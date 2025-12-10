@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/models/menu_permission_model.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/models/menu_permission_model.dart';
 
 Widget buildPermissionCheckbox({
   required MenuPermissionsItem item,

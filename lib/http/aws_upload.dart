@@ -2,8 +2,8 @@ import 'dart:typed_data';
 import 'package:aws_s3_upload_lite/aws_s3_upload_lite.dart';
 import 'package:aws_s3_upload_lite/enum/acl.dart';
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/http/loader.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class AwsUpload {
   static Future<String?> uploadToAws(Uint8List result, String fileType,

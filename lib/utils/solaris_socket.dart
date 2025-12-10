@@ -2,7 +2,7 @@ import 'dart:developer';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:techtify/http/http_urls.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 
 class suryaprabhaSocket {
   static IO.Socket? socket;

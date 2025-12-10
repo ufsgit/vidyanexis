@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/controller/models/notification_model.dart';
+import 'package:vidyanexis/controller/models/notification_model.dart';
 
 class NotificationProvider extends ChangeNotifier {
   final List<NotificationModel> _notifications = [];
@@ -24,7 +24,6 @@ class NotificationProvider extends ChangeNotifier {
       removeNotification(int.parse(notification.notificationId!));
     });
   }
-
 
   void removeNotification(int id) {
     _notifications.removeWhere(

@@ -1,18 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/presentation/pages/home/task_summary_page.dart';
+import 'package:vidyanexis/presentation/pages/home/task_summary_page.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/dashboard_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/presentation/pages/dashboard/task_overview_tab.dart';
-import 'package:techtify/presentation/pages/reports/staff_attendance_screen.dart';
-import 'package:techtify/presentation/pages/dashboard/custom_tab.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/presentation/pages/dashboard/lead_overview_tab.dart';
-import 'package:techtify/presentation/pages/dashboard/work_overview_tab.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_field.dart';
-import 'package:techtify/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/task_overview_tab.dart';
+import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/custom_tab.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/lead_overview_tab.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/work_overview_tab.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 import '../../widgets/home/custom_textfield_widget_mobile.dart';
 

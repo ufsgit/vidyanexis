@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/dashboard_provider.dart';
-import 'package:techtify/controller/models/dashboard_task_model.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class TaskOverviewTab extends StatefulWidget {
   const TaskOverviewTab({super.key});

@@ -4,47 +4,47 @@ import 'dart:ui';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/audio_file_provider.dart';
-import 'package:techtify/controller/check_in_out_provider.dart';
-import 'package:techtify/controller/followup_reports_provider.dart';
-import 'package:techtify/controller/form_builder_provider.dart';
-import 'package:techtify/controller/notification_provider.dart';
-import 'package:techtify/controller/quotation_report_provider.dart';
-import 'package:techtify/presentation/pages/reports/quotation_report.dart';
-import 'package:techtify/presentation/widgets/notification_overlay.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/controller/check_in_out_provider.dart';
+import 'package:vidyanexis/controller/followup_reports_provider.dart';
+import 'package:vidyanexis/controller/form_builder_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/controller/quotation_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
+import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/amc_report_provider.dart';
-import 'package:techtify/controller/attendance_report_provider.dart';
-import 'package:techtify/controller/conversion_report_provider.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/controller/customer_provider.dart';
-import 'package:techtify/controller/dashboard_provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/enquiry_report_provider.dart';
-import 'package:techtify/controller/enquiry_source_provider.dart';
-import 'package:techtify/controller/expense_provider.dart';
-import 'package:techtify/controller/feedback_provider.dart';
-import 'package:techtify/controller/feedback_report_provider.dart';
-import 'package:techtify/controller/image_upload_provider.dart';
-import 'package:techtify/controller/inovoice_report_provider.dart';
-import 'package:techtify/controller/lead_details_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/login_controller.dart';
-import 'package:techtify/controller/models/task_page_provider.dart';
-import 'package:techtify/controller/process_flow_provider.dart';
-import 'package:techtify/controller/reports_provider.dart';
-import 'package:techtify/controller/service_report_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/controller/task_report_provider.dart';
-import 'package:techtify/controller/warrenty_report_provider.dart';
-import 'package:techtify/controller/work_report_provider.dart';
-import 'package:techtify/controller/work_summary_provider.dart';
-import 'package:techtify/firebase_options.dart';
-import 'package:techtify/routes/routes.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/utils/firebase_notification_service.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/amc_report_provider.dart';
+import 'package:vidyanexis/controller/attendance_report_provider.dart';
+import 'package:vidyanexis/controller/conversion_report_provider.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/customer_provider.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/enquiry_report_provider.dart';
+import 'package:vidyanexis/controller/enquiry_source_provider.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/feedback_provider.dart';
+import 'package:vidyanexis/controller/feedback_report_provider.dart';
+import 'package:vidyanexis/controller/image_upload_provider.dart';
+import 'package:vidyanexis/controller/inovoice_report_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/login_controller.dart';
+import 'package:vidyanexis/controller/models/task_page_provider.dart';
+import 'package:vidyanexis/controller/process_flow_provider.dart';
+import 'package:vidyanexis/controller/reports_provider.dart';
+import 'package:vidyanexis/controller/service_report_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/task_report_provider.dart';
+import 'package:vidyanexis/controller/warrenty_report_provider.dart';
+import 'package:vidyanexis/controller/work_report_provider.dart';
+import 'package:vidyanexis/controller/work_summary_provider.dart';
+import 'package:vidyanexis/firebase_options.dart';
+import 'package:vidyanexis/routes/routes.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/utils/firebase_notification_service.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -101,8 +101,6 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => FormBuilderProvider()),
         ChangeNotifierProvider(create: (context) => AudioFileProvider()),
-
-        
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),
@@ -118,11 +116,13 @@ class MyApp extends StatelessWidget {
           },
         ),
         scaffoldMessengerKey: navigatorKey,
-        color:  const Color.fromARGB(255, 0, 90, 69),
+        color: const Color.fromARGB(255, 0, 90, 69),
         title: '${AppStyles.name()} Admin',
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor:   const Color.fromARGB(255, 0, 90, 69),),
+          colorScheme: ColorScheme.fromSeed(
+            seedColor: const Color.fromARGB(255, 0, 90, 69),
+          ),
           useMaterial3: true,
           fontFamily: 'PlusJakartaSans',
           textTheme: const TextTheme(

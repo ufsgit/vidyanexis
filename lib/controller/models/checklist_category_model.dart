@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:techtify/controller/models/checklist_item_model.dart';
+import 'package:vidyanexis/controller/models/checklist_item_model.dart';
 
 CheckListCategoryModel checkListCategoryModelFromJson(String str) =>
     CheckListCategoryModel.fromJson(json.decode(str));

@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/http/loader.dart';
-import 'package:techtify/presentation/widgets/customer/add_quotation.dart';
-import 'package:techtify/presentation/widgets/customer/custom_expansion_tile_widget.dart';
-import 'package:techtify/presentation/widgets/customer/pdf/print_kre_pdf.dart';
-import 'package:techtify/presentation/widgets/customer/task_label_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/quotation_details_printer_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/customer/custom_expansion_tile_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart';
+import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/quotation_details_printer_widget.dart';
 
 class QuotationDetailsWidget extends StatelessWidget {
   final String customerId;

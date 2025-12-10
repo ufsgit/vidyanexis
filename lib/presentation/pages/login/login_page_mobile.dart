@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/login_controller.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/presentation/widgets/login/login_page_widgets.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/login_controller.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/presentation/widgets/login/login_page_widgets.dart';
 
 class LoginPageMobile extends StatefulWidget {
   static String route = '/login';

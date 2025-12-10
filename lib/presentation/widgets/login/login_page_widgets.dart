@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 Widget textFieldWidget(
     {required TextEditingController? controller,

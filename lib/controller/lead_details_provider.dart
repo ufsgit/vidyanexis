@@ -1,15 +1,15 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/utils/util_functions.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/models/follow_up_history.dart';
-import 'package:techtify/controller/models/lead_details_model.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/models/follow_up_history.dart';
+import 'package:vidyanexis/controller/models/lead_details_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 
 class LeadDetailsProvider with ChangeNotifier {
   List<LeadDetails> _leadDetails = [];

@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/lead_details_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/presentation/pages/home/customer_details_page.dart';
-import 'package:techtify/presentation/widgets/home/follow_up_history_widget.dart';
-import 'package:techtify/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/home/follow_up_history_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 
 class LeadDetailsWidget extends StatefulWidget {
   final String customerId;

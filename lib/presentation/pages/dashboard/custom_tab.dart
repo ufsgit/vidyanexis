@@ -1,7 +1,7 @@
 // import 'package:flutter/material.dart';
-// import 'package:techtify/constants/app_colors.dart';
-// import 'package:techtify/constants/app_styles.dart';
-// import 'package:techtify/controller/dashboard_provider.dart';
+// import 'package:vidyanexis/constants/app_colors.dart';
+// import 'package:vidyanexis/constants/app_styles.dart';
+// import 'package:vidyanexis/controller/dashboard_provider.dart';
 
 // class CustomTab extends StatelessWidget {
 //   const CustomTab({
@@ -178,10 +178,10 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/dashboard_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:provider/provider.dart';
 
 class CustomTab extends StatelessWidget {

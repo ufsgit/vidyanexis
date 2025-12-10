@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/models/task_page_provider.dart';
-import 'package:techtify/controller/models/task_report_model.dart';
-import 'package:techtify/controller/models/task_type_status_model.dart';
-import 'package:techtify/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:techtify/presentation/widgets/customer/custom_app_bar_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/models/task_page_provider.dart';
+import 'package:vidyanexis/controller/models/task_report_model.dart';
+import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 
 class ProcessFlowDialog extends StatefulWidget {

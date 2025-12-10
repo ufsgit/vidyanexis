@@ -2,14 +2,14 @@
 // import 'package:flutter/services.dart';
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:intl/intl.dart';
-// import 'package:techtify/constants/app_colors.dart';
-// import 'package:techtify/controller/models/custom_field_by_status.dart';
-// import 'package:techtify/controller/models/custom_field_enquiry_for_model.dart'
+// import 'package:vidyanexis/constants/app_colors.dart';
+// import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+// import 'package:vidyanexis/controller/models/custom_field_enquiry_for_model.dart'
 //     as enq;
-// import 'package:techtify/controller/models/field_value_model.dart';
-// import 'package:techtify/presentation/widgets/home/custom_dropdown_widget.dart';
-// import 'package:techtify/presentation/widgets/home/custom_text_field.dart';
-// import 'package:techtify/presentation/widgets/home/new_drawer_widget.dart';
+// import 'package:vidyanexis/controller/models/field_value_model.dart';
+// import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+// import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+// import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 
 // class UnifiedCustomFieldsSection extends StatefulWidget {
 //   // For enquiry for fields

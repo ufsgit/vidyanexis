@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:techtify/controller/expense_provider.dart';
-import 'package:techtify/controller/models/checklist_category_model.dart';
-import 'package:techtify/controller/models/checklist_item_model.dart';
-import 'package:techtify/presentation/widgets/home/custom_dropdown_widget.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/models/checklist_category_model.dart';
+import 'package:vidyanexis/controller/models/checklist_item_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
 class AddCheckListItemPage extends StatefulWidget {
   CheckListItemModel checkListItemModel = CheckListItemModel();

@@ -6,7 +6,7 @@ import 'dart:convert';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 TaskTypeStatusModel taskTypeStatusModelFromJson(String str) =>
     TaskTypeStatusModel.fromJson(json.decode(str));
@@ -58,16 +58,16 @@ class TaskTypeStatusModel {
 
   factory TaskTypeStatusModel.fromJson(Map<String, dynamic> json) =>
       TaskTypeStatusModel(
-          statusId: json["Status_Id"],
-          statusName: json["Status_Name"],
-          statusOrder: json["Status_Order"],
-          followup: json["Followup"],
-          isRegistered: json["Is_Registered"],
-          colorCode: json["Color_Code"] == null
-              ? Colors.black
-              : AppColors.parseColor(json["Color_Code"]),
-          taskTypeId: json["Task_Type_Id"],
-          enquiryForId: json["Enquiry_For_Id"], // Added field mapping
+        statusId: json["Status_Id"],
+        statusName: json["Status_Name"],
+        statusOrder: json["Status_Order"],
+        followup: json["Followup"],
+        isRegistered: json["Is_Registered"],
+        colorCode: json["Color_Code"] == null
+            ? Colors.black
+            : AppColors.parseColor(json["Color_Code"]),
+        taskTypeId: json["Task_Type_Id"],
+        enquiryForId: json["Enquiry_For_Id"], // Added field mapping
       );
 
   Map<String, dynamic> toJson() => {

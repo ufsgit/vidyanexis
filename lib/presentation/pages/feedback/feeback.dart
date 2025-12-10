@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/controller/feedback_provider.dart';
+import 'package:vidyanexis/controller/feedback_provider.dart';
 
 class FeedbackPage extends StatefulWidget {
   final String customerId;

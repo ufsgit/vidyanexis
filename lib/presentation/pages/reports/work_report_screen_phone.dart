@@ -2,15 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/customer_provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/controller/work_report_provider.dart';
-import 'package:techtify/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:techtify/presentation/widgets/home/custom_app_bar_mobile.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/controller/work_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class WorkReportPhone extends StatefulWidget {
   static const String route = '/workReport/';

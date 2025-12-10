@@ -3,14 +3,14 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/controller/models/document_type_model.dart';
-import 'package:techtify/controller/models/mandatory_status_model.dart';
-import 'package:techtify/controller/models/task_report_model.dart';
-import 'package:techtify/controller/models/task_type_model.dart';
-import 'package:techtify/controller/models/task_type_status_model.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/http/loader.dart';
+import 'package:vidyanexis/controller/models/document_type_model.dart';
+import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
+import 'package:vidyanexis/controller/models/task_report_model.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
+import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class TaskPageProvider extends ChangeNotifier {
   List<TaskReportModel> _taskReport = [];

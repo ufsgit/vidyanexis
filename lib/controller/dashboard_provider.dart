@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/controller/models/dashboard_count_model.dart';
-import 'package:techtify/controller/models/dashboard_info_model.dart';
-import 'package:techtify/controller/models/dashboard_task_model.dart';
-import 'package:techtify/controller/models/follow_up_summary_model.dart';
-import 'package:techtify/controller/models/lead_conversion_model.dart';
-import 'package:techtify/controller/models/lead_progress_model.dart';
-import 'package:techtify/controller/models/search_leads_model.dart';
-import 'package:techtify/controller/models/task_allocation_model.dart';
-import 'package:techtify/controller/models/work_report_summary_model.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
+import 'package:vidyanexis/controller/models/dashboard_count_model.dart';
+import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
+import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
+import 'package:vidyanexis/controller/models/follow_up_summary_model.dart';
+import 'package:vidyanexis/controller/models/lead_conversion_model.dart';
+import 'package:vidyanexis/controller/models/lead_progress_model.dart';
+import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/models/task_allocation_model.dart';
+import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 
 class DashboardProvider extends ChangeNotifier {
   int _tabIndex = 0;

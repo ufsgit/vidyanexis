@@ -3,35 +3,35 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:techtify/controller/customer_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/models/follow_up_model.dart';
-import 'package:techtify/controller/models/search_lead_status_model.dart';
-import 'package:techtify/controller/models/search_user_details_model.dart';
-import 'package:techtify/controller/models/task_type_model.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/presentation/pages/home/process_flow_dialog.dart';
-import 'package:techtify/presentation/widgets/customer/status_dropdown_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_app_bar_mobile.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/controller/customer_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/models/follow_up_model.dart';
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/status_dropdown_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/models/task_page_provider.dart';
-import 'package:techtify/controller/models/task_report_model.dart';
-import 'package:techtify/controller/models/task_type_status_model.dart';
-import 'package:techtify/controller/reports_provider.dart';
-import 'package:techtify/controller/task_report_provider.dart';
-import 'package:techtify/presentation/pages/home/customer_details_page.dart';
-import 'package:techtify/presentation/widgets/customer/task_details_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/side_drawer_mobile.dart';
-import 'package:techtify/presentation/widgets/home/table_cell.dart';
-import 'package:techtify/utils/csv_function.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/models/task_page_provider.dart';
+import 'package:vidyanexis/controller/models/task_report_model.dart';
+import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/controller/reports_provider.dart';
+import 'package:vidyanexis/controller/task_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -1208,11 +1208,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                 TableWidget(
                                     flex: 2,
                                     title: 'Description',
-                                   color: const Color(0xFFFFFFFF)),
+                                    color: const Color(0xFFFFFFFF)),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Date',
-                                  color: const Color(0xFFFFFFFF)),
+                                    color: const Color(0xFFFFFFFF)),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Status',
@@ -1220,7 +1220,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 TableWidget(
                                     flex: 1,
                                     title: 'Details',
-                                 color: const Color(0xFFFFFFFF)),
+                                    color: const Color(0xFFFFFFFF)),
                               ],
                             ),
                           ),

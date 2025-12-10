@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/controller/models/amc_report_model.dart';
-import 'package:techtify/controller/models/feedback_model.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/http/loader.dart';
+import 'package:vidyanexis/controller/models/amc_report_model.dart';
+import 'package:vidyanexis/controller/models/feedback_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class FeedbackReportProvider extends ChangeNotifier {
   List<FeedbackModel> _amcReport = [];

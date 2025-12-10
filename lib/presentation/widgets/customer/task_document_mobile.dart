@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/controller/models/task_document_model.dart';
-import 'package:techtify/http/http_urls.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/models/task_document_model.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 import 'package:provider/provider.dart';
 
 class TaskDocumentsPage extends StatefulWidget {

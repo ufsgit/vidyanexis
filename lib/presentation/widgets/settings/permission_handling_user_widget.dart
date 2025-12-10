@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/models/dummy_models.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/dummy_models.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 class PermissionHandlingUserWidget extends StatelessWidget {
   final String userName;

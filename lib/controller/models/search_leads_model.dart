@@ -1,4 +1,4 @@
-import 'package:techtify/controller/models/task_customer_model.dart';
+import 'package:vidyanexis/controller/models/task_customer_model.dart';
 
 class SearchLeadModel {
   // ─────────────────── Core Fields ───────────────────

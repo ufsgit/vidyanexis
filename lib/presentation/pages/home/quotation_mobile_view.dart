@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/presentation/pages/home/add_quotation_widget_mobile.dart';
-import 'package:techtify/presentation/widgets/customer/quotation_details_page_phone.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/add_quotation_widget_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/quotation_details_page_phone.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 import '../../../constants/app_colors.dart';
 

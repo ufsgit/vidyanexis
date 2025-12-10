@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
 
 class CustomDropDown extends StatelessWidget {
   const CustomDropDown({

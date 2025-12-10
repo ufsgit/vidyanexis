@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/http/loader.dart';
-import 'package:techtify/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 
 class LoginController extends ChangeNotifier {
   String _userName = '';

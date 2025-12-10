@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 enum PopupMenuOptions { edit, delete }
 

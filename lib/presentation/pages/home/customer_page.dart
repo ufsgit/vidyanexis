@@ -3,20 +3,20 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:techtify/controller/audio_file_provider.dart';
-import 'package:techtify/controller/models/search_leads_model.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/main.dart';
+import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/main.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/customer_provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/presentation/pages/home/customer_details_page.dart';
-import 'package:techtify/presentation/widgets/customer/add_follow_up_dialog.dart';
-import 'package:techtify/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 class CustomerPage extends StatefulWidget {
   const CustomerPage({super.key});
@@ -817,11 +817,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Status',
-                                     color: const Color(0xFFFFFFFF)),
+                                      color: const Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 1,
                                       title: 'Follow Up Date',
-                                     color: const Color(0xFFFFFFFF)),
+                                      color: const Color(0xFFFFFFFF)),
                                 ],
                               ),
                             ),

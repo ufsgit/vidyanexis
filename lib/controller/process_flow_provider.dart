@@ -2,19 +2,19 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:techtify/controller/models/branch_model.dart';
-import 'package:techtify/controller/models/department_model.dart';
-import 'package:techtify/controller/models/document_list_model.dart';
-import 'package:techtify/controller/models/document_type_model.dart';
-import 'package:techtify/controller/models/enquiry_for_model.dart';
-import 'package:techtify/controller/models/process_flow_model.dart';
-import 'package:techtify/controller/models/task_document_model.dart';
-import 'package:techtify/controller/models/task_flow_model.dart';
-import 'package:techtify/controller/models/task_type_model.dart';
-import 'package:techtify/controller/models/task_type_status_model.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/http/loader.dart';
+import 'package:vidyanexis/controller/models/branch_model.dart';
+import 'package:vidyanexis/controller/models/department_model.dart';
+import 'package:vidyanexis/controller/models/document_list_model.dart';
+import 'package:vidyanexis/controller/models/document_type_model.dart';
+import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/process_flow_model.dart';
+import 'package:vidyanexis/controller/models/task_document_model.dart';
+import 'package:vidyanexis/controller/models/task_flow_model.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
+import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class ProcessFlowProvider extends ChangeNotifier {
   ProcessFlowModel processFlowModel = ProcessFlowModel();

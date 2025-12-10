@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/attendance_report_provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/presentation/widgets/home/add_attendance.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/table_cell.dart';
-import 'package:techtify/utils/csv_function.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/attendance_report_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/presentation/widgets/home/add_attendance.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 
 class StaffAttendanceScreen extends StatefulWidget {
   const StaffAttendanceScreen({super.key});

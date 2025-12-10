@@ -1,10 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/main.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/main.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/http/http_urls.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 
 class HttpRequest {
   static final sideBarProvider = Provider.of<SidebarProvider>(

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/expense_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:techtify/presentation/widgets/inventory/purchase_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/inventory/purchase_widget.dart';
 
 class PurchaseScreen extends StatefulWidget {
   const PurchaseScreen({super.key});

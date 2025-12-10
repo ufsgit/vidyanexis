@@ -3,10 +3,10 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:intl/intl.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:techtify/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'dart:async';
 
-import 'package:techtify/constants/app_styles.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 class EmployeeTracking extends StatefulWidget {
   const EmployeeTracking({super.key});

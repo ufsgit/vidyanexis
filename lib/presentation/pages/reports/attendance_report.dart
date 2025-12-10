@@ -1,9 +1,9 @@
 // import 'package:flutter/material.dart';
 // import 'package:provider/provider.dart';
-// import 'package:techtify/constants/app_colors.dart';
-// import 'package:techtify/controller/attendance_report_provider.dart';
-// import 'package:techtify/controller/drop_down_provider.dart';
-// import 'package:techtify/presentation/widgets/home/table_cell.dart';
+// import 'package:vidyanexis/constants/app_colors.dart';
+// import 'package:vidyanexis/controller/attendance_report_provider.dart';
+// import 'package:vidyanexis/controller/drop_down_provider.dart';
+// import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 // class AttendanceReport extends StatefulWidget {
 //   const AttendanceReport({super.key});

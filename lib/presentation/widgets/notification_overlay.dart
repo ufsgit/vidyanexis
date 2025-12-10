@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/controller/models/notification_model.dart';
-import 'package:techtify/controller/notification_provider.dart';
-import 'package:techtify/presentation/widgets/notification_widget.dart';
+import 'package:vidyanexis/controller/models/notification_model.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/presentation/widgets/notification_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

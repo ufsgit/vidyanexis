@@ -198,10 +198,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
-import 'package:techtify/utils/extensions.dart';
-import 'package:techtify/utils/widgets.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/utils/widgets.dart';
 
 class CustomTextfieldWidgetMobile extends StatefulWidget {
   const CustomTextfieldWidgetMobile(

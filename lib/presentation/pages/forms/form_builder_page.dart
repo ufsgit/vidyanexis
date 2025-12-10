@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/controller/models/form_model.dart';
+import 'package:vidyanexis/controller/models/form_model.dart';
 import '../../../controller/form_builder_provider.dart';
 import '../../widgets/home/custom_button_widget.dart';
 import '../../widgets/home/custom_text_field.dart';

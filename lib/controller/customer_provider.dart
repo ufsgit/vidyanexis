@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:techtify/main.dart';
+import 'package:vidyanexis/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/models/search_leads_model.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/http/loader.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class CustomerProvider extends ChangeNotifier {
   List<SearchLeadModel> _customerData = [];

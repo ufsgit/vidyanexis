@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/dashboard_provider.dart';
-import 'package:techtify/presentation/pages/dashboard/count_widget.dart';
-import 'package:techtify/presentation/pages/dashboard/custom_dropdown.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/count_widget.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 
 class CustomerWorkSummary extends StatelessWidget {
   const CustomerWorkSummary({super.key, required this.dashBoardProvider});

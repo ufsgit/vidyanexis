@@ -5,11 +5,10 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-
-import 'package:techtify/controller/models/notification_model.dart';
-import 'package:techtify/controller/notification_provider.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/main.dart';
+import 'package:vidyanexis/controller/models/notification_model.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/main.dart';
 
 class MicrotecSocket {
   static IO.Socket? socket;

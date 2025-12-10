@@ -2,22 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
-import 'package:techtify/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/conversion_report_provider.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/presentation/pages/home/customer_details_page.dart';
-import 'package:techtify/presentation/widgets/customer/conversion_details_page.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/conversion_report_provider.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/customer/conversion_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/side_drawer_mobile.dart';
-import 'package:techtify/presentation/widgets/home/table_cell.dart';
-import 'package:techtify/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 
 class ConversionReportPage extends StatefulWidget {
   final bool fromDashBoard;

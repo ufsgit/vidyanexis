@@ -9,11 +9,11 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
-import 'package:techtify/http/aws_upload.dart';
-import 'package:techtify/http/http_urls.dart';
+import 'package:vidyanexis/http/aws_upload.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 import 'package:universal_html/html.dart' as html;
-import 'package:techtify/helpers/media_stream_helper_stub.dart'
-    if (dart.library.html) 'package:techtify/helpers/media_stream_helper_web.dart';
+import 'package:vidyanexis/helpers/media_stream_helper_stub.dart'
+    if (dart.library.html) 'package:vidyanexis/helpers/media_stream_helper_web.dart';
 
 class AudioFileProvider extends ChangeNotifier {
   List<AudioFile> _audios = [];

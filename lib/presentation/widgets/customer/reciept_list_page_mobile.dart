@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/presentation/widgets/customer/add_invoice_phone.dart';
-import 'package:techtify/presentation/widgets/customer/add_receipt_page_phone.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_invoice_phone.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_receipt_page_phone.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class BillingDetailsPagePhone extends StatefulWidget {
   final String customerId;
@@ -422,17 +422,17 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
 // import 'package:google_fonts/google_fonts.dart';
 // import 'package:intl/intl.dart';
 // import 'package:provider/provider.dart';
-// import 'package:techtify/constants/app_colors.dart';
-// import 'package:techtify/controller/customer_details_provider.dart';
-// import 'package:techtify/controller/leads_provider.dart';
-// import 'package:techtify/presentation/widgets/customer/add_receipt_page_phone.dart';
-// import 'package:techtify/presentation/widgets/customer/add_task.dart';
-// import 'package:techtify/presentation/widgets/customer/add_task_mobile.dart';
-// import 'package:techtify/presentation/widgets/customer/receipt_details_page_phone.dart';
-// import 'package:techtify/presentation/widgets/customer/task_details_page_phone.dart';
-// import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-// import 'package:techtify/presentation/widgets/home/lead_widget.dart';
-// import 'package:techtify/utils/extensions.dart';
+// import 'package:vidyanexis/constants/app_colors.dart';
+// import 'package:vidyanexis/controller/customer_details_provider.dart';
+// import 'package:vidyanexis/controller/leads_provider.dart';
+// import 'package:vidyanexis/presentation/widgets/customer/add_receipt_page_phone.dart';
+// import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
+// import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
+// import 'package:vidyanexis/presentation/widgets/customer/receipt_details_page_phone.dart';
+// import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
+// import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+// import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
+// import 'package:vidyanexis/utils/extensions.dart';
 
 // class RecieptListPageMobile extends StatefulWidget {
 //   final String customerId;

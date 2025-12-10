@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/main.dart';
-import 'package:techtify/presentation/widgets/customer/add_reciept.dart';
-import 'package:techtify/presentation/widgets/customer/reciept_card.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/main.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
+import 'package:vidyanexis/presentation/widgets/customer/reciept_card.dart';
 import 'package:provider/provider.dart';
 
 class ReceiptScreen extends StatefulWidget {

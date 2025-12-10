@@ -3,20 +3,20 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/constants/enums.dart';
-import 'package:techtify/controller/audio_file_provider.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/lead_details_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/models/search_leads_model.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/presentation/widgets/home/add_followup_drawer_widget.dart';
-import 'package:techtify/presentation/widgets/home/lead_detail_widget.dart';
-import 'package:techtify/presentation/widgets/home/new_drawer_widget.dart';
-import 'package:techtify/presentation/widgets/home/table_cell.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/constants/enums.dart';
+import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/add_followup_drawer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class LeadPage extends StatefulWidget {
   final bool fromDashBoard;
@@ -722,8 +722,8 @@ class _LeadsPageState extends State<LeadPage> {
                                     Container(
                                       height: 60,
                                       decoration: const BoxDecoration(
-                                        color: const Color.fromARGB(255, 0, 90, 69),
-
+                                        color: const Color.fromARGB(
+                                            255, 0, 90, 69),
                                         borderRadius: BorderRadius.only(
                                             topLeft: Radius.circular(8),
                                             bottomLeft: Radius.circular(8)),
@@ -761,8 +761,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                       color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                     Text(
@@ -775,9 +775,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                       color: const Color(0xFFFFFFFF),
-
-                                                        
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     )
                                                   ],
@@ -804,8 +803,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                       color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                     Text(
@@ -815,11 +814,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                        color: const Color(0xFFFFFFFF),
-
-
-                                                        
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                   ],
@@ -847,8 +843,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                       //     FontWeight
                                                       //         .bold,
                                                       fontSize: 13,
-                                                     color: const Color(0xFFFFFFFF),
-
+                                                      color: const Color(
+                                                          0xFFFFFFFF),
                                                     ),
                                                   ),
                                                   Text(
@@ -863,8 +859,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                       //     FontWeight
                                                       //         .bold,
                                                       fontSize: 13,
-                                                      color: const Color(0xFFFFFFFF),
-
+                                                      color: const Color(
+                                                          0xFFFFFFFF),
                                                     ),
                                                   ),
                                                 ],
@@ -891,8 +887,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                        color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                     Text(
@@ -905,8 +901,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                        color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                   ],
@@ -934,8 +930,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                        color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                     // Text(
@@ -975,8 +971,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                        color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                     Text(
@@ -986,8 +982,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                       // maxLines: 2,
                                                       style: const TextStyle(
                                                         fontSize: 13,
-                                                        color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                   ],
@@ -1015,8 +1011,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                         //     FontWeight
                                                         //         .bold,
                                                         fontSize: 13,
-                                                       color: const Color(0xFFFFFFFF),
-
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
                                                       ),
                                                     ),
                                                     Text(
@@ -1400,8 +1396,8 @@ class _LeadsPageState extends State<LeadPage> {
                                       Container(
                                         height: 60,
                                         decoration: const BoxDecoration(
-                                          color: const Color.fromARGB(255, 0, 90, 69),
-
+                                          color: const Color.fromARGB(
+                                              255, 0, 90, 69),
                                           borderRadius: BorderRadius.only(
                                               topRight: Radius.circular(8),
                                               bottomRight: Radius.circular(8)),
@@ -1414,9 +1410,10 @@ class _LeadsPageState extends State<LeadPage> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                _HeaderCell('Status',
-                                                    width: 160,
-                                                    ),
+                                                _HeaderCell(
+                                                  'Status',
+                                                  width: 160,
+                                                ),
                                                 // _HeaderCell('Done Date',
                                                 //     width: 160),
                                               ],
@@ -1461,7 +1458,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                   CrossAxisAlignment.start,
                                               children: [
                                                 _HeaderCell('Follow-Up Date',
-                                                
                                                     width: 160),
                                                 // _HeaderCell('', width: 160),
                                               ],
@@ -2068,7 +2064,6 @@ class _HeaderCell extends StatelessWidget {
           // overflow: TextOverflow.ellipsis,
           style: const TextStyle(
             color: const Color(0xFFFFFFFF),
-
           ),
         ),
       ),

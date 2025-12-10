@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/controller/models/amc_status_model.dart';
-import 'package:techtify/controller/models/district_model.dart';
-import 'package:techtify/controller/models/document_type_model.dart';
-import 'package:techtify/controller/models/enquiry_for_model.dart';
-import 'package:techtify/controller/models/enquiry_source_model.dart';
-import 'package:techtify/controller/models/follow_up_model.dart';
-import 'package:techtify/controller/models/follow_up_status_model.dart';
-import 'package:techtify/controller/models/search_lead_status_model.dart';
-import 'package:techtify/controller/models/search_user_details_model.dart';
-import 'package:techtify/controller/models/task_type_model.dart';
-import 'package:techtify/controller/models/task_type_status_model.dart';
-import 'package:techtify/http/http_requests.dart';
+import 'package:vidyanexis/controller/models/amc_status_model.dart';
+import 'package:vidyanexis/controller/models/district_model.dart';
+import 'package:vidyanexis/controller/models/document_type_model.dart';
+import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
+import 'package:vidyanexis/controller/models/follow_up_model.dart';
+import 'package:vidyanexis/controller/models/follow_up_status_model.dart';
+import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
+import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
 
 import '../http/http_urls.dart';
 

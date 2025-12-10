@@ -1,7 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 class TaskReportModel {
   final int taskId;

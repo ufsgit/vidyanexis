@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/expense_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/presentation/pages/inventory/category_page.dart';
-import 'package:techtify/presentation/pages/inventory/expense_management.dart';
-import 'package:techtify/presentation/pages/inventory/item_page.dart';
-import 'package:techtify/presentation/pages/inventory/purchase_screen.dart';
-import 'package:techtify/presentation/pages/inventory/stock_use_page.dart';
-import 'package:techtify/presentation/pages/inventory/unit_page.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/inventory/category_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
+import 'package:vidyanexis/presentation/pages/inventory/item_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/purchase_screen.dart';
+import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/unit_page.dart';
 
 class InventoryPage extends StatefulWidget {
   const InventoryPage({super.key});

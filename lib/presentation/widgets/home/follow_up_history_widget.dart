@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/models/follow_up_history.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/follow_up_history.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 class FollowUpCard extends StatefulWidget {
@@ -104,8 +104,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
           // For web error: consider tailoring the error message for unsupported audio format
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
-              content: Text(
-                  "Failed to play audio."),
+              content: Text("Failed to play audio."),
               backgroundColor: Colors.red,
             ),
           );

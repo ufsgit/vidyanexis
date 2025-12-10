@@ -9,7 +9,7 @@ class AppStyles {
   }
 
   static name() {
-    String name = 'Techtify';
+    String name = 'vidyanexis';
     // String name = 'First Day';
     // String name = 'Neopower';
     // String name = 'Horizon';

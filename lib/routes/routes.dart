@@ -1,20 +1,20 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/presentation/pages/feedback/feeback.dart';
-import 'package:techtify/presentation/pages/home/bulk_importing_screen.dart';
-import 'package:techtify/presentation/pages/home/customer_details_page.dart';
-import 'package:techtify/presentation/pages/home/home_page_mobile.dart';
-import 'package:techtify/presentation/pages/home/homepage.dart';
-import 'package:techtify/presentation/pages/login/login_page.dart';
-import 'package:techtify/presentation/pages/login/login_page_mobile.dart';
-import 'package:techtify/presentation/pages/login/splash_screen.dart';
-import 'package:techtify/presentation/pages/reports/enquiry_source_reports_screen.dart';
-import 'package:techtify/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
-import 'package:techtify/presentation/pages/reports/work_report_screen.dart';
-import 'package:techtify/presentation/widgets/customer/complaints_details_page_mobile.dart';
-import 'package:techtify/presentation/widgets/customer/quotation_details_page_phone.dart';
-import 'package:techtify/presentation/widgets/customer/task_details_page_phone.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/pages/feedback/feeback.dart';
+import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/pages/home/home_page_mobile.dart';
+import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/presentation/pages/login/login_page.dart';
+import 'package:vidyanexis/presentation/pages/login/login_page_mobile.dart';
+import 'package:vidyanexis/presentation/pages/login/splash_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/enquiry_source_reports_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
+import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/quotation_details_page_phone.dart';
+import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 
 final GoRouter appRouter = GoRouter(
   debugLogDiagnostics: true, // Helpful for debugging

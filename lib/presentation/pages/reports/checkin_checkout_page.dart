@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:techtify/controller/check_in_out_provider.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/presentation/widgets/home/add_check_in_out.dart';
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/controller/check_in_out_provider.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/presentation/widgets/home/add_check_in_out.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 class CheckInOutScreen extends StatefulWidget {
   const CheckInOutScreen({super.key});

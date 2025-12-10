@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/presentation/widgets/customer/custom_app_bar_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_textfield_widget_mobile.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 
 class AddPaymentPhone extends StatefulWidget {
   final bool isEdit;

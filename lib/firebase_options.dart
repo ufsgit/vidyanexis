@@ -64,18 +64,18 @@ class DefaultFirebaseOptions {
     apiKey: 'AIzaSyCuqDaaBwi3WLBUHS16sLUF1JgLvosLUi4',
     appId: '1:215237081386:ios:4893d6a39c23274786c653',
     messagingSenderId: '215237081386',
-    projectId: 'techtify-app-b2973',
-    storageBucket: 'techtify-app-b2973.firebasestorage.app',
-    iosBundleId: 'com.example.techtify',
+    projectId: 'vidyanexis-app-b2973',
+    storageBucket: 'vidyanexis-app-b2973.firebasestorage.app',
+    iosBundleId: 'com.example.vidyanexis',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
     apiKey: 'AIzaSyDKTJiHRyiemSZTH0fUhVIkek8hbI9LBmk',
     appId: '1:215237081386:web:8432d326a14cc34786c653',
     messagingSenderId: '215237081386',
-    projectId: 'techtify-app-b2973',
-    authDomain: 'techtify-app-b2973.firebaseapp.com',
-    storageBucket: 'techtify-app-b2973.firebasestorage.app',
+    projectId: 'vidyanexis-app-b2973',
+    authDomain: 'vidyanexis-app-b2973.firebaseapp.com',
+    storageBucket: 'vidyanexis-app-b2973.firebasestorage.app',
     measurementId: 'G-YCLBX5CCNK',
   );
 }

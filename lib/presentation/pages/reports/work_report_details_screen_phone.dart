@@ -1,16 +1,16 @@
 // import 'package:flutter/material.dart';
 // import 'package:go_router/go_router.dart';
 // import 'package:google_fonts/google_fonts.dart';
-// import 'package:techtify/main.dart';
+// import 'package:vidyanexis/main.dart';
 // import 'package:provider/provider.dart';
-// import 'package:techtify/constants/app_colors.dart';
-// import 'package:techtify/controller/customer_provider.dart';
-// import 'package:techtify/controller/leads_provider.dart';
-// import 'package:techtify/controller/side_bar_provider.dart';
-// import 'package:techtify/presentation/pages/reports/work_report_screen_phone.dart';
-// import 'package:techtify/presentation/pages/reports/work_summary_screen_phone.dart';
-// import 'package:techtify/presentation/widgets/home/custom_app_bar_mobile.dart';
-// import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
+// import 'package:vidyanexis/constants/app_colors.dart';
+// import 'package:vidyanexis/controller/customer_provider.dart';
+// import 'package:vidyanexis/controller/leads_provider.dart';
+// import 'package:vidyanexis/controller/side_bar_provider.dart';
+// import 'package:vidyanexis/presentation/pages/reports/work_report_screen_phone.dart';
+// import 'package:vidyanexis/presentation/pages/reports/work_summary_screen_phone.dart';
+// import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+// import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 // class WorkReportDetailsScreenPhone extends StatefulWidget {
 //   final String userId;

@@ -1,4 +1,4 @@
-import 'package:techtify/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/models/search_leads_model.dart';
 
 class LeadDetails {
   // Core Fields

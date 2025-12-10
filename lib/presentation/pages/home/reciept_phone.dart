@@ -1,16 +1,16 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/customer_details_provider.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/main.dart';
-import 'package:techtify/presentation/widgets/customer/add_receipt_page_phone.dart';
-import 'package:techtify/presentation/widgets/customer/add_reciept.dart';
-import 'package:techtify/presentation/widgets/home/confirmation_dialog_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/main.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_receipt_page_phone.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
+import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:provider/provider.dart';
 
 class RecieptPhone extends StatefulWidget {

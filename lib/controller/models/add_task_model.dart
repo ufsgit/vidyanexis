@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:techtify/controller/models/task_customer_model.dart';
+import 'package:vidyanexis/controller/models/task_customer_model.dart';
 
 AddTaskModel addTaskModelFromJson(String str) =>
     AddTaskModel.fromJson(json.decode(str));

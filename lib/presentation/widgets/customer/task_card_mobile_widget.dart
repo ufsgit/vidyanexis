@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:techtify/presentation/widgets/customer/expanded_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/expanded_text_widget.dart';
 
 class TaskCardMobileWidget extends StatelessWidget {
   final String taskTypeName;

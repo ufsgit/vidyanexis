@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/presentation/pages/dashboard/common_widgets.dart';
-import 'package:techtify/presentation/widgets/customer/add_periodic_service_mobile.dart';
-import 'package:techtify/presentation/widgets/customer/periodic_service_details_page_mobile.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-// import 'package:techtify/presentation/widgets/customer/add_periodic_service_mobile.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/common_widgets.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/periodic_service_details_page_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+// import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../constants/app_styles.dart';

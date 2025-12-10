@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:techtify/controller/drop_down_provider.dart';
-import 'package:techtify/controller/leads_provider.dart';
-import 'package:techtify/controller/notification_provider.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/http/socket_io.dart';
-import 'package:techtify/main.dart';
-import 'package:techtify/presentation/pages/home/customer_details_page.dart';
-import 'package:techtify/presentation/pages/home/homepage.dart';
-import 'package:techtify/presentation/widgets/customer/add_follow_up_dialog.dart';
-import 'package:techtify/presentation/widgets/home/add_followup_drawer_widget.dart';
-import 'package:techtify/presentation/widgets/home/lead_detail_widget.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/http/socket_io.dart';
+import 'package:vidyanexis/main.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/home/add_followup_drawer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/presentation/widgets/notification_overlay.dart';
-import 'package:techtify/controller/models/notification_model.dart';
+import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
+import 'package:vidyanexis/controller/models/notification_model.dart';
 import 'package:intl/intl.dart';
 
 class NotificationsPage extends StatefulWidget {

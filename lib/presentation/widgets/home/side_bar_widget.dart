@@ -4,12 +4,12 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/models/side_bar_model.dart';
-import 'package:techtify/controller/side_bar_provider.dart';
-import 'package:techtify/presentation/pages/home/homepage.dart';
-import 'package:techtify/presentation/pages/login/login_page.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/side_bar_model.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 
 class CustomSidebar extends StatefulWidget {
   final List<SidebarOption> options;
@@ -24,7 +24,7 @@ class CustomSidebar extends StatefulWidget {
   const CustomSidebar({
     super.key,
     required this.options,
-    this.title = 'techtify',
+    this.title = 'vidyanexis',
     this.width,
     this.isDrawer = false,
     required this.userName,

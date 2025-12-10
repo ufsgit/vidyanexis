@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/controller/models/company_details_model.dart';
-import 'package:techtify/controller/models/get_quotation_master_id_model.dart';
-import 'package:techtify/controller/models/lead_details_model.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/models/company_details_model.dart';
+import 'package:vidyanexis/controller/models/get_quotation_master_id_model.dart';
+import 'package:vidyanexis/controller/models/lead_details_model.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';

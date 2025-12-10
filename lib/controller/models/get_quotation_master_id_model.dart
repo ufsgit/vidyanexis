@@ -1,4 +1,4 @@
-import 'package:techtify/controller/models/quotaion_list_model.dart';
+import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
 
 class GetQuotationbyMasterIdmodel {
   final int quotationMasterId;

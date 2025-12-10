@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/presentation/widgets/settings/add_custom_field.dart';
+import 'package:vidyanexis/presentation/widgets/settings/add_custom_field.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../constants/app_styles.dart';
@@ -21,7 +21,7 @@ class _CustomFieldState extends State<CustomField> {
   Future<List<CustomFieldModel>>? customfieldListFuture;
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      getData(); 
+      getData();
     });
     super.initState();
   }

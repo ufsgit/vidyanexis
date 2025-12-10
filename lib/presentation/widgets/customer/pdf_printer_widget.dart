@@ -2,9 +2,9 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
-import 'package:techtify/controller/models/lead_details_model.dart';
-import 'package:techtify/controller/models/solar_panel_details_model.dart';
-import 'package:techtify/http/http_urls.dart';
+import 'package:vidyanexis/controller/models/lead_details_model.dart';
+import 'package:vidyanexis/controller/models/solar_panel_details_model.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 
 class PDFPrinter {
   static Future<void> buildPdf(List<LeadDetails>? leadDetails,

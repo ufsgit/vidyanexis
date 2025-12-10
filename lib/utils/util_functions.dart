@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_styles.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 void showToastInDialog(String message, BuildContext context) {
   OverlayEntry overlayEntry;

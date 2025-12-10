@@ -6,9 +6,9 @@ import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 import 'package:pdf/pdf.dart' as pw_format;
 import 'package:pdf/widgets.dart' as pw;
-import 'package:techtify/controller/models/company_details_model.dart';
-import 'package:techtify/controller/models/get_quotation_master_id_model.dart';
-import 'package:techtify/controller/models/lead_details_model.dart';
+import 'package:vidyanexis/controller/models/company_details_model.dart';
+import 'package:vidyanexis/controller/models/get_quotation_master_id_model.dart';
+import 'package:vidyanexis/controller/models/lead_details_model.dart';
 
 class QuotationPDFPrinterWeb {
   static Future<void> printQuotationDialog({

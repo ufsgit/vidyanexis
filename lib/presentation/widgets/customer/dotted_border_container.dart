@@ -2,7 +2,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:techtify/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 class DottedBorderContainer extends StatelessWidget {
   DottedBorderContainer({super.key, this.width = 110, this.height = 110});

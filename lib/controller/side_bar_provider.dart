@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/controller/models/menu_model.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/main.dart';
-import 'package:techtify/presentation/pages/home/bulk_importing_screen.dart';
-import 'package:techtify/presentation/pages/settings/checklist_category_page.dart';
-import 'package:techtify/presentation/pages/settings/checklist_item_page.dart';
-import 'package:techtify/presentation/pages/settings/checklist_type.dart';
-import 'package:techtify/presentation/pages/settings/company_details.dart';
-import 'package:techtify/presentation/pages/settings/department_page.dart';
-import 'package:techtify/presentation/pages/settings/document_type.dart';
-import 'package:techtify/presentation/pages/settings/enquiry_for_content.dart';
-import 'package:techtify/presentation/pages/settings/enquiry_source_content.dart';
-import 'package:techtify/presentation/pages/settings/lead_users_content.dart';
-import 'package:techtify/presentation/pages/settings/task_type.dart';
-import 'package:techtify/presentation/pages/settings/user_content_page.dart';
-import 'package:techtify/presentation/pages/settings/version_page.dart';
+import 'package:vidyanexis/controller/models/menu_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/main.dart';
+import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
+import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
+import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart';
+import 'package:vidyanexis/presentation/pages/settings/checklist_type.dart';
+import 'package:vidyanexis/presentation/pages/settings/company_details.dart';
+import 'package:vidyanexis/presentation/pages/settings/department_page.dart';
+import 'package:vidyanexis/presentation/pages/settings/document_type.dart';
+import 'package:vidyanexis/presentation/pages/settings/enquiry_for_content.dart';
+import 'package:vidyanexis/presentation/pages/settings/enquiry_source_content.dart';
+import 'package:vidyanexis/presentation/pages/settings/lead_users_content.dart';
+import 'package:vidyanexis/presentation/pages/settings/task_type.dart';
+import 'package:vidyanexis/presentation/pages/settings/user_content_page.dart';
+import 'package:vidyanexis/presentation/pages/settings/version_page.dart';
 import 'package:provider/provider.dart';
 
 class SidebarProvider extends ChangeNotifier {

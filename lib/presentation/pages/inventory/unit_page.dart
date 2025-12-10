@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/controller/settings_provider.dart';
-import 'package:techtify/presentation/pages/settings/add_unit_page.dart';
-import 'package:techtify/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/pages/settings/add_unit_page.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 class UnitPage extends StatefulWidget {
   const UnitPage({super.key});

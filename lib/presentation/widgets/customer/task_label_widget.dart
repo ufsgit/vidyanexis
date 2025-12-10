@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:techtify/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 class TaskLabelValue extends StatelessWidget {
   final String label;

@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:techtify/controller/models/amc_report_model.dart';
-import 'package:techtify/controller/models/conversion_model.dart';
-import 'package:techtify/controller/models/invoice_report_model.dart';
-import 'package:techtify/controller/models/serive_report_model.dart';
-import 'package:techtify/controller/models/task_report_model.dart';
-import 'package:techtify/http/http_requests.dart';
-import 'package:techtify/http/http_urls.dart';
-import 'package:techtify/http/loader.dart';
+import 'package:vidyanexis/controller/models/amc_report_model.dart';
+import 'package:vidyanexis/controller/models/conversion_model.dart';
+import 'package:vidyanexis/controller/models/invoice_report_model.dart';
+import 'package:vidyanexis/controller/models/serive_report_model.dart';
+import 'package:vidyanexis/controller/models/task_report_model.dart';
+import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class ReportsProvider extends ChangeNotifier {
   List<TaskReportModel> _taskReport = [];

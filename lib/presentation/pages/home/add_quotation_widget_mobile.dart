@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:techtify/constants/app_styles.dart';
-import 'package:techtify/presentation/widgets/customer/custom_app_bar_widget.dart';
-import 'package:techtify/presentation/widgets/home/auto_complete_textfield.dart';
-import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
-import 'package:techtify/presentation/widgets/home/custom_textfield_widget_mobile.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';

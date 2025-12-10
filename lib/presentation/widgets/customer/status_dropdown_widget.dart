@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/presentation/widgets/home/custom_text_widget.dart';
-import 'package:techtify/controller/models/follow_up_model.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/controller/models/follow_up_model.dart';
 
 // Moved outside the class to fix the generic function issue
 bool defaultEquals<T>(T a, T b) => a == b;

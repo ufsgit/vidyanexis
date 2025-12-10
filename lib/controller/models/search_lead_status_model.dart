@@ -4,7 +4,7 @@
 
 import 'dart:convert';
 
-import 'package:techtify/controller/models/custom_field_by_status.dart';
+import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
 
 List<SearchLeadStatusModel> searchLeadStatusModelFromJson(String str) =>
     List<SearchLeadStatusModel>.from(

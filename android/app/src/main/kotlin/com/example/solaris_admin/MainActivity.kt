@@ -1,4 +1,4 @@
-package com.solaris.techtify
+package com.solaris.vidyanexis
 
 import io.flutter.embedding.android.FlutterActivity
 

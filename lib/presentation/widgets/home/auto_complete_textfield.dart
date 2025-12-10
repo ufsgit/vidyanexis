@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:techtify/constants/app_colors.dart';
-import 'package:techtify/presentation/widgets/home/custom_textfield_widget_mobile.dart';
-import 'package:techtify/utils/extensions.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class CustomAutocomplete<T extends Object> extends StatelessWidget {
   final List<T> items;
