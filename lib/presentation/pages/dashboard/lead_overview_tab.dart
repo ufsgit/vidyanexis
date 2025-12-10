@@ -1,0 +1,333 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:techtify/constants/app_styles.dart';
+import 'package:techtify/controller/dashboard_provider.dart';
+import 'package:techtify/controller/models/follow_up_summary_model.dart';
+import 'package:techtify/controller/models/lead_conversion_model.dart';
+import 'package:techtify/controller/models/lead_progress_model.dart';
+import 'package:techtify/controller/models/task_allocation_model.dart';
+import 'package:techtify/presentation/pages/dashboard/chart.dart';
+import 'package:techtify/presentation/widgets/home/table_cell.dart';
+import 'package:techtify/presentation/pages/dashboard/weekly_report_card.dart';
+
+class LeadsOverViewTab extends StatefulWidget {
+  const LeadsOverViewTab({
+    super.key,
+    required this.leadConversionData,
+    required this.pieData,
+    required this.countLeadData,
+    required this.followUpLeadData,
+    required this.taskAllocationData,
+    required this.dashBoardProvider,
+  });
+
+  final List<LeadCoversionChartModel> leadConversionData;
+  final List<CountLeadCoversionChartModel> countLeadData;
+  final List<FollowUpSummaryModel> followUpLeadData;
+  final List<TaskAllocationSummaryModel> taskAllocationData;
+  final DashboardProvider dashBoardProvider;
+  final List<LeadProgressReportModel> pieData;
+
+  @override
+  State<LeadsOverViewTab> createState() => _LeadsOverViewTabState();
+}
+
+class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
+  @override
+  void initState() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      DashboardProvider dashBoardProvider =
+          Provider.of<DashboardProvider>(context, listen: false);
+      dashBoardProvider.getLeadData();
+    });
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      runSpacing: 10,
+      spacing: 10,
+      children: [
+        Chart(
+          dashboardProvider: widget.dashBoardProvider,
+          leadData: widget.leadConversionData,
+          countLeadData: widget.countLeadData,
+          isLeadOverView: true,
+          taskData: widget.taskAllocationData,
+        ),
+        WeeklyReportCard(
+          isLeadOverView: true,
+          data: widget.pieData,
+          dashboardProvider: widget.dashBoardProvider,
+        ),
+        // Container(
+        //   padding: const EdgeInsets.all(10),
+        //   decoration: BoxDecoration(boxShadow: const [
+        //     BoxShadow(color: Colors.black12, blurRadius: 5)
+        //   ], color: Colors.white, borderRadius: BorderRadius.circular(18)),
+        //   constraints: const BoxConstraints(
+        //       minWidth: 100, maxWidth: 1650, minHeight: 300, maxHeight: 370),
+        //   child: ListView(
+        //     children: [
+        //       Row(
+        //         children: [
+        //           Text(
+        //             'Follow-Up Summary',
+        //             style: AppStyles.getBodyTextStyle(
+        //                 fontSize: 14, fontColor: Colors.grey.shade400),
+        //           ),
+        //           // const Spacer(),
+        //           // Expanded(
+        //           //   child: TextField(
+        //           //     decoration: InputDecoration(
+        //           //       border: OutlineInputBorder(
+        //           //         borderRadius: BorderRadius.circular(16),
+        //           //       ),
+        //           //       prefixIcon: const Icon(Icons.search),
+        //           //       hintText: "Search here...",
+        //           //     ),
+        //           //   ),
+        //           // ),
+        //         ],
+        //       ),
+        //       // const SizedBox(height: 15),
+        //       Padding(
+        //         padding: const EdgeInsets.all(16.0),
+        //         child: Container(
+        //           decoration: BoxDecoration(
+        //             color: Colors.white,
+        //             borderRadius: BorderRadius.circular(14),
+        //           ),
+        //           child: Padding(
+        //             padding: const EdgeInsets.all(8.0),
+        //             child: Column(
+        //               children: [
+        //                 Container(
+        //                   decoration: BoxDecoration(
+        //                     color: const Color(0xFFEFF2F5),
+        //                     borderRadius: BorderRadius.circular(8),
+        //                   ),
+        //                   child: Row(
+        //                     children: [
+        //                       if (MediaQuery.of(context).size.width > 700) ...[
+        //                         const SizedBox(
+        //                           width: 80,
+        //                           child: Padding(
+        //                             padding: EdgeInsets.symmetric(
+        //                                 vertical: 12.0, horizontal: 25.0),
+        //                             child: Text('Sl No.',
+        //                                 style: TextStyle(
+        //                                     fontWeight: FontWeight.bold,
+        //                                     color: Color(0xFF607185))),
+        //                           ),
+        //                         ),
+        //                         const TableWidget(
+        //                             flex: 3,
+        //                             title: 'Employee name',
+        //                             color: Color(0xFF607185)),
+        //                         const TableWidget(
+        //                             flex: 1,
+        //                             title: 'Assigned',
+        //                             color: Color(0xFF607185)),
+        //                         const TableWidget(
+        //                             flex: 2,
+        //                             title: 'Pending',
+        //                             color: Color(0xFF607185)),
+        //                         const TableWidget(
+        //                             flex: 1,
+        //                             title: 'Completed',
+        //                             color: Color(0xFF607185)),
+        //                         const TableWidget(
+        //                             flex: 1,
+        //                             title: 'Performance Rate',
+        //                             color: Color(0xFF607185)),
+        //                       ] else ...[
+        //                         const Expanded(
+        //                           child: Padding(
+        //                             padding: EdgeInsets.all(12.0),
+        //                             child: Row(
+        //                               mainAxisAlignment:
+        //                                   MainAxisAlignment.spaceBetween,
+        //                               children: [
+        //                                 Text('Employee',
+        //                                     style: TextStyle(
+        //                                         fontWeight: FontWeight.bold,
+        //                                         color: Color(0xFF607185))),
+        //                                 Text('Stats',
+        //                                     style: TextStyle(
+        //                                         fontWeight: FontWeight.bold,
+        //                                         color: Color(0xFF607185))),
+        //                               ],
+        //                             ),
+        //                           ),
+        //                         ),
+        //                       ],
+        //                     ],
+        //                   ),
+        //                 ),
+        //                 ListView.builder(
+        //                   shrinkWrap: true,
+        //                   physics: const NeverScrollableScrollPhysics(),
+        //                   itemCount: followUpLeadData.length,
+        //                   itemBuilder: (context, index) {
+        //                     return Container(
+        //                       decoration: BoxDecoration(
+        //                         color: index % 2 == 0
+        //                             ? Colors.white
+        //                             : const Color(0xFFF6F7F9),
+        //                         borderRadius: BorderRadius.circular(8),
+        //                       ),
+        //                       child: MediaQuery.of(context).size.width > 700
+        //                           ? _buildDesktopRow(
+        //                               context, index, followUpLeadData)
+        //                           : _buildMobileRow(
+        //                               context, index, followUpLeadData),
+        //                     );
+        //                   },
+        //                 ),
+        //               ],
+        //             ),
+        //           ),
+        //         ),
+        //       )
+        //     ],
+        //   ),
+        // ),
+      ],
+    );
+  }
+
+  Widget _buildDesktopRow(BuildContext context, int index,
+      List<FollowUpSummaryModel> followUpLeadData) {
+    return Row(
+      children: [
+        SizedBox(
+          width: 80,
+          child: Padding(
+            padding:
+                const EdgeInsets.symmetric(vertical: 12.0, horizontal: 25.0),
+            child: Text("${index + 1}",
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                )),
+          ),
+        ),
+        TableWidget(
+          flex: 3,
+          data: _buildEmployeeCell(context, index, followUpLeadData),
+        ),
+        TableWidget(flex: 1, title: followUpLeadData[index].total.toString()),
+        TableWidget(
+          flex: 2,
+          title: followUpLeadData[index].pending,
+        ),
+        TableWidget(
+          flex: 1,
+          title: followUpLeadData[index].completed,
+        ),
+        TableWidget(
+          flex: 1,
+          title: '${followUpLeadData[index].performanceRate}%',
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileRow(BuildContext context, int index,
+      List<FollowUpSummaryModel> followUpLeadData) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Row(
+        children: [
+          Expanded(
+            flex: 2,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildEmployeeCell(context, index, followUpLeadData,
+                    isMobile: true),
+                const SizedBox(height: 4),
+                Text(
+                  followUpLeadData[index].toUserName ?? '',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            flex: 1,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  'Assigned: ${followUpLeadData[index].total}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                Text(
+                  'Pending: ${followUpLeadData[index].pending}',
+                  style: const TextStyle(fontSize: 12),
+                ),
+                Text(
+                  'Rate: ${followUpLeadData[index].performanceRate}%',
+                  style: const TextStyle(fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmployeeCell(BuildContext context, int index,
+      List<FollowUpSummaryModel> followUpLeadData,
+      {bool isMobile = false}) {
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+        decoration: BoxDecoration(
+          color: const Color(0xFFE9EDF1),
+          borderRadius: BorderRadius.circular(50),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/images/lead_profile.png',
+              width: 15,
+              height: 15,
+            ),
+            const SizedBox(width: 8),
+            Flexible(
+              child: Text(
+                followUpLeadData[index].toUserName ?? '',
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+                style: TextStyle(
+                  color: Colors.black,
+                  fontWeight: FontWeight.bold,
+                  fontSize: isMobile ? 13 : 14,
+                ),
+              ),
+            ),
+            if (!isMobile) ...[
+              const SizedBox(width: 8),
+              Image.asset(
+                'assets/images/forward.png',
+                width: 12,
+                height: 12,
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

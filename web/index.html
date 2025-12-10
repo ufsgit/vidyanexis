@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <base href="$FLUTTER_BASE_HREF">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="Techtify">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <title>Techtify</title>
+  <link rel="manifest" href="manifest.json">
+
+  <!-- Cache control headers -->
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate, max-age=0">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+
+  <style>
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: #f0f0f0;
+      font-family: Arial, sans-serif;
+    }
+
+    #loading-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .loader {
+      border: 4px solid #f3f3f3;
+      border-top: 4px solid #3498db;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      0% {
+        transform: rotate(0deg);
+      }
+
+      100% {
+        transform: rotate(360deg);
+      }
+    }
+
+    .loading-text {
+      color: #333;
+      font-size: 18px;
+    }
+  </style>
+
+  <script>
+    const APP_VERSION = '1.0.1+5';
+    const serviceWorkerVersion = null;
+  </script>
+
+  <script>
+    async function clearAllStorage() {
+      try {
+        console.log('Starting cache and storage clearing...');
+
+        // Clear localStorage
+        if (window.localStorage) {
+          localStorage.clear();
+          console.log('✓ localStorage cleared');
+        }
+
+        // Clear sessionStorage
+        if (window.sessionStorage) {
+          sessionStorage.clear();
+          console.log('✓ sessionStorage cleared');
+        }
+
+        // Clear all caches (Cache Storage API)
+        if ('caches' in window) {
+          try {
+            const cacheNames = await caches.keys();
+            await Promise.all(
+              cacheNames.map(cacheName => {
+                console.log('Deleting cache:', cacheName);
+                return caches.delete(cacheName);
+              })
+            );
+            console.log('✓ All caches cleared');
+          } catch (e) {
+            console.log('Cache clearing error:', e);
+          }
+        }
+
+        // Unregister all service workers
+        if ('serviceWorker' in navigator) {
+          try {
+            const registrations = await navigator.serviceWorker.getRegistrations();
+            await Promise.all(
+              registrations.map(registration => {
+                console.log('Unregistering service worker:', registration.scope);
+                return registration.unregister();
+              })
+            );
+            console.log('✓ All service workers unregistered');
+          } catch (e) {
+            console.log('Service worker unregistration error:', e);
+          }
+        }
+
+        console.log('✓ Storage clearing completed');
+      } catch (error) {
+        console.error('Error during storage clearing:', error);
+      }
+    }
+
+    async function checkVersionAndClearIfNeeded() {
+      let storedVersion = null;
+
+      try {
+        storedVersion = localStorage.getItem('app_admin_app_version');
+      } catch (e) {
+        console.log('Could not read stored version:', e);
+      }
+
+      console.log('Stored version:', storedVersion);
+      console.log('Current version:', APP_VERSION);
+
+      if (storedVersion && storedVersion !== APP_VERSION) {
+        console.log('🔄 Version changed from ${storedVersion} to ${APP_VERSION} - clearing cache...');
+
+        await clearAllStorage();
+
+        try {
+          localStorage.setItem('app_admin_app_version', APP_VERSION);
+          console.log('✓ New version stored');
+        } catch (e) {
+          console.log('Could not store new version:', e);
+        }
+
+        const userConfirmed = confirm('A new version is available. The page will reload to apply updates. Continue?');
+        if (userConfirmed) {
+          console.log('🔄 User confirmed - reloading page...');
+          setTimeout(() => {
+            window.location.reload();
+          }, 500);
+        } else {
+          console.log('User cancelled reload');
+        }
+
+        return true;
+      } else if (!storedVersion) {
+        try {
+          localStorage.setItem('app_admin_app_version', APP_VERSION);
+          console.log('✓ Initial version stored:', APP_VERSION);
+        } catch (e) {
+          console.log('Could not store initial version:', e);
+        }
+      } else {
+        console.log('✓ Version unchanged - no cache clearing needed');
+      }
+
+      return false;
+    }
+
+    checkVersionAndClearIfNeeded();
+  </script>
+
+  <!-- Cache busting for flutter.js -->
+  <script>
+    const timestamp = new Date().getTime();
+    const flutterScript = document.createElement('script');
+    flutterScript.src = 'flutter.js?v=' + APP_VERSION + '&t=' + timestamp;
+    flutterScript.defer = true;
+    document.head.appendChild(flutterScript);
+  </script>
+</head>
+
+<body>
+  <div id="loading-container">
+    <div class="loader"></div>
+  </div>
+  <script>
+    window.addEventListener('load', function () {
+      const version = new Date().getTime();
+
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        entrypointUrl: 'main.dart.js?v=' + APP_VERSION + '&t=' + version,
+        onEntrypointLoaded: function (engineInitializer) {
+          engineInitializer.initializeEngine().then(function (appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
+  </script>
+</body>
+
+</html>

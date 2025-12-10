@@ -1,0 +1,183 @@
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:techtify/constants/app_colors.dart';
+import 'package:techtify/controller/models/category_model.dart';
+import 'package:techtify/controller/settings_provider.dart';
+import 'package:techtify/presentation/widgets/home/custom_button_widget.dart';
+import 'package:techtify/presentation/widgets/home/custom_text_field.dart';
+
+class AddCategoryWidget extends StatefulWidget {
+  final bool isEdit;
+  final String editId;
+  final CategoryModel? data;
+
+  const AddCategoryWidget({
+    super.key,
+    required this.isEdit,
+    required this.editId,
+    this.data,
+  });
+
+  @override
+  State<AddCategoryWidget> createState() => _AddCategoryWidgetState();
+}
+
+class _AddCategoryWidgetState extends State<AddCategoryWidget> {
+  String? validateInputs(
+      BuildContext context, SettingsProvider settingsProvider) {
+    if (settingsProvider.categoryNameController.text.trim().isEmpty) {
+      return 'Please enter Category Name';
+    }
+
+    // if (settingsProvider.selectedColor == null) {
+    //   return 'Please select a category color';
+    // }
+    return null;
+  }
+
+  void showErrorDialog(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Cannot save',
+            style: TextStyle(
+              color: AppColors.appViolet,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: Text(
+            message,
+            style: const TextStyle(
+              color: Colors.black87,
+              fontSize: 16,
+            ),
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: Text(
+                'OK',
+                style: TextStyle(
+                  color: AppColors.appViolet,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.isEdit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        settingsProvider.categoryNameController.text =
+            widget.data?.categoryName ?? '';
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      title: Row(
+        children: [
+          Text(
+            widget.isEdit ? 'Edit Category' : 'Add Category',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBlack,
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: () {
+              settingsProvider.categoryNameController.clear();
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.close),
+          )
+        ],
+      ),
+      content: Container(
+        color: Colors.white,
+        width: MediaQuery.sizeOf(context).width / 2,
+        height: MediaQuery.sizeOf(context).height / 6,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: settingsProvider.categoryNameController,
+                      hintText: 'Category Name*',
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              const SizedBox(height: 24.0),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        CustomElevatedButton(
+          buttonText: 'Cancel',
+          onPressed: () {
+            settingsProvider.categoryNameController.clear();
+            Navigator.pop(context);
+          },
+          backgroundColor: AppColors.whiteColor,
+          borderColor: AppColors.appViolet,
+          textColor: AppColors.appViolet,
+        ),
+        CustomElevatedButton(
+          buttonText: 'Save',
+          onPressed: () async {
+            final validationError = validateInputs(context, settingsProvider);
+            if (validationError != null) {
+              showErrorDialog(context, validationError);
+              return;
+            }
+
+            settingsProvider.addCategoryName(
+              context: context,
+              statusId: widget.editId,
+              statusName: settingsProvider.categoryNameController.text,
+            );
+          },
+          backgroundColor: AppColors.appViolet,
+          borderColor: AppColors.appViolet,
+          textColor: AppColors.whiteColor,
+        ),
+      ],
+    );
+  }
+}
