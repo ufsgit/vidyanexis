@@ -2,10 +2,10 @@ class HttpUrls {
   //baseurls
 
   static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
-  // static String baseUrl = 'https://3pm19pm4-3511.inc1.devtunnels.ms/';
+//   static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
-      'https://ufsnabeelphotoalbum.s3.us-east-2.amazonaws.com/';
+      'https://pub-aa285b71265445f696ebfb8a5bd95430.r2.dev/UploadedImages/1/1765801349354.jpeg';
 
   //endpoints
   static String loginCheck = "Login/Login_Check";
@@ -205,4 +205,6 @@ class HttpUrls {
       "status/Get_CustomFields_On_StatusChange";
   static String getCustomFieldByEnquiryForId =
       "lead/Get_CustomFields_On_EnquiryFor";
+  static String saveRefund = "service/Save_Refund_Details";
+  static String getRefundDetails = "service/Get_Refund_Details";
 }
