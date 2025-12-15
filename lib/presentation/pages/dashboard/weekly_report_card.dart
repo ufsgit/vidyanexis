@@ -3,10 +3,12 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/common_report_widget.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 
 class WeeklyReportCard extends StatelessWidget {
   const WeeklyReportCard({
@@ -29,7 +31,9 @@ class WeeklyReportCard extends StatelessWidget {
           color: Colors.white,
           borderRadius: BorderRadius.circular(18)),
       constraints: BoxConstraints(
-          minWidth: 100, maxWidth: 440, maxHeight: isLeadOverView ? 500 : 420),
+          minWidth: 100,
+          maxWidth: MediaQuery.of(context).size.width,
+          maxHeight: isLeadOverView ? 500 : 420),
       padding: const EdgeInsets.all(10),
       child: Column(
         children: [
@@ -57,22 +61,44 @@ class WeeklyReportCard extends StatelessWidget {
           isLeadOverView
               ? Column(
                   children: [
-                    SfCircularChart(series: <CircularSeries<
-                        LeadProgressReportModel, String>>[
-                      DoughnutSeries<LeadProgressReportModel, String>(
-                        // cornerStyle: CornerStyle.bothCurve,
+                    SizedBox(
+                      height: 250, // Adjust height as needed for the bar chart
+                      child: SfCartesianChart(
+                        primaryXAxis: CategoryAxis(),
+                        primaryYAxis: NumericAxis(),
+                        series: <CartesianSeries<LeadProgressReportModel,
+                            String>>[
+                          ColumnSeries<LeadProgressReportModel, String>(
+                            dataSource: data,
+                            xValueMapper: (LeadProgressReportModel data, _) =>
+                                data.statusName,
+                            yValueMapper: (LeadProgressReportModel data, _) =>
+                                data.count,
+                            pointColorMapper: (LeadProgressReportModel data,
+                                    _) =>
+                                AppColors.parseColor(data.colorCode.toString()),
+                            dataLabelSettings:
+                                const DataLabelSettings(isVisible: true),
+                            onPointTap: (ChartPointDetails details) {
+                              final statusId =
+                                  data![details.pointIndex!].statusId;
+                              final leadProvider = Provider.of<LeadsProvider>(
+                                  context,
+                                  listen: false);
+                              leadProvider.setStatus(statusId);
 
-                        explode: true,
-
-                        dataSource: data,
-                        xValueMapper: (LeadProgressReportModel data, _) =>
-                            data.statusName,
-                        yValueMapper: (LeadProgressReportModel data, _) =>
-                            num.parse(data.percentage),
-                        pointColorMapper: (LeadProgressReportModel data, _) =>
-                            AppColors.parseColor(data.colorCode.toString()),
-                      )
-                    ]),
+                              Navigator.of(context).push(
+                                MaterialPageRoute(
+                                  builder: (context) => LeadPageReport(
+                                    fromDashBoard: true,
+                                  ),
+                                ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
+                    ),
                     SizedBox(
                       height: 100,
                       child: GridView.builder(
@@ -84,7 +110,7 @@ class WeeklyReportCard extends StatelessWidget {
                                 maxCrossAxisExtent: 260, mainAxisExtent: 30),
                         itemBuilder: (c, i) => newMethod(
                             data![i].statusName.toString(),
-                            data![i].percentage,
+                            data![i].count.toString(),
                             AppColors.parseColor(
                                 data![i].colorCode.toString())),
                       ),
@@ -155,7 +181,7 @@ class WeeklyReportCard extends StatelessWidget {
                   fontSize: 12, fontColor: AppColors.textGrey4),
               children: [
                 TextSpan(
-                  text: "  ($count%)",
+                  text: "  ($count)",
                   style: AppStyles.getHeadingTextStyle(fontSize: 14),
                 )
               ]),
