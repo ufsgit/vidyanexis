@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
@@ -78,11 +79,14 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
     );
   }
 
+  int userId = 0;
+  String userName = '';
+
   @override
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final attendanceProvider =
           Provider.of<AttendanceReportProvider>(context, listen: false);
 
@@ -94,6 +98,11 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
         attendanceProvider.assignToFollowUpController.text = widget.user;
         dropDownProvider.setSelectedUserId(widget.userId);
       }
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
+      userName = preferences.getString('userName') ?? "";
+      dropDownProvider.setSelectedUserId(userId);
+      attendanceProvider.assignToFollowUpController.text = userName;
     });
   }
 
@@ -158,9 +167,8 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                             attendanceProvider.assignToFollowUpController.text =
                                 selectedItem.userDetailsName ?? '';
                           },
-                          selectedValue: widget.isEdit
-                              ? dropDownProvider.selectedUserId
-                              : null),
+                          enabled: userId == 1,
+                          selectedValue: dropDownProvider.selectedUserId),
                     ),
                   ),
                   // const SizedBox(width: 10),
