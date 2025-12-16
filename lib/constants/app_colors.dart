@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static Color scaffoldColor = const Color(0xFFF6F7F9);
- static Color whiteColor = const Color(0xFFFFFFFF);
+  static Color whiteColor = const Color(0xFFFFFFFF);
 
   static Color statusColor = const Color.fromARGB(255, 241, 212, 205);
 
@@ -14,7 +14,6 @@ class AppColors {
   static Color primaryViolet = const Color(0xFF152D70);
   static Color primaryBlue = const Color(0xFFEFB60A);
 
-
   static Color violet = const Color(0xFF6A0DAD);
   static Color buttonBackgroundColor = const Color(0xFFA2C6EB);
 
@@ -22,9 +21,9 @@ class AppColors {
   static Color appViolet = const Color(0xFFEFB60A);
   static Color lightGreen = const Color(0xFFD9FAD9);
   static Color surfaceGrey = const Color(0xFFF4F7FA);
-   static Color techityfyGrey = Color.fromARGB(255, 0, 90, 69);
+  static Color techityfyGrey = Color.fromARGB(255, 0, 90, 69);
   static Color darkGreen = const Color(0xFF27A127);
-  static Color textGrey1 =const Color(0xFFE9EDF1);
+  static Color textGrey1 = const Color(0xFFE9EDF1);
   static Color textGrey2 = const Color(0xFFC2C9D0);
   static Color textGrey3 = const Color(0xFF607085);
   static Color textGrey4 = const Color(0xFF7D8B9B);
@@ -40,6 +39,12 @@ class AppColors {
   static const Color bluebutton = Color(0xFF1A7AE8);
 
   static Color green = const Color(0xFFACD5A5);
+
+  //common colors
+  static Color commonBackgroundColor = const Color(0xFFE9EDF1);
+  static Color commonTextColor = const Color(0xFF000000);
+  static Color commonTextBoxColor = const Color(0xFFFFFFFF);
+  static Color commonBorderColor = const Color(0xFFFFFFFF);
 
   static Color parseColor(String colorCode) {
     try {

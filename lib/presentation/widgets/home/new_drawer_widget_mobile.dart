@@ -382,6 +382,46 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         );
       } else {
         leadProvider.clearAllLeadControllers(context);
+        //default source category
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        int? selectedSourceId;
+        if (settingsProvider.searchSourceCategory.isNotEmpty) {
+          selectedSourceId =
+              settingsProvider.searchSourceCategory.first.sourceId;
+        }
+
+        if (selectedSourceId != null) {
+          dropDownProvider.setSourceCategoryId(selectedSourceId);
+          final selectedItem = settingsProvider.searchSourceCategory
+              .firstWhere((source) => source.sourceId == selectedSourceId);
+          leadProvider.sourceCategoryController.text = selectedItem.sourceName;
+
+          dropDownProvider.updateEnquiryForName(0, '');
+          leadProvider.enquiryForController.clear();
+
+          dropDownProvider.filterEnquiryForByCategory(selectedSourceId);
+        }
+
+        //default enquiry for
+        int? defaultEnquiryForId;
+        if (dropDownProvider.filteredEnquiryForData.isNotEmpty) {
+          defaultEnquiryForId =
+              dropDownProvider.filteredEnquiryForData.first.enquiryForId;
+        }
+
+        if (defaultEnquiryForId != null) {
+          final selectedEnquiryFor = dropDownProvider.filteredEnquiryForData
+              .firstWhere((task) => task.enquiryForId == defaultEnquiryForId);
+          dropDownProvider.updateEnquiryForName(
+              defaultEnquiryForId, selectedEnquiryFor.enquiryForName);
+          leadProvider.customFieldEnquiryFor.clear();
+          leadProvider.getCustomFieldsByEnquiryForId(
+            context,
+            leadId: widget.isEdit ? leadProvider.customerId : 0,
+            enquiryForId: defaultEnquiryForId,
+          );
+        }
 
         settingsProvider.selectedDepartmentId = 0;
         settingsProvider.selectedBranchId = 0;
@@ -2152,24 +2192,22 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               .toList(),
           controller: leadProvider.sourceCategoryController,
           onItemSelected: (selectedId) {
-            // Set the selected source category ID in the provider
             dropDownProvider.setSourceCategoryId(selectedId);
-
-            // Update the controller text with the selected item's name
             final selectedItem = settingsProvider.searchSourceCategory
                 .firstWhere((source) => source.sourceId == selectedId);
             leadProvider.sourceCategoryController.text =
                 selectedItem.sourceName ?? '';
+            // dropDownProvider
+            //     .setSelectedEnquirySourceId(-1);
+            // leadProvider.enquirySourceController
+            //     .clear();
+            // dropDownProvider
+            //     .filterEnquirySourcesByCategory(
+            //         selectedId);
             dropDownProvider.updateEnquiryForName(0, '');
             leadProvider.enquiryForController.clear();
 
             dropDownProvider.filterEnquiryForByCategory(selectedId);
-            // // Clear the enquiry source selection when source category changes
-            // dropDownProvider.setSelectedEnquirySourceId(-1);
-            // leadProvider.enquirySourceController.clear();
-
-            // // Filter enquiry sources based on selected source category
-            // dropDownProvider.filterEnquirySourcesByCategory(selectedId);
           },
           selectedValue: dropDownProvider.selectedSourceId,
         ),
@@ -2253,36 +2291,31 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
         const SizedBox(height: 10),
 
-        CustomAutocomplete<EnquiryForModel>(
-          key: ValueKey(dropDownProvider.selectedEnquiryForId),
-          focusNode: enquiryForNode,
-          showOptionsOnTap: true,
-          optionsViewOpenDirection: OptionsViewOpenDirection.down,
-          items: dropDownProvider.filteredEnquiryForData,
+        CommonDropdown<int>(
+          hintText: 'Enquiry For*',
           enabled: dropDownProvider.selectedSourceId != null,
-          displayStringFunction: (model) => model.enquiryForName,
-          defaultText: dropDownProvider.selectedEnquiryForName ?? '',
-          labelText: 'Enquiry For *',
+          items: dropDownProvider.filteredEnquiryForData
+              .map((status) => DropdownItem<int>(
+                    id: status.enquiryForId,
+                    name: status.enquiryForName,
+                  ))
+              .toList(),
           controller: leadProvider.enquiryForController,
-          onSelected: (EnquiryForModel selectedItem) {
-            dropDownProvider.updateEnquiryForName(
-                selectedItem.enquiryForId, selectedItem.enquiryForName);
-            leadProvider.enquiryForController.text =
-                selectedItem.enquiryForName;
-            leadProvider.customFieldEnquiryFor.clear();
-            leadProvider.getCustomFieldsByEnquiryForId(context,
-                leadId: widget.isEdit ? int.parse(widget.customerId) : 0,
-                enquiryForId: selectedItem.enquiryForId);
-
-            if (dropDownProvider is ChangeNotifier) {
-              (dropDownProvider as ChangeNotifier).notifyListeners();
+          onItemSelected: (int? newValue) {
+            if (newValue != null) {
+              final selectedEnquiryFor = dropDownProvider.filteredEnquiryForData
+                  .firstWhere((task) => task.enquiryForId == newValue);
+              dropDownProvider.updateEnquiryForName(
+                  newValue, selectedEnquiryFor.enquiryForName);
+              leadProvider.customFieldEnquiryFor.clear();
+              leadProvider.getCustomFieldsByEnquiryForId(
+                context,
+                leadId: widget.isEdit ? leadProvider.customerId : 0,
+                enquiryForId: newValue,
+              );
             }
           },
-          onChanged: (value) {
-            if (value.isEmpty) {
-              dropDownProvider.updateEnquiryForName(null, '');
-            }
-          },
+          selectedValue: dropDownProvider.selectedEnquiryForId,
         ),
         const SizedBox(
           height: 10,

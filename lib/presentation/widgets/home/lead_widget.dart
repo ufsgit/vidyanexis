@@ -154,7 +154,8 @@ class LeadCard extends StatelessWidget {
                                   style: GoogleFonts.plusJakartaSans(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColors.textGrey3),
+                                      color:
+                                          AppColors.parseColor(lead.colorCode)),
                                 ),
                                 const SizedBox(
                                   height: 2,
@@ -306,48 +307,39 @@ class LeadCard extends StatelessWidget {
                     try {
                       final dropDownProvider =
                           Provider.of<DropDownProvider>(context, listen: false);
-                      dropDownProvider.selectedStatusId = null;
-                      dropDownProvider.selectedUserId = null;
-                      leadsProvider.setCutomerId(lead.customerId);
-                      leadsProvider.branchController.text = lead.branchName;
-                      settingsProvider.selectedBranchId = lead.branchId;
-                      print('knrgoiw ${lead.branchId}');
-                      print('knrgoiw ${lead.statusId}');
-                      leadsProvider.departmentController.text =
-                          lead.departmentName;
-                      settingsProvider.selectedDepartmentId =
-                          int.parse(lead.departmentId.toString());
-
                       dropDownProvider.selectedStatusId =
                           int.parse(lead.statusId.toString());
+                      leadsProvider.statusController.text = lead.statusName;
+                      print('status id ${lead.statusId}');
+                      print('status name ${lead.statusName}');
                       dropDownProvider.selectedUserId =
                           int.parse(lead.toUserId.toString());
-                      leadsProvider.setCutomerId(lead.customerId);
-                      leadsProvider.statusController.text = lead.statusName;
-
                       leadsProvider.assignToFollowUpController.text =
                           lead.toUserName;
-                      // leadsProvider.nextFollowUpDateController.text =
-                      //     lead.nextFollowUpDate.isNotEmpty
-                      //         ? DateFormat('dd MMM yyyy')
-                      //             .format(DateTime.parse(lead.nextFollowUpDate))
-                      //         : '';
+                      print('assign to ${lead.toUserName}');
+                      print('assign to id ${lead.toUserId}');
+                      leadsProvider.setCutomerId(lead.customerId);
                       leadsProvider.branchController.text = lead.branchName;
                       settingsProvider.selectedBranchId = lead.branchId;
+                      print('branch ${lead.branchId}');
+                      print('branch name ${lead.branchName}');
                       leadsProvider.departmentController.text =
                           lead.departmentName;
                       settingsProvider.selectedDepartmentId =
-                          int.parse(lead.departmentId);
-                      print('jbniyui ${lead.toJson()}');
-                      dropDownProvider.getUserDetails(context);
+                          int.tryParse(lead.departmentId.toString()) ?? 0;
+                      print('department id ${lead.departmentId}');
+                      print('department name ${lead.departmentName}');
+
+                      leadsProvider.nextFollowUpDateController.text =
+                          lead.nextFollowUpDate.isNotEmpty
+                              ? _formatDateSafely(lead.nextFollowUpDate)
+                              : '';
+                      leadsProvider.messageController.clear();
                       dropDownProvider.filterStaffByBranchAndDepartment(
                         branchId: lead.branchId,
-                        departmentId: int.parse(lead.departmentId),
+                        departmentId:
+                            int.tryParse(lead.departmentId.toString()) ?? 0,
                       );
-                      // leadsProvider.messageController.text =
-                      //     lead.remark;
-
-                      leadsProvider.messageController.clear();
                     } catch (e) {}
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
@@ -395,5 +387,14 @@ class LeadCard extends StatelessWidget {
         if (isExpanded) const SizedBox(height: 12),
       ],
     );
+  }
+}
+
+String _formatDateSafely(String dateStr) {
+  try {
+    final date = DateTime.parse(dateStr);
+    return DateFormat('dd MMM yyyy').format(date);
+  } catch (e) {
+    return ''; // Return an empty string if parsing fails
   }
 }
