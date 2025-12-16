@@ -62,8 +62,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
         const Tab(text: "Complaints"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[15] == 1)
         const Tab(text: "Periodic Services"),
-      if (!widget.fromLead && settingsprovider.menuIsViewMap[19] == 1)
-        const Tab(text: "Documents"),
+      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
         const Tab(text: "Receipt"),
       // const Tab(text: "Task Documents"),
@@ -361,7 +360,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             PeriodicServicesMobile(
               customerId: widget.customerId.toString(),
             ),
-          if (!widget.fromLead)
+          if (settingsprovider.menuIsViewMap[19] == 1)
             DocumentsListPagePhone(
               customerId: widget.customerId.toString(),
             ),
