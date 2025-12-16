@@ -57,7 +57,8 @@ class _CustomerPageState extends State<CustomerPage> {
 
       customerProvider.getSearchCustomers(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
-      provider.getFollowUpStatus(context, '2');
+      // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
+      provider.getFollowUpStatus(context, '');
       provider.getUserDetails(context);
 
       //search

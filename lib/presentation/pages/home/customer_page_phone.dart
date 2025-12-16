@@ -43,7 +43,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
     settingsProvider.searchDepartment('', context);
 
     searchProvider.stopSearch();
-    provider.getFollowUpStatus(context, '2');
+    // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
+    provider.getFollowUpStatus(context, '');
     provider.getUserDetails(context);
 
     // Reset search criteria
@@ -74,7 +75,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       customerProvider.resetExpansion();
       customerProvider.getSearchCustomers(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
-      provider.getFollowUpStatus(context, '2');
+      // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
+      provider.getFollowUpStatus(context, '');
       provider.getUserDetails(context);
       customerProvider.setFilter(false);
 

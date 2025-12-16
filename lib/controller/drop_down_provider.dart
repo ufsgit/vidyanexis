@@ -453,19 +453,38 @@ class DropDownProvider extends ChangeNotifier {
 
   void getAllFollowUpStatus(BuildContext context, String viewId) async {
     try {
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: "${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewId");
+      // Build endpoint and add pagination parameters. Only include ViewIn_Id when provided.
+      String endPoint =
+          '${HttpUrls.searchStatus}?status_Name=&Page_Index=1&PageSize=1000';
+      if (viewId.isNotEmpty) {
+        endPoint =
+            "${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000";
+      }
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 
       if (response.statusCode == 200) {
         final data = response.data;
+        print('DEBUG getAllFollowUpStatus: Data type=${data.runtimeType}');
 
         if (data != null) {
-          _followUpStatusList = (data as List<dynamic>)
-              .map((item) => FollowUpStatusModel.fromJson(item))
-              .toList();
+          // Handle both list and map responses
+          if (data is List<dynamic>) {
+            _followUpStatusList =
+                data.map((item) => FollowUpStatusModel.fromJson(item)).toList();
+          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
+            _followUpStatusList = (data['data'] as List<dynamic>)
+                .map((item) => FollowUpStatusModel.fromJson(item))
+                .toList();
+          } else {
+            _followUpStatusList = [];
+          }
+          print(
+              'DEBUG getAllFollowUpStatus: Loaded ${_followUpStatusList.length} statuses');
           notifyListeners();
         }
       } else {
+        print(
+            'DEBUG getAllFollowUpStatus: Server error ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
@@ -543,19 +562,39 @@ class DropDownProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewId');
+      // Build endpoint and add pagination parameters. Only include ViewIn_Id when provided.
+      String endPoint =
+          '${HttpUrls.searchStatus}?status_Name=&Page_Index=1&PageSize=1000';
+      if (viewId.isNotEmpty) {
+        endPoint =
+            '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000';
+      }
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 
       if (response.statusCode == 200) {
         final data = response.data;
+        print(
+            'DEBUG getFollowUpStatus: Data type=${data.runtimeType}, Value=$data');
 
         if (data != null) {
-          _followUpstatus = (data as List<dynamic>)
-              .map((item) => SearchLeadStatusModel.fromJson(item))
-              .toList();
+          // Handle both list and map responses
+          if (data is List<dynamic>) {
+            _followUpstatus = data
+                .map((item) => SearchLeadStatusModel.fromJson(item))
+                .toList();
+          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
+            _followUpstatus = (data['data'] as List<dynamic>)
+                .map((item) => SearchLeadStatusModel.fromJson(item))
+                .toList();
+          } else {
+            _followUpstatus = [];
+          }
+          print(
+              'DEBUG getFollowUpStatus: Loaded ${_followUpstatus.length} statuses');
           notifyListeners();
         }
       } else {
+        print('DEBUG getFollowUpStatus: Server error ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );

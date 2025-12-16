@@ -6,7 +6,11 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
+import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
+import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
+import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
+import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_checklist_management_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -165,6 +169,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[37] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "CheckList Management"),
+      if (settingsprovider.menuIsViewMap[37] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Refund Form"),
     ];
     // final List<SidebarOption> sidebarOptions = [
     //   SidebarOption(
@@ -418,6 +425,64 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 );
                               },
                             ),
+                        if (settingsprovider.menuIsViewMap[61] == 1 &&
+                            sideprovider.name != 'Lead /')
+                          CustomElevatedButton(
+                            backgroundColor: AppColors.whiteColor,
+                            borderColor: AppColors.bluebutton,
+                            textColor: AppColors.bluebutton,
+                            buttonText: 'KSEB',
+                            onPressed: () async {
+                              final customer = (customerDetailsProvider
+                                              .leadDetails !=
+                                          null &&
+                                      customerDetailsProvider
+                                          .leadDetails!.isNotEmpty)
+                                  ? customerDetailsProvider.leadDetails?.first
+                                  : null;
+                              ksebPdf(
+                                  customerDetails: customer, context: context);
+                            },
+                          ),
+                        if (settingsprovider.menuIsViewMap[63] == 1 &&
+                            sideprovider.name != 'Lead /')
+                          CustomElevatedButton(
+                            backgroundColor: AppColors.whiteColor,
+                            borderColor: AppColors.bluebutton,
+                            textColor: AppColors.bluebutton,
+                            buttonText: 'Vendor Agreement',
+                            onPressed: () async {
+                              final customer = (customerDetailsProvider
+                                              .leadDetails !=
+                                          null &&
+                                      customerDetailsProvider
+                                          .leadDetails!.isNotEmpty)
+                                  ? customerDetailsProvider.leadDetails?.first
+                                  : null;
+                              vendorAgreementPdf(
+                                  customerDetails: customer, context: context);
+                            },
+                          ),
+                        if (settingsprovider.menuIsViewMap[62] == 1 &&
+                            sideprovider.name != 'Lead /')
+                          CustomElevatedButton(
+                            backgroundColor: AppColors.whiteColor,
+                            borderColor: AppColors.bluebutton,
+                            textColor: AppColors.bluebutton,
+                            buttonText: 'Vendor Feasibility',
+                            onPressed: () async {
+                              final customer = (customerDetailsProvider
+                                              .leadDetails !=
+                                          null &&
+                                      customerDetailsProvider
+                                          .leadDetails!.isNotEmpty)
+                                  ? customerDetailsProvider.leadDetails?.first
+                                  : null;
+
+                              rtsFeasibilityReportPdf(
+                                  customerDetails: customer, context: context);
+                            },
+                          ),
                       ],
                     ),
                   ),
@@ -2035,6 +2100,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           if (sideprovider.name != 'Lead /')
                                             CheckListManagementWidget(
                                                 customerId: widget.customerId),
+
+                                        if (settingsprovider
+                                                .menuIsViewMap[37] ==
+                                            1)
+                                          if (sideprovider.name != 'Lead /')
+                                            RefundFormPage(widget.customerId),
                                       ],
                                     ),
                                   ),

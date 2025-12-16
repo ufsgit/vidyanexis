@@ -93,6 +93,16 @@ class LeadDetails {
   final int? stageId;
   final String? stageName;
   final int activeTaskCount;
+  final String KsebExpense;
+  final String actualRTSCapacity;
+  final String totalProjectCost;
+  final String PMSuryaShakthiPortalid;
+  final String JanSamarthid;
+  final String bankbranch;
+  final String inverterBrandName;
+  final String panelBrandName;
+  final String noOfPanels;
+  final String Efficiency;
 
   // New Additional Fields
   final int age;
@@ -197,6 +207,16 @@ class LeadDetails {
     this.stageId,
     this.stageName,
     required this.activeTaskCount,
+    required this.KsebExpense,
+    required this.actualRTSCapacity,
+    required this.totalProjectCost,
+    required this.PMSuryaShakthiPortalid,
+    required this.JanSamarthid,
+    required this.bankbranch,
+    required this.inverterBrandName,
+    required this.panelBrandName,
+    required this.noOfPanels,
+    required this.Efficiency,
     // New Additional Parameters
     required this.age,
     required this.peId,
@@ -315,6 +335,16 @@ class LeadDetails {
       panelSerialNo: parseString(json['panel_serial_no']),
       stageId: parseInt(json['Stage_Id']),
       stageName: parseString(json['Stage_Name']),
+      KsebExpense: parseString(json['Kseb_Expense']),
+      actualRTSCapacity: parseString(json['Actual_RTS_Capacity']),
+      totalProjectCost: parseString(json['Total_Project_Cost']),
+      PMSuryaShakthiPortalid: parseString(json['PM_SuryaShakthi_Portal_Id']),
+      JanSamarthid: parseString(json['Jan_Samarth_Id']),
+      bankbranch: parseString(json['bankbranch']),
+      inverterBrandName: parseString(json['inverterBrandName']),
+      panelBrandName: parseString(json['panelBrandName']),
+      noOfPanels: parseString(json['noOfPanels']),
+      Efficiency: parseString(json['Efficiency']),
       // New Additional Fields
       age: parseInt(json['Age']),
       peId: parseInt(json['PE_Id']),
@@ -424,6 +454,16 @@ class LeadDetails {
       'panel_serial_no': panelSerialNo,
       'Stage_Id': stageId,
       'Stage_Name': stageName,
+      'Kseb_Expense': KsebExpense,
+      'Actual_RTS_Capacity': actualRTSCapacity,
+      'Total_Project_Cost': totalProjectCost,
+      'PM_SuryaShakthi_Portal_Id': PMSuryaShakthiPortalid,
+      'Jan_Samarth_Id': JanSamarthid,
+      'bankbranch': bankbranch,
+      'inverterBrandName': inverterBrandName,
+      'panelBrandName': panelBrandName,
+      'noOfPanels': noOfPanels,
+      'Efficiency': Efficiency,
       // New Additional Fields
       'Age': age,
       'PE_Id': peId,
@@ -633,6 +673,17 @@ class LeadDetails {
       stageId: stageId ?? this.stageId,
       stageName: stageName ?? this.stageName,
       activeTaskCount: activeTaskCount ?? this.activeTaskCount,
+      KsebExpense: KsebExpense ?? this.KsebExpense,
+      actualRTSCapacity: actualRTSCapacity ?? this.actualRTSCapacity,
+      totalProjectCost: totalProjectCost ?? this.totalProjectCost,
+      PMSuryaShakthiPortalid:
+          PMSuryaShakthiPortalid ?? this.PMSuryaShakthiPortalid,
+      JanSamarthid: JanSamarthid ?? this.JanSamarthid,
+      bankbranch: bankbranch ?? this.bankbranch,
+      inverterBrandName: inverterBrandName ?? this.inverterBrandName,
+      panelBrandName: panelBrandName ?? this.panelBrandName,
+      noOfPanels: noOfPanels ?? this.noOfPanels,
+      Efficiency: Efficiency ?? this.Efficiency,
       // New Additional Fields
       age: age ?? this.age,
       peId: peId ?? this.peId,

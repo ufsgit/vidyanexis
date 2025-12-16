@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -226,6 +227,24 @@ class CustomerDetailsProvider extends ChangeNotifier {
   ScrollController imageScrollControllerList = ScrollController();
   ScrollController taskScrollController = ScrollController();
   ScrollController taskScrollControllerList = ScrollController();
+
+  //refund
+  final TextEditingController electricalsectioncontroller =
+      TextEditingController();
+  final TextEditingController electricalsectionplacecontroller =
+      TextEditingController();
+  final TextEditingController consumernumbercontroller =
+      TextEditingController();
+  final TextEditingController kwcapacitycontroller = TextEditingController();
+  final TextEditingController accountnamecontroller = TextEditingController();
+  final TextEditingController accountnumbercontroller = TextEditingController();
+  final TextEditingController banknamecontroller = TextEditingController();
+  final TextEditingController ifsccontroller = TextEditingController();
+  final TextEditingController refundamountcontroller = TextEditingController();
+  final TextEditingController reasoncontroller = TextEditingController();
+
+  List<RefundModel> _refundList = [];
+  List<RefundModel> get refundList => _refundList;
 
   //reciept
   List<ReceiptListModel> _receiptList = [];
@@ -1843,6 +1862,101 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void clearRecieptDetails() {
     recieptAmountController.clear();
     recieptDescriptionController.clear();
+  }
+
+  saveRefund(String refundId, String customerId, BuildContext context) async {
+    print(customerId);
+    try {
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+      String userName = preferences.getString('userName') ?? "";
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveRefund,
+        bodyData: {
+          "Refund_Id": refundId,
+          "Customer_Id": customerId,
+          "Electrical_Section": electricalsectioncontroller.text.toString(),
+          "Place": electricalsectionplacecontroller.text.toString(),
+          "Consumer_Number": consumernumbercontroller.text.toString(),
+          "KW_Capacity": kwcapacitycontroller.text.toString(),
+          "Account_Holder_Name": accountnamecontroller.text.toString(),
+          "Account_Number": accountnumbercontroller.text.toString(),
+          "Bank_Name": banknamecontroller.text.toString(),
+          "IFSC_Code": ifsccontroller.text.toString(),
+          "By_User_Id": int.parse(userId),
+          "By_User_Name": userName
+        },
+      );
+
+      if (response!.statusCode == 200) {
+        final data = response.data;
+        log('Success');
+
+        clearRefundDetails();
+
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        getRefundDetails(customerId, context);
+        getInvoiceRecieptTotal(customerId, context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  void clearRefundDetails() {
+    refundamountcontroller.clear();
+    electricalsectioncontroller.clear();
+    electricalsectionplacecontroller.clear();
+  }
+
+  getRefundDetails(String customerId, BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getRefundDetails}?Customer_Id=$customerId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          log(data.toString());
+
+          _refundList = (data as List<dynamic>)
+              .map((item) => RefundModel.fromJson(item))
+              .toList();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    } finally {
+      _isLoading = false; // Set loading to false once the request completes
+      notifyListeners(); // Notify listeners to rebuild with the final state
+    }
   }
 
   getInvoiceListApi(String customerId, BuildContext context) async {
