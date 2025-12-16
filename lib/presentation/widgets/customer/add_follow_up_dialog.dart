@@ -296,31 +296,27 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
       child: ListView(
         shrinkWrap: true,
         children: [
-          CustomAutocomplete<SearchLeadStatusModel>(
-            focusNode: statusNode,
-            showOptionsOnTap: true,
-            maxHeight: 300,
-            optionsViewOpenDirection: OptionsViewOpenDirection.down,
-            items: dropDownProvider.followUpData,
-            displayStringFunction: (model) => model.statusName ?? '',
-            defaultText: leadProvider.statusController.text,
-            labelText: 'Status',
+          CommonDropdown<int>(
+            hintText: 'Follow-up Status*',
+            items: dropDownProvider.followUpData
+                .map((status) => DropdownItem<int>(
+                      id: status.statusId ?? 0,
+                      name: status.statusName ?? '',
+                    ))
+                .toList(),
             controller: leadProvider.statusController,
-            onSelected: (SearchLeadStatusModel selectedStatus) {
-              setState(() {
-                dropDownProvider
-                    .setSelectedStatusId(selectedStatus.statusId ?? 0);
-                leadProvider.customFieldList.clear();
-                leadProvider.getCustomFieldsByStatusId(context,
-                    leadId: leadProvider.customerId,
-                    statusId: selectedStatus.statusId ?? 0);
-
-                leadProvider.statusController.text =
-                    selectedStatus.statusName ?? '';
-                _clearDateControllerIfNotRequired();
-              });
+            onItemSelected: (selectedId) {
+              dropDownProvider.setSelectedStatusId(selectedId);
+              final selectedItem = dropDownProvider.followUpData.firstWhere(
+                (status) => status.statusId == selectedId,
+              );
+              leadProvider.customFieldList.clear();
+              leadProvider.getCustomFieldsByStatusId(context,
+                  leadId: leadProvider.customerId, statusId: selectedId);
+              leadProvider.statusController.text =
+                  selectedItem.statusName ?? '';
             },
-            onChanged: (value) {},
+            selectedValue: dropDownProvider.selectedStatusId,
           ),
 
           const SizedBox(height: 16),
@@ -420,8 +416,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
           const SizedBox(height: 16),
 
           if (dropDownProvider.isFollowupRequiredNew())
-            CustomTextfieldWidgetMobile(
-              focusNode: FocusNode(),
+            CustomTextField(
               onTap: () async {
                 final DateTime? picked = await showDatePicker(
                   context: context,
@@ -435,13 +430,11 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 }
               },
               readOnly: true,
+              height: 54,
               controller: leadProvider.nextFollowUpDateController,
+              hintText: 'Next Follow-up Date*',
               suffixIcon: IconButton(
-                icon: Icon(
-                  Icons.calendar_month_outlined,
-                  size: 16,
-                  color: AppColors.textGrey4,
-                ),
+                icon: const Icon(Icons.calendar_today),
                 onPressed: () async {
                   final DateTime? picked = await showDatePicker(
                     context: context,
@@ -455,7 +448,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                   }
                 },
               ),
-              labelText: 'Next Follow-up Date',
+              labelText: '',
             ),
 
           if (dropDownProvider.isFollowupRequiredNew())
