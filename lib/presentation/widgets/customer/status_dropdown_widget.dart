@@ -250,7 +250,8 @@ class _StatusDropdownWidgetState<T> extends State<StatusDropdownWidget<T>> {
                 children: [
                   Flexible(
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(maxWidth: 190),
+                      constraints: BoxConstraints(
+                          maxWidth: widget.containerWidth ?? 190),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [

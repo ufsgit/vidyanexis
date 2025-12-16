@@ -8,6 +8,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
@@ -442,6 +443,58 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             },
                             areItemsEqual: (a, b) => a == b,
                             label: 'Enquiry for',
+                          ),
+                          StatusDropdownWidget<int>(
+                            containerWidth:
+                                MediaQuery.sizeOf(context).width / 2.5,
+                            statusName: 'Enquiry Source',
+                            items: [0] +
+                                provider.enquiryData
+                                    .map(
+                                        (status) => status.enquirySourceId ?? 0)
+                                    .toList(),
+                            initialValue: leadProvider.selectedEnquirySource,
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                leadProvider.setEnquirySourceFilter(
+                                    newValue); // Update the status in the provider
+                              }
+                              String status =
+                                  leadProvider.selectedStatus.toString();
+                              String fromDate = leadProvider.formattedFromDate;
+                              String toDate = leadProvider.formattedToDate;
+                              String enquiryFor =
+                                  leadProvider.selectedEnquiryFor.toString();
+                              int enquirySource =
+                                  leadProvider.selectedEnquirySource ?? 0;
+
+                              leadProvider.setSearchCriteria(
+                                leadProvider.search,
+                                fromDate,
+                                toDate,
+                                status,
+                                enquiryFor,
+                                enquirySource: enquirySource,
+                              );
+                              leadProvider.getSearchLeads(context);
+                            },
+                            displayStringFor: (int statusId) {
+                              if (statusId == 0) return 'All';
+
+                              final status = provider.enquiryData.firstWhere(
+                                  (status) =>
+                                      status.enquirySourceId == statusId,
+                                  orElse: () => Enquirysourcemodel(
+                                      enquirySourceId: 0,
+                                      enquirySourceName: '',
+                                      sourceCategoryId: 0,
+                                      sourceCategoryName: '',
+                                      deleteStatus: 0));
+
+                              return status.enquirySourceName ?? '';
+                            },
+                            areItemsEqual: (a, b) => a == b,
+                            label: 'Enquiry Source',
                           ),
                         ],
                       ),

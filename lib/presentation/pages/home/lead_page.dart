@@ -670,6 +670,78 @@ class _LeadsPageState extends State<LeadPage> {
                         ],
                       ),
                     ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: leadProvider.selectedEnquirySource != null &&
+                                    leadProvider.selectedEnquirySource != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        children: [
+                          const Text('Enquiry Source: '),
+                          DropdownButton<int>(
+                            value: leadProvider.selectedEnquirySource,
+                            hint: const Text('All'),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value:
+                                        0, // Use 0 or null to represent "All"
+                                    child: Text(
+                                      'All',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                ] +
+                                provider.enquiryData
+                                    .map((user) => DropdownMenuItem<int>(
+                                          value: user.enquirySourceId,
+                                          child: Text(
+                                            user.enquirySourceName,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ))
+                                    .toList(),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                leadProvider.setEnquirySourceFilter(
+                                    newValue); // Update the status in the provider
+                              }
+                              String status =
+                                  leadProvider.selectedStatus.toString();
+                              String fromDate = leadProvider.formattedFromDate;
+                              String toDate = leadProvider.formattedToDate;
+                              String enquiryFor =
+                                  leadProvider.selectedEnquiryFor.toString();
+                              int enquirySource =
+                                  leadProvider.selectedEnquirySource ?? 0;
+                              print(
+                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
+                              leadProvider.setSearchCriteria(
+                                leadProvider.search,
+                                fromDate,
+                                toDate,
+                                status,
+                                enquiryFor,
+                                enquirySource: enquirySource,
+                              );
+                              leadProvider.getSearchLeads(context);
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
                     const Spacer(),
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
@@ -679,6 +751,8 @@ class _LeadsPageState extends State<LeadPage> {
                         //     leadProvider.selectedUser != 0) ||
                         (leadProvider.selectedEnquiryFor != null &&
                             leadProvider.selectedEnquiryFor != 0) ||
+                        (leadProvider.selectedEnquirySource != null &&
+                            leadProvider.selectedEnquirySource != 0) ||
                         leadProvider.search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
