@@ -301,7 +301,7 @@ class LeadCard extends StatelessWidget {
                 CustomActionButton(
                   onTap: () {
                     leadsProvider.statusController.clear();
-                    leadsProvider.assignToFollowUpController.clear();
+                    leadsProvider.searchUserController.clear();
                     leadsProvider.messageController.clear();
                     leadsProvider.nextFollowUpDateController.clear();
                     try {
@@ -314,7 +314,7 @@ class LeadCard extends StatelessWidget {
                       print('status name ${lead.statusName}');
                       dropDownProvider.selectedUserId =
                           int.parse(lead.toUserId.toString());
-                      leadsProvider.assignToFollowUpController.text =
+                      leadsProvider.searchUserController.text =
                           lead.toUserName;
                       print('assign to ${lead.toUserName}');
                       print('assign to id ${lead.toUserId}');

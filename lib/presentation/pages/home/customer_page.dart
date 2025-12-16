@@ -1023,7 +1023,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                               .toUserId
                                                               .toString());
                                                       leadsProvider
-                                                          .assignToFollowUpController
+                                                          .searchUserController
                                                           .text = lead.toUserName;
                                                       print(
                                                           'assign to ${lead.toUserName}');
@@ -1337,7 +1337,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                 .toUserId
                                                                 .toString());
                                                         leadsProvider
-                                                            .assignToFollowUpController
+                                                            .searchUserController
                                                             .text = lead.toUserName;
                                                         print(
                                                             'assign to ${lead.toUserName}');

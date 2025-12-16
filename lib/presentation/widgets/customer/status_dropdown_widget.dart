@@ -17,6 +17,7 @@ class StatusDropdownWidget<T> extends StatefulWidget {
   final double? dropdownHeight;
   final String Function(T) displayStringFor;
   final bool Function(T, T) areItemsEqual;
+  final bool enabled; // Whether the dropdown is enabled
 
   const StatusDropdownWidget({
     Key? key,
@@ -30,6 +31,7 @@ class StatusDropdownWidget<T> extends StatefulWidget {
     required this.displayStringFor,
     required this.areItemsEqual,
     required this.statusName,
+    this.enabled = true, // Default enabled by default
   }) : super(key: key);
 
   @override
@@ -82,6 +84,7 @@ class _StatusDropdownWidgetState<T> extends State<StatusDropdownWidget<T>> {
   }
 
   void _toggleDropdown() {
+    if (!widget.enabled) return; // Only open if enabled
     if (_isOpen) {
       _removeOverlay();
     } else {
@@ -175,18 +178,20 @@ class _StatusDropdownWidgetState<T> extends State<StatusDropdownWidget<T>> {
                     final isSelected =
                         widget.areItemsEqual(item, selectedValue);
                     return InkWell(
-                      onTap: () {
-                        setState(() {
-                          selectedValue = item;
-                        });
-                        widget.onChanged(item);
-                        _removeOverlay();
+                      onTap: !widget.enabled
+                          ? null
+                          : () {
+                              setState(() {
+                                selectedValue = item;
+                              });
+                              widget.onChanged(item);
+                              _removeOverlay();
 
-                        // Recalculate text size after selection changes
-                        WidgetsBinding.instance.addPostFrameCallback((_) {
-                          _calculateTextSize();
-                        });
-                      },
+                              // Recalculate text size after selection changes
+                              WidgetsBinding.instance.addPostFrameCallback((_) {
+                                _calculateTextSize();
+                              });
+                            },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 16.0,

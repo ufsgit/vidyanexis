@@ -1562,7 +1562,7 @@ class LeadsProvider extends ChangeNotifier {
 
   void removeStatus() {
     _selectedStatus = null;
-    _selectedUser = null;
+    // _selectedUser = null;
     _selectedEnquiryFor = null;
     notifyListeners();
   }

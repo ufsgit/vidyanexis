@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
@@ -62,10 +63,13 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     await leadProvider.getSearchLeads(context);
   }
 
+  int userId = 0;
+  String userName = '';
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final searchProvider =
           Provider.of<SidebarProvider>(context, listen: false);
       searchProvider.stopSearch();
@@ -74,6 +78,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
 
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
+      userName = preferences.getString('userName') ?? "";
+      leadProvider.setUserFilterStatus(userId);
       // leadProvider.leadData.clear();
       leadProvider.setFilter(false);
       settingsProvider.searchBranch(context);
@@ -384,6 +392,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
 
                               return status.userDetailsName ?? 'Unknown';
                             },
+                            enabled: false,
                             areItemsEqual: (a, b) => a == b,
                             label: 'All Staff',
                           ),
