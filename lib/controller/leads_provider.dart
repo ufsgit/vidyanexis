@@ -162,6 +162,16 @@ class LeadsProvider extends ChangeNotifier {
   int get customerId => _customerId;
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
+  set formattedFromDate(String value) {
+    _formattedFromDate = value;
+    notifyListeners();
+  }
+
+  set formattedToDate(String value) {
+    _formattedToDate = value;
+    notifyListeners();
+  }
+
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
@@ -1619,6 +1629,8 @@ class LeadsProvider extends ChangeNotifier {
         status = '0';
       }
       String isDate = "0";
+      String fromDate = formattedFromDate;
+      String toDate = formattedToDate;
       if (fromDate.isEmpty && toDate.isEmpty) {
         isDate = "0";
         if (fromDate.isEmpty) {

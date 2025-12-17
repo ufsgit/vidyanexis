@@ -7,6 +7,7 @@ import 'package:vidyanexis/controller/models/lead_conversion_model.dart';
 import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
 
@@ -49,13 +50,16 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
       runSpacing: 10,
       spacing: 10,
       children: [
-        Chart(
-          dashboardProvider: widget.dashBoardProvider,
+        LeadGraphBarChart(
           leadData: widget.leadConversionData,
-          countLeadData: widget.countLeadData,
-          isLeadOverView: true,
-          taskData: widget.taskAllocationData,
         ),
+        ConversionGraphBarChart(
+          leadData: widget.leadConversionData,
+        ),
+        LeadDistributionPieChart(
+          leadData: widget.leadConversionData,
+        ),
+
         WeeklyReportCard(
           isLeadOverView: true,
           data: widget.pieData,

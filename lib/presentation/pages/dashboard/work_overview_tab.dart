@@ -45,10 +45,7 @@ class _WorkOverViewTabState extends State<WorkOverViewTab> {
       runSpacing: 10,
       spacing: 10,
       children: [
-        Chart(
-          dashboardProvider: widget.dashboardProvider,
-          leadData: widget.data,
-          countLeadData: widget.countLeadData,
+        TaskAllocationBarChart(
           taskData: widget.taskData,
         ),
         WeeklyReportCard(
