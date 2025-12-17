@@ -709,17 +709,31 @@ class SettingsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchStatus}?status_Name=$query&ViewIn_Id=$viewId');
+      // Build endpoint and include ViewIn_Id only when provided
+      String endPoint =
+          '${HttpUrls.searchStatus}?status_Name=$query&Page_Index=1&PageSize=1000';
+      if (viewId.isNotEmpty) {
+        endPoint =
+            '${HttpUrls.searchStatus}?status_Name=$query&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000';
+      }
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 
       if (response.statusCode == 200) {
         final data = response.data;
 
         if (data != null) {
-          _searchLeadType = (data as List<dynamic>)
-              .map((item) => SearchLeadStatusModel.fromJson(item))
-              .toList();
+          // Handle both list and map responses
+          if (data is List<dynamic>) {
+            _searchLeadType = data
+                .map((item) => SearchLeadStatusModel.fromJson(item))
+                .toList();
+          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
+            _searchLeadType = (data['data'] as List<dynamic>)
+                .map((item) => SearchLeadStatusModel.fromJson(item))
+                .toList();
+          } else {
+            _searchLeadType = [];
+          }
           notifyListeners();
         }
       } else {
@@ -2743,16 +2757,30 @@ class SettingsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewId');
+      // Build endpoint and include ViewIn_Id only when provided
+      String endPoint =
+          '${HttpUrls.searchStatus}?status_Name=&Page_Index=1&PageSize=1000';
+      if (viewId.isNotEmpty) {
+        endPoint =
+            '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000';
+      }
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 
       if (response.statusCode == 200) {
         final data = response.data;
 
         if (data != null) {
-          _status = (data as List<dynamic>)
-              .map((item) => SearchStatusModel.fromJson(item))
-              .toList();
+          // Handle both list and map responses
+          if (data is List<dynamic>) {
+            _status =
+                data.map((item) => SearchStatusModel.fromJson(item)).toList();
+          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
+            _status = (data['data'] as List<dynamic>)
+                .map((item) => SearchStatusModel.fromJson(item))
+                .toList();
+          } else {
+            _status = [];
+          }
           notifyListeners();
         }
       } else {

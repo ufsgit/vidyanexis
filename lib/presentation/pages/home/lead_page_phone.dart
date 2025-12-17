@@ -3,10 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
@@ -62,10 +64,13 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     await leadProvider.getSearchLeads(context);
   }
 
+  int userId = 0;
+  String userName = '';
+
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final searchProvider =
           Provider.of<SidebarProvider>(context, listen: false);
       searchProvider.stopSearch();
@@ -74,6 +79,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
 
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
+      userName = preferences.getString('userName') ?? "";
+      leadProvider.setUserFilterStatus(userId);
       // leadProvider.leadData.clear();
       leadProvider.setFilter(false);
       settingsProvider.searchBranch(context);
@@ -384,6 +393,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
 
                               return status.userDetailsName ?? 'Unknown';
                             },
+                            enabled: false,
                             areItemsEqual: (a, b) => a == b,
                             label: 'All Staff',
                           ),
@@ -433,6 +443,58 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             },
                             areItemsEqual: (a, b) => a == b,
                             label: 'Enquiry for',
+                          ),
+                          StatusDropdownWidget<int>(
+                            containerWidth:
+                                MediaQuery.sizeOf(context).width / 2.5,
+                            statusName: 'Enquiry Source',
+                            items: [0] +
+                                provider.enquiryData
+                                    .map(
+                                        (status) => status.enquirySourceId ?? 0)
+                                    .toList(),
+                            initialValue: leadProvider.selectedEnquirySource,
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                leadProvider.setEnquirySourceFilter(
+                                    newValue); // Update the status in the provider
+                              }
+                              String status =
+                                  leadProvider.selectedStatus.toString();
+                              String fromDate = leadProvider.formattedFromDate;
+                              String toDate = leadProvider.formattedToDate;
+                              String enquiryFor =
+                                  leadProvider.selectedEnquiryFor.toString();
+                              int enquirySource =
+                                  leadProvider.selectedEnquirySource ?? 0;
+
+                              leadProvider.setSearchCriteria(
+                                leadProvider.search,
+                                fromDate,
+                                toDate,
+                                status,
+                                enquiryFor,
+                                enquirySource: enquirySource,
+                              );
+                              leadProvider.getSearchLeads(context);
+                            },
+                            displayStringFor: (int statusId) {
+                              if (statusId == 0) return 'All';
+
+                              final status = provider.enquiryData.firstWhere(
+                                  (status) =>
+                                      status.enquirySourceId == statusId,
+                                  orElse: () => Enquirysourcemodel(
+                                      enquirySourceId: 0,
+                                      enquirySourceName: '',
+                                      sourceCategoryId: 0,
+                                      sourceCategoryName: '',
+                                      deleteStatus: 0));
+
+                              return status.enquirySourceName ?? '';
+                            },
+                            areItemsEqual: (a, b) => a == b,
+                            label: 'Enquiry Source',
                           ),
                         ],
                       ),

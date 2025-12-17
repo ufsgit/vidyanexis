@@ -292,6 +292,47 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         );
       } else {
         leadProvider.clearAllLeadControllers(context);
+
+        //default source category
+        final settingsProvider =
+            Provider.of<SettingsProvider>(context, listen: false);
+        int? selectedSourceId;
+        if (settingsProvider.searchSourceCategory.isNotEmpty) {
+          selectedSourceId =
+              settingsProvider.searchSourceCategory.first.sourceId;
+        }
+
+        if (selectedSourceId != null) {
+          dropDownProvider.setSourceCategoryId(selectedSourceId);
+          final selectedItem = settingsProvider.searchSourceCategory
+              .firstWhere((source) => source.sourceId == selectedSourceId);
+          leadProvider.sourceCategoryController.text = selectedItem.sourceName;
+
+          dropDownProvider.updateEnquiryForName(0, '');
+          leadProvider.enquiryForController.clear();
+
+          dropDownProvider.filterEnquiryForByCategory(selectedSourceId);
+        }
+
+        //default enquiry for
+        int? defaultEnquiryForId;
+        if (dropDownProvider.filteredEnquiryForData.isNotEmpty) {
+          defaultEnquiryForId =
+              dropDownProvider.filteredEnquiryForData.first.enquiryForId;
+        }
+
+        if (defaultEnquiryForId != null) {
+          final selectedEnquiryFor = dropDownProvider.filteredEnquiryForData
+              .firstWhere((task) => task.enquiryForId == defaultEnquiryForId);
+          dropDownProvider.updateEnquiryForName(
+              defaultEnquiryForId, selectedEnquiryFor.enquiryForName);
+          leadProvider.customFieldEnquiryFor.clear();
+          leadProvider.getCustomFieldsByEnquiryForId(
+            context,
+            leadId: widget.isEdit ? leadProvider.customerId : 0,
+            enquiryForId: defaultEnquiryForId,
+          );
+        }
       }
       dropDownProvider.getUserDetails(context);
       print(leadProvider.loginUserName);

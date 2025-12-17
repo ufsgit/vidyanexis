@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/constants/enums.dart';
@@ -94,6 +95,9 @@ class _LeadsPageState extends State<LeadPage> {
   // bool isEdit = false;
   int? _hoveredRowIndex;
 
+  int userId = 0;
+  String userName = '';
+
   @override
   void initState() {
     super.initState();
@@ -103,11 +107,15 @@ class _LeadsPageState extends State<LeadPage> {
     // Setup scroll synchronization
     _fixedVerticalController.addListener(_syncScrollFromFixed);
     _scrollableVerticalController.addListener(_syncScrollFromScrollable);
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
+      userName = preferences.getString('userName') ?? "";
+      leadProvider.setUserFilterStatus(userId);
 
       provider.getEnquirySource(context);
       settingsProvider.searchBranch(context);
@@ -558,28 +566,34 @@ class _LeadsPageState extends State<LeadPage> {
                                           ),
                                         ))
                                     .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setUserFilterStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  leadProvider.selectedStatus.toString();
-                              String fromDate = leadProvider.formattedFromDate;
-                              String toDate = leadProvider.formattedToDate;
-                              String enquiryFor =
-                                  leadProvider.selectedEnquiryFor.toString();
-                              print(
-                                  'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                              );
-                              leadProvider.getSearchLeads(context);
-                            },
+                            // onChanged: userId == 1
+                            //     ? (int? newValue) {
+                            //         if (newValue != null) {
+                            //           leadProvider.setUserFilterStatus(
+                            //               newValue); // Update the status in the provider
+                            //         }
+                            //         String status =
+                            //             leadProvider.selectedStatus.toString();
+                            //         String fromDate =
+                            //             leadProvider.formattedFromDate;
+                            //         String toDate =
+                            //             leadProvider.formattedToDate;
+                            //         String enquiryFor = leadProvider
+                            //             .selectedEnquiryFor
+                            //             .toString();
+                            //         print(
+                            //             'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
+                            //         leadProvider.setSearchCriteria(
+                            //           leadProvider.search,
+                            //           fromDate,
+                            //           toDate,
+                            //           status,
+                            //           enquiryFor,
+                            //         );
+                            //         leadProvider.getSearchLeads(context);
+                            //       }
+                            //     : null,
+                            onChanged: null,
                             underline: Container(),
                             isDense: true,
                             iconSize: 18,
@@ -656,15 +670,89 @@ class _LeadsPageState extends State<LeadPage> {
                         ],
                       ),
                     ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: leadProvider.selectedEnquirySource != null &&
+                                    leadProvider.selectedEnquirySource != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        children: [
+                          const Text('Enquiry Source: '),
+                          DropdownButton<int>(
+                            value: leadProvider.selectedEnquirySource,
+                            hint: const Text('All'),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value:
+                                        0, // Use 0 or null to represent "All"
+                                    child: Text(
+                                      'All',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                ] +
+                                provider.enquiryData
+                                    .map((user) => DropdownMenuItem<int>(
+                                          value: user.enquirySourceId,
+                                          child: Text(
+                                            user.enquirySourceName,
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ))
+                                    .toList(),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                leadProvider.setEnquirySourceFilter(
+                                    newValue); // Update the status in the provider
+                              }
+                              String status =
+                                  leadProvider.selectedStatus.toString();
+                              String fromDate = leadProvider.formattedFromDate;
+                              String toDate = leadProvider.formattedToDate;
+                              String enquiryFor =
+                                  leadProvider.selectedEnquiryFor.toString();
+                              int enquirySource =
+                                  leadProvider.selectedEnquirySource ?? 0;
+                              print(
+                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
+                              leadProvider.setSearchCriteria(
+                                leadProvider.search,
+                                fromDate,
+                                toDate,
+                                status,
+                                enquiryFor,
+                                enquirySource: enquirySource,
+                              );
+                              leadProvider.getSearchLeads(context);
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
                     const Spacer(),
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
                         (leadProvider.selectedStatus != null &&
                             leadProvider.selectedStatus != 0) ||
-                        (leadProvider.selectedUser != null &&
-                            leadProvider.selectedUser != 0) ||
+                        // (leadProvider.selectedUser != null &&
+                        //     leadProvider.selectedUser != 0) ||
                         (leadProvider.selectedEnquiryFor != null &&
                             leadProvider.selectedEnquiryFor != 0) ||
+                        (leadProvider.selectedEnquirySource != null &&
+                            leadProvider.selectedEnquirySource != 0) ||
                         leadProvider.search.isNotEmpty)
                       ElevatedButton(
                         onPressed: () {
@@ -1519,11 +1607,27 @@ class _LeadsPageState extends State<LeadPage> {
                                                                   int.parse(lead
                                                                       .statusId
                                                                       .toString());
+                                                              leadProvider
+                                                                      .statusController
+                                                                      .text =
+                                                                  lead.statusName;
+                                                              print(
+                                                                  'status id ${lead.statusId}');
+                                                              print(
+                                                                  'status name ${lead.statusName}');
                                                               dropDownProvider
                                                                       .selectedUserId =
                                                                   int.parse(lead
                                                                       .toUserId
                                                                       .toString());
+                                                              leadProvider
+                                                                      .searchUserController
+                                                                      .text =
+                                                                  lead.toUserName;
+                                                              print(
+                                                                  'assign to ${lead.toUserName}');
+                                                              print(
+                                                                  'assign to id ${lead.toUserId}');
                                                               leadProvider
                                                                   .setCutomerId(
                                                                       lead.customerId);
@@ -1535,30 +1639,24 @@ class _LeadsPageState extends State<LeadPage> {
                                                                       .selectedBranchId =
                                                                   lead.branchId;
                                                               print(
-                                                                  'knrgoiw ${lead.branchId}');
+                                                                  'branch ${lead.branchId}');
                                                               print(
-                                                                  'knrgoiw ${lead.statusId}');
+                                                                  'branch name ${lead.branchName}');
                                                               leadProvider
                                                                       .departmentController
                                                                       .text =
                                                                   lead.departmentName;
                                                               settingsProvider
                                                                       .selectedDepartmentId =
-                                                                  int.parse(lead
-                                                                      .departmentId
-                                                                      .toString());
-                                                              leadProvider
-                                                                      .statusController
-                                                                      .text =
-                                                                  lead.statusName;
+                                                                  int.tryParse(lead
+                                                                          .departmentId
+                                                                          .toString()) ??
+                                                                      0;
                                                               print(
-                                                                  'dgonwrsog ${lead.statusId}');
+                                                                  'department id ${lead.departmentId}');
                                                               print(
-                                                                  'dgonwrsog ${lead.statusName}');
-                                                              leadProvider
-                                                                      .assignToFollowUpController
-                                                                      .text =
-                                                                  lead.toUserName;
+                                                                  'department name ${lead.departmentName}');
+
                                                               leadProvider
                                                                   .nextFollowUpDateController
                                                                   .text = lead
@@ -1570,13 +1668,27 @@ class _LeadsPageState extends State<LeadPage> {
                                                               leadProvider
                                                                   .messageController
                                                                   .clear();
+                                                              dropDownProvider
+                                                                  .filterStaffByBranchAndDepartment(
+                                                                branchId: lead
+                                                                    .branchId,
+                                                                departmentId:
+                                                                    int.tryParse(lead
+                                                                            .departmentId
+                                                                            .toString()) ??
+                                                                        0,
+                                                              );
                                                             } catch (e) {}
                                                             Scaffold.of(context)
                                                                 .openEndDrawer();
                                                           },
                                                           child: _DataCell(
-                                                              lead.statusName, // appointment
-                                                              width: 160),
+                                                              lead
+                                                                  .statusName, // appointment
+                                                              width: 160,
+                                                              color: AppColors
+                                                                  .parseColor(lead
+                                                                      .colorCode)),
                                                         ),
                                                         // _DataCell(
                                                         //     "Done date", // appointment
@@ -1666,47 +1778,88 @@ class _LeadsPageState extends State<LeadPage> {
               onFollowUpPressed: () async {
                 Navigator.pop(context);
 
-                leadProvider.statusController.clear();
-                leadProvider.assignToFollowUpController.clear();
-                leadProvider.nextFollowUpDateController.clear();
-                leadProvider.messageController.clear();
-                final dropDownProvider =
-                    Provider.of<DropDownProvider>(context, listen: false);
-                dropDownProvider.selectedStatusId = null;
-                dropDownProvider.selectedUserId = null;
+                // leadProvider.statusController.clear();
+                // leadProvider.assignToFollowUpController.clear();
+                // leadProvider.nextFollowUpDateController.clear();
+                // leadProvider.messageController.clear();
+                // final dropDownProvider =
+                //     Provider.of<DropDownProvider>(context, listen: false);
+                // dropDownProvider.selectedStatusId = null;
+                // dropDownProvider.selectedUserId = null;
+                // Future.delayed(const Duration(milliseconds: 0), () async {
+                //   setState(() {
+                //     viewProfile = false;
+                //     viewFollowUp = true;
+                //   });
+                //   await loadExistingAudioFiles(
+                //       leadDetailsProvider.leadDetails![0].audioFiles);
+                //   dropDownProvider.selectedStatusId = int.parse(
+                //       leadDetailsProvider.leadDetails![0].statusId.toString());
+                //   dropDownProvider.selectedUserId = int.parse(
+                //       leadDetailsProvider.leadDetails![0].toUserId.toString());
+                //   settingsProvider.selectedBranchId = int.parse(
+                //       leadDetailsProvider.leadDetails![0].branchId.toString());
+
+                //   leadProvider.setCutomerId(
+                //       leadDetailsProvider.leadDetails![0].customerId);
+                //   leadProvider.statusController.text =
+                //       leadDetailsProvider.leadDetails![0].statusName;
+
+                //   leadProvider.searchUserController.text =
+                //       leadDetailsProvider.leadDetails![0].toUserName;
+                //   dropDownProvider.setSelectedUserId(
+                //       leadDetailsProvider.leadDetails![0].toUserId);
+                //   dropDownProvider.filterStaffByBranchAndDepartment(
+                //     branchId: settingsProvider.selectedBranchId,
+                //     departmentId:
+                //         leadDetailsProvider.leadDetails![0].departmentId,
+                //   );
+                //   leadProvider.nextFollowUpDateController.text = leadProvider
+                //           .leadData[0].nextFollowUpDate.isNotEmpty
+                //       ? DateFormat('dd MMM yyyy').format(DateTime.parse(
+                //           leadDetailsProvider.leadDetails![0].nextFollowUpDate))
+                //       : '';
+                //   _scaffoldKey.currentState?.openEndDrawer();
+                // });
                 Future.delayed(const Duration(milliseconds: 0), () async {
                   setState(() {
                     viewProfile = false;
                     viewFollowUp = true;
                   });
-                  await loadExistingAudioFiles(
-                      leadDetailsProvider.leadDetails![0].audioFiles);
-                  dropDownProvider.selectedStatusId = int.parse(
-                      leadDetailsProvider.leadDetails![0].statusId.toString());
-                  dropDownProvider.selectedUserId = int.parse(
-                      leadDetailsProvider.leadDetails![0].toUserId.toString());
-                  settingsProvider.selectedBranchId = int.parse(
-                      leadDetailsProvider.leadDetails![0].branchId.toString());
+                  var lead = leadDetailsProvider.leadDetails![0];
+                  final dropDownProvider =
+                      Provider.of<DropDownProvider>(context, listen: false);
+                  dropDownProvider.selectedStatusId =
+                      int.parse(lead.statusId.toString());
+                  leadProvider.statusController.text = lead.statusName;
+                  print('status id ${lead.statusId}');
+                  print('status name ${lead.statusName}');
+                  dropDownProvider.selectedUserId =
+                      int.parse(lead.toUserId.toString());
+                  leadProvider.searchUserController.text = lead.toUserName;
+                  print('assign to ${lead.toUserName}');
+                  print('assign to id ${lead.toUserId}');
+                  leadProvider.setCutomerId(lead.customerId);
+                  leadProvider.branchController.text = lead.branchName;
+                  settingsProvider.selectedBranchId = lead.branchId;
+                  print('branch ${lead.branchId}');
+                  print('branch name ${lead.branchName}');
+                  leadProvider.departmentController.text = lead.departmentName;
+                  settingsProvider.selectedDepartmentId =
+                      int.tryParse(lead.departmentId.toString()) ?? 0;
+                  print('department id ${lead.departmentId}');
+                  print('department name ${lead.departmentName}');
 
-                  leadProvider.setCutomerId(
-                      leadDetailsProvider.leadDetails![0].customerId);
-                  leadProvider.statusController.text =
-                      leadDetailsProvider.leadDetails![0].statusName;
-
-                  leadProvider.searchUserController.text =
-                      leadDetailsProvider.leadDetails![0].toUserName;
-                  dropDownProvider.setSelectedUserId(
-                      leadDetailsProvider.leadDetails![0].toUserId);
+                  leadProvider.nextFollowUpDateController.text =
+                      lead.nextFollowUpDate.isNotEmpty
+                          ? _formatDateSafely(lead.nextFollowUpDate)
+                          : '';
+                  leadProvider.messageController.clear();
                   dropDownProvider.filterStaffByBranchAndDepartment(
-                    branchId: settingsProvider.selectedBranchId,
+                    branchId: lead.branchId,
                     departmentId:
-                        leadDetailsProvider.leadDetails![0].departmentId,
+                        int.tryParse(lead.departmentId.toString()) ?? 0,
                   );
-                  leadProvider.nextFollowUpDateController.text = leadProvider
-                          .leadData[0].nextFollowUpDate.isNotEmpty
-                      ? DateFormat('dd MMM yyyy').format(DateTime.parse(
-                          leadDetailsProvider.leadDetails![0].nextFollowUpDate))
-                      : '';
                   _scaffoldKey.currentState?.openEndDrawer();
                 });
               },
@@ -1905,7 +2058,7 @@ class _LeadsPageState extends State<LeadPage> {
   }
 
 // Simple text cell
-  Widget _DataCell(String value, {required double width}) {
+  Widget _DataCell(String value, {required double width, Color? color}) {
     return SizedBox(
       width: width,
       child: Padding(
@@ -1916,11 +2069,12 @@ class _LeadsPageState extends State<LeadPage> {
           value,
           overflow: TextOverflow.ellipsis,
           // maxLines: 2,
-          style: const TextStyle(
+          style: TextStyle(
             // fontWeight:
             //     FontWeight
             //         .bold,
             fontSize: 13,
+            color: color,
           ),
         ),
       ),

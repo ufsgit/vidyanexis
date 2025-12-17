@@ -57,7 +57,8 @@ class _CustomerPageState extends State<CustomerPage> {
 
       customerProvider.getSearchCustomers(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
-      provider.getFollowUpStatus(context, '2');
+      // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
+      provider.getFollowUpStatus(context, '');
       provider.getUserDetails(context);
 
       //search
@@ -128,7 +129,7 @@ class _CustomerPageState extends State<CustomerPage> {
   Widget build(BuildContext context) {
     final customerProvider = Provider.of<CustomerProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
-    final leadProvider = Provider.of<LeadsProvider>(context);
+    final leadsProvider = Provider.of<LeadsProvider>(context);
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -186,8 +187,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                   child: ElevatedButton(
                                     onPressed: () {
                                       String query = searchController.text;
-                                      // leadProvider.selectDateFilterOption(null);
-                                      // leadProvider.removeStatus();
+                                      // leadsProvider.selectDateFilterOption(null);
+                                      // leadsProvider.removeStatus();
                                       print(query);
                                       if (customerProvider.search.isNotEmpty) {
                                         searchController.clear();
@@ -309,8 +310,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                   child: ElevatedButton(
                                     onPressed: () {
                                       String query = searchController.text;
-                                      // leadProvider.selectDateFilterOption(null);
-                                      // leadProvider.removeStatus();
+                                      // leadsProvider.selectDateFilterOption(null);
+                                      // leadsProvider.removeStatus();
                                       print(query);
                                       if (customerProvider.search.isNotEmpty) {
                                         searchController.clear();
@@ -1002,19 +1003,36 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                   SettingsProvider>(
                                                               context,
                                                               listen: false);
+
                                                       dropDownProvider
                                                               .selectedStatusId =
                                                           int.parse(lead
                                                               .statusId
                                                               .toString());
+                                                      leadsProvider
+                                                              .statusController
+                                                              .text =
+                                                          lead.statusName;
+                                                      print(
+                                                          'status id ${lead.statusId}');
+                                                      print(
+                                                          'status name ${lead.statusName}');
                                                       dropDownProvider
                                                               .selectedUserId =
                                                           int.parse(lead
                                                               .toUserId
                                                               .toString());
-                                                      leadProvider.setCutomerId(
-                                                          lead.customerId);
-                                                      leadProvider
+                                                      leadsProvider
+                                                          .searchUserController
+                                                          .text = lead.toUserName;
+                                                      print(
+                                                          'assign to ${lead.toUserName}');
+                                                      print(
+                                                          'assign to id ${lead.toUserId}');
+                                                      leadsProvider
+                                                          .setCutomerId(
+                                                              lead.customerId);
+                                                      leadsProvider
                                                               .branchController
                                                               .text =
                                                           lead.branchName;
@@ -1022,32 +1040,25 @@ class _CustomerPageState extends State<CustomerPage> {
                                                               .selectedBranchId =
                                                           lead.branchId;
                                                       print(
-                                                          'knrgoiw ${lead.branchId}');
+                                                          'branch ${lead.branchId}');
                                                       print(
-                                                          'knrgoiw ${lead.statusId}');
-                                                      await loadExistingAudioFiles(
-                                                          lead.audioFiles);
-                                                      leadProvider
+                                                          'branch name ${lead.branchName}');
+                                                      leadsProvider
                                                               .departmentController
                                                               .text =
                                                           lead.departmentName;
                                                       settingsProvider
                                                               .selectedDepartmentId =
-                                                          int.parse(lead
-                                                              .departmentId
-                                                              .toString());
-                                                      leadProvider
-                                                              .statusController
-                                                              .text =
-                                                          lead.statusName;
+                                                          int.tryParse(lead
+                                                                  .departmentId
+                                                                  .toString()) ??
+                                                              0;
                                                       print(
-                                                          'dgonwrsog ${lead.statusId}');
+                                                          'department id ${lead.departmentId}');
                                                       print(
-                                                          'dgonwrsog ${lead.statusName}');
-                                                      leadProvider
-                                                          .assignToFollowUpController
-                                                          .text = lead.toUserName;
-                                                      leadProvider
+                                                          'department name ${lead.departmentName}');
+
+                                                      leadsProvider
                                                           .nextFollowUpDateController
                                                           .text = lead
                                                               .nextFollowUpDate
@@ -1055,56 +1066,18 @@ class _CustomerPageState extends State<CustomerPage> {
                                                           ? _formatDateSafely(lead
                                                               .nextFollowUpDate)
                                                           : '';
-                                                      leadProvider
+                                                      leadsProvider
                                                           .messageController
                                                           .clear();
-                                                      print(
-                                                          "dfgwergw3r ${lead.toJson()}");
-                                                      leadProvider
-                                                          .statusController
-                                                          .clear();
-                                                      leadProvider
-                                                          .assignToFollowUpController
-                                                          .clear();
-                                                      leadProvider
-                                                          .messageController
-                                                          .clear();
-                                                      leadProvider
-                                                          .nextFollowUpDateController
-                                                          .clear();
-
-                                                      dropDownProvider
-                                                              .selectedStatusId =
-                                                          null;
-                                                      dropDownProvider
-                                                              .selectedUserId =
-                                                          null;
-                                                      leadProvider.setCutomerId(
-                                                          lead.customerId);
-                                                      dropDownProvider
-                                                          .getUserDetails(
-                                                              context);
-                                                      leadProvider
-                                                          .searchUserController
-                                                          .text = lead.toUserName;
-                                                      dropDownProvider
-                                                          .setSelectedUserId(
-                                                              lead.toUserId);
                                                       dropDownProvider
                                                           .filterStaffByBranchAndDepartment(
                                                         branchId: lead.branchId,
-                                                        departmentId: int.parse(
-                                                            lead.departmentId),
+                                                        departmentId:
+                                                            int.tryParse(lead
+                                                                    .departmentId
+                                                                    .toString()) ??
+                                                                0,
                                                       );
-                                                      // Navigator.push(context,
-                                                      //     MaterialPageRoute(
-                                                      //   builder: (context) {
-                                                      //     return AddFollowupDialog(
-                                                      //       customerName:
-                                                      //           lead.customerName,
-                                                      //     );
-                                                      //   },
-                                                      // ));
                                                     } catch (e) {}
                                                     showDialog(
                                                       barrierDismissible: false,
@@ -1202,7 +1175,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 //             horizontal: 25.0),
                                                 //     child: Text(
                                                 //         ((index + 1) +
-                                                //                 leadProvider
+                                                //                 leadsProvider
                                                 //                     .startLimit -
                                                 //                 1)
                                                 //             .toString(),
@@ -1335,43 +1308,91 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     ),
                                                     InkWell(
                                                       onTap: () {
-                                                        print(
-                                                            "dfgwergw3r ${lead.toJson()}");
-                                                        leadProvider
-                                                            .statusController
-                                                            .clear();
-                                                        leadProvider
-                                                            .assignToFollowUpController
-                                                            .clear();
-                                                        leadProvider
-                                                            .messageController
-                                                            .clear();
-                                                        leadProvider
-                                                            .nextFollowUpDateController
-                                                            .clear();
                                                         final dropDownProvider =
                                                             Provider.of<
                                                                     DropDownProvider>(
                                                                 context,
                                                                 listen: false);
+                                                        final settingsProvider =
+                                                            Provider.of<
+                                                                    SettingsProvider>(
+                                                                context,
+                                                                listen: false);
                                                         dropDownProvider
                                                                 .selectedStatusId =
-                                                            null;
+                                                            int.parse(lead
+                                                                .statusId
+                                                                .toString());
+                                                        leadsProvider
+                                                                .statusController
+                                                                .text =
+                                                            lead.statusName;
+                                                        print(
+                                                            'status id ${lead.statusId}');
+                                                        print(
+                                                            'status name ${lead.statusName}');
                                                         dropDownProvider
                                                                 .selectedUserId =
-                                                            null;
-                                                        leadProvider
+                                                            int.parse(lead
+                                                                .toUserId
+                                                                .toString());
+                                                        leadsProvider
+                                                            .searchUserController
+                                                            .text = lead.toUserName;
+                                                        print(
+                                                            'assign to ${lead.toUserName}');
+                                                        print(
+                                                            'assign to id ${lead.toUserId}');
+                                                        leadsProvider
                                                             .setCutomerId(lead
                                                                 .customerId);
-                                                        // Navigator.push(context,
-                                                        //     MaterialPageRoute(
-                                                        //   builder: (context) {
-                                                        //     return AddFollowupDialog(
-                                                        //       customerName: lead
-                                                        //           .customerName,
-                                                        //     );
-                                                        //   },
-                                                        // ));
+                                                        leadsProvider
+                                                                .branchController
+                                                                .text =
+                                                            lead.branchName;
+                                                        settingsProvider
+                                                                .selectedBranchId =
+                                                            lead.branchId;
+                                                        print(
+                                                            'branch ${lead.branchId}');
+                                                        print(
+                                                            'branch name ${lead.branchName}');
+                                                        leadsProvider
+                                                                .departmentController
+                                                                .text =
+                                                            lead.departmentName;
+                                                        settingsProvider
+                                                                .selectedDepartmentId =
+                                                            int.tryParse(lead
+                                                                    .departmentId
+                                                                    .toString()) ??
+                                                                0;
+                                                        print(
+                                                            'department id ${lead.departmentId}');
+                                                        print(
+                                                            'department name ${lead.departmentName}');
+
+                                                        leadsProvider
+                                                            .nextFollowUpDateController
+                                                            .text = lead
+                                                                .nextFollowUpDate
+                                                                .isNotEmpty
+                                                            ? _formatDateSafely(
+                                                                lead.nextFollowUpDate)
+                                                            : '';
+                                                        leadsProvider
+                                                            .messageController
+                                                            .clear();
+                                                        dropDownProvider
+                                                            .filterStaffByBranchAndDepartment(
+                                                          branchId:
+                                                              lead.branchId,
+                                                          departmentId:
+                                                              int.tryParse(lead
+                                                                      .departmentId
+                                                                      .toString()) ??
+                                                                  0,
+                                                        );
                                                         showDialog(
                                                           barrierDismissible:
                                                               false,

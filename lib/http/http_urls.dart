@@ -5,7 +5,7 @@ class HttpUrls {
   static String baseUrl = 'https://tnk02n8v-3511.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
-      'https://ufsnabeelphotoalbum.s3.us-east-2.amazonaws.com/';
+      'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
 
   //endpoints
   static String loginCheck = "Login/Login_Check";
@@ -207,4 +207,6 @@ class HttpUrls {
       "status/Get_CustomFields_On_StatusChange";
   static String getCustomFieldByEnquiryForId =
       "lead/Get_CustomFields_On_EnquiryFor";
+  static String saveRefund = "service/Save_Refund_Details";
+  static String getRefundDetails = "service/Get_Refund_Details";
 }

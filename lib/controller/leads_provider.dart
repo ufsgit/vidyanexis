@@ -190,6 +190,14 @@ class LeadsProvider extends ChangeNotifier {
   String _loginUserName = '';
   String get loginUserName => _loginUserName;
 
+  // --- NEW: Enquiry Source Filter ---
+  int? _selectedEnquirySource;
+  int? get selectedEnquirySource => _selectedEnquirySource;
+  void setEnquirySourceFilter(int? value) {
+    _selectedEnquirySource = value;
+    notifyListeners();
+  }
+
   //invertor and panel details
   final TextEditingController invertorBrandController = TextEditingController();
   final TextEditingController invertorCapacityController =
@@ -540,13 +548,15 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   void setSearchCriteria(String search, String fromDate, String toDate,
-      String status, String enquiryFor) {
+      String status, String enquiryFor,
+      {int enquirySource = 0}) {
     leadData.clear();
     _search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
     _status = status;
     _enquiryForS = enquiryFor;
+    _selectedEnquirySource = enquirySource;
     _startLimit = 1;
     _endLimit = 25;
     notifyListeners(); // Notify listeners so that UI can rebuild
@@ -725,7 +735,7 @@ class LeadsProvider extends ChangeNotifier {
 
     final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS');
+            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
 
     if (response.statusCode == 200) {
       final data = response.data;
@@ -1562,8 +1572,9 @@ class LeadsProvider extends ChangeNotifier {
 
   void removeStatus() {
     _selectedStatus = null;
-    _selectedUser = null;
+    // _selectedUser = null;
     _selectedEnquiryFor = null;
+    _selectedEnquirySource = null;
     notifyListeners();
   }
 
@@ -1625,7 +1636,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLeadReports}?lead_Name=$search&Is_Date=$isDate&Fromdate=$fromDate&Todate=$toDate&To_User_Id=$toUserId&Status_Id=$status');
+              '${HttpUrls.searchLeadReports}?lead_Name=$search&Is_Date=$isDate&Fromdate=$fromDate&Todate=$toDate&To_User_Id=$toUserId&Status_Id=${_selectedStatus ?? 0}');
 
       if (response.statusCode == 200) {
         final data = response.data;

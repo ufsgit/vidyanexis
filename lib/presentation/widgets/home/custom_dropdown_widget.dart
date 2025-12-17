@@ -97,18 +97,16 @@ class CommonDropdown<T> extends StatelessWidget {
           ),
           // Handle selectedValue properly, it should be a valid id in items
           value: validValue,
-          items: enabled
-              ? items
-                  .map((item) => DropdownMenuItem<T>(
-                        value: item.id,
-                        child: Text(
-                          item.name,
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                        ),
-                      ))
-                  .toList()
-              : null, // Set items to null when disabled
+          items: items
+              .map((item) => DropdownMenuItem<T>(
+                    value: item.id,
+                    child: Text(
+                      item.name,
+                      overflow: TextOverflow.ellipsis,
+                      maxLines: 1,
+                    ),
+                  ))
+              .toList(),
           selectedItemBuilder: enabled
               ? (BuildContext context) {
                   return items.map<Widget>((item) {

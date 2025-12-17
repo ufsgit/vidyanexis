@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/task_overview_tab.dart';
 import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/custom_tab.dart';
+import 'package:vidyanexis/presentation/widgets/home/add_attendance.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_overview_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/work_overview_tab.dart';
@@ -96,20 +97,27 @@ class _DashBoardPageState extends State<DashBoardPage> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               if (settingsProvider.menuIsViewMap[26].toString() == '1')
-                CustomElevatedButton(
-                  buttonText: 'View Attendance',
-                  onPressed: () async {
+                ElevatedButton.icon(
+                  onPressed: () {
                     showDialog(
                       barrierDismissible: false,
                       context: context,
                       builder: (BuildContext context) {
-                        return const StaffAttendanceScreen();
+                        return const AddAttendanceWidget(
+                            editId: '0', isEdit: false, user: '', userId: 0);
                       },
                     );
                   },
-                  backgroundColor: AppColors.whiteColor,
-                  borderColor: AppColors.appViolet,
-                  textColor: AppColors.appViolet,
+                  icon: const Icon(Icons.add),
+                  label: const Text('Mark Attendance'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.primaryBlue,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
                 ),
             ],
           ),
