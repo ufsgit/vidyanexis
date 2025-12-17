@@ -566,34 +566,34 @@ class _LeadsPageState extends State<LeadPage> {
                                           ),
                                         ))
                                     .toList(),
-                            // onChanged: userId == 1
-                            //     ? (int? newValue) {
-                            //         if (newValue != null) {
-                            //           leadProvider.setUserFilterStatus(
-                            //               newValue); // Update the status in the provider
-                            //         }
-                            //         String status =
-                            //             leadProvider.selectedStatus.toString();
-                            //         String fromDate =
-                            //             leadProvider.formattedFromDate;
-                            //         String toDate =
-                            //             leadProvider.formattedToDate;
-                            //         String enquiryFor = leadProvider
-                            //             .selectedEnquiryFor
-                            //             .toString();
-                            //         print(
-                            //             'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                            //         leadProvider.setSearchCriteria(
-                            //           leadProvider.search,
-                            //           fromDate,
-                            //           toDate,
-                            //           status,
-                            //           enquiryFor,
-                            //         );
-                            //         leadProvider.getSearchLeads(context);
-                            //       }
-                            //     : null,
-                            onChanged: null,
+                            onChanged: userId == 1
+                                ? (int? newValue) {
+                                    if (newValue != null) {
+                                      leadProvider.setUserFilterStatus(
+                                          newValue); // Update the status in the provider
+                                    }
+                                    String status =
+                                        leadProvider.selectedStatus.toString();
+                                    String fromDate =
+                                        leadProvider.formattedFromDate;
+                                    String toDate =
+                                        leadProvider.formattedToDate;
+                                    String enquiryFor = leadProvider
+                                        .selectedEnquiryFor
+                                        .toString();
+                                    print(
+                                        'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
+                                    leadProvider.setSearchCriteria(
+                                      leadProvider.search,
+                                      fromDate,
+                                      toDate,
+                                      status,
+                                      enquiryFor,
+                                    );
+                                    leadProvider.getSearchLeads(context);
+                                  }
+                                : null,
+                            // onChanged: null,
                             underline: Container(),
                             isDense: true,
                             iconSize: 18,
