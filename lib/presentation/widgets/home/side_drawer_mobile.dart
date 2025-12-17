@@ -38,6 +38,7 @@ import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dar
 import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
@@ -98,6 +99,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       // },
       if (settingsProvider.menuIsViewMap[25].toString() == '1')
         {'title': 'Work Reports', 'page': const WorkSummaryPhone()},
+      if (settingsProvider.menuIsViewMap[24].toString() == '1')
+        {'title': 'Time Track Reports', 'page': const TimeTrackReportPage()},
 
       if (settingsProvider.menuIsViewMap[53].toString() == '1')
         {

@@ -39,6 +39,7 @@ import 'package:vidyanexis/controller/service_report_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
+import 'package:vidyanexis/controller/time_track_report_provider.dart';
 import 'package:vidyanexis/controller/work_report_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
@@ -101,6 +102,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
         ChangeNotifierProvider(create: (_) => FormBuilderProvider()),
         ChangeNotifierProvider(create: (context) => AudioFileProvider()),
+        ChangeNotifierProvider(create: (context) => TimeTrackReportProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),

@@ -1,8 +1,8 @@
 class HttpUrls {
   //baseurls
 
-  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
-  // static String baseUrl = 'https://3pm19pm4-3511.inc1.devtunnels.ms/';
+  //static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  static String baseUrl = 'https://tnk02n8v-3511.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://ufsnabeelphotoalbum.s3.us-east-2.amazonaws.com/';
@@ -13,6 +13,8 @@ class HttpUrls {
   static String saveLead = "lead/Save_lead";
   static String saveCustomer = "lead/Update_Customer";
   static String saveFollowUp = "followup/Save_followup";
+  static String timeTrack = "followup/Time_track_reports";
+  static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
   // static String getAllFollowUpStatus = "status/Search_status";

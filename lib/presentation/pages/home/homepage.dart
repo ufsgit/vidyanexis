@@ -35,6 +35,7 @@ import 'package:vidyanexis/presentation/pages/reports/conversion_report_page.dar
 import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
@@ -196,6 +197,13 @@ class _HomePageState extends State<HomePage> {
           title: 'Work Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: WorkSummaryScreen()),
+        ),
+
+      if (settingsProvider.menuIsViewMap[24].toString() == '1')
+        SidebarOption(
+          title: 'Time Track Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: TimeTrackReportPage()),
         ),
 
       if (settingsProvider.menuIsViewMap[53].toString() == '1')
