@@ -19,10 +19,17 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final providerTimeTrack =
           Provider.of<TimeTrackReportProvider>(context, listen: false);
-      providerTimeTrack.clearFilters(); // Clear previous filters on load
+
+      // Clear previous filters
+      providerTimeTrack.clearFilters();
+
+      // Initialize with logged-in user
+      await providerTimeTrack.initializeWithLoggedInUser();
+
+      // Fetch data with logged-in user filter
       providerTimeTrack.getTimeTrackReport(context);
 
       // Fetch user details for dropdown
@@ -57,17 +64,12 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Search and Filter Header
-                    _buildHeader(context, providerTimeTrack),
+                    // Filter Section (At the top)
+                    _buildFilterSection(
+                        context, providerTimeTrack, dropDownProvider),
                     const SizedBox(height: 16),
 
-                    // Filter Section (Collapsible)
-                    if (providerTimeTrack.isFilter)
-                      _buildFilterSection(
-                          context, providerTimeTrack, dropDownProvider),
-                    if (providerTimeTrack.isFilter) const SizedBox(height: 16),
-
-                    // Chart Section
+                    // Chart Section (Below filters)
                     Container(
                       padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
@@ -210,151 +212,11 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                         ],
                       ),
                     ),
-                    const SizedBox(height: 16),
-                    // List Section
-                    if (providerTimeTrack.timeTrackList.isNotEmpty)
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: providerTimeTrack.timeTrackList.length,
-                        itemBuilder: (context, index) {
-                          final item = providerTimeTrack.timeTrackList[index];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 12),
-                            elevation: 2,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: ListTile(
-                              leading: CircleAvatar(
-                                backgroundColor:
-                                    AppColors.primaryBlue.withOpacity(0.1),
-                                child: Text(
-                                  '${index + 1}',
-                                  style: TextStyle(
-                                    color: AppColors.primaryBlue,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                              // title: Text(
-                              //   'Time: ${item.entryDate}',
-                              //   style: const TextStyle(
-                              //     fontWeight: FontWeight.w600,
-                              //     fontSize: 14,
-                              //   ),
-                              // ),
-                              // subtitle: Text(
-                              //   'Count: ${item.count}',
-                              //   style: TextStyle(
-                              //     color: Colors.grey[600],
-                              //     fontSize: 13,
-                              //   ),
-                              // ),
-                            ),
-                          );
-                        },
-                      )
-                    else
-                      const Center(
-                        child: Padding(
-                          padding: EdgeInsets.all(20.0),
-                          child: Text("No records found"),
-                        ),
-                      ),
+                    // No list items section below
                   ],
                 ),
               ),
             ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context, TimeTrackReportProvider provider) {
-    return Row(
-      children: [
-        /*
-        Expanded(
-          child: Container(
-            height: 40,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(color: Colors.grey[300]!),
-            ),
-            child: TextField(
-              controller: searchController,
-              onSubmitted: (query) {
-                // provider.setSearch(query); // Implement search logic if needed
-                // provider.getTimeTrackReport(context);
-              },
-              decoration: InputDecoration(
-                hintText: 'Search here....',
-                prefixIcon: const Icon(Icons.search),
-                border: InputBorder.none,
-                contentPadding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 4,
-                ),
-                suffixIcon: IconButton(
-                  onPressed: () {
-                    searchController.clear();
-                    // provider.setSearch('');
-                    // provider.getTimeTrackReport(context);
-                  },
-                  icon: const Icon(Icons.close),
-                ),
-              ),
-            ),
-          ),
-        ),
-        const SizedBox(width: 16),
-        */
-        // const Spacer(), // Added spacer to push filter button if needed, or just let it start
-        // OutlinedButton.icon(
-        //   onPressed: () => provider.toggleFilter(),
-        //   icon: const Icon(Icons.filter_list),
-        //   label: const Text('Filter'),
-        //   style: OutlinedButton.styleFrom(
-        //     foregroundColor:
-        //         provider.isFilter ? Colors.white : AppColors.primaryBlue,
-        //     backgroundColor:
-        //         provider.isFilter ? const Color(0xFF5499D9) : Colors.white,
-        //     side: BorderSide(
-        //       color: provider.isFilter
-        //           ? const Color(0xFF5499D9)
-        //           : AppColors.primaryBlue,
-        //     ),
-        //     padding: const EdgeInsets.symmetric(
-        //       horizontal: 16,
-        //       vertical: 12,
-        //     ),
-        //   ),
-        // ),
-        /*
-        const SizedBox(width: 16),
-        CustomElevatedButton(
-          onPressed: () {
-            exportToExcel(
-              headers: [
-                'Date',
-                'Count',
-              ],
-              data: provider.timeTrackList.map((item) {
-                return {
-                  'Date': item.entryDate,
-                  'Count': item.count,
-                };
-              }).toList(),
-              fileName: 'Time_Track_Report',
-            );
-          },
-          buttonText: 'Export to Excel',
-          textColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          backgroundColor: AppColors.appViolet,
-        )
-        */
-      ],
     );
   }
 
@@ -456,7 +318,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                               const DropdownMenuItem<int>(
                                 value: 0,
                                 child: Text(
-                                  'User',
+                                  'All Users',
                                   style: TextStyle(fontSize: 14),
                                 ),
                               ),

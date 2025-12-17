@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/time_track_model.dart';
 import 'package:vidyanexis/controller/models/time_track_chart_data.dart';
 import 'package:vidyanexis/controller/models/time_track_record.dart';
@@ -158,6 +159,17 @@ class TimeTrackReportProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     notifyListeners();
+  }
+
+  Future<void> initializeWithLoggedInUser() async {
+    final preferences = await SharedPreferences.getInstance();
+    String userIdStr = preferences.getString('userId') ?? "0";
+    int loggedInUserId = int.tryParse(userIdStr) ?? 0;
+
+    if (loggedInUserId != 0) {
+      _selectedUser = loggedInUserId;
+      notifyListeners();
+    }
   }
 
   Future<void> getTimeTrackReport(BuildContext context) async {
