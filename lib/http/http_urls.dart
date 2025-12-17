@@ -5,7 +5,7 @@ class HttpUrls {
 //   static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
-      'https://pub-aa285b71265445f696ebfb8a5bd95430.r2.dev/UploadedImages/1/1765801349354.jpeg';
+      'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
 
   //endpoints
   static String loginCheck = "Login/Login_Check";
