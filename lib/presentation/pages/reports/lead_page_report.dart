@@ -148,39 +148,40 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                leadProvider.toggleFilter();
-                                leadProvider.selectDateFilterOption(null);
-                                leadProvider.removeStatus();
-                                leadProvider.getSearchLeadReports(
-                                    '', '', '', '', context);
-                                print(leadProvider.isFilter);
-                              },
-                              icon: const Icon(Icons.filter_list),
-                              label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : ''),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: leadProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors
-                                        .primaryBlue, // Change foreground color
-                                backgroundColor: leadProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : Colors.white, // Change background color
-                                side: BorderSide(
-                                    color: leadProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : AppColors
-                                            .primaryBlue), // Change border color
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                            if (!widget.fromDashBoard)
+                              OutlinedButton.icon(
+                                onPressed: () {
+                                  leadProvider.toggleFilter();
+                                  leadProvider.selectDateFilterOption(null);
+                                  leadProvider.removeStatus();
+                                  leadProvider.getSearchLeadReports(
+                                      '', '', '', '', context);
+                                  print(leadProvider.isFilter);
+                                },
+                                icon: const Icon(Icons.filter_list),
+                                label: Text(
+                                    MediaQuery.of(context).size.width > 860
+                                        ? 'Filter'
+                                        : ''),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: leadProvider.isFilter
+                                      ? Colors.white
+                                      : AppColors
+                                          .primaryBlue, // Change foreground color
+                                  backgroundColor: leadProvider.isFilter
+                                      ? const Color(0xFF5499D9)
+                                      : Colors.white, // Change background color
+                                  side: BorderSide(
+                                      color: leadProvider.isFilter
+                                          ? const Color(0xFF5499D9)
+                                          : AppColors
+                                              .primaryBlue), // Change border color
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                 ),
                               ),
-                            ),
                             const SizedBox(width: 16),
                             ElevatedButton.icon(
                               onPressed: () async {
