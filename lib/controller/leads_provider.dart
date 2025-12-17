@@ -1636,7 +1636,7 @@ class LeadsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLeadReports}?lead_Name=$search&Is_Date=$isDate&Fromdate=$fromDate&Todate=$toDate&To_User_Id=$toUserId&Status_Id=$status');
+              '${HttpUrls.searchLeadReports}?lead_Name=$search&Is_Date=$isDate&Fromdate=$fromDate&Todate=$toDate&To_User_Id=$toUserId&Status_Id=${_selectedStatus ?? 0}');
 
       if (response.statusCode == 200) {
         final data = response.data;
