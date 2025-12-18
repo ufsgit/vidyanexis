@@ -15,6 +15,16 @@ class WorkReportProvider extends ChangeNotifier {
   String _formattedToDate = '';
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
+  set formattedFromDate(String value) {
+    _formattedFromDate = value;
+    notifyListeners();
+  }
+
+  set formattedToDate(String value) {
+    _formattedToDate = value;
+    notifyListeners();
+  }
+
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
 
