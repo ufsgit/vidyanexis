@@ -32,6 +32,7 @@ import 'package:vidyanexis/controller/models/task_user_list_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
@@ -178,6 +179,27 @@ class CustomerDetailsProvider extends ChangeNotifier {
   TextEditingController additionalStructureController = TextEditingController();
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
+
+  List<DropdownItem<int>> get quotationTypeData => [
+        DropdownItem(id: 1, name: 'Residential'),
+        DropdownItem(id: 2, name: 'Commercial'),
+      ];
+  TextEditingController quotationTypeController = TextEditingController();
+  int _selectedQuotationType = 0;
+  int get selectedQuotationType => _selectedQuotationType;
+  set selectedQuotationType(int value) {
+    _selectedQuotationType = value;
+    notifyListeners();
+  }
+
+  TextEditingController commercialDescriptionController =
+      TextEditingController();
+  TextEditingController commercialDCCapacityController =
+      TextEditingController();
+  TextEditingController commercialACCapacityController =
+      TextEditingController();
+  TextEditingController commercialUnitPriceController = TextEditingController();
+  TextEditingController commercialTotalController = TextEditingController();
 
 //financial controllers
   final TextEditingController advanceController = TextEditingController();
@@ -2449,5 +2471,85 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       print('Exception occurred: $error');
     }
+  }
+
+  void addOrEditCommercialItem(BuildContext context) {
+    //   // Validate input fields
+    //   if (commercialDescriptionController.text.isEmpty) {
+    //     showDialog(
+    //       context: context,
+    //       builder: (BuildContext context) {
+    //         return AlertDialog(
+    //           title: Text(
+    //             'Cannot save',
+    //             style: TextStyle(
+    //               color: AppColors.appViolet,
+    //               fontWeight: FontWeight.bold,
+    //             ),
+    //           ),
+    //           content: const Text(
+    //             'Missing Details',
+    //             style: TextStyle(
+    //               color: Colors.black87,
+    //               fontSize: 16,
+    //             ),
+    //           ),
+    //           shape: RoundedRectangleBorder(
+    //             borderRadius: BorderRadius.circular(15),
+    //           ),
+    //           actions: [
+    //             TextButton(
+    //               onPressed: () {
+    //                 Navigator.pop(context);
+    //               },
+    //               child: Text(
+    //                 'OK',
+    //                 style: TextStyle(
+    //                   color: AppColors.appViolet,
+    //                   fontWeight: FontWeight.bold,
+    //                   fontSize: 16,
+    //                 ),
+    //               ),
+    //             ),
+    //           ],
+    //         );
+    //       },
+    //     );
+    //     return;
+    //   }
+
+    //   // Create the new commercial item
+    //   final unitPrice = double.tryParse(itemPriceController.text) ?? 0.0;
+    //   final mrp = double.tryParse(itemMrpController.text) ?? 0.0;
+    //   final gstPercent = double.tryParse(itemGstPercentController.text) ?? 0.0;
+    //   final adCess = double.tryParse(itemAdCessController.text) ?? 0.0;
+    //   final gst = double.tryParse(itemGstController.text) ?? 0.0;
+    //   final quantity = int.tryParse(itemQuantityController.text) ?? 1;
+    //   final amount = double.tryParse(itemTotalController.text) ?? 0.0;
+
+    //   final newItem = Item(
+    //     ItemName: itemNameController.text,
+    //     UnitPrice: unitPrice,
+    //     Quantity: quantity,
+    //     MRP: mrp,
+    //     GST: gst,
+    //     GSTPercent: gstPercent,
+    //     AdCESS: adCess,
+    //     Unit: itemUnitController.text,
+    //     Amount: amount,
+    //   );
+
+    //   if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
+    //     // Edit existing item
+    //     _items[_editIndex!] = newItem;
+    //   } else {
+    //     // Add new item
+    //     _items.add(newItem);
+    //   }
+
+    //   // Clear the text fields
+    //   _editIndex = null;
+
+    //   notifyListeners(); // Trigger UI updates
   }
 }
