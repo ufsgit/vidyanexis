@@ -5,6 +5,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/work_report_provider.dart';
+import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
@@ -32,7 +33,27 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<WorkReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+      final workSummaryProvider =
+          Provider.of<WorkSummaryProvider>(context, listen: false);
+      //pass date from work summary to work report
+      reportsProvider.selectDateFilterOption(null);
+
+      reportsProvider.formattedFromDate = workSummaryProvider.formattedFromDate;
+      reportsProvider.formattedToDate = workSummaryProvider.formattedToDate;
+      reportsProvider.setTaskSearchCriteria(
+          '',
+          reportsProvider.formattedFromDate,
+          reportsProvider.formattedToDate,
+          '',
+          '');
+      if (workSummaryProvider.fromDate != null) {
+        reportsProvider
+            .setFromDate(workSummaryProvider.fromDate ?? DateTime.now());
+      }
+      if (workSummaryProvider.toDate != null) {
+        reportsProvider.setToDate(workSummaryProvider.toDate ?? DateTime.now());
+      }
+      //
       reportsProvider.getSearchTaskReport(widget.userId, context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);
