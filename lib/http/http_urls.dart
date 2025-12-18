@@ -2,7 +2,7 @@ class HttpUrls {
   //baseurls
 
   static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
-  // static String baseUrl = 'https://tnk02n8v-3511.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -138,6 +138,11 @@ class HttpUrls {
   static String getTaskUsers = "task/Get_Task_Users";
   static String saveStock = "item/Save_Stock";
   static String getExpenseTypes = "item/get_expense_types";
+  static String addExpenseType = "item/save_expense_type";
+  static String deleteExpenseType = "item/Delete_Expense_Type";
+  static String getExpenseManagementList = "item/get_expense_management";
+  static String saveExpenseManagement = "item/save_expense_management";
+  static String deleteExpenseManagement = "item/Delete_Expense_Management";
   static String getPurchaseData = "item/get_purchase_details";
   static String savePurchase = "item/save_purchase_details";
   static String getInvoiceList = "service/Get_Customer_Invoice";
