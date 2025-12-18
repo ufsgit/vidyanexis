@@ -393,7 +393,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
 
                               return status.userDetailsName ?? 'Unknown';
                             },
-                            enabled: false,
+                            enabled: userId == 1 ? true : false,
                             areItemsEqual: (a, b) => a == b,
                             label: 'All Staff',
                           ),

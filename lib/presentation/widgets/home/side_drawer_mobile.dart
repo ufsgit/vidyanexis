@@ -120,7 +120,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
       if (settingsProvider.menuIsViewMap[55].toString() == '1')
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
-        {'title': 'Lead Reports', 'page': const LeadReportMobile()},
+        {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
     ];
 
     return Drawer(
