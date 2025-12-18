@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/models/checklist_category_model.dart';
 import 'package:vidyanexis/controller/models/checklist_item_model.dart';
 import 'package:vidyanexis/controller/models/custom_field_dropdown.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
+import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/source_category_model.dart';
 import 'package:vidyanexis/controller/models/stage_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -168,6 +169,11 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController searchBranchController = TextEditingController();
   final TextEditingController branchController = TextEditingController();
 
+  //expense type
+  final TextEditingController searchExpenseTypeController =
+      TextEditingController();
+  final TextEditingController expenseTypeController = TextEditingController();
+
   //lists
   List<BranchModel> _branchModel = [];
   List<BranchModel> get branchModel => _branchModel;
@@ -204,6 +210,8 @@ class SettingsProvider extends ChangeNotifier {
   List<DocumentTypeModel> _documentType = [];
   List<DocumentTypeModel> get documentType => _documentType;
   List<CustomFieldModel> customFieldModelList = [];
+  List<ExpenseTypeModel> _expenseTypeList = [];
+  List<ExpenseTypeModel> get expenseTypeList => _expenseTypeList;
 
   List<SearchStatusModel> _status = [];
   List<SearchStatusModel> get status => _status;
@@ -3185,6 +3193,123 @@ class SettingsProvider extends ChangeNotifier {
         return id > 0;
       } else {
         showToastInDialog("'Failed to delete category'", context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  addExpenseType({
+    required BuildContext context,
+    required String expenseId,
+    required String expenseName,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.addExpenseType,
+          bodyData: {
+            "Expense_Type_Id": expenseId,
+            "Expense_Type_Name": expenseName
+          });
+
+      if (response!.statusCode == 200) {
+        expenseTypeController.clear();
+        searchExpenseTypeController.clear();
+
+        final data = response.data;
+        getExpenseType('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  Future<List<ExpenseTypeModel>> getExpenseType(
+      String query, BuildContext context) async {
+    _expenseTypeList = [];
+    notifyListeners();
+
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getExpenseTypes}?Expense_Type_Name=$query');
+
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+
+        if (data != null &&
+            data is List &&
+            data.isNotEmpty &&
+            data[0] is List) {
+          List<dynamic> expenseDataList = data[0];
+
+          _expenseTypeList = expenseDataList
+              .map((item) =>
+                  ExpenseTypeModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+    return _expenseTypeList;
+  }
+
+  void deleteExpenseType(BuildContext context, int userId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteExpenseType}/$userId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Expense_Type_Id'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete an Expense Type \n that is currently in use");
+        } else {
+          getExpenseType('', context);
+          expenseTypeController.clear();
+          searchExpenseTypeController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Expense Type deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete Expense Type')),
+        );
       }
     } catch (e) {
       print('Exception occurred: $e');

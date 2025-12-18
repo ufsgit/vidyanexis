@@ -26,6 +26,7 @@ import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_rep
 import 'package:vidyanexis/presentation/pages/reports/feddback_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_page.dart';
 import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
@@ -165,7 +166,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/flow.svg',
           baseContent: const ProcessFlowPage(),
         ),
-
+      if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
+        SidebarOption(
+          title: 'Expense Management',
+          iconPath: 'assets/images/inventory.svg',
+          baseContent: const ExpenseManagement(),
+        ),
       if (settingsProvider.menuIsViewMap[7].toString() == '1')
         SidebarOption(
           title: 'Task Reports',

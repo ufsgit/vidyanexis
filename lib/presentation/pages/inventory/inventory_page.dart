@@ -70,8 +70,9 @@ class _InventoryPageState extends State<InventoryPage> {
                   _buildMenuItem(context, 'Category', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[37].toString() == '1')
                   _buildMenuItem(context, 'Unit', Icons.document_scanner),
-                // _buildMenuItem(
-                //     context, 'Expense Management', Icons.document_scanner),
+                if (settingsProvider.menuIsViewMap[48].toString() == '1')
+                  _buildMenuItem(
+                      context, 'Expense Management', Icons.document_scanner),
               ],
             ),
           ),
