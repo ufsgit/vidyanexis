@@ -12,9 +12,14 @@ import 'package:vidyanexis/controller/models/checklist_category_model.dart';
 import 'package:vidyanexis/controller/models/checklist_item_model.dart';
 import 'package:vidyanexis/controller/models/custom_field_dropdown.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
+import 'package:vidyanexis/controller/models/customer_details_model.dart';
+import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
+import 'package:vidyanexis/controller/models/project_model.dart';
+import 'package:vidyanexis/controller/models/project_type_model.dart';
 import 'package:vidyanexis/controller/models/source_category_model.dart';
 import 'package:vidyanexis/controller/models/stage_model.dart';
+import 'package:vidyanexis/controller/models/tax_slab_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_source_category_page.dart';
@@ -125,6 +130,11 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController progressValueController = TextEditingController();
   final TextEditingController sourceCategoryEnquiryController =
       TextEditingController();
+  final TextEditingController projectController = TextEditingController();
+  final TextEditingController searchProjectController = TextEditingController();
+  final TextEditingController projectTypeController = TextEditingController();
+  final TextEditingController searchProjectTypeController =
+      TextEditingController();
 
   //enquiry source
   final TextEditingController enquirySourceController = TextEditingController();
@@ -212,6 +222,10 @@ class SettingsProvider extends ChangeNotifier {
   List<CustomFieldModel> customFieldModelList = [];
   List<ExpenseTypeModel> _expenseTypeList = [];
   List<ExpenseTypeModel> get expenseTypeList => _expenseTypeList;
+  List<CustomerModel> _customerTypeList = [];
+  List<CustomerModel> get customerTypeList => _customerTypeList;
+  List<TaxSlabModel> _taxSlabModel = [];
+  List<TaxSlabModel> get taxSlabModel => _taxSlabModel;
 
   List<SearchStatusModel> _status = [];
   List<SearchStatusModel> get status => _status;
@@ -315,6 +329,11 @@ class SettingsProvider extends ChangeNotifier {
   int _isFeedbackChecked = 0;
   int get isFeedbackChecked => _isFeedbackChecked;
   int? get selectedStatusId => _selectedStatusId;
+
+  List<ProjectTypeModel> _projectTypeList = [];
+  List<ProjectTypeModel> get projectTypeList => _projectTypeList;
+  List<ProjectModel> _projectList = [];
+  List<ProjectModel> get projectList => _projectList;
 
   set selectedBranchId(int? id) {
     _selectedBranchId = id;
@@ -3202,6 +3221,41 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  Future<List<ProjectTypeModel>> searchProjectTypes(
+      String query, BuildContext context) async {
+    _projectTypeList = [];
+    notifyListeners();
+
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchProjectType}?Project_Type_Name=$query');
+
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+
+        if (data != null) {
+          _projectTypeList = (data as List<dynamic>)
+              .map((item) => ProjectTypeModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+    return _projectTypeList;
+  }
+
   addExpenseType({
     required BuildContext context,
     required String expenseId,
@@ -3317,5 +3371,259 @@ class SettingsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+  }
+
+  Future<List<ProjectModel>> searchProjects(
+      String query, BuildContext context) async {
+    _projectList = [];
+    notifyListeners();
+
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.searchProjects}?Project_Name=$query');
+
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+
+        if (data != null) {
+          _projectList = (data as List<dynamic>)
+              .map((item) => ProjectModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+    return _projectList;
+  }
+
+  addProject({
+    required BuildContext context,
+    required String forId,
+    required String forName,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveProjects,
+          bodyData: {"project_ID": forId, "project_Name": forName});
+
+      if (response!.statusCode == 200) {
+        projectController.clear();
+        searchProjectController.clear();
+
+        final data = response.data;
+        searchProjects('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  addProjectType({
+    required BuildContext context,
+    required String forId,
+    required String forName,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveProjectType,
+          bodyData: {"Project_Type_Id": forId, "Project_Type_Name": forName});
+
+      if (response!.statusCode == 200) {
+        projectTypeController.clear();
+        searchProjectTypeController.clear();
+
+        final data = response.data;
+        searchProjectTypes('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  void deleteProjectType(BuildContext context, int projectIdTypeId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: '${HttpUrls.deleteProjectType}',
+          bodyData: {"Project_Type_Id": projectIdTypeId});
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        int projectId = data['Project_Type_Id'];
+        if (projectId > 0) {
+          searchProjectTypes('', context);
+          projectTypeController.clear();
+          searchProjectTypeController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Project type deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        } else {
+          Loader.stopLoader(context);
+          alert(context, "Project type delete failed");
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete project type')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  void deleteProject(BuildContext context, int projectId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: '${HttpUrls.deleteProjects}',
+          bodyData: {"project_ID": projectId});
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        int projectId = data['project_ID'];
+        if (projectId > 0) {
+          searchProjects('', context);
+          projectController.clear();
+          searchProjectController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Project deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        } else {
+          Loader.stopLoader(context);
+          alert(context, "Project delete failed");
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete project')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<List<CustomerModel>> getCustomerDropDown(BuildContext context) async {
+    _customerTypeList = [];
+    notifyListeners();
+
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getAllLeadDropDown}',
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data is List) {
+          _customerTypeList = data
+              .map((item) =>
+                  CustomerModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+
+    return _customerTypeList;
+  }
+
+  Future<List<TaxSlabModel>> searchTaxSlab(
+      BuildContext context, String taskId) async {
+    _taxSlabModel = [];
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getAllTax}/$taskId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data is List) {
+          _taxSlabModel =
+              data.map((item) => TaxSlabModel.fromJson(item)).toList();
+
+          notifyListeners();
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Unexpected data format')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+    return _taxSlabModel;
   }
 }

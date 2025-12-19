@@ -9,6 +9,8 @@ import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/models/customer_details_model.dart';
+import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/models/item_lists_model.dart';
@@ -23,6 +25,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 
 class ExpenseProvider extends ChangeNotifier {
   String _selectedMenu = 'Item';
@@ -35,6 +38,16 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController itemUnitPriceController = TextEditingController();
   final TextEditingController itemHSNController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
+  final TextEditingController searchExpenseController = TextEditingController();
+  final TextEditingController userController = TextEditingController();
+  final TextEditingController projectController = TextEditingController();
+  final TextEditingController leadController = TextEditingController();
+  final TextEditingController commentController = TextEditingController();
+  final TextEditingController expenseHeadController = TextEditingController();
+  final TextEditingController amountWithoutTaxController =
+      TextEditingController();
+  final TextEditingController projectTypeController = TextEditingController();
+
   final List<Uint8List> _images = []; // List to store images
   final List<Uint8List> _pdfs = [];
   List<Uint8List> get images => _images;
@@ -54,6 +67,10 @@ class ExpenseProvider extends ChangeNotifier {
   List<StockUseModel> get stockUseList => _stockUseList;
   List<StockUseItems> _stockUseItems = [];
   List<StockUseItems> get stockUseItems => _stockUseItems;
+  List<ExpenseModel> _expenseModelList = [];
+  List<ExpenseModel> get expenseModelList => _expenseModelList;
+  int? _selectedUser;
+  int? get selectedUser => _selectedUser;
   //item add
   final TextEditingController searchitemNameController =
       TextEditingController();
@@ -85,7 +102,11 @@ class ExpenseProvider extends ChangeNotifier {
   List<StockEntry> get stockList => _stockList;
   int? _selectedCustomerId;
   int? get selectedCustomerId => _selectedCustomerId;
+  int? _selectedProjectTypeId;
+  int? get selectedProjectTypeId => _selectedProjectTypeId;
 
+  int? _expenseId;
+  int? get expenseId => _expenseId;
   int? _selectedExpenseTypeId;
   int? get selectedExpenseTypeId => _selectedExpenseTypeId;
 
@@ -203,6 +224,14 @@ class ExpenseProvider extends ChangeNotifier {
   List<ExpenseTypeModel> get expenseTypeList => _expenseTypeList;
   int? _selectedDateFilterIndex;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+  int? _selectedClient;
+  int? get selectedClient => _selectedClient;
+  get taxPercentageController => null;
+
+  //client filter
+  List<CustomerModel> _clientList = [];
+  List<CustomerModel> get clientList => _clientList;
+
   void setSelectedCustomerId(int id) {
     _selectedCustomerId = id;
     notifyListeners();
@@ -404,6 +433,21 @@ class ExpenseProvider extends ChangeNotifier {
     _toDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
+    notifyListeners();
+  }
+
+  void setUserFilter(int newUser) {
+    _selectedUser = newUser;
+    notifyListeners();
+  }
+
+  void setClientFilter(int newClient) {
+    _selectedClient = newClient;
+    notifyListeners();
+  }
+
+  void setProjectTypeFilter(int id) {
+    _selectedProjectTypeId = id;
     notifyListeners();
   }
 
@@ -911,6 +955,29 @@ class ExpenseProvider extends ChangeNotifier {
   }
   //-----------------------------------------
   //Expense Management
+
+  void getStockUseDetails(
+      {required BuildContext context, required String masterId}) {}
+
+  void clearUserFilter() {
+    _selectedUser = null;
+    notifyListeners();
+  }
+
+  void clearClientFilter() {
+    _selectedClient = null;
+    notifyListeners();
+  }
+
+  void clearProjectTypeFilter() {
+    _selectedProjectTypeId = null;
+    notifyListeners();
+  }
+
+  void clearExpenseTypeFilter() {
+    _selectedExpenseTypeId = null;
+    notifyListeners();
+  }
 
   //File Upload
   Future<void> addFile() async {
@@ -1534,6 +1601,111 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  void getStockUseDetails(
-      {required BuildContext context, required String masterId}) {}
+  Future<List<ExpenseModel>> searchExpense(
+      String query, BuildContext context) async {
+    _expenseModelList = [];
+    // isLoading = true;
+    Loader.showLoader(context);
+    notifyListeners();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String userId = preferences.getString('userId') ?? "";
+    String assignedTo = selectedUser == null ? userId : selectedUser.toString();
+
+    //Client filter
+    String clientId = selectedClient == null ? "0" : selectedClient.toString();
+
+    try {
+      final expenseTypeId = selectedExpenseTypeId ?? 0;
+      final projectTypeId = selectedProjectTypeId ?? 0;
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.getExpenseManagement}?Expense_Head=$query&reference_id=$assignedTo&expense_type_id=$expenseTypeId&project_type_id=$projectTypeId"');
+
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+
+        if (data != null) {
+          _expenseModelList = (data as List<dynamic>)
+              .map((item) => ExpenseModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    } finally {
+      Loader.stopLoader(context);
+      notifyListeners();
+    }
+    return _expenseModelList;
+  }
+
+  void saveExpense(ExpenseModel expenseModel, BuildContext context,
+      String customerId) async {
+    try {
+      Loader.showLoader(context);
+
+      var data = expenseModel.toJson();
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveExpenseManagement, bodyData: data);
+
+      if (response!.statusCode == 200) {
+        final data = response.data;
+        // searchExpense('', context, customerId);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  Future deleteExpense(BuildContext context, int id) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.deleteExpenseManagement + "/" + id.toString(),
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+
+        searchExpense('', context);
+        searchExpenseController.clear();
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Expense deleted successfully')),
+        );
+        Loader.stopLoader(context);
+
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete expense')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
 }
