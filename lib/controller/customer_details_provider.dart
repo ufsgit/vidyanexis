@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
@@ -192,6 +193,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  //commercial
   TextEditingController commercialDescriptionController =
       TextEditingController();
   TextEditingController commercialDCCapacityController =
@@ -200,6 +202,46 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   TextEditingController commercialUnitPriceController = TextEditingController();
   TextEditingController commercialTotalController = TextEditingController();
+  List<CommercialItemModel> _commercialItems = [];
+  List<CommercialItemModel> get commercialItems => _commercialItems;
+  int? _editCommercialIndex;
+  int? get editCommercialIndex => _editCommercialIndex;
+
+  void setEditCommercialItemIndex(int? index) {
+    _editCommercialIndex = index;
+    notifyListeners();
+  }
+
+  //cableDetails
+  final TextEditingController cableStructureController =
+      TextEditingController();
+  final TextEditingController cableTypeController = TextEditingController();
+  final TextEditingController cableShortCircuitTempController =
+      TextEditingController();
+  final TextEditingController cableStandardController = TextEditingController();
+  final TextEditingController cableConductorClassController =
+      TextEditingController();
+  final TextEditingController cableMaterialController = TextEditingController();
+  final TextEditingController cableProtectionController =
+      TextEditingController();
+  final TextEditingController cableWarrantyController = TextEditingController();
+  final TextEditingController cableTensileStrengthController =
+      TextEditingController();
+
+  //solarPV
+  final TextEditingController plantCapacityController = TextEditingController();
+  final TextEditingController moduleTechnologiesController =
+      TextEditingController();
+  final TextEditingController mountingStructureTechnologiesController =
+      TextEditingController();
+  final TextEditingController projectSchemeController = TextEditingController();
+  final TextEditingController powerEvacuationController =
+      TextEditingController();
+  final TextEditingController areaApproximateController =
+      TextEditingController();
+  final TextEditingController solarPlantOutputConnectionController =
+      TextEditingController();
+  final TextEditingController schemeController = TextEditingController();
 
 //financial controllers
   final TextEditingController advanceController = TextEditingController();
@@ -468,7 +510,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print("Invalid input for price or quantity");
     }
     totalController.text =
-        total.toString(); // Update controller with formatted subtotal
+        total.toStringAsFixed(2); // Update controller with formatted subtotal
     notifyListeners();
   }
 
@@ -477,13 +519,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
     final unitPrice = double.tryParse(itemPriceController.text) ?? 0.0;
     final quantity = int.tryParse(itemQuantityController.text) ?? 1;
     final gstPercent = double.tryParse(itemGstPercentController.text) ?? 0.0;
-    final adCess = double.tryParse(itemAdCessController.text) ?? 0.0;
+    final otherTax = double.tryParse(itemAdCessController.text) ?? 0.0;
 
     // GST should be calculated on the total price (unitPrice * quantity)
     final gst = ((unitPrice * quantity) * gstPercent) / 100;
     itemGstController.text = gst.toStringAsFixed(2);
 
-    final total = (unitPrice * quantity) + gst + adCess;
+    final total = (unitPrice * quantity) + gst + otherTax;
     itemTotalController.text = total.toStringAsFixed(2);
   }
 
@@ -540,19 +582,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addOrEditBOMItem() {
     // Validate input fields
-    if (billdescriptionController.text.isEmpty ||
-        billmakeController.text.isEmpty ||
-        billquantityController.text.isEmpty ||
-        billdistributorController.text.isEmpty ||
-        billinvoiceController.text.isEmpty) {
-      return;
-    }
+    // if (billdescriptionController.text.isEmpty ||
+    //     billmakeController.text.isEmpty ||
+    //     billquantityController.text.isEmpty ||
+    //     billdistributorController.text.isEmpty ||
+    //     billinvoiceController.text.isEmpty) {
+    //   return;
+    // }
 
     // Create the BOM item
     final newBOMItem = BillOfMaterialItem(
       itemsAndDescription: billdescriptionController.text,
       make: billmakeController.text,
-      quantity: int.parse(billquantityController.text),
+      quantity: int.tryParse(billquantityController.text) ?? 0,
       distributor: billdistributorController.text,
       invoiceNo: billinvoiceController.text,
     );
@@ -1427,6 +1469,28 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "TotalGSTAmount": double.tryParse(totalGstAmountController.text) ?? 0.0,
         "TotalGSTPercent": double.tryParse(totalGstPerController.text) ?? 0.0,
         "TotalAdCESS": double.tryParse(totalAdCESSController.text) ?? 0.0,
+        //
+        "QuotationTypeId": _selectedQuotationType,
+        "QuotationTypeName": quotationTypeController.text,
+        "CommercialItems": _commercialItems.map((e) => e.toJson()).toList(),
+        "CableStructure": cableStructureController.text,
+        "CableType": cableTypeController.text,
+        "CableShortCircuitTemp": cableShortCircuitTempController.text,
+        "CableStandard": cableStandardController.text,
+        "CableConductorClass": cableConductorClassController.text,
+        "CableMaterial": cableMaterialController.text,
+        "CableProtection": cableProtectionController.text,
+        "CableWarranty": cableWarrantyController.text,
+        "CableTensileStrength": cableTensileStrengthController.text,
+        "PlantCapacity": plantCapacityController.text,
+        "ModuleTechnologies": moduleTechnologiesController.text,
+        "MountingStructureTechnologies":
+            mountingStructureTechnologiesController.text,
+        "ProjectScheme": projectSchemeController.text,
+        "PowerEvacuation": powerEvacuationController.text,
+        "AreaApproximate": areaApproximateController.text,
+        "SolarPlantOutputConnection": solarPlantOutputConnectionController.text,
+        "Scheme": schemeController.text,
       });
 
       if (response!.statusCode == 200) {
@@ -2474,82 +2538,113 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   void addOrEditCommercialItem(BuildContext context) {
-    //   // Validate input fields
-    //   if (commercialDescriptionController.text.isEmpty) {
-    //     showDialog(
-    //       context: context,
-    //       builder: (BuildContext context) {
-    //         return AlertDialog(
-    //           title: Text(
-    //             'Cannot save',
-    //             style: TextStyle(
-    //               color: AppColors.appViolet,
-    //               fontWeight: FontWeight.bold,
-    //             ),
-    //           ),
-    //           content: const Text(
-    //             'Missing Details',
-    //             style: TextStyle(
-    //               color: Colors.black87,
-    //               fontSize: 16,
-    //             ),
-    //           ),
-    //           shape: RoundedRectangleBorder(
-    //             borderRadius: BorderRadius.circular(15),
-    //           ),
-    //           actions: [
-    //             TextButton(
-    //               onPressed: () {
-    //                 Navigator.pop(context);
-    //               },
-    //               child: Text(
-    //                 'OK',
-    //                 style: TextStyle(
-    //                   color: AppColors.appViolet,
-    //                   fontWeight: FontWeight.bold,
-    //                   fontSize: 16,
-    //                 ),
-    //               ),
-    //             ),
-    //           ],
-    //         );
-    //       },
-    //     );
-    //     return;
-    //   }
+    // Validate input fields
+    if (commercialDescriptionController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Cannot save',
+              style: TextStyle(
+                color: AppColors.appViolet,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: const Text(
+              'Missing Details',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: AppColors.appViolet,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
 
-    //   // Create the new commercial item
-    //   final unitPrice = double.tryParse(itemPriceController.text) ?? 0.0;
-    //   final mrp = double.tryParse(itemMrpController.text) ?? 0.0;
-    //   final gstPercent = double.tryParse(itemGstPercentController.text) ?? 0.0;
-    //   final adCess = double.tryParse(itemAdCessController.text) ?? 0.0;
-    //   final gst = double.tryParse(itemGstController.text) ?? 0.0;
-    //   final quantity = int.tryParse(itemQuantityController.text) ?? 1;
-    //   final amount = double.tryParse(itemTotalController.text) ?? 0.0;
+    // Create the new commercial item
+    final newItem = CommercialItemModel(
+      description: commercialDescriptionController.text,
+      dcCapacity: commercialDCCapacityController.text,
+      acCapacity: commercialACCapacityController.text,
+      unitPrice: commercialUnitPriceController.text,
+      total: commercialTotalController.text,
+    );
 
-    //   final newItem = Item(
-    //     ItemName: itemNameController.text,
-    //     UnitPrice: unitPrice,
-    //     Quantity: quantity,
-    //     MRP: mrp,
-    //     GST: gst,
-    //     GSTPercent: gstPercent,
-    //     AdCESS: adCess,
-    //     Unit: itemUnitController.text,
-    //     Amount: amount,
-    //   );
+    if (_editCommercialIndex != null &&
+        _editCommercialIndex! >= 0 &&
+        _editCommercialIndex! < _commercialItems.length) {
+      // Edit existing item
+      _commercialItems[_editCommercialIndex!] = newItem;
+    } else {
+      // Add new item
+      _commercialItems.add(newItem);
+    }
 
-    //   if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
-    //     // Edit existing item
-    //     _items[_editIndex!] = newItem;
-    //   } else {
-    //     // Add new item
-    //     _items.add(newItem);
-    //   }
+    // Clear the text fields
+    _editCommercialIndex = null;
+    clearCommercialItemFields();
+    print(_commercialItems.map((e) => e.toJson()).toList());
+    commercialTotalCalculator();
+    notifyListeners(); // Trigger UI updates
+  }
 
-    //   // Clear the text fields
-    //   _editIndex = null;
+  void clearCommercialItemFields() {
+    commercialDescriptionController.clear();
+    commercialDCCapacityController.clear();
+    commercialACCapacityController.clear();
+    commercialUnitPriceController.clear();
+    commercialTotalController.clear();
+  }
 
-    //   notifyListeners(); // Trigger UI updates
+  void populateCommercialItemFieldsForEditing(int index) {
+    // Populate text fields with existing item's data for editing
+    if (index >= 0 && index < _commercialItems.length) {
+      final itemToEdit = _commercialItems[index];
+
+      commercialDescriptionController.text = itemToEdit.description ?? '';
+      commercialDCCapacityController.text = itemToEdit.dcCapacity ?? '';
+      commercialACCapacityController.text = itemToEdit.acCapacity ?? '';
+      commercialUnitPriceController.text = itemToEdit.unitPrice ?? '';
+      commercialTotalController.text = itemToEdit.total ?? '';
+
+      setEditCommercialItemIndex(index);
+      notifyListeners();
+    }
+  }
+
+  void deleteCommercialItem(int index) {
+    if (index >= 0 && index < _commercialItems.length) {
+      _commercialItems.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void commercialTotalCalculator() {
+    double total = 0;
+    for (var item in _commercialItems) {
+      total += double.tryParse(item.total ?? '0') ?? 0;
+    }
+    totalController.text = total.toStringAsFixed(2);
   }
 }
