@@ -1,8 +1,8 @@
 class HttpUrls {
   //baseurls
 
-  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
-  // static String baseUrl = 'https://2jw4dwnj-3520.inc1.devtunnels.ms/';
+//   static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  static String baseUrl = 'https://2jw4dwnj-3520.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
