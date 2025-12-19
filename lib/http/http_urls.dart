@@ -1,7 +1,9 @@
 class HttpUrls {
   //baseurls
 
-  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+//   static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+    static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
+
   // static String baseUrl = 'https://2jw4dwnj-3520.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
