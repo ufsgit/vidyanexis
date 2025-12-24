@@ -478,7 +478,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
           const SizedBox(height: 16),
 
           // Audio Recording Section
-          _buildAudioSection(audioProvider),
+          if (settingsProvider.menuIsViewMap[67].toString() == '1')
+            _buildAudioSection(audioProvider),
           const SizedBox(height: 16),
         ],
       ),

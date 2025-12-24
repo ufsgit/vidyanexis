@@ -212,6 +212,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
     final provider = Provider.of<AudioFileProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return AlertDialog(
       scrollable: true,
@@ -573,241 +574,161 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
             const SizedBox(height: 16.0),
             // Updated UI with debugging and test capabilities
 
-            Column(
-              children: [
-                // Recording Controls
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: provider.isRecording
-                        ? Colors.red.withOpacity(0.1)
-                        : Colors.grey.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: provider.isRecording ? Colors.red : Colors.grey,
-                      width: 2,
-                    ),
-                  ),
-                  child: Column(
-                    children: [
-                      // Recording Status
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (provider.isRecording) ...[
-                            Icon(
-                              provider.isRecordingPaused
-                                  ? Icons.pause
-                                  : Icons.fiber_manual_record,
-                              color: Colors.red,
-                              size: 20,
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              provider.isRecordingPaused
-                                  ? 'Recording Paused'
-                                  : 'Recording...',
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(
-                              provider.formattedRecordingDuration,
-                              style: const TextStyle(
-                                color: Colors.red,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ] else
-                            ...[],
-                        ],
+            if (settingsProvider.menuIsViewMap[67].toString() == '1')
+              Column(
+                children: [
+                  // Recording Controls
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: provider.isRecording
+                          ? Colors.red.withOpacity(0.1)
+                          : Colors.grey.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(
+                        color: provider.isRecording ? Colors.red : Colors.grey,
+                        width: 2,
                       ),
+                    ),
+                    child: Column(
+                      children: [
+                        // Recording Status
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (provider.isRecording) ...[
+                              Icon(
+                                provider.isRecordingPaused
+                                    ? Icons.pause
+                                    : Icons.fiber_manual_record,
+                                color: Colors.red,
+                                size: 20,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                provider.isRecordingPaused
+                                    ? 'Recording Paused'
+                                    : 'Recording...',
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                provider.formattedRecordingDuration,
+                                style: const TextStyle(
+                                  color: Colors.red,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ] else
+                              ...[],
+                          ],
+                        ),
 
-                      // Web-specific instructions
-                      if (kIsWeb) ...[
-                        const SizedBox(height: 8),
-                        Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.blue.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
+                        // Web-specific instructions
+                        if (kIsWeb) ...[
+                          const SizedBox(height: 8),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.blue.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Icon(Icons.info_outline,
+                                        color: Colors.blue, size: 16),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: Text(
+                                        'Web Recording: Allow microphone access when prompted',
+                                        style: TextStyle(
+                                          fontSize: 12,
+                                          color: Colors.blue,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                          child: const Column(
-                            children: [
-                              Row(
-                                children: [
-                                  Icon(Icons.info_outline,
-                                      color: Colors.blue, size: 16),
-                                  SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      'Web Recording: Allow microphone access when prompted',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        color: Colors.blue,
+                        ],
+
+                        const SizedBox(height: 16),
+
+                        // Recording Control Buttons
+                        if (!provider.isRecording) ...[
+                          // Recording start buttons
+                          if (kIsWeb) ...[
+                            // Two options for web recording
+                            Column(
+                              children: [
+                                // Primary recording button (record package)
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () async {
+                                      provider.debugRecordingState();
+                                      await provider.startRecording();
+                                      provider.debugRecordingState();
+                                    },
+                                    icon: const Icon(Icons.mic, size: 20),
+                                    label: const Text('Start Recording'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+                                ),
 
-                      const SizedBox(height: 16),
+                                SizedBox(
+                                  height: 8,
+                                ),
 
-                      // Recording Control Buttons
-                      if (!provider.isRecording) ...[
-                        // Recording start buttons
-                        if (kIsWeb) ...[
-                          // Two options for web recording
-                          Column(
-                            children: [
-                              // Primary recording button (record package)
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton.icon(
-                                  onPressed: () async {
-                                    provider.debugRecordingState();
-                                    await provider.startRecording();
-                                    provider.debugRecordingState();
-                                  },
-                                  icon: const Icon(Icons.mic, size: 20),
-                                  label: const Text('Start Recording'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.red,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () async {
+                                      await provider.addAudioFile();
+                                    },
+                                    icon:
+                                        const Icon(Icons.audiotrack, size: 20),
+                                    label: const Text('Add Audio file'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.blue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
-
-                              SizedBox(
-                                height: 8,
-                              ),
-
-                              SizedBox(
-                                width: double.infinity,
-                                child: ElevatedButton.icon(
-                                  onPressed: () async {
-                                    await provider.addAudioFile();
-                                  },
-                                  icon: const Icon(Icons.audiotrack, size: 20),
-                                  label: const Text('Add Audio file'),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.blue,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ] else ...[
-                          // Mobile recording button
-                          ElevatedButton.icon(
-                            onPressed: () async {
-                              provider.debugRecordingState();
-                              await provider.startRecording();
-                              provider.debugRecordingState();
-                            },
-                            icon: const Icon(Icons.mic, size: 20),
-                            label: const Text('Start Recording'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(8),
-                              ),
+                              ],
                             ),
-                          ),
-                        ],
-                      ] else ...[
-                        // Recording control buttons (pause, stop, cancel)
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: [
-                            // Pause/Resume Button (only for record package, not native web)
-                            if (provider.nativeMediaRecorder == null) ...[
-                              ElevatedButton.icon(
-                                onPressed: provider.isRecordingPaused
-                                    ? provider.resumeRecording
-                                    : provider.pauseRecording,
-                                icon: Icon(
-                                    provider.isRecordingPaused
-                                        ? Icons.play_arrow
-                                        : Icons.pause,
-                                    size: 20),
-                                label: Text(provider.isRecordingPaused
-                                    ? 'Resume'
-                                    : 'Pause'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.orange,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                ),
-                              ),
-                            ],
-
-                            // Stop Button
+                          ] else ...[
+                            // Mobile recording button
                             ElevatedButton.icon(
                               onPressed: () async {
-                                print('=== STOPPING RECORDING ===');
                                 provider.debugRecordingState();
-
-                                // Use appropriate stop method based on which recorder is active
-                                if (kIsWeb &&
-                                    provider.nativeMediaRecorder != null) {
-                                  await provider.stopNativeWebRecording();
-                                } else {
-                                  await provider.stopRecording();
-                                }
-
+                                await provider.startRecording();
                                 provider.debugRecordingState();
                               },
-                              icon: const Icon(Icons.stop, size: 20),
-                              label: const Text('Stop'),
+                              icon: const Icon(Icons.mic, size: 20),
+                              label: const Text('Start Recording'),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
-                                foregroundColor: Colors.white,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                              ),
-                            ),
-
-                            // Cancel Button
-                            ElevatedButton.icon(
-                              onPressed: () async {
-                                print('=== CANCELLING RECORDING ===');
-                                provider.debugRecordingState();
-                                await provider.cancelRecording();
-                                provider.debugRecordingState();
-                              },
-                              icon: const Icon(Icons.cancel, size: 20),
-                              label: const Text('Cancel'),
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.grey,
+                                backgroundColor: Colors.red,
                                 foregroundColor: Colors.white,
                                 padding: const EdgeInsets.symmetric(
                                     horizontal: 16, vertical: 12),
@@ -817,338 +738,427 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                               ),
                             ),
                           ],
-                        ),
-                      ],
-                    ],
-                  ),
-                ),
-
-                // const SizedBox(height: 16),
-
-                // Row(
-                //   children: [
-                //     ElevatedButton(
-                //       onPressed: () async {
-                //         await provider.addAudioFile();
-                //       },
-                //       style: ElevatedButton.styleFrom(
-                //         backgroundColor: AppColors.appViolet,
-                //         foregroundColor: AppColors.whiteColor,
-                //         padding: const EdgeInsets.symmetric(
-                //             horizontal: 12, vertical: 12),
-                //         shape: RoundedRectangleBorder(
-                //           borderRadius: BorderRadius.circular(8),
-                //         ),
-                //       ),
-                //       child: const Row(
-                //         mainAxisSize: MainAxisSize.min,
-                //         children: [
-                //           Icon(Icons.audiotrack, size: 16),
-                //           SizedBox(width: 8),
-                //           Text('Add Audio File',
-                //               style: TextStyle(fontSize: 16)),
-                //         ],
-                //       ),
-                //     ),
-                //   ],
-                // ),
-
-                const SizedBox(height: 16),
-
-                // Audio Files Display
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.withOpacity(0.05),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          const Icon(Icons.audio_file,
-                              size: 16, color: Colors.grey),
-                          const SizedBox(width: 8),
-                          Text(
-                            'Audio Files (${provider.audios.length})',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 14,
-                              color: Colors.grey,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Display message if no audio files
-                      if (provider.audios.isEmpty) ...[
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: Colors.grey.withOpacity(0.1),
-                            borderRadius: BorderRadius.circular(8),
-                            border:
-                                Border.all(color: Colors.grey.withOpacity(0.2)),
-                          ),
-                          child: const Column(
+                        ] else ...[
+                          // Recording control buttons (pause, stop, cancel)
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
                             children: [
-                              Icon(Icons.audiotrack,
-                                  size: 48, color: Colors.grey),
-                              SizedBox(height: 8),
-                              Text(
-                                'No audio files yet',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500,
+                              // Pause/Resume Button (only for record package, not native web)
+                              if (provider.nativeMediaRecorder == null) ...[
+                                ElevatedButton.icon(
+                                  onPressed: provider.isRecordingPaused
+                                      ? provider.resumeRecording
+                                      : provider.pauseRecording,
+                                  icon: Icon(
+                                      provider.isRecordingPaused
+                                          ? Icons.play_arrow
+                                          : Icons.pause,
+                                      size: 20),
+                                  label: Text(provider.isRecordingPaused
+                                      ? 'Resume'
+                                      : 'Pause'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.orange,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                  ),
+                                ),
+                              ],
+
+                              // Stop Button
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  print('=== STOPPING RECORDING ===');
+                                  provider.debugRecordingState();
+
+                                  // Use appropriate stop method based on which recorder is active
+                                  if (kIsWeb &&
+                                      provider.nativeMediaRecorder != null) {
+                                    await provider.stopNativeWebRecording();
+                                  } else {
+                                    await provider.stopRecording();
+                                  }
+
+                                  provider.debugRecordingState();
+                                },
+                                icon: const Icon(Icons.stop, size: 20),
+                                label: const Text('Stop'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
                               ),
-                              SizedBox(height: 4),
-                              Text(
-                                'Record audio or upload files to get started',
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
+
+                              // Cancel Button
+                              ElevatedButton.icon(
+                                onPressed: () async {
+                                  print('=== CANCELLING RECORDING ===');
+                                  provider.debugRecordingState();
+                                  await provider.cancelRecording();
+                                  provider.debugRecordingState();
+                                },
+                                icon: const Icon(Icons.cancel, size: 20),
+                                label: const Text('Cancel'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                      ] else ...[
-                        // Display audio files
-                        Column(
-                          children:
-                              provider.audios.asMap().entries.map((entry) {
-                            int index = entry.key;
-                            AudioFile audioFile = entry.value;
+                        ],
+                      ],
+                    ),
+                  ),
 
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 8),
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(12),
-                                border: Border.all(
-                                    color: Colors.blue.withOpacity(0.3)),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.1),
-                                    spreadRadius: 1,
-                                    blurRadius: 3,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
+                  // const SizedBox(height: 16),
+
+                  // Row(
+                  //   children: [
+                  //     ElevatedButton(
+                  //       onPressed: () async {
+                  //         await provider.addAudioFile();
+                  //       },
+                  //       style: ElevatedButton.styleFrom(
+                  //         backgroundColor: AppColors.appViolet,
+                  //         foregroundColor: AppColors.whiteColor,
+                  //         padding: const EdgeInsets.symmetric(
+                  //             horizontal: 12, vertical: 12),
+                  //         shape: RoundedRectangleBorder(
+                  //           borderRadius: BorderRadius.circular(8),
+                  //         ),
+                  //       ),
+                  //       child: const Row(
+                  //         mainAxisSize: MainAxisSize.min,
+                  //         children: [
+                  //           Icon(Icons.audiotrack, size: 16),
+                  //           SizedBox(width: 8),
+                  //           Text('Add Audio File',
+                  //               style: TextStyle(fontSize: 16)),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ],
+                  // ),
+
+                  const SizedBox(height: 16),
+
+                  // Audio Files Display
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: Colors.grey.withOpacity(0.05),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey.withOpacity(0.2)),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.audio_file,
+                                size: 16, color: Colors.grey),
+                            const SizedBox(width: 8),
+                            Text(
+                              'Audio Files (${provider.audios.length})',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 14,
+                                color: Colors.grey,
                               ),
-                              child: Row(
-                                children: [
-                                  // Audio icon with recording indicator
-                                  Container(
-                                    padding: const EdgeInsets.all(8),
-                                    decoration: BoxDecoration(
-                                      color: audioFile.isRecording
-                                          ? Colors.red.withOpacity(0.1)
-                                          : Colors.blue.withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Icon(
-                                      audioFile.isRecording
-                                          ? Icons.mic
-                                          : Icons.audiotrack,
-                                      color: audioFile.isRecording
-                                          ? Colors.red
-                                          : Colors.blue,
-                                      size: 20,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 12),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
 
-                                  // Audio file info
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          audioFile.name,
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
+                        // Display message if no audio files
+                        if (provider.audios.isEmpty) ...[
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                  color: Colors.grey.withOpacity(0.2)),
+                            ),
+                            child: const Column(
+                              children: [
+                                Icon(Icons.audiotrack,
+                                    size: 48, color: Colors.grey),
+                                SizedBox(height: 8),
+                                Text(
+                                  'No audio files yet',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: 4),
+                                Text(
+                                  'Record audio or upload files to get started',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ] else ...[
+                          // Display audio files
+                          Column(
+                            children:
+                                provider.audios.asMap().entries.map((entry) {
+                              int index = entry.key;
+                              AudioFile audioFile = entry.value;
+
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 8),
+                                padding: const EdgeInsets.all(12),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(12),
+                                  border: Border.all(
+                                      color: Colors.blue.withOpacity(0.3)),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.grey.withOpacity(0.1),
+                                      spreadRadius: 1,
+                                      blurRadius: 3,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    // Audio icon with recording indicator
+                                    Container(
+                                      padding: const EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: audioFile.isRecording
+                                            ? Colors.red.withOpacity(0.1)
+                                            : Colors.blue.withOpacity(0.1),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Icon(
+                                        audioFile.isRecording
+                                            ? Icons.mic
+                                            : Icons.audiotrack,
+                                        color: audioFile.isRecording
+                                            ? Colors.red
+                                            : Colors.blue,
+                                        size: 20,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 12),
+
+                                    // Audio file info
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            audioFile.name,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 14,
+                                            ),
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
                                           ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                        const SizedBox(height: 2),
-                                        Row(
-                                          children: [
-                                            if (audioFile.isRecording) ...[
-                                              Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 6,
-                                                        vertical: 2),
-                                                decoration: BoxDecoration(
-                                                  color: Colors.red,
-                                                  borderRadius:
-                                                      BorderRadius.circular(4),
-                                                ),
-                                                child: const Text(
-                                                  'RECORDED',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.bold,
+                                          const SizedBox(height: 2),
+                                          Row(
+                                            children: [
+                                              if (audioFile.isRecording) ...[
+                                                Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 6,
+                                                      vertical: 2),
+                                                  decoration: BoxDecoration(
+                                                    color: Colors.red,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            4),
                                                   ),
+                                                  child: const Text(
+                                                    'RECORDED',
+                                                    style: TextStyle(
+                                                      color: Colors.white,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 8),
+                                              ],
+                                              Text(
+                                                '${(audioFile.data.length / 1024).toStringAsFixed(1)} KB',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey,
                                                 ),
                                               ),
                                               const SizedBox(width: 8),
+                                              Text(
+                                                '.${audioFile.extension}',
+                                                style: const TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
                                             ],
-                                            Text(
-                                              '${(audioFile.data.length / 1024).toStringAsFixed(1)} KB',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                              ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+
+                                    // Action buttons
+                                    Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        // Play/Pause Button
+                                        GestureDetector(
+                                          onTap: () {
+                                            if (audioFile.isPlaying) {
+                                              provider.pauseAudio(index);
+                                            } else {
+                                              provider.playAudio(index);
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.blue,
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
                                             ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              '.${audioFile.extension}',
-                                              style: const TextStyle(
-                                                fontSize: 12,
-                                                color: Colors.grey,
-                                                fontWeight: FontWeight.w500,
-                                              ),
+                                            child: Icon(
+                                              audioFile.isPlaying
+                                                  ? Icons.pause
+                                                  : Icons.play_arrow,
+                                              color: Colors.white,
+                                              size: 16,
                                             ),
-                                          ],
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+
+                                        // Stop Button
+                                        GestureDetector(
+                                          onTap: () => provider.stopAudio(),
+                                          child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              color: Colors.orange,
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            child: const Icon(
+                                              Icons.stop,
+                                              color: Colors.white,
+                                              size: 16,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+
+                                        // Remove Button
+                                        GestureDetector(
+                                          onTap: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Remove Audio File'),
+                                                  content: Text(
+                                                      'Remove "${audioFile.name}" from this task?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(
+                                                              context),
+                                                      child:
+                                                          const Text('Cancel'),
+                                                    ),
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        provider
+                                                            .removeAudio(index);
+                                                        Navigator.pop(context);
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                          SnackBar(
+                                                            content: Text(
+                                                                'Audio file "${audioFile.name}" removed.'),
+                                                            duration:
+                                                                const Duration(
+                                                                    seconds: 2),
+                                                          ),
+                                                        );
+                                                      },
+                                                      child: const Text(
+                                                          'Remove',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red)),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.all(6),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  Colors.red.withOpacity(0.1),
+                                              borderRadius:
+                                                  BorderRadius.circular(16),
+                                            ),
+                                            child: const Icon(
+                                              Icons.close,
+                                              color: Colors.red,
+                                              size: 16,
+                                            ),
+                                          ),
                                         ),
                                       ],
                                     ),
-                                  ),
-
-                                  // Action buttons
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // Play/Pause Button
-                                      GestureDetector(
-                                        onTap: () {
-                                          if (audioFile.isPlaying) {
-                                            provider.pauseAudio(index);
-                                          } else {
-                                            provider.playAudio(index);
-                                          }
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.blue,
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          child: Icon(
-                                            audioFile.isPlaying
-                                                ? Icons.pause
-                                                : Icons.play_arrow,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-
-                                      // Stop Button
-                                      GestureDetector(
-                                        onTap: () => provider.stopAudio(),
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.orange,
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          child: const Icon(
-                                            Icons.stop,
-                                            color: Colors.white,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 8),
-
-                                      // Remove Button
-                                      GestureDetector(
-                                        onTap: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'Remove Audio File'),
-                                                content: Text(
-                                                    'Remove "${audioFile.name}" from this task?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    child: const Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      provider
-                                                          .removeAudio(index);
-                                                      Navigator.pop(context);
-                                                      ScaffoldMessenger.of(
-                                                              context)
-                                                          .showSnackBar(
-                                                        SnackBar(
-                                                          content: Text(
-                                                              'Audio file "${audioFile.name}" removed.'),
-                                                          duration:
-                                                              const Duration(
-                                                                  seconds: 2),
-                                                        ),
-                                                      );
-                                                    },
-                                                    child: const Text('Remove',
-                                                        style: TextStyle(
-                                                            color: Colors.red)),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.all(6),
-                                          decoration: BoxDecoration(
-                                            color: Colors.red.withOpacity(0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(16),
-                                          ),
-                                          child: const Icon(
-                                            Icons.close,
-                                            color: Colors.red,
-                                            size: 16,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            );
-                          }).toList(),
-                        ),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                          ),
+                        ],
                       ],
-                    ],
+                    ),
                   ),
-                ),
-              ],
-            ),
+                ],
+              ),
             const SizedBox(height: 16.0),
 
             Row(
