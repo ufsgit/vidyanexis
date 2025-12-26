@@ -229,39 +229,8 @@ class LeadCard extends StatelessWidget {
                     String phone =
                         lead.contactNumber.replaceAll(RegExp(r'[^\d+]'), '');
 
-                    final Uri webWhatsapp =
-                        Uri.parse('https://api.whatsapp.com/send?phone=$phone');
-
-                    try {
-                      if (await canLaunchUrl(webWhatsapp)) {
-                        await launchUrl(webWhatsapp,
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        final Uri whatsappUri =
-                            Uri.parse('whatsapp://send?phone=$phone');
-                        if (await canLaunchUrl(whatsappUri)) {
-                          await launchUrl(whatsappUri,
-                              mode: LaunchMode.externalApplication);
-                        } else {
-                          if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                    'WhatsApp is not installed on this device'),
-                              ),
-                            );
-                          }
-                        }
-                      }
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Could not open WhatsApp'),
-                          ),
-                        );
-                      }
-                    }
+                    // Always show dialog to choose between Normal WhatsApp or WhatsApp Business
+                    _showWhatsAppOptionsDialog(context, phone);
                   },
                   // imageColor: AppColors.darkGreen,
                   imagePath: "assets/images/lead_icon_1.png",
@@ -301,7 +270,7 @@ class LeadCard extends StatelessWidget {
                 CustomActionButton(
                   onTap: () {
                     leadsProvider.statusController.clear();
-                    leadsProvider.assignToFollowUpController.clear();
+                    leadsProvider.searchUserController.clear();
                     leadsProvider.messageController.clear();
                     leadsProvider.nextFollowUpDateController.clear();
                     try {
@@ -314,8 +283,7 @@ class LeadCard extends StatelessWidget {
                       print('status name ${lead.statusName}');
                       dropDownProvider.selectedUserId =
                           int.parse(lead.toUserId.toString());
-                      leadsProvider.assignToFollowUpController.text =
-                          lead.toUserName;
+                      leadsProvider.searchUserController.text = lead.toUserName;
                       print('assign to ${lead.toUserName}');
                       print('assign to id ${lead.toUserId}');
                       leadsProvider.setCutomerId(lead.customerId);
@@ -386,6 +354,98 @@ class LeadCard extends StatelessWidget {
           ),
         if (isExpanded) const SizedBox(height: 12),
       ],
+    );
+  }
+
+  void _showWhatsAppOptionsDialog(BuildContext context, String phone) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Choose WhatsApp'),
+          content: const Text('Select which WhatsApp to open:'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                // Try to open Normal WhatsApp
+                final Uri normalWhatsappUri =
+                    Uri.parse('whatsapp://send?phone=$phone');
+                try {
+                  if (await canLaunchUrl(normalWhatsappUri)) {
+                    await launchUrl(normalWhatsappUri,
+                        mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Normal WhatsApp is not installed'),
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Could not open Normal WhatsApp'),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Normal WhatsApp'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                // Try to open WhatsApp Business
+                final Uri businessWhatsappUri =
+                    Uri.parse('whatsapp://send?phone=$phone');
+                // For WhatsApp Business, the scheme might be different on some platforms
+                // On Android, it's typically: intent://send?phone=$phone#Intent;package=com.whatsapp.w4b;end
+                // But url_launcher handles this differently, so we'll use the web API as fallback
+                final Uri webWhatsapp =
+                    Uri.parse('https://api.whatsapp.com/send?phone=$phone');
+
+                try {
+                  // Try web WhatsApp which works for both
+                  if (await canLaunchUrl(webWhatsapp)) {
+                    await launchUrl(webWhatsapp,
+                        mode: LaunchMode.externalApplication);
+                  } else if (await canLaunchUrl(businessWhatsappUri)) {
+                    await launchUrl(businessWhatsappUri,
+                        mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('WhatsApp Business is not installed'),
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Could not open WhatsApp Business'),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('WhatsApp Business'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 }

@@ -1,11 +1,13 @@
 class HttpUrls {
   //baseurls
 
-  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
-//   static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
+//   static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+    static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
+
+  // static String baseUrl = 'https://2jw4dwnj-3520.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
-      'https://pub-aa285b71265445f696ebfb8a5bd95430.r2.dev/UploadedImages/1/1765801349354.jpeg';
+      'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
 
   //endpoints
   static String loginCheck = "Login/Login_Check";
@@ -13,6 +15,8 @@ class HttpUrls {
   static String saveLead = "lead/Save_lead";
   static String saveCustomer = "lead/Update_Customer";
   static String saveFollowUp = "followup/Save_followup";
+  static String timeTrack = "followup/Time_track_reports";
+  static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
   // static String getAllFollowUpStatus = "status/Search_status";
@@ -136,6 +140,17 @@ class HttpUrls {
   static String getTaskUsers = "task/Get_Task_Users";
   static String saveStock = "item/Save_Stock";
   static String getExpenseTypes = "item/get_expense_types";
+  static String addExpenseType = "item/save_expense_type";
+  static String deleteExpenseType = "item/Delete_Expense_Type";
+  static String getExpenseManagement = "item/get_expense_management";
+  static String saveExpenseManagement = "item/save_expense_management";
+  static String deleteExpenseManagement = "item/Delete_Expense_Management";
+  static String saveProjectType = "project/Save_Project_Type";
+  static String searchProjectType = "project/Get_Project_Type";
+  static String saveProjects = "project/Save_Project";
+  static String deleteProjects = "project/Delete_Project";
+  static String searchProjects = "project/Get_Project";
+  static String deleteProjectType = "project/Delete_Project_Type";
   static String getPurchaseData = "item/get_purchase_details";
   static String savePurchase = "item/save_purchase_details";
   static String getInvoiceList = "service/Get_Customer_Invoice";
@@ -207,4 +222,6 @@ class HttpUrls {
       "lead/Get_CustomFields_On_EnquiryFor";
   static String saveRefund = "service/Save_Refund_Details";
   static String getRefundDetails = "service/Get_Refund_Details";
+  static String getAllLeadDropDown = "lead/Get_All_Lead_Dropdown";
+  static String getAllTax = "tax/Get_Tax";
 }

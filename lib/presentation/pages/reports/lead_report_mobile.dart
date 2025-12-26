@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/reports_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -26,7 +27,9 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class LeadReportMobile extends StatefulWidget {
-  const LeadReportMobile({super.key});
+  const LeadReportMobile(this.fromDashBoard, {super.key});
+
+  final bool fromDashBoard;
 
   @override
   State<LeadReportMobile> createState() => _leadReportMobile();
@@ -43,7 +46,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      final leadReportProvider =
+          Provider.of<LeadReportProvider>(context, listen: false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
@@ -53,7 +57,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
-      leadProvider.getSearchLeadReports('', '', '', '', context);
+      leadReportProvider.getSearchLeadReports('', '', '', '', context);
     });
   }
 
@@ -77,7 +81,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
       return colors[nameHash % colors.length];
     }
 
-    final leadProvider = Provider.of<LeadsProvider>(context);
+    final leadReportProvider = Provider.of<LeadReportProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     final searchProvider = Provider.of<SidebarProvider>(context);
     final customerProvider = Provider.of<CustomerProvider>(context);
@@ -93,7 +97,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
           child: IconButton(
             onPressed: () {
               customerProvider.setFilter(false);
-              leadProvider.setFilter(false);
+              leadReportProvider.setFilter(false);
               searchProvider.stopSearch();
               context.pop();
             },
@@ -107,11 +111,11 @@ class _leadReportMobile extends State<LeadReportMobile> {
         title: 'Leads Report',
         onSearchTap: () {
           searchProvider.startSearch();
-          leadProvider.toggleFilter();
-          leadProvider.selectDateFilterOption(null);
-          leadProvider.removeStatus();
-          leadProvider.getSearchLeadReports('', '', '', '', context);
-          print(leadProvider.isFilter);
+          leadReportProvider.toggleFilter();
+          // leadReportProvider.selectDateFilterOption(null);
+          // leadReportProvider.removeStatus();
+          leadReportProvider.getSearchLeadReports('', '', '', '', context);
+          print(leadReportProvider.isFilter);
         },
         titleStyle: GoogleFonts.plusJakartaSans(
             fontSize: 16,
@@ -119,22 +123,22 @@ class _leadReportMobile extends State<LeadReportMobile> {
             color: AppColors.textBlack),
         searchHintText: 'Search Reports...',
         onFilterTap: () {
-          leadProvider.toggleFilter();
+          leadReportProvider.toggleFilter();
         },
         onClearTap: () {
           searchController.clear();
           searchProvider.stopSearch();
-          leadProvider.toggleFilter();
-          leadProvider.selectDateFilterOption(null);
-          leadProvider.removeStatus();
-          leadProvider.getSearchLeadReports('', '', '', '', context);
+          leadReportProvider.toggleFilter();
+          // leadReportProvider.selectDateFilterOption(null);
+          // leadReportProvider.removeStatus();
+          leadReportProvider.getSearchLeadReports('', '', '', '', context);
         },
         onSearch: (query) {
           String query = searchController.text;
-          leadProvider.selectDateFilterOption(null);
-          leadProvider.removeStatus();
+          // leadReportProvider.selectDateFilterOption(null);
+          // leadReportProvider.removeStatus();
           print(query);
-          leadProvider.getSearchLeadReports(query, '', '', '', context);
+          leadReportProvider.getSearchLeadReports(query, '', '', '', context);
         },
         searchController: searchController,
         showExcel: true,
@@ -148,7 +152,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
               'Next Follow-up Date',
               'Status'
             ],
-            data: leadProvider.leadReportData.map((task) {
+            data: leadReportProvider.leadReportData.map((task) {
               return {
                 'Customer Name': task.customerName,
                 'Mobile no': task.contactNumber,
@@ -170,199 +174,205 @@ class _leadReportMobile extends State<LeadReportMobile> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (leadProvider.isFilter)
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Wrap(
-                  runSpacing: 10,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: leadProvider.selectedStatus != null &&
-                                    leadProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: leadProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: provider.followUpData
-                                .map((status) => DropdownMenuItem<int>(
-                                      value: status.statusId,
-                                      child: Text(
-                                        status.statusName ?? '',
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ))
-                                .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setStatus(newValue);
-
-                                String status =
-                                    leadProvider.selectedStatus.toString();
-
-                                String fromDate =
-                                    leadProvider.formattedFromDate;
-                                String toDate = leadProvider.formattedToDate;
-
-                                print(
-                                    'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-
-                                leadProvider.getSearchLeadReports(
-                                    searchController.text,
-                                    fromDate,
-                                    toDate,
-                                    status,
-                                    context);
-                              }
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        onClickTopButton(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 1.5),
+            if (!widget.fromDashBoard)
+              if (leadReportProvider.isFilter)
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Wrap(
+                    runSpacing: 10,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(
-                              color: leadProvider.fromDate != null ||
-                                      leadProvider.toDate != null
+                              color:
+                                  leadReportProvider.selectedStatus != null &&
+                                          leadReportProvider.selectedStatus != 0
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text('Status: '),
+                            DropdownButton<int>(
+                              value: leadReportProvider.selectedStatus,
+                              hint: const Text('All'),
+                              items: provider.followUpData
+                                  .map((status) => DropdownMenuItem<int>(
+                                        value: status.statusId,
+                                        child: Text(
+                                          status.statusName ?? '',
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (int? newValue) {
+                                if (newValue != null) {
+                                  leadReportProvider.setStatus(newValue);
+
+                                  String status = leadReportProvider
+                                      .selectedStatus
+                                      .toString();
+
+                                  String fromDate =
+                                      leadReportProvider.formattedFromDate;
+                                  String toDate =
+                                      leadReportProvider.formattedToDate;
+
+                                  print(
+                                      'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
+
+                                  leadReportProvider.getSearchLeadReports(
+                                      searchController.text,
+                                      fromDate,
+                                      toDate,
+                                      status,
+                                      context);
+                                }
+                              },
+                              underline: Container(),
+                              isDense: true,
+                              iconSize: 18,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          onClickTopButton(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 1.5),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: leadReportProvider.fromDate != null ||
+                                        leadReportProvider.toDate != null
+                                    ? AppColors.primaryBlue
+                                    : Colors.grey[300]!),
+                          ),
+                          child: Row(
+                            children: [
+                              if (leadReportProvider.fromDate == null &&
+                                  leadReportProvider.toDate == null)
+                                const Text('Next Follow-Up Date: All'),
+                              if (leadReportProvider.fromDate != null &&
+                                  leadReportProvider.toDate != null)
+                                Text(
+                                    'Date : ${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}'),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down_outlined,
+                                color: Colors.black45,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: leadReportProvider.selectedUser != null
                                   ? AppColors.primaryBlue
                                   : Colors.grey[300]!),
                         ),
                         child: Row(
                           children: [
-                            if (leadProvider.fromDate == null &&
-                                leadProvider.toDate == null)
-                              const Text('Next Follow-Up Date: All'),
-                            if (leadProvider.fromDate != null &&
-                                leadProvider.toDate != null)
-                              Text(
-                                  'Date : ${leadProvider.formattedFromDate} - ${leadProvider.formattedToDate}'),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_outlined,
-                              color: Colors.black45,
-                              size: 20,
+                            const Text('Assigned Staff: '),
+                            DropdownButton<int>(
+                              value: leadReportProvider.selectedUser,
+                              hint: const Text('All'),
+                              items: provider.searchUserDetails
+                                  .map((user) => DropdownMenuItem<int>(
+                                        value: user.userDetailsId!,
+                                        child: Text(
+                                          user.userDetailsName ?? '',
+                                          style: const TextStyle(fontSize: 14),
+                                        ),
+                                      ))
+                                  .toList(),
+                              onChanged: (int? newValue) {
+                                if (newValue != null) {
+                                  leadReportProvider.setUserFilterStatus(
+                                      newValue); // Update the status in the provider
+                                  String status = leadReportProvider
+                                      .selectedStatus
+                                      .toString();
+
+                                  String fromDate =
+                                      leadReportProvider.formattedFromDate;
+                                  String toDate =
+                                      leadReportProvider.formattedToDate;
+
+                                  print(
+                                      'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
+
+                                  leadReportProvider.getSearchLeadReports(
+                                      searchController.text,
+                                      fromDate,
+                                      toDate,
+                                      status,
+                                      context);
+                                }
+                              },
+                              underline: Container(),
+                              isDense: true,
+                              iconSize: 18,
                             ),
                           ],
                         ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: leadProvider.selectedUser != null
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
+                      const SizedBox(
+                        width: 10,
                       ),
-                      child: Row(
-                        children: [
-                          const Text('Assigned Staff: '),
-                          DropdownButton<int>(
-                            value: leadProvider.selectedUser,
-                            hint: const Text('All'),
-                            items: provider.searchUserDetails
-                                .map((user) => DropdownMenuItem<int>(
-                                      value: user.userDetailsId!,
-                                      child: Text(
-                                        user.userDetailsName ?? '',
-                                        style: const TextStyle(fontSize: 14),
-                                      ),
-                                    ))
-                                .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setUserFilterStatus(
-                                    newValue); // Update the status in the provider
-                                String status =
-                                    leadProvider.selectedStatus.toString();
-
-                                String fromDate =
-                                    leadProvider.formattedFromDate;
-                                String toDate = leadProvider.formattedToDate;
-
-                                print(
-                                    'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-
-                                leadProvider.getSearchLeadReports(
-                                    searchController.text,
-                                    fromDate,
-                                    toDate,
-                                    status,
-                                    context);
-                              }
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
+                      if (leadReportProvider.fromDate != null ||
+                          leadReportProvider.toDate != null ||
+                          leadReportProvider.selectedStatus != null ||
+                          leadReportProvider.selectedUser != null)
+                        ElevatedButton(
+                          onPressed: () {
+                            leadReportProvider.selectDateFilterOption(null);
+                            leadReportProvider.removeStatus();
+                            leadReportProvider.getSearchLeadReports(
+                                '', '', '', '', context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textRed,
+                            side: BorderSide(color: AppColors.textRed),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
                           ),
-                        ],
-                      ),
-                    ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    if (leadProvider.fromDate != null ||
-                        leadProvider.toDate != null ||
-                        leadProvider.selectedStatus != null ||
-                        leadProvider.selectedUser != null)
-                      ElevatedButton(
-                        onPressed: () {
-                          leadProvider.selectDateFilterOption(null);
-                          leadProvider.removeStatus();
-                          leadProvider.getSearchLeadReports(
-                              '', '', '', '', context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
+                          child: const Text('Reset'),
                         ),
-                        child: const Text('Reset'),
-                      ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
@@ -376,10 +386,10 @@ class _leadReportMobile extends State<LeadReportMobile> {
                       },
                       shrinkWrap: true,
                       physics: const ClampingScrollPhysics(),
-                      itemCount:
-                          leadProvider.leadReportData.length, // Number of leads
+                      itemCount: leadReportProvider
+                          .leadReportData.length, // Number of leads
                       itemBuilder: (context, index) {
-                        var lead = leadProvider.leadReportData[index];
+                        var lead = leadReportProvider.leadReportData[index];
 
                         return InkWell(
                           child: Container(
@@ -614,8 +624,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
   void onClickTopButton(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => Consumer<LeadsProvider>(
-        builder: (context, leadProvider, child) {
+      builder: (context) => Consumer<LeadReportProvider>(
+        builder: (context, leadReportProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
@@ -644,19 +654,21 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         String title = dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
-                            leadProvider.setDateFilter(title);
-                            leadProvider.selectDateFilterOption(index);
+                            leadReportProvider.setDateFilter(title);
+                            leadReportProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
                           label: Text(title),
                           backgroundColor:
-                              leadProvider.selectedDateFilterIndex == index
+                              leadReportProvider.selectedDateFilterIndex ==
+                                      index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
                           labelStyle: TextStyle(
-                            color: leadProvider.selectedDateFilterIndex == index
+                            color: leadReportProvider.selectedDateFilterIndex ==
+                                    index
                                 ? Colors.white
                                 : Colors.black,
                           ),
@@ -675,13 +687,14 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => leadProvider.selectDate(context, true),
+                            onTap: () =>
+                                leadReportProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              hintText: leadProvider.fromDate != null
-                                  ? '${leadProvider.fromDate!.toLocal()}'
+                              hintText: leadReportProvider.fromDate != null
+                                  ? '${leadReportProvider.fromDate!.toLocal()}'
                                       .split(' ')[0]
                                   : 'From',
                               suffixIcon: const Icon(Icons.calendar_month),
@@ -693,13 +706,13 @@ class _leadReportMobile extends State<LeadReportMobile> {
                           child: TextField(
                             readOnly: true,
                             onTap: () =>
-                                leadProvider.selectDate(context, false),
+                                leadReportProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              hintText: leadProvider.toDate != null
-                                  ? '${leadProvider.toDate!.toLocal()}'
+                              hintText: leadReportProvider.toDate != null
+                                  ? '${leadReportProvider.toDate!.toLocal()}'
                                       .split(' ')[0]
                                   : 'To',
                               suffixIcon: const Icon(Icons.calendar_month),
@@ -714,14 +727,15 @@ class _leadReportMobile extends State<LeadReportMobile> {
                       height: 40,
                       child: TextButton(
                         onPressed: () async {
-                          leadProvider.formatDate();
+                          leadReportProvider.formatDate();
                           String status =
-                              leadProvider.selectedStatus.toString();
+                              leadReportProvider.selectedStatus.toString();
 
-                          String fromDate = leadProvider.formattedFromDate;
-                          String toDate = leadProvider.formattedToDate;
+                          String fromDate =
+                              leadReportProvider.formattedFromDate;
+                          String toDate = leadReportProvider.formattedToDate;
 
-                          await leadProvider.getSearchLeadReports(
+                          await leadReportProvider.getSearchLeadReports(
                               searchController.text,
                               fromDate,
                               toDate,

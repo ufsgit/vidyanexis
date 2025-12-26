@@ -23,7 +23,7 @@ class AppColors {
   static Color surfaceGrey = const Color(0xFFF4F7FA);
   static Color techityfyGrey = Color.fromARGB(255, 0, 90, 69);
   static Color darkGreen = const Color(0xFF27A127);
-  static Color textGrey1 = const Color(0xFFE9EDF1);
+  static Color textGrey1 = const Color.fromARGB(255, 141, 141, 141);
   static Color textGrey2 = const Color(0xFFC2C9D0);
   static Color textGrey3 = const Color(0xFF607085);
   static Color textGrey4 = const Color(0xFF7D8B9B);

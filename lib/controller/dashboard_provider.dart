@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/dashboard_count_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
@@ -10,6 +12,7 @@ import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/main.dart';
 
 class DashboardProvider extends ChangeNotifier {
   int _tabIndex = 0;
@@ -159,28 +162,44 @@ class DashboardProvider extends ChangeNotifier {
     try {
       notifyListeners();
       selectedeLeadProgressValue = filterValue;
-      late DateTime fromDate;
+      late dynamic fromDateParam;
+      late dynamic toDateParam;
+      late String isDateCheckParam;
 
-      switch (filterValue) {
-        case 'tdy':
-          fromDate = DateTime.now();
-
-          break;
-        case 'th_wk':
-          fromDate = DateTime.now().subtract(const Duration(days: 7));
-          break;
-        case 'th_mnt':
-          fromDate = DateTime.now().subtract(const Duration(days: 30));
-        default:
-          fromDate = DateTime.now();
+      if (isFilter) {
+        DateTime fromDate;
+        switch (filterValue) {
+          case 'tdy':
+            fromDate = DateTime.now();
+            break;
+          case 'th_wk':
+            fromDate = DateTime.now().subtract(const Duration(days: 7));
+            break;
+          case 'th_mnt':
+            fromDate = DateTime.now().subtract(const Duration(days: 30));
+            break;
+          default:
+            fromDate = DateTime.now();
+        }
+        fromDateParam =
+            fromDate.toIso8601String().split('T').first; // Format to YYYY-MM-DD
+        toDateParam = DateTime.now()
+            .toIso8601String()
+            .split('T')
+            .first; // Format to YYYY-MM-DD
+        isDateCheckParam = "1";
+      } else {
+        fromDateParam = "";
+        toDateParam = "";
+        isDateCheckParam = "0";
       }
 
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.leadProgressReport,
           bodyData: {
-            "Fromdate": fromDate,
-            "Todate": DateTime.now(),
-            "Is_Date_Check": isFilter ? "1" : "0"
+            "Fromdate": fromDateParam,
+            "Todate": toDateParam,
+            "Is_Date_Check": isDateCheckParam
           }).then((response) {
         print(response);
         if (response.statusCode == 200) {
@@ -189,6 +208,11 @@ class DashboardProvider extends ChangeNotifier {
           leadProgressReport = (pieData)
               .map((item) => LeadProgressReportModel.fromJson(item))
               .toList();
+          final leadProgress = Provider.of<LeadsProvider>(
+              navigatorKey.currentContext!,
+              listen: false);
+          leadProgress.formattedFromDate = fromDateParam;
+          leadProgress.formattedToDate = toDateParam;
         }
       });
     } catch (e) {

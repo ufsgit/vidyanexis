@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
 class QuotationCreationWidget extends StatelessWidget {
@@ -221,730 +222,73 @@ class QuotationCreationWidget extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF6F7F9),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                children: [
-                                  TextSpan(
-                                    text: 'Financials ',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textGrey1,
-                                    ),
-                                  ),
-                                  TextSpan(
-                                    text: '*',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.red,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemNameController,
-                                    hintText: 'Item Name',
-                                    labelText: '',
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemPriceController,
-                                    onChanged: (p0) {
-                                      // Calculate total amount and GST when price changes
-                                      customerDetailsProvider
-                                          .calculateTotalAmount();
-                                    },
-                                    hintText: 'Price',
-                                    labelText: '',
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d*\.?\d{0,2}'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemQuantityController,
-                                    onChanged: (value) {
-                                      // Calculate total amount when quantity changes
-                                      customerDetailsProvider
-                                          .calculateTotalAmount();
-                                    },
-                                    hintText: 'Quantity',
-                                    labelText: '',
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemUnitController,
-                                    hintText: 'Unit',
-                                    labelText: '',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemGstPercentController,
-                                    onChanged: (value) {
-                                      // Calculate GST when GST% changes
-                                      customerDetailsProvider
-                                          .calculateTotalAmount();
-                                    },
-                                    hintText: 'GST %',
-                                    labelText: '',
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d*\.?\d{0,2}'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: true,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemGstController,
-                                    hintText: 'GST',
-                                    labelText: '',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemAdCessController,
-                                    hintText: 'AdCESS',
-                                    labelText: '',
-                                    onChanged: (value) {
-                                      // Calculate GST when GST% changes
-                                      customerDetailsProvider
-                                          .calculateTotalAmount();
-                                    },
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                        RegExp(r'^\d*\.?\d{0,2}'),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 16),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: true,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .itemTotalController,
-                                    hintText: 'Amount',
-                                    labelText: '',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            // Row(
-                            //   children: [
-                            //     Expanded(
-                            //       child: CustomTextField(
-                            //         readOnly: false,
-                            //         height: 54,
-                            //         controller: customerDetailsProvider
-                            //             .itemMrpController,
-                            //         hintText: 'MRP',
-                            //         labelText: '',
-                            //         inputFormatters: [
-                            //           FilteringTextInputFormatter.digitsOnly
-                            //         ],
-                            //       ),
-                            //     ),
-                            //     const SizedBox(width: 16),
-                            //     Expanded(
-                            //       child: CustomTextField(
-                            //         readOnly: false,
-                            //         height: 54,
-                            //         controller: customerDetailsProvider
-                            //             .itemPriceController,
-                            //         onChanged: (p0) {
-                            //           int total = 0;
-
-                            //           final itemPrice = int.tryParse(
-                            //               customerDetailsProvider
-                            //                   .itemPriceController.text);
-                            //           final itemQuantity = int.tryParse(
-                            //               customerDetailsProvider
-                            //                   .itemQuantityController.text);
-
-                            //           if (itemPrice != null &&
-                            //               itemQuantity != null) {
-                            //             total = itemPrice * itemQuantity;
-                            //           } else {
-                            //             print(
-                            //                 "Invalid input for price or quantity");
-                            //           }
-                            //           customerDetailsProvider
-                            //               .itemTotalController
-                            //               .text = total.toString();
-                            //         },
-                            //         hintText: 'Price',
-                            //         labelText: '',
-                            //         inputFormatters: [
-                            //           FilteringTextInputFormatter.digitsOnly
-                            //         ],
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-                            // const SizedBox(height: 16),
-                            // Row(
-                            //   children: [
-                            //     Expanded(
-                            //       child: CustomTextField(
-                            //         readOnly: false,
-                            //         height: 54,
-                            //         controller: customerDetailsProvider
-                            //             .itemQuantityController,
-                            //         hintText: 'Quantity',
-                            //         labelText: '',
-                            //         onChanged: (p0) {
-                            //           int total = 0;
-
-                            //           final itemPrice = int.tryParse(
-                            //               customerDetailsProvider
-                            //                   .itemPriceController.text);
-                            //           final itemQuantity = int.tryParse(
-                            //               customerDetailsProvider
-                            //                   .itemQuantityController.text);
-
-                            //           if (itemPrice != null &&
-                            //               itemQuantity != null) {
-                            //             total = itemPrice * itemQuantity;
-                            //           } else {
-                            //             print(
-                            //                 "Invalid input for price or quantity");
-                            //           }
-                            //           customerDetailsProvider
-                            //               .itemTotalController
-                            //               .text = total.toString();
-                            //         },
-                            //         inputFormatters: [
-                            //           FilteringTextInputFormatter.digitsOnly
-                            //         ],
-                            //       ),
-                            //     ),
-                            //     const SizedBox(width: 16),
-                            //     Expanded(
-                            //       child: CustomTextField(
-                            //         readOnly: true,
-                            //         height: 54,
-                            //         controller: customerDetailsProvider
-                            //             .itemTotalController,
-                            //         hintText: 'Total',
-                            //         labelText: '',
-                            //         inputFormatters: [
-                            //           FilteringTextInputFormatter.digitsOnly
-                            //         ],
-                            //       ),
-                            //     ),
-                            //   ],
-                            // ),
-                            const SizedBox(height: 16),
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                customerDetailsProvider.addOrEditItem(context);
-                              },
-                              icon: const Icon(Icons.add),
-                              label: const Text('Add item'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors
-                                    .primaryBlue, // Change foreground color
-                                backgroundColor:
-                                    Colors.white, // Change background color
-                                side: BorderSide(
-                                    color: AppColors
-                                        .primaryBlue), // Change border color
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 0,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      8), // Add border radius
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            AppStyles.isWebScreen(context)
-                                ? ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount:
-                                        customerDetailsProvider.items.length,
-                                    itemBuilder: (context, index) {
-                                      final item =
-                                          customerDetailsProvider.items[index];
-                                      return Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 10),
-                                        margin:
-                                            const EdgeInsets.only(bottom: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: Text(
-                                                item.ItemName,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 15),
-                                            Text(
-                                              'Quantity: ${item.Quantity}',
-                                              style: TextStyle(
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                            const SizedBox(width: 15),
-                                            Text(
-                                              'Unit Price: ₹${item.UnitPrice.toStringAsFixed(2)}',
-                                              style: TextStyle(
-                                                color: Colors.grey[600],
-                                              ),
-                                            ),
-                                            const SizedBox(width: 15),
-                                            Text(
-                                              'GST: ₹${item.GST.toStringAsFixed(2)}',
-                                              style: const TextStyle(
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 15),
-                                            Text(
-                                              'Total: ₹${item.Amount.toStringAsFixed(2)}',
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Colors.black54,
-                                              ),
-                                            ),
-                                            const SizedBox(width: 5),
-                                            TextButton(
-                                              onPressed: () =>
-                                                  customerDetailsProvider
-                                                      .populateItemFieldsForEditing(
-                                                          index),
-                                              child: Text(
-                                                'Edit',
-                                                style: TextStyle(
-                                                  color: Colors.blue[400],
-                                                ),
-                                              ),
-                                            ),
-                                            TextButton(
-                                              onPressed: () =>
-                                                  customerDetailsProvider
-                                                      .deleteItem(index),
-                                              child: Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                  color: Colors.red[400],
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  )
-                                : ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount:
-                                        customerDetailsProvider.items.length,
-                                    itemBuilder: (context, index) {
-                                      final item =
-                                          customerDetailsProvider.items[index];
-                                      return Container(
-                                        padding: const EdgeInsets.all(12),
-                                        margin:
-                                            const EdgeInsets.only(bottom: 10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.grey.withOpacity(0.1),
-                                              spreadRadius: 1,
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 2),
-                                            ),
-                                          ],
-                                        ),
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: Text(
-                                                    item.ItemName,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  'Quantity: ${item.Quantity}',
-                                                  style: TextStyle(
-                                                    color: Colors.grey[600],
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  'Total: ₹${item.Amount.toStringAsFixed(2)}',
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Colors.black54,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            const SizedBox(height: 8),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.end,
-                                              children: [
-                                                TextButton.icon(
-                                                  onPressed: () =>
-                                                      customerDetailsProvider
-                                                          .populateItemFieldsForEditing(
-                                                              index),
-                                                  icon: Icon(Icons.edit,
-                                                      size: 18,
-                                                      color: Colors.blue[400]),
-                                                  label: Text(
-                                                    'Edit',
-                                                    style: TextStyle(
-                                                      color: Colors.blue[400],
-                                                    ),
-                                                  ),
-                                                ),
-                                                TextButton.icon(
-                                                  onPressed: () =>
-                                                      customerDetailsProvider
-                                                          .deleteItem(index),
-                                                  icon: Icon(Icons.delete,
-                                                      size: 18,
-                                                      color: Colors.red[400]),
-                                                  label: Text(
-                                                    'Delete',
-                                                    style: TextStyle(
-                                                      color: Colors.red[400],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      );
-                                    },
-                                  ),
-                            // if (customerDetailsProvider.items.isNotEmpty)
-                            //   Row(
-                            //     mainAxisAlignment:
-                            //         AppStyles.isWebScreen(context)
-                            //             ? MainAxisAlignment.end
-                            //             : MainAxisAlignment.start,
-                            //     children: [
-                            //       Text(
-                            //         AppStyles.isWebScreen(context)
-                            //             ? 'Subsidy Amount:   '
-                            //             : 'Subsidy \n Amount:   ',
-                            //         style: TextStyle(
-                            //             fontWeight: FontWeight.bold,
-                            //             color: Colors.black,
-                            //             fontSize: 16),
-                            //       ),
-                            //       Container(
-                            //         width: 140,
-                            //         padding: const EdgeInsets.symmetric(
-                            //             horizontal: 8.0, vertical: 0),
-                            //         decoration: BoxDecoration(
-                            //           color: Colors.white,
-                            //           borderRadius: BorderRadius.circular(10),
-                            //         ),
-                            //         child: TextField(
-                            //           controller: customerDetailsProvider
-                            //               .qsubsidyAmountController,
-                            //           onChanged: (p0) {
-                            //             if (customerDetailsProvider
-                            //                 .qsubsidyAmountController
-                            //                 .text
-                            //                 .isEmpty) {
-                            //               customerDetailsProvider
-                            //                   .qsubsidyAmountController
-                            //                   .text = '0';
-                            //             }
-                            //             customerDetailsProvider.updateTotal();
-                            //           },
-                            //           decoration: const InputDecoration(
-                            //               border: InputBorder.none,
-                            //               contentPadding: EdgeInsets.zero,
-                            //               hintText: '₹'),
-                            //           inputFormatters: [
-                            //             FilteringTextInputFormatter.allow(
-                            //                 RegExp(r'^\d*\.?\d{0,2}')),
-                            //           ],
-                            //         ),
-                            //       ),
-                            //     ],
-                            //   ),
-                            if (customerDetailsProvider.items.isNotEmpty)
-                              Row(
-                                mainAxisAlignment:
-                                    AppStyles.isWebScreen(context)
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Taxable amount:  ₹ ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    width: 130,
-                                    child: TextField(
-                                      controller: customerDetailsProvider
-                                          .gstTaxableAmountController,
-                                      readOnly: true,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black54,
-                                          fontSize: 16),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder
-                                            .none, // Remove the border if needed
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            if (customerDetailsProvider.items.isNotEmpty)
-                              Row(
-                                mainAxisAlignment:
-                                    AppStyles.isWebScreen(context)
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Tax amount:  ₹ ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    width: 130,
-                                    child: TextField(
-                                      controller: customerDetailsProvider
-                                          .totalGstAmountController,
-                                      readOnly: true,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black54,
-                                          fontSize: 16),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder
-                                            .none, // Remove the border if needed
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            if (customerDetailsProvider.items.isNotEmpty)
-                              Row(
-                                mainAxisAlignment:
-                                    AppStyles.isWebScreen(context)
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Ad. CESS :  ₹ ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    width: 130,
-                                    child: TextField(
-                                      controller: customerDetailsProvider
-                                          .totalAdCESSController,
-                                      readOnly: true,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black54,
-                                          fontSize: 16),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder
-                                            .none, // Remove the border if needed
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            if (customerDetailsProvider.items.isNotEmpty)
-                              Row(
-                                mainAxisAlignment:
-                                    AppStyles.isWebScreen(context)
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Sub Total:  ₹ ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    width: 130,
-                                    child: TextField(
-                                      controller: customerDetailsProvider
-                                          .subtotalController,
-                                      readOnly: true,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black54,
-                                          fontSize: 16),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder
-                                            .none, // Remove the border if needed
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            if (customerDetailsProvider.items.isNotEmpty)
-                              Row(
-                                mainAxisAlignment:
-                                    AppStyles.isWebScreen(context)
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                children: [
-                                  const Text(
-                                    'Total:  ₹ ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                        fontSize: 16),
-                                  ),
-                                  SizedBox(
-                                    width: 130,
-                                    child: TextField(
-                                      controller: customerDetailsProvider
-                                          .totalController,
-                                      readOnly: true,
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.black54,
-                                          fontSize: 16),
-                                      decoration: const InputDecoration(
-                                        border: InputBorder
-                                            .none, // Remove the border if needed
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  CommonDropdown(
+                    hintText: 'Quotation Type',
+                    items: customerDetailsProvider.quotationTypeData,
+                    onItemSelected: (value) {
+                      customerDetailsProvider.selectedQuotationType = value;
+                      final selectedItem =
+                          customerDetailsProvider.quotationTypeData.firstWhere(
+                        (status) => status.id == value,
+                      );
+                      customerDetailsProvider.quotationTypeController.text =
+                          selectedItem.name;
+                    },
+                    selectedValue:
+                        customerDetailsProvider.selectedQuotationType,
                   ),
+                  const SizedBox(height: 16),
+                  if (customerDetailsProvider.selectedQuotationType == 1) ...[
+                    residentialItemWidget(context),
+                  ],
+                  if (customerDetailsProvider.selectedQuotationType == 2) ...[
+                    commercialItemWidget(context),
+                  ],
                 ],
               ),
+
+              if (customerDetailsProvider.selectedQuotationType == 2)
+                //solar pv system specification
+                ExpansionTile(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  title: Text(
+                    'Solar PV System Specification',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textGrey1,
+                    ),
+                  ),
+                  tilePadding: EdgeInsets.zero,
+                  initiallyExpanded: false,
+                  children: [
+                    solarPvSystemSpecificationWidget(context),
+                  ],
+                ),
+
+              if (customerDetailsProvider.selectedQuotationType == 2)
+                //cable details
+                ExpansionTile(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  title: Text(
+                    'Cable Details',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textGrey1,
+                    ),
+                  ),
+                  tilePadding: EdgeInsets.zero,
+                  initiallyExpanded: false,
+                  children: [
+                    cableDetailsWidget(context),
+                  ],
+                ),
+
               //additional expenses
               ExpansionTile(
                 shape: const RoundedRectangleBorder(
@@ -1606,7 +950,7 @@ class QuotationCreationWidget extends StatelessWidget {
                   borderRadius: BorderRadius.zero,
                 ),
                 title: Text(
-                  'Technical Specification',
+                  'Technical Proposal',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -1616,448 +960,7 @@ class QuotationCreationWidget extends StatelessWidget {
                 tilePadding: EdgeInsets.zero,
                 initiallyExpanded: false,
                 children: [
-                  const SizedBox(
-                    height: 5,
-                  ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF6F7F9),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        padding: const EdgeInsets.all(16.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .billdescriptionController,
-                                    hintText: 'Item name',
-                                    labelText: '',
-                                  ),
-                                ),
-                                const SizedBox(width: 16.0),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .billmakeController,
-                                    hintText: 'Make',
-                                    labelText: '',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .billquantityController,
-                                    hintText: 'Quantity',
-                                    labelText: '',
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly
-                                    ],
-                                  ),
-                                ),
-                                const SizedBox(width: 16.0),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .billdistributorController,
-                                    hintText: 'Distributor',
-                                    labelText: '',
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller:
-                                  customerDetailsProvider.billinvoiceController,
-                              hintText: 'Invoice No',
-                              labelText: '',
-                            ),
-                            const SizedBox(height: 16),
-                            OutlinedButton.icon(
-                              onPressed:
-                                  customerDetailsProvider.addOrEditBOMItem,
-                              icon: const Icon(Icons.add),
-                              label: const Text('Add Material'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors
-                                    .primaryBlue, // Change foreground color
-                                backgroundColor:
-                                    Colors.white, // Change background color
-                                side: BorderSide(
-                                    color: AppColors
-                                        .primaryBlue), // Change border color
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 0,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      8), // Add border radius
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            if (customerDetailsProvider.bomItems.isNotEmpty)
-                              AppStyles.isWebScreen(context)
-                                  ? Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 5),
-                                      decoration: BoxDecoration(
-                                        color: Colors.white,
-                                        borderRadius: BorderRadius.circular(20),
-                                      ),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 40,
-                                                child: Text(
-                                                  'Sl No',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(
-                                                width: 8,
-                                              ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  'Items',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  'Make',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  'Quantity',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  'Invoice No',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  'Distributor',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  'Actions',
-                                                  textAlign: TextAlign.center,
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 14,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(
-                                            height: 10,
-                                          ),
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemCount: customerDetailsProvider
-                                                .bomItems.length,
-                                            itemBuilder: (context, index) {
-                                              final item =
-                                                  customerDetailsProvider
-                                                      .bomItems[index];
-                                              return Row(
-                                                children: [
-                                                  SizedBox(
-                                                    width: 40,
-                                                    child: Center(
-                                                      child: Text(
-                                                        (index + 1).toString(),
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                                fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 8,
-                                                  ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      item.itemsAndDescription,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      item.make,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    child: Text(
-                                                      item.quantity.toString(),
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      item.invoiceNo,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 2,
-                                                    child: Text(
-                                                      item.distributor,
-                                                      style: GoogleFonts
-                                                          .plusJakartaSans(
-                                                              fontSize: 14),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: TextButton(
-                                                      onPressed: () =>
-                                                          customerDetailsProvider
-                                                              .populateBOMFieldsForEditing(
-                                                                  index),
-                                                      child: Text(
-                                                        'Edit',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Colors.blue[400],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  Expanded(
-                                                    flex: 1,
-                                                    child: TextButton(
-                                                      onPressed: () =>
-                                                          customerDetailsProvider
-                                                              .deleteBOMItem(
-                                                                  index),
-                                                      child: Text(
-                                                        'Delete',
-                                                        style: TextStyle(
-                                                          color:
-                                                              Colors.red[400],
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    )
-                                  : Container(
-                                      // padding: const EdgeInsets.all(12),
-                                      // decoration: BoxDecoration(
-                                      //   color: AppColors.scaffoldColor,
-                                      //   borderRadius: BorderRadius.circular(20),
-                                      // ),
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            'BOM Items',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          const SizedBox(height: 12),
-                                          ListView.builder(
-                                            shrinkWrap: true,
-                                            physics:
-                                                const NeverScrollableScrollPhysics(),
-                                            itemCount: customerDetailsProvider
-                                                .bomItems.length,
-                                            itemBuilder: (context, index) {
-                                              final item =
-                                                  customerDetailsProvider
-                                                      .bomItems[index];
-                                              return Card(
-                                                color: Colors.white,
-                                                margin: const EdgeInsets.only(
-                                                    bottom: 12),
-                                                elevation: 2,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(12),
-                                                ),
-                                                child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(16),
-                                                  child: Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      _buildInfoRow('Item',
-                                                          item.itemsAndDescription),
-                                                      const SizedBox(height: 8),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child:
-                                                                _buildInfoRow(
-                                                                    'Make',
-                                                                    item.make),
-                                                          ),
-                                                          Expanded(
-                                                            child:
-                                                                _buildInfoRow(
-                                                              'Quantity',
-                                                              item.quantity
-                                                                  .toString(),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      const SizedBox(height: 8),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: _buildInfoRow(
-                                                                'Invoice No',
-                                                                item.invoiceNo),
-                                                          ),
-                                                          const SizedBox(
-                                                              width: 8),
-                                                          Expanded(
-                                                            child: _buildInfoRow(
-                                                                'Distributor',
-                                                                item.distributor),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Expanded(
-                                                            child: TextButton(
-                                                              onPressed: () =>
-                                                                  customerDetailsProvider
-                                                                      .populateBOMFieldsForEditing(
-                                                                          index),
-                                                              child: Text(
-                                                                'Edit',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                          .blue[
-                                                                      400],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          Expanded(
-                                                            child: TextButton(
-                                                              onPressed: () =>
-                                                                  customerDetailsProvider
-                                                                      .deleteBOMItem(
-                                                                          index),
-                                                              child: Text(
-                                                                'Delete',
-                                                                style:
-                                                                    TextStyle(
-                                                                  color: Colors
-                                                                      .red[400],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                  billofMaterialsWidget(context),
                 ],
               ),
             ],
@@ -2210,6 +1113,1426 @@ class QuotationCreationWidget extends StatelessWidget {
           ],
         );
       },
+    );
+  }
+
+  Widget residentialItemWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF6F7F9),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RichText(
+                text: TextSpan(
+                  children: [
+                    TextSpan(
+                      text: 'Residential ',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey1,
+                      ),
+                    ),
+                    TextSpan(
+                      text: '',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.red,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemNameController,
+                      hintText: 'Item Name',
+                      labelText: '',
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemPriceController,
+                      onChanged: (p0) {
+                        // Calculate total amount and GST when price changes
+                        customerDetailsProvider.calculateTotalAmount();
+                      },
+                      hintText: 'Price',
+                      labelText: '',
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d{0,2}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller:
+                          customerDetailsProvider.itemQuantityController,
+                      onChanged: (value) {
+                        // Calculate total amount when quantity changes
+                        customerDetailsProvider.calculateTotalAmount();
+                      },
+                      hintText: 'Quantity',
+                      labelText: '',
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemUnitController,
+                      hintText: 'Unit',
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller:
+                          customerDetailsProvider.itemGstPercentController,
+                      onChanged: (value) {
+                        // Calculate GST when GST% changes
+                        customerDetailsProvider.calculateTotalAmount();
+                      },
+                      hintText: 'GST %',
+                      labelText: '',
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d{0,2}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: true,
+                      height: 54,
+                      controller: customerDetailsProvider.itemGstController,
+                      hintText: 'GST',
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemAdCessController,
+                      hintText: 'Other Tax',
+                      labelText: '',
+                      onChanged: (value) {
+                        // Calculate GST when GST% changes
+                        customerDetailsProvider.calculateTotalAmount();
+                      },
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'^\d*\.?\d{0,2}'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: true,
+                      height: 54,
+                      controller: customerDetailsProvider.itemTotalController,
+                      hintText: 'Amount',
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: CustomTextField(
+              //         readOnly: false,
+              //         height: 54,
+              //         controller: customerDetailsProvider
+              //             .itemMrpController,
+              //         hintText: 'MRP',
+              //         labelText: '',
+              //         inputFormatters: [
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     ),
+              //     const SizedBox(width: 16),
+              //     Expanded(
+              //       child: CustomTextField(
+              //         readOnly: false,
+              //         height: 54,
+              //         controller: customerDetailsProvider
+              //             .itemPriceController,
+              //         onChanged: (p0) {
+              //           int total = 0;
+
+              //           final itemPrice = int.tryParse(
+              //               customerDetailsProvider
+              //                   .itemPriceController.text);
+              //           final itemQuantity = int.tryParse(
+              //               customerDetailsProvider
+              //                   .itemQuantityController.text);
+
+              //           if (itemPrice != null &&
+              //               itemQuantity != null) {
+              //             total = itemPrice * itemQuantity;
+              //           } else {
+              //             print(
+              //                 "Invalid input for price or quantity");
+              //           }
+              //           customerDetailsProvider
+              //               .itemTotalController
+              //               .text = total.toString();
+              //         },
+              //         hintText: 'Price',
+              //         labelText: '',
+              //         inputFormatters: [
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              // const SizedBox(height: 16),
+              // Row(
+              //   children: [
+              //     Expanded(
+              //       child: CustomTextField(
+              //         readOnly: false,
+              //         height: 54,
+              //         controller: customerDetailsProvider
+              //             .itemQuantityController,
+              //         hintText: 'Quantity',
+              //         labelText: '',
+              //         onChanged: (p0) {
+              //           int total = 0;
+
+              //           final itemPrice = int.tryParse(
+              //               customerDetailsProvider
+              //                   .itemPriceController.text);
+              //           final itemQuantity = int.tryParse(
+              //               customerDetailsProvider
+              //                   .itemQuantityController.text);
+
+              //           if (itemPrice != null &&
+              //               itemQuantity != null) {
+              //             total = itemPrice * itemQuantity;
+              //           } else {
+              //             print(
+              //                 "Invalid input for price or quantity");
+              //           }
+              //           customerDetailsProvider
+              //               .itemTotalController
+              //               .text = total.toString();
+              //         },
+              //         inputFormatters: [
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     ),
+              //     const SizedBox(width: 16),
+              //     Expanded(
+              //       child: CustomTextField(
+              //         readOnly: true,
+              //         height: 54,
+              //         controller: customerDetailsProvider
+              //             .itemTotalController,
+              //         hintText: 'Total',
+              //         labelText: '',
+              //         inputFormatters: [
+              //           FilteringTextInputFormatter.digitsOnly
+              //         ],
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: () {
+                  customerDetailsProvider.addOrEditItem(context);
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Add item'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor:
+                      AppColors.primaryBlue, // Change foreground color
+                  backgroundColor: Colors.white, // Change background color
+                  side: BorderSide(
+                      color: AppColors.primaryBlue), // Change border color
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Add border radius
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: customerDetailsProvider.items.length,
+                itemBuilder: (context, index) {
+                  final item = customerDetailsProvider.items[index];
+                  return Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    margin: const EdgeInsets.only(bottom: 10),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            item.ItemName,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          'Quantity: ${item.Quantity}',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          'Unit Price: ₹${item.UnitPrice.toStringAsFixed(2)}',
+                          style: TextStyle(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          'GST: ₹${item.GST.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(width: 15),
+                        Text(
+                          'Total: ₹${item.Amount.toStringAsFixed(2)}',
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                          ),
+                        ),
+                        const SizedBox(width: 5),
+                        TextButton(
+                          onPressed: () => customerDetailsProvider
+                              .populateItemFieldsForEditing(index),
+                          child: Text(
+                            'Edit',
+                            style: TextStyle(
+                              color: Colors.blue[400],
+                            ),
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () =>
+                              customerDetailsProvider.deleteItem(index),
+                          child: Text(
+                            'Delete',
+                            style: TextStyle(
+                              color: Colors.red[400],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
+
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Sub Total:  ₹ ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: TextField(
+                        controller: customerDetailsProvider.subtotalController,
+                        readOnly: true,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16),
+                        decoration: const InputDecoration(
+                          border:
+                              InputBorder.none, // Remove the border if needed
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Taxable amount:  ₹ ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: TextField(
+                        controller:
+                            customerDetailsProvider.gstTaxableAmountController,
+                        readOnly: true,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16),
+                        decoration: const InputDecoration(
+                          border:
+                              InputBorder.none, // Remove the border if needed
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'CGST amount:  ₹ ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: TextField(
+                        controller:
+                            customerDetailsProvider.totalCgstAmountController,
+                        readOnly: true,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16),
+                        decoration: const InputDecoration(
+                          border:
+                              InputBorder.none, // Remove the border if needed
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'SGST amount:  ₹ ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: TextField(
+                        controller:
+                            customerDetailsProvider.totalSgstAmountController,
+                        readOnly: true,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16),
+                        decoration: const InputDecoration(
+                          border:
+                              InputBorder.none, // Remove the border if needed
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'GST amount:  ₹ ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: TextField(
+                        controller:
+                            customerDetailsProvider.totalGstAmountController,
+                        readOnly: true,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16),
+                        decoration: const InputDecoration(
+                          border:
+                              InputBorder.none, // Remove the border if needed
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Other Tax:  ₹ ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: TextField(
+                        controller:
+                            customerDetailsProvider.totalAdCESSController,
+                        readOnly: true,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16),
+                        decoration: const InputDecoration(
+                          border:
+                              InputBorder.none, // Remove the border if needed
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Discount:   ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    Container(
+                      width: 140,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextField(
+                        controller:
+                            customerDetailsProvider.qsubsidyAmountController,
+                        onChanged: (p0) {
+                          if (customerDetailsProvider
+                              .qsubsidyAmountController.text.isEmpty) {
+                            customerDetailsProvider
+                                .qsubsidyAmountController.text = '0';
+                          }
+                          customerDetailsProvider.updateTotal();
+                        },
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: '₹'),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'Total:  ₹ ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    SizedBox(
+                      width: 130,
+                      child: TextField(
+                        controller: customerDetailsProvider.totalController,
+                        readOnly: true,
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black54,
+                            fontSize: 16),
+                        decoration: const InputDecoration(
+                          border:
+                              InputBorder.none, // Remove the border if needed
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget commercialItemWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F7F9),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Commercial ',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey1,
+                  ),
+                ),
+                TextSpan(
+                  text: '',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.red,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.commercialDescriptionController,
+                  readOnly: false,
+                  keyboardType: TextInputType.multiline,
+                  height: 54,
+                  hintText: 'Description',
+                  labelText: '',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.commercialDCCapacityController,
+                  readOnly: false,
+                  height: 54,
+                  hintText: 'Solar Plant DC Capacity',
+                  labelText: '',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.commercialACCapacityController,
+                  readOnly: false,
+                  height: 54,
+                  hintText: 'Solar Plant AC Capacity',
+                  labelText: '',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.commercialUnitPriceController,
+                  readOnly: false,
+                  height: 54,
+                  hintText: 'Unit Price',
+                  labelText: '',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.commercialTotalController,
+                  readOnly: false,
+                  height: 54,
+                  hintText: 'Total',
+                  labelText: '',
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(
+                        RegExp(r'^\d*\.?\d{0,2}')),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: () {
+              customerDetailsProvider.addOrEditCommercialItem(context);
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Add item'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primaryBlue, // Change foreground color
+              backgroundColor: Colors.white, // Change background color
+              side: BorderSide(
+                  color: AppColors.primaryBlue), // Change border color
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 0,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8), // Add border radius
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: customerDetailsProvider.commercialItems.length,
+            itemBuilder: (context, index) {
+              final item = customerDetailsProvider.commercialItems[index];
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.description ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      'AC Capacity: ${item.acCapacity}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      'DC Capacity: ${item.dcCapacity}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      'Unit Price: ₹${item.unitPrice}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      'Total: ₹${item.total}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                      ),
+                    ),
+                    const SizedBox(width: 5),
+                    TextButton(
+                      onPressed: () => customerDetailsProvider
+                          .populateCommercialItemFieldsForEditing(index),
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(
+                          color: Colors.blue[400],
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          customerDetailsProvider.deleteCommercialItem(index),
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(
+                          color: Colors.red[400],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+          if (customerDetailsProvider.commercialItems.isNotEmpty)
+            Row(
+              mainAxisAlignment: AppStyles.isWebScreen(context)
+                  ? MainAxisAlignment.end
+                  : MainAxisAlignment.start,
+              children: [
+                Text(
+                  'Total amount:  ₹ ',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      fontSize: 16),
+                ),
+                SizedBox(
+                  width: 130,
+                  child: TextField(
+                    controller: customerDetailsProvider.totalController,
+                    readOnly: true,
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black54,
+                        fontSize: 16),
+                    decoration: const InputDecoration(
+                      border: InputBorder.none, // Remove the border if needed
+                    ),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget cableDetailsWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    return Column(
+      children: [
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.cableStructureController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Structure',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.cableTypeController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Type',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller:
+                    customerDetailsProvider.cableShortCircuitTempController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Short circuit temperature range',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.cableStandardController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Standard',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller:
+                    customerDetailsProvider.cableConductorClassController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Conductor Class',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.cableMaterialController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Material',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.cableProtectionController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Protection',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.cableWarrantyController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Warranty',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller:
+                    customerDetailsProvider.cableTensileStrengthController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Tensile strength',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget solarPvSystemSpecificationWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    return Column(
+      children: [
+        const SizedBox(height: 4),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.plantCapacityController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Plant Capacity',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller:
+                    customerDetailsProvider.moduleTechnologiesController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Module Technologies',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider
+                    .mountingStructureTechnologiesController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Mounting Structure Technologies',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.projectSchemeController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Project Scheme',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.powerEvacuationController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Power Evacuation',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.areaApproximateController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Area (Approximate)',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider
+                    .solarPlantOutputConnectionController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Solar Plant output Connection ',
+                labelText: '',
+              ),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: CustomTextField(
+                controller: customerDetailsProvider.schemeController,
+                readOnly: false,
+                keyboardType: TextInputType.text,
+                height: 54,
+                hintText: 'Scheme',
+                labelText: '',
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget billofMaterialsWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF6F7F9),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller:
+                          customerDetailsProvider.billdescriptionController,
+                      hintText: 'Description',
+                      labelText: '',
+                    ),
+                  ),
+                  const SizedBox(width: 16.0),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.billmakeController,
+                      hintText:
+                          customerDetailsProvider.selectedQuotationType == 1
+                              ? 'Brand'
+                              : 'Make',
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller:
+                          customerDetailsProvider.billquantityController,
+                      hintText: 'Quantity',
+                      labelText: '',
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    ),
+                  ),
+                  if (customerDetailsProvider.selectedQuotationType == 1) ...[
+                    const SizedBox(width: 16.0),
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.billdistributorController,
+                        hintText: 'Uom',
+                        labelText: '',
+                      ),
+                    ),
+                  ]
+                ],
+              ),
+              const SizedBox(height: 16),
+              if (customerDetailsProvider.selectedQuotationType == 1)
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: customerDetailsProvider.billinvoiceController,
+                  hintText: 'Comments',
+                  labelText: '',
+                ),
+              const SizedBox(height: 16),
+              OutlinedButton.icon(
+                onPressed: customerDetailsProvider.addOrEditBOMItem,
+                icon: const Icon(Icons.add),
+                label: const Text('Add Material'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor:
+                      AppColors.primaryBlue, // Change foreground color
+                  backgroundColor: Colors.white, // Change background color
+                  side: BorderSide(
+                      color: AppColors.primaryBlue), // Change border color
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 0,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8), // Add border radius
+                  ),
+                ),
+              ),
+              const SizedBox(height: 16),
+              if (customerDetailsProvider.bomItems.isNotEmpty)
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Column(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: 40,
+                            child: Text(
+                              'Sl No',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            width: 8,
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Items',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Make',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: Text(
+                              'Quantity',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Invoice No',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Distributor',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            flex: 2,
+                            child: Text(
+                              'Actions',
+                              textAlign: TextAlign.center,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: customerDetailsProvider.bomItems.length,
+                        itemBuilder: (context, index) {
+                          final item = customerDetailsProvider.bomItems[index];
+                          return Row(
+                            children: [
+                              SizedBox(
+                                width: 40,
+                                child: Center(
+                                  child: Text(
+                                    (index + 1).toString(),
+                                    style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 14),
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  item.itemsAndDescription,
+                                  style:
+                                      GoogleFonts.plusJakartaSans(fontSize: 14),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  item.make,
+                                  style:
+                                      GoogleFonts.plusJakartaSans(fontSize: 14),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  item.quantity.toString(),
+                                  style:
+                                      GoogleFonts.plusJakartaSans(fontSize: 14),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  item.invoiceNo,
+                                  style:
+                                      GoogleFonts.plusJakartaSans(fontSize: 14),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 2,
+                                child: Text(
+                                  item.distributor,
+                                  style:
+                                      GoogleFonts.plusJakartaSans(fontSize: 14),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  onPressed: () => customerDetailsProvider
+                                      .populateBOMFieldsForEditing(index),
+                                  child: Text(
+                                    'Edit',
+                                    style: TextStyle(
+                                      color: Colors.blue[400],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: TextButton(
+                                  onPressed: () => customerDetailsProvider
+                                      .deleteBOMItem(index),
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                      color: Colors.red[400],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }

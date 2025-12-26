@@ -75,7 +75,7 @@ class _CommonReportWidgetState extends State<CommonReportWidget> {
                       ))
                     : Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
-                          return const LeadReportMobile();
+                          return const LeadReportMobile(false);
                         },
                       ));
               }

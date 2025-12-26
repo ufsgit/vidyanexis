@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_report_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -34,7 +35,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      final leadReportProvider =
+          Provider.of<LeadReportProvider>(context, listen: false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
@@ -44,14 +46,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
-      leadProvider.getSearchLeadReports('', '', '', '', context);
+      leadReportProvider.getSearchLeadReports('', '', '', '', context);
     });
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final leadProvider = Provider.of<LeadsProvider>(context);
+    final leadReportProvider = Provider.of<LeadReportProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     return AppStyles.isWebScreen(context)
         ? Scaffold(
@@ -119,10 +121,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               child: TextField(
                                 controller: searchController,
                                 onSubmitted: (query) {
-                                  leadProvider.selectDateFilterOption(null);
-                                  leadProvider.removeStatus();
+                                  leadReportProvider
+                                      .selectDateFilterOption(null);
+                                  leadReportProvider.removeStatus();
                                   print(query);
-                                  leadProvider.getSearchLeadReports(
+                                  leadReportProvider.getSearchLeadReports(
                                       query, '', '', '', context);
                                 },
                                 decoration: InputDecoration(
@@ -136,10 +139,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   suffixIcon: TextButton(
                                     onPressed: () {
                                       String query = searchController.text;
-                                      leadProvider.selectDateFilterOption(null);
-                                      leadProvider.removeStatus();
+                                      leadReportProvider
+                                          .selectDateFilterOption(null);
+                                      leadReportProvider.removeStatus();
                                       print(query);
-                                      leadProvider.getSearchLeadReports(
+                                      leadReportProvider.getSearchLeadReports(
                                           query, '', '', '', context);
                                     },
                                     child: const Text('Search'),
@@ -148,39 +152,40 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                             ),
                             const SizedBox(width: 16),
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                leadProvider.toggleFilter();
-                                leadProvider.selectDateFilterOption(null);
-                                leadProvider.removeStatus();
-                                leadProvider.getSearchLeadReports(
-                                    '', '', '', '', context);
-                                print(leadProvider.isFilter);
-                              },
-                              icon: const Icon(Icons.filter_list),
-                              label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : ''),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: leadProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors
-                                        .primaryBlue, // Change foreground color
-                                backgroundColor: leadProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : Colors.white, // Change background color
-                                side: BorderSide(
-                                    color: leadProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : AppColors
-                                            .primaryBlue), // Change border color
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                            if (!widget.fromDashBoard)
+                              OutlinedButton.icon(
+                                onPressed: () {
+                                  leadReportProvider.toggleFilter();
+                                  // leadReportProvider.selectDateFilterOption(null);
+                                  // leadReportProvider.removeStatus();
+                                  // leadReportProvider.getSearchLeadReports(
+                                  //     '', '', '', '', context);
+                                  print(leadReportProvider.isFilter);
+                                },
+                                icon: const Icon(Icons.filter_list),
+                                label: Text(
+                                    MediaQuery.of(context).size.width > 860
+                                        ? 'Filter'
+                                        : ''),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: leadReportProvider.isFilter
+                                      ? Colors.white
+                                      : AppColors
+                                          .primaryBlue, // Change foreground color
+                                  backgroundColor: leadReportProvider.isFilter
+                                      ? const Color(0xFF5499D9)
+                                      : Colors.white, // Change background color
+                                  side: BorderSide(
+                                      color: leadReportProvider.isFilter
+                                          ? const Color(0xFF5499D9)
+                                          : AppColors
+                                              .primaryBlue), // Change border color
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
                                 ),
                               ),
-                            ),
                             const SizedBox(width: 16),
                             ElevatedButton.icon(
                               onPressed: () async {
@@ -193,7 +198,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     'Next Follow-up Date',
                                     'Status'
                                   ],
-                                  data: leadProvider.leadReportData.map((task) {
+                                  data: leadReportProvider.leadReportData
+                                      .map((task) {
                                     return {
                                       'Customer Name': task.customerName,
                                       'Mobile no': task.contactNumber,
@@ -228,7 +234,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           ],
                         ),
                       ),
-                      if (leadProvider.isFilter)
+                      if (leadReportProvider.isFilter)
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 16.0),
                           padding: const EdgeInsets.all(10.0),
@@ -245,15 +251,17 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                      color: leadProvider.selectedStatus != null
-                                          ? AppColors.primaryBlue
-                                          : Colors.grey[300]!),
+                                      color:
+                                          leadReportProvider.selectedStatus !=
+                                                  null
+                                              ? AppColors.primaryBlue
+                                              : Colors.grey[300]!),
                                 ),
                                 child: Row(
                                   children: [
                                     const Text('Status: '),
                                     DropdownButton<int>(
-                                      value: leadProvider.selectedStatus,
+                                      value: leadReportProvider.selectedStatus,
                                       hint: const Text('All'),
                                       items: provider.followUpData
                                           .map(
@@ -268,7 +276,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           .toList(),
                                       onChanged: (int? newValue) {
                                         if (newValue != null) {
-                                          leadProvider.setStatus(
+                                          leadReportProvider.setStatus(
                                               newValue); // Update the status in the provider
                                         }
                                       },
@@ -293,20 +301,22 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     color: Colors.white,
                                     borderRadius: BorderRadius.circular(20),
                                     border: Border.all(
-                                        color: leadProvider.fromDate != null ||
-                                                leadProvider.toDate != null
+                                        color: leadReportProvider.fromDate !=
+                                                    null ||
+                                                leadReportProvider.toDate !=
+                                                    null
                                             ? AppColors.primaryBlue
                                             : Colors.grey[300]!),
                                   ),
                                   child: Row(
                                     children: [
-                                      if (leadProvider.fromDate == null &&
-                                          leadProvider.toDate == null)
+                                      if (leadReportProvider.fromDate == null &&
+                                          leadReportProvider.toDate == null)
                                         const Text('Next Follow-Up Date: All'),
-                                      if (leadProvider.fromDate != null &&
-                                          leadProvider.toDate != null)
+                                      if (leadReportProvider.fromDate != null &&
+                                          leadReportProvider.toDate != null)
                                         Text(
-                                            'Date : ${leadProvider.formattedFromDate} - ${leadProvider.formattedToDate}'),
+                                            'Date : ${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}'),
                                       const SizedBox(
                                         width: 10,
                                       ),
@@ -329,7 +339,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                      color: leadProvider.selectedUser != null
+                                      color: leadReportProvider.selectedUser !=
+                                              null
                                           ? AppColors.primaryBlue
                                           : Colors.grey[300]!),
                                 ),
@@ -337,7 +348,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   children: [
                                     const Text('Assigned Staff: '),
                                     DropdownButton<int>(
-                                      value: leadProvider.selectedUser,
+                                      value: leadReportProvider.selectedUser,
                                       hint: const Text('All'),
                                       items: provider.searchUserDetails
                                           .map((user) => DropdownMenuItem<int>(
@@ -351,7 +362,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           .toList(),
                                       onChanged: (int? newValue) {
                                         if (newValue != null) {
-                                          leadProvider.setUserFilterStatus(
+                                          leadReportProvider.setUserFilterStatus(
                                               newValue); // Update the status in the provider
                                         }
                                       },
@@ -366,14 +377,16 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ElevatedButton(
                                 onPressed: () {
                                   // Apply the selected filters (You can use values from the provider)
-                                  String status =
-                                      leadProvider.selectedStatus.toString();
+                                  String status = leadReportProvider
+                                      .selectedStatus
+                                      .toString();
                                   String fromDate =
-                                      leadProvider.formattedFromDate;
-                                  String toDate = leadProvider.formattedToDate;
+                                      leadReportProvider.formattedFromDate;
+                                  String toDate =
+                                      leadReportProvider.formattedToDate;
                                   print(
                                       'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                  leadProvider.getSearchLeadReports(
+                                  leadReportProvider.getSearchLeadReports(
                                       '', fromDate, toDate, status, context);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -391,15 +404,16 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               const SizedBox(
                                 width: 10,
                               ),
-                              if (leadProvider.fromDate != null ||
-                                  leadProvider.toDate != null ||
-                                  leadProvider.selectedStatus != null ||
-                                  leadProvider.selectedUser != null)
+                              if (leadReportProvider.fromDate != null ||
+                                  leadReportProvider.toDate != null ||
+                                  leadReportProvider.selectedStatus != null ||
+                                  leadReportProvider.selectedUser != null)
                                 ElevatedButton(
                                   onPressed: () {
-                                    leadProvider.selectDateFilterOption(null);
-                                    leadProvider.removeStatus();
-                                    leadProvider.getSearchLeadReports(
+                                    leadReportProvider
+                                        .selectDateFilterOption(null);
+                                    leadReportProvider.removeStatus();
+                                    leadReportProvider.getSearchLeadReports(
                                         '', '', '', '', context);
                                   },
                                   style: ElevatedButton.styleFrom(
@@ -484,11 +498,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       true, // To avoid scrolling issues when inside a parent widget
                                   physics:
                                       const NeverScrollableScrollPhysics(), // Disable scrolling here, as parent scroll handles it
-                                  itemCount: leadProvider
+                                  itemCount: leadReportProvider
                                       .leadReportData.length, // Number of leads
                                   itemBuilder: (context, index) {
-                                    var lead =
-                                        leadProvider.leadReportData[index];
+                                    var lead = leadReportProvider
+                                        .leadReportData[index];
                                     return Container(
                                       decoration: BoxDecoration(
                                         color: index % 2 == 0
@@ -509,7 +523,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                       horizontal: 25.0),
                                               child: Text(
                                                   ((index + 1) +
-                                                          leadProvider
+                                                          leadReportProvider
                                                               .startLimit -
                                                           1)
                                                       .toString(),
@@ -525,7 +539,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                 setState(() {
                                                   viewProfile = true;
                                                 });
-                                                leadProvider.setCutomerId(
+                                                leadReportProvider.setCutomerId(
                                                     lead.customerId);
                                                 Scaffold.of(context)
                                                     .openEndDrawer();
@@ -619,15 +633,16 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                   viewProfile = false;
                                                   viewFollowUp = true;
                                                 });
-                                                leadProvider.setCutomerId(
+                                                leadReportProvider.setCutomerId(
                                                     lead.customerId);
-                                                leadProvider.statusController
+                                                leadReportProvider
+                                                    .statusController
                                                     .text = lead.statusName;
 
-                                                leadProvider
+                                                leadReportProvider
                                                     .assignToFollowUpController
                                                     .text = lead.toUserName;
-                                                leadProvider
+                                                leadReportProvider
                                                     .nextFollowUpDateController
                                                     .text = lead
                                                         .nextFollowUpDate
@@ -635,7 +650,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                     ? _formatDateSafely(
                                                         lead.nextFollowUpDate)
                                                     : '';
-                                                // leadProvider.messageController.text =
+                                                // leadReportProvider.messageController.text =
                                                 //     lead.remark;
 
                                                 Scaffold.of(context)
@@ -697,7 +712,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     );
                                   },
                                 ),
-                                // if (leadProvider.leadData.isEmpty)
+                                // if (leadReportProvider.leadData.isEmpty)
                                 //   Container(
                                 //     height: 400,
                                 //     // child: Center(
@@ -744,7 +759,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         _scaffoldKey.currentState?.openEndDrawer();
                       });
                     },
-                    customerId: leadProvider.customerId.toString(),
+                    customerId: leadReportProvider.customerId.toString(),
                   )
                 : viewFollowUp
                     ? const AddFollowupDrawerWidget()
@@ -752,14 +767,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         isEdit: isEdit,
                       ),
           )
-        : LeadReportMobile();
+        : LeadReportMobile(widget.fromDashBoard);
   }
 
   void onClickTopButton(BuildContext context) {
     showDialog(
       context: context,
-      builder: (context) => Consumer<LeadsProvider>(
-        builder: (context, leadProvider, child) {
+      builder: (context) => Consumer<LeadReportProvider>(
+        builder: (context, leadReportProvider, child) {
           return AlertDialog(
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18),
@@ -788,19 +803,21 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         String title = dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
-                            leadProvider.setDateFilter(title);
-                            leadProvider.selectDateFilterOption(index);
+                            leadReportProvider.setDateFilter(title);
+                            leadReportProvider.selectDateFilterOption(index);
                           },
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(20),
                           ),
                           label: Text(title),
                           backgroundColor:
-                              leadProvider.selectedDateFilterIndex == index
+                              leadReportProvider.selectedDateFilterIndex ==
+                                      index
                                   ? AppColors.primaryBlue
                                   : Colors.white,
                           labelStyle: TextStyle(
-                            color: leadProvider.selectedDateFilterIndex == index
+                            color: leadReportProvider.selectedDateFilterIndex ==
+                                    index
                                 ? Colors.white
                                 : Colors.black,
                           ),
@@ -819,13 +836,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => leadProvider.selectDate(context, true),
+                            onTap: () =>
+                                leadReportProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              hintText: leadProvider.fromDate != null
-                                  ? '${leadProvider.fromDate!.toLocal()}'
+                              hintText: leadReportProvider.fromDate != null
+                                  ? '${leadReportProvider.fromDate!.toLocal()}'
                                       .split(' ')[0]
                                   : 'From',
                               suffixIcon: const Icon(Icons.calendar_month),
@@ -837,13 +855,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           child: TextField(
                             readOnly: true,
                             onTap: () =>
-                                leadProvider.selectDate(context, false),
+                                leadReportProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
-                              hintText: leadProvider.toDate != null
-                                  ? '${leadProvider.toDate!.toLocal()}'
+                              hintText: leadReportProvider.toDate != null
+                                  ? '${leadReportProvider.toDate!.toLocal()}'
                                       .split(' ')[0]
                                   : 'To',
                               suffixIcon: const Icon(Icons.calendar_month),
@@ -860,10 +878,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         onPressed: () {
                           Navigator.pop(context);
 
-                          leadProvider.formatDate();
+                          leadReportProvider.formatDate();
 
-                          print(leadProvider.formattedFromDate);
-                          print(leadProvider.formattedToDate);
+                          print(leadReportProvider.formattedFromDate);
+                          print(leadReportProvider.formattedToDate);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,

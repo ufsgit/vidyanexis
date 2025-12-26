@@ -34,7 +34,7 @@ import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'dart:html' as html;
 
-class LeadsProvider extends ChangeNotifier {
+class LeadReportProvider extends ChangeNotifier {
   //controllers for add lead
   final TextEditingController leadNameController = TextEditingController();
   final TextEditingController leadAgeController = TextEditingController();

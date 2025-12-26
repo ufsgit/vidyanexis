@@ -366,22 +366,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       _leadNameFocusNode.requestFocus();
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
-      final leadDetailsProvider =
-          Provider.of<LeadDetailsProvider>(context, listen: false);
+
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
       if (widget.isEdit) {
-        await leadDetailsProvider.fetchLeadDetails(widget.customerId, context);
-
-        await leadProvider.getCustomFieldsByEnquiryForId(
+        leadProvider.getCustomFieldsByEnquiryForId(
           context,
           enquiryForId: dropDownProvider.selectedEnquiryForId ?? 0,
-          leadId: int.parse(widget.customerId),
+          leadId: leadProvider.customerId,
         );
       } else {
         leadProvider.clearAllLeadControllers(context);
+
         //default source category
         final settingsProvider =
             Provider.of<SettingsProvider>(context, listen: false);
@@ -422,10 +418,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             enquiryForId: defaultEnquiryForId,
           );
         }
-
-        settingsProvider.selectedDepartmentId = 0;
-        settingsProvider.selectedBranchId = 0;
-        dropDownProvider.setSourceCategoryId(0);
       }
       dropDownProvider.getUserDetails(context);
       print(leadProvider.loginUserName);

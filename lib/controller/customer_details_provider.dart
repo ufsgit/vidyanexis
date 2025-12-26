@@ -2,6 +2,8 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/commercial_item_model.dart';
+import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -31,6 +33,7 @@ import 'package:vidyanexis/controller/models/task_user_list_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
@@ -178,6 +181,68 @@ class CustomerDetailsProvider extends ChangeNotifier {
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
 
+  List<DropdownItem<int>> get quotationTypeData => [
+        DropdownItem(id: 1, name: 'Residential'),
+        DropdownItem(id: 2, name: 'Commercial'),
+      ];
+  TextEditingController quotationTypeController = TextEditingController();
+  int _selectedQuotationType = 0;
+  int get selectedQuotationType => _selectedQuotationType;
+  set selectedQuotationType(int value) {
+    _selectedQuotationType = value;
+    notifyListeners();
+  }
+
+  //commercial
+  TextEditingController commercialDescriptionController =
+      TextEditingController();
+  TextEditingController commercialDCCapacityController =
+      TextEditingController();
+  TextEditingController commercialACCapacityController =
+      TextEditingController();
+  TextEditingController commercialUnitPriceController = TextEditingController();
+  TextEditingController commercialTotalController = TextEditingController();
+  List<CommercialItemModel> _commercialItems = [];
+  List<CommercialItemModel> get commercialItems => _commercialItems;
+  int? _editCommercialIndex;
+  int? get editCommercialIndex => _editCommercialIndex;
+
+  void setEditCommercialItemIndex(int? index) {
+    _editCommercialIndex = index;
+    notifyListeners();
+  }
+
+  //cableDetails
+  final TextEditingController cableStructureController =
+      TextEditingController();
+  final TextEditingController cableTypeController = TextEditingController();
+  final TextEditingController cableShortCircuitTempController =
+      TextEditingController();
+  final TextEditingController cableStandardController = TextEditingController();
+  final TextEditingController cableConductorClassController =
+      TextEditingController();
+  final TextEditingController cableMaterialController = TextEditingController();
+  final TextEditingController cableProtectionController =
+      TextEditingController();
+  final TextEditingController cableWarrantyController = TextEditingController();
+  final TextEditingController cableTensileStrengthController =
+      TextEditingController();
+
+  //solarPV
+  final TextEditingController plantCapacityController = TextEditingController();
+  final TextEditingController moduleTechnologiesController =
+      TextEditingController();
+  final TextEditingController mountingStructureTechnologiesController =
+      TextEditingController();
+  final TextEditingController projectSchemeController = TextEditingController();
+  final TextEditingController powerEvacuationController =
+      TextEditingController();
+  final TextEditingController areaApproximateController =
+      TextEditingController();
+  final TextEditingController solarPlantOutputConnectionController =
+      TextEditingController();
+  final TextEditingController schemeController = TextEditingController();
+
 //financial controllers
   final TextEditingController advanceController = TextEditingController();
   final TextEditingController deliveryController = TextEditingController();
@@ -226,6 +291,24 @@ class CustomerDetailsProvider extends ChangeNotifier {
   ScrollController imageScrollControllerList = ScrollController();
   ScrollController taskScrollController = ScrollController();
   ScrollController taskScrollControllerList = ScrollController();
+
+  //refund
+  final TextEditingController electricalsectioncontroller =
+      TextEditingController();
+  final TextEditingController electricalsectionplacecontroller =
+      TextEditingController();
+  final TextEditingController consumernumbercontroller =
+      TextEditingController();
+  final TextEditingController kwcapacitycontroller = TextEditingController();
+  final TextEditingController accountnamecontroller = TextEditingController();
+  final TextEditingController accountnumbercontroller = TextEditingController();
+  final TextEditingController banknamecontroller = TextEditingController();
+  final TextEditingController ifsccontroller = TextEditingController();
+  final TextEditingController refundamountcontroller = TextEditingController();
+  final TextEditingController reasoncontroller = TextEditingController();
+
+  List<RefundModel> _refundList = [];
+  List<RefundModel> get refundList => _refundList;
 
   //reciept
   List<ReceiptListModel> _receiptList = [];
@@ -427,7 +510,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       print("Invalid input for price or quantity");
     }
     totalController.text =
-        total.toString(); // Update controller with formatted subtotal
+        total.toStringAsFixed(2); // Update controller with formatted subtotal
     notifyListeners();
   }
 
@@ -436,13 +519,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
     final unitPrice = double.tryParse(itemPriceController.text) ?? 0.0;
     final quantity = int.tryParse(itemQuantityController.text) ?? 1;
     final gstPercent = double.tryParse(itemGstPercentController.text) ?? 0.0;
-    final adCess = double.tryParse(itemAdCessController.text) ?? 0.0;
+    final otherTax = double.tryParse(itemAdCessController.text) ?? 0.0;
 
     // GST should be calculated on the total price (unitPrice * quantity)
     final gst = ((unitPrice * quantity) * gstPercent) / 100;
     itemGstController.text = gst.toStringAsFixed(2);
 
-    final total = (unitPrice * quantity) + gst + adCess;
+    final total = (unitPrice * quantity) + gst + otherTax;
     itemTotalController.text = total.toStringAsFixed(2);
   }
 
@@ -499,19 +582,19 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addOrEditBOMItem() {
     // Validate input fields
-    if (billdescriptionController.text.isEmpty ||
-        billmakeController.text.isEmpty ||
-        billquantityController.text.isEmpty ||
-        billdistributorController.text.isEmpty ||
-        billinvoiceController.text.isEmpty) {
-      return;
-    }
+    // if (billdescriptionController.text.isEmpty ||
+    //     billmakeController.text.isEmpty ||
+    //     billquantityController.text.isEmpty ||
+    //     billdistributorController.text.isEmpty ||
+    //     billinvoiceController.text.isEmpty) {
+    //   return;
+    // }
 
     // Create the BOM item
     final newBOMItem = BillOfMaterialItem(
       itemsAndDescription: billdescriptionController.text,
       make: billmakeController.text,
-      quantity: int.parse(billquantityController.text),
+      quantity: int.tryParse(billquantityController.text) ?? 0,
       distributor: billdistributorController.text,
       invoiceNo: billinvoiceController.text,
     );
@@ -1386,6 +1469,28 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "TotalGSTAmount": double.tryParse(totalGstAmountController.text) ?? 0.0,
         "TotalGSTPercent": double.tryParse(totalGstPerController.text) ?? 0.0,
         "TotalAdCESS": double.tryParse(totalAdCESSController.text) ?? 0.0,
+        //
+        "QuotationTypeId": _selectedQuotationType,
+        "QuotationTypeName": quotationTypeController.text,
+        "CommercialItems": _commercialItems.map((e) => e.toJson()).toList(),
+        "CableStructure": cableStructureController.text,
+        "CableType": cableTypeController.text,
+        "CableShortCircuitTemp": cableShortCircuitTempController.text,
+        "CableStandard": cableStandardController.text,
+        "CableConductorClass": cableConductorClassController.text,
+        "CableMaterial": cableMaterialController.text,
+        "CableProtection": cableProtectionController.text,
+        "CableWarranty": cableWarrantyController.text,
+        "CableTensileStrength": cableTensileStrengthController.text,
+        "PlantCapacity": plantCapacityController.text,
+        "ModuleTechnologies": moduleTechnologiesController.text,
+        "MountingStructureTechnologies":
+            mountingStructureTechnologiesController.text,
+        "ProjectScheme": projectSchemeController.text,
+        "PowerEvacuation": powerEvacuationController.text,
+        "AreaApproximate": areaApproximateController.text,
+        "SolarPlantOutputConnection": solarPlantOutputConnectionController.text,
+        "Scheme": schemeController.text,
       });
 
       if (response!.statusCode == 200) {
@@ -1843,6 +1948,101 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void clearRecieptDetails() {
     recieptAmountController.clear();
     recieptDescriptionController.clear();
+  }
+
+  saveRefund(String refundId, String customerId, BuildContext context) async {
+    print(customerId);
+    try {
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+      String userName = preferences.getString('userName') ?? "";
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveRefund,
+        bodyData: {
+          "Refund_Id": refundId,
+          "Customer_Id": customerId,
+          "Electrical_Section": electricalsectioncontroller.text.toString(),
+          "Place": electricalsectionplacecontroller.text.toString(),
+          "Consumer_Number": consumernumbercontroller.text.toString(),
+          "KW_Capacity": kwcapacitycontroller.text.toString(),
+          "Account_Holder_Name": accountnamecontroller.text.toString(),
+          "Account_Number": accountnumbercontroller.text.toString(),
+          "Bank_Name": banknamecontroller.text.toString(),
+          "IFSC_Code": ifsccontroller.text.toString(),
+          "By_User_Id": int.parse(userId),
+          "By_User_Name": userName
+        },
+      );
+
+      if (response!.statusCode == 200) {
+        final data = response.data;
+        log('Success');
+
+        clearRefundDetails();
+
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        getRefundDetails(customerId, context);
+        getInvoiceRecieptTotal(customerId, context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  void clearRefundDetails() {
+    refundamountcontroller.clear();
+    electricalsectioncontroller.clear();
+    electricalsectionplacecontroller.clear();
+  }
+
+  getRefundDetails(String customerId, BuildContext context) async {
+    _isLoading = true;
+    notifyListeners();
+
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getRefundDetails}?Customer_Id=$customerId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          log(data.toString());
+
+          _refundList = (data as List<dynamic>)
+              .map((item) => RefundModel.fromJson(item))
+              .toList();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    } finally {
+      _isLoading = false; // Set loading to false once the request completes
+      notifyListeners(); // Notify listeners to rebuild with the final state
+    }
   }
 
   getInvoiceListApi(String customerId, BuildContext context) async {
@@ -2335,5 +2535,116 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       print('Exception occurred: $error');
     }
+  }
+
+  void addOrEditCommercialItem(BuildContext context) {
+    // Validate input fields
+    if (commercialDescriptionController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Cannot save',
+              style: TextStyle(
+                color: AppColors.appViolet,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: const Text(
+              'Missing Details',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: AppColors.appViolet,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // Create the new commercial item
+    final newItem = CommercialItemModel(
+      description: commercialDescriptionController.text,
+      dcCapacity: commercialDCCapacityController.text,
+      acCapacity: commercialACCapacityController.text,
+      unitPrice: commercialUnitPriceController.text,
+      total: commercialTotalController.text,
+    );
+
+    if (_editCommercialIndex != null &&
+        _editCommercialIndex! >= 0 &&
+        _editCommercialIndex! < _commercialItems.length) {
+      // Edit existing item
+      _commercialItems[_editCommercialIndex!] = newItem;
+    } else {
+      // Add new item
+      _commercialItems.add(newItem);
+    }
+
+    // Clear the text fields
+    _editCommercialIndex = null;
+    clearCommercialItemFields();
+    print(_commercialItems.map((e) => e.toJson()).toList());
+    commercialTotalCalculator();
+    notifyListeners(); // Trigger UI updates
+  }
+
+  void clearCommercialItemFields() {
+    commercialDescriptionController.clear();
+    commercialDCCapacityController.clear();
+    commercialACCapacityController.clear();
+    commercialUnitPriceController.clear();
+    commercialTotalController.clear();
+  }
+
+  void populateCommercialItemFieldsForEditing(int index) {
+    // Populate text fields with existing item's data for editing
+    if (index >= 0 && index < _commercialItems.length) {
+      final itemToEdit = _commercialItems[index];
+
+      commercialDescriptionController.text = itemToEdit.description ?? '';
+      commercialDCCapacityController.text = itemToEdit.dcCapacity ?? '';
+      commercialACCapacityController.text = itemToEdit.acCapacity ?? '';
+      commercialUnitPriceController.text = itemToEdit.unitPrice ?? '';
+      commercialTotalController.text = itemToEdit.total ?? '';
+
+      setEditCommercialItemIndex(index);
+      notifyListeners();
+    }
+  }
+
+  void deleteCommercialItem(int index) {
+    if (index >= 0 && index < _commercialItems.length) {
+      _commercialItems.removeAt(index);
+      notifyListeners();
+    }
+  }
+
+  void commercialTotalCalculator() {
+    double total = 0;
+    for (var item in _commercialItems) {
+      total += double.tryParse(item.total ?? '0') ?? 0;
+    }
+    totalController.text = total.toStringAsFixed(2);
   }
 }

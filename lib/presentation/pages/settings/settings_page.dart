@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/pages/settings/department_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/document_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_for_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_source_content.dart';
+import 'package:vidyanexis/presentation/pages/settings/expense_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/lead_users_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/source_cateGory_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/stage_page.dart';
@@ -218,6 +219,8 @@ class _SettingsPageState extends State<SettingsPage> {
             return const CheckListCategoryPage();
           case 'Custom Field':
             return const CustomField();
+          case 'ExpenseType':
+            return const ExpenseType();
 
           default:
             return const SizedBox.shrink();
@@ -329,6 +332,12 @@ class _SettingsPageState extends State<SettingsPage> {
         _buildMenuItem(
           context,
           'Custom Field',
+          Icons.category,
+        ),
+      if (settingsProvider.menuIsViewMap[64].toString() == '1')
+        _buildMenuItem(
+          context,
+          'ExpenseType',
           Icons.category,
         ),
       // if (settingsProvider.menuIsViewMap[28].toString() == '1')

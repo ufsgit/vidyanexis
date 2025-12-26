@@ -11,6 +11,7 @@ import 'package:vidyanexis/presentation/pages/settings/department_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/document_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_for_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_source_content.dart';
+import 'package:vidyanexis/presentation/pages/settings/expense_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/lead_users_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/task_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/user_content_page.dart';
@@ -70,6 +71,7 @@ class SidebarProvider extends ChangeNotifier {
         widget: const TaskTypeContent()),
     MenuModel(
         menuId: 42, menuName: "DepartmentPage", widget: const DepartmentPage()),
+    MenuModel(menuId: 64, menuName: "ExpenseType", widget: const ExpenseType()),
   ];
 
   // Don't access Provider in constructor

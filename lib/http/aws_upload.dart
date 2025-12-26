@@ -18,11 +18,11 @@ class AwsUpload {
     BuildContext context,
   ) async {
     try {
-      final accessKey = "4884c170ed667f280f2615c329abaf1c";
+      final accessKey = "65cb84d8b8d8a2880efd1100dababc31";
       final secretKey =
-          "38b75cffcaac51c100560eabac6a743dfe0a2943d36300d53012fcdd97bfab65";
+          "28be688805e41781c41cf5c66f3e56add70f7d0699e3d7acdbc71cb23fac30a1";
       final bucketName = "vidyanexis";
-      final accountId = "e8b03061a99616c9340485f214c19a68";
+      final accountId = "538b13d4d239da205337637dc6b57ff0";
 
       // Generate unique filename
       String uploadFileName = DateTime.now().millisecondsSinceEpoch.toString();

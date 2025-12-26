@@ -26,6 +26,7 @@ import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_rep
 import 'package:vidyanexis/presentation/pages/reports/feddback_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_page.dart';
 import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
@@ -35,6 +36,7 @@ import 'package:vidyanexis/presentation/pages/reports/conversion_report_page.dar
 import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
@@ -164,7 +166,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/flow.svg',
           baseContent: const ProcessFlowPage(),
         ),
-
+      if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
+        SidebarOption(
+          title: 'Expense Management',
+          iconPath: 'assets/images/inventory.svg',
+          baseContent: const ExpenseManagement(),
+        ),
       if (settingsProvider.menuIsViewMap[7].toString() == '1')
         SidebarOption(
           title: 'Task Reports',
@@ -196,6 +203,13 @@ class _HomePageState extends State<HomePage> {
           title: 'Work Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: WorkSummaryScreen()),
+        ),
+
+      if (settingsProvider.menuIsViewMap[24].toString() == '1')
+        SidebarOption(
+          title: 'Time Track Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: TimeTrackReportPage()),
         ),
 
       if (settingsProvider.menuIsViewMap[53].toString() == '1')

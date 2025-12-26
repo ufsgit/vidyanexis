@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/common_report_widget.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
@@ -79,13 +81,19 @@ class WeeklyReportCard extends StatelessWidget {
                                 AppColors.parseColor(data.colorCode.toString()),
                             dataLabelSettings:
                                 const DataLabelSettings(isVisible: true),
-                            onPointTap: (ChartPointDetails details) {
+                            onPointTap: (ChartPointDetails details) async {
                               final statusId =
                                   data![details.pointIndex!].statusId;
-                              final leadProvider = Provider.of<LeadsProvider>(
-                                  context,
-                                  listen: false);
-                              leadProvider.setStatus(statusId);
+                              final leadReportProvider =
+                                  Provider.of<LeadReportProvider>(context,
+                                      listen: false);
+                              SharedPreferences preferences =
+                                  await SharedPreferences.getInstance();
+                              int userId = int.tryParse(
+                                      preferences.getString('userId') ?? "0") ??
+                                  0;
+                              leadReportProvider.setStatus(statusId);
+                              leadReportProvider.setUserFilterStatus(userId);
 
                               Navigator.of(context).push(
                                 MaterialPageRoute(

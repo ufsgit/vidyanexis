@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/work_report_provider.dart';
+import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -39,7 +40,27 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
 
       final reportsProvider =
           Provider.of<WorkReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+      final workSummaryProvider =
+          Provider.of<WorkSummaryProvider>(context, listen: false);
+      //pass date from work summary to work report
+      reportsProvider.selectDateFilterOption(null);
+
+      reportsProvider.formattedFromDate = workSummaryProvider.formattedFromDate;
+      reportsProvider.formattedToDate = workSummaryProvider.formattedToDate;
+      reportsProvider.setTaskSearchCriteria(
+          '',
+          reportsProvider.formattedFromDate,
+          reportsProvider.formattedToDate,
+          '',
+          '');
+      if (workSummaryProvider.fromDate != null) {
+        reportsProvider
+            .setFromDate(workSummaryProvider.fromDate ?? DateTime.now());
+      }
+      if (workSummaryProvider.toDate != null) {
+        reportsProvider.setToDate(workSummaryProvider.toDate ?? DateTime.now());
+      }
+      //
       reportsProvider.getSearchTaskReport(widget.userId, context);
       searchProvider.stopSearch();
       reportsProvider.setFilter(false);
