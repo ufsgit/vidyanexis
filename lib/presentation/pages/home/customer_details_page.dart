@@ -48,6 +48,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/customer_profie_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/utils/file_share_function.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
   static const String route = '/customerDetails/';
@@ -2915,6 +2916,99 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             curve: Curves.easeInOut,
                           );
                         }
+                      },
+                    ),
+                  ),
+
+                  // Close button
+                  // Download button
+                  Positioned(
+                    top: 20,
+                    right: 70,
+                    child: IconButton(
+                      icon: const Icon(Icons.share, color: Colors.white),
+                      onPressed: () {
+                        int currentIndex = pageController.hasClients &&
+                                pageController.page != null
+                            ? pageController.page!.round()
+                            : initialIndex;
+                        String path = items[currentIndex].filePath;
+                        String imageUrl =
+                            baseImgUrl ? path : HttpUrls.imgBaseUrl + path;
+
+                        showDialog(
+                          context: context,
+                          builder: (dialogContext) {
+                            return AlertDialog(
+                              title: const Text('Share'),
+                              content: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(
+                                      Icons.chat,
+                                      color: Colors.green,
+                                    ),
+                                    onPressed: () async {
+                                      Navigator.of(dialogContext).pop();
+                                      try {
+                                        final launched =
+                                            await FileShare.shareToWhatsApp(
+                                          imageUrl,
+                                          caption: 'Sharing image',
+                                        );
+                                        if (!launched) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'Could not open WhatsApp.')));
+                                        }
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Could not share image: $e')));
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(width: 16),
+                                  IconButton(
+                                    icon: const Icon(Icons.email),
+                                    onPressed: () async {
+                                      Navigator.of(dialogContext).pop();
+                                      try {
+                                        final launched =
+                                            await FileShare.shareViaEmail(
+                                          imageUrl,
+                                          subject: 'Sharing image',
+                                          body: 'Sharing image',
+                                        );
+                                        if (!launched) {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(const SnackBar(
+                                                  content: Text(
+                                                      'Could not open mail client.')));
+                                        }
+                                      } catch (e) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(SnackBar(
+                                                content: Text(
+                                                    'Could not share via mail: $e')));
+                                      }
+                                    },
+                                  ),
+                                ],
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.of(dialogContext).pop(),
+                                  child: const Text('Cancel'),
+                                )
+                              ],
+                            );
+                          },
+                        );
                       },
                     ),
                   ),
