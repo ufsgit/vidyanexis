@@ -1,9 +1,11 @@
 import 'dart:developer';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/get_refund_model.dart';
+import 'package:vidyanexis/controller/models/maintenance_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,6 +36,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
@@ -127,10 +130,21 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   final TextEditingController fromDateController = TextEditingController();
   final TextEditingController toDateController = TextEditingController();
+  final TextEditingController amcTotalDurationController =
+      TextEditingController();
+  final TextEditingController amcPeriodIntervalController =
+      TextEditingController();
+
   int? _selectedAMCStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
   String? _selectedAMCStatusName;
   String? get selectedAMCStatusName => _selectedAMCStatusName;
+  List<MaintenanceDate> _maintenanceDates = [];
+  List<MaintenanceDate> get maintenanceDates => _maintenanceDates;
+  int _monthInterval = 0;
+  int _yearInterval = 0;
+  int get monthInterval => _monthInterval;
+  int get yearInterval => _yearInterval;
 
   //quotations
   final TextEditingController qproductnameController = TextEditingController();
@@ -332,6 +346,14 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<SolarPanelDetails> _formDetails = [];
   List<SolarPanelDetails> get formDetails => _formDetails;
 
+  set monthInterval(int value) {
+    _monthInterval = value;
+  }
+
+  set yearInterval(int value) {
+    _yearInterval = value;
+  }
+
   set selectedQuotationStatus(int? value) {
     // Add any necessary validation or logic here
     if (_selectedQuotationStatus != value) {
@@ -348,6 +370,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
       // Notify listeners if using Provider or any other state management solution
       // Example: notifyListeners();
     }
+  }
+
+  set maintenanceDates(List<MaintenanceDate> newDates) {
+    _maintenanceDates = List.from(newDates);
   }
 
   updateTotalAmount(int total) {
@@ -2646,5 +2672,127 @@ class CustomerDetailsProvider extends ChangeNotifier {
       total += double.tryParse(item.total ?? '0') ?? 0;
     }
     totalController.text = total.toStringAsFixed(2);
+  }
+
+  void calculateMaintenanceDates({
+    required String installationDate,
+    required int totalDuration,
+    required int monthInterval,
+    required BuildContext context,
+  }) {
+    _maintenanceDates = [];
+
+    if (installationDate.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Installation date is required"),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    if (monthInterval <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Select Periodic Interval"),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    if (totalDuration <= 0) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Select Total Duration"),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    DateTime installDate;
+    try {
+      installDate = DateTime.parse(installationDate);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Invalid date format"),
+          behavior: SnackBarBehavior.floating,
+          duration: Duration(seconds: 3),
+        ),
+      );
+      return;
+    }
+
+    DateTime expDate = DateTime(
+        installDate.year + totalDuration, installDate.month, installDate.day);
+
+    final formattedExpiry = "${expDate.year.toString().padLeft(4, '0')}-"
+        "${expDate.month.toString().padLeft(2, '0')}-"
+        "${expDate.day.toString().padLeft(2, '0')}";
+    toDateController.text = formattedExpiry.toDDMMYYYY();
+
+    // int maintenanceId = 1;
+
+    // Add installation date
+    _maintenanceDates.add(MaintenanceDate(
+      // id: (maintenanceId++).toString(),
+      date: "${installDate.year.toString().padLeft(4, '0')}-"
+          "${installDate.month.toString().padLeft(2, '0')}-"
+          "${installDate.day.toString().padLeft(2, '0')}",
+    ));
+
+    DateTime currentDate = installDate;
+
+    while (true) {
+      int newYear = currentDate.year;
+      int newMonth = currentDate.month + monthInterval;
+
+      // Handle year overflow
+      newYear += (newMonth - 1) ~/ 12;
+      newMonth = ((newMonth - 1) % 12) + 1;
+
+      // Handle day overflow (e.g., Jan 31 + 1 month)
+      int lastDayOfMonth = DateTime(newYear, newMonth + 1, 0).day;
+      int newDay = math.min(currentDate.day, lastDayOfMonth);
+
+      DateTime nextDate = DateTime(newYear, newMonth, newDay);
+
+      // Stop if we've reached or passed the expiration date
+      if (!nextDate.isBefore(expDate)) break;
+
+      _maintenanceDates.add(MaintenanceDate(
+        // id: (maintenanceId++).toString(),
+        date: "${nextDate.year.toString().padLeft(4, '0')}-"
+            "${nextDate.month.toString().padLeft(2, '0')}-"
+            "${nextDate.day.toString().padLeft(2, '0')}",
+      ));
+
+      currentDate = nextDate;
+    }
+
+    // Add expiration date if it's not already in the list
+    if (_maintenanceDates.isEmpty ||
+        !_datesEqual(_maintenanceDates.last.date, formattedExpiry)) {
+      _maintenanceDates.add(MaintenanceDate(
+        // id: maintenanceId.toString(),
+        date: formattedExpiry,
+      ));
+    }
+
+    notifyListeners();
+  }
+
+  bool _datesEqual(String date1, String date2) {
+    try {
+      return DateTime.parse(date1) == DateTime.parse(date2);
+    } catch (e) {
+      return false;
+    }
   }
 }

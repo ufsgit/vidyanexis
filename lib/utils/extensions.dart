@@ -14,6 +14,42 @@ extension DateStringFormatter on String {
     }
   }
 
+  String toUniversalYyyyMmDd() {
+    if (this == null || this!.trim().isEmpty) return '';
+    final value = this!.trim();
+
+    // Try parsing with common formats
+    final List<DateFormat> formats = [
+      DateFormat('yyyy-MM-dd'),
+      DateFormat('dd-MM-yyyy'),
+      DateFormat('dd/MM/yyyy'),
+      DateFormat('dd MMM yyyy'),
+      DateFormat('MM/dd/yyyy'),
+      DateFormat('yyyy/MM/dd'),
+    ];
+
+    DateTime? parsedDate;
+
+    // Try all formats
+    for (final format in formats) {
+      try {
+        parsedDate = format.parseStrict(value);
+        break;
+      } catch (_) {}
+    }
+
+    // Try DateTime.parse as fallback
+    if (parsedDate == null) {
+      try {
+        parsedDate = DateTime.parse(value);
+      } catch (_) {}
+    }
+
+    if (parsedDate == null) return '';
+
+    return DateFormat('yyyy-MM-dd').format(parsedDate);
+  }
+
   String toDDMMYYYY() {
     try {
       final DateTime date = DateTime.parse(this);

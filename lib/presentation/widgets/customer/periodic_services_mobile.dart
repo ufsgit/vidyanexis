@@ -6,6 +6,7 @@ import 'package:vidyanexis/presentation/pages/dashboard/common_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_service_details_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 // import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
 
 import '../../../constants/app_colors.dart';
@@ -156,21 +157,24 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
                         const Text('•',
                             style: TextStyle(fontSize: 14, color: Colors.grey)),
                         const SizedBox(width: 5),
-                        Container(
-                          padding: EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Color(0xffF6F7F9),
-                            borderRadius: BorderRadius.circular(7),
-                          ),
-                          child: Center(
-                            child: Text(
-                              style: AppStyles.getBoldTextStyle(fontSize: 11),
-                              '${formatDate(item.fromDate ?? DateTime.now())} - ${formatDate(item.toDate ?? DateTime.now())}',
+                        Expanded(
+                          flex: 4,
+                          child: Container(
+                            padding: EdgeInsets.all(4),
+                            decoration: BoxDecoration(
+                              color: Color(0xffF6F7F9),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            child: Center(
+                              child: Text(
+                                style: AppStyles.getBoldTextStyle(fontSize: 12),
+                                '${item.fromDate.toDayMonthYearFormat()} - ${item.toDate.toDayMonthYearFormat()}',
+                              ),
                             ),
                           ),
                         ),
                         // Spacer(),
-                        // // const SizedBox(width: 5),
+                        // const SizedBox(width: 5),
                         // Text(
                         //   timeAgo(item.date ?? DateTime.now()),
                         //   style: AppStyles.getBoldTextStyle(

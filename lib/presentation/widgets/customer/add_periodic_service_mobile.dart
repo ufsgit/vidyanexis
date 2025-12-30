@@ -5,12 +5,16 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/amc_status_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
@@ -27,7 +31,8 @@ class AddPeriodicServiceMobile extends StatefulWidget {
       this.amcAmountController,
       this.fromDateController,
       this.toDateController,
-      required this.amcId});
+      required this.amcId,
+      this.amc});
   final bool isEdit;
   final String customerId;
   final String? amcProductNameController;
@@ -37,6 +42,7 @@ class AddPeriodicServiceMobile extends StatefulWidget {
   final String? fromDateController;
   final String? toDateController;
   final String amcId;
+  final AmcReportModeld? amc;
 
   @override
   State<AddPeriodicServiceMobile> createState() =>
@@ -125,22 +131,53 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
 
   @override
   void initState() {
-    if (widget.isEdit) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final leadDetailsProvider =
+          Provider.of<LeadDetailsProvider>(context, listen: false);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      customerDetailsProvider.amcProductNameController.text =
-          widget.amcProductNameController!;
-      customerDetailsProvider.amcServiceController.text =
-          widget.amcServiceController!;
-      customerDetailsProvider.amcDescriptionController.text =
-          widget.amcDescriptionController!;
-      customerDetailsProvider.amcAmountController.text =
-          widget.amcAmountController!;
-      customerDetailsProvider.fromDateController.text =
-          widget.fromDateController!;
-      customerDetailsProvider.toDateController.text = widget.toDateController!;
-      super.initState();
-    }
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      customerDetailsProvider.maintenanceDates.clear();
+      leadDetailsProvider.fetchLeadDetails(widget.customerId, context);
+      if (leadDetailsProvider.leadDetails != null &&
+          leadDetailsProvider.leadDetails!.isNotEmpty) {
+        String installationDate =
+            leadDetailsProvider.leadDetails![0].entryDate ?? '';
+        customerDetailsProvider.fromDateController.text =
+            installationDate.toDDMMYYYY();
+      }
+      dropDownProvider.setSelectedAmcPeriodicIntervalId(0);
+      dropDownProvider.setSelectedAmcTotalDurationId(0);
+      dropDownProvider.getDuration(context);
+      dropDownProvider.getIntervals(context);
+      customerDetailsProvider.yearInterval = 0;
+      customerDetailsProvider.monthInterval = 0;
+      if (widget.isEdit) {
+        customerDetailsProvider.amcProductNameController.text =
+            widget.amcProductNameController!;
+        customerDetailsProvider.amcServiceController.text =
+            widget.amcServiceController!;
+        customerDetailsProvider.amcDescriptionController.text =
+            widget.amcDescriptionController!;
+        customerDetailsProvider.amcAmountController.text =
+            widget.amcAmountController!;
+        customerDetailsProvider.fromDateController.text =
+            widget.fromDateController!;
+        customerDetailsProvider.toDateController.text =
+            widget.toDateController!;
+        dropDownProvider
+            .setSelectedAmcPeriodicIntervalId(widget.amc!.periodIntervalId);
+        dropDownProvider
+            .setSelectedAmcTotalDurationId(widget.amc!.totalDurationId);
+        customerDetailsProvider.yearInterval = widget.amc!.totalDurationNo;
+        customerDetailsProvider.monthInterval = widget.amc!.periodIntervalNo;
+        customerDetailsProvider.amcTotalDurationController.text =
+            widget.amc!.totalDurationName;
+        customerDetailsProvider.maintenanceDates = widget.amc!.maintenanceDate;
+        super.initState();
+      }
+    });
   }
 
   @override
@@ -166,21 +203,21 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
               customerDetailsProvider.toDateController.text.isNotEmpty) {
             await customerDetailsProvider.saveAmc(
               amcId: widget.amcId,
-              toDate: formatDate(customerDetailsProvider.toDateController.text,
-                  "dd-MM-yyyy", "yyyy-MM-dd"),
+              toDate: customerDetailsProvider.toDateController.text
+                  .toUniversalYyyyMmDd(),
               cusId: widget.customerId,
               amount: customerDetailsProvider.amcAmountController.text,
               context: context,
               description:
                   customerDetailsProvider.amcDescriptionController.text,
-              fromDate: formatDate(
-                  customerDetailsProvider.fromDateController.text,
-                  "dd-MM-yyyy",
-                  "yyyy-MM-dd"),
+              fromDate: customerDetailsProvider.fromDateController.text
+                  .toUniversalYyyyMmDd(),
               productName:
                   customerDetailsProvider.amcProductNameController.text,
               serviceName: customerDetailsProvider.amcServiceController.text,
             );
+            Navigator.pop(context);
+            Navigator.pop(context);
           } else {
             showDialog(
               context: context,
@@ -224,7 +261,6 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
           }
         },
       ),
-
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
@@ -360,120 +396,216 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
               Row(
                 children: [
                   Expanded(
-                    child: CustomTextfieldWidgetMobile(
-                      focusNode: FocusNode(),
+                    child: TextField(
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textBlack,
+                      ),
                       controller: customerDetailsProvider.fromDateController,
                       readOnly: true,
-                      onTap: () =>
-                          _selectDate(context, true, customerDetailsProvider),
-                      labelText: 'From *',
-                      // decoration: InputDecoration(
-                      //   label: RichText(
-                      //     text: TextSpan(
-                      //       text: 'From *'.replaceAll('*', ''),
-                      //       style: GoogleFonts.plusJakartaSans(
-                      //         fontSize: 14,
-                      //         fontWeight: FontWeight.w500,
-                      //         color: AppColors.textGrey3,
-                      //       ),
-                      //       children: const <TextSpan>[
-                      //         TextSpan(
-                      //           text: ' *', // The asterisk part
-                      //           style: TextStyle(
-                      //               color:
-                      //                   Colors.red), // Red color for asterisk
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      //   border: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     borderSide: BorderSide(
-                      //       color: AppColors.textGrey2,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   focusedBorder: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     borderSide: BorderSide(
-                      //       color: AppColors.textGrey2,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   enabledBorder: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     borderSide: BorderSide(
-                      //       color: AppColors.textGrey2,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   hintText: 'From *',
-                      //   hintStyle: GoogleFonts.plusJakartaSans(
-                      //     fontSize: 14,
-                      //     fontWeight: FontWeight.w500,
-                      //     color: AppColors.textGrey3,
-                      //   ),
-                      //   suffixIcon: const Icon(Icons.calendar_month),
-                      // ),
+                      onTap: () async {
+                        await _selectDate(
+                            context, true, customerDetailsProvider);
+                        String installationDate =
+                            (customerDetailsProvider.fromDateController.text)
+                                .toyyyymmdd();
+
+                        customerDetailsProvider.calculateMaintenanceDates(
+                          monthInterval: customerDetailsProvider.monthInterval,
+                          context: context,
+                          installationDate: installationDate,
+                          totalDuration: customerDetailsProvider.yearInterval,
+                        );
+                      },
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: TextSpan(
+                            text: 'Installation Date *'.replaceAll('*', ''),
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textGrey3,
+                            ),
+                            children: const <TextSpan>[
+                              TextSpan(
+                                text: ' *',
+                                style: TextStyle(color: Colors.red),
+                              ),
+                            ],
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: AppColors.textGrey2,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: AppColors.textGrey2,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: AppColors.textGrey2,
+                            width: 1,
+                          ),
+                        ),
+                        hintStyle: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey3,
+                        ),
+                        suffixIcon: const Icon(Icons.calendar_month),
+                      ),
                     ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: CommonDropdown<int>(
+                        hintText: 'Periodic Interval',
+                        items: dropDownProvider.amcInterval
+                            .map((status) => DropdownItem<int>(
+                                  id: status.intervalsId,
+                                  name: status.intervalsName,
+                                  no: status.intervalsNo,
+                                ))
+                            .toList(),
+                        controller:
+                            customerDetailsProvider.amcPeriodIntervalController,
+                        onItemSelected: (selectedId) {
+                          dropDownProvider
+                              .setSelectedAmcPeriodicIntervalId(selectedId);
+
+                          final selectedItem =
+                              dropDownProvider.amcInterval.firstWhere(
+                            (status) => status.intervalsId == selectedId,
+                          );
+
+                          customerDetailsProvider.amcPeriodIntervalController
+                              .text = selectedItem.intervalsName;
+
+                          String installationDate =
+                              (customerDetailsProvider.fromDateController.text)
+                                  .toyyyymmdd();
+
+                          customerDetailsProvider.monthInterval =
+                              selectedItem.intervalsNo;
+
+                          customerDetailsProvider.calculateMaintenanceDates(
+                            monthInterval:
+                                customerDetailsProvider.monthInterval,
+                            context: context,
+                            installationDate: installationDate,
+                            totalDuration: customerDetailsProvider.yearInterval,
+                          );
+                        },
+                        selectedValue: dropDownProvider.amcPeriodIntervalId),
                   ),
                   const SizedBox(width: 10),
                   Expanded(
-                    child: CustomTextfieldWidgetMobile(
-                      focusNode: FocusNode(),
+                    child: CommonDropdown<int>(
+                      hintText: 'Select Total Duration',
+                      items: dropDownProvider.amcDuration
+                          .map((status) => DropdownItem<int>(
+                                id: status.durationId,
+                                name: status.durationName,
+                                no: status.durationNo,
+                              ))
+                          .toList(),
+                      controller:
+                          customerDetailsProvider.amcTotalDurationController,
+                      onItemSelected: (selectedId) {
+                        dropDownProvider
+                            .setSelectedAmcTotalDurationId(selectedId);
+
+                        final selectedItem =
+                            dropDownProvider.amcDuration.firstWhere(
+                          (status) => status.durationId == selectedId,
+                        );
+
+                        customerDetailsProvider.amcTotalDurationController
+                            .text = selectedItem.durationName;
+
+                        String installationDate =
+                            (customerDetailsProvider.fromDateController.text)
+                                .toyyyymmdd();
+
+                        customerDetailsProvider.yearInterval =
+                            selectedItem.durationNo;
+
+                        customerDetailsProvider.calculateMaintenanceDates(
+                          monthInterval: customerDetailsProvider.monthInterval,
+                          context: context,
+                          installationDate: installationDate,
+                          totalDuration: customerDetailsProvider.yearInterval,
+                        );
+                      },
+                      selectedValue: dropDownProvider.amcTotalDurationlId,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textBlack,
+                      ),
                       controller: customerDetailsProvider.toDateController,
                       readOnly: true,
-                      onTap: () =>
-                          _selectDate(context, false, customerDetailsProvider),
-                      // decoration: InputDecoration(
-                      //   label: RichText(
-                      //     text: TextSpan(
-                      //       text: 'To *'.replaceAll('*', ''),
-                      //       style: GoogleFonts.plusJakartaSans(
-                      //         fontSize: 14,
-                      //         fontWeight: FontWeight.w500,
-                      //         color: AppColors.textGrey3,
-                      //       ),
-                      //       children: const <TextSpan>[
-                      //         TextSpan(
-                      //           text: ' *', // The asterisk part
-                      //           style: TextStyle(
-                      //               color:
-                      //                   Colors.red), // Red color for asterisk
-                      //         ),
-                      //       ],
-                      //     ),
-                      //   ),
-                      //   border: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     borderSide: BorderSide(
-                      //       color: AppColors.textGrey2,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   focusedBorder: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     borderSide: BorderSide(
-                      //       color: AppColors.textGrey2,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   enabledBorder: OutlineInputBorder(
-                      //     borderRadius: BorderRadius.circular(10),
-                      //     borderSide: BorderSide(
-                      //       color: AppColors.textGrey2,
-                      //       width: 1,
-                      //     ),
-                      //   ),
-                      //   hintText: 'To *',
-                      //   hintStyle: GoogleFonts.plusJakartaSans(
-                      //     fontSize: 14,
-                      //     fontWeight: FontWeight.w500,
-                      //     color: AppColors.textGrey3,
-                      //   ),
-                      //   suffixIcon: const Icon(Icons.calendar_month),
-                      // ),
-                      labelText: 'To *',
+                      decoration: InputDecoration(
+                        label: RichText(
+                          text: TextSpan(
+                            text: 'Expiry Date *',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textGrey3,
+                            ),
+                          ),
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: AppColors.textGrey2,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: AppColors.textGrey2,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide(
+                            color: AppColors.textGrey2,
+                            width: 1,
+                          ),
+                        ),
+                        hintStyle: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey3,
+                        ),
+                        suffixIcon: const Icon(Icons.calendar_month),
+                      ),
                     ),
                   ),
                 ],
@@ -497,86 +629,91 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
                 minLines: 3,
                 maxLines: 5,
               ),
+              if (customerDetailsProvider.maintenanceDates.isNotEmpty)
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 16.0),
+                    Text(
+                      'Service Periods:',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    const SizedBox(height: 8.0),
+                    if (customerDetailsProvider.maintenanceDates.length > 2)
+                      Container(
+                        padding: const EdgeInsets.all(12.0),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100], // Light background
+                          borderRadius: BorderRadius.circular(8.0),
+                        ),
+                        child: ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount:
+                              customerDetailsProvider.maintenanceDates.length -
+                                  2,
+                          itemBuilder: (context, index) {
+                            final dateString = customerDetailsProvider
+                                .maintenanceDates[index + 1];
+
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 8.0),
+                              padding: const EdgeInsets.symmetric(
+                                  vertical: 12.0, horizontal: 12.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(8.0),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.grey.withOpacity(0.2),
+                                    blurRadius: 4,
+                                    spreadRadius: 1,
+                                  ),
+                                ],
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(Icons.event,
+                                      color: AppColors.primaryBlue, size: 18),
+                                  const SizedBox(width: 8.0),
+                                  Expanded(
+                                    child: Text(
+                                      dateString.date
+                                          .toString()
+                                          .toDayMonthYearFormat(),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColors.primaryBlue,
+                                      ),
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                      )
+                    else
+                      Text(
+                        'No Service Period available.',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.grey[600],
+                        ),
+                      ),
+                  ],
+                ),
             ],
           ),
         ),
       ),
-      // actions: [
-      //   CustomElevatedButton(
-      //     buttonText: 'Cancel',
-      //     onPressed: () {
-      //       customerDetailsProvider.clearAmcControllers();
-      //       Navigator.pop(context);
-      //     },
-      //     backgroundColor: AppColors.whiteColor,
-      //     borderColor: AppColors.appViolet,
-      //     textColor: AppColors.appViolet,
-      //   ),
-      //   CustomElevatedButton(
-      //     buttonText: 'Save',
-      //     onPressed: () async {
-      //       if (customerDetailsProvider.amcAmountController.text.isNotEmpty &&
-      //           customerDetailsProvider.amcServiceController.text.isNotEmpty &&
-      //           customerDetailsProvider.amcProductNameController.text.isNotEmpty &&
-      //           customerDetailsProvider.fromDateController.text.isNotEmpty) {
-      //         customerDetailsProvider.saveAmc(
-      //           amcId: widget.amcId,
-      //           toDate: formatDate(customerDetailsProvider.toDateController.text, "dd-MM-yyyy", "yyyy-MM-dd"),
-      //           cusId: widget.customerId,
-      //           amount: customerDetailsProvider.amcAmountController.text,
-      //           context: context,
-      //           description: customerDetailsProvider.amcDescriptionController.text,
-      //           fromDate: formatDate(customerDetailsProvider.fromDateController.text, "dd-MM-yyyy", "yyyy-MM-dd"),
-      //           productName: customerDetailsProvider.amcProductNameController.text,
-      //           serviceName: customerDetailsProvider.amcServiceController.text,
-      //         );
-      //       } else {
-      //         showDialog(
-      //           context: context,
-      //           builder: (BuildContext context) {
-      //             return AlertDialog(
-      //               title: Text(
-      //                 'Cannot save',
-      //                 style: TextStyle(
-      //                   color: AppColors.appViolet,
-      //                   fontWeight: FontWeight.bold,
-      //                 ),
-      //               ),
-      //               content: const Text(
-      //                 'Missing Details',
-      //                 style: TextStyle(
-      //                   color: Colors.black87,
-      //                   fontSize: 16,
-      //                 ),
-      //               ),
-      //               shape: RoundedRectangleBorder(
-      //                 borderRadius: BorderRadius.circular(15),
-      //               ),
-      //               actions: [
-      //                 TextButton(
-      //                   onPressed: () {
-      //                     Navigator.pop(context);
-      //                   },
-      //                   child: Text(
-      //                     'OK',
-      //                     style: TextStyle(
-      //                       color: AppColors.appViolet,
-      //                       fontWeight: FontWeight.bold,
-      //                       fontSize: 16,
-      //                     ),
-      //                   ),
-      //                 ),
-      //               ],
-      //             );
-      //           },
-      //         );
-      //       }
-      //     },
-      //     backgroundColor: AppColors.appViolet,
-      //     borderColor: AppColors.appViolet,
-      //     textColor: AppColors.whiteColor,
-      //   ),
-      // ],
     );
   }
 }

@@ -147,6 +147,7 @@ class DropdownItem<T> {
   final String? address;
   final String? unit;
   final String? category;
+  final int? no;
 
   DropdownItem({
     required this.id,
@@ -154,5 +155,6 @@ class DropdownItem<T> {
     this.address,
     this.unit,
     this.category,
+    this.no,
   });
 }

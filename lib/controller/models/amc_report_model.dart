@@ -1,3 +1,5 @@
+import 'package:vidyanexis/controller/models/maintenance_model.dart';
+
 class AmcReportModeld {
   int amcId;
   String amcNo;
@@ -10,13 +12,20 @@ class AmcReportModeld {
   String amount;
   int createdBy;
   int customerId;
-  DateTime? fromDate; // Made nullable
-  DateTime? toDate; // Made nullable
+  String fromDate;
+  String toDate;
   int deleteStatus;
   String createdByName;
   String customerName;
   final String mobile;
   final String address1;
+  final String periodIntervalName;
+  final int periodIntervalId;
+  final int periodIntervalNo;
+  final String totalDurationName;
+  final int totalDurationId;
+  final int totalDurationNo;
+  List<MaintenanceDate> maintenanceDate;
 
   AmcReportModeld({
     required this.amcId,
@@ -30,13 +39,20 @@ class AmcReportModeld {
     required this.amount,
     required this.createdBy,
     required this.customerId,
-    this.fromDate, // Nullable
-    this.toDate, // Nullable
+    required this.fromDate,
+    required this.toDate,
     required this.deleteStatus,
     required this.createdByName,
     required this.customerName,
     required this.mobile,
     required this.address1,
+    required this.periodIntervalId,
+    required this.periodIntervalNo,
+    required this.periodIntervalName,
+    required this.totalDurationId,
+    required this.totalDurationNo,
+    required this.totalDurationName,
+    required this.maintenanceDate,
   });
 
   factory AmcReportModeld.fromJson(Map<String, dynamic> json) =>
@@ -52,16 +68,24 @@ class AmcReportModeld {
         amount: json["Amount"] ?? '',
         createdBy: json["Created_By"] ?? 0,
         customerId: json["Customer_Id"] ?? 0,
-        fromDate: json["From_Date"] != null
-            ? DateTime.tryParse(json["From_Date"])
-            : null,
-        toDate:
-            json["To_Date"] != null ? DateTime.tryParse(json["To_Date"]) : null,
+        fromDate: json["From_Date"]?.toString() ?? '',
+        toDate: json["To_Date"]?.toString() ?? '',
         deleteStatus: json["DeleteStatus"] ?? 0,
         createdByName: json["Created_By_Name"] ?? '',
         customerName: json["Customer_Name"] ?? '',
         mobile: json['Contact_Number'] ?? '',
-        address1: json['Address1'] ?? '',
+        address1: json['address'] ?? '',
+        periodIntervalId: json['Interval_Id'] ?? 0,
+        periodIntervalNo: json['Intervals_No'] ?? 0,
+        periodIntervalName: json['Interval_Name'] ?? '',
+        totalDurationId: json['Duration_Id'] ?? 0,
+        totalDurationNo: json['Duration_No'] ?? 0,
+        totalDurationName: json['Duration_Name'] ?? '',
+        maintenanceDate: json['interval_details'] != null
+            ? (json['interval_details'] as List)
+                .map((item) => MaintenanceDate.fromJson(item))
+                .toList()
+            : [],
       );
 
   Map<String, dynamic> toJson() => {
@@ -76,12 +100,8 @@ class AmcReportModeld {
         "Amount": amount,
         "Created_By": createdBy,
         "Customer_Id": customerId,
-        "From_Date": fromDate != null
-            ? "${fromDate!.year.toString().padLeft(4, '0')}-${fromDate!.month.toString().padLeft(2, '0')}-${fromDate!.day.toString().padLeft(2, '0')}"
-            : null,
-        "To_Date": toDate != null
-            ? "${toDate!.year.toString().padLeft(4, '0')}-${toDate!.month.toString().padLeft(2, '0')}-${toDate!.day.toString().padLeft(2, '0')}"
-            : null,
+        "From_Date": fromDate,
+        "To_Date": toDate,
         "DeleteStatus": deleteStatus,
         "Created_By_Name": createdByName,
         "Customer_Name": customerName,

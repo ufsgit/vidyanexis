@@ -3,10 +3,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/amc_status_model.dart';
 import 'package:vidyanexis/controller/models/district_model.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
+import 'package:vidyanexis/controller/models/duration_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_status_model.dart';
+import 'package:vidyanexis/controller/models/interval_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
@@ -48,6 +50,15 @@ class DropDownProvider extends ChangeNotifier {
   int? get selectedDistrictId => _selectedDistrictId;
   String _selectedDistrictName = '';
   String get selectedDistrictName => _selectedDistrictName;
+  int? _amcPeriodIntervalId;
+  int? get amcPeriodIntervalId => _amcPeriodIntervalId;
+  int? _amcTotalDurationId;
+  int? get amcTotalDurationlId => _amcTotalDurationId;
+  List<DurationModel> _amcDuration = [];
+  List<DurationModel> get amcDuration => _amcDuration;
+  List<IntervalModel> _amcInterval = [];
+  List<IntervalModel> get amcInterval => _amcInterval;
+
   // Method to set source category ID and filter enquiry sources
   void setSourceCategoryId(int? categoryId) {
     selectedSourceId = categoryId;
@@ -311,6 +322,16 @@ class DropDownProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setSelectedAmcPeriodicIntervalId(int id) {
+    _amcPeriodIntervalId = id;
+    notifyListeners();
+  }
+
+  void setSelectedAmcTotalDurationId(int id) {
+    _amcTotalDurationId = id;
+    notifyListeners();
+  }
+
   void updateEnquiryForName(int? value, String enquiryForName) {
     _selectedEnquiryForId = value;
     _selectedEnquiryForName = enquiryForName;
@@ -419,6 +440,70 @@ class DropDownProvider extends ChangeNotifier {
       return selectedStatus.followup == 1;
     }
     return false;
+  }
+
+  void getDuration(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcDuration);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final dataItem = data['data'] ?? [];
+
+          _amcDuration = (dataItem as List<dynamic>)
+              .map((item) => DurationModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  void getIntervals(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcInterval);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final dataItem = data['data'] ?? [];
+
+          _amcInterval = (dataItem as List<dynamic>)
+              .map((item) => IntervalModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
   }
 
   void getEnquirySource(BuildContext context) async {
