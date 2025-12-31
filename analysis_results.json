@@ -1,0 +1,11 @@
+﻿Analyzing add_task_widget.dart...                               
+
+warning - The value of the field '_selectedDate' isn't used - lib\presentation\widgets\home\add_task_widget.dart:29:13 - unused_field
+warning - The value of the field '_selectedEndDate' isn't used - lib\presentation\widgets\home\add_task_widget.dart:30:13 - unused_field
+   info - The getter 'selectedStatus' recursively returns itself - lib\presentation\widgets\home\add_task_widget.dart:32:30 - recursive_getters
+warning - The '!' will have no effect because the receiver can't be null - lib\presentation\widgets\home\add_task_widget.dart:131:59 - unnecessary_non_null_assertion
+warning - The left operand can't be null, so the right operand is never executed - lib\presentation\widgets\home\add_task_widget.dart:132:67 - dead_null_aware_expression
+  error - The property 'value' can't be unconditionally accessed because the receiver can be 'null' - lib\presentation\widgets\home\add_task_widget.dart:253:38 - unchecked_use_of_nullable_value
+  error - Undefined name 'taskId' - lib\presentation\widgets\home\add_task_widget.dart:254:23 - undefined_identifier
+   info - Don't use 'BuildContext's across async gaps - lib\presentation\widgets\home\add_task_widget.dart:257:36 - use_build_context_synchronously
+

@@ -1,3 +1,4 @@
+// Check line 1776
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -417,7 +418,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     showDialog(
                                                       context: context,
                                                       builder: (_) =>
-                                                          const AddTaskWidget(),
+                                                          const AddTaskWidget(
+                                                        taskId: 0,
+                                                      ),
                                                     );
                                                   },
                                                   icon: const Icon(Icons.add),
@@ -428,7 +431,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         AppColors.primaryBlue,
                                                     foregroundColor:
                                                         Colors.white,
-                                                    padding: const EdgeInsets.symmetric(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                       horizontal: 16,
                                                       vertical: 12,
                                                     ),
@@ -1318,39 +1322,40 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   .clear();
                                               reportsProvider.taskTypeModel
                                                   .clear();
-                                               if (task.customerName == null ||
-                                                   task.customerName!.isEmpty) {
-                                                 updateStatusDialogWithoutTask(
-                                                         task)
-                                                     .then((value) {
-                                                   if (value == true) {
-                                                     reportsProvider
-                                                         .searchTaskByCustomer(
-                                                             context);
-                                                   }
-                                                 });
-                                               } else {
-                                                 if (AppStyles.isWebScreen(
-                                                     context)) {
-                                                   statusDialog(task)
-                                                       .then((value) {
-                                                     if (value == true) {
-                                                       reportsProvider
-                                                           .searchTaskByCustomer(
-                                                               context);
-                                                     }
-                                                   });
-                                                 } else {
-                                                   statusDialogMobile(task)
-                                                       .then((value) {
-                                                     if (value == true) {
-                                                       reportsProvider
-                                                           .searchTaskByCustomer(
-                                                               context);
-                                                     }
-                                                   });
-                                                 }
-                                               }
+                                              if (task.customerName ==
+                                                      null || // check here
+                                                  task.customerName!.isEmpty) {
+                                                updateStatusDialogWithoutTask(
+                                                        task)
+                                                    .then((value) {
+                                                  if (value == true) {
+                                                    reportsProvider
+                                                        .searchTaskByCustomer(
+                                                            context);
+                                                  }
+                                                });
+                                              } else {
+                                                if (AppStyles.isWebScreen(
+                                                    context)) {
+                                                  statusDialog(task)
+                                                      .then((value) {
+                                                    if (value == true) {
+                                                      reportsProvider
+                                                          .searchTaskByCustomer(
+                                                              context);
+                                                    }
+                                                  });
+                                                } else {
+                                                  statusDialogMobile(task)
+                                                      .then((value) {
+                                                    if (value == true) {
+                                                      reportsProvider
+                                                          .searchTaskByCustomer(
+                                                              context);
+                                                    }
+                                                  });
+                                                }
+                                              }
                                             },
                                             child: Container(
                                               color: AppColors.whiteColor,
@@ -1374,50 +1379,50 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               reportsProvider
                                                                   .taskTypeModel
                                                                   .clear();
-                                                               if (task.customerName ==
-                                                                       null ||
-                                                                   task.customerName!
-                                                                       .isEmpty) {
-                                                                 updateStatusDialogWithoutTask(
-                                                                         task)
-                                                                     .then(
-                                                                         (value) {
-                                                                   if (value ==
-                                                                       true) {
-                                                                     reportsProvider
-                                                                         .searchTaskByCustomer(
-                                                                             context);
-                                                                   }
-                                                                 });
-                                                               } else {
-                                                                 if (AppStyles
-                                                                     .isWebScreen(
-                                                                         context)) {
-                                                                   statusDialog(
-                                                                           task)
-                                                                       .then(
-                                                                           (value) {
-                                                                     if (value ==
-                                                                         true) {
-                                                                       reportsProvider
-                                                                           .searchTaskByCustomer(
-                                                                               context);
-                                                                     }
-                                                                   });
-                                                                 } else {
-                                                                   statusDialogMobile(
-                                                                           task)
-                                                                       .then(
-                                                                           (value) async {
-                                                                     if (value ==
-                                                                         true) {
-                                                                       reportsProvider
-                                                                           .searchTaskByCustomer(
-                                                                               context);
-                                                                     }
-                                                                   });
-                                                                 }
-                                                               }
+                                                              if (task.customerName ==
+                                                                      null ||
+                                                                  task.customerName!
+                                                                      .isEmpty) {
+                                                                updateStatusDialogWithoutTask(
+                                                                        task)
+                                                                    .then(
+                                                                        (value) {
+                                                                  if (value ==
+                                                                      true) {
+                                                                    reportsProvider
+                                                                        .searchTaskByCustomer(
+                                                                            context);
+                                                                  }
+                                                                });
+                                                              } else {
+                                                                if (AppStyles
+                                                                    .isWebScreen(
+                                                                        context)) {
+                                                                  statusDialog(
+                                                                          task)
+                                                                      .then(
+                                                                          (value) {
+                                                                    if (value ==
+                                                                        true) {
+                                                                      reportsProvider
+                                                                          .searchTaskByCustomer(
+                                                                              context);
+                                                                    }
+                                                                  });
+                                                                } else {
+                                                                  statusDialogMobile(
+                                                                          task)
+                                                                      .then(
+                                                                          (value) async {
+                                                                    if (value ==
+                                                                        true) {
+                                                                      reportsProvider
+                                                                          .searchTaskByCustomer(
+                                                                              context);
+                                                                    }
+                                                                  });
+                                                                }
+                                                              }
                                                             },
                                                             child: Row(
                                                               children: [
@@ -1471,50 +1476,50 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               reportsProvider
                                                                   .taskTypeModel
                                                                   .clear();
-                                                               if (task.customerName ==
-                                                                       null ||
-                                                                   task.customerName!
-                                                                       .isEmpty) {
-                                                                 updateStatusDialogWithoutTask(
-                                                                         task)
-                                                                     .then(
-                                                                         (value) {
-                                                                   if (value ==
-                                                                       true) {
-                                                                     reportsProvider
-                                                                         .searchTaskByCustomer(
-                                                                             context);
-                                                                   }
-                                                                 });
-                                                               } else {
-                                                                 if (AppStyles
-                                                                     .isWebScreen(
-                                                                         context)) {
-                                                                   statusDialog(
-                                                                           task)
-                                                                       .then(
-                                                                           (value) {
-                                                                     if (value ==
-                                                                         true) {
-                                                                       reportsProvider
-                                                                           .searchTaskByCustomer(
-                                                                               context);
-                                                                     }
-                                                                   });
-                                                                 } else {
-                                                                   statusDialogMobile(
-                                                                           task)
-                                                                       .then(
-                                                                           (value) {
-                                                                     if (value ==
-                                                                         true) {
-                                                                       reportsProvider
-                                                                           .searchTaskByCustomer(
-                                                                               context);
-                                                                     }
-                                                                   });
-                                                                 }
-                                                               }
+                                                              if (task.customerName ==
+                                                                      null ||
+                                                                  task.customerName!
+                                                                      .isEmpty) {
+                                                                updateStatusDialogWithoutTask(
+                                                                        task)
+                                                                    .then(
+                                                                        (value) {
+                                                                  if (value ==
+                                                                      true) {
+                                                                    reportsProvider
+                                                                        .searchTaskByCustomer(
+                                                                            context);
+                                                                  }
+                                                                });
+                                                              } else {
+                                                                if (AppStyles
+                                                                    .isWebScreen(
+                                                                        context)) {
+                                                                  statusDialog(
+                                                                          task)
+                                                                      .then(
+                                                                          (value) {
+                                                                    if (value ==
+                                                                        true) {
+                                                                      reportsProvider
+                                                                          .searchTaskByCustomer(
+                                                                              context);
+                                                                    }
+                                                                  });
+                                                                } else {
+                                                                  statusDialogMobile(
+                                                                          task)
+                                                                      .then(
+                                                                          (value) {
+                                                                    if (value ==
+                                                                        true) {
+                                                                      reportsProvider
+                                                                          .searchTaskByCustomer(
+                                                                              context);
+                                                                    }
+                                                                  });
+                                                                }
+                                                              }
                                                             },
                                                             child: Container(
                                                                 height: 22,
@@ -1767,40 +1772,41 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     reportsProvider
                                                         .taskTypeModel
                                                         .clear();
-                                                     if (task.customerName == null ||
-                                                         task.customerName!
-                                                             .isEmpty) {
-                                                       updateStatusDialogWithoutTask(
-                                                               task)
-                                                           .then((value) {
-                                                         if (value == true) {
-                                                           reportsProvider
-                                                               .searchTaskByCustomer(
-                                                                   context);
-                                                         }
-                                                       });
-                                                     } else {
-                                                       if (AppStyles.isWebScreen(
-                                                           context)) {
-                                                         statusDialog(task).then(
-                                                             (value) {
-                                                           if (value == true) {
-                                                             reportsProvider
-                                                                 .searchTaskByCustomer(
-                                                                     context);
-                                                           }
-                                                         });
-                                                       } else {
-                                                         statusDialogMobile(task)
-                                                             .then((value) {
-                                                           if (value == true) {
-                                                             reportsProvider
-                                                                 .searchTaskByCustomer(
-                                                                     context);
-                                                           }
-                                                         });
-                                                       }
-                                                     }
+                                                    if (task.customerName ==
+                                                            'kozhichena banath' || // 'test' // check here
+                                                        task.customerName!
+                                                            .isEmpty) {
+                                                      updateStatusDialogWithoutTask(
+                                                              task)
+                                                          .then((value) {
+                                                        if (value == true) {
+                                                          reportsProvider
+                                                              .searchTaskByCustomer(
+                                                                  context);
+                                                        }
+                                                      });
+                                                    } else {
+                                                      if (AppStyles.isWebScreen(
+                                                          context)) {
+                                                        statusDialog(task)
+                                                            .then((value) {
+                                                          if (value == true) {
+                                                            reportsProvider
+                                                                .searchTaskByCustomer(
+                                                                    context);
+                                                          }
+                                                        });
+                                                      } else {
+                                                        statusDialogMobile(task)
+                                                            .then((value) {
+                                                          if (value == true) {
+                                                            reportsProvider
+                                                                .searchTaskByCustomer(
+                                                                    context);
+                                                          }
+                                                        });
+                                                      }
+                                                    }
                                                   },
                                                   child: Container(
                                                     padding: task.taskStatusName !=
@@ -2148,7 +2154,8 @@ class _tasksPageReportState extends State<TaskPage> {
                         snapshot.data!.isEmpty) {
                       return const Padding(
                         padding: EdgeInsets.all(24.0),
-                        child: Center(child: Text('Error loading status options')),
+                        child:
+                            Center(child: Text('Error loading status options')),
                       );
                     } else {
                       final statusOptions = snapshot.data!;
@@ -2302,8 +2309,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   strokeWidth: 2,
                                                   valueColor:
                                                       AlwaysStoppedAnimation<
-                                                              Color>(
-                                                          Colors.white)))
+                                                          Color>(Colors.white)))
                                           : const Text('Save'),
                                     ),
                                   ],

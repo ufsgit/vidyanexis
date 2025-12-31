@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:provider/provider.dart';
 
 class TaskPageProvider extends ChangeNotifier {
   List<TaskReportModel> _taskReport = [];
@@ -408,6 +409,93 @@ class TaskPageProvider extends ChangeNotifier {
                 DateFormat('yyyy-MM-dd').format(DateTime.now()),
             "Tasks": _selectedTaskTypeIds.join(",")
           });
+
+      if (response?.statusCode == 200) {
+        final data = response?.data;
+
+        if (data != null) {
+          bool isSuccess = data["success"];
+          return isSuccess;
+        } else {
+          return false;
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+      return false;
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      return false;
+    }
+  }
+
+  Future<bool> saveTaskData(
+      BuildContext context,
+      int userId,
+      int taskId,
+      String taskName,
+      bool isRepeating,
+      TextEditingController durationController,
+      TextEditingController endDateController) async {
+    try {
+      final bodyData = {
+        "Task_Id": taskId,
+        "Task_name": taskName,
+        "User_Id": userId,
+        "Task_date": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        "Is_Repeating_Task": isRepeating,
+        "Duration": durationController,
+        "End_Date": endDateController,
+      };
+      print('=== TaskPageProvider: HTTP POST Request Body ===');
+      print(bodyData);
+      print('================================================');
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveTaskData, bodyData: bodyData);
+
+      if (response?.statusCode == 200) {
+        final data = response?.data;
+
+        if (data != null) {
+          bool isSuccess = data["success"];
+          return isSuccess;
+        } else {
+          return false;
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+      return false;
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      return false;
+    }
+  }
+
+  //Status Dialogue
+  Future<bool> updateTaskData(
+    BuildContext context,
+    String statusName,
+  ) async {
+    try {
+      final bodyData = {
+        "Task_status": statusName,
+      };
+      print('=== TaskPageProvider: HTTP POST Request Body ===');
+      print(bodyData);
+      print('================================================');
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.updateTaskData, bodyData: bodyData);
 
       if (response?.statusCode == 200) {
         final data = response?.data;

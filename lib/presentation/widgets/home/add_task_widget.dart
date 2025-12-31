@@ -1,14 +1,21 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
 class AddTaskWidget extends StatefulWidget {
-  const AddTaskWidget({super.key});
+  const AddTaskWidget({
+    super.key,
+    required this.taskId,
+  });
+
+  final int taskId;
 
   @override
   State<AddTaskWidget> createState() => _AddTaskWidgetState();
@@ -21,7 +28,8 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
   final _durationController = TextEditingController();
   final _dateController = TextEditingController();
   final _endDateController = TextEditingController();
-
+  TaskPageProvider reportsProvider = TaskPageProvider();
+  int taskId = 0;
   int? _selectedUserId;
   String? _selectedDuration;
   DateTime? _selectedDate;
@@ -130,10 +138,12 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                                   ))
                               .toList(),
                           controller: _userController,
-                          onItemSelected: (id) {
-                            setState(() {
-                              _selectedUserId = id;
-                            });
+                          onItemSelected: (int? newValue) {
+                            if (newValue != null) {
+                              setState(() {
+                                _selectedUserId = newValue;
+                              });
+                            }
                           },
                           selectedValue: _selectedUserId,
                         );
@@ -243,25 +253,56 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                 ),
                 const SizedBox(width: 16),
                 ElevatedButton(
-                  onPressed: () {
-                    // Placeholder for Save logic
-                    Navigator.pop(context);
+                  onPressed: () async {
+                    if (kDebugMode) {
+                      print('--- AddTaskWidget: Debugging Save Data ---');
+                    }
+                    if (kDebugMode) {
+                      print('Task Name: ${_taskController.text}');
+                    }
+                    if (kDebugMode) {
+                      print('Task Detail: ${_detailController.text}');
+                    }
+                    if (kDebugMode) {
+                      print('Selected User ID: $_selectedUserId');
+                    }
+                    if (kDebugMode) {
+                      print('Is Repeating: $_isRepeating');
+                    }
+                    if (kDebugMode) {
+                      print('Duration: ${_durationController.text}');
+                    }
+                    if (kDebugMode) {
+                      print('End Date: ${_endDateController.text}');
+                    }
+                    if (kDebugMode) {
+                      print('Task ID (from widget): ${widget.taskId}');
+                    }
+                    if (kDebugMode) {
+                      print('-----------------------------------------');
+                    }
+
+                    if (_selectedUserId == null) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Please select a user')),
+                      );
+                      return;
+                    }
+
+                    // Passing _selectedUserId as userId and widget.taskId as taskId
+                    bool isSuccess = await reportsProvider.saveTaskData(
+                        context,
+                        _selectedUserId!,
+                        widget.taskId,
+                        _taskController.text,
+                        _isRepeating,
+                        _durationController,
+                        _endDateController);
+                    if (isSuccess) {
+                      Navigator.of(context).pop(true);
+                    }
                   },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 32, vertical: 16),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    elevation: 0,
-                  ),
-                  child: Text(
-                    'Save',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: const Text('Save'),
                 ),
               ],
             ),

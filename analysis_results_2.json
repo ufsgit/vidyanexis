@@ -1,0 +1,9 @@
+﻿Analyzing add_task_widget.dart...                               
+
+warning - The value of the field '_selectedDate' isn't used - lib\presentation\widgets\home\add_task_widget.dart:30:13 - unused_field
+warning - The value of the field '_selectedEndDate' isn't used - lib\presentation\widgets\home\add_task_widget.dart:31:13 - unused_field
+   info - The private field _taskId could be 'final' - lib\presentation\widgets\home\add_task_widget.dart:34:7 - prefer_final_fields
+warning - The left operand can't be null, so the right operand is never executed - lib\presentation\widgets\home\add_task_widget.dart:133:63 - dead_null_aware_expression
+warning - The left operand can't be null, so the right operand is never executed - lib\presentation\widgets\home\add_task_widget.dart:134:67 - dead_null_aware_expression
+   info - Don't use 'BuildContext's across async gaps, guarded by an unrelated 'mounted' check - lib\presentation\widgets\home\add_task_widget.dart:266:36 - use_build_context_synchronously
+
