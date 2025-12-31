@@ -443,67 +443,67 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   void getDuration(BuildContext context) async {
-    try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
+    // try {
+    //   SharedPreferences preferences = await SharedPreferences.getInstance();
+    //   String userId = preferences.getString('userId') ?? "";
 
-      final response =
-          await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcDuration);
+    //   final response =
+    //       await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcDuration);
 
-      if (response.statusCode == 200) {
-        final data = response.data;
+    //   if (response.statusCode == 200) {
+    //     final data = response.data;
 
-        if (data != null) {
-          final dataItem = data['data'] ?? [];
+    //     if (data != null) {
+    //       final dataItem = data['data'] ?? [];
 
-          _amcDuration = (dataItem as List<dynamic>)
-              .map((item) => DurationModel.fromJson(item))
-              .toList();
-          notifyListeners();
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-      }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-    }
+    //       _amcDuration = (dataItem as List<dynamic>)
+    //           .map((item) => DurationModel.fromJson(item))
+    //           .toList();
+    //       notifyListeners();
+    //     }
+    //   } else {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(content: Text('Server Error')),
+    //     );
+    //   }
+    // } catch (e) {
+    //   print('Exception occurred: $e');
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('An error occurred')),
+    //   );
+    // }
   }
 
   void getIntervals(BuildContext context) async {
-    try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
+    // try {
+    //   SharedPreferences preferences = await SharedPreferences.getInstance();
+    //   String userId = preferences.getString('userId') ?? "";
 
-      final response =
-          await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcInterval);
+    //   final response =
+    //       await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcInterval);
 
-      if (response.statusCode == 200) {
-        final data = response.data;
+    //   if (response.statusCode == 200) {
+    //     final data = response.data;
 
-        if (data != null) {
-          final dataItem = data['data'] ?? [];
+    //     if (data != null) {
+    //       final dataItem = data['data'] ?? [];
 
-          _amcInterval = (dataItem as List<dynamic>)
-              .map((item) => IntervalModel.fromJson(item))
-              .toList();
-          notifyListeners();
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-      }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-    }
+    //       _amcInterval = (dataItem as List<dynamic>)
+    //           .map((item) => IntervalModel.fromJson(item))
+    //           .toList();
+    //       notifyListeners();
+    //     }
+    //   } else {
+    //     ScaffoldMessenger.of(context).showSnackBar(
+    //       const SnackBar(content: Text('Server Error')),
+    //     );
+    //   }
+    // } catch (e) {
+    //   print('Exception occurred: $e');
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(content: Text('An error occurred')),
+    //   );
+    // }
   }
 
   void getEnquirySource(BuildContext context) async {

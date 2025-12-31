@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
+import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
@@ -45,6 +46,28 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
     _dateController.dispose();
     _endDateController.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      taskId = widget.taskId;
+      if (taskId != 0) {
+        await reportsProvider.getTaskData(taskId.toString(), context);
+        final task = reportsProvider.taskData.first;
+        _taskController.text = task.taskName ?? '';
+        _detailController.text = task.taskDetail ?? '';
+        _userController.text = task.userDetailsName ?? '';
+        _durationController.text = task.taskDuration ?? '';
+        _dateController.text = task.taskStartDate ?? '';
+        _endDateController.text = task.taskEndDate ?? '';
+        _isRepeating = task.isRepeating ?? false;
+        _selectedUserId = task.userDetailsId;
+        _selectedDuration = task.taskDuration;
+      }
+    });
   }
 
   Future<void> _selectDate(BuildContext context, bool isEndDate) async {
@@ -299,6 +322,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                         _durationController,
                         _endDateController);
                     if (isSuccess) {
+                      reportsProvider.searchTaskByCustomer(context);
                       Navigator.of(context).pop(true);
                     }
                   },

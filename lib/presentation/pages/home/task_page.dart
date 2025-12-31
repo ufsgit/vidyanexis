@@ -1845,46 +1845,68 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 ),
                                               ),
                                               Expanded(
-                                                child: CustomOutlinedSvgButton(
-                                                  showIcon: false,
-                                                  onPressed: () async {
-                                                    final taskId = task
-                                                            .taskMasterId
-                                                            ?.toString() ??
-                                                        '';
-                                                    final customerId = task
-                                                            .customerId
-                                                            ?.toString() ??
-                                                        '';
-                                                    if (taskId.isNotEmpty) {
-                                                      customerDetailsProvider
-                                                          .getTaskDetails(
-                                                              taskId, context);
+                                                child: Row(
+                                                  children: [
+                                                    CustomOutlinedSvgButton(
+                                                      showIcon: false,
+                                                      onPressed: () async {
+                                                        final taskId = task
+                                                                .taskMasterId
+                                                                ?.toString() ??
+                                                            '';
+                                                        final customerId = task
+                                                                .customerId
+                                                                ?.toString() ??
+                                                            '';
+                                                        if (taskId.isNotEmpty) {
+                                                          customerDetailsProvider
+                                                              .getTaskDetails(
+                                                                  taskId,
+                                                                  context);
 
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return TaskDetailsWidget(
-                                                            taskId: taskId,
-                                                            customerId:
-                                                                customerId,
-                                                            showEdit: false,
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return TaskDetailsWidget(
+                                                                taskId: taskId,
+                                                                customerId:
+                                                                    customerId,
+                                                                showEdit: false,
+                                                              );
+                                                            },
                                                           );
-                                                        },
-                                                      );
-                                                    }
-                                                  },
-                                                  svgPath:
-                                                      'assets/images/Print.svg',
-                                                  label: 'Details',
-                                                  breakpoint: 860,
-                                                  foregroundColor:
-                                                      AppColors.primaryBlue,
-                                                  backgroundColor: Colors.white,
-                                                  borderSide: BorderSide(
-                                                      color: AppColors
-                                                          .primaryBlue),
+                                                        }
+                                                      },
+                                                      svgPath:
+                                                          'assets/images/Print.svg',
+                                                      label: 'Details',
+                                                      breakpoint: 860,
+                                                      foregroundColor:
+                                                          AppColors.primaryBlue,
+                                                      backgroundColor:
+                                                          Colors.white,
+                                                      borderSide: BorderSide(
+                                                          color: AppColors
+                                                              .primaryBlue),
+                                                    ),
+                                                    IconButton(
+                                                      icon: Icon(
+                                                        Icons.edit_outlined,
+                                                      ),
+                                                      onPressed: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (_) =>
+                                                              AddTaskWidget(
+                                                            taskId: task
+                                                                .taskMasterId,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                             ],

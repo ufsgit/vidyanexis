@@ -22,6 +22,8 @@ class TaskPageProvider extends ChangeNotifier {
   List<DocumentTypeModel> get documentTypeModel => _documentTypeModel;
   List<MandatoryStatusModel> _statusData = [];
   List<MandatoryStatusModel> get statusData => _statusData;
+  List<TaskReportModel> _taskData = [];
+  List<TaskReportModel> get taskData => _taskData;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -449,8 +451,8 @@ class TaskPageProvider extends ChangeNotifier {
         "User_Id": userId,
         "Task_date": DateFormat('yyyy-MM-dd').format(DateTime.now()),
         "Is_Repeating_Task": isRepeating,
-        "Duration": durationController,
-        "End_Date": endDateController,
+        "Duration": durationController.text,
+        "End_Date": endDateController.text,
       };
       print('=== TaskPageProvider: HTTP POST Request Body ===');
       print(bodyData);
@@ -479,6 +481,30 @@ class TaskPageProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
       return false;
+    }
+  }
+
+  Future<void> getTaskData(String taskId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getTaskData}/$taskId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        _taskData = (data as List<dynamic>)
+            .map((item) => TaskReportModel.fromJson(item))
+            .toList();
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
     }
   }
 

@@ -30,6 +30,14 @@ class TaskReportModel {
   final String address3;
   final String address4;
   final Color? colorCode;
+  final String taskName;
+  final String taskDetail;
+  final String userDetailsName;
+  final String taskDuration;
+  final String taskStartDate;
+  final String taskEndDate;
+  final bool isRepeating;
+  final int userDetailsId;
 
   TaskReportModel({
     required this.taskId,
@@ -57,6 +65,14 @@ class TaskReportModel {
     required this.address3,
     required this.address4,
     this.colorCode,
+    required this.taskName,
+    required this.taskDetail,
+    required this.userDetailsName,
+    required this.taskDuration,
+    required this.taskStartDate,
+    required this.taskEndDate,
+    required this.isRepeating,
+    required this.userDetailsId,
   });
 
   factory TaskReportModel.fromJson(Map<String, dynamic> json) {
@@ -88,6 +104,14 @@ class TaskReportModel {
       colorCode: json["Color_Code"] == null
           ? Colors.black
           : AppColors.parseColor(json["Color_Code"]),
+      taskName: json['Task_Name'] ?? '',
+      taskDetail: json['Task_Detail'] ?? '',
+      userDetailsName: json['User_Details_Name'] ?? '',
+      taskDuration: json['Task_Duration'] ?? '',
+      taskStartDate: json['Task_Start_Date'] ?? '',
+      taskEndDate: json['Task_End_Date'] ?? '',
+      isRepeating: json['Is_Repeating'] ?? false,
+      userDetailsId: json['User_Details_Id'] ?? 0,
     );
   }
 

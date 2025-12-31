@@ -1,11 +1,10 @@
 class HttpUrls {
   //baseurls
 
-//   static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
-  static String baseUrl = 'https://bay_mentapi.trackbox.net.in/'; // live url
+  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
 
-//  static String baseUrl = 'https://2jw4dwnj-3520.inc1.devtunnels.ms/';
-//  static String baseUrl = 'https://tnk02n8v-3511.inc1.devtunnels.ms/'; // local url
+  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
 
@@ -225,5 +224,6 @@ class HttpUrls {
   static String getAllLeadDropDown = "lead/Get_All_Lead_Dropdown";
   static String getAllTax = "tax/Get_Tax";
   static String saveTaskData = "task_data/Save_Task_Data";
+  static String getTaskData = "task_data/Get_Task_Data";
   static String updateTaskData = "task_data/Update_Task_Status";
 }
