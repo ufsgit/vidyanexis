@@ -29,6 +29,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
       // Initialize with logged-in user
       await providerTimeTrack.initializeWithLoggedInUser();
 
+      providerTimeTrack.setFromDate(DateTime.now());
+
       // Fetch data with logged-in user filter
       providerTimeTrack.getTimeTrackReport(context);
 
@@ -253,7 +255,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 20,
-                      vertical: 10,
+                      vertical: 3,
                     ),
                     decoration: BoxDecoration(
                       color: Colors.white,

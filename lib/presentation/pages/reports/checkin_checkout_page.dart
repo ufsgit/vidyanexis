@@ -194,33 +194,33 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            await reportsProvider.getAttendanceDetails(
-                                "0", context);
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddCheckInOutWidget(
-                                  editId: '0',
-                                  isEdit: false,
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.add),
-                          label: const Text('Add Attendance'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
+                        // ElevatedButton.icon(
+                        //   onPressed: () async {
+                        //     await reportsProvider.getAttendanceDetails(
+                        //         "0", context);
+                        //     showDialog(
+                        //       barrierDismissible: false,
+                        //       context: context,
+                        //       builder: (BuildContext context) {
+                        //         return const AddCheckInOutWidget(
+                        //           editId: '0',
+                        //           isEdit: false,
+                        //         );
+                        //       },
+                        //     );
+                        //   },
+                        //   icon: const Icon(Icons.add),
+                        //   label: const Text('Add Attendance'),
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: AppColors.primaryBlue,
+                        //     foregroundColor: Colors.white,
+                        //     padding: const EdgeInsets.symmetric(
+                        //       horizontal: 16,
+                        //       vertical: 12,
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 16),
                         // CustomElevatedButton(
                         //   onPressed: () {
                         //     exportToExcel(
@@ -364,33 +364,33 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        ElevatedButton.icon(
-                          onPressed: () async {
-                            await reportsProvider.getAttendanceDetails(
-                                "0", context);
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddCheckInOutWidget(
-                                  editId: '0',
-                                  isEdit: false,
-                                );
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.add),
-                          label: const Text('Add Attendance'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.primaryBlue,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 0,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
+                        // ElevatedButton.icon(
+                        //   onPressed: () async {
+                        //     await reportsProvider.getAttendanceDetails(
+                        //         "0", context);
+                        //     showDialog(
+                        //       barrierDismissible: false,
+                        //       context: context,
+                        //       builder: (BuildContext context) {
+                        //         return const AddCheckInOutWidget(
+                        //           editId: '0',
+                        //           isEdit: false,
+                        //         );
+                        //       },
+                        //     );
+                        //   },
+                        //   icon: const Icon(Icons.add),
+                        //   label: const Text('Add Attendance'),
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: AppColors.primaryBlue,
+                        //     foregroundColor: Colors.white,
+                        //     padding: const EdgeInsets.symmetric(
+                        //       horizontal: 16,
+                        //       vertical: 0,
+                        //     ),
+                        //   ),
+                        // ),
+                        // const SizedBox(width: 16),
                         // CustomElevatedButton(
                         //   onPressed: () {
                         //     exportToExcel(
@@ -917,28 +917,28 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                                             TableWidget(
                                               flex: 1,
                                               data: GestureDetector(
-                                                onTap: () async {
-                                                  await reportsProvider
-                                                      .getAttendanceDetails(
-                                                          task.attendanceMasterId
-                                                              .toString(),
-                                                          context);
-                                                  showDialog(
-                                                    barrierDismissible: false,
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return AddCheckInOutWidget(
-                                                        editId: task
-                                                            .attendanceMasterId
-                                                            .toString(),
-                                                        isEdit: true,
-                                                      );
-                                                    },
-                                                  );
-                                                  // context.push(
-                                                  //     '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                },
+                                                // onTap: () async {
+                                                //   await reportsProvider
+                                                //       .getAttendanceDetails(
+                                                //           task.attendanceMasterId
+                                                //               .toString(),
+                                                //           context);
+                                                //   showDialog(
+                                                //     barrierDismissible: false,
+                                                //     context: context,
+                                                //     builder:
+                                                //         (BuildContext context) {
+                                                //       return AddCheckInOutWidget(
+                                                //         editId: task
+                                                //             .attendanceMasterId
+                                                //             .toString(),
+                                                //         isEdit: true,
+                                                //       );
+                                                //     },
+                                                //   );
+                                                //   // context.push(
+                                                //   //     '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                // },
                                                 child: Container(
                                                   padding: const EdgeInsets
                                                       .symmetric(
@@ -1061,41 +1061,41 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
                                           color: Color(0xFF607185),
                                         ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () async {
-                                          await reportsProvider
-                                              .getAttendanceDetails(
-                                                  task.attendanceMasterId
-                                                      .toString(),
-                                                  context);
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (_) => AddCheckInOutWidget(
-                                              editId: task.attendanceMasterId
-                                                  .toString(),
-                                              isEdit: true,
-                                            ),
-                                          );
-                                        },
-                                        child: Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 5),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFE9EDF1),
-                                            borderRadius:
-                                                BorderRadius.circular(30),
-                                          ),
-                                          child: Text(
-                                            task.userDetailsName,
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              fontSize: 14,
-                                            ),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                      ),
+                                      // GestureDetector(
+                                      //   onTap: () async {
+                                      //     await reportsProvider
+                                      //         .getAttendanceDetails(
+                                      //             task.attendanceMasterId
+                                      //                 .toString(),
+                                      //             context);
+                                      //     showDialog(
+                                      //       barrierDismissible: false,
+                                      //       context: context,
+                                      //       builder: (_) => AddCheckInOutWidget(
+                                      //         editId: task.attendanceMasterId
+                                      //             .toString(),
+                                      //         isEdit: true,
+                                      //       ),
+                                      //     );
+                                      //   },
+                                      //   child: Container(
+                                      //     padding: const EdgeInsets.symmetric(
+                                      //         horizontal: 10, vertical: 5),
+                                      //     decoration: BoxDecoration(
+                                      //       color: const Color(0xFFE9EDF1),
+                                      //       borderRadius:
+                                      //           BorderRadius.circular(30),
+                                      //     ),
+                                      //     child: Text(
+                                      //       task.userDetailsName,
+                                      //       style: const TextStyle(
+                                      //         fontWeight: FontWeight.bold,
+                                      //         fontSize: 14,
+                                      //       ),
+                                      //       overflow: TextOverflow.ellipsis,
+                                      //     ),
+                                      //   ),
+                                      // ),
                                     ],
                                   ),
                                   const SizedBox(height: 10),

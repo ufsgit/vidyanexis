@@ -200,6 +200,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
               showErrorDialog(context, validationError);
               return;
             }
+            await attendanceProvider.getLocation(context: context);
             attendanceProvider.saveAttendance(
                 dropDownProvider.selectedUserId ?? 0, context);
           },

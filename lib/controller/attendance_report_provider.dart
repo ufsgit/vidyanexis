@@ -1,7 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vidyanexis/controller/models/attendance_record_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
@@ -44,6 +47,10 @@ class AttendanceReportProvider extends ChangeNotifier {
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
   int? get selectedTaskType => _selectedTaskType;
+
+  String location = '';
+  String latitude = '';
+  String longitude = '';
 
   final TextEditingController assignToFollowUpController =
       TextEditingController();
@@ -299,6 +306,71 @@ class AttendanceReportProvider extends ChangeNotifier {
     }
   }
 
+  getLocation({required BuildContext context}) async {
+    // if (!kIsWeb) {
+    Loader.showLoader(context);
+    PermissionStatus locationStatus = await Permission.location.status;
+
+    print(locationStatus.isPermanentlyDenied);
+    if (locationStatus.isDenied) {
+      locationStatus = await Permission.location.request();
+
+      print(locationStatus);
+    }
+
+    if (locationStatus.isPermanentlyDenied) {
+      await openAppSettings();
+    }
+
+    if (!locationStatus.isDenied) {
+      try {
+        Position position = await Geolocator.getCurrentPosition(
+            desiredAccuracy: LocationAccuracy.high);
+        print('current');
+        latitude = position.latitude.toString();
+        longitude = position.longitude.toString();
+        location = await getAddressFromCoordinates(
+            position.latitude, position.longitude);
+        print(location);
+        print(latitude);
+        print(longitude);
+        Loader.stopLoader(context);
+      } catch (e) {
+        Loader.stopLoader(context);
+        print('Error: $e');
+      }
+    }
+    // }
+  }
+
+  Future<String> getAddressFromCoordinates(
+      double latitude, double longitude) async {
+    try {
+      // Ensure GeocodingPlatform.instance is available and not null
+      final geocoding = GeocodingPlatform.instance;
+      if (geocoding != null) {
+        // Get the list of placemarks based on latitude and longitude
+        List<Placemark> placemarks =
+            await geocoding.placemarkFromCoordinates(latitude, longitude);
+
+        // If the list is not empty, return the first result
+        if (placemarks.isNotEmpty) {
+          Placemark place = placemarks[0];
+          String address =
+              '${place.street}, ${place.locality}, ${place.country}';
+          return address; // Return the formatted address
+        } else {
+          return ''; // In case no address is found
+        }
+      } else {
+        return '';
+      }
+    } catch (e) {
+      print('Error occurred: $e');
+      return '';
+    }
+  }
+
   void saveAttendance(int selectedUserId, BuildContext context) async {
     print(selectedUserId);
     print(assignToFollowUpController.text.toString());
@@ -311,9 +383,9 @@ class AttendanceReportProvider extends ChangeNotifier {
           "User_Details_Id": selectedUserId,
           "User_Details_Name": assignToFollowUpController.text.toString(),
           "photo": "",
-          "location": "",
-          "latitude": "",
-          "longitude": ""
+          "location": location,
+          "latitude": latitude,
+          "longitude": longitude,
         },
       );
 
