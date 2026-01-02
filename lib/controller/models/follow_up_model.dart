@@ -110,33 +110,40 @@ class CustomField {
   int? isMandatory;
   int? customFieldId;
   String? customFieldName;
+  String? missingMandatoryCount;
 
   CustomField({
     this.isMandatory,
     this.customFieldId,
     this.customFieldName,
+    this.missingMandatoryCount,
   });
 
   CustomField copyWith({
     int? isMandatory,
     int? customFieldId,
     String? customFieldName,
+    String? missingMandatoryCount,
   }) =>
       CustomField(
         isMandatory: isMandatory ?? this.isMandatory,
         customFieldId: customFieldId ?? this.customFieldId,
         customFieldName: customFieldName ?? this.customFieldName,
+        missingMandatoryCount:
+            missingMandatoryCount ?? this.missingMandatoryCount,
       );
 
   factory CustomField.fromJson(Map<String, dynamic> json) => CustomField(
         isMandatory: json["isMandatory"],
         customFieldId: json["custom_field_id"],
         customFieldName: json["custom_field_name"],
+        missingMandatoryCount: json["missing_mandatory_document_count"],
       );
 
   Map<String, dynamic> toJson() => {
         "isMandatory": isMandatory,
         "custom_field_id": customFieldId,
         "custom_field_name": customFieldName,
+        "missing_mandatory_document_count": missingMandatoryCount,
       };
 }

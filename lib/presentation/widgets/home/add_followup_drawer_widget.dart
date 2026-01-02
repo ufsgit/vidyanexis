@@ -305,8 +305,13 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                     const SizedBox(width: 8),
                     CustomElevatedButton(
                       buttonText: 'Add follow-up',
-                      onPressed: () async {
-                        await _saveFollowUp(
+                      isLoading: leadProvider.isSavingFollowup,
+                      onPressed: () {
+                        // Prevent multiple submissions
+                        if (leadProvider.isSavingFollowup) {
+                          return;
+                        }
+                        _saveFollowUp(
                           leadProvider,
                           dropDownProvider,
                           settingsProvider,
@@ -900,23 +905,44 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
     SettingsProvider settingsProvider,
   ) {
     String? errorMessage;
+    
+    // Validate custom fields first
     final validation = customFieldLeadStatusKey.currentState?.validateForm();
 
-    if (leadProvider.statusController.text.isEmpty ||
-        statusName == null ||
-        statusName.isEmpty) {
+    // Priority 1: Check for missing mandatory documents
+    if (leadProvider.missingMandatoryDocumentCount > 0) {
+      errorMessage = 'document uploads pending';
+    }
+    // Priority 2: Check Follow Up Status
+    else if (dropDownProvider.selectedStatusId == null ||
+        dropDownProvider.selectedStatusId == 0) {
       errorMessage = 'Follow Up Status Required';
-    } else if (leadProvider.searchUserController.text.isEmpty ||
-        userDetailsName == null ||
-        userDetailsName.isEmpty) {
+    }
+    // Priority 3: Check Branch
+    else if (settingsProvider.selectedBranchId == null ||
+        settingsProvider.selectedBranchId == 0 ||
+        settingsProvider.selectedBranchId == -1) {
+      errorMessage = 'Please select Branch';
+    }
+    // Priority 4: Check Department
+    else if (settingsProvider.selectedDepartmentId == null ||
+        settingsProvider.selectedDepartmentId <= 0 ||
+        settingsProvider.selectedDepartmentId == -1) {
+      errorMessage = 'Please select Department';
+    }
+    // Priority 5: Check Assigned Staff
+    else if (dropDownProvider.selectedUserId == null ||
+        dropDownProvider.selectedUserId == 0) {
       errorMessage = 'Please Assign Staff';
-    } else if (dropDownProvider.isFollowupRequiredNew() &&
-        leadProvider.nextFollowUpDateController.text.isEmpty) {
+    }
+    // Priority 6: Check Follow-up Date (if required)
+    else if (dropDownProvider.isFollowupRequiredNew() &&
+        (leadProvider.nextFollowUpDateController.text.isEmpty ||
+         leadProvider.nextFollowUpDateController.text.trim().isEmpty)) {
       errorMessage = 'Please select followup Date';
-    } else if (settingsProvider.selectedBranchId! <= 0 &&
-        settingsProvider.selectedDepartmentId <= 0) {
-      errorMessage = 'Please select Branch And Department';
-    } else if (validation?.isValid == false) {
+    }
+    // Priority 7: Check custom fields validation
+    else if (validation != null && validation.isValid == false) {
       errorMessage = 'Please Enter mandatory fields';
     }
 

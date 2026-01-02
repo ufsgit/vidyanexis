@@ -233,6 +233,9 @@ class LeadsProvider extends ChangeNotifier {
   List<CustomFieldByStatusId> _customFieldEnquiryFor = [];
   List<CustomFieldByStatusId> get customFieldEnquiryFor =>
       _customFieldEnquiryFor;
+  
+  int _missingMandatoryDocumentCount = 0;
+  int get missingMandatoryDocumentCount => _missingMandatoryDocumentCount;
   ScrollController scrollController = ScrollController();
   int? expandedIndex;
   String _aadharImage = '';
@@ -1394,11 +1397,53 @@ class LeadsProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data;
         print('dfooigwe9 ${data}');
-        if (data != null && data.isNotEmpty) {
-          _customFieldList = (data as List<dynamic>)
-              .map((e) => CustomFieldByStatusId.fromJson(e))
-              .toList();
+        print('missing_mandatory_document_count check: ${data}');
+        
+        // Initialize to 0
+        _missingMandatoryDocumentCount = 0;
+        _customFieldList = [];
+        
+        if (data != null) {
+          // Check if data is a Map (with missing_mandatory_document_count at root)
+          if (data is Map<String, dynamic>) {
+            // Try to get missing_mandatory_document_count from various possible keys
+            _missingMandatoryDocumentCount = 
+                int.tryParse(data['missing_mandatory_document_count']?.toString() ?? '0') ?? 0;
+            
+            // Also check alternative key names
+            if (_missingMandatoryDocumentCount == 0) {
+              _missingMandatoryDocumentCount = 
+                  int.tryParse(data['missingMandatoryDocumentCount']?.toString() ?? '0') ?? 0;
+            }
+            
+            // Check if custom_fields is in the map
+            if (data['custom_fields'] != null && (data['custom_fields'] as List).isNotEmpty) {
+              _customFieldList = (data['custom_fields'] as List<dynamic>)
+                  .map((e) => CustomFieldByStatusId.fromJson(e))
+                  .toList();
+            } else if (data['data'] != null && (data['data'] is List) && (data['data'] as List).isNotEmpty) {
+              // Some APIs wrap the list in a 'data' field
+              _customFieldList = (data['data'] as List<dynamic>)
+                  .map((e) => CustomFieldByStatusId.fromJson(e))
+                  .toList();
+            } else if (data['data'] != null && data['data'] is List && (data['data'] as List).isEmpty) {
+              _customFieldList = [];
+            }
+          } else if (data is List && data.isNotEmpty) {
+            // If data is a List, parse it directly
+            _customFieldList = data
+                .map((e) => CustomFieldByStatusId.fromJson(e))
+                .toList();
+            // If the API returns a list, missing_mandatory_document_count might be at root level
+            // Check if response has extra fields (though Dio typically doesn't support this)
+            _missingMandatoryDocumentCount = 0;
+          } else if (data is List && data.isEmpty) {
+            _customFieldList = [];
+            _missingMandatoryDocumentCount = 0;
+          }
         }
+        
+        print('Parsed missing_mandatory_document_count: $_missingMandatoryDocumentCount');
         // Loader.stopLoader(context);
       } else {
         // Loader.stopLoader(context);
