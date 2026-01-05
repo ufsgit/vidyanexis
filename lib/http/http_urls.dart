@@ -226,4 +226,6 @@ class HttpUrls {
   static String saveTaskData = "task_data/Save_Task_Data";
   static String getTaskData = "task_data/Get_Task_Data";
   static String updateTaskData = "task_data/Update_Task_Status";
+  static String getFollowUpStatusCustomer =
+      "status/get_followupstatus_customer";
 }

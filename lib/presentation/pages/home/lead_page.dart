@@ -872,6 +872,42 @@ class _LeadsPageState extends State<LeadPage> {
                                               ),
                                             ),
                                           ),
+                                          SizedBox(
+                                            width: 75,
+                                            // Reduced from 70 to 60
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical:
+                                                      0.0, // Reduced from 10.0 to 4.0
+                                                  horizontal:
+                                                      0.0), // Reduced from 25.0 to 15.0
+                                              child: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: [
+                                                    Text(
+                                                      'ID',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      // maxLines: 2,
+                                                      style: const TextStyle(
+                                                        // fontWeight:
+                                                        //     FontWeight
+                                                        //         .bold,
+                                                        fontSize: 13,
+                                                        color: const Color(
+                                                            0xFFFFFFFF),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
                                           TableWidget(
                                               width: 120,
                                               padding: EdgeInsets.zero,
@@ -1205,6 +1241,35 @@ class _LeadsPageState extends State<LeadPage> {
                                                                           .value)
                                                                     const Text(
                                                                         "⭐")
+                                                                ],
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        SizedBox(
+                                                          width: 75,
+                                                          // Reduced from 80 to 60
+                                                          child: Padding(
+                                                            padding: const EdgeInsets
+                                                                .symmetric(
+                                                                vertical:
+                                                                    0.0, // Reduced from 12.0 to 4.0
+                                                                horizontal:
+                                                                    0.0), // Reduced from 25.0 to 15.0
+                                                            child: Center(
+                                                              child: Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .center,
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Text(
+                                                                      lead.customerId
+                                                                          .toString(),
+                                                                      style:
+                                                                          const TextStyle()),
                                                                 ],
                                                               ),
                                                             ),

@@ -692,6 +692,53 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getFollowUpStatusCustomer(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      // Build endpoint and add pagination parameters. Only include ViewIn_Id when provided.
+      String endPoint =
+          '${HttpUrls.getFollowUpStatusCustomer}?status_Name=&Page_Index=1&PageSize=1000';
+      
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        print(
+            'DEBUG getFollowUpStatus: Data type=${data.runtimeType}, Value=$data');
+
+        if (data != null) {
+          // Handle both list and map responses
+          if (data is List<dynamic>) {
+            _followUpstatus = data
+                .map((item) => SearchLeadStatusModel.fromJson(item))
+                .toList();
+          } else if (data is Map<String, dynamic> && data.containsKey('data')) {
+            _followUpstatus = (data['data'] as List<dynamic>)
+                .map((item) => SearchLeadStatusModel.fromJson(item))
+                .toList();
+          } else {
+            _followUpstatus = [];
+          }
+          print(
+              'DEBUG getFollowUpStatus: Loaded ${_followUpstatus.length} statuses');
+          notifyListeners();
+        }
+      } else {
+        print('DEBUG getFollowUpStatus: Server error ${response.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
   void getTaskType(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();

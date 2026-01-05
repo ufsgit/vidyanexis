@@ -41,7 +41,7 @@ class _CustomerPageState extends State<CustomerPage> {
     super.initState();
     CustomerPage._currentState = this;
 
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final customerProvider =
           Provider.of<CustomerProvider>(context, listen: false);
       final settingsProvider =
@@ -58,8 +58,9 @@ class _CustomerPageState extends State<CustomerPage> {
       customerProvider.getSearchCustomers(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
-      provider.getFollowUpStatus(context, '2');
+      // provider.getFollowUpStatus(context, '2');
       provider.getUserDetails(context);
+      await provider.getFollowUpStatusCustomer(context);
 
       //search
       // searchController.addListener(() {
