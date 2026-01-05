@@ -223,19 +223,63 @@ class LeadCard extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                // ------------------------------------------------------------------
+                // NEW UPDATED WHATSAPP LOGIC — PRIORITY:
+                // 1. WhatsApp Business
+                // 2. Normal WhatsApp
+                // 3. WhatsApp Web
+                // ------------------------------------------------------------------
                 CustomActionButton(
                   imageColor: AppColors.textGreen,
                   onTap: () async {
                     String phone =
                         lead.contactNumber.replaceAll(RegExp(r'[^\d+]'), '');
 
-                    // Always show dialog to choose between Normal WhatsApp or WhatsApp Business
-                    _showWhatsAppOptionsDialog(context, phone);
+                    // Add +91 if missing
+                    if (!phone.startsWith('+')) {
+                      phone = '+91$phone';
+                    }
+
+                    Uri waBusiness =
+                        Uri.parse("whatsapp-business://send?phone=$phone");
+                    Uri waNormal =
+                        Uri.parse("whatsapp://send?phone=$phone");
+                    Uri waWeb = Uri.parse(
+                        "https://api.whatsapp.com/send?phone=$phone");
+
+                    try {
+                      // 1️⃣ USER has WhatsApp Business → open Business first
+                      if (await canLaunchUrl(waBusiness)) {
+                        await launchUrl(waBusiness,
+                            mode: LaunchMode.externalApplication);
+                        return;
+                      }
+
+                      // 2️⃣ USER has normal WhatsApp → open it
+                      if (await canLaunchUrl(waNormal)) {
+                        await launchUrl(waNormal,
+                            mode: LaunchMode.externalApplication);
+                        return;
+                      }
+
+                      // 3️⃣ Open WhatsApp Web if no app installed
+                      await launchUrl(waWeb,
+                          mode: LaunchMode.externalApplication);
+                    } catch (e) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Unable to open WhatsApp"),
+                          ),
+                        );
+                      }
+                    }
                   },
-                  // imageColor: AppColors.darkGreen,
                   imagePath: "assets/images/lead_icon_1.png",
                   text: 'Chat',
                 ),
+                // ------------------------------------------------------------------
+
                 const SizedBox(width: 15),
                 CustomActionButton(
                   imageColor: AppColors.appViolet,
