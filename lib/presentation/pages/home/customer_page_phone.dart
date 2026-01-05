@@ -44,8 +44,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
 
     searchProvider.stopSearch();
     // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
-    provider.getFollowUpStatus(context, '2');
+    // provider.getFollowUpStatus(context, '2');
     provider.getUserDetails(context);
+    await provider.getFollowUpStatusCustomer(context);
 
     // Reset search criteria
     customerProvider.setSearchCriteria(
