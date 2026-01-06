@@ -122,6 +122,11 @@ class LeadDetailsProvider with ChangeNotifier {
             leadProvider.cancelledPassBookImage =
                 leadData.cancelledChequePassbook ?? '';
             leadProvider.passportImage = leadData.passportSizePhoto ?? '';
+            dropDownProvider.setSourceCategoryId(leadData.sourceCategoryId);
+            leadProvider.sourceCategoryController.text =
+                leadData.sourceCategoryName;
+            dropDownProvider
+                .filterEnquiryForByCategory(leadData.sourceCategoryId);
             dropDownProvider.updateEnquiryForName(
                 leadData.enquiryForId, leadData.enquiryForName);
             dropDownProvider.updateDistrict(

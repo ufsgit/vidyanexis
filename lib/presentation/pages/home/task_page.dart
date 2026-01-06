@@ -2536,7 +2536,7 @@ class _tasksPageReportState extends State<TaskPage> {
                       int statusId = defaultStatus.statusId ?? 0;
                       int tasktypeId = defaultStatus.taskTypeId ?? 0;
                       int customerId = task.customerId ?? 0;
-                      int enquiryForId = defaultStatus.enquiryForId ?? 0;
+                      int enquiryForId = task.enquiryForId ?? 0;
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         reportsProvider.fetchTaskTypes(tasktypeId, statusId,
                             customerId, enquiryForId, context);
@@ -2595,8 +2595,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 0;
                                         int customerId = task.customerId ?? 0;
                                         int enquiryForId =
-                                            selectedStatus.value.enquiryForId ??
-                                                0;
+                                            task.enquiryForId ?? 0;
 
                                         await reportsProvider.fetchTaskTypes(
                                             tasktypeId,

@@ -12,6 +12,7 @@ class TaskReportModel {
   final String taskStatusName;
   final int toUserId;
   final int customerId;
+  final int enquiryForId;
   final int createdBy;
   final int taskTypeId;
   final String taskTypeName;
@@ -49,6 +50,7 @@ class TaskReportModel {
     required this.taskStatusName,
     required this.toUserId,
     required this.customerId,
+    required this.enquiryForId,
     required this.createdBy,
     required this.taskTypeId,
     required this.taskTypeName,
@@ -86,6 +88,7 @@ class TaskReportModel {
       taskStatusName: json['Task_Status_Name'] ?? '',
       toUserId: json['To_User_Id'] ?? 0,
       customerId: json['Customer_Id'] ?? 0,
+      enquiryForId: json['Enquiry_For_Id'] ?? 0,
       createdBy: json['Created_By'] ?? 0,
       taskTypeId: json['Task_Type_Id'] ?? 0,
       taskTypeName: json['Task_Type_Name'] ?? '',

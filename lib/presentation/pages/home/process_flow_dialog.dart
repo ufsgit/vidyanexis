@@ -313,7 +313,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               int statusId = selectedStatus.statusId ?? 0;
               int tasktypeId = selectedStatus.taskTypeId ?? 0;
               int customerId = widget.task.customerId ?? 0;
-              int enquiryForId = selectedStatus.enquiryForId ?? 0;
+              int enquiryForId = widget.task.enquiryForId ?? 0;
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 reportsProvider.fetchTaskTypes(
                     tasktypeId, statusId, customerId, enquiryForId, context);
@@ -365,7 +365,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 int tasktypeId = selectedStatus.taskTypeId ?? 0;
                                 int customerId = widget.task.customerId ?? 0;
                                 int enquiryForId =
-                                    selectedStatus.enquiryForId ?? 0;
+                                    widget.task.enquiryForId ?? 0;
 
                                 await reportsProvider.fetchTaskTypes(
                                     tasktypeId,
