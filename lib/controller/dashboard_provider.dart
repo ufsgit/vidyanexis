@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
+import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/main.dart';
@@ -25,6 +26,7 @@ class DashboardProvider extends ChangeNotifier {
   String? selectedeTaskAllocationValue;
   String? selectedDashboardCountValue;
   String? selectedWorkSummaryValue;
+  String? selectedLeadEnquiryReportValue;
   List<LeadCoversionChartModel> conversionData = [];
   List<WorkSummaryReportModel> workSummaryReportModel = [];
   List<CountLeadCoversionChartModel> conversionCountData = [];
@@ -40,7 +42,7 @@ class DashboardProvider extends ChangeNotifier {
   List<TaskInfoDashboardModel> get taskInfoModel => _taskInfoModel;
   List<DashBoardTaskModel> _dashBoardTasks = [];
   List<DashBoardTaskModel>? get dashBoardTasks => _dashBoardTasks;
-  List<LeadProgressReportModel> leadEnquiryReport = [];
+  List<LeadEnquiryReportModel> leadEnquiryReport = [];
   bool isLeadEnquiryReportLoading = false;
   bool _isLoading = false;
   List<Department>? _departments;
@@ -423,31 +425,55 @@ class DashboardProvider extends ChangeNotifier {
     _hoverStates[index] = isHovered;
     notifyListeners();
   }
-
   bool isHovered(int index) => _hoverStates[index] ?? false;
 
   Future<void> getLeadEnquiryReport({
     bool isFilter = false,
     String? filterValue,
   }) async {
-    isLeadEnquiryReportLoading = true;
-    notifyListeners();
     try {
+      selectedLeadEnquiryReportValue = filterValue;
+      late dynamic fromDateParam;
+      late dynamic toDateParam;
+      late String isDateCheckParam;
+
+      if (isFilter) {
+        DateTime fromDate;
+        switch (filterValue) {
+          case 'tdy':
+            fromDate = DateTime.now();
+            break;
+          case 'th_wk':
+            fromDate = DateTime.now().subtract(const Duration(days: 7));
+            break;
+          case 'th_mnt':
+            fromDate = DateTime.now().subtract(const Duration(days: 30));
+            break;
+          default:
+            fromDate = DateTime.now();
+        }
+        fromDateParam = fromDate.toIso8601String().split('T').first;
+        toDateParam = DateTime.now().toIso8601String().split('T').first;
+        isDateCheckParam = "1";
+      } else {
+        fromDateParam = "";
+        toDateParam = "";
+        isDateCheckParam = "0";
+      }
+
       isLeadEnquiryReportLoading = true;
       notifyListeners();
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.leadEnquiryReport,
           bodyData: {
-            "Fromdate": "",
-            "Todate": "",
-            "Is_Date_Check": "0"
+            "Fromdate": fromDateParam,
+            "Todate": toDateParam,
+            "Is_Date_Check": isDateCheckParam
           }).then((response) {
         if (response.statusCode == 200) {
           List<dynamic> pieData = response.data;
-
-  void getLeadEnquiryReport(BuildContext context) {}
           leadEnquiryReport = (pieData)
-              .map((item) => LeadProgressReportModel.fromJson(item))
+              .map((item) => LeadEnquiryReportModel.fromJson(item))
               .toList();
         }
       });

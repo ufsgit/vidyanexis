@@ -5,8 +5,9 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
-import 'package:vidyanexis/controller/models/lead_progress_model.dart';
+import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 
 class LeadEnquiryForReportCard extends StatelessWidget {
@@ -46,12 +47,16 @@ class LeadEnquiryForReportCard extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Lead Enquiry For Report'),
-                  // Optional: Dropdown for filtering if needed, but not requested specifically
-                  // for this new card in a unique way other than what getLeadEnquiryReport does.
+                  const Text('Lead Enquiry For Report'),
+                  CustomDropDown(
+                      value: provider.selectedLeadEnquiryReportValue,
+                      dashboardProvider: provider,
+                      onChanged: (v) => provider.getLeadEnquiryReport(
+                          isFilter: v != "all",
+                          filterValue: v == "all" ? null : v)),
                 ],
               ),
               const SizedBox(height: 15),
@@ -62,19 +67,19 @@ class LeadEnquiryForReportCard extends StatelessWidget {
                     child: SfCartesianChart(
                       primaryXAxis: CategoryAxis(),
                       primaryYAxis: NumericAxis(),
-                      series: <CartesianSeries<LeadProgressReportModel, String>>[
-                        ColumnSeries<LeadProgressReportModel, String>(
+                      series: <CartesianSeries<LeadEnquiryReportModel, String>>[
+                        ColumnSeries<LeadEnquiryReportModel, String>(
                           dataSource: data,
-                          xValueMapper: (LeadProgressReportModel data, _) =>
-                              data.statusName,
-                          yValueMapper: (LeadProgressReportModel data, _) =>
+                          xValueMapper: (LeadEnquiryReportModel data, _) =>
+                              data.enquiryForName,
+                          yValueMapper: (LeadEnquiryReportModel data, _) =>
                               data.count,
-                          pointColorMapper: (LeadProgressReportModel data, _) =>
-                              AppColors.parseColor(data.colorCode.toString()),
+                          pointColorMapper: (LeadEnquiryReportModel data, _) =>
+                              AppColors.parseColor(data.colorCode),
                           dataLabelSettings:
                               const DataLabelSettings(isVisible: true),
                           onPointTap: (ChartPointDetails details) async {
-                            final statusId = data[details.pointIndex!].statusId;
+                            final statusId = data[details.pointIndex!].enquiryForId;
                             final leadReportProvider =
                                 Provider.of<LeadReportProvider>(context,
                                     listen: false);
@@ -107,9 +112,9 @@ class LeadEnquiryForReportCard extends StatelessWidget {
                           const SliverGridDelegateWithMaxCrossAxisExtent(
                               maxCrossAxisExtent: 260, mainAxisExtent: 30),
                       itemBuilder: (c, i) => _buildLegendItem(
-                          data[i].statusName.toString(),
+                          data[i].enquiryForName,
                           data[i].count.toString(),
-                          AppColors.parseColor(data[i].colorCode.toString())),
+                          AppColors.parseColor(data[i].colorCode)),
                     ),
                   ),
                 ],
