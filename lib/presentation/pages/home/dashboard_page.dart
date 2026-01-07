@@ -66,9 +66,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   );
                 },
               ),
-              title: Text(
+              title: const Text(
                 'Dashboard',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),

@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/lead_enquiry_for_report_card.dart';
 
 class LeadsOverViewTab extends StatefulWidget {
   const LeadsOverViewTab({
@@ -40,6 +41,7 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
       DashboardProvider dashBoardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
       dashBoardProvider.getLeadData();
+      dashBoardProvider.getLeadEnquiryReport(isFilter: false);
     });
     super.initState();
   }
@@ -58,6 +60,9 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
         ),
         LeadDistributionPieChart(
           leadData: widget.leadConversionData,
+        ),
+        LeadEnquiryForReportCard(
+          dashboardProvider: widget.dashBoardProvider,
         ),
 
         WeeklyReportCard(

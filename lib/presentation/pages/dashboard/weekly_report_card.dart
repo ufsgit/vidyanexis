@@ -56,7 +56,7 @@ class WeeklyReportCard extends StatelessWidget {
                           filterValue: v == "all" ? null : v)
                       : dashBoardProvider.getDashBoardCount(
                           isFilter: v != "all",
-                          filterValue: v == "all" ? null : v)),
+                          filterValue: v == "all" ? null : v), hintText: '',),
             ],
           ),
           const SizedBox(height: 15),

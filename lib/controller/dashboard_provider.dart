@@ -40,6 +40,8 @@ class DashboardProvider extends ChangeNotifier {
   List<TaskInfoDashboardModel> get taskInfoModel => _taskInfoModel;
   List<DashBoardTaskModel> _dashBoardTasks = [];
   List<DashBoardTaskModel>? get dashBoardTasks => _dashBoardTasks;
+  List<LeadProgressReportModel> leadEnquiryReport = [];
+  bool isLeadEnquiryReportLoading = false;
   bool _isLoading = false;
   List<Department>? _departments;
   String? _errorMessage;
@@ -423,6 +425,40 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   bool isHovered(int index) => _hoverStates[index] ?? false;
+
+  Future<void> getLeadEnquiryReport({
+    bool isFilter = false,
+    String? filterValue,
+  }) async {
+    isLeadEnquiryReportLoading = true;
+    notifyListeners();
+    try {
+      isLeadEnquiryReportLoading = true;
+      notifyListeners();
+      await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.leadEnquiryReport,
+          bodyData: {
+            "Fromdate": "",
+            "Todate": "",
+            "Is_Date_Check": "0"
+          }).then((response) {
+        if (response.statusCode == 200) {
+          List<dynamic> pieData = response.data;
+
+  void getLeadEnquiryReport(BuildContext context) {}
+          leadEnquiryReport = (pieData)
+              .map((item) => LeadProgressReportModel.fromJson(item))
+              .toList();
+        }
+      });
+    } catch (e) {
+      print(e);
+    } finally {
+      isLeadEnquiryReportLoading = false;
+      notifyListeners();
+    }
+  }
+
   getLeadData() async {
     try {
       isDashBoardLoading = true;

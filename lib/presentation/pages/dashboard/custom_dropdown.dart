@@ -7,10 +7,14 @@ class CustomDropDown extends StatelessWidget {
     required this.dashboardProvider,
     this.onChanged,
     this.value,
+    this.hintText = 'Select',
   });
+
   final DashboardProvider dashboardProvider;
   final void Function(String?)? onChanged;
   final String? value;
+  final String hintText;
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,7 +23,7 @@ class CustomDropDown extends StatelessWidget {
         borderRadius: BorderRadius.circular(10),
       ),
       child: DropdownButtonHideUnderline(
-        child: DropdownButton(
+        child: DropdownButton<String>(
           value: value,
           padding: const EdgeInsets.symmetric(horizontal: 13, vertical: 3),
           items: const [
@@ -28,13 +32,13 @@ class CustomDropDown extends StatelessWidget {
             DropdownMenuItem(value: 'th_wk', child: Text('This Week')),
             DropdownMenuItem(value: 'th_mnt', child: Text('This Month')),
           ],
-          hint: const Text('Select'),
+          hint: Text(hintText),
           isDense: true,
           icon: const Icon(Icons.keyboard_arrow_down_outlined),
           onChanged: onChanged,
-          onTap: () {},
         ),
       ),
     );
   }
 }
+

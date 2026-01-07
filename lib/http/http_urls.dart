@@ -228,4 +228,5 @@ class HttpUrls {
   static String updateTaskData = "task_data/Update_Task_Status";
   static String getFollowUpStatusCustomer =
       "status/get_followupstatus_customer";
+  static String leadEnquiryReport = "lead/Lead_Enquiry_Report";
 }
