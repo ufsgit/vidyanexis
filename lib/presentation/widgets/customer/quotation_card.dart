@@ -211,6 +211,12 @@ class QuotationCard extends StatelessWidget {
                 if (settingsprovider.menuIsEditMap[16] == 1)
                   IconButton(
                     onPressed: () async {
+                      await customerDetailsProvider.getQuatationListByMasterId(
+                          taskId, context);
+                      final quotation =
+                          customerDetailsProvider.quotationListByMaster.first;
+
+                      // ---- BASIC DETAILS ----
                       customerDetailsProvider.customerId = customerId;
                       customerDetailsProvider.qproductnameController.text =
                           title;
@@ -226,89 +232,129 @@ class QuotationCard extends StatelessWidget {
                           warranty;
                       customerDetailsProvider.qtermsConditionsController.text =
                           terms;
-                      // customerDetailsProvider
-                      //     .updateItemsFromQuotationDetails(
-                      //         quotation_details,
-                      //         bill_of_materials,
-                      //         productionChartModel);
+
+                      // ---- STATUS ----
                       customerDetailsProvider.selectedQuotationStatus =
                           int.parse(statusId);
                       customerDetailsProvider.selectedQuotationStatusName =
                           status;
-                      customerDetailsProvider.updateSubtotal();
 
-                      await customerDetailsProvider.getQuatationListByMasterId(
-                          taskId, context);
+                      // ---- FEES ----
                       customerDetailsProvider.registrationFeeController.text =
-                          customerDetailsProvider
-                              .quotationListByMaster[0].ksebRegistrationFee
-                              .toString();
+                          quotation.ksebRegistrationFee.toString();
                       customerDetailsProvider.feasibilityFeeController.text =
-                          customerDetailsProvider
-                              .quotationListByMaster[0].ksebFeasibilityFee
-                              .toString();
+                          quotation.ksebFeasibilityFee.toString();
                       customerDetailsProvider.systemPriceController.text =
-                          customerDetailsProvider
-                              .quotationListByMaster[0].ksebSystemPrice
-                              .toString();
-                      customerDetailsProvider
-                              .additionalStructureController.text =
-                          customerDetailsProvider
-                              .quotationListByMaster[0].additionalStructure
-                              .toString();
+                          quotation.ksebSystemPrice.toString();
+                      customerDetailsProvider.additionalStructureController
+                          .text = quotation.additionalStructure.toString();
+
+                      // ---- TOTALS ----
                       customerDetailsProvider.subtotalController.text =
-                          customerDetailsProvider
-                              .quotationListByMaster[0].totalAmount
-                              .toString();
+                          quotation.totalAmount.toString();
                       customerDetailsProvider.totalController.text =
-                          customerDetailsProvider
-                              .quotationListByMaster[0].netTotal
-                              .toString();
+                          quotation.netTotal.toString();
+
+                      // ---- ITEMS ----
                       customerDetailsProvider
                           .updateItemsFromQuotationDetailsNew(
-                              customerDetailsProvider
-                                  .quotationListByMaster[0].quotationDetails,
-                              customerDetailsProvider
-                                  .quotationListByMaster[0].billOfMaterials,
-                              customerDetailsProvider
-                                  .quotationListByMaster[0].productionChart);
+                        quotation.quotationDetails,
+                        quotation.billOfMaterials,
+                        quotation.productionChart,
+                      );
 
-                      final taxableAmount = double.tryParse(
-                              customerDetailsProvider
-                                  .quotationListByMaster[0].taxableAmount) ??
-                          0.0;
-                      final gstAmount = double.tryParse(customerDetailsProvider
-                              .quotationListByMaster[0].gstAmount) ??
-                          0.0;
-                      final gstPer = double.tryParse(customerDetailsProvider
-                              .quotationListByMaster[0].gstPer) ??
-                          0.0;
+                      // ---- GST ----
+                      final taxable =
+                          double.tryParse(quotation.taxableAmount) ?? 0;
+                      final gst = double.tryParse(quotation.gstAmount) ?? 0;
+                      final gstPer = double.tryParse(quotation.gstPer) ?? 0;
 
                       customerDetailsProvider.gstTaxableAmountController.text =
-                          taxableAmount.toStringAsFixed(2);
+                          taxable.toStringAsFixed(2);
                       customerDetailsProvider.cgstTaxableAmountController.text =
-                          (taxableAmount / 2).toStringAsFixed(2);
+                          (taxable / 2).toStringAsFixed(2);
                       customerDetailsProvider.sgstTaxableAmountController.text =
-                          (taxableAmount / 2).toStringAsFixed(2);
+                          (taxable / 2).toStringAsFixed(2);
 
                       customerDetailsProvider.totalGstAmountController.text =
-                          gstAmount.toStringAsFixed(2);
+                          gst.toStringAsFixed(2);
                       customerDetailsProvider.totalCgstAmountController.text =
-                          (gstAmount / 2).toStringAsFixed(2);
+                          (gst / 2).toStringAsFixed(2);
                       customerDetailsProvider.totalSgstAmountController.text =
-                          (gstAmount / 2).toStringAsFixed(2);
+                          (gst / 2).toStringAsFixed(2);
 
                       customerDetailsProvider.totalGstPerController.text =
                           gstPer.toStringAsFixed(2);
-                      customerDetailsProvider.totalSgstPerController.text =
-                          (gstPer / 2).toStringAsFixed(2);
                       customerDetailsProvider.totalCgstPerController.text =
                           (gstPer / 2).toStringAsFixed(2);
+                      customerDetailsProvider.totalSgstPerController.text =
+                          (gstPer / 2).toStringAsFixed(2);
 
+                      // ---- QUOTATION TYPE ----
+                      customerDetailsProvider.quotationTypeController.text =
+                          quotation.quotationTypeName;
+                      customerDetailsProvider.selectedQuotationType =
+                          quotation.quotationTypeId;
+
+                      // ---- CABLE DETAILS ----
+                      customerDetailsProvider.cableStructureController.text =
+                          quotation.cableStructure;
+                      customerDetailsProvider.cableTypeController.text =
+                          quotation.cableType;
+                      customerDetailsProvider.cableShortCircuitTempController
+                          .text = quotation.cableShortCircuitTemp;
+                      customerDetailsProvider.cableStandardController.text =
+                          quotation.cableStandard;
+                      customerDetailsProvider.cableConductorClassController
+                          .text = quotation.cableConductorClass;
+                      customerDetailsProvider.cableMaterialController.text =
+                          quotation.cableMaterial;
+                      customerDetailsProvider.cableProtectionController.text =
+                          quotation.cableProtection;
+                      customerDetailsProvider.cableWarrantyController.text =
+                          quotation.cableWarranty;
+                      customerDetailsProvider.cableTensileStrengthController
+                          .text = quotation.cableTensileStrength;
+
+                      // ---- OTHER DETAILS ----
+                      customerDetailsProvider.plantCapacityController.text =
+                          quotation.plantCapacity;
+                      customerDetailsProvider.moduleTechnologiesController
+                          .text = quotation.moduleTechnologies;
+                      customerDetailsProvider
+                          .mountingStructureTechnologiesController
+                          .text = quotation.mountingStructureTechnologies;
+                      customerDetailsProvider.projectSchemeController.text =
+                          quotation.projectScheme;
+                      customerDetailsProvider.powerEvacuationController.text =
+                          quotation.powerEvacuation;
+                      customerDetailsProvider.areaApproximateController.text =
+                          quotation.areaApproximate;
+                      customerDetailsProvider
+                          .solarPlantOutputConnectionController
+                          .text = quotation.solarPlantOutputConnection;
+                      customerDetailsProvider.schemeController.text =
+                          quotation.scheme;
+                      customerDetailsProvider.qvalidityController.text =
+                          quotation.validity;
+                      customerDetailsProvider.qtendorNumberController.text =
+                          quotation.tendorNumber;
+                      customerDetailsProvider.paymentTermsController.text =
+                          quotation.paymentTermsName;
+                      customerDetailsProvider.incoTermsController.text =
+                          quotation.incoTerms;
+                      customerDetailsProvider.shippingChargesController.text =
+                          quotation.shippingCharges;
                       customerDetailsProvider.totalAdCESSController.text =
-                          customerDetailsProvider
-                              .quotationListByMaster[0].adCess
-                              .toString();
+                          quotation.otherTax;
+                      customerDetailsProvider.totalCgstAmountController.text =
+                          quotation.totalCgstAmount;
+                      customerDetailsProvider.totalSgstAmountController.text =
+                          quotation.totalSgstAmount;
+
+                      customerDetailsProvider.commercialItems =
+                          quotation.commercialItems;
+
                       showDialog(
                         context: context,
                         barrierDismissible: false,

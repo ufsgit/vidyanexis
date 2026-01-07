@@ -177,6 +177,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController totalCgstPerController = TextEditingController();
   final TextEditingController totalSgstPerController = TextEditingController();
   final TextEditingController totalAdCESSController = TextEditingController();
+  final TextEditingController shippingChargesController =
+      TextEditingController(text: '0');
   TextEditingController subtotalController = TextEditingController();
   TextEditingController totalController = TextEditingController();
   final TextEditingController qtermsConditionsController =
@@ -218,6 +220,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   TextEditingController commercialTotalController = TextEditingController();
   List<CommercialItemModel> _commercialItems = [];
   List<CommercialItemModel> get commercialItems => _commercialItems;
+  set commercialItems(List<CommercialItemModel> value) {
+    _commercialItems = value;
+    notifyListeners();
+  }
+
   int? _editCommercialIndex;
   int? get editCommercialIndex => _editCommercialIndex;
 
@@ -258,6 +265,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController schemeController = TextEditingController();
 
 //financial controllers
+  final TextEditingController qvalidityController = TextEditingController();
+  final TextEditingController qtendorNumberController = TextEditingController();
+  final TextEditingController paymentTermsController = TextEditingController();
+  final TextEditingController incoTermsController = TextEditingController();
   final TextEditingController advanceController = TextEditingController();
   final TextEditingController deliveryController = TextEditingController();
   final TextEditingController workCompletionController =
@@ -529,9 +540,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     final subtotal = double.tryParse(subtotalController.text);
     final subsidy = double.tryParse(qsubsidyAmountController.text);
+    final shippingCharges =
+        double.tryParse(shippingChargesController.text) ?? 0.0;
 
     if (subtotal != null && subsidy != null) {
-      total = subtotal - subsidy;
+      total = subtotal - subsidy + shippingCharges;
     } else {
       print("Invalid input for price or quantity");
     }
@@ -1446,11 +1459,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
       String userName = preferences.getString('userName') ?? "";
-      double totalAmount = getTotalAmount();
-      print("Total Amount: Rs$totalAmount");
-      double netTotal =
-          totalAmount - double.parse(qsubsidyAmountController.text.toString());
-      print("Total Amount: Rs$netTotal");
+      // double totalAmount = getTotalAmount();
+      // print("Total Amount: Rs$totalAmount");
+      // double netTotal =
+      //     totalAmount - double.parse(qsubsidyAmountController.text.toString());
+      // print("Total Amount: Rs$netTotal");
 
       final response = await HttpRequest
           .httpPostRequest(endPoint: HttpUrls.saveQuotationMaster, bodyData: {
@@ -1459,9 +1472,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Quotation_No": "",
         "PaymentTerms": 0,
         "Payment_Term_Description": "",
-        "TotalAmount": totalAmount,
+        "TotalAmount": subtotalController.text,
         "Subsidy_Amount": qsubsidyAmountController.text.toString(),
-        "NetTotal": netTotal,
+        "NetTotal": totalController.text,
         "Product_Name": qproductnameController.text.toString(),
         "Warranty": qwarrentyController.text.toString(),
         "Terms_And_Conditions": qtermsConditionsController.text.toString(),
@@ -1517,6 +1530,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "AreaApproximate": areaApproximateController.text,
         "SolarPlantOutputConnection": solarPlantOutputConnectionController.text,
         "Scheme": schemeController.text,
+        "Validity": qvalidityController.text,
+        "TendorNumber": qtendorNumberController.text,
+        "Payment_Terms_Name": paymentTermsController.text,
+        "IncoTerms": incoTermsController.text,
+        "totalOther_Tax": totalAdCESSController.text,
+        "Total_CGST_Amount": totalCgstAmountController.text,
+        "Total_SGST_Amount": totalSgstAmountController.text,
+        "Total_IGST_Amount": "0",
+        "Shipping_Charges":
+            double.tryParse(shippingChargesController.text) ?? 0.0,
       });
 
       if (response!.statusCode == 200) {
@@ -1594,7 +1617,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     advanceController.clear();
     deliveryController.clear();
     quotationStatusController.clear();
-    qsubsidyAmountController.clear();
+    qsubsidyAmountController.text = '0';
     qtermsConditionsController.clear();
     qwarrentyController.clear();
     itemNameController.clear();
@@ -1633,6 +1656,31 @@ class CustomerDetailsProvider extends ChangeNotifier {
     totalCgstPerController.clear();
     totalSgstPerController.clear();
     totalAdCESSController.clear();
+    _selectedQuotationType = 0;
+    quotationTypeController.clear();
+    _commercialItems = [];
+    cableStructureController.clear();
+    cableTypeController.clear();
+    cableShortCircuitTempController.clear();
+    cableStandardController.clear();
+    cableConductorClassController.clear();
+    cableMaterialController.clear();
+    cableProtectionController.clear();
+    cableWarrantyController.clear();
+    cableTensileStrengthController.clear();
+    plantCapacityController.clear();
+    moduleTechnologiesController.clear();
+    mountingStructureTechnologiesController.clear();
+    projectSchemeController.clear();
+    powerEvacuationController.clear();
+    areaApproximateController.clear();
+    solarPlantOutputConnectionController.clear();
+    schemeController.clear();
+    qvalidityController.clear();
+    qtendorNumberController.clear();
+    paymentTermsController.clear();
+    incoTermsController.clear();
+    shippingChargesController.text = '0';
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {

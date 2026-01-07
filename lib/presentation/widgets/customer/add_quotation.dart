@@ -222,6 +222,29 @@ class QuotationCreationWidget extends StatelessWidget {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  Row(children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider.qvalidityController,
+                        hintText: 'Validity',
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.qtendorNumberController,
+                        hintText: 'Tendor Number',
+                        labelText: '',
+                      ),
+                    ),
+                  ]),
+                  const SizedBox(height: 16),
                   CommonDropdown(
                     hintText: 'Quotation Type',
                     items: customerDetailsProvider.quotationTypeData,
@@ -514,7 +537,33 @@ class QuotationCreationWidget extends StatelessWidget {
                       ),
                       const SizedBox(width: 16),
                     ],
-                  )
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller: customerDetailsProvider.paymentTermsController,
+                          hintText: 'Payment Terms',
+                          labelText: '',
+                          // onChanged: (value) => _validateTotal(),
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: CustomTextField(
+                          readOnly: false,
+                          height: 54,
+                          controller:
+                              customerDetailsProvider.incoTermsController,
+                          hintText: 'Inco Terms',
+                          labelText: '',
+                          // onChanged: (value) => _validateTotal(),
+                        ),
+                      )
+                    ],
+                  ),
                 ],
               ),
               // ExpansionTile(
@@ -1707,6 +1756,50 @@ class QuotationCreationWidget extends StatelessWidget {
                               .qsubsidyAmountController.text.isEmpty) {
                             customerDetailsProvider
                                 .qsubsidyAmountController.text = '0';
+                          }
+                          customerDetailsProvider.updateTotal();
+                        },
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: '₹'),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Shipping Charges:   ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    Container(
+                      width: 140,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextField(
+                        controller:
+                            customerDetailsProvider.shippingChargesController,
+                        onChanged: (p0) {
+                          if (customerDetailsProvider
+                              .shippingChargesController.text.isEmpty) {
+                            customerDetailsProvider
+                                .shippingChargesController.text = '0';
                           }
                           customerDetailsProvider.updateTotal();
                         },
