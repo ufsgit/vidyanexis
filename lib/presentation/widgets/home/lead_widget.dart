@@ -74,6 +74,7 @@ class LeadCard extends StatelessWidget {
                     children: [
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           // Stack(
                           //   children: [
@@ -143,6 +144,19 @@ class LeadCard extends StatelessWidget {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
                                       color: AppColors.textBlack),
+                                ),
+                                const SizedBox(width: 6),
+                                Container(
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 2),
+                                  child: Text(
+                                    'ID ${lead.customerId}',
+                                    style: TextStyle(
+                                      color: AppColors.textGrey3,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
                                 ),
                                 const SizedBox(
                                   height: 4,
@@ -242,10 +256,9 @@ class LeadCard extends StatelessWidget {
 
                     Uri waBusiness =
                         Uri.parse("whatsapp-business://send?phone=$phone");
-                    Uri waNormal =
-                        Uri.parse("whatsapp://send?phone=$phone");
-                    Uri waWeb = Uri.parse(
-                        "https://api.whatsapp.com/send?phone=$phone");
+                    Uri waNormal = Uri.parse("whatsapp://send?phone=$phone");
+                    Uri waWeb =
+                        Uri.parse("https://api.whatsapp.com/send?phone=$phone");
 
                     try {
                       // 1️⃣ USER has WhatsApp Business → open Business first
