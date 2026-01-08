@@ -139,6 +139,10 @@ class LeadReportProvider extends ChangeNotifier {
 
   SaveLeadDropdownModel? _leadDropdownData; // Change from List to single object
 
+  int currentPage = 1;
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
+
   List<SearchLeadModel> _tempData = [];
 
   bool _isFilter = false;
@@ -498,15 +502,79 @@ class LeadReportProvider extends ChangeNotifier {
 //.......................................................................
 
   void scrollListener(BuildContext context) {
-    if (scrollController.position.pixels ==
-        scrollController.position.maxScrollExtent) {
-      print('Max Scroll');
-      // Load next page when user scrolls to bottom
-      if (endLimit < totalCount) {
-        fetchNextPage(context);
+    if (scrollController.hasClients &&
+        scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 100) {
+      if (!isLoadingMore && hasMoreData && _endLimit < _totalCount) {
+        loadMoreLeads(context);
       }
-    } else {
-      print('End...');
+    }
+  }
+
+  Future<void> loadMoreLeads(BuildContext context) async {
+    if (isLoadingMore || !hasMoreData || _endLimit >= _totalCount) {
+      if (_endLimit >= _totalCount) {
+        hasMoreData = false;
+        notifyListeners();
+      }
+      return;
+    }
+
+    isLoadingMore = true;
+    notifyListeners();
+
+    try {
+      _startLimit += 25;
+      _endLimit += 25;
+
+      if (_status.isEmpty || _status == 'null') {
+        _status = '0';
+      }
+      if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
+        _enquiryForS = '0';
+      }
+
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+      } else {
+        isDate = "1";
+      }
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "0";
+      String toUserId = (_selectedUser ?? 0).toString();
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<SearchLeadModel> nextData = (data as List<dynamic>)
+              .map((item) => SearchLeadModel.fromJson(item))
+              .toList();
+
+          _totalCount = nextData.last.customerId;
+          nextData.removeLast();
+
+          if (nextData.isEmpty) {
+            hasMoreData = false;
+          } else {
+            _leadData.addAll(nextData);
+            currentPage++;
+            hasMoreData = nextData.length >= 25;
+          }
+        }
+      } else {
+        hasMoreData = false;
+      }
+    } catch (e) {
+      log("Error loading more leads: $e");
+    } finally {
+      isLoadingMore = false;
+      notifyListeners();
     }
   }
 
@@ -569,6 +637,8 @@ class LeadReportProvider extends ChangeNotifier {
     _selectedEnquirySource = enquirySource;
     _startLimit = 1;
     _endLimit = 25;
+    currentPage = 1;
+    hasMoreData = true;
     notifyListeners(); // Notify listeners so that UI can rebuild
   }
 
@@ -605,12 +675,8 @@ class LeadReportProvider extends ChangeNotifier {
 
   Future<void> fetchNextPage(BuildContext context) async {
     if (_endLimit < _totalCount) {
-      _startLimit += 25;
-      _endLimit += 25;
-      getSearchLeads(context);
+      loadMoreLeads(context);
     }
-    // print('Start' + _startLimit.toString());
-    // print('End' + _endLimit.toString());
     notifyListeners();
   }
 
@@ -790,7 +856,7 @@ class LeadReportProvider extends ChangeNotifier {
 
         // Loader.stopLoader(context);
         _isLoading = false;
-
+        hasMoreData = _tempData.length >= 25;
         notifyListeners();
       }
     } else {
