@@ -292,6 +292,27 @@ class QuotationCreationWidget extends StatelessWidget {
                 ),
 
               if (customerDetailsProvider.selectedQuotationType == 2)
+                //scope of work
+                ExpansionTile(
+                  shape: const RoundedRectangleBorder(
+                    borderRadius: BorderRadius.zero,
+                  ),
+                  title: Text(
+                    'Scope of Work',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textGrey1,
+                    ),
+                  ),
+                  tilePadding: EdgeInsets.zero,
+                  initiallyExpanded: false,
+                  children: [
+                    scopeOfWorkWidget(context),
+                  ],
+                ),
+
+              if (customerDetailsProvider.selectedQuotationType == 2)
                 //cable details
                 ExpansionTile(
                   shape: const RoundedRectangleBorder(
@@ -544,7 +565,8 @@ class QuotationCreationWidget extends StatelessWidget {
                         child: CustomTextField(
                           readOnly: false,
                           height: 54,
-                          controller: customerDetailsProvider.paymentTermsController,
+                          controller:
+                              customerDetailsProvider.paymentTermsController,
                           hintText: 'Payment Terms',
                           labelText: '',
                           // onChanged: (value) => _validateTotal(),
@@ -1036,7 +1058,8 @@ class QuotationCreationWidget extends StatelessWidget {
               return;
             }
 
-            if (customerDetailsProvider.items.isEmpty) {
+            if (customerDetailsProvider.items.isEmpty &&
+                customerDetailsProvider.commercialItems.isEmpty) {
               _showValidationDialog(context, 'Cannot Save', 'No items added');
               return;
             }
@@ -1771,7 +1794,7 @@ class QuotationCreationWidget extends StatelessWidget {
                     ),
                   ],
                 ),
-                if (customerDetailsProvider.items.isNotEmpty)
+              if (customerDetailsProvider.items.isNotEmpty)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
                       ? MainAxisAlignment.end
@@ -2221,6 +2244,151 @@ class QuotationCreationWidget extends StatelessWidget {
           ],
         ),
       ],
+    );
+  }
+
+  Widget scopeOfWorkWidget(BuildContext context) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF6F7F9),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  controller:
+                      customerDetailsProvider.designAndEngineeringController,
+                  readOnly: false,
+                  keyboardType: TextInputType.multiline,
+                  height: 54,
+                  hintText: 'Design and Engineering',
+                  labelText: '',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.a3SScopeController,
+                  readOnly: false,
+                  height: 54,
+                  hintText: 'A3S Scope',
+                  labelText: '',
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: CustomTextField(
+                  controller: customerDetailsProvider.clientScopeController,
+                  readOnly: false,
+                  height: 54,
+                  hintText: 'Client Scope',
+                  labelText: '',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: () {
+              customerDetailsProvider.addOrEditScopeOfWorkItem(context);
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Add item'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primaryBlue, // Change foreground color
+              backgroundColor: Colors.white, // Change background color
+              side: BorderSide(
+                  color: AppColors.primaryBlue), // Change border color
+              padding: const EdgeInsets.symmetric(
+                horizontal: 10,
+                vertical: 0,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8), // Add border radius
+              ),
+            ),
+          ),
+          const SizedBox(height: 16),
+          ListView.builder(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: customerDetailsProvider.scopeOfWorkItems.length,
+            itemBuilder: (context, index) {
+              final item = customerDetailsProvider.scopeOfWorkItems[index];
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                margin: const EdgeInsets.only(bottom: 10),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.designAndEngineering ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      '${item.a3SScope}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    Text(
+                      '${item.clientScope}',
+                      style: TextStyle(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const SizedBox(width: 15),
+                    const SizedBox(width: 5),
+                    TextButton(
+                      onPressed: () => customerDetailsProvider
+                          .populateScopeOfWorkItemFieldsForEditing(index),
+                      child: Text(
+                        'Edit',
+                        style: TextStyle(
+                          color: Colors.blue[400],
+                        ),
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () =>
+                          customerDetailsProvider.deleteScopeOfWorkItem(index),
+                      child: Text(
+                        'Delete',
+                        style: TextStyle(
+                          color: Colors.red[400],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 

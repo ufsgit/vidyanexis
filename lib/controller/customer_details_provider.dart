@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/maintenance_model.dart';
+import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -230,6 +231,26 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void setEditCommercialItemIndex(int? index) {
     _editCommercialIndex = index;
+    notifyListeners();
+  }
+
+  //scope of work
+  TextEditingController designAndEngineeringController =
+      TextEditingController();
+  TextEditingController a3SScopeController = TextEditingController();
+  TextEditingController clientScopeController = TextEditingController();
+  List<ScopeOfWorkModel> _scopeOfWorkItems = [];
+  List<ScopeOfWorkModel> get scopeOfWorkItems => _scopeOfWorkItems;
+  set scopeOfWorkItems(List<ScopeOfWorkModel> value) {
+    _scopeOfWorkItems = value;
+    notifyListeners();
+  }
+
+  int? _editScopeOfWorkIndex;
+  int? get editScopeOfWorkIndex => _editScopeOfWorkIndex;
+
+  void setEditScopeOfWorkItemIndex(int? index) {
+    _editScopeOfWorkIndex = index;
     notifyListeners();
   }
 
@@ -1540,6 +1561,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Total_IGST_Amount": "0",
         "Shipping_Charges":
             double.tryParse(shippingChargesController.text) ?? 0.0,
+        "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
       });
 
       if (response!.statusCode == 200) {
@@ -1681,6 +1703,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
     paymentTermsController.clear();
     incoTermsController.clear();
     shippingChargesController.text = '0';
+    designAndEngineeringController.clear();
+    a3SScopeController.clear();
+    clientScopeController.clear();
+    _scopeOfWorkItems.clear();
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {
@@ -2720,6 +2746,103 @@ class CustomerDetailsProvider extends ChangeNotifier {
       total += double.tryParse(item.total ?? '0') ?? 0;
     }
     totalController.text = total.toStringAsFixed(2);
+  }
+
+  void addOrEditScopeOfWorkItem(BuildContext context) {
+    // Validate input fields
+    if (designAndEngineeringController.text.isEmpty) {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(
+              'Cannot save',
+              style: TextStyle(
+                color: AppColors.appViolet,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            content: const Text(
+              'Missing Details',
+              style: TextStyle(
+                color: Colors.black87,
+                fontSize: 16,
+              ),
+            ),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(15),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text(
+                  'OK',
+                  style: TextStyle(
+                    color: AppColors.appViolet,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
+      );
+      return;
+    }
+
+    // Create the new commercial item
+    final newItem = ScopeOfWorkModel(
+      designAndEngineering: designAndEngineeringController.text,
+      a3SScope: a3SScopeController.text,
+      clientScope: clientScopeController.text,
+    );
+
+    if (_editScopeOfWorkIndex != null &&
+        _editScopeOfWorkIndex! >= 0 &&
+        _editScopeOfWorkIndex! < _scopeOfWorkItems.length) {
+      // Edit existing item
+      _scopeOfWorkItems[_editScopeOfWorkIndex!] = newItem;
+    } else {
+      // Add new item
+      _scopeOfWorkItems.add(newItem);
+    }
+
+    // Clear the text fields
+    _editScopeOfWorkIndex = null;
+    clearScopeOfWorkItemFields();
+    print(_scopeOfWorkItems.map((e) => e.toJson()).toList());
+    notifyListeners(); // Trigger UI updates
+  }
+
+  void clearScopeOfWorkItemFields() {
+    designAndEngineeringController.clear();
+    a3SScopeController.clear();
+    clientScopeController.clear();
+  }
+
+  void populateScopeOfWorkItemFieldsForEditing(int index) {
+    // Populate text fields with existing item's data for editing
+    if (index >= 0 && index < _scopeOfWorkItems.length) {
+      final itemToEdit = _scopeOfWorkItems[index];
+
+      designAndEngineeringController.text =
+          itemToEdit.designAndEngineering ?? '';
+      a3SScopeController.text = itemToEdit.a3SScope ?? '';
+      clientScopeController.text = itemToEdit.clientScope ?? '';
+
+      setEditScopeOfWorkItemIndex(index);
+      notifyListeners();
+    }
+  }
+
+  void deleteScopeOfWorkItem(int index) {
+    if (index >= 0 && index < _scopeOfWorkItems.length) {
+      _scopeOfWorkItems.removeAt(index);
+      notifyListeners();
+    }
   }
 
   void calculateMaintenanceDates({

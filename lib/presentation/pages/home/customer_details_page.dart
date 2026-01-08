@@ -2518,7 +2518,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       terms: task.termsAndConditions,
                       subsidy: task.subsidyAmount,
                       quotation_details: task.quotationDetails ?? [],
-                      bill_of_materials: task.billOfMaterials ?? []),
+                      bill_of_materials: task.billOfMaterials ?? [],
+                      quotation: task),
                 );
               },
             ),
