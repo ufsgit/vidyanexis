@@ -352,11 +352,11 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             customerId: widget.customerId,
           ),
 
-          if (!widget.fromLead)
+          if (!widget.fromLead && settingsprovider.menuIsViewMap[14] == 1)
             ComplaintsPageMobile(
               customerId: widget.customerId.toString(),
             ),
-          if (!widget.fromLead)
+          if (!widget.fromLead && settingsprovider.menuIsViewMap[15] == 1)
             PeriodicServicesMobile(
               customerId: widget.customerId.toString(),
             ),
@@ -364,13 +364,14 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             DocumentsListPagePhone(
               customerId: widget.customerId.toString(),
             ),
-          if (!widget.fromLead) RecieptPhone(widget.customerId.toString()),
+          if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
+            RecieptPhone(widget.customerId.toString()),
 
           // TaskDocumentsPage(
           //   customerId: widget.customerId.toString(),
           // ),
 
-          if (!widget.fromLead)
+          if (!widget.fromLead && settingsprovider.menuIsViewMap[37] == 1)
             CheckListManagementWidget(customerId: widget.customerId.toString()),
 
           // RecieptListPageMobile(

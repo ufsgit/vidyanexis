@@ -63,7 +63,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: CustomAppBarWidget(
-        title: 'Add document',
+        title: 'Add Document',
         onLeadingPressed: () {
           provider.clearFiles();
           Navigator.of(context).pop();
@@ -132,7 +132,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                     ),
                   ),
                   content: const Text(
-                    'Choose document type',
+                    'Choose Document Type',
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 16,
@@ -210,7 +210,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
               items: dropDownProvider.documentType,
               displayStringFunction: (model) => model.documentTypeName ?? '',
               defaultText: provider.docTypeController.text,
-              labelText: 'Document type',
+              labelText: 'Document Type',
               controller: provider.docTypeController,
               onSelected: (DocumentTypeModel selectedStatus) {
                 setState(() {
@@ -241,7 +241,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: CustomText(
-                            'Upload document',
+                            'Upload Document',
                             fontWeight: FontWeight.w400,
                             fontSize: 14,
                             color: AppColors.textGrey4,
