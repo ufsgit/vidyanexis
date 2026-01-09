@@ -13,6 +13,7 @@ import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_printer_edit_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
@@ -39,6 +40,7 @@ class QuotationCard extends StatelessWidget {
   final List<QuotationDetail> quotation_details;
   final List<BillOfMaterial> bill_of_materials;
   final List<ProductionChartModel> productionChartModel;
+  final QuatationListModel? quotation;
 
   const QuotationCard(
       {super.key,
@@ -59,7 +61,8 @@ class QuotationCard extends StatelessWidget {
       required this.advancePercentage,
       required this.deliveryPercentage,
       required this.completionPercentage,
-      required this.productionChartModel});
+      required this.productionChartModel,
+      this.quotation});
 
   @override
   Widget build(BuildContext context) {
@@ -175,39 +178,33 @@ class QuotationCard extends StatelessWidget {
                 //       : '',
                 // ),
                 const Spacer(),
-                if (settingsprovider.menuIsViewMap[32] == 1)
-                  CustomOutlinedSvgButton(
-                    onPressed: () async {
-                      await Loader.showLoader(context);
-                      await customerDetailsProvider.getQuatationListByMasterId(
-                          taskId, context);
-                      await customerDetailsProvider.fetchLeadDetails(
-                          customerId, context);
-                      await settingsprovider.getCompanyDetails();
-                      generateAndPrintPDFs(
-                          context: context, //     companyDetails:
-                          companyDetails: settingsprovider.companyDetails[0],
-                          customerDetails:
-                              customerDetailsProvider.leadDetails![0],
-                          quotationData:
-                              customerDetailsProvider.quotationListByMaster[0]);
-                      // await QuotationPDFPrinter.printQuotationDialog(
-                      //     title: 'Quotation',
-                      //     companyDetails:
-                      //         settingsprovider.companyDetails[0],
-                      //     customerDetails:
-                      //         customerDetailsProvider.leadDetails![0],
-                      //     quotationData: customerDetailsProvider
-                      //         .quotationListByMaster[0]);
-                      Loader.stopLoader(context);
-                    },
-                    svgPath: 'assets/images/Print.svg',
-                    label: 'Print',
-                    breakpoint: 860,
-                    foregroundColor: AppColors.primaryBlue,
-                    backgroundColor: Colors.white,
-                    borderSide: BorderSide(color: AppColors.primaryBlue),
-                  ),
+                if (settingsprovider.menuIsViewMap[32] == 1) ...[
+                  if (quotation?.quotationTypeId == 2)
+                    CustomOutlinedSvgButton(
+                      onPressed: () async {
+                        await Loader.showLoader(context);
+                        await customerDetailsProvider
+                            .getQuatationListByMasterId(taskId, context);
+                        await customerDetailsProvider.fetchLeadDetails(
+                            customerId, context);
+                        await settingsprovider.getCompanyDetails();
+                        printCommercialPDFs(
+                            context: context, //     companyDetails:
+                            companyDetails: settingsprovider.companyDetails[0],
+                            customerDetails:
+                                customerDetailsProvider.leadDetails![0],
+                            quotationData: customerDetailsProvider
+                                .quotationListByMaster[0]);
+                        Loader.stopLoader(context);
+                      },
+                      svgPath: 'assets/images/Print.svg',
+                      label: 'Print Commercial',
+                      breakpoint: 860,
+                      foregroundColor: AppColors.primaryBlue,
+                      backgroundColor: Colors.white,
+                      borderSide: BorderSide(color: AppColors.primaryBlue),
+                    ),
+                ],
                 if (settingsprovider.menuIsEditMap[16] == 1)
                   IconButton(
                     onPressed: () async {
@@ -354,6 +351,9 @@ class QuotationCard extends StatelessWidget {
 
                       customerDetailsProvider.commercialItems =
                           quotation.commercialItems;
+
+                      customerDetailsProvider.scopeOfWorkItems =
+                          quotation.scopeOfWorkItems;
 
                       showDialog(
                         context: context,

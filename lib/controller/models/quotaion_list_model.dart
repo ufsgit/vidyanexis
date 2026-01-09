@@ -30,6 +30,7 @@ class QuatationListModel {
   List<QuotationDetail>? quotationDetails;
   List<BillOfMaterial>? billOfMaterials;
   List<ProductionChartModel>? productionChartModel;
+  int quotationTypeId;
 
   QuatationListModel({
     required this.quotationMasterId,
@@ -61,6 +62,7 @@ class QuatationListModel {
     this.quotationDetails,
     this.billOfMaterials,
     this.productionChartModel,
+    required this.quotationTypeId,
   });
 
   factory QuatationListModel.fromMap(Map<String, dynamic> json) =>
@@ -93,6 +95,7 @@ class QuatationListModel {
         description: json["Description"] ?? '',
         deleteStatus: json["DeleteStatus"] ?? 0,
         createdByName: json["Created_By_Name"] ?? '',
+        quotationTypeId: json["QuotationTypeId"] ?? 0,
         quotationDetails: json["quotation_details"] == null
             ? []
             : List<QuotationDetail>.from(json["quotation_details"]!

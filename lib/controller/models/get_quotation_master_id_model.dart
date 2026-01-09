@@ -1,5 +1,6 @@
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
+import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
 
 class GetQuotationbyMasterIdmodel {
   final int quotationMasterId;
@@ -51,6 +52,7 @@ class GetQuotationbyMasterIdmodel {
   final List<BillOfMaterial> billOfMaterials;
   final List<ProductionChartModel> productionChart;
   final List<CommercialItemModel> commercialItems;
+  final List<ScopeOfWorkModel> scopeOfWorkItems;
 
   final int quotationTypeId;
   final String quotationTypeName;
@@ -148,6 +150,7 @@ class GetQuotationbyMasterIdmodel {
     required this.totalSgstAmount,
     required this.totalIgstAmount,
     required this.otherTax,
+    required this.scopeOfWorkItems,
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -227,6 +230,9 @@ class GetQuotationbyMasterIdmodel {
       totalSgstAmount: toStr(json['Total_SGST_Amount']),
       totalIgstAmount: toStr(json['Total_IGST_Amount']),
       otherTax: toStr(json['totalOther_Tax']),
+      scopeOfWorkItems: (json['ScopeOfWorkItems'] as List? ?? [])
+          .map((e) => ScopeOfWorkModel.fromJson(e))
+          .toList(),
     );
   }
 }
