@@ -505,7 +505,7 @@ class QuotationCreationWidget extends StatelessWidget {
                 initiallyExpanded: false,
                 children: [
                   const SizedBox(
-                    height: 5,
+                    height: 16,
                   ),
                   Row(
                     children: [
@@ -514,7 +514,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           readOnly: false,
                           height: 54,
                           controller: customerDetailsProvider.advanceController,
-                          hintText: 'Advance in %',
+                          hintText: 'Advance Against Purchase Order %',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -529,7 +529,8 @@ class QuotationCreationWidget extends StatelessWidget {
                           height: 54,
                           controller:
                               customerDetailsProvider.deliveryController,
-                          hintText: 'On Material delivery(%)',
+                          hintText:
+                              'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -548,7 +549,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           height: 54,
                           controller:
                               customerDetailsProvider.workCompletionController,
-                          hintText: 'On Work completion(%)',
+                          hintText: 'After project completion %',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -559,6 +560,7 @@ class QuotationCreationWidget extends StatelessWidget {
                       const SizedBox(width: 16),
                     ],
                   ),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(

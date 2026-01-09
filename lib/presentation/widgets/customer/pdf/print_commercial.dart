@@ -33,7 +33,7 @@ Future<void> printCommercialPDFs({
     await _addFifthPage(pdf);
     await _addSixthPage(pdf, 6);
     await _addPlaceholderPage(pdf, 7);
-    await _addPlaceholderPage(pdf, 8);
+    await _addEightPage(pdf);
     await _addNinthPage(pdf, 9);
 
     final Uint8List pdfBytes = await pdf.save();
@@ -514,6 +514,191 @@ Future<void> _addSixthPage(pw.Document pdf, int pageNumber) async {
   }
 }
 
+Future<void> _addEightPage(pw.Document pdf) async {
+  // Load fonts
+
+  final font = await PdfGoogleFonts.openSansRegular();
+  final boldFont = await PdfGoogleFonts.openSansBold();
+
+  String headerImagePath = 'assets/images/commercial_header.jpg';
+  Uint8List? headerImageBytes;
+  pw.MemoryImage? headerImage;
+
+  String footerImagePath = 'assets/images/commercial_footer.jpg';
+  Uint8List? footerImageBytes;
+  pw.MemoryImage? footerImage;
+  double totalAmount = double.tryParse(quotation?.netTotal ?? '0') ?? 0.0;
+  String amountInWords = convertNumberToWords(totalAmount);
+  try {
+    final ByteData headerImageData = await rootBundle.load(headerImagePath);
+    headerImageBytes = headerImageData.buffer.asUint8List();
+    headerImage = pw.MemoryImage(headerImageBytes);
+
+    final ByteData footerImageData = await rootBundle.load(footerImagePath);
+    footerImageBytes = footerImageData.buffer.asUint8List();
+    footerImage = pw.MemoryImage(footerImageBytes);
+
+    pdf.addPage(
+      pw.MultiPage(
+        pageFormat: PdfPageFormat.a4,
+        margin: const pw.EdgeInsets.all(40),
+        header: (context) => _buildHeader(headerImage),
+        footer: (context) => _buildFooter(footerImage),
+        build: (context) => [
+          /// ---------------- TOP DISCLAIMER ----------------
+          pw.Text(
+            'Damage caused by external events unconnected with flaws or defects in the product.\n'
+            'Unauthorized attempts to repair / maintenance by non-authorized / certified personnel.\n'
+            'Force Majeure, including but not limited to earthquake, lightning, acts of vandalism.',
+            style: pw.TextStyle(font: font, fontSize: 9),
+          ),
+
+          pw.SizedBox(height: 25),
+
+          /// ---------------- COMMERCIAL PROPOSAL TITLE ----------------
+          pw.Text(
+            'Commercial Proposal .',
+            style: pw.TextStyle(
+              font: boldFont,
+              fontSize: 10,
+            ),
+          ),
+          pw.SizedBox(height: 10),
+          // Dynamic Table
+          pw.Table(
+            border: pw.TableBorder.all(color: PdfColors.black, width: 1),
+            columnWidths: const {
+              0: pw.FixedColumnWidth(60),
+              1: pw.FlexColumnWidth(),
+              2: pw.FlexColumnWidth(),
+              3: pw.FlexColumnWidth(),
+              4: pw.FlexColumnWidth(),
+              5: pw.FlexColumnWidth(),
+            },
+            children: [
+              // Header
+              pw.TableRow(
+                children: [
+                  _tableHeader('Sl No'),
+                  _tableHeader('Description'),
+                  _tableHeader('Solar plant DC capacity'),
+                  _tableHeader('Solar plant AC capacity'),
+                  _tableHeader('Unit price (INR wp)'),
+                  _tableHeader('Total Price Exc. Tax'),
+                ],
+              ),
+
+              // Dynamic Rows from List
+              ...(quotation?.commercialItems ?? [])
+                  .asMap()
+                  .entries
+                  .map((entry) {
+                final index = entry.key;
+                final item = entry.value;
+                return pw.TableRow(
+                  children: [
+                    _tableCell((index + 1).toString(),
+                        align: pw.Alignment.center),
+                    _tableCell(item.description ?? '',
+                        align: pw.Alignment.center),
+                    _tableCell(item.dcCapacity ?? '',
+                        align: pw.Alignment.center),
+                    _tableCell(item.acCapacity ?? '',
+                        align: pw.Alignment.center),
+                    _tableCell(item.unitPrice ?? '',
+                        align: pw.Alignment.center),
+                    _tableCell(item.total ?? '', align: pw.Alignment.center),
+                  ],
+                );
+              }),
+            ],
+          ),
+          pw.Table(
+            border: pw.TableBorder.all(color: PdfColors.black, width: 1),
+            columnWidths: const {
+              0: pw.FixedColumnWidth(60),
+              1: pw.FlexColumnWidth(4),
+              2: pw.FlexColumnWidth(),
+            },
+            children: [
+              // Header
+              pw.TableRow(
+                children: [
+                  _tableCell(''),
+                  _tableCell('Total System Cost Exc. Tax',
+                      align: pw.Alignment.centerRight),
+                  _tableCell(quotation?.netTotal ?? '0'),
+                ],
+              ),
+            ],
+          ),
+          pw.SizedBox(height: 25),
+
+          /// ---------------- AMOUNT IN WORDS ----------------
+          pw.Text(
+            'Amount in words: $amountInWords',
+            style: pw.TextStyle(font: font, fontSize: 9),
+          ),
+
+          pw.SizedBox(height: 25),
+
+          /// ---------------- PAYMENT TERMS TITLE ----------------
+          pw.Text(
+            'Payment Terms',
+            style: pw.TextStyle(
+              font: boldFont,
+              fontSize: 10,
+            ),
+          ),
+          pw.SizedBox(height: 10),
+
+          pw.Table(
+            border: pw.TableBorder.all(color: PdfColors.black, width: 1),
+            columnWidths: {
+              0: const pw.FlexColumnWidth(1),
+              1: const pw.FlexColumnWidth(3),
+            },
+            children: [
+              _cableSpecRow('Payment', 'Stage', isBold: true),
+              _cableSpecRow('${quotation?.advancePercentage ?? ""}%',
+                  "Advance Against Purchase Order ",
+                  align: pw.Alignment.centerLeft, isBold: true),
+              _cableSpecRow('${quotation?.onDeliveryPercentage ?? ""}%',
+                  "On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice ",
+                  align: pw.Alignment.centerLeft, isBold: true),
+              _cableSpecRow('${quotation?.workCompletionPercentage ?? ""}%',
+                  "After project completion ",
+                  align: pw.Alignment.centerLeft, isBold: true),
+            ],
+          ),
+          pw.SizedBox(height: 10),
+
+          /// ---------------- PROJECT COMPLETION ----------------
+          pw.Text(
+            'Project Completion: 15 to 30 days from the date of drawing approval, '
+            'providing access to roof and receipt of advance and whichever is later.',
+            style: pw.TextStyle(font: font, fontSize: 9),
+          ),
+
+          pw.SizedBox(height: 10),
+
+          /// ---------------- DELAY DISCLAIMER ----------------
+          pw.Text(
+            'A3S shall not be responsible for delays not attributable to A3S like delay '
+            'due to regulatory issues like KSEB policies etc., in such a case timeline '
+            'will get automatically extended for the period of any such delay not solely '
+            'attributable to A3S.',
+            style: pw.TextStyle(font: font, fontSize: 9),
+          ),
+        ],
+      ),
+    );
+  } catch (e) {
+    _addFallbackPage(pdf, 5);
+    return;
+  }
+}
+
 Future<void> _addNinthPage(pw.Document pdf, int pageNumber) async {
   String contentImagePath = 'assets/images/commercial_${pageNumber}.jpg';
   Uint8List? contentImageBytes;
@@ -567,11 +752,12 @@ Future<void> _addNinthPage(pw.Document pdf, int pageNumber) async {
   }
 }
 
-pw.TableRow _cableSpecRow(String parameter, String value) {
+pw.TableRow _cableSpecRow(String parameter, String value,
+    {pw.Alignment align = pw.Alignment.center, bool isBold = false}) {
   return pw.TableRow(
     children: [
-      _tableCell(parameter, align: pw.Alignment.center),
-      _tableCell(value, align: pw.Alignment.center),
+      _tableCell(parameter, align: pw.Alignment.center, isBold: isBold),
+      _tableCell(value, align: align, isBold: isBold),
     ],
   );
 }
@@ -588,15 +774,19 @@ pw.Widget _tableHeader(String text) {
   );
 }
 
-pw.Widget _tableCell(String text, {pw.Alignment? align}) {
+pw.Widget _tableCell(String text, {pw.Alignment? align, bool isBold = false}) {
   return pw.Padding(
     padding: const pw.EdgeInsets.all(4),
     child: pw.Text(
       text,
-      style: const pw.TextStyle(fontSize: 10),
+      style: pw.TextStyle(
+          fontSize: 10,
+          fontWeight: isBold ? pw.FontWeight.bold : pw.FontWeight.normal),
       textAlign: align == pw.Alignment.center
           ? pw.TextAlign.center
-          : pw.TextAlign.left,
+          : align == pw.Alignment.centerRight
+              ? pw.TextAlign.right
+              : pw.TextAlign.left,
     ),
   );
 }

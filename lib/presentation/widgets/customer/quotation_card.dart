@@ -157,7 +157,7 @@ class QuotationCard extends StatelessWidget {
                   style: TextStyle(color: Colors.grey),
                 ),
                 Text(
-                  ' ₹ $servicename',
+                  ' ₹ ${quotation?.netTotal ?? '0'}',
                   style: const TextStyle(
                       fontWeight: FontWeight.w600, color: Colors.black54),
                 ),
