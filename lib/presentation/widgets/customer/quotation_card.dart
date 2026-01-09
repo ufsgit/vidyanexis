@@ -242,25 +242,25 @@ class QuotationCard extends StatelessWidget {
                       // ---- BASIC DETAILS ----
                       customerDetailsProvider.customerId = customerId;
                       customerDetailsProvider.qproductnameController.text =
-                          title;
+                          quotation.productName;
                       customerDetailsProvider.advanceController.text =
-                          advancePercentage;
+                          quotation.advancePercentage;
                       customerDetailsProvider.deliveryController.text =
-                          deliveryPercentage;
+                          quotation.onDeliveryPercentage;
                       customerDetailsProvider.workCompletionController.text =
-                          completionPercentage;
+                          quotation.workCompletionPercentage;
                       customerDetailsProvider.qsubsidyAmountController.text =
-                          subsidy;
+                          quotation.subsidyAmount;
                       customerDetailsProvider.qwarrentyController.text =
-                          warranty;
+                          quotation.warranty;
                       customerDetailsProvider.qtermsConditionsController.text =
-                          terms;
+                          quotation.termsAndConditions;
 
                       // ---- STATUS ----
                       customerDetailsProvider.selectedQuotationStatus =
-                          int.parse(statusId);
+                          quotation.quotationStatusId;
                       customerDetailsProvider.selectedQuotationStatusName =
-                          status;
+                          quotation.quotationStatusName;
 
                       // ---- FEES ----
                       customerDetailsProvider.registrationFeeController.text =
