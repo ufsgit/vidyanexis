@@ -34,6 +34,19 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     statusOptionsFuture = getStatusType(widget.task.taskTypeId.toString());
   }
 
+  @override
+  void dispose() {
+    // Clear description on close
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) {
+        final reportsProvider =
+            Provider.of<TaskPageProvider>(context, listen: false);
+        reportsProvider.clearDescription();
+      }
+    });
+    super.dispose();
+  }
+
   Future<List<TaskTypeStatusModel>> getStatusType(String taskTypeId) async {
     DropDownProvider provider = DropDownProvider();
     return provider.getStatusByTaskTypeId(context, taskTypeId, '3');
@@ -489,6 +502,42 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                         return Container();
                       }
                     },
+                  ),
+
+                  const SizedBox(height: 16),
+
+                  // Description Section
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      CustomText(
+                        'Description',
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textBlack,
+                      ),
+                      const SizedBox(height: 12),
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: AppColors.grey),
+                          color: AppColors.whiteColor,
+                        ),
+                        child: TextField(
+                          controller: reportsProvider.descriptionController,
+                          maxLines: 4,
+                          minLines: 3,
+                          decoration: const InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            border: InputBorder.none,
+                            hintText: 'Enter description',
+                            hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+                          style: const TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ],
                   ),
 
                   const SizedBox(height: 16),

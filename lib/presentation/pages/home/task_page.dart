@@ -2103,6 +2103,8 @@ class _tasksPageReportState extends State<TaskPage> {
         final theme = Theme.of(context);
         final Future<List<TaskTypeStatusModel>> statusOptionsFuture =
             getStatusType(task.taskTypeId.toString());
+        final reportsProvider =
+            Provider.of<TaskPageProvider>(context, listen: false);
 
         return Dialog(
           elevation: 5,
@@ -2256,6 +2258,35 @@ class _tasksPageReportState extends State<TaskPage> {
                                     }).toList(),
                                   );
                                 },
+                              ),
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Description',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: theme.textTheme.bodyLarge?.color,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: theme.dividerColor),
+                                color: theme.cardColor,
+                              ),
+                              child: TextField(
+                                controller: reportsProvider.descriptionController,
+                                maxLines: 4,
+                                minLines: 3,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  border: InputBorder.none,
+                                  hintText: 'Enter description',
+                                ),
+                                style: const TextStyle(fontSize: 14),
                               ),
                             ),
                             const SizedBox(height: 24),
@@ -2739,6 +2770,35 @@ class _tasksPageReportState extends State<TaskPage> {
                                   return const Text("");
                                 }
                               },
+                            ),
+                            const SizedBox(height: 16),
+                            Text(
+                              'Description',
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w500,
+                                color: theme.textTheme.bodyLarge?.color,
+                              ),
+                            ),
+                            const SizedBox(height: 12),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: theme.dividerColor),
+                                color: theme.cardColor,
+                              ),
+                              child: TextField(
+                                controller: reportsProvider.descriptionController,
+                                maxLines: 4,
+                                minLines: 3,
+                                decoration: const InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  border: InputBorder.none,
+                                  hintText: 'Enter description',
+                                ),
+                                style: const TextStyle(fontSize: 14),
+                              ),
                             ),
                             const SizedBox(height: 20),
                             Consumer<TaskPageProvider>(
