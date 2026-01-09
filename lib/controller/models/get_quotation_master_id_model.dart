@@ -244,7 +244,7 @@ class QuotationDetail {
   int quantity;
   double unitPrice;
   int quotationDetailsId;
-  double MRP;
+  String MRP;
   double GST;
   double GSTPercent;
   double AdCESS;
@@ -272,7 +272,7 @@ class QuotationDetail {
       quantity: toInt(json['Quantity']),
       unitPrice: toDouble(json['UnitPrice']),
       quotationDetailsId: toInt(json['Quotation_Details_Id']),
-      MRP: toDouble(json['MRP']),
+      MRP: toStr(json['MRP']),
       GST: toDouble(json['GST']),
       GSTPercent: toDouble(json['GSTPercent']),
       AdCESS: toDouble(json['AdCESS']),

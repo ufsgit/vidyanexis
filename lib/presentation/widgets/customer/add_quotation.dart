@@ -1239,7 +1239,11 @@ class QuotationCreationWidget extends StatelessWidget {
                       labelText: '',
                     ),
                   ),
-                  const SizedBox(width: 16),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
                   Expanded(
                     child: CustomTextField(
                       readOnly: false,
@@ -1256,6 +1260,16 @@ class QuotationCreationWidget extends StatelessWidget {
                           RegExp(r'^\d*\.?\d{0,2}'),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemMrpController,
+                      hintText: 'HSN CODE',
+                      labelText: '',
                     ),
                   ),
                 ],
@@ -2667,7 +2681,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              'Invoice No',
+                              'Comments',
                               style: GoogleFonts.plusJakartaSans(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -2677,7 +2691,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              'Distributor',
+                              'Uom',
                               style: GoogleFonts.plusJakartaSans(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,

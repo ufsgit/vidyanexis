@@ -3,7 +3,7 @@ class Item {
   double UnitPrice;
   int Quantity;
   double Amount;
-  double MRP;
+  String MRP;
   double GST;
   double GSTPercent;
   double AdCESS;
@@ -38,7 +38,7 @@ class Item {
   factory Item.fromJson(Map<String, dynamic> json) {
     return Item(
       ItemName: json['ItemName'],
-      MRP: json['MRP'],
+      MRP: json['MRP']?.toString() ?? '',
       UnitPrice: json['UnitPrice'].toDouble(),
       Quantity: json['Quantity'],
       GST: json['GST'],
