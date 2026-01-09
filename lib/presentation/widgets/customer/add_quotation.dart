@@ -505,7 +505,7 @@ class QuotationCreationWidget extends StatelessWidget {
                 initiallyExpanded: false,
                 children: [
                   const SizedBox(
-                    height: 5,
+                    height: 16,
                   ),
                   Row(
                     children: [
@@ -514,7 +514,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           readOnly: false,
                           height: 54,
                           controller: customerDetailsProvider.advanceController,
-                          hintText: 'Advance in %',
+                          hintText: 'Advance Against Purchase Order %',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -529,7 +529,8 @@ class QuotationCreationWidget extends StatelessWidget {
                           height: 54,
                           controller:
                               customerDetailsProvider.deliveryController,
-                          hintText: 'On Material delivery(%)',
+                          hintText:
+                              'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -548,7 +549,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           height: 54,
                           controller:
                               customerDetailsProvider.workCompletionController,
-                          hintText: 'On Work completion(%)',
+                          hintText: 'After project completion %',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -559,6 +560,7 @@ class QuotationCreationWidget extends StatelessWidget {
                       const SizedBox(width: 16),
                     ],
                   ),
+                  const SizedBox(height: 16),
                   Row(
                     children: [
                       Expanded(
@@ -1237,7 +1239,11 @@ class QuotationCreationWidget extends StatelessWidget {
                       labelText: '',
                     ),
                   ),
-                  const SizedBox(width: 16),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
                   Expanded(
                     child: CustomTextField(
                       readOnly: false,
@@ -1254,6 +1260,16 @@ class QuotationCreationWidget extends StatelessWidget {
                           RegExp(r'^\d*\.?\d{0,2}'),
                         ),
                       ],
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemMrpController,
+                      hintText: 'HSN CODE',
+                      labelText: '',
                     ),
                   ),
                 ],
@@ -2665,7 +2681,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              'Invoice No',
+                              'Comments',
                               style: GoogleFonts.plusJakartaSans(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
@@ -2675,7 +2691,7 @@ class QuotationCreationWidget extends StatelessWidget {
                           Expanded(
                             flex: 2,
                             child: Text(
-                              'Distributor',
+                              'Uom',
                               style: GoogleFonts.plusJakartaSans(
                                 fontWeight: FontWeight.w600,
                                 fontSize: 14,
