@@ -157,6 +157,11 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void setFilterState(bool value) {
+    _isFilter = value;
+    notifyListeners();
+  }
+
   void nextPage() {
     if (_pageIndex < _totalPages) {
       _pageIndex++;
@@ -177,11 +182,6 @@ class TaskPageProvider extends ChangeNotifier {
       nextPage();
       await searchTaskByCustomer(context);
     }
-  }
-
-  void setFilter(bool filter) {
-    _isFilter = false;
-    notifyListeners();
   }
 
   void selectDateFilterOption(int? index) {

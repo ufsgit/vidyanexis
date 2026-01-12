@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
+
 import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
@@ -36,7 +36,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
+
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 
 class TaskPage extends StatefulWidget {
@@ -50,7 +50,7 @@ class _tasksPageReportState extends State<TaskPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   DropDownProvider provider = DropDownProvider();
-  TaskPageProvider reportsProvider = TaskPageProvider();
+  late TaskPageProvider reportsProvider;
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   late bool _isMobile;
@@ -67,7 +67,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
       _updateScreenType();
       _setupScrollListener();
-      taskPageProvider.setFilter(false);
+      taskPageProvider.setFilterState(false);
       searchProvider.stopSearch();
 
       customerProvider.resetExpansion();
@@ -140,7 +140,7 @@ class _tasksPageReportState extends State<TaskPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   @override
   Widget build(BuildContext context) {
-    final leadProvider = Provider.of<LeadsProvider>(context);
+    // Removed unused leadProvider
 
     final reportsProvider = Provider.of<TaskPageProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
@@ -191,8 +191,10 @@ class _tasksPageReportState extends State<TaskPage> {
               },
               onClearTap: () {
                 searchController.clear();
-                reportsProvider.toggleFilter();
+                reportsProvider.setFilterState(false);
                 searchProvider.stopSearch();
+                reportsProvider.selectDateFilterOption(null);
+                reportsProvider.removeStatus();
                 reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
 
                 reportsProvider.searchTaskByCustomer(context);
@@ -401,13 +403,37 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 // FILTER BUTTON
                                                 OutlinedButton.icon(
                                                   onPressed: () {
-                                                    reportsProvider.setFilter(
-                                                        !reportsProvider
-                                                            .isFilter);
+                                                    reportsProvider
+                                                        .toggleFilter();
                                                   },
                                                   icon: const Icon(
                                                       Icons.filter_list),
                                                   label: const Text('Filter'),
+                                                  style:
+                                                      OutlinedButton.styleFrom(
+                                                    foregroundColor:
+                                                        reportsProvider.isFilter
+                                                            ? Colors.white
+                                                            : AppColors
+                                                                .primaryBlue,
+                                                    backgroundColor:
+                                                        reportsProvider.isFilter
+                                                            ? const Color(
+                                                                0xFF5499D9)
+                                                            : Colors.white,
+                                                    side: BorderSide(
+                                                        color: reportsProvider
+                                                                .isFilter
+                                                            ? const Color(
+                                                                0xFF5499D9)
+                                                            : AppColors
+                                                                .primaryBlue),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 12,
+                                                    ),
+                                                  ),
                                                 ),
 
                                                 const SizedBox(width: 16),
@@ -954,7 +980,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                       provider.followUpData
                                           .map((status) => status.statusId ?? 0)
                                           .toList(),
-                                  initialValue: leadProvider.selectedStatus,
+                                  initialValue:
+                                      reportsProvider.selectedStatus ?? 0,
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
                                       reportsProvider.setStatus(newValue);
@@ -1036,7 +1063,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 reportsProvider
                                                                         .toDate !=
                                                                     null
-                                                            ? 'Date : ${reportsProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toString().toDayMonthYearFormat()}'
+                                                            ? 'Date : ${reportsProvider.formattedFromDate.toDayMonthYearFormat()} - ${reportsProvider.formattedToDate.toDayMonthYearFormat()}'
                                                             : "Date",
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w500,
@@ -1068,7 +1095,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           .map((status) =>
                                               status.userDetailsId ?? 0)
                                           .toList(),
-                                  initialValue: leadProvider.selectedUser,
+                                  initialValue:
+                                      reportsProvider.selectedUser ?? 0,
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
                                       reportsProvider
@@ -1124,7 +1152,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           .map((status) =>
                                               status.taskTypeId ?? 0)
                                           .toList(),
-                                  initialValue: leadProvider.selectedEnquiryFor,
+                                  initialValue:
+                                      reportsProvider.selectedTaskType ?? 0,
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
                                       reportsProvider.setTaskType(newValue);
@@ -1180,6 +1209,51 @@ class _tasksPageReportState extends State<TaskPage> {
                                   areItemsEqual: (a, b) => a == b,
                                   label: 'Task Type',
                                 ),
+
+                                // Reset button for mobile - only shown when filters are active
+                                if (reportsProvider.fromDate != null ||
+                                    reportsProvider.toDate != null ||
+                                    (reportsProvider.selectedStatus != null &&
+                                        reportsProvider.selectedStatus != 0) ||
+                                    (reportsProvider.selectedUser != null &&
+                                        reportsProvider.selectedUser != 0) ||
+                                    (reportsProvider.selectedTaskType != null &&
+                                        reportsProvider.selectedTaskType !=
+                                            0) ||
+                                    reportsProvider.Search.isNotEmpty)
+                                  Container(
+                                    width:
+                                        MediaQuery.sizeOf(context).width / 1.1,
+                                    child: ElevatedButton(
+                                      onPressed: () {
+                                        reportsProvider
+                                            .selectDateFilterOption(null);
+                                        reportsProvider.removeStatus();
+                                        searchController.clear();
+                                        reportsProvider.setTaskSearchCriteria(
+                                          '',
+                                          '',
+                                          '',
+                                          '',
+                                          '',
+                                          '',
+                                        );
+                                        reportsProvider
+                                            .searchTaskByCustomer(context);
+                                      },
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.white,
+                                        foregroundColor: AppColors.textRed,
+                                        side: BorderSide(
+                                            color: AppColors.textRed),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 16,
+                                          vertical: 12,
+                                        ),
+                                      ),
+                                      child: const Text('Reset'),
+                                    ),
+                                  ),
                               ],
                             ),
                           ),
@@ -2169,7 +2243,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             ),
                             const SizedBox(height: 4),
                             Text(
-                              task.taskTypeName ?? '',
+                              task.taskTypeName,
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 18,
@@ -2296,7 +2370,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                 color: theme.cardColor,
                               ),
                               child: TextField(
-                                controller: reportsProvider.descriptionController,
+                                controller:
+                                    reportsProvider.descriptionController,
                                 maxLines: 4,
                                 minLines: 3,
                                 decoration: const InputDecoration(
@@ -2807,7 +2882,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                 color: theme.cardColor,
                               ),
                               child: TextField(
-                                controller: reportsProvider.descriptionController,
+                                controller:
+                                    reportsProvider.descriptionController,
                                 maxLines: 4,
                                 minLines: 3,
                                 decoration: const InputDecoration(

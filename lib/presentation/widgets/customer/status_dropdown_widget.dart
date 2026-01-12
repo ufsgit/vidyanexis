@@ -66,6 +66,18 @@ class _StatusDropdownWidgetState<T> extends State<StatusDropdownWidget<T>> {
     });
   }
 
+  @override
+  void didUpdateWidget(covariant StatusDropdownWidget<T> oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue) {
+      if (widget.initialValue != null) {
+        setState(() {
+          selectedValue = widget.initialValue!;
+        });
+      }
+    }
+  }
+
   void _calculateTextSize() {
     if (_textKey.currentContext != null) {
       final RenderBox renderBox =
