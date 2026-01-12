@@ -2,6 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/menu_model.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
@@ -46,7 +47,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
       final preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
       if (!kIsWeb && userId.isNotEmpty) {
-        await FirebaseMessaging.instance.subscribeToTopic('Tectify-$userId');
+        await FirebaseMessaging.instance.subscribeToTopic('${AppStyles.name}-$userId');
       }
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);

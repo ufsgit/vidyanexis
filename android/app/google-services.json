@@ -66,6 +66,25 @@
       "client_info": {
         "mobilesdk_app_id": "1:215237081386:android:83d1da76ee7290b486c653",
         "android_client_info": {
+          "package_name": "com.solaris.techtify"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFSVfpQLKzBTBG-g9qZEVpnoSHN_L8xfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215237081386:android:1e349c97f24c36fa86c653",
+        "android_client_info": {
           "package_name": "com.solaris.vidyanexis"
         }
       },
