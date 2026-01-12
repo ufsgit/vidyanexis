@@ -44,29 +44,28 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
     });
   }
 
+  Color getAvatarColor(String name) {
+    final colors = [
+      Colors.blue.withOpacity(.75),
+      Colors.purple.withOpacity(.75),
+      Colors.orange.withOpacity(.75),
+      Colors.teal.withOpacity(.75),
+      Colors.pink.withOpacity(.75),
+      Colors.indigo.withOpacity(.75),
+      Colors.green.withOpacity(.75),
+      Colors.deepOrange.withOpacity(.75),
+      Colors.cyan.withOpacity(.75),
+      Colors.brown.withOpacity(.75),
+    ];
+    final nameHash = name.hashCode.abs();
+    return colors[nameHash % colors.length];
+  }
+
   @override
   Widget build(BuildContext context) {
     final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(
       context,
     );
-    final scrollController = ScrollController();
-
-    Color getAvatarColor(String name) {
-      final colors = [
-        Colors.blue.withOpacity(.75),
-        Colors.purple.withOpacity(.75),
-        Colors.orange.withOpacity(.75),
-        Colors.teal.withOpacity(.75),
-        Colors.pink.withOpacity(.75),
-        Colors.indigo.withOpacity(.75),
-        Colors.green.withOpacity(.75),
-        Colors.deepOrange.withOpacity(.75),
-        Colors.cyan.withOpacity(.75),
-        Colors.brown.withOpacity(.75),
-      ];
-      final nameHash = name.hashCode.abs();
-      return colors[nameHash % colors.length];
-    }
 
     return Scaffold(
         backgroundColor: AppColors.whiteColor,
@@ -101,22 +100,15 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                       ],
                     ),
                   )
-                : SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 8),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ListView.builder(
-                            itemCount:
-                                customerDetailsProvider.documentList.length,
-                            shrinkWrap: true,
-                            physics: const ClampingScrollPhysics(),
-                            itemBuilder: (context, index) {
+                : CustomScrollView(
+                    slivers: [
+                      SliverPadding(
+                        padding: const EdgeInsets.all(8),
+                        sliver: SliverList(
+                          delegate: SliverChildBuilderDelegate(
+                            (context, index) {
                               var userData =
                                   customerDetailsProvider.documentList[index];
-                              userData.userName;
                               List<ImageDetail> images = userData.imageDetails;
                               return TileWidget(
                                 initiallyExpanded: true,
@@ -133,9 +125,11 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                   ),
                                   child: Center(
                                     child: Text(
-                                      userData.userName
-                                          .substring(0, 1)
-                                          .toUpperCase(),
+                                      userData.userName.isNotEmpty
+                                          ? userData.userName
+                                              .substring(0, 1)
+                                              .toUpperCase()
+                                          : '?',
                                       style: const TextStyle(
                                         fontSize: 12,
                                         color: Colors.white,
@@ -146,225 +140,213 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                 ),
                                 children: [
                                   Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 60),
+                                    padding: const EdgeInsets.only(
+                                        left: 44, right: 16),
                                     child: Column(
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          height: 140,
-                                          child: Scrollbar(
-                                            controller: scrollController,
-                                            thumbVisibility: true,
-                                            child: ListView.separated(
-                                              scrollDirection: Axis.horizontal,
-                                              controller: scrollController,
-                                              physics:
-                                                  const RangeMaintainingScrollPhysics(),
-                                              separatorBuilder:
-                                                  (context, index) =>
-                                                      const SizedBox(width: 8),
-                                              itemCount: images.length,
-                                              itemBuilder: (context, index) {
-                                                final image = images[index];
+                                          height: 160,
+                                          child: ListView.separated(
+                                            scrollDirection: Axis.horizontal,
+                                            physics:
+                                                const BouncingScrollPhysics(),
+                                            separatorBuilder:
+                                                (context, index) =>
+                                                    const SizedBox(width: 8),
+                                            itemCount: images.length,
+                                            itemBuilder: (context, imgIndex) {
+                                              final image = images[imgIndex];
 
-                                                return Column(
-                                                  children: [
-                                                    Stack(
-                                                      children: [
-                                                        InkWell(
-                                                          onTap: () {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .push(
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        FullScreenImageView(
-                                                                  imagePath: image
-                                                                      .filePath,
-                                                                ),
+                                              return Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Stack(
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () {
+                                                          Navigator.of(context)
+                                                              .push(
+                                                            MaterialPageRoute(
+                                                              builder: (context) =>
+                                                                  FullScreenImageView(
+                                                                imagePath: image
+                                                                    .filePath,
                                                               ),
-                                                            );
-                                                          },
-                                                          child: ClipRRect(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          8),
-                                                              child:
-                                                                  Image.network(
-                                                                image.filePath,
-                                                                width: 80,
-                                                                height: 80,
-                                                                fit:
-                                                                    BoxFit.fill,
-                                                                loadingBuilder: (BuildContext
-                                                                        context,
-                                                                    Widget
-                                                                        child,
-                                                                    ImageChunkEvent?
-                                                                        loadingProgress) {
-                                                                  if (loadingProgress ==
-                                                                      null) {
-                                                                    return child;
-                                                                  } else {
-                                                                    return SizedBox(
-                                                                      height:
-                                                                          70,
-                                                                      width: 70,
-                                                                      child:
-                                                                          Center(
-                                                                        child:
-                                                                            CircularProgressIndicator(
-                                                                          value: loadingProgress.expectedTotalBytes != null
-                                                                              ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1)
-                                                                              : null,
-                                                                        ),
-                                                                      ),
-                                                                    );
-                                                                  }
-                                                                },
-                                                                errorBuilder: (BuildContext
-                                                                        context,
-                                                                    Object
-                                                                        exception,
-                                                                    StackTrace?
-                                                                        stackTrace) {
-                                                                  return GestureDetector(
-                                                                    onTap:
-                                                                        () async {
-                                                                      final Uri
-                                                                          url =
-                                                                          Uri.parse(
-                                                                              image.filePath);
-                                                                      try {
-                                                                        await launchUrl(
-                                                                            url,
-                                                                            mode:
-                                                                                LaunchMode.externalApplication);
-                                                                      } catch (e) {
-                                                                        print(
-                                                                            'Could not launch $url: $e');
-                                                                      }
-                                                                    },
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                            child:
+                                                                Image.network(
+                                                              image.filePath,
+                                                              width: 80,
+                                                              height: 80,
+                                                              fit: BoxFit.cover,
+                                                              loadingBuilder:
+                                                                  (context,
+                                                                      child,
+                                                                      progress) {
+                                                                if (progress ==
+                                                                    null) {
+                                                                  return child;
+                                                                }
+                                                                return Container(
+                                                                  width: 80,
+                                                                  height: 80,
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      100],
+                                                                  child:
+                                                                      const Center(
                                                                     child:
-                                                                        Container(
+                                                                        SizedBox(
+                                                                      width: 20,
+                                                                      height:
+                                                                          20,
+                                                                      child: CircularProgressIndicator(
+                                                                          strokeWidth:
+                                                                              2),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                              errorBuilder:
+                                                                  (context,
+                                                                      error,
+                                                                      stack) {
+                                                                return GestureDetector(
+                                                                  onTap:
+                                                                      () async {
+                                                                    final Uri
+                                                                        url =
+                                                                        Uri.parse(
+                                                                            image.filePath);
+                                                                    try {
+                                                                      await launchUrl(
+                                                                          url,
+                                                                          mode:
+                                                                              LaunchMode.externalApplication);
+                                                                    } catch (e) {
+                                                                      print(
+                                                                          'Could not launch $url: $e');
+                                                                    }
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
                                                                       color: Colors
                                                                               .grey[
                                                                           200],
-                                                                      width: 70,
-                                                                      height:
-                                                                          70,
-                                                                      child:
-                                                                          const Column(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.center,
-                                                                        children: [
-                                                                          Icon(
-                                                                            Icons.picture_as_pdf,
-                                                                            color:
-                                                                                Colors.red,
-                                                                            size:
-                                                                                50,
-                                                                          ),
-                                                                        ],
-                                                                      ),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
                                                                     ),
-                                                                  );
-                                                                },
-                                                              )),
-                                                        ),
-                                                        Positioned(
-                                                          right: 4,
-                                                          top: 4,
-                                                          child: InkWell(
-                                                            onTap: () {
-                                                              showConfirmationDialog(
-                                                                context:
+                                                                    width: 80,
+                                                                    height: 80,
+                                                                    child:
+                                                                        const Icon(
+                                                                      Icons
+                                                                          .picture_as_pdf,
+                                                                      color: Colors
+                                                                          .red,
+                                                                      size: 40,
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            )),
+                                                      ),
+                                                      Positioned(
+                                                        right: 0,
+                                                        top: 0,
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            showConfirmationDialog(
+                                                              context: context,
+                                                              isLoading:
+                                                                  customerDetailsProvider
+                                                                      .isDeleteLoading,
+                                                              title:
+                                                                  'Confirm Deletion',
+                                                              content:
+                                                                  'Are you sure you want to delete this document?',
+                                                              onCancel: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                              onConfirm:
+                                                                  () async {
+                                                                await customerDetailsProvider.deleteImage(
                                                                     context,
-                                                                isLoading:
-                                                                    customerDetailsProvider
-                                                                        .isDeleteLoading,
-                                                                title:
-                                                                    'Confirm Deletion',
-                                                                content:
-                                                                    'Are you sure you want to delete this Lead?',
-                                                                onCancel: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                onConfirm:
-                                                                    () async {
-                                                                  await customerDetailsProvider.deleteImage(
-                                                                      context,
-                                                                      image
-                                                                          .imageId
-                                                                          .toString(),
-                                                                      widget
-                                                                          .customerId
-                                                                          .toString());
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                },
-                                                                confirmButtonText:
-                                                                    'Delete',
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              width: 30,
-                                                              height: 30,
-                                                              decoration: BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              100),
-                                                                  color: AppColors
-                                                                      .whiteColor
-                                                                      .withOpacity(
-                                                                          .6)),
-                                                              child: Center(
-                                                                child: Icon(
-                                                                  Icons
-                                                                      .delete_forever_outlined,
-                                                                  color: AppColors
-                                                                      .btnRed,
-                                                                  size: 18,
-                                                                ),
-                                                              ),
+                                                                    image
+                                                                        .imageId
+                                                                        .toString(),
+                                                                    widget
+                                                                        .customerId
+                                                                        .toString());
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                              confirmButtonText:
+                                                                  'Delete',
+                                                            );
+                                                          },
+                                                          child: Container(
+                                                            width: 24,
+                                                            height: 24,
+                                                            decoration: BoxDecoration(
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                                color: Colors
+                                                                    .white
+                                                                    .withOpacity(
+                                                                        .8)),
+                                                            child: const Icon(
+                                                              Icons
+                                                                  .delete_forever_outlined,
+                                                              color: Colors.red,
+                                                              size: 16,
                                                             ),
                                                           ),
-                                                        )
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 5,
-                                                    ),
-                                                    Text(
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  SizedBox(
+                                                    width: 80,
+                                                    child: Text(
                                                       image.documentTypeName,
-                                                      style: TextStyle(
-                                                          fontSize: 12,
-                                                          color: AppColors
-                                                              .textBlack),
-                                                    ),
-                                                    Text(
-                                                      DateFormat(
-                                                              'dd/MM/yyyy h:mm a')
-                                                          .format(DateTime
-                                                              .parse(image
-                                                                  .entryDate)),
-                                                      style: TextStyle(
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
                                                           fontSize: 10,
-                                                          color: AppColors
-                                                              .textGrey4),
+                                                          fontWeight:
+                                                              FontWeight.w500),
                                                     ),
-                                                  ],
-                                                );
-                                              },
-                                            ),
+                                                  ),
+                                                  Text(
+                                                    DateFormat('dd/MM/yy')
+                                                        .format(DateTime.parse(
+                                                            image.entryDate)),
+                                                    style: const TextStyle(
+                                                        fontSize: 9,
+                                                        color: Colors.grey),
+                                                  ),
+                                                ],
+                                              );
+                                            },
                                           ),
                                         ),
                                       ],
@@ -373,10 +355,12 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                                 ],
                               );
                             },
-                          )
-                        ],
+                            childCount:
+                                customerDetailsProvider.documentList.length,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
         floatingActionButton: CustomElevatedButton(
           prefixIcon: Icons.add,
@@ -392,26 +376,6 @@ class _DocumentsListPagePhoneState extends State<DocumentsListPagePhone> {
                     customerId: widget.customerId.toString());
               },
             ));
-            // showModalBottomSheet(
-            //   context: context,
-            //   isScrollControlled: true,
-            //   showDragHandle: false,
-            //   isDismissible: false,
-            //   backgroundColor: Colors.transparent,
-            //   builder: (BuildContext context) {
-            //     return Padding(
-            //       padding: EdgeInsets.only(
-            //           bottom: MediaQuery.of(context).viewInsets.bottom),
-            //       child: Wrap(
-            //         children: [
-            //           // ImageUploadAlert(
-            //           //     customerId: widget.customerId.toString())
-            //           AddDocumentPhone(customerId: widget.customerId.toString())
-            //         ],
-            //       ),
-            //     );
-            //   },
-            // );
           },
           backgroundColor: AppColors.bluebutton,
           borderColor: AppColors.bluebutton,

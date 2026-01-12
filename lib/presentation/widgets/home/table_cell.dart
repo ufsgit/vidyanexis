@@ -4,15 +4,17 @@ class TableWidget extends StatelessWidget {
   final String title;
   final Widget? data;
   final Color color;
+  final double? fontSize;
   final double? width;
   final int flex;
   final EdgeInsetsGeometry? padding;
+
   const TableWidget({
     super.key,
     this.title = '',
     this.data,
-  this.color = const Color(0xFF172230),
-
+    this.color = const Color(0xFF172230),
+    this.fontSize,
     this.width,
     this.flex = 0,
     this.padding,
@@ -49,8 +51,10 @@ class TableWidget extends StatelessWidget {
                 child: Text(title,
                     overflow: TextOverflow.visible,
                     maxLines: 4,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, color: color)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: color,
+                        fontSize: fontSize)),
               ),
             )
           : SizedBox(
@@ -62,8 +66,10 @@ class TableWidget extends StatelessWidget {
                 child: Text(title,
                     overflow: TextOverflow.visible,
                     maxLines: 4,
-                    style:
-                        TextStyle(fontWeight: FontWeight.w600, color: color)),
+                    style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: color,
+                        fontSize: fontSize)),
               ),
             );
     }

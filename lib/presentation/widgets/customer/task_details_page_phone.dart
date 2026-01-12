@@ -37,7 +37,6 @@ class TaskDetailsPagePhone extends StatefulWidget {
 class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -49,27 +48,27 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
     });
   }
 
+  Color getAvatarColor(String name) {
+    final colors = [
+      Colors.blue.withOpacity(.75),
+      Colors.purple.withOpacity(.75),
+      Colors.orange.withOpacity(.75),
+      Colors.teal.withOpacity(.75),
+      Colors.pink.withOpacity(.75),
+      Colors.indigo.withOpacity(.75),
+      Colors.green.withOpacity(.75),
+      Colors.deepOrange.withOpacity(.75),
+      Colors.cyan.withOpacity(.75),
+      Colors.brown.withOpacity(.75),
+    ];
+    final nameHash = name.hashCode.abs();
+    return colors[nameHash % colors.length];
+  }
+
   @override
   Widget build(BuildContext context) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
-    final scrollController = ScrollController();
-    Color getAvatarColor(String name) {
-      final colors = [
-        Colors.blue.withOpacity(.75),
-        Colors.purple.withOpacity(.75),
-        Colors.orange.withOpacity(.75),
-        Colors.teal.withOpacity(.75),
-        Colors.pink.withOpacity(.75),
-        Colors.indigo.withOpacity(.75),
-        Colors.green.withOpacity(.75),
-        Colors.deepOrange.withOpacity(.75),
-        Colors.cyan.withOpacity(.75),
-        Colors.brown.withOpacity(.75),
-      ];
-      final nameHash = name.hashCode.abs();
-      return colors[nameHash % colors.length];
-    }
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -102,6 +101,8 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
             onOptionSelected: (PopupMenuOptions option) async {
               switch (option) {
                 case PopupMenuOptions.edit:
+                  if (customerDetailsProvider.taskDetails.isEmpty) break;
+
                   customerDetailsProvider.customerId = customerDetailsProvider
                       .taskDetails[0].customerId
                       .toString();
@@ -145,29 +146,6 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                       );
                     },
                   ));
-                  // showModalBottomSheet(
-                  //   context: context,
-                  //   isScrollControlled: true,
-                  //   showDragHandle: false,
-                  //   isDismissible: false,
-                  //   backgroundColor: Colors.transparent,
-                  //   builder: (BuildContext context) {
-                  //     return Padding(
-                  //       padding: EdgeInsets.only(
-                  //           bottom: MediaQuery.of(context).viewInsets.bottom),
-                  //       child: Wrap(
-                  //         children: [
-                  //           AddTaskMobile(
-                  //             isEdit: true,
-                  //             taskId: customerDetailsProvider
-                  //                 .taskDetails[0].taskMasterId
-                  //                 .toString(),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     );
-                  //   },
-                  // );
                   break;
                 case PopupMenuOptions.delete:
                   showConfirmationDialog(
@@ -194,15 +172,15 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
           ),
         ],
       ),
-      body: customerDetailsProvider.taskDetails.isEmpty
+      body: customerDetailsProvider.isLoadingDetails ||
+              customerDetailsProvider.taskDetails.isEmpty
           ? const Center(
               child: CircularProgressIndicator(),
             )
-          : SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TaskCardMobileWidget(
+          : CustomScrollView(
+              slivers: [
+                SliverToBoxAdapter(
+                  child: TaskCardMobileWidget(
                     taskTypeName:
                         customerDetailsProvider.taskDetails[0].taskTypeName,
                     taskStatusName:
@@ -238,234 +216,212 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                                   : 'assets/images/icon_amc.png',
                     ),
                   ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Divider(
-                    color: AppColors.grey,
-                  ),
-                  const SizedBox(
-                    height: 12,
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        RichText(
-                          text: TextSpan(
-                            children: [
-                              TextSpan(
-                                text: 'Task logs ',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColors.textBlack,
-                                ),
-                              ),
-                              TextSpan(
-                                text:
-                                    '(${customerDetailsProvider.taskDetails[0].taskDocuments.length} assignees)',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textGrey4,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        ListView.builder(
-                          shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
-                          itemCount: customerDetailsProvider
-                              .taskDetails[0].taskDocuments.length,
-                          itemBuilder: (context, index) {
-                            final taskUser = customerDetailsProvider
-                                .taskDetails[0].taskDocuments[index];
-
-                            return TileWidget(
-                              titleWidget: RichText(
-                                text: TextSpan(
-                                  children: [
-                                    TextSpan(
-                                      text: '${taskUser.userDetailsName} ',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textBlack,
-                                      ),
-                                    ),
-                                    // TextSpan(
-                                    //   text: ' • ',
-                                    //   style: GoogleFonts.plusJakartaSans(
-                                    //     fontSize: 14,
-                                    //     fontWeight: FontWeight.w600,
-                                    //     color: AppColors.textGrey2,
-                                    //   ),
-                                    // ),
-                                    // TextSpan(
-                                    //   text: 'Completed',
-                                    //   style: GoogleFonts.plusJakartaSans(
-                                    //     fontSize: 14,
-                                    //     fontWeight: FontWeight.w600,
-                                    //     color: AppColors.appViolet,
-                                    //   ),
-                                    // ),
-                                  ],
-                                ),
-                              ),
-                              tilePadding: const EdgeInsets.all(0),
-                              subtitle:
-                                  '${taskUser.documents[0].startDateTime.isNotEmpty ? taskUser.documents[0].startDateTime.toMonthDayYearFormat() : '--,-- '} to ${taskUser.documents[0].completionDateTime.isNotEmpty ? taskUser.documents[0].completionDateTime.toMonthDayYearFormat() : '--,--'}',
-                              leading: Container(
-                                width: 30,
-                                height: 30,
-                                decoration: BoxDecoration(
-                                  color:
-                                      getAvatarColor(taskUser.userDetailsName),
-                                  borderRadius: BorderRadius.circular(100),
-                                ),
-                                child: Center(
-                                  child: Text(
-                                    taskUser.userDetailsName
-                                        .substring(0, 1)
-                                        .toUpperCase(),
-                                    style: const TextStyle(
-                                      fontSize: 12,
-                                      color: Colors.white,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              children: [
-                                Column(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 26),
-                                      child: SizedBox(
-                                        height: 80,
-                                        child: Scrollbar(
-                                          controller: scrollController,
-                                          thumbVisibility: true,
-                                          child: ListView.separated(
-                                            scrollDirection: Axis.horizontal,
-                                            controller: scrollController,
-                                            physics:
-                                                const RangeMaintainingScrollPhysics(),
-                                            separatorBuilder:
-                                                (context, index) =>
-                                                    const SizedBox(width: 8),
-                                            itemCount:
-                                                taskUser.documents.length,
-                                            itemBuilder: (context, index) {
-                                              return Center(
-                                                child: Column(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () {},
-                                                      child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                          child: Image.network(
-                                                            HttpUrls.imgBaseUrl +
-                                                                taskUser
-                                                                    .documents[
-                                                                        0]
-                                                                    .filePath,
-                                                            width: 70,
-                                                            height: 70,
-                                                            fit: BoxFit.fill,
-                                                            loadingBuilder:
-                                                                (BuildContext
-                                                                        context,
-                                                                    Widget
-                                                                        child,
-                                                                    ImageChunkEvent?
-                                                                        loadingProgress) {
-                                                              if (loadingProgress ==
-                                                                  null) {
-                                                                return child;
-                                                              } else {
-                                                                return SizedBox(
-                                                                  height: 70,
-                                                                  width: 70,
-                                                                  child: Center(
-                                                                    child:
-                                                                        CircularProgressIndicator(
-                                                                      value: loadingProgress.expectedTotalBytes !=
-                                                                              null
-                                                                          ? loadingProgress.cumulativeBytesLoaded /
-                                                                              (loadingProgress.expectedTotalBytes ?? 1)
-                                                                          : null,
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              }
-                                                            },
-                                                            errorBuilder:
-                                                                (BuildContext
-                                                                        context,
-                                                                    Object
-                                                                        error,
-                                                                    StackTrace?
-                                                                        stackTrace) {
-                                                              return Container(
-                                                                  width: 70,
-                                                                  height: 70,
-                                                                  decoration: BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                      color: Colors
-                                                                          .grey
-                                                                          .withOpacity(
-                                                                              0.2)),
-                                                                  child: const Icon(
-                                                                      Icons
-                                                                          .hide_image_outlined));
-                                                            },
-                                                          )),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: const EdgeInsets.only(left: 26),
-                                      child: Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: ExpandableText(
-                                          maxLines: 2,
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textBlack,
-                                          ),
-                                          text: taskUser.documents[0].taskNote,
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ],
-                            );
-                          },
-                        )
-                      ],
+                ),
+                const SliverToBoxAdapter(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 12),
+                    child: Divider(
+                      color: Color(0xFFEEEEEE),
                     ),
                   ),
-                ],
-              ),
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: RichText(
+                      text: TextSpan(
+                        children: [
+                          TextSpan(
+                            text: 'Task logs ',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textBlack,
+                            ),
+                          ),
+                          TextSpan(
+                            text:
+                                '(${customerDetailsProvider.taskDetails[0].taskDocuments.length} assignees)',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textGrey4,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                const SliverToBoxAdapter(
+                  child: SizedBox(height: 12),
+                ),
+                SliverList(
+                  delegate: SliverChildBuilderDelegate(
+                    (context, index) {
+                      final taskUser = customerDetailsProvider
+                          .taskDetails[0].taskDocuments[index];
+
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: TileWidget(
+                          titleWidget: RichText(
+                            text: TextSpan(
+                              children: [
+                                TextSpan(
+                                  text: '${taskUser.userDetailsName} ',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textBlack,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          tilePadding: const EdgeInsets.all(0),
+                          subtitle: (taskUser.documents.isNotEmpty)
+                              ? '${taskUser.documents[0].startDateTime.isNotEmpty ? taskUser.documents[0].startDateTime.toMonthDayYearFormat() : '--,-- '} to ${taskUser.documents[0].completionDateTime.isNotEmpty ? taskUser.documents[0].completionDateTime.toMonthDayYearFormat() : '--,--'}'
+                              : '--,-- to --,--',
+                          leading: Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                              color: getAvatarColor(taskUser.userDetailsName),
+                              borderRadius: BorderRadius.circular(100),
+                            ),
+                            child: Center(
+                              child: Text(
+                                taskUser.userDetailsName.isNotEmpty
+                                    ? taskUser.userDetailsName
+                                        .substring(0, 1)
+                                        .toUpperCase()
+                                    : '?',
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (taskUser.documents.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(left: 26),
+                                    child: SizedBox(
+                                      height: 100,
+                                      child: ListView.separated(
+                                        scrollDirection: Axis.horizontal,
+                                        physics: const BouncingScrollPhysics(),
+                                        separatorBuilder: (context, index) =>
+                                            const SizedBox(width: 8),
+                                        itemCount: taskUser.documents.length,
+                                        itemBuilder: (context, docIndex) {
+                                          final doc =
+                                              taskUser.documents[docIndex];
+                                          return Center(
+                                            child: Column(
+                                              children: [
+                                                InkWell(
+                                                  onTap: () {
+                                                    // Add image view logic if needed
+                                                  },
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    child: Image.network(
+                                                      HttpUrls.imgBaseUrl +
+                                                          doc.filePath,
+                                                      width: 70,
+                                                      height: 70,
+                                                      fit: BoxFit.cover,
+                                                      loadingBuilder: (context,
+                                                          child, progress) {
+                                                        if (progress == null) {
+                                                          return child;
+                                                        }
+                                                        return Container(
+                                                          width: 70,
+                                                          height: 70,
+                                                          color:
+                                                              Colors.grey[200],
+                                                          child: const Center(
+                                                            child: SizedBox(
+                                                              width: 20,
+                                                              height: 20,
+                                                              child:
+                                                                  CircularProgressIndicator(
+                                                                strokeWidth: 2,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        );
+                                                      },
+                                                      errorBuilder: (context,
+                                                          error, stack) {
+                                                        return Container(
+                                                          width: 70,
+                                                          height: 70,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: Colors
+                                                                .grey[200],
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        8),
+                                                          ),
+                                                          child: const Icon(
+                                                            Icons
+                                                                .hide_image_outlined,
+                                                            color: Colors.grey,
+                                                          ),
+                                                        );
+                                                      },
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                if (taskUser.documents.isNotEmpty &&
+                                    taskUser.documents[0].taskNote.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 26, top: 8, bottom: 8),
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: ExpandableText(
+                                        maxLines: 2,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textBlack,
+                                        ),
+                                        text: taskUser.documents[0].taskNote,
+                                      ),
+                                    ),
+                                  )
+                              ],
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                    childCount: customerDetailsProvider
+                        .taskDetails[0].taskDocuments.length,
+                  ),
+                ),
+              ],
             ),
     );
   }

@@ -34,7 +34,7 @@ class TaskLabelValue extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SizedBox(
-          width: 120,
+          width: 140,
           child: Text(
             '$label:',
             style: GoogleFonts.plusJakartaSans(

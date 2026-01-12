@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -1177,12 +1178,14 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                         child: Text('No.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 14,
                                                 color: Color(0xFF607185))),
                                       ),
                                     ),
                                     TableWidget(
                                         flex: 2,
                                         title: 'Customer Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     // TableWidget(
                                     //     flex: 1,
@@ -1195,26 +1198,32 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                     TableWidget(
                                         flex: 1,
                                         title: 'Task',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Staff',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 3,
                                         title: 'Description',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Date',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Status',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Details',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                   ],
                                 ),
@@ -1268,6 +1277,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
+                                                          fontSize: 12,
                                                         )),
                                               ),
                                             ),
@@ -1328,7 +1338,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                               ),
                                                             ),
                                                             const SizedBox(
@@ -1354,7 +1364,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                 ),
@@ -1366,15 +1376,19 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                             //     flex: 2, title: task.address1),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: task.taskTypeName),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: task.toUserName),
                                             TableWidget(
                                                 flex: 3,
+                                                fontSize: 12,
                                                 title: task.description),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: (task
                                                         .entryDate.isNotEmpty)
                                                     ? DateFormat('dd MMM yyyy')
@@ -1410,7 +1424,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                     color: StatusUtils
                                                         .getTaskTextColor(
                                                             task.taskStatusId),
-                                                    fontSize: 13,
+                                                    fontSize: 12,
                                                   ),
                                                 ),
                                               ),
@@ -1449,6 +1463,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                 svgPath:
                                                     'assets/images/Print.svg',
                                                 label: 'Details',
+                                                textStyle:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w600,
+                                                ),
                                                 breakpoint: 860,
                                                 foregroundColor:
                                                     AppColors.primaryBlue,
@@ -1545,7 +1564,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                       ),
@@ -1556,9 +1575,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                             ),
                                             TableWidget(
                                                 width: 150,
+                                                fontSize: 12,
                                                 title: task.taskTypeName),
                                             TableWidget(
                                                 width: 150,
+                                                fontSize: 12,
                                                 title: task.toUserName),
                                             Row(
                                               children: [
@@ -1605,7 +1626,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                     color: StatusUtils
                                                         .getTaskTextColor(
                                                             task.taskStatusId),
-                                                    fontSize: 13,
+                                                    fontSize: 12,
                                                   ),
                                                 ),
                                               ),

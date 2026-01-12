@@ -49,7 +49,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool _isLoadingDetails = false;
   bool get isLoading => _isLoading;
 
-  bool get isLoadingDetails => _isLoading;
+  bool get isLoadingDetails => _isLoadingDetails;
   bool _isDeleteLoading = false;
   bool get isDeleteLoading => _isDeleteLoading;
   int? _selectedTaskType;
@@ -960,30 +960,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          // Clear previous task details before adding the new ones
-          _taskDetails = [];
-          var listData = [data];
-
-          _taskDetails =
-              (listData).map((item) => TaskDetails.fromJson(item)).toList();
-          notifyListeners();
-
-          // // Check if data is a List and map it to TaskDetails objects
-          // if (data is List) {
-          //   _taskDetails =
-          //       data.map((item) => TaskDetails.fromJson(item)).toList();
-          // } else if (data is Map) {
-          //   // Handle Map data if needed
-          //   if (data['task_notes'] != null && data['task_notes'] is List) {
-          //     var taskNotesList = data['task_notes'] as List<dynamic>;
-          //     _taskDetails = taskNotesList
-          //         .map((item) => TaskDetails.fromJson(item))
-          //         .toList();
-          //   }
-          // }
-
-          // Notify listeners to update the UI
-          notifyListeners();
+          _taskDetails = [TaskDetails.fromJson(data)];
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
