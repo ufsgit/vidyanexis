@@ -671,6 +671,12 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void clearUserFilter() {
+    _selectedUser = null;
+    notifyListeners();
+  }
+
+
   void setEnquiryForFilter(int newStatus) {
     _selectedEnquiryFor = newStatus;
     print(_selectedEnquiryFor.toString());

@@ -482,7 +482,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // Create the new item
     final unitPrice = double.tryParse(itemPriceController.text) ?? 0.0;
-    final mrp = double.tryParse(itemMrpController.text) ?? 0.0;
+    final mrp = itemMrpController.text;
     final gstPercent = double.tryParse(itemGstPercentController.text) ?? 0.0;
     final adCess = double.tryParse(itemAdCessController.text) ?? 0.0;
     final gst = double.tryParse(itemGstController.text) ?? 0.0;
@@ -1777,7 +1777,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           ItemName: '',
           UnitPrice: 0,
           Quantity: 0,
-          MRP: 0,
+          MRP: "",
           GST: 0,
           GSTPercent: 0,
           AdCESS: 0,
@@ -1793,7 +1793,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       items[i].Quantity = quotationDetails[i].quantity;
       items[i].UnitPrice = (quotationDetails[i].unitPrice).toDouble();
       items[i].Amount = quotationDetails[i].amount.toDouble();
-      items[i].MRP = quotationDetails[i].MRP.toDouble();
+      items[i].MRP = quotationDetails[i].MRP;
       items[i].GST = quotationDetails[i].GST.toDouble();
       items[i].GSTPercent = quotationDetails[i].GSTPercent.toDouble();
       items[i].AdCESS = quotationDetails[i].AdCESS.toDouble();

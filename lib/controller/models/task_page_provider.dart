@@ -63,6 +63,13 @@ class TaskPageProvider extends ChangeNotifier {
   List<String> _selectedTaskTypeIds = [];
   List<String> get selectedTaskTypeIds => _selectedTaskTypeIds;
 
+  final TextEditingController descriptionController = TextEditingController();
+
+  void clearDescription() {
+    descriptionController.clear();
+    notifyListeners();
+  }
+
   int _pageIndex = 1;
   int _pageSize = 10;
   int _totalSize = 0;
@@ -406,7 +413,7 @@ class TaskPageProvider extends ChangeNotifier {
             "Status_Id": statusModel.statusId,
             "Status_Name": statusModel.statusName,
             "By_User_Id": userId,
-            "Description": "",
+            "Description": descriptionController.text,
             "Next_FollowUp_Date":
                 DateFormat('yyyy-MM-dd').format(DateTime.now()),
             "Tasks": _selectedTaskTypeIds.join(",")
@@ -417,6 +424,9 @@ class TaskPageProvider extends ChangeNotifier {
 
         if (data != null) {
           bool isSuccess = data["success"];
+          if (isSuccess) {
+            descriptionController.clear();
+          }
           return isSuccess;
         } else {
           return false;

@@ -15,6 +15,7 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_printer_edit_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
@@ -204,6 +205,31 @@ class QuotationCard extends StatelessWidget {
                       backgroundColor: Colors.white,
                       borderSide: BorderSide(color: AppColors.primaryBlue),
                     ),
+                  if (quotation?.quotationTypeId == 1)
+                    CustomOutlinedSvgButton(
+                      onPressed: () async {
+                        await Loader.showLoader(context);
+                        await customerDetailsProvider
+                            .getQuatationListByMasterId(taskId, context);
+                        await customerDetailsProvider.fetchLeadDetails(
+                            customerId, context);
+                        await settingsprovider.getCompanyDetails();
+                        printResidentialPDFs(
+                            context: context, //     companyDetails:
+                            companyDetails: settingsprovider.companyDetails[0],
+                            customerDetails:
+                                customerDetailsProvider.leadDetails![0],
+                            quotationData: customerDetailsProvider
+                                .quotationListByMaster[0]);
+                        Loader.stopLoader(context);
+                      },
+                      svgPath: 'assets/images/Print.svg',
+                      label: 'Print Residential',
+                      breakpoint: 860,
+                      foregroundColor: AppColors.primaryBlue,
+                      backgroundColor: Colors.white,
+                      borderSide: BorderSide(color: AppColors.primaryBlue),
+                    ),
                 ],
                 if (settingsprovider.menuIsEditMap[16] == 1)
                   IconButton(
@@ -216,25 +242,25 @@ class QuotationCard extends StatelessWidget {
                       // ---- BASIC DETAILS ----
                       customerDetailsProvider.customerId = customerId;
                       customerDetailsProvider.qproductnameController.text =
-                          title;
+                          quotation.productName;
                       customerDetailsProvider.advanceController.text =
-                          advancePercentage;
+                          quotation.advancePercentage;
                       customerDetailsProvider.deliveryController.text =
-                          deliveryPercentage;
+                          quotation.onDeliveryPercentage;
                       customerDetailsProvider.workCompletionController.text =
-                          completionPercentage;
+                          quotation.workCompletionPercentage;
                       customerDetailsProvider.qsubsidyAmountController.text =
-                          subsidy;
+                          quotation.subsidyAmount;
                       customerDetailsProvider.qwarrentyController.text =
-                          warranty;
+                          quotation.warranty;
                       customerDetailsProvider.qtermsConditionsController.text =
-                          terms;
+                          quotation.termsAndConditions;
 
                       // ---- STATUS ----
                       customerDetailsProvider.selectedQuotationStatus =
-                          int.parse(statusId);
+                          quotation.quotationStatusId;
                       customerDetailsProvider.selectedQuotationStatusName =
-                          status;
+                          quotation.quotationStatusName;
 
                       // ---- FEES ----
                       customerDetailsProvider.registrationFeeController.text =
