@@ -523,84 +523,85 @@ class _LeadsPageState extends State<LeadPage> {
                     const SizedBox(
                       width: 10,
                     ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: leadProvider.selectedUser != null &&
-                                    leadProvider.selectedUser != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text('Assigned Staff: '),
-                          DropdownButton<int>(
-                            value: leadProvider.selectedUser,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ] +
-                                provider.searchUserDetails
-                                    .map((user) => DropdownMenuItem<int>(
-                                          value: user.userDetailsId!,
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                                maxWidth: 150),
-                                            child: Text(
-                                              user.userDetailsName ?? '',
-                                              overflow: TextOverflow
-                                                  .ellipsis, // Adds ellipsis when the text is too long
-                                              style:
-                                                  const TextStyle(fontSize: 14),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: userId == 1
-                                ? (int? newValue) {
-                                    if (newValue != null) {
-                                      leadProvider.setUserFilterStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status =
-                                        leadProvider.selectedStatus.toString();
-                                    String fromDate =
-                                        leadProvider.formattedFromDate;
-                                    String toDate =
-                                        leadProvider.formattedToDate;
-                                    String enquiryFor = leadProvider
-                                        .selectedEnquiryFor
-                                        .toString();
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                                    leadProvider.setSearchCriteria(
-                                      leadProvider.search,
-                                      fromDate,
-                                      toDate,
-                                      status,
-                                      enquiryFor,
-                                    );
-                                    leadProvider.getSearchLeads(context);
-                                  }
-                                : null,
-                            // onChanged: null,
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          )
-                        ],
-                      ),
-                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(20),
+                    //     border: Border.all(
+                    //         color: leadProvider.selectedUser != null &&
+                    //                 leadProvider.selectedUser != 0
+                    //             ? AppColors.primaryBlue
+                    //             : Colors.grey[300]!),
+                    //   ),
+                    //   child: Row(
+                    //     children: [
+                    //       const Text('Assigned Staff: '),
+                    //       DropdownButton<int>(
+                    //         value: leadProvider.selectedUser,
+                    //         hint: const Text('All'),
+                    //         items: [
+                    //               const DropdownMenuItem<int>(
+                    //                 value:
+                    //                     0, // Use 0 or null to represent "All"
+                    //                 child: Text(
+                    //                   'All',
+                    //                   style: TextStyle(fontSize: 14),
+                    //                 ),
+                    //               ),
+                    //             ] +
+                    //             provider.searchUserDetails
+                    //                 .map((user) => DropdownMenuItem<int>(
+                    //                       value: user.userDetailsId!,
+                    //                       child: ConstrainedBox(
+                    //                         constraints: const BoxConstraints(
+                    //                             maxWidth: 150),
+                    //                         child: Text(
+                    //                           user.userDetailsName ?? '',
+                    //                           overflow: TextOverflow
+                    //                               .ellipsis, // Adds ellipsis when the text is too long
+                    //                           style:
+                    //                               const TextStyle(fontSize: 14),
+                    //                         ),
+                    //                       ),
+                    //                     ))
+                    //                 .toList(),
+                    //         onChanged: userId == 1
+                    //             ? (int? newValue) {
+                    //                 if (newValue != null) {
+                    //                   leadProvider.setUserFilterStatus(
+                    //                       newValue); // Update the status in the provider
+                    //                 }
+                    //                 String status =
+                    //                     leadProvider.selectedStatus.toString();
+                    //                 String fromDate =
+                    //                     leadProvider.formattedFromDate;
+                    //                 String toDate =
+                    //                     leadProvider.formattedToDate;
+                    //                 String enquiryFor = leadProvider
+                    //                     .selectedEnquiryFor
+                    //                     .toString();
+                    //                 print(
+                    //                     'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
+                    //                 leadProvider.setSearchCriteria(
+                    //                   leadProvider.search,
+                    //                   fromDate,
+                    //                   toDate,
+                    //                   status,
+                    //                   enquiryFor,
+                    //                 );
+                    //                 leadProvider.getSearchLeads(context);
+                    //               }
+                    //             : null,
+                    //         // onChanged: null,
+                    //         underline: Container(),
+                    //         isDense: true,
+                    //         iconSize: 18,
+                    //       )
+                    //     ],
+                    //   ),
+                    // ),
+                    _buildAssignedStaffFilter(leadProvider),
                     const SizedBox(
                       width: 10,
                     ),
@@ -2233,6 +2234,164 @@ class _LeadsPageState extends State<LeadPage> {
         ],
       ),
     );
+  }
+
+  // Filters (no date): User, Client, Project Type, Expense Type
+  Widget _buildAssignedStaffFilter(LeadsProvider leadProvider) {
+    return Consumer<DropDownProvider>(
+      builder: (context, dropDownProvider, child) {
+        // Get current user details from SharedPreferences
+        return FutureBuilder<Map<String, dynamic>>(
+          future: _getCurrentUserDetailsWithAdmin(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: const Text('Loading...'),
+              );
+            }
+
+            final userData = snapshot.data!;
+            bool isAdmin = userData['isAdmin'] as bool;
+            int? currentUserId = userData['userId'] as int?;
+            String? currentUserName = userData['userName'] as String?;
+            print('isAdmin: $isAdmin');
+            print('currentUserId: $currentUserId');
+            print('currentUserName: $currentUserName');
+
+            // Build dropdown items based on user role, using list from leadProvider
+            List<DropdownMenuItem<int>> dropdownItems;
+            int dropdownValue;
+
+            if (isAdmin) {
+              // Admin: Show all users with "All" option, using leadProvider's list
+              dropdownItems = [
+                    const DropdownMenuItem<int>(
+                      value: 0, // Use 0 or null to represent "All"
+                      child: Text(
+                        'All',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ] +
+                  dropDownProvider.searchUserDetails
+                      .map((user) => DropdownMenuItem<int>(
+                            value: user.userDetailsId!,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 150),
+                              child: Text(
+                                user.userDetailsName ?? '',
+                                overflow: TextOverflow
+                                    .ellipsis, // Adds ellipsis when the text is too long
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ))
+                      .toList();
+              // For admin, use the selected value from provider
+              dropdownValue = leadProvider.selectedUser ?? 0;
+            } else {
+              // Non-admin staff: Show only their own name
+              dropdownItems = [
+                DropdownMenuItem<int>(
+                  value: currentUserId ?? 0,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 150),
+                    child: Text(
+                      currentUserName ?? 'Current User',
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ),
+              ];
+              // For non-admin, always use their own ID
+              dropdownValue = currentUserId ?? 0;
+            }
+
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: (leadProvider.selectedUser != null &&
+                          leadProvider.selectedUser != 0)
+                      ? AppColors.primaryBlue
+                      : Colors.grey[300]!,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Assigned Staff: '),
+                  DropdownButton<int>(
+                    value: dropdownValue,
+                    hint: const Text('All'),
+                    items: dropdownItems,
+                    onChanged: isAdmin
+                        ? (int? newValue) {
+                            if (newValue != null) {
+                              leadProvider.setUserFilterStatus(
+                                  newValue); // Update the status in the provider
+                            }
+                            String status =
+                                leadProvider.selectedStatus.toString();
+                            String fromDate = leadProvider.formattedFromDate;
+                            String toDate = leadProvider.formattedToDate;
+                            String enquiryFor =
+                                leadProvider.selectedEnquiryFor.toString();
+                            print(
+                                'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
+                            leadProvider.setSearchCriteria(
+                              leadProvider.search,
+                              fromDate,
+                              toDate,
+                              status,
+                              enquiryFor,
+                            );
+                            leadProvider.getSearchLeads(context);
+                          }
+                        : null, // Disable dropdown for non-admin users
+                    underline: Container(),
+                    isDense: true,
+                    iconSize: 18,
+                    disabledHint: Text(
+                      currentUserName ?? 'Current User',
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+// Helper method to get current user details from SharedPreferences
+  Future<Map<String, dynamic>> _getCurrentUserDetailsWithAdmin() async {
+    final preferences = await SharedPreferences.getInstance();
+
+    // Get user type from SharedPreferences
+    // Usually admin user type is 1, but check your backend logic
+    String userType = preferences.getString('userType') ?? '0';
+    print('userType: $userType');
+
+    return {
+      'userId': int.tryParse(preferences.getString('userId') ?? '0'),
+      'userName': preferences.getString('userName') ?? 'Current User',
+      'isAdmin':
+          userType == '1', // Adjust this based on your admin user type value
+    };
   }
 
   List<String> dateButtonTitles = [
