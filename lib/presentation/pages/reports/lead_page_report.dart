@@ -191,14 +191,23 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               onPressed: () async {
                                 exportToExcel(
                                   headers: [
-                                    'Customer Name',
+                                    ''
+                                        'Customer Name',
                                     'Mobile no',
                                     'Remark',
                                     'Assigned To',
                                     'Next Follow-up Date',
                                     'Status'
                                   ],
-                                  data: leadReportProvider.leadReportData
+                                  data: (leadReportProvider
+                                              .selectedLeadIds.isEmpty
+                                          ? leadReportProvider.leadReportData
+                                          : leadReportProvider.leadReportData
+                                              .where((lead) =>
+                                                  leadReportProvider
+                                                      .selectedLeadIds
+                                                      .contains(
+                                                          lead.customerId)))
                                       .map((task) {
                                     return {
                                       'Customer Name': task.customerName,
@@ -447,10 +456,23 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     color: const Color(0xFFEFF2F5),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: const Row(
+                                  child: Row(
                                     // mainAxisAlignment: MainAxisAlignment.start,
                                     children: [
                                       SizedBox(
+                                        width: 50,
+                                        child: Checkbox(
+                                          value: leadReportProvider
+                                              .areAllLeadsSelected,
+                                          onChanged: (value) {
+                                            leadReportProvider
+                                                .toggleAllLeadsSelection(
+                                                    value ?? false);
+                                          },
+                                          activeColor: AppColors.primaryBlue,
+                                        ),
+                                      ),
+                                      const SizedBox(
                                         width: 70,
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(
@@ -514,6 +536,21 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       child: Row(
                                         // mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
+                                          SizedBox(
+                                            width: 50,
+                                            child: Checkbox(
+                                              value: leadReportProvider
+                                                  .isLeadSelected(
+                                                      lead.customerId),
+                                              onChanged: (value) {
+                                                leadReportProvider
+                                                    .toggleLeadSelection(
+                                                        lead.customerId);
+                                              },
+                                              activeColor:
+                                                  AppColors.primaryBlue,
+                                            ),
+                                          ),
                                           SizedBox(
                                             width: 70,
                                             child: Padding(

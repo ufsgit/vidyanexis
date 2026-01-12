@@ -152,7 +152,12 @@ class _leadReportMobile extends State<LeadReportMobile> {
               'Next Follow-up Date',
               'Status'
             ],
-            data: leadReportProvider.leadReportData.map((task) {
+            data: (leadReportProvider.selectedLeadIds.isEmpty
+                    ? leadReportProvider.leadReportData
+                    : leadReportProvider.leadReportData.where((lead) =>
+                        leadReportProvider.selectedLeadIds
+                            .contains(lead.customerId)))
+                .map((task) {
               return {
                 'Customer Name': task.customerName,
                 'Mobile no': task.contactNumber,

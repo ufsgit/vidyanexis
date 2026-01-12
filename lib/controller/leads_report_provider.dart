@@ -186,6 +186,37 @@ class LeadReportProvider extends ChangeNotifier {
   List<SearchLeadModel> get leadData => _leadData;
   List<LeadReportModel> get leadReportData => _leadReportData;
 
+  // --- Selection Logic ---
+  Set<int> _selectedLeadIds = {};
+  Set<int> get selectedLeadIds => _selectedLeadIds;
+
+  bool isLeadSelected(int customerId) {
+    return _selectedLeadIds.contains(customerId);
+  }
+
+  void toggleLeadSelection(int customerId) {
+    if (_selectedLeadIds.contains(customerId)) {
+      _selectedLeadIds.remove(customerId);
+    } else {
+      _selectedLeadIds.add(customerId);
+    }
+    notifyListeners();
+  }
+
+  void toggleAllLeadsSelection(bool selected) {
+    if (selected) {
+      _selectedLeadIds = _leadReportData.map((lead) => lead.customerId).toSet();
+    } else {
+      _selectedLeadIds.clear();
+    }
+    notifyListeners();
+  }
+
+  bool get areAllLeadsSelected {
+    if (_leadReportData.isEmpty) return false;
+    return _selectedLeadIds.length == _leadReportData.length;
+  }
+
   SaveLeadDropdownModel? get leadDropdownData => _leadDropdownData;
 
   String _search = '';
@@ -1727,6 +1758,7 @@ class LeadReportProvider extends ChangeNotifier {
           _leadReportData = (data as List<dynamic>)
               .map((item) => LeadReportModel.fromJson(item))
               .toList();
+          _selectedLeadIds.clear(); // Clear selection when data is reloaded
           notifyListeners();
         }
       } else {
