@@ -221,7 +221,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                                             if (!kIsWeb && userId.isNotEmpty) {
                                               await FirebaseMessaging.instance
                                                   .unsubscribeFromTopic(
-                                                      '${AppStyles.name}-$userId');
+                                                      '${AppStyles.name()}-$userId');
                                             }
                                             await prefs.clear();
                                             context.go(LoginPageMobile.route);

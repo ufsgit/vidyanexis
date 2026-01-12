@@ -47,7 +47,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
       final preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
       if (!kIsWeb && userId.isNotEmpty) {
-        await FirebaseMessaging.instance.subscribeToTopic('${AppStyles.name}-$userId');
+        await FirebaseMessaging.instance.subscribeToTopic('${AppStyles.name()}-$userId');
       }
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
