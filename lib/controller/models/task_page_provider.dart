@@ -12,6 +12,7 @@ import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 class TaskPageProvider extends ChangeNotifier {
   List<TaskReportModel> _taskReport = [];
@@ -64,6 +65,7 @@ class TaskPageProvider extends ChangeNotifier {
   List<String> get selectedTaskTypeIds => _selectedTaskTypeIds;
 
   final TextEditingController descriptionController = TextEditingController();
+  final TextEditingController followUpDateController = TextEditingController();
 
   void clearDescription() {
     descriptionController.clear();
@@ -414,8 +416,9 @@ class TaskPageProvider extends ChangeNotifier {
             "Status_Name": statusModel.statusName,
             "By_User_Id": userId,
             "Description": descriptionController.text,
-            "Next_FollowUp_Date":
-                DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            // "Next_FollowUp_Date":
+            //     DateFormat('yyyy-MM-dd').format(DateTime.now()),
+            "Next_FollowUp_Date": followUpDateController.text.toyyyymmdd(),
             "Tasks": _selectedTaskTypeIds.join(",")
           });
 

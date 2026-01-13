@@ -14,6 +14,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/status_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -2354,6 +2355,8 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                             ),
                             const SizedBox(height: 16),
+                            dateFollowUpWidget(),
+                            const SizedBox(height: 16),
                             Text(
                               'Description',
                               style: TextStyle(
@@ -2865,6 +2868,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                 }
                               },
                             ),
+                            const SizedBox(height: 16),
+                            dateFollowUpWidget(),
                             const SizedBox(height: 16),
                             Text(
                               'Description',
@@ -3592,4 +3597,50 @@ class _tasksPageReportState extends State<TaskPage> {
     'This Week',
     'This Month',
   ];
+
+  Widget dateFollowUpWidget() {
+    final taskProvider = Provider.of<TaskPageProvider>(context, listen: false);
+    final theme = Theme.of(context);
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: theme.dividerColor),
+        color: theme.cardColor,
+      ),
+      child: CustomTextField(
+        onTap: () async {
+          final DateTime? picked = await showDatePicker(
+            context: context,
+            initialDate: DateTime.now(),
+            firstDate: DateTime.now(),
+            lastDate: DateTime.now().add(const Duration(days: 365)),
+          );
+          if (picked != null) {
+            taskProvider.followUpDateController.text =
+                DateFormat('dd MMM yyyy').format(picked);
+          }
+        },
+        readOnly: true,
+        height: 54,
+        controller: taskProvider.followUpDateController,
+        hintText: 'Follow-up Date',
+        suffixIcon: IconButton(
+          icon: const Icon(Icons.calendar_today),
+          onPressed: () async {
+            final DateTime? picked = await showDatePicker(
+              context: context,
+              initialDate: DateTime.now(),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
+            );
+            if (picked != null) {
+              taskProvider.followUpDateController.text =
+                  DateFormat('dd MMM yyyy').format(picked);
+            }
+          },
+        ),
+        labelText: '',
+      ),
+    );
+  }
 }
