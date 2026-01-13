@@ -188,6 +188,25 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                             const SizedBox(width: 16),
                             ElevatedButton.icon(
+                              onPressed: () {
+                                _showTransferDialog(context);
+                              },
+                              icon: const Icon(Icons.compare_arrows),
+                              label: Text(
+                                  MediaQuery.of(context).size.width > 860
+                                      ? 'Transfer'
+                                      : ''),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            ElevatedButton.icon(
                               onPressed: () async {
                                 exportToExcel(
                                   headers: [
@@ -958,5 +977,143 @@ class _LeadsPageReportState extends State<LeadPageReport> {
     } catch (e) {
       return '';
     }
+  }
+
+  void _showTransferDialog(BuildContext parentContext) {
+    final leadReportProvider =
+        Provider.of<LeadReportProvider>(parentContext, listen: false);
+
+    if (leadReportProvider.selectedLeadIds.isEmpty) {
+      ScaffoldMessenger.of(parentContext).showSnackBar(
+        const SnackBar(content: Text('Please select leads to transfer')),
+      );
+      return;
+    }
+
+    // Local state for the dialog
+    int? selectedStatusId;
+    String? selectedStatusName;
+    int? selectedUserId;
+    String? selectedUserName;
+    final remarkController = TextEditingController();
+
+    showDialog(
+      context: parentContext,
+      builder: (dialogContext) {
+        return StatefulBuilder(builder: (context, setState) {
+          return AlertDialog(
+            title: const Text('Transfer Leads'),
+            content: Consumer<DropDownProvider>(
+              builder: (context, provider, child) {
+                return SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      // Status Dropdown
+                      DropdownButtonFormField<int>(
+                        decoration: const InputDecoration(labelText: 'Status'),
+                        value: selectedStatusId,
+                        items: provider.followUpData.map((status) {
+                          return DropdownMenuItem<int>(
+                            value: status.statusId,
+                            child: Text(status.statusName ?? ''),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedStatusId = value;
+                            try {
+                              selectedStatusName = provider.followUpData
+                                  .firstWhere((s) => s.statusId == value)
+                                  .statusName;
+                            } catch (e) {
+                              selectedStatusName = '';
+                            }
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      // Staff Dropdown
+                      DropdownButtonFormField<int>(
+                        decoration:
+                            const InputDecoration(labelText: 'Assign To'),
+                        value: selectedUserId,
+                        items: provider.searchUserDetails.map((user) {
+                          return DropdownMenuItem<int>(
+                            value: user.userDetailsId,
+                            child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 200),
+                                child: Text(
+                                  user.userDetailsName ?? '',
+                                  overflow: TextOverflow.ellipsis,
+                                )),
+                          );
+                        }).toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            selectedUserId = value;
+                            try {
+                              selectedUserName = provider.searchUserDetails
+                                  .firstWhere((u) => u.userDetailsId == value)
+                                  .userDetailsName;
+                            } catch (e) {
+                              selectedUserName = '';
+                            }
+                          });
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      // Remark
+                      TextField(
+                        controller: remarkController,
+                        decoration: const InputDecoration(
+                          labelText: 'Remark',
+                          border: OutlineInputBorder(),
+                        ),
+                        maxLines: 3,
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(dialogContext),
+                child: const Text('Cancel'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  if (selectedStatusId == null || selectedUserId == null) {
+                    ScaffoldMessenger.of(dialogContext).showSnackBar(
+                      const SnackBar(
+                          content: Text('Please select Status and Staff')),
+                    );
+                    return;
+                  }
+
+                  Navigator.pop(dialogContext); // Close dialog
+
+                  leadReportProvider.transferLeads(
+                    context: parentContext,
+                    statusId: selectedStatusId!,
+                    statusName: selectedStatusName ?? '',
+                    toUserId: selectedUserId!,
+                    toUserName: selectedUserName ?? '',
+                    remark: remarkController.text,
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Transfer'),
+              ),
+            ],
+          );
+        });
+      },
+    );
   }
 }

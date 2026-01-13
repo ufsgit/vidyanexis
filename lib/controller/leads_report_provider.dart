@@ -805,6 +805,77 @@ class LeadReportProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  getSearchLeadReports(String search, String fromDate, String toDate,
+      String status, BuildContext context) async {
+    try {
+      _isLoading = true;
+      notifyListeners();
+
+      _search = search;
+      _fromDateS = fromDate;
+      _toDateS = toDate;
+      _status = status;
+      _startLimit = 1;
+      _endLimit = 25;
+      currentPage = 1;
+
+      if (_status.isEmpty || _status == 'null') {
+        _status = '0';
+      }
+      if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
+        _enquiryForS = '0';
+      }
+
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+        if (_fromDateS.isEmpty) {
+          _fromDateS = "";
+        }
+        if (_toDateS.isEmpty) {
+          _toDateS = "";
+        }
+      } else {
+        isDate = "1";
+      }
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String toUserId = (_selectedUser ?? 0).toString();
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<LeadReportModel> nextData = (data as List<dynamic>)
+              .map((item) => LeadReportModel.fromJson(item))
+              .toList();
+
+          if (nextData.isNotEmpty) {
+            _totalCount = nextData.last.customerId;
+            nextData.removeLast();
+            _leadReportData = nextData;
+          } else {
+            _leadReportData = [];
+          }
+          hasMoreData = _leadReportData.length >= 25;
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+      _isLoading = false;
+      notifyListeners();
+    } catch (e) {
+      _isLoading = false;
+      notifyListeners();
+      print('Exception occurred: $e');
+    }
+  }
+
   getSearchLeads(BuildContext context) async {
     // try {
     // Loader.showLoader(context);
@@ -1716,7 +1787,7 @@ class LeadReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchLeadReports(String search, String fromDate, String toDate,
+  getSearchLeadReportsOld(String search, String fromDate, String toDate,
       String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
@@ -2067,5 +2138,69 @@ class LeadReportProvider extends ChangeNotifier {
     }
 
     notifyListeners();
+  }
+
+  Future<void> transferLeads({
+    required BuildContext context,
+    required int statusId,
+    required String statusName,
+    required int toUserId,
+    required String toUserName,
+    required String remark,
+  }) async {
+    try {
+      if (_selectedLeadIds.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select leads to transfer')),
+        );
+        return;
+      }
+
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userName = preferences.getString('userName') ?? "";
+      String userId = preferences.getString('userId') ?? "0";
+
+      String customerIds = _selectedLeadIds.join(',');
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.leadReport,
+        bodyData: {
+          "Lead_Report": {
+            "Status_Id": statusId,
+            "Status_Name": statusName,
+            "Next_FollowUp_date": "",
+            "By_User_Id": userId,
+            "By_User_Name": userName,
+            "To_User_Id": toUserId,
+            "To_User_Name": toUserName,
+            "Remark": remark,
+          },
+          "Customer_Id": customerIds
+        },
+      );
+
+      Loader.stopLoader(context);
+
+      if (response != null && response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Leads transferred successfully')),
+        );
+
+        // Clear selection and refresh data
+        _selectedLeadIds.clear();
+        getSearchLeadReports(_search, _fromDateS, _toDateS, _status, context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to transfer leads')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred during transfer: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred during transfer')),
+      );
+    }
   }
 }

@@ -443,67 +443,68 @@ class DropDownProvider extends ChangeNotifier {
   }
 
   void getDuration(BuildContext context) async {
-    // try {
-    //   SharedPreferences preferences = await SharedPreferences.getInstance();
-    //   String userId = preferences.getString('userId') ?? "";
+    try {
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcDuration);
 
-    //   final response =
-    //       await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcDuration);
+      if (response.statusCode == 200) {
+        final data = response.data;
 
-    //   if (response.statusCode == 200) {
-    //     final data = response.data;
+        if (data != null) {
+          final dataItem = data['data'] ?? [];
 
-    //     if (data != null) {
-    //       final dataItem = data['data'] ?? [];
-
-    //       _amcDuration = (dataItem as List<dynamic>)
-    //           .map((item) => DurationModel.fromJson(item))
-    //           .toList();
-    //       notifyListeners();
-    //     }
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text('Server Error')),
-    //     );
-    //   }
-    // } catch (e) {
-    //   print('Exception occurred: $e');
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('An error occurred')),
-    //   );
-    // }
+          _amcDuration = (dataItem as List<dynamic>)
+              .map((item) => DurationModel.fromJson(item))
+              .toList();
+        }
+      }
+    } catch (e) {
+      print('Exception occurred in getDuration: $e');
+    }
+    // Fallback hardcoded values if API fails or returns empty
+    if (_amcDuration.isEmpty) {
+      _amcDuration = [
+        DurationModel(durationId: 1, durationName: '1 Year', durationNo: 1),
+        DurationModel(durationId: 2, durationName: '2 Years', durationNo: 2),
+        DurationModel(durationId: 3, durationName: '3 Years', durationNo: 3),
+        DurationModel(durationId: 4, durationName: '4 Years', durationNo: 4),
+        DurationModel(durationId: 5, durationName: '5 Years', durationNo: 5),
+      ];
+    }
+    notifyListeners();
   }
 
   void getIntervals(BuildContext context) async {
-    // try {
-    //   SharedPreferences preferences = await SharedPreferences.getInstance();
-    //   String userId = preferences.getString('userId') ?? "";
+    try {
+      final response =
+          await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcInterval);
 
-    //   final response =
-    //       await HttpRequest.httpGetRequest(endPoint: HttpUrls.amcInterval);
+      if (response.statusCode == 200) {
+        final data = response.data;
 
-    //   if (response.statusCode == 200) {
-    //     final data = response.data;
+        if (data != null) {
+          final dataItem = data['data'] ?? [];
 
-    //     if (data != null) {
-    //       final dataItem = data['data'] ?? [];
-
-    //       _amcInterval = (dataItem as List<dynamic>)
-    //           .map((item) => IntervalModel.fromJson(item))
-    //           .toList();
-    //       notifyListeners();
-    //     }
-    //   } else {
-    //     ScaffoldMessenger.of(context).showSnackBar(
-    //       const SnackBar(content: Text('Server Error')),
-    //     );
-    //   }
-    // } catch (e) {
-    //   print('Exception occurred: $e');
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('An error occurred')),
-    //   );
-    // }
+          _amcInterval = (dataItem as List<dynamic>)
+              .map((item) => IntervalModel.fromJson(item))
+              .toList();
+        }
+      }
+    } catch (e) {
+      print('Exception occurred in getIntervals: $e');
+    }
+    // Fallback hardcoded values if API fails or returns empty
+    if (_amcInterval.isEmpty) {
+      _amcInterval = [
+        IntervalModel(intervalsId: 1, intervalsName: 'Monthly', intervalsNo: 1),
+        IntervalModel(
+            intervalsId: 2, intervalsName: 'Quarterly', intervalsNo: 3),
+        IntervalModel(
+            intervalsId: 3, intervalsName: 'Half Yearly', intervalsNo: 6),
+        IntervalModel(intervalsId: 4, intervalsName: 'Yearly', intervalsNo: 12),
+      ];
+    }
+    notifyListeners();
   }
 
   void getEnquirySource(BuildContext context) async {
@@ -700,7 +701,7 @@ class DropDownProvider extends ChangeNotifier {
       // Build endpoint and add pagination parameters. Only include ViewIn_Id when provided.
       String endPoint =
           '${HttpUrls.getFollowUpStatusCustomer}?status_Name=&Page_Index=1&PageSize=1000';
-      
+
       final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 
       if (response.statusCode == 200) {

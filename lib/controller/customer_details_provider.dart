@@ -1312,6 +1312,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
       String userName = preferences.getString('userName') ?? "";
 
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveAmcDetails,
           bodyData: {
@@ -1327,7 +1330,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
             "Created_By": userId,
             "From_Date": fromDate,
             "To_Date": toDate,
-            "Customer_Id": cusId
+            "Customer_Id": cusId,
+            "Interval_Id": dropDownProvider.amcPeriodIntervalId,
+            "Intervals_No": monthInterval,
+            "Duration_Id": dropDownProvider.amcTotalDurationlId,
+            "Duration_No": yearInterval,
+            "interval_details":
+                _maintenanceDates.map((e) => e.toJson()).toList(),
           });
 
       if (response!.statusCode == 200) {

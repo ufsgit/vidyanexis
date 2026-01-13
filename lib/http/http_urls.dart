@@ -49,6 +49,8 @@ class HttpUrls {
   static String getQuotationByMasterId =
       "quotation_master/Get_quotation_master";
   static String searchAMCStatus = 'amc_status/Search_amc_status';
+  static String amcDuration = "amc_duration/Search_amc_duration";
+  static String amcInterval = "amc_interval/Search_amc_intervals";
   static String searchTaskReport = "task/Search_task_Report";
   static String searchFollowupReports = "lead/Search_Pending_Followup_Report";
   static String searchQuotationReports =
@@ -231,4 +233,5 @@ class HttpUrls {
   static String getFollowUpStatusCustomer =
       "status/get_followupstatus_customer";
   static String leadEnquiryReport = "lead/Lead_Enquiry_Report";
+  static String leadReport = "lead/Lead_Report";
 }
