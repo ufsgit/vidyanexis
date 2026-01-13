@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/commercial_item_model.dart';
 import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/maintenance_model.dart';
+import 'package:vidyanexis/controller/models/quotation_type_model.dart';
 import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
@@ -198,10 +199,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
 
-  List<DropdownItem<int>> get quotationTypeData => [
-        DropdownItem(id: 1, name: 'Residential'),
-        DropdownItem(id: 2, name: 'Commercial'),
-      ];
+  List<QuotationTypeModel> _quotationTypeData = [];
+  List<QuotationTypeModel> get quotationTypeData => _quotationTypeData;
+  set quotationTypeData(List<QuotationTypeModel> value) {
+    _quotationTypeData = value;
+    notifyListeners();
+  }
+
   TextEditingController quotationTypeController = TextEditingController();
   int _selectedQuotationType = 0;
   int get selectedQuotationType => _selectedQuotationType;
@@ -2950,6 +2954,37 @@ class CustomerDetailsProvider extends ChangeNotifier {
       return DateTime.parse(date1) == DateTime.parse(date2);
     } catch (e) {
       return false;
+    }
+  }
+
+  void getQuotationTypes(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getQuotationTypes}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final newData = data['data'] ?? [];
+          _quotationTypeData = (newData as List<dynamic>)
+              .map((item) => QuotationTypeModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
     }
   }
 }

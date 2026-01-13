@@ -11,7 +11,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
-class QuotationCreationWidget extends StatelessWidget {
+class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
   String customerId;
   String quotationId;
@@ -20,6 +20,23 @@ class QuotationCreationWidget extends StatelessWidget {
       required this.quotationId,
       required this.isEdit,
       required this.customerId});
+
+  @override
+  State<QuotationCreationWidget> createState() =>
+      _QuotationCreationWidgetState();
+}
+
+class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
+  @override
+  void initState() {
+    // TODO: implement initState
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.getQuotationTypes(context);
+    });
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +67,7 @@ class QuotationCreationWidget extends StatelessWidget {
       title: Row(
         children: [
           Text(
-            isEdit ? 'Edit Quotation' : 'Add Quotation',
+            widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
             style: GoogleFonts.plusJakartaSans(
               fontSize: 18,
               fontWeight: FontWeight.w500,
@@ -247,15 +264,20 @@ class QuotationCreationWidget extends StatelessWidget {
                   const SizedBox(height: 16),
                   CommonDropdown(
                     hintText: 'Quotation Type',
-                    items: customerDetailsProvider.quotationTypeData,
+                    items: customerDetailsProvider.quotationTypeData
+                        .map((status) => DropdownItem<int>(
+                              id: status.quotationTypeId,
+                              name: status.quotationTypeName,
+                            ))
+                        .toList(),
                     onItemSelected: (value) {
                       customerDetailsProvider.selectedQuotationType = value;
                       final selectedItem =
                           customerDetailsProvider.quotationTypeData.firstWhere(
-                        (status) => status.id == value,
+                        (status) => status.quotationTypeId == value,
                       );
                       customerDetailsProvider.quotationTypeController.text =
-                          selectedItem.name;
+                          selectedItem.quotationTypeName;
                     },
                     selectedValue:
                         customerDetailsProvider.selectedQuotationType,
@@ -1070,7 +1092,7 @@ class QuotationCreationWidget extends StatelessWidget {
             // if (validationMessage == null) {
             // Save if total is exactly 100%
             customerDetailsProvider.saveQuotation(
-                quotationId, customerId, context, isEdit);
+                widget.quotationId, widget.customerId, context, widget.isEdit);
             // }
             //  else {
             //   // Show alert dialog for incorrect total
