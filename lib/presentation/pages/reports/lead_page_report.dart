@@ -996,6 +996,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
     int? selectedUserId;
     String? selectedUserName;
     final remarkController = TextEditingController();
+    final nextFollowUpDateController = TextEditingController();
 
     showDialog(
       context: parentContext,
@@ -1073,6 +1074,31 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         ),
                         maxLines: 3,
                       ),
+                      const SizedBox(height: 16),
+                      // Next Follow Up Date
+                      TextField(
+                        controller: nextFollowUpDateController,
+                        readOnly: true,
+                        decoration: const InputDecoration(
+                          labelText: 'Next Follow Up Date',
+                          suffixIcon: Icon(Icons.calendar_today),
+                          border: OutlineInputBorder(),
+                        ),
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime.now(),
+                            lastDate: DateTime(2101),
+                          );
+                          if (picked != null) {
+                            setState(() {
+                              nextFollowUpDateController.text =
+                                  DateFormat('dd MMM yyyy').format(picked);
+                            });
+                          }
+                        },
+                      ),
                     ],
                   ),
                 );
@@ -1102,6 +1128,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                     toUserId: selectedUserId!,
                     toUserName: selectedUserName ?? '',
                     remark: remarkController.text,
+                    nextFollowUpDate: nextFollowUpDateController.text,
                   );
                 },
                 style: ElevatedButton.styleFrom(

@@ -2147,6 +2147,7 @@ class LeadReportProvider extends ChangeNotifier {
     required int toUserId,
     required String toUserName,
     required String remark,
+    required String nextFollowUpDate,
   }) async {
     try {
       if (_selectedLeadIds.isEmpty) {
@@ -2157,11 +2158,21 @@ class LeadReportProvider extends ChangeNotifier {
       }
 
       Loader.showLoader(context);
+
+      String formattedDate = '';
+      if (nextFollowUpDate.isNotEmpty) {
+        DateTime parsedDate;
+        try {
+          parsedDate = DateFormat('dd MMM yyyy').parse(nextFollowUpDate);
+        } catch (e) {
+          parsedDate = DateTime.parse(nextFollowUpDate);
+        }
+        formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userName = preferences.getString('userName') ?? "";
       String userId = preferences.getString('userId') ?? "0";
-
-      String customerIds = _selectedLeadIds.join(',');
 
       final response = await HttpRequest.httpPostRequest(
         endPoint: HttpUrls.leadReport,
@@ -2169,14 +2180,14 @@ class LeadReportProvider extends ChangeNotifier {
           "Lead_Report": {
             "Status_Id": statusId,
             "Status_Name": statusName,
-            "Next_FollowUp_date": "",
+            "Next_FollowUp_date": formattedDate,
             "By_User_Id": userId,
             "By_User_Name": userName,
             "To_User_Id": toUserId,
             "To_User_Name": toUserName,
             "Remark": remark,
           },
-          "Customer_Id": customerIds
+          "Customer_Id": _selectedLeadIds.toList()
         },
       );
 
