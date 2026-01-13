@@ -1,11 +1,11 @@
 class HttpUrls {
   //baseurls
   //live
-  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
 
   //dev
-  // static String baseUrl = 'https://3pm19pm4-3511.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3511.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -231,4 +231,5 @@ class HttpUrls {
   static String getFollowUpStatusCustomer =
       "status/get_followupstatus_customer";
   static String leadEnquiryReport = "lead/Lead_Enquiry_Report";
+  static String getQuotationTypes = "quotation_master/get_quotation_types";
 }
