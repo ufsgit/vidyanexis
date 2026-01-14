@@ -97,6 +97,7 @@ class _LeadsPageState extends State<LeadPage> {
 
   int userId = 0;
   String userName = '';
+  String userType = '';
 
   @override
   void initState() {
@@ -115,7 +116,11 @@ class _LeadsPageState extends State<LeadPage> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
-      leadProvider.setUserFilterStatus(userId);
+      userType = preferences.getString('userType') ?? "";
+      //not admin type assign user filter
+      if (userType != "1") {
+        leadProvider.setUserFilterStatus(userId);
+      }
 
       provider.getEnquirySource(context);
       settingsProvider.searchBranch(context);
