@@ -66,6 +66,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
 
   int userId = 0;
   String userName = '';
+  String userType = '';
 
   @override
   void initState() {
@@ -82,7 +83,11 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
-      leadProvider.setUserFilterStatus(userId);
+      userType = preferences.getString('userType') ?? "";
+      //not admin type assign user filter
+      if (userType != "1") {
+        leadProvider.setUserFilterStatus(userId);
+      }
       // leadProvider.leadData.clear();
       leadProvider.setFilter(false);
       settingsProvider.searchBranch(context);
