@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
@@ -505,6 +506,53 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                   ),
 
                   const SizedBox(height: 16),
+                  // FollowUp Section
+                  if (selectedStatus.followup == 1)
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        CustomText(
+                          'FollowUp Date',
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textBlack,
+                        ),
+                        const SizedBox(height: 12),
+                        Container(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: AppColors.grey),
+                            color: AppColors.whiteColor,
+                          ),
+                          child: TextField(
+                            controller: reportsProvider.followUpDateController,
+                            onTap: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now()
+                                    .add(const Duration(days: 365)),
+                              );
+                              if (picked != null) {
+                                reportsProvider.followUpDateController.text =
+                                    DateFormat('dd MMM yyyy').format(picked);
+                              }
+                            },
+                            decoration: const InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              border: InputBorder.none,
+                              hintText: 'Enter FollowUp Date',
+                              hintStyle:
+                                  TextStyle(color: Colors.grey, fontSize: 14),
+                            ),
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ],
+                    ),
+                  const SizedBox(height: 16),
 
                   // Description Section
                   Column(
@@ -532,7 +580,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 horizontal: 16, vertical: 12),
                             border: InputBorder.none,
                             hintText: 'Enter description',
-                            hintStyle: TextStyle(color: Colors.grey, fontSize: 14),
+                            hintStyle:
+                                TextStyle(color: Colors.grey, fontSize: 14),
                           ),
                           style: const TextStyle(fontSize: 14),
                         ),

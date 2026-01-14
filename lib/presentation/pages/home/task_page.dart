@@ -2377,6 +2377,9 @@ class _tasksPageReportState extends State<TaskPage> {
                       final ValueNotifier<TaskTypeStatusModel> selectedStatus =
                           ValueNotifier(defaultStatus);
                       final ValueNotifier<bool> isSaving = ValueNotifier(false);
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        reportsProvider.clearDescription();
+                      });
 
                       return Container(
                         padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
@@ -2445,9 +2448,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                 },
                               ),
                             ),
-                            const SizedBox(height: 16),
-                            dateFollowUpWidget(),
-                            const SizedBox(height: 16),
+                            ValueListenableBuilder<TaskTypeStatusModel>(
+                              valueListenable: selectedStatus,
+                              builder: (ctx, status, child) {
+                                if (status.followup == 1) {
+                                  return Column(
+                                    children: [
+                                      const SizedBox(height: 16),
+                                      dateFollowUpWidget(),
+                                      const SizedBox(height: 16),
+                                    ],
+                                  );
+                                }
+                                return const SizedBox(height: 16);
+                              },
+                            ),
                             Text(
                               'Description',
                               style: TextStyle(
@@ -2759,6 +2774,7 @@ class _tasksPageReportState extends State<TaskPage> {
                       WidgetsBinding.instance.addPostFrameCallback((_) {
                         reportsProvider.fetchTaskTypes(tasktypeId, statusId,
                             customerId, enquiryForId, context);
+                        reportsProvider.clearDescription();
                       });
 
                       final ValueNotifier<TaskTypeStatusModel> selectedStatus =
@@ -2959,9 +2975,21 @@ class _tasksPageReportState extends State<TaskPage> {
                                 }
                               },
                             ),
-                            const SizedBox(height: 16),
-                            dateFollowUpWidget(),
-                            const SizedBox(height: 16),
+                            ValueListenableBuilder<TaskTypeStatusModel>(
+                              valueListenable: selectedStatus,
+                              builder: (ctx, status, child) {
+                                if (status.followup == 1) {
+                                  return Column(
+                                    children: [
+                                      const SizedBox(height: 16),
+                                      dateFollowUpWidget(),
+                                      const SizedBox(height: 16),
+                                    ],
+                                  );
+                                }
+                                return const SizedBox(height: 16);
+                              },
+                            ),
                             Text(
                               'Description',
                               style: TextStyle(
@@ -3692,46 +3720,51 @@ class _tasksPageReportState extends State<TaskPage> {
   Widget dateFollowUpWidget() {
     final taskProvider = Provider.of<TaskPageProvider>(context, listen: false);
     final theme = Theme.of(context);
-    return Container(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: theme.dividerColor),
-        color: theme.cardColor,
-      ),
-      child: CustomTextField(
-        onTap: () async {
-          final DateTime? picked = await showDatePicker(
-            context: context,
-            initialDate: DateTime.now(),
-            firstDate: DateTime.now(),
-            lastDate: DateTime.now().add(const Duration(days: 365)),
-          );
-          if (picked != null) {
-            taskProvider.followUpDateController.text =
-                DateFormat('dd MMM yyyy').format(picked);
-          }
-        },
-        readOnly: true,
-        height: 54,
-        controller: taskProvider.followUpDateController,
-        hintText: 'Follow-up Date',
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.calendar_today),
-          onPressed: () async {
-            final DateTime? picked = await showDatePicker(
-              context: context,
-              initialDate: DateTime.now(),
-              firstDate: DateTime.now(),
-              lastDate: DateTime.now().add(const Duration(days: 365)),
-            );
-            if (picked != null) {
-              taskProvider.followUpDateController.text =
-                  DateFormat('dd MMM yyyy').format(picked);
-            }
-          },
+    taskProvider.followUpDateController.clear();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Follow-up Date',
+          style: TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.w500,
+            color: theme.textTheme.bodyLarge?.color,
+          ),
         ),
-        labelText: '',
-      ),
+        const SizedBox(height: 12),
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: theme.dividerColor),
+            color: theme.cardColor,
+          ),
+          child: TextField(
+            onTap: () async {
+              final DateTime? picked = await showDatePicker(
+                context: context,
+                initialDate: DateTime.now(),
+                firstDate: DateTime.now(),
+                lastDate: DateTime.now().add(const Duration(days: 365)),
+              );
+              if (picked != null) {
+                taskProvider.followUpDateController.text =
+                    DateFormat('dd MMM yyyy').format(picked);
+              }
+            },
+            readOnly: true,
+            controller: taskProvider.followUpDateController,
+            decoration: const InputDecoration(
+              contentPadding:
+                  EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              border: InputBorder.none,
+              hintText: 'Enter Follow-up Date',
+              suffixIcon: Icon(Icons.calendar_today),
+            ),
+            style: const TextStyle(fontSize: 14),
+          ),
+        ),
+      ],
     );
   }
 

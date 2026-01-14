@@ -69,6 +69,7 @@ class TaskPageProvider extends ChangeNotifier {
 
   void clearDescription() {
     descriptionController.clear();
+    followUpDateController.clear();
     notifyListeners();
   }
 
