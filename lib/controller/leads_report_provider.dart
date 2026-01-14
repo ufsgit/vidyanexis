@@ -2194,24 +2194,32 @@ class LeadReportProvider extends ChangeNotifier {
       Loader.stopLoader(context);
 
       if (response != null && response.statusCode == 200) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Leads transferred successfully')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Leads transferred successfully')),
+          );
+        }
 
         // Clear selection and refresh data
         _selectedLeadIds.clear();
-        getSearchLeadReports(_search, _fromDateS, _toDateS, _status, context);
+        if (context.mounted) {
+          getSearchLeadReports(_search, _fromDateS, _toDateS, _status, context);
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to transfer leads')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to transfer leads')),
+          );
+        }
       }
     } catch (e) {
       Loader.stopLoader(context);
       print('Exception occurred during transfer: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred during transfer')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred during transfer')),
+        );
+      }
     }
   }
 }

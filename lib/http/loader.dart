@@ -16,6 +16,12 @@ class Loader {
   }
 
   static void stopLoader(BuildContext context) {
-    Navigator.of(context).pop(); // Close the dialog
+    try {
+      if (context.mounted && Navigator.canPop(context)) {
+        Navigator.of(context).pop(); // Close the dialog
+      }
+    } catch (e) {
+      print("Error stopping loader: $e");
+    }
   }
 }
