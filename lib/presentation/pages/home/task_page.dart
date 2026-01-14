@@ -39,6 +39,8 @@ import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
 
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({super.key});
@@ -1658,6 +1660,95 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               task.taskTypeName,
                                                               ''),
                                                         ),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        CustomActionButton(
+                                                          imageColor: AppColors
+                                                              .textGreen,
+                                                          onTap: () async {
+                                                            try {
+                                                              String mobile =
+                                                                  await _fetchAndGetMobile(
+                                                                      context,
+                                                                      task,
+                                                                      customerDetailsProvider);
+                                                              if (!context
+                                                                  .mounted)
+                                                                return;
+                                                              mobile = mobile
+                                                                  .replaceAll(
+                                                                      RegExp(
+                                                                          r'[^\d+]'),
+                                                                      '');
+                                                              if (mobile
+                                                                  .isNotEmpty) {
+                                                                _showWhatsAppOptionsDialog(
+                                                                    context,
+                                                                    mobile);
+                                                              } else {
+                                                                ScaffoldMessenger
+                                                                        .maybeOf(
+                                                                            context)
+                                                                    ?.showSnackBar(const SnackBar(
+                                                                        content:
+                                                                            Text('Phone number not found')));
+                                                              }
+                                                            } catch (e) {
+                                                              print(
+                                                                  'Error in Chat button: $e');
+                                                            }
+                                                          },
+                                                          imagePath:
+                                                              "assets/images/lead_icon_1.png",
+                                                          text: 'Chat',
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 15),
+                                                        CustomActionButton(
+                                                          imageColor: AppColors
+                                                              .bluebutton,
+                                                          onTap: () async {
+                                                            try {
+                                                              String mobile =
+                                                                  await _fetchAndGetMobile(
+                                                                      context,
+                                                                      task,
+                                                                      customerDetailsProvider);
+                                                              if (!context
+                                                                  .mounted)
+                                                                return;
+                                                              if (mobile
+                                                                  .isNotEmpty) {
+                                                                final Uri
+                                                                    phoneUri =
+                                                                    Uri(
+                                                                  scheme: 'tel',
+                                                                  path: mobile,
+                                                                );
+                                                                if (await canLaunchUrl(
+                                                                    phoneUri)) {
+                                                                  await launchUrl(
+                                                                      phoneUri);
+                                                                }
+                                                              } else {
+                                                                ScaffoldMessenger
+                                                                        .maybeOf(
+                                                                            context)
+                                                                    ?.showSnackBar(const SnackBar(
+                                                                        content:
+                                                                            Text('Phone number not found')));
+                                                              }
+                                                            } catch (e) {
+                                                              print(
+                                                                  'Error in Call button: $e');
+                                                            }
+                                                          },
+                                                          imagePath:
+                                                              "assets/images/lead_icon_2.png",
+                                                          text: 'Call',
+                                                        ),
+                                                        const SizedBox(
+                                                            width: 15),
 
                                                         // Date (right/end)
                                                         Row(
@@ -3641,6 +3732,115 @@ class _tasksPageReportState extends State<TaskPage> {
         ),
         labelText: '',
       ),
+    );
+  }
+
+  Future<String> _fetchAndGetMobile(BuildContext context, TaskReportModel task,
+      CustomerDetailsProvider customerProvider) async {
+    String mobile = task.mobile;
+    if (mobile.isEmpty || mobile == 'null' || mobile == '0') {
+      try {
+        // Removed Snackbar to avoid context issues
+        await customerProvider.fetchLeadDetails(
+            task.customerId.toString(), context);
+
+        final details = customerProvider.leadDetails;
+        if (details != null && details.isNotEmpty) {
+          mobile = details[0].contactNumber ?? '';
+        }
+      } catch (e) {
+        print("Error fetching details: $e");
+      }
+    }
+    return mobile;
+  }
+
+  void _showWhatsAppOptionsDialog(BuildContext context, String phone) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return AlertDialog(
+          title: const Text('Choose WhatsApp'),
+          content: const Text('Select which WhatsApp to open:'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                // Try to open Normal WhatsApp
+                final Uri normalWhatsappUri =
+                    Uri.parse('whatsapp://send?phone=$phone');
+                try {
+                  if (await canLaunchUrl(normalWhatsappUri)) {
+                    await launchUrl(normalWhatsappUri,
+                        mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Normal WhatsApp is not installed'),
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Could not open Normal WhatsApp'),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('Normal WhatsApp'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(dialogContext).pop();
+                // Try to open WhatsApp Business
+                final Uri businessWhatsappUri =
+                    Uri.parse('whatsapp://send?phone=$phone');
+                final Uri webWhatsapp =
+                    Uri.parse('https://api.whatsapp.com/send?phone=$phone');
+
+                try {
+                  // Try web WhatsApp which works for both
+                  if (await canLaunchUrl(webWhatsapp)) {
+                    await launchUrl(webWhatsapp,
+                        mode: LaunchMode.externalApplication);
+                  } else if (await canLaunchUrl(businessWhatsappUri)) {
+                    await launchUrl(businessWhatsappUri,
+                        mode: LaunchMode.externalApplication);
+                  } else {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('WhatsApp Business is not installed'),
+                        ),
+                      );
+                    }
+                  }
+                } catch (e) {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Could not open WhatsApp Business'),
+                      ),
+                    );
+                  }
+                }
+              },
+              child: const Text('WhatsApp Business'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+              },
+              child: const Text('Cancel'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
