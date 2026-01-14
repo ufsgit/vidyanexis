@@ -14,6 +14,10 @@ import 'package:vidyanexis/presentation/widgets/home/add_followup_drawer_widget.
 import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class LeadPageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -38,6 +42,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       final leadReportProvider =
           Provider.of<LeadReportProvider>(context, listen: false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
@@ -46,6 +52,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
+      settingsProvider.searchBranch(context);
+      settingsProvider.searchDepartment('', context);
       leadReportProvider.getSearchLeadReports('', '', '', '', context);
     });
   }
@@ -75,14 +83,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
               controller: scrollController,
               thumbVisibility: true,
               trackVisibility: true,
-              child: SingleChildScrollView(
+              child: CustomScrollView(
                 controller: scrollController,
-                child: Container(
-                  color: Colors.grey[50],
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Padding(
+                slivers: [
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: Colors.grey[50],
+                      child: Padding(
                         padding: const EdgeInsets.all(16.0),
                         child: Row(
                           children: [
@@ -156,10 +163,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               OutlinedButton.icon(
                                 onPressed: () {
                                   leadReportProvider.toggleFilter();
-                                  // leadReportProvider.selectDateFilterOption(null);
-                                  // leadReportProvider.removeStatus();
-                                  // leadReportProvider.getSearchLeadReports(
-                                  //     '', '', '', '', context);
                                   print(leadReportProvider.isFilter);
                                 },
                                 icon: const Icon(Icons.filter_list),
@@ -262,530 +265,504 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           ],
                         ),
                       ),
-                      if (leadReportProvider.isFilter)
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                          padding: const EdgeInsets.all(10.0),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
-                            children: [
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
+                    ),
+                  ),
+                  if (leadReportProvider.isFilter)
+                    SliverToBoxAdapter(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                        padding: const EdgeInsets.all(10.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                    color: leadReportProvider.selectedStatus !=
+                                            null
+                                        ? AppColors.primaryBlue
+                                        : Colors.grey[300]!),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Text('Status: '),
+                                  DropdownButton<int>(
+                                    value: leadReportProvider.selectedStatus,
+                                    hint: const Text('All'),
+                                    items: provider.followUpData
+                                        .map((status) => DropdownMenuItem<int>(
+                                              value: status.statusId,
+                                              child: Text(
+                                                status.statusName ?? '',
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider.setStatus(
+                                            newValue); // Update the status in the provider
+                                      }
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                onClickTopButton(context);
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20, vertical: 1.5),
                                 decoration: BoxDecoration(
                                   color: Colors.white,
                                   borderRadius: BorderRadius.circular(20),
                                   border: Border.all(
-                                      color:
-                                          leadReportProvider.selectedStatus !=
-                                                  null
-                                              ? AppColors.primaryBlue
-                                              : Colors.grey[300]!),
-                                ),
-                                child: Row(
-                                  children: [
-                                    const Text('Status: '),
-                                    DropdownButton<int>(
-                                      value: leadReportProvider.selectedStatus,
-                                      hint: const Text('All'),
-                                      items: provider.followUpData
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.statusId,
-                                                    child: Text(
-                                                      status.statusName ?? '',
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                      onChanged: (int? newValue) {
-                                        if (newValue != null) {
-                                          leadReportProvider.setStatus(
-                                              newValue); // Update the status in the provider
-                                        }
-                                      },
-                                      underline: Container(),
-                                      isDense: true,
-                                      iconSize: 18,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              GestureDetector(
-                                onTap: () {
-                                  onClickTopButton(context);
-                                },
-                                child: Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 1.5),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    border: Border.all(
-                                        color: leadReportProvider.fromDate !=
-                                                    null ||
-                                                leadReportProvider.toDate !=
-                                                    null
-                                            ? AppColors.primaryBlue
-                                            : Colors.grey[300]!),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      if (leadReportProvider.fromDate == null &&
-                                          leadReportProvider.toDate == null)
-                                        const Text('Next Follow-Up Date: All'),
-                                      if (leadReportProvider.fromDate != null &&
-                                          leadReportProvider.toDate != null)
-                                        Text(
-                                            'Date : ${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}'),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Icon(
-                                        Icons.arrow_drop_down_outlined,
-                                        color: Colors.black45,
-                                        size: 20,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: leadReportProvider.selectedUser !=
-                                              null
+                                      color: leadReportProvider.fromDate !=
+                                                  null ||
+                                              leadReportProvider.toDate != null
                                           ? AppColors.primaryBlue
                                           : Colors.grey[300]!),
                                 ),
                                 child: Row(
                                   children: [
-                                    const Text('Assigned Staff: '),
-                                    DropdownButton<int>(
-                                      value: leadReportProvider.selectedUser,
-                                      hint: const Text('All'),
-                                      items: provider.searchUserDetails
-                                          .map((user) => DropdownMenuItem<int>(
-                                                value: user.userDetailsId!,
-                                                child: Text(
-                                                  user.userDetailsName ?? '',
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
-                                                ),
-                                              ))
-                                          .toList(),
-                                      onChanged: (int? newValue) {
-                                        if (newValue != null) {
-                                          leadReportProvider.setUserFilterStatus(
-                                              newValue); // Update the status in the provider
-                                        }
-                                      },
-                                      underline: Container(),
-                                      isDense: true,
-                                      iconSize: 18,
+                                    if (leadReportProvider.fromDate == null &&
+                                        leadReportProvider.toDate == null)
+                                      const Text('Next Follow-Up Date: All'),
+                                    if (leadReportProvider.fromDate != null &&
+                                        leadReportProvider.toDate != null)
+                                      Text(
+                                          'Date : ${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}'),
+                                    const SizedBox(
+                                      width: 10,
+                                    ),
+                                    const Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: Colors.black45,
+                                      size: 20,
                                     ),
                                   ],
                                 ),
                               ),
-                              const Spacer(),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                    color:
+                                        leadReportProvider.selectedUser != null
+                                            ? AppColors.primaryBlue
+                                            : Colors.grey[300]!),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Text('Assigned Staff: '),
+                                  DropdownButton<int>(
+                                    value: leadReportProvider.selectedUser,
+                                    hint: const Text('All'),
+                                    items: provider.searchUserDetails
+                                        .map((user) => DropdownMenuItem<int>(
+                                              value: user.userDetailsId!,
+                                              child: Text(
+                                                user.userDetailsName ?? '',
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider.setUserFilterStatus(
+                                            newValue); // Update the status in the provider
+                                      }
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const Spacer(),
+                            ElevatedButton(
+                              onPressed: () {
+                                // Apply the selected filters (You can use values from the provider)
+                                String status = leadReportProvider
+                                    .selectedStatus
+                                    .toString();
+                                String fromDate =
+                                    leadReportProvider.formattedFromDate;
+                                String toDate =
+                                    leadReportProvider.formattedToDate;
+                                print(
+                                    'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
+                                leadReportProvider.getSearchLeadReports(
+                                    '', fromDate, toDate, status, context);
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.white,
+                                foregroundColor: AppColors.primaryBlue,
+                                side: BorderSide(color: AppColors.primaryBlue),
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 16,
+                                  vertical: 12,
+                                ),
+                              ),
+                              child: const Text('Apply'),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            if (leadReportProvider.fromDate != null ||
+                                leadReportProvider.toDate != null ||
+                                leadReportProvider.selectedStatus != null ||
+                                leadReportProvider.selectedUser != null)
                               ElevatedButton(
                                 onPressed: () {
-                                  // Apply the selected filters (You can use values from the provider)
-                                  String status = leadReportProvider
-                                      .selectedStatus
-                                      .toString();
-                                  String fromDate =
-                                      leadReportProvider.formattedFromDate;
-                                  String toDate =
-                                      leadReportProvider.formattedToDate;
-                                  print(
-                                      'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
+                                  leadReportProvider
+                                      .selectDateFilterOption(null);
+                                  leadReportProvider.removeStatus();
                                   leadReportProvider.getSearchLeadReports(
-                                      '', fromDate, toDate, status, context);
+                                      '', '', '', '', context);
                                 },
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.primaryBlue,
-                                  side:
-                                      BorderSide(color: AppColors.primaryBlue),
+                                  foregroundColor: AppColors.textRed,
+                                  side: BorderSide(color: AppColors.textRed),
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 12,
                                   ),
                                 ),
-                                child: const Text('Apply'),
+                                child: const Text('Reset'),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: Colors.grey[50], // Match bg
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 16.0),
+                      child: Container(
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius:
+                              BorderRadius.vertical(top: Radius.circular(14)),
+                        ),
+                        padding: const EdgeInsets.all(8.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFEFF2F5),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            // mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: 50,
+                                child: Checkbox(
+                                  value: leadReportProvider.areAllLeadsSelected,
+                                  onChanged: (value) {
+                                    leadReportProvider.toggleAllLeadsSelection(
+                                        value ?? false);
+                                  },
+                                  activeColor: AppColors.primaryBlue,
+                                ),
                               ),
                               const SizedBox(
-                                width: 10,
-                              ),
-                              if (leadReportProvider.fromDate != null ||
-                                  leadReportProvider.toDate != null ||
-                                  leadReportProvider.selectedStatus != null ||
-                                  leadReportProvider.selectedUser != null)
-                                ElevatedButton(
-                                  onPressed: () {
-                                    leadReportProvider
-                                        .selectDateFilterOption(null);
-                                    leadReportProvider.removeStatus();
-                                    leadReportProvider.getSearchLeadReports(
-                                        '', '', '', '', context);
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.white,
-                                    foregroundColor: AppColors.textRed,
-                                    side: BorderSide(color: AppColors.textRed),
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: const Text('Reset'),
+                                width: 70,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 12.0, horizontal: 25.0),
+                                  child: Text('No',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF607185))),
                                 ),
+                              ),
+                              TableWidget(
+                                  flex: 1,
+                                  title: 'Lead name',
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  width: 130,
+                                  title: 'Mobile no',
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  flex: 2,
+                                  title: 'Remark',
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  flex: 1,
+                                  title: 'Assigned Staff',
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  width: 130,
+                                  title: 'Follow-Up',
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  width: 200,
+                                  title: 'Next Follow-up Date',
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  width: 150,
+                                  title: 'Status',
+                                  color: Color(0xFF607185)),
                             ],
                           ),
                         ),
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                // Header Row (Table Column Titles)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFEFF2F5),
-                                    borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                  ),
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        var lead = leadReportProvider.leadReportData[index];
+                        return Container(
+                          color: Colors.grey[50], // Match bg
+                          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Container(
+                            color: Colors.white, // Continuation of card
+                            padding:
+                                const EdgeInsets.symmetric(horizontal: 8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: index % 2 == 0
+                                    ? Colors.white
+                                    : const Color(0xFFF6F7F9),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              // Alternate row colors
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 50,
+                                    child: Checkbox(
+                                      value: leadReportProvider
+                                          .isLeadSelected(lead.customerId),
+                                      onChanged: (value) {
+                                        leadReportProvider.toggleLeadSelection(
+                                            lead.customerId);
+                                      },
+                                      activeColor: AppColors.primaryBlue,
+                                    ),
                                   ),
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 50,
-                                        child: Checkbox(
-                                          value: leadReportProvider
-                                              .areAllLeadsSelected,
-                                          onChanged: (value) {
-                                            leadReportProvider
-                                                .toggleAllLeadsSelection(
-                                                    value ?? false);
-                                          },
-                                          activeColor: AppColors.primaryBlue,
+                                  SizedBox(
+                                    width: 70,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 25.0),
+                                      child: Text(
+                                          ((index + 1) +
+                                                  leadReportProvider
+                                                      .startLimit -
+                                                  1)
+                                              .toString(),
+                                          style: const TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          )),
+                                    ),
+                                  ),
+                                  TableWidget(
+                                    flex: 1,
+                                    data: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          viewProfile = true;
+                                        });
+                                        leadReportProvider
+                                            .setCutomerId(lead.customerId);
+                                        Scaffold.of(context).openEndDrawer();
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 8, vertical: 4),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFE9EDF1),
+                                          borderRadius:
+                                              BorderRadius.circular(50),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 70,
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0, horizontal: 25.0),
-                                          child: Text('No',
-                                              style: TextStyle(
+                                        child: MediaQuery.of(context)
+                                                    .size
+                                                    .width >
+                                                1700
+                                            ? Row(
+                                                mainAxisSize: MainAxisSize
+                                                    .min, // Ensures the Row takes only as much space as needed
+                                                children: [
+                                                  // Front image (before text)
+                                                  Image.asset(
+                                                    'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
+                                                    width:
+                                                        15, // You can adjust the size of the image
+                                                    height:
+                                                        15, // You can adjust the size of the image
+                                                  ),
+                                                  const SizedBox(
+                                                      width:
+                                                          8), // Space between the image and text
+                                                  Text(
+                                                    lead.customerName.length >
+                                                            15
+                                                        ? '${lead.customerName.substring(0, 15)}...'
+                                                        : lead.customerName,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  const SizedBox(
+                                                      width:
+                                                          8), // Space between the text and back image
+                                                  // Back image (after text)
+                                                  Image.asset(
+                                                    'assets/images/forward.png', // Replace with your image asset or NetworkImage
+                                                    width:
+                                                        12, // Adjust the size of the image
+                                                    height:
+                                                        12, // Adjust the size of the image
+                                                  ),
+                                                ],
+                                              )
+                                            : Text(
+                                                lead.customerName,
+                                                style: const TextStyle(
+                                                  color: Colors.black,
                                                   fontWeight: FontWeight.bold,
-                                                  color: Color(0xFF607185))),
+                                                  fontSize: 14,
+                                                ),
+                                              ),
+                                      ),
+                                    ),
+                                  ),
+                                  TableWidget(
+                                      width: 130, title: lead.contactNumber),
+                                  TableWidget(
+                                    flex: 2,
+                                    title: lead.remark.trim(),
+                                  ),
+                                  TableWidget(flex: 1, title: lead.toUserName),
+                                  TableWidget(
+                                    width: 130,
+                                    data: InkWell(
+                                      onTap: () {
+                                        setState(() {
+                                          viewProfile = false;
+                                          viewFollowUp = true;
+                                        });
+                                        leadReportProvider
+                                            .setCutomerId(lead.customerId);
+                                        leadReportProvider.statusController
+                                            .text = lead.statusName;
+
+                                        leadReportProvider
+                                            .assignToFollowUpController
+                                            .text = lead.toUserName;
+                                        leadReportProvider
+                                                .nextFollowUpDateController
+                                                .text =
+                                            lead.nextFollowUpDate.isNotEmpty
+                                                ? _formatDateSafely(
+                                                    lead.nextFollowUpDate)
+                                                : '';
+                                        // leadReportProvider.messageController.text =
+                                        //     lead.remark;
+
+                                        Scaffold.of(context).openEndDrawer();
+                                      },
+                                      child: Image.asset(
+                                        lead.lateFollowUp == '0'
+                                            ? 'assets/images/followup_yes.png'
+                                            : 'assets/images/followup_no.png',
+                                        color: lead.lateFollowUp == '0'
+                                            ? Colors.green
+                                            : Colors.red,
+                                        width: 20,
+                                        height: 20,
+                                      ),
+                                    ),
+                                  ),
+                                  TableWidget(
+                                      width: 200,
+                                      title: (lead.nextFollowUpDate.isNotEmpty)
+                                          ? _formatDateSafely(
+                                              lead.nextFollowUpDate)
+                                          : ''),
+                                  TableWidget(
+                                    width: 150,
+                                    data: Container(
+                                      padding: lead.statusName.isNotEmpty
+                                          ? const EdgeInsets.symmetric(
+                                              horizontal: 8, vertical: 4)
+                                          : const EdgeInsets.all(0),
+                                      decoration: BoxDecoration(
+                                        color: StatusUtils.getStatusColor(
+                                            int.parse(lead.statusId)),
+                                        borderRadius: BorderRadius.circular(6),
+                                        border: Border.all(
+                                            color: Colors.black45, width: 0.1),
+                                      ),
+                                      child: Text(
+                                        lead.statusName,
+                                        style: TextStyle(
+                                          color: StatusUtils.getStatusTextColor(
+                                              int.parse(lead.statusId)),
+                                          fontSize: 12,
                                         ),
                                       ),
-                                      TableWidget(
-                                          flex: 1,
-                                          title: 'Lead name',
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          width: 130,
-                                          title: 'Mobile no',
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 2,
-                                          title: 'Remark',
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 1,
-                                          title: 'Assigned Staff',
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          width: 130,
-                                          title: 'Follow-Up',
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          width: 200,
-                                          title: 'Next Follow-up Date',
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          width: 150,
-                                          title: 'Status',
-                                          color: Color(0xFF607185)),
-                                    ],
+                                    ),
                                   ),
-                                ),
-                                // Data Rows
-                                ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const NeverScrollableScrollPhysics(), // Disable scrolling here, as parent scroll handles it
-                                  itemCount: leadReportProvider
-                                      .leadReportData.length, // Number of leads
-                                  itemBuilder: (context, index) {
-                                    var lead = leadReportProvider
-                                        .leadReportData[index];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 == 0
-                                            ? Colors.white
-                                            : const Color(0xFFF6F7F9),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      // Alternate row colors
-                                      child: Row(
-                                        // mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                            width: 50,
-                                            child: Checkbox(
-                                              value: leadReportProvider
-                                                  .isLeadSelected(
-                                                      lead.customerId),
-                                              onChanged: (value) {
-                                                leadReportProvider
-                                                    .toggleLeadSelection(
-                                                        lead.customerId);
-                                              },
-                                              activeColor:
-                                                  AppColors.primaryBlue,
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: 70,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 25.0),
-                                              child: Text(
-                                                  ((index + 1) +
-                                                          leadReportProvider
-                                                              .startLimit -
-                                                          1)
-                                                      .toString(),
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                  )),
-                                            ),
-                                          ),
-                                          TableWidget(
-                                            flex: 1,
-                                            data: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  viewProfile = true;
-                                                });
-                                                leadReportProvider.setCutomerId(
-                                                    lead.customerId);
-                                                Scaffold.of(context)
-                                                    .openEndDrawer();
-                                              },
-                                              child: Container(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      const Color(0xFFE9EDF1),
-                                                  borderRadius:
-                                                      BorderRadius.circular(50),
-                                                ),
-                                                child: MediaQuery.of(context)
-                                                            .size
-                                                            .width >
-                                                        1700
-                                                    ? Row(
-                                                        mainAxisSize: MainAxisSize
-                                                            .min, // Ensures the Row takes only as much space as needed
-                                                        children: [
-                                                          // Front image (before text)
-                                                          Image.asset(
-                                                            'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                            width:
-                                                                15, // You can adjust the size of the image
-                                                            height:
-                                                                15, // You can adjust the size of the image
-                                                          ),
-                                                          const SizedBox(
-                                                              width:
-                                                                  8), // Space between the image and text
-                                                          Text(
-                                                            lead.customerName
-                                                                        .length >
-                                                                    15
-                                                                ? '${lead.customerName.substring(0, 15)}...'
-                                                                : lead
-                                                                    .customerName,
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 14,
-                                                            ),
-                                                          ),
-                                                          const SizedBox(
-                                                              width:
-                                                                  8), // Space between the text and back image
-                                                          // Back image (after text)
-                                                          Image.asset(
-                                                            'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                            width:
-                                                                12, // Adjust the size of the image
-                                                            height:
-                                                                12, // Adjust the size of the image
-                                                          ),
-                                                        ],
-                                                      )
-                                                    : Text(
-                                                        lead.customerName,
-                                                        style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                              ),
-                                            ),
-                                          ),
-                                          TableWidget(
-                                              width: 130,
-                                              title: lead.contactNumber),
-                                          TableWidget(
-                                            flex: 2,
-                                            title: lead.remark.trim(),
-                                          ),
-                                          TableWidget(
-                                              flex: 1, title: lead.toUserName),
-                                          TableWidget(
-                                            width: 130,
-                                            data: InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  viewProfile = false;
-                                                  viewFollowUp = true;
-                                                });
-                                                leadReportProvider.setCutomerId(
-                                                    lead.customerId);
-                                                leadReportProvider
-                                                    .statusController
-                                                    .text = lead.statusName;
-
-                                                leadReportProvider
-                                                    .assignToFollowUpController
-                                                    .text = lead.toUserName;
-                                                leadReportProvider
-                                                    .nextFollowUpDateController
-                                                    .text = lead
-                                                        .nextFollowUpDate
-                                                        .isNotEmpty
-                                                    ? _formatDateSafely(
-                                                        lead.nextFollowUpDate)
-                                                    : '';
-                                                // leadReportProvider.messageController.text =
-                                                //     lead.remark;
-
-                                                Scaffold.of(context)
-                                                    .openEndDrawer();
-                                              },
-                                              child: Image.asset(
-                                                lead.lateFollowUp == '0'
-                                                    ? 'assets/images/followup_yes.png'
-                                                    : 'assets/images/followup_no.png',
-                                                color: lead.lateFollowUp == '0'
-                                                    ? Colors.green
-                                                    : Colors.red,
-                                                width: 20,
-                                                height: 20,
-                                              ),
-                                            ),
-                                          ),
-                                          TableWidget(
-                                              width: 200,
-                                              title: (lead.nextFollowUpDate
-                                                      .isNotEmpty)
-                                                  ? _formatDateSafely(
-                                                      lead.nextFollowUpDate)
-                                                  : ''),
-                                          TableWidget(
-                                            width: 150,
-                                            data: Container(
-                                              padding: lead
-                                                      .statusName.isNotEmpty
-                                                  ? const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4)
-                                                  : const EdgeInsets.all(0),
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    StatusUtils.getStatusColor(
-                                                        int.parse(
-                                                            lead.statusId)),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                border: Border.all(
-                                                    color: Colors.black45,
-                                                    width: 0.1),
-                                              ),
-                                              child: Text(
-                                                lead.statusName,
-                                                style: TextStyle(
-                                                  color: StatusUtils
-                                                      .getStatusTextColor(
-                                                          int.parse(
-                                                              lead.statusId)),
-                                                  fontSize: 12,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                                // if (leadReportProvider.leadData.isEmpty)
-                                //   Container(
-                                //     height: 400,
-                                //     // child: Center(
-                                //     //   child: Text(
-                                //     //     "No Data",
-                                //     //     style: TextStyle(fontWeight: FontWeight.w600),
-                                //     //   ),
-                                //     // ),
-                                //   ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      )
-                    ],
+                        );
+                      },
+                      childCount: leadReportProvider.leadReportData.length,
+                    ),
                   ),
-                ),
+                  SliverToBoxAdapter(
+                    child: Container(
+                      color: Colors.grey[50],
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, bottom: 16.0),
+                      child: Container(
+                        height: 16,
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.vertical(
+                              bottom: Radius.circular(14)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
             // bottomNavigationBar: _buildPaginationControls(context),
@@ -982,6 +959,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
   void _showTransferDialog(BuildContext parentContext) {
     final leadReportProvider =
         Provider.of<LeadReportProvider>(parentContext, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(parentContext, listen: false);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(parentContext, listen: false);
 
     if (leadReportProvider.selectedLeadIds.isEmpty) {
       ScaffoldMessenger.of(parentContext).showSnackBar(
@@ -990,11 +971,18 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       return;
     }
 
-    // Local state for the dialog
-    int? selectedStatusId;
-    String? selectedStatusName;
-    int? selectedUserId;
-    String? selectedUserName;
+    // Reset providers
+    settingsProvider.selectedBranchId = null;
+    settingsProvider.selectedDepartmentId = null;
+    dropDownProvider.selectedStatusId = null; // Set to null using setter
+    dropDownProvider.selectedUserId = null; // Set to null using setter
+    dropDownProvider.filteredStaffData = []; // Clear staff list
+
+    // Local controllers for display text (optional if not used for submit)
+    final statusController = TextEditingController();
+    final branchController = TextEditingController();
+    final departmentController = TextEditingController();
+    final staffController = TextEditingController();
     final remarkController = TextEditingController();
     final nextFollowUpDateController = TextEditingController();
 
@@ -1003,141 +991,257 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       builder: (dialogContext) {
         return StatefulBuilder(builder: (context, setState) {
           return AlertDialog(
-            title: const Text('Transfer Leads'),
-            content: Consumer<DropDownProvider>(
-              builder: (context, provider, child) {
-                return SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      // Status Dropdown
-                      DropdownButtonFormField<int>(
-                        decoration: const InputDecoration(labelText: 'Status'),
-                        value: selectedStatusId,
-                        items: provider.followUpData.map((status) {
-                          return DropdownMenuItem<int>(
-                            value: status.statusId,
-                            child: Text(status.statusName ?? ''),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedStatusId = value;
-                            try {
-                              selectedStatusName = provider.followUpData
-                                  .firstWhere((s) => s.statusId == value)
-                                  .statusName;
-                            } catch (e) {
-                              selectedStatusName = '';
-                            }
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      // Staff Dropdown
-                      DropdownButtonFormField<int>(
-                        decoration:
-                            const InputDecoration(labelText: 'Assign To'),
-                        value: selectedUserId,
-                        items: provider.searchUserDetails.map((user) {
-                          return DropdownMenuItem<int>(
-                            value: user.userDetailsId,
-                            child: ConstrainedBox(
-                                constraints:
-                                    const BoxConstraints(maxWidth: 200),
-                                child: Text(
-                                  user.userDetailsName ?? '',
-                                  overflow: TextOverflow.ellipsis,
-                                )),
-                          );
-                        }).toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            selectedUserId = value;
-                            try {
-                              selectedUserName = provider.searchUserDetails
-                                  .firstWhere((u) => u.userDetailsId == value)
-                                  .userDetailsName;
-                            } catch (e) {
-                              selectedUserName = '';
-                            }
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      // Remark
-                      TextField(
-                        controller: remarkController,
-                        decoration: const InputDecoration(
-                          labelText: 'Remark',
-                          border: OutlineInputBorder(),
-                        ),
-                        maxLines: 3,
-                      ),
-                      const SizedBox(height: 16),
-                      // Next Follow Up Date
-                      TextField(
-                        controller: nextFollowUpDateController,
-                        readOnly: true,
-                        decoration: const InputDecoration(
-                          labelText: 'Next Follow Up Date',
-                          suffixIcon: Icon(Icons.calendar_today),
-                          border: OutlineInputBorder(),
-                        ),
-                        onTap: () async {
-                          final DateTime? picked = await showDatePicker(
-                            context: context,
-                            initialDate: DateTime.now(),
-                            firstDate: DateTime.now(),
-                            lastDate: DateTime(2101),
-                          );
-                          if (picked != null) {
-                            setState(() {
-                              nextFollowUpDateController.text =
-                                  DateFormat('dd MMM yyyy').format(picked);
-                            });
-                          }
-                        },
-                      ),
-                    ],
-                  ),
-                );
-              },
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
             ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(dialogContext),
-                child: const Text('Cancel'),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (selectedStatusId == null || selectedUserId == null) {
-                    ScaffoldMessenger.of(dialogContext).showSnackBar(
-                      const SnackBar(
-                          content: Text('Please select Status and Staff')),
+            contentPadding: const EdgeInsets.all(24),
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width > 600
+                  ? 500
+                  : MediaQuery.of(context).size.width * 0.9,
+              child: SingleChildScrollView(
+                child: Consumer2<DropDownProvider, SettingsProvider>(
+                  builder:
+                      (context, dropDownProvider, settingsProvider, child) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Transfer Leads',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textBlack,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 24),
+
+                        // Status
+                        CommonDropdown<int>(
+                          hintText: 'Follow-up Status*',
+                          items: dropDownProvider.followUpData
+                              .map((status) => DropdownItem<int>(
+                                    id: status.statusId ?? 0,
+                                    name: status.statusName ?? '',
+                                  ))
+                              .toList(),
+                          controller: statusController,
+                          onItemSelected: (selectedId) {
+                            dropDownProvider.setSelectedStatusId(selectedId);
+                            final selectedItem =
+                                dropDownProvider.followUpData.firstWhere(
+                              (status) => status.statusId == selectedId,
+                            );
+                            statusController.text =
+                                selectedItem.statusName ?? '';
+                          },
+                          selectedValue: dropDownProvider.selectedStatusId,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Branch & Department
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: CommonDropdown<int>(
+                                  hintText: 'Branch*',
+                                  selectedValue:
+                                      settingsProvider.selectedBranchId,
+                                  items: settingsProvider.branchModel
+                                      .map((source) => DropdownItem<int>(
+                                            id: source.branchId ?? 0,
+                                            name: source.branchName ?? '',
+                                          ))
+                                      .toList(),
+                                  controller: branchController,
+                                  onItemSelected: (selectedId) {
+                                    settingsProvider.selectedBranchId =
+                                        selectedId;
+                                    final selectedBranch = settingsProvider
+                                        .branchModel
+                                        .firstWhere((branch) =>
+                                            branch.branchId == selectedId);
+                                    branchController.text =
+                                        selectedBranch.branchName ?? '';
+                                    settingsProvider.setSelectedDepartmentId(0);
+                                    departmentController.clear();
+                                    dropDownProvider.setSelectedUserId(0);
+                                    staffController.clear();
+                                    dropDownProvider
+                                        .filterStaffByBranchAndDepartment(
+                                      branchId: selectedId,
+                                      departmentId: null,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 4.0),
+                                child: CommonDropdown<int>(
+                                  key: ValueKey(
+                                      settingsProvider.selectedBranchId),
+                                  hintText: 'Department*',
+                                  selectedValue:
+                                      settingsProvider.selectedDepartmentId,
+                                  items: settingsProvider.departmentModel
+                                      .map((source) => DropdownItem<int>(
+                                            id: source.departmentId,
+                                            name: source.departmentName ?? '',
+                                          ))
+                                      .toList(),
+                                  controller: departmentController,
+                                  onItemSelected: (selectedId) {
+                                    settingsProvider.selectedDepartmentId =
+                                        selectedId;
+                                    final selectedDepartment = settingsProvider
+                                        .departmentModel
+                                        .firstWhere((dept) =>
+                                            dept.departmentId == selectedId);
+                                    departmentController.text =
+                                        selectedDepartment.departmentName ?? '';
+                                    dropDownProvider.setSelectedUserId(0);
+                                    staffController.clear();
+                                    dropDownProvider
+                                        .filterStaffByBranchAndDepartment(
+                                      branchId:
+                                          settingsProvider.selectedBranchId,
+                                      departmentId: selectedId,
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Assigned Staff
+                        CommonDropdown<int>(
+                          hintText: 'Assigned Staff*',
+                          items: dropDownProvider.filteredStaffData
+                              .map((staff) => DropdownItem<int>(
+                                    id: staff.userDetailsId,
+                                    name: staff.userDetailsName,
+                                  ))
+                              .toList(),
+                          controller: staffController,
+                          onItemSelected: (selectedId) {
+                            dropDownProvider.setSelectedUserId(selectedId);
+                            final selectedStaff = dropDownProvider
+                                .filteredStaffData
+                                .firstWhere((staff) =>
+                                    staff.userDetailsId == selectedId);
+                            staffController.text =
+                                selectedStaff.userDetailsName;
+                          },
+                          selectedValue: dropDownProvider.selectedUserId,
+                          enabled: settingsProvider.selectedBranchId != null &&
+                              settingsProvider.selectedDepartmentId != null,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Remarks
+                        CustomTextField(
+                          height: 90,
+                          controller: remarkController,
+                          hintText: 'Remarks',
+                          labelText: '',
+                          minLines: 3,
+                          keyboardType: TextInputType.multiline,
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Next Follow-up Date (Always show or conditional? Existing had it. Logic in drawer uses isFollowupRequiredNew)
+                        if (dropDownProvider.isFollowupRequiredNew())
+                          CustomTextField(
+                            onTap: () async {
+                              final DateTime? picked = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime.now()
+                                    .add(const Duration(days: 365)),
+                              );
+                              if (picked != null) {
+                                nextFollowUpDateController.text =
+                                    DateFormat('dd MMM yyyy').format(picked);
+                              }
+                            },
+                            readOnly: true,
+                            height: 54,
+                            controller: nextFollowUpDateController,
+                            hintText: 'Next Follow-up Date*',
+                            suffixIcon: const Icon(Icons.calendar_today),
+                            labelText: '',
+                          ),
+
+                        const SizedBox(height: 24),
+
+                        // Buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            CustomElevatedButton(
+                              buttonText: 'Cancel',
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: const Color(
+                                  0xFFFFB800), // Yellow color from image roughly
+                              textColor: const Color(0xFFFFB800),
+                            ),
+                            const SizedBox(width: 8),
+                            CustomElevatedButton(
+                              buttonText:
+                                  'Transfer', // Or "Add follow-up" if keeping text
+                              onPressed: () {
+                                if (dropDownProvider.selectedStatusId == null ||
+                                    dropDownProvider.selectedUserId == null) {
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Please select Status and Staff')),
+                                  );
+                                  return;
+                                }
+
+                                Navigator.pop(dialogContext); // Close dialog
+
+                                leadReportProvider.transferLeads(
+                                  context: parentContext,
+                                  statusId: dropDownProvider.selectedStatusId!,
+                                  statusName: statusController.text,
+                                  toUserId: dropDownProvider.selectedUserId!,
+                                  toUserName: staffController.text,
+                                  remark: remarkController.text,
+                                  nextFollowUpDate:
+                                      nextFollowUpDateController.text,
+                                );
+                              },
+                              backgroundColor:
+                                  const Color(0xFFFFB800), // Yellow filled
+                              borderColor: const Color(0xFFFFB800),
+                              textColor: AppColors.whiteColor,
+                            ),
+                          ],
+                        ),
+                      ],
                     );
-                    return;
-                  }
-
-                  Navigator.pop(dialogContext); // Close dialog
-
-                  leadReportProvider.transferLeads(
-                    context: parentContext,
-                    statusId: selectedStatusId!,
-                    statusName: selectedStatusName ?? '',
-                    toUserId: selectedUserId!,
-                    toUserName: selectedUserName ?? '',
-                    remark: remarkController.text,
-                    nextFollowUpDate: nextFollowUpDateController.text,
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  foregroundColor: Colors.white,
+                  },
                 ),
-                child: const Text('Transfer'),
               ),
-            ],
+            ),
           );
         });
       },

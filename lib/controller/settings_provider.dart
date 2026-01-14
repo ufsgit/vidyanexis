@@ -2318,7 +2318,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   set selectedDepartmentId(int? id) {
-    _selectedDepartmentId = id!;
+    _selectedDepartmentId = id ?? -1;
     notifyListeners();
   }
 
