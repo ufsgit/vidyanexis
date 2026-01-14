@@ -6,6 +6,8 @@ class CustomFieldByStatusId {
   String? datavalue;
   List<DropdownValue>? dropdownValues;
   List<CheckBoxValues>? checkboxValues;
+  dynamic missingMandatoryDocumentCount;
+  List<String>? missingMandatoryDocumentNames;
 
   CustomFieldByStatusId({
     this.isMandatory,
@@ -15,6 +17,8 @@ class CustomFieldByStatusId {
     this.customFieldTypeId,
     this.dropdownValues,
     this.checkboxValues,
+    this.missingMandatoryDocumentCount,
+    this.missingMandatoryDocumentNames,
   });
 
   CustomFieldByStatusId copyWith({
@@ -24,6 +28,8 @@ class CustomFieldByStatusId {
     String? datavalue,
     List<DropdownValue>? dropdownValues,
     List<CheckBoxValues>? checkboxValues,
+    dynamic missingMandatoryDocumentCount,
+    List<String>? missingMandatoryDocumentNames,
   }) =>
       CustomFieldByStatusId(
         isMandatory: isMandatory ?? this.isMandatory,
@@ -32,6 +38,10 @@ class CustomFieldByStatusId {
         datavalue: datavalue ?? this.datavalue,
         dropdownValues: dropdownValues ?? this.dropdownValues,
         checkboxValues: checkboxValues ?? this.checkboxValues,
+        missingMandatoryDocumentCount:
+            missingMandatoryDocumentCount ?? this.missingMandatoryDocumentCount,
+        missingMandatoryDocumentNames:
+            missingMandatoryDocumentNames ?? this.missingMandatoryDocumentNames,
       );
 
   factory CustomFieldByStatusId.fromJson(Map<String, dynamic> json) =>
@@ -45,11 +55,15 @@ class CustomFieldByStatusId {
             ? []
             : List<DropdownValue>.from(
                 json["dropdown_values"]!.map((x) => DropdownValue.fromJson(x))),
-        // Fixed this line - properly map each item to CheckBoxValues.fromJson
         checkboxValues: json["checkbox_values"] == null
             ? []
             : List<CheckBoxValues>.from(json["checkbox_values"]!
                 .map((x) => CheckBoxValues.fromJson(x))),
+        missingMandatoryDocumentCount: json["missing_mandatory_document_count"],
+        missingMandatoryDocumentNames:
+            json["missing_mandatory_document_names"] == null
+                ? []
+                : List<String>.from(json["missing_mandatory_document_names"]!),
       );
 
   Map<String, dynamic> toJson() => {
@@ -63,6 +77,11 @@ class CustomFieldByStatusId {
         "checkbox_values": checkboxValues == null
             ? []
             : List<dynamic>.from(checkboxValues!.map((x) => x.toJson())),
+        "missing_mandatory_document_count": missingMandatoryDocumentCount,
+        "missing_mandatory_document_names": missingMandatoryDocumentNames ==
+                null
+            ? []
+            : List<dynamic>.from(missingMandatoryDocumentNames!.map((x) => x)),
       };
 }
 
