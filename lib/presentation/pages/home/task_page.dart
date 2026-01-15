@@ -173,9 +173,9 @@ class _tasksPageReportState extends State<TaskPage> {
                       'Task': task.taskTypeName,
                       'Assigned To': task.toUserName,
                       'Description': task.description,
-                      'Date': task.entryDate.isNotEmpty
+                      'Date': task.taskDate.isNotEmpty
                           ? DateFormat('dd MMM yyyy')
-                              .format(DateTime.parse(task.entryDate))
+                              .format(DateTime.parse(task.taskDate))
                           : '',
                       'Status': task.taskStatusName,
                     };
@@ -497,13 +497,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             'Description': task
                                                                 .description,
                                                             'Date': task
-                                                                    .entryDate
+                                                                    .taskDate
                                                                     .isNotEmpty
                                                                 ? DateFormat(
                                                                         'dd MMM yyyy')
                                                                     .format(DateTime
                                                                         .parse(task
-                                                                            .entryDate))
+                                                                            .taskDate))
                                                                 : '',
                                                             'Status': task
                                                                 .taskStatusName,
@@ -1765,7 +1765,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             const SizedBox(
                                                                 width: 8),
                                                             CustomText(
-                                                              task.entryDate
+                                                              task.taskDate
                                                                   .toDayMonthYearFormat(),
                                                               fontSize: 12,
                                                               color: AppColors
@@ -1937,8 +1937,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                               TableWidget(
                                                   flex: 1,
                                                   fontSize: 12,
-                                                  title: task.entryDate != null
-                                                      ? task.entryDate
+                                                  title: task.taskDate != null
+                                                      ? task.taskDate
                                                           .toDayMonthYearFormat()
                                                       : ''),
                                               TableWidget(
@@ -2030,7 +2030,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       showIcon: false,
                                                       onPressed: () async {
                                                         final taskId = task
-                                                                .taskMasterId
+                                                                .taskId
                                                                 ?.toString() ??
                                                             '';
                                                         final customerId = task

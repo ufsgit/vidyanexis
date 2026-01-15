@@ -33,6 +33,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     super.initState();
 
     statusOptionsFuture = getStatusType(widget.task.taskTypeId.toString());
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final reportsProvider =
+          Provider.of<TaskPageProvider>(context, listen: false);
+      reportsProvider.clearDescription();
+    });
   }
 
   @override
