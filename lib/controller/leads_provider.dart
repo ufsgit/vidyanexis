@@ -130,7 +130,6 @@ class LeadsProvider extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMoreData = true;
 
-
 //cost
   final TextEditingController projectCostController = TextEditingController();
   final TextEditingController additionalCostControler = TextEditingController();
@@ -205,6 +204,32 @@ class LeadsProvider extends ChangeNotifier {
   String _loginUserName = '';
   String get loginUserName => _loginUserName;
 
+  //from login details
+  int _loginBranchId = 0;
+  int get loginBranchId => _loginBranchId;
+  String _loginBranchName = '';
+  String get loginBranchName => _loginBranchName;
+  int _loginDepartmentId = 0;
+  int get loginDepartmentId => _loginDepartmentId;
+  String _loginDepartmentName = '';
+  String get loginDepartmentName => _loginDepartmentName;
+  String _loginUserTypeName = '';
+  String get loginUserTypeName => _loginUserTypeName;
+
+  Future<void> loadLoginDetails() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    _loginUserId = int.tryParse(preferences.getString('userId') ?? '0') ?? 0;
+    _loginUserName = preferences.getString('userName') ?? '';
+    _loginBranchId =
+        int.tryParse(preferences.getString('branchId') ?? '0') ?? 0;
+    _loginBranchName = preferences.getString('branchName') ?? '';
+    _loginDepartmentId =
+        int.tryParse(preferences.getString('departmentId') ?? '0') ?? 0;
+    _loginDepartmentName = preferences.getString('departmentName') ?? '';
+    _loginUserTypeName = preferences.getString('userTypeName') ?? '';
+    notifyListeners();
+  }
+
   // --- NEW: Enquiry Source Filter ---
   int? _selectedEnquirySource;
   int? get selectedEnquirySource => _selectedEnquirySource;
@@ -238,7 +263,7 @@ class LeadsProvider extends ChangeNotifier {
   List<CustomFieldByStatusId> _customFieldEnquiryFor = [];
   List<CustomFieldByStatusId> get customFieldEnquiryFor =>
       _customFieldEnquiryFor;
-  
+
   int _missingMandatoryDocumentCount = 0;
   int get missingMandatoryDocumentCount => _missingMandatoryDocumentCount;
   ScrollController scrollController = ScrollController();
@@ -675,7 +700,6 @@ class LeadsProvider extends ChangeNotifier {
     _selectedUser = null;
     notifyListeners();
   }
-
 
   void setEnquiryForFilter(int newStatus) {
     _selectedEnquiryFor = newStatus;
@@ -1471,42 +1495,50 @@ class LeadsProvider extends ChangeNotifier {
         final data = response.data;
         print('dfooigwe9 ${data}');
         print('missing_mandatory_document_count check: ${data}');
-        
+
         // Initialize to 0
         _missingMandatoryDocumentCount = 0;
         _customFieldList = [];
-        
+
         if (data != null) {
           // Check if data is a Map (with missing_mandatory_document_count at root)
           if (data is Map<String, dynamic>) {
             // Try to get missing_mandatory_document_count from various possible keys
-            _missingMandatoryDocumentCount = 
-                int.tryParse(data['missing_mandatory_document_count']?.toString() ?? '0') ?? 0;
-            
+            _missingMandatoryDocumentCount = int.tryParse(
+                    data['missing_mandatory_document_count']?.toString() ??
+                        '0') ??
+                0;
+
             // Also check alternative key names
             if (_missingMandatoryDocumentCount == 0) {
-              _missingMandatoryDocumentCount = 
-                  int.tryParse(data['missingMandatoryDocumentCount']?.toString() ?? '0') ?? 0;
+              _missingMandatoryDocumentCount = int.tryParse(
+                      data['missingMandatoryDocumentCount']?.toString() ??
+                          '0') ??
+                  0;
             }
-            
+
             // Check if custom_fields is in the map
-            if (data['custom_fields'] != null && (data['custom_fields'] as List).isNotEmpty) {
+            if (data['custom_fields'] != null &&
+                (data['custom_fields'] as List).isNotEmpty) {
               _customFieldList = (data['custom_fields'] as List<dynamic>)
                   .map((e) => CustomFieldByStatusId.fromJson(e))
                   .toList();
-            } else if (data['data'] != null && (data['data'] is List) && (data['data'] as List).isNotEmpty) {
+            } else if (data['data'] != null &&
+                (data['data'] is List) &&
+                (data['data'] as List).isNotEmpty) {
               // Some APIs wrap the list in a 'data' field
               _customFieldList = (data['data'] as List<dynamic>)
                   .map((e) => CustomFieldByStatusId.fromJson(e))
                   .toList();
-            } else if (data['data'] != null && data['data'] is List && (data['data'] as List).isEmpty) {
+            } else if (data['data'] != null &&
+                data['data'] is List &&
+                (data['data'] as List).isEmpty) {
               _customFieldList = [];
             }
           } else if (data is List && data.isNotEmpty) {
             // If data is a List, parse it directly
-            _customFieldList = data
-                .map((e) => CustomFieldByStatusId.fromJson(e))
-                .toList();
+            _customFieldList =
+                data.map((e) => CustomFieldByStatusId.fromJson(e)).toList();
             // If the API returns a list, missing_mandatory_document_count might be at root level
             // Check if response has extra fields (though Dio typically doesn't support this)
             _missingMandatoryDocumentCount = 0;
@@ -1515,8 +1547,9 @@ class LeadsProvider extends ChangeNotifier {
             _missingMandatoryDocumentCount = 0;
           }
         }
-        
-        print('Parsed missing_mandatory_document_count: $_missingMandatoryDocumentCount');
+
+        print(
+            'Parsed missing_mandatory_document_count: $_missingMandatoryDocumentCount');
         // Loader.stopLoader(context);
       } else {
         // Loader.stopLoader(context);

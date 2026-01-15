@@ -44,7 +44,15 @@ class LoginController extends ChangeNotifier {
         preferences.setString('token', data['token'].toString());
         preferences.setString('userName', data['User_Details_Name'].toString());
         preferences.setString('userId', data['User_Details_Id'].toString());
-        preferences.setString('userType', data['User_Type'].toString());
+        preferences.setString('userType', data['User_Type_Id'].toString());
+        preferences.setString(
+            'userTypeName', data['User_Type_Name']?.toString() ?? '');
+        preferences.setString('branchId', data['Branch_Id'].toString());
+        preferences.setString('branchName', data['Branch_Name'].toString());
+        preferences.setString('departmentId', data['Department_Id'].toString());
+        preferences.setString(
+            'departmentName', data['Department_Name'].toString());
+
         passWordController.clear();
         userNameController.clear();
         _userName = userName;

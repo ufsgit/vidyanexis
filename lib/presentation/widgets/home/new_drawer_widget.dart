@@ -278,12 +278,17 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
   void initState() {
     super.initState();
     _leadNameFocusNode = FocusNode();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       _leadNameFocusNode.requestFocus();
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
 
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+
+      await leadProvider.loadLoginDetails();
+
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(
           context,
@@ -293,9 +298,26 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       } else {
         leadProvider.clearAllLeadControllers(context);
 
+        // Populate defaults from login
+        leadProvider.branchController.text = leadProvider.loginBranchName;
+        leadProvider.departmentController.text =
+            leadProvider.loginDepartmentName;
+        leadProvider.searchUserController.text = leadProvider.loginUserName;
+        leadProvider.followUpDateController.text =
+            DateFormat('dd MMM yyyy').format(DateTime.now());
+
+        dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
+        settingsProvider.selectedBranchId = leadProvider.loginBranchId;
+        settingsProvider
+            .setSelectedDepartmentId(leadProvider.loginDepartmentId);
+
+        // Filter staff initially
+        dropDownProvider.filterStaffByBranchAndDepartment(
+          branchId: leadProvider.loginBranchId,
+          departmentId: leadProvider.loginDepartmentId,
+        );
+
         //default source category
-        final settingsProvider =
-            Provider.of<SettingsProvider>(context, listen: false);
         int? selectedSourceId;
         if (settingsProvider.searchSourceCategory.isNotEmpty) {
           selectedSourceId =
@@ -393,15 +415,29 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              widget.isEdit
-                                  ? 'Edit Lead details'
-                                  : 'Add New Lead',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: AppColors.textBlack,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  widget.isEdit
+                                      ? 'Edit Lead details'
+                                      : 'Add New Lead',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    color: AppColors.textBlack,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                if (!widget.isEdit)
+                                  Text(
+                                    '${leadProvider.loginBranchName} | ${leadProvider.loginDepartmentName} | ${leadProvider.loginUserTypeName}',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      color: AppColors.primaryBlue,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                              ],
                             ),
                             Row(
                               children: [
