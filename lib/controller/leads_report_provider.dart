@@ -849,18 +849,21 @@ class LeadReportProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          List<LeadReportModel> nextData = (data as List<dynamic>)
+          _leadReportData = (data as List<dynamic>)
               .map((item) => LeadReportModel.fromJson(item))
               .toList();
+          // List<LeadReportModel> nextData = (data as List<dynamic>)
+          //     .map((item) => LeadReportModel.fromJson(item))
+          //     .toList();
 
-          if (nextData.isNotEmpty) {
-            _totalCount = nextData.last.customerId;
-            nextData.removeLast();
-            _leadReportData = nextData;
-          } else {
-            _leadReportData = [];
-          }
-          hasMoreData = _leadReportData.length >= 25;
+          // if (nextData.isNotEmpty) {
+          //   _totalCount = nextData.last.customerId;
+          //   nextData.removeLast();
+          //   _leadReportData = nextData;
+          // } else {
+          //   _leadReportData = [];
+          // }
+          // hasMoreData = _leadReportData.length >= 25;
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
