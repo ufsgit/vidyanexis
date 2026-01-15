@@ -2267,4 +2267,112 @@ class LeadReportProvider extends ChangeNotifier {
       }
     }
   }
+
+  Future<void> transferLeadsMultiUser({
+    required BuildContext context,
+    required int statusId,
+    required String statusName,
+    required Map<int, int> assignments, // userId -> count
+    required Map<int, String> userNames, // userId -> userName
+    required String remark,
+    required String nextFollowUpDate,
+  }) async {
+    try {
+      if (_selectedLeadIds.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select leads to transfer')),
+        );
+        return;
+      }
+
+      Loader.showLoader(context);
+
+      String formattedDate = '';
+      if (nextFollowUpDate.isNotEmpty) {
+        DateTime parsedDate;
+        try {
+          parsedDate = DateFormat('dd MMM yyyy').parse(nextFollowUpDate);
+        } catch (e) {
+          parsedDate = DateTime.parse(nextFollowUpDate);
+        }
+        formattedDate = DateFormat('yyyy-MM-dd').format(parsedDate);
+      }
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userName = preferences.getString('userName') ?? "";
+      String userId = preferences.getString('userId') ?? "0";
+
+      List<int> allSelectedIds = List.from(_selectedLeadIds);
+      int currentIndex = 0;
+      bool allSuccess = true;
+
+      for (var entry in assignments.entries) {
+        int targetUserId = entry.key;
+        int count = entry.value;
+        String targetUserName = userNames[targetUserId] ?? '';
+
+        if (count > 0 && currentIndex + count <= allSelectedIds.length) {
+          var idsToTransfer =
+              allSelectedIds.sublist(currentIndex, currentIndex + count);
+          currentIndex += count;
+
+          final response = await HttpRequest.httpPostRequest(
+            endPoint: HttpUrls.leadReport,
+            bodyData: {
+              "Lead_Report": {
+                "Status_Id": statusId,
+                "Status_Name": statusName,
+                "Next_FollowUp_date": formattedDate,
+                "By_User_Id": userId,
+                "By_User_Name": userName,
+                "To_User_Id": targetUserId,
+                "To_User_Name": targetUserName,
+                "Remark": remark,
+              },
+              "Customer_Id": idsToTransfer
+            },
+          );
+
+          if (response == null || response.statusCode != 200) {
+            allSuccess = false;
+            print("Failed to transfer batch to User $targetUserId");
+          }
+        }
+      }
+
+      Loader.stopLoader(context);
+
+      if (allSuccess) {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Leads transferred successfully')),
+          );
+        }
+        // Clear selection and refresh data
+        _selectedLeadIds.clear();
+        if (context.mounted) {
+          getSearchLeadReports(_search, _fromDateS, _toDateS, _status, context);
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Some transfers failed')),
+          );
+        }
+        // Even if some failed, reload to show current state? Or keep selection?
+        // Safer to reload.
+        if (context.mounted) {
+          getSearchLeadReports(_search, _fromDateS, _toDateS, _status, context);
+        }
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred during multi transfer: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred during transfer')),
+        );
+      }
+    }
+  }
 }
