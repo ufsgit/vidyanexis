@@ -143,6 +143,14 @@ class LeadReportProvider extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMoreData = true;
 
+  int _startLimit = 1;
+  int _endLimit = 500;
+  int _totalCount = 0;
+
+  int get startLimit => _startLimit;
+  int get endLimit => _endLimit;
+  int get totalCount => _totalCount;
+
   List<SearchLeadModel> _tempData = [];
 
   bool _isFilter = false;
@@ -155,14 +163,18 @@ class LeadReportProvider extends ChangeNotifier {
   String _formattedToDate = '';
   int? _selectedDateFilterIndex;
   int _customerId = 0;
-  int _startLimit = 1;
-  int _endLimit = 25;
-  // final int _limit = 25;
-  int _totalCount = 0;
 
-  int get startLimit => _startLimit;
-  int get endLimit => _endLimit;
-  int get totalCount => _totalCount;
+  int _pageIndex = 1;
+  int _pageSize = 500;
+  int _totalSize = 0;
+  int _totalPages = 1;
+
+  int get pageIndex => _pageIndex;
+  int get pageSize => _pageSize;
+  int get totalSize => _totalSize;
+  int get totalPages => _totalPages;
+  bool get hasMorePages => _pageIndex < _totalPages;
+
   int get customerId => _customerId;
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
@@ -704,23 +716,39 @@ class LeadReportProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
-  Future<void> fetchNextPage(BuildContext context) async {
-    if (_endLimit < _totalCount) {
-      loadMoreLeads(context);
-    }
+  void setPageSize(int newSize) {
+    if (newSize < 1) return;
+    _pageSize = newSize;
     notifyListeners();
   }
 
-  // Fetch previous page data
-  Future<void> fetchPreviousPage(BuildContext context) async {
-    if (_startLimit > 0) {
-      _startLimit -= 25;
-      _endLimit -= 25;
-      getSearchLeads(context);
+  void goToPage(int page) {
+    if (page >= 1 && page <= _totalPages) {
+      _pageIndex = page;
+      notifyListeners();
     }
-    // print('Start' + _startLimit.toString());
-    // print('End' + _endLimit.toString());
-    notifyListeners();
+  }
+
+  void nextPage() {
+    if (_pageIndex < _totalPages) {
+      _pageIndex++;
+      notifyListeners();
+    }
+  }
+
+  void previousPage() {
+    if (_pageIndex > 1) {
+      _pageIndex--;
+      notifyListeners();
+    }
+  }
+
+  Future<void> loadMoreData(BuildContext context) async {
+    if (hasMorePages && !isLoading) {
+      nextPage();
+      await getSearchLeadReports(
+          _search, _fromDateS, _toDateS, _status, context);
+    }
   }
 
   void selectDateFilterOption(int? index) {
@@ -808,16 +836,15 @@ class LeadReportProvider extends ChangeNotifier {
   getSearchLeadReports(String search, String fromDate, String toDate,
       String status, BuildContext context) async {
     try {
-      _isLoading = true;
+      if (!isLoadingMore) {
+        _isLoading = true;
+      }
       notifyListeners();
 
       _search = search;
       _fromDateS = fromDate;
       _toDateS = toDate;
       _status = status;
-      _startLimit = 1;
-      _endLimit = 25;
-      currentPage = 1;
 
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
@@ -842,6 +869,10 @@ class LeadReportProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String toUserId = (_selectedUser ?? 0).toString();
 
+      // Calculate start and end indices based on page logic
+      _startLimit = (_pageIndex - 1) * _pageSize + 1;
+      _endLimit = _pageIndex * _pageSize;
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
@@ -854,13 +885,25 @@ class LeadReportProvider extends ChangeNotifier {
               .toList();
 
           if (nextData.isNotEmpty) {
-            _totalCount = nextData.last.customerId;
+            _totalSize = nextData.last.customerId;
+            _totalPages = (_totalSize / _pageSize).ceil();
             nextData.removeLast();
-            _leadReportData = nextData;
+
+            final isMobile = MediaQuery.of(context).size.width < 768;
+
+            if (isMobile && _pageIndex > 1) {
+              _leadReportData.addAll(nextData);
+            } else {
+              _leadReportData = nextData;
+            }
           } else {
-            _leadReportData = [];
+            if (_pageIndex == 1) {
+              _leadReportData = [];
+              _totalSize = 0;
+              _totalPages = 1;
+            }
           }
-          hasMoreData = _leadReportData.length >= 25;
+          hasMoreData = _pageIndex < _totalPages;
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -868,9 +911,11 @@ class LeadReportProvider extends ChangeNotifier {
         );
       }
       _isLoading = false;
+      isLoadingMore = false;
       notifyListeners();
     } catch (e) {
       _isLoading = false;
+      isLoadingMore = false;
       notifyListeners();
       print('Exception occurred: $e');
     }

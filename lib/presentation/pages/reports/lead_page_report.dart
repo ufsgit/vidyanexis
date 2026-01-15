@@ -496,7 +496,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 width: 70,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 12.0, horizontal: 25.0),
+                                      vertical: 12.0, horizontal: 16.0),
                                   child: Text('No',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -505,6 +505,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                               TableWidget(
                                   flex: 1,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0, horizontal: 24.0),
                                   title: 'Lead name',
                                   color: Color(0xFF607185)),
                               TableWidget(
@@ -529,6 +531,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   width: 150,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0, horizontal: 24.0),
                                   title: 'Status',
                                   color: Color(0xFF607185)),
                             ],
@@ -575,7 +579,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     width: 70,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 12.0, horizontal: 25.0),
+                                          vertical: 12.0, horizontal: 16.0),
                                       child: Text(
                                           ((index + 1) +
                                                   leadReportProvider
@@ -765,7 +769,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                 ],
               ),
             ),
-            // bottomNavigationBar: _buildPaginationControls(context),
+            bottomNavigationBar: _buildPaginationControls(context),
             endDrawer: viewProfile
                 ? LeadDetailsWidget(
                     onEditPressed: () async {
@@ -954,6 +958,96 @@ class _LeadsPageReportState extends State<LeadPageReport> {
     } catch (e) {
       return '';
     }
+  }
+
+  Widget _buildPaginationControls(BuildContext context) {
+    return Consumer<LeadReportProvider>(
+      builder: (context, provider, child) {
+        if (provider.totalPages <= 0) return const SizedBox.shrink();
+
+        return Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(top: BorderSide(color: Colors.grey[200]!)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Total Tasks: ${provider.totalSize}',
+                  style: const TextStyle(
+                    color: Color(0xFF6C7C93),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...List.generate(provider.totalPages, (index) {
+                    int page = index + 1;
+                    // Logic to show limited pages if many (simple version for now: max 5 pages or smart check)
+                    // If pages > 7, show 1, 2, ..., current-1, current, current+1, ..., last
+                    if (provider.totalPages > 7) {
+                      if (index > 1 &&
+                          index < provider.totalPages - 2 &&
+                          (page < provider.pageIndex - 1 ||
+                              page > provider.pageIndex + 1)) {
+                        if (page == provider.pageIndex - 2 ||
+                            page == provider.pageIndex + 2) {
+                          return const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              child: Text('...'));
+                        }
+                        return const SizedBox.shrink();
+                      }
+                    }
+
+                    bool isSelected = page == provider.pageIndex;
+                    return InkWell(
+                      onTap: () {
+                        provider.goToPage(page);
+                        // Use stored filters from provider
+                        provider.getSearchLeadReports(
+                            provider.search,
+                            provider.fromDateS,
+                            provider.toDateS,
+                            provider.status,
+                            context);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primaryBlue
+                              : const Color(0xFFEaeaeb),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$page',
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 
   void _showTransferDialog(BuildContext parentContext) {
