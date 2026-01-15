@@ -7,7 +7,6 @@ import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 
 class LeadEnquiryForReportCard extends StatelessWidget {
@@ -25,10 +24,9 @@ class LeadEnquiryForReportCard extends StatelessWidget {
         if (provider.isLeadEnquiryReportLoading) {
           return Container(
             height: 400,
-            decoration: BoxDecoration(
-                boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(18)),
+            decoration: BoxDecoration(boxShadow: const [
+              BoxShadow(color: Colors.black12, blurRadius: 5)
+            ], color: Colors.white, borderRadius: BorderRadius.circular(18)),
             child: const Center(child: CircularProgressIndicator()),
           );
         }
@@ -36,10 +34,9 @@ class LeadEnquiryForReportCard extends StatelessWidget {
         final data = provider.leadEnquiryReport;
 
         return Container(
-          decoration: BoxDecoration(
-              boxShadow: const [BoxShadow(color: Colors.black12, blurRadius: 5)],
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(18)),
+          decoration: BoxDecoration(boxShadow: const [
+            BoxShadow(color: Colors.black12, blurRadius: 5)
+          ], color: Colors.white, borderRadius: BorderRadius.circular(18)),
           constraints: BoxConstraints(
               minWidth: 100,
               maxWidth: MediaQuery.of(context).size.width,
@@ -47,16 +44,15 @@ class LeadEnquiryForReportCard extends StatelessWidget {
           padding: const EdgeInsets.all(10),
           child: Column(
             children: [
-              Row(
+              const Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text('Lead Enquiry For Report'),
-                  CustomDropDown(
-                      value: provider.selectedLeadEnquiryReportValue,
-                      dashboardProvider: provider,
-                      onChanged: (v) => provider.getLeadEnquiryReport(
-                          isFilter: v != "all",
-                          filterValue: v == "all" ? null : v)),
+                  Text('Lead Enquiry For Report'),
+                  // CustomDropDown(
+                  //     value: provider.selectedLeadEnquiryReportValue,
+                  //     dashboardProvider: provider,
+                  //     onChanged: (v) => provider.getLeadData(
+                  //         filterValue: v == "all" ? null : v)),
                 ],
               ),
               const SizedBox(height: 15),
@@ -79,7 +75,8 @@ class LeadEnquiryForReportCard extends StatelessWidget {
                           dataLabelSettings:
                               const DataLabelSettings(isVisible: true),
                           onPointTap: (ChartPointDetails details) async {
-                            final statusId = data[details.pointIndex!].enquiryForId;
+                            final statusId =
+                                data[details.pointIndex!].enquiryForId;
                             final leadReportProvider =
                                 Provider.of<LeadReportProvider>(context,
                                     listen: false);

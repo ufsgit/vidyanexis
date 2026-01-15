@@ -4,11 +4,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/common_report_widget.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 
@@ -45,18 +43,19 @@ class WeeklyReportCard extends StatelessWidget {
               Text(isLeadOverView
                   ? 'Lead Progress Report'
                   : 'Work Report Summary'),
-              CustomDropDown(
-                  value: isLeadOverView
-                      ? dashBoardProvider.selectedeLeadProgressValue
-                      : dashBoardProvider.selectedDashboardCountValue,
-                  dashboardProvider: dashBoardProvider,
-                  onChanged: (v) => isLeadOverView
-                      ? dashBoardProvider.getLeadProgressionReport(
-                          isFilter: v != "all",
-                          filterValue: v == "all" ? null : v)
-                      : dashBoardProvider.getDashBoardCount(
-                          isFilter: v != "all",
-                          filterValue: v == "all" ? null : v), hintText: '',),
+              // CustomDropDown(
+              //   value: isLeadOverView
+              //       ? dashBoardProvider.selectedeLeadProgressValue
+              //       : dashBoardProvider.selectedDashboardCountValue,
+              //   dashboardProvider: dashBoardProvider,
+              //   onChanged: (v) => isLeadOverView
+              //       ? dashBoardProvider.getLeadData(
+              //           filterValue: v == "all" ? null : v)
+              //       : dashBoardProvider.getDashBoardCount(
+              //           isFilter: v != "all",
+              //           filterValue: v == "all" ? null : v),
+              //   hintText: '',
+              // ),
             ],
           ),
           const SizedBox(height: 15),

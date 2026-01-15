@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/dashboard_count_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
 import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
@@ -13,7 +12,6 @@ import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
 import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
-import 'package:vidyanexis/main.dart';
 
 class DashboardProvider extends ChangeNotifier {
   int _tabIndex = 0;
@@ -52,6 +50,21 @@ class DashboardProvider extends ChangeNotifier {
   bool get isLoading => _isLoading;
   List<Department>? get departments => _departments;
   String? get errorMessage => _errorMessage;
+  int _selectedUser = 0;
+  int get selectedUser => _selectedUser;
+
+  // Date filter properties
+  int? _selectedDateFilterIndex;
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  String _formattedFromDate = '';
+  String _formattedToDate = '';
+
+  int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+  DateTime? get fromDate => _fromDate;
+  DateTime? get toDate => _toDate;
+  String get formattedFromDate => _formattedFromDate;
+  String get formattedToDate => _formattedToDate;
 
   // Fetch dashboard task data
   Future<void> fetchDashBoardTaskData() async {
@@ -114,33 +127,50 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getLeadConversionChartData(
-      {bool isFilter = false, String? filterValue}) async {
-    try {
+  void setCommonDateFilter(String? filterValue) {
+    if (filterValue == null || filterValue == "all") {
+      _fromDate = null;
+      _toDate = null;
+      _formattedFromDate = '';
+      _formattedToDate = '';
+      selectedeLeadConversionValue = null;
+      selectedeLeadProgressValue = null;
+      selectedLeadEnquiryReportValue = null;
+    } else {
       selectedeLeadConversionValue = filterValue;
-      late DateTime fromDate;
-
+      selectedeLeadProgressValue = filterValue;
+      selectedLeadEnquiryReportValue = filterValue;
+      DateTime from;
       switch (filterValue) {
         case 'tdy':
-          fromDate = DateTime.now();
-
+          from = DateTime.now();
           break;
         case 'th_wk':
-          fromDate = DateTime.now().subtract(const Duration(days: 7));
+          from = DateTime.now().subtract(const Duration(days: 7));
           break;
         case 'th_mnt':
-          fromDate = DateTime.now().subtract(const Duration(days: 30));
+          from = DateTime.now().subtract(const Duration(days: 30));
+          break;
         default:
-          fromDate = DateTime.now();
+          from = DateTime.now();
       }
+      _fromDate = from;
+      _toDate = DateTime.now();
+      formatDate();
+    }
+    notifyListeners();
+  }
 
+  Future<void> getLeadConversionChartData() async {
+    try {
       notifyListeners();
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.enquirySourceConversionReport,
           bodyData: {
-            "Fromdate": fromDate,
-            "Todate": DateTime.now(),
-            "Is_Date_Check": isFilter ? "1" : "0"
+            "Fromdate": _formattedFromDate,
+            "Todate": _formattedToDate,
+            "Is_Date_Check": _formattedFromDate.isNotEmpty ? "1" : "0",
+            "User": _selectedUser
           }).then((response) {
         print(response);
         if (response.statusCode == 200) {
@@ -162,48 +192,17 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getLeadProgressionReport({bool isFilter = false, String? filterValue}) async {
+  Future<void> getLeadProgressionReport() async {
     try {
       notifyListeners();
-      selectedeLeadProgressValue = filterValue;
-      late dynamic fromDateParam;
-      late dynamic toDateParam;
-      late String isDateCheckParam;
-
-      if (isFilter) {
-        DateTime fromDate;
-        switch (filterValue) {
-          case 'tdy':
-            fromDate = DateTime.now();
-            break;
-          case 'th_wk':
-            fromDate = DateTime.now().subtract(const Duration(days: 7));
-            break;
-          case 'th_mnt':
-            fromDate = DateTime.now().subtract(const Duration(days: 30));
-            break;
-          default:
-            fromDate = DateTime.now();
-        }
-        fromDateParam =
-            fromDate.toIso8601String().split('T').first; // Format to YYYY-MM-DD
-        toDateParam = DateTime.now()
-            .toIso8601String()
-            .split('T')
-            .first; // Format to YYYY-MM-DD
-        isDateCheckParam = "1";
-      } else {
-        fromDateParam = "";
-        toDateParam = "";
-        isDateCheckParam = "0";
-      }
 
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.leadProgressReport,
           bodyData: {
-            "Fromdate": fromDateParam,
-            "Todate": toDateParam,
-            "Is_Date_Check": isDateCheckParam
+            "Fromdate": _formattedFromDate,
+            "Todate": _formattedToDate,
+            "Is_Date_Check": _formattedFromDate.isNotEmpty ? "1" : "0",
+            "User": _selectedUser
           }).then((response) {
         print(response);
         if (response.statusCode == 200) {
@@ -212,11 +211,11 @@ class DashboardProvider extends ChangeNotifier {
           leadProgressReport = (pieData)
               .map((item) => LeadProgressReportModel.fromJson(item))
               .toList();
-          final leadProgress = Provider.of<LeadsProvider>(
-              navigatorKey.currentContext!,
-              listen: false);
-          leadProgress.formattedFromDate = fromDateParam;
-          leadProgress.formattedToDate = toDateParam;
+          // final leadProgress = Provider.of<LeadsProvider>(
+          //     navigatorKey.currentContext!,
+          //     listen: false);
+          // leadProgress.formattedFromDate = _formattedFromDate;
+          // leadProgress.formattedToDate = _formattedToDate;
         }
       });
     } catch (e) {
@@ -425,50 +424,20 @@ class DashboardProvider extends ChangeNotifier {
     _hoverStates[index] = isHovered;
     notifyListeners();
   }
+
   bool isHovered(int index) => _hoverStates[index] ?? false;
 
-  Future<void> getLeadEnquiryReport({
-    bool isFilter = false,
-    String? filterValue,
-  }) async {
+  Future<void> getLeadEnquiryReport() async {
     try {
-      selectedLeadEnquiryReportValue = filterValue;
-      late dynamic fromDateParam;
-      late dynamic toDateParam;
-      late String isDateCheckParam;
-
-      if (isFilter) {
-        DateTime fromDate;
-        switch (filterValue) {
-          case 'tdy':
-            fromDate = DateTime.now();
-            break;
-          case 'th_wk':
-            fromDate = DateTime.now().subtract(const Duration(days: 7));
-            break;
-          case 'th_mnt':
-            fromDate = DateTime.now().subtract(const Duration(days: 30));
-            break;
-          default:
-            fromDate = DateTime.now();
-        }
-        fromDateParam = fromDate.toIso8601String().split('T').first;
-        toDateParam = DateTime.now().toIso8601String().split('T').first;
-        isDateCheckParam = "1";
-      } else {
-        fromDateParam = "";
-        toDateParam = "";
-        isDateCheckParam = "0";
-      }
-
       isLeadEnquiryReportLoading = true;
       notifyListeners();
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.leadEnquiryReport,
           bodyData: {
-            "Fromdate": fromDateParam,
-            "Todate": toDateParam,
-            "Is_Date_Check": isDateCheckParam
+            "Fromdate": _formattedFromDate,
+            "Todate": _formattedToDate,
+            "Is_Date_Check": _formattedFromDate.isNotEmpty ? "1" : "0",
+            "User": _selectedUser
           }).then((response) {
         if (response.statusCode == 200) {
           List<dynamic> pieData = response.data;
@@ -485,12 +454,18 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getLeadData() async {
+  Future<void> getLeadData({String? filterValue}) async {
     try {
+      if (filterValue != null) {
+        setCommonDateFilter(filterValue);
+      }
       isDashBoardLoading = true;
       notifyListeners();
-      getLeadConversionChartData();
-      getLeadProgressionReport();
+      await Future.wait<void>([
+        getLeadConversionChartData(),
+        getLeadProgressionReport(),
+        getLeadEnquiryReport(),
+      ]);
     } finally {
       isDashBoardLoading = false;
       notifyListeners();
@@ -507,6 +482,108 @@ class DashboardProvider extends ChangeNotifier {
     } finally {
       isDashBoardLoading = false;
       notifyListeners();
+    }
+  }
+
+  void setUserFilterStatus(int newStatus) {
+    _selectedUser = newStatus;
+    print(_selectedUser.toString());
+    notifyListeners(); // Notify listeners about the change
+  }
+
+  void selectDateFilterOption(int? index) {
+    if (index == null) {
+      // If the index is null, we are clearing the filter
+      _selectedDateFilterIndex = null; // Reset to the default "no filter" state
+      _fromDate = null;
+      _toDate = null;
+      _formattedFromDate = '';
+      _formattedToDate = '';
+    } else {
+      _selectedDateFilterIndex = index; // Set the new selected filter index
+      formatDate();
+    }
+    notifyListeners();
+  }
+
+  void setDateFilter(String title) {
+    final now = DateTime.now();
+
+    switch (title) {
+      case 'Yesterday':
+        _fromDate = now.subtract(const Duration(days: 1));
+        _toDate = now.subtract(const Duration(days: 1));
+        break;
+      case 'Today':
+        _fromDate = now;
+        _toDate = now;
+        break;
+      case 'Tomorrow':
+        _fromDate = now.add(const Duration(days: 1));
+        _toDate = now.add(const Duration(days: 1));
+        break;
+      case 'This Week':
+        _fromDate = now.subtract(Duration(days: now.weekday - 1));
+        _toDate = now.add(Duration(days: 7 - now.weekday));
+        break;
+      case 'This Month':
+        _fromDate = DateTime(now.year, now.month, 1);
+        _toDate = DateTime(now.year, now.month + 1, 0);
+        break;
+      default:
+        _fromDate = null;
+        _toDate = null;
+        break;
+    }
+
+    notifyListeners(); // Notify listeners to rebuild the UI
+  }
+
+  void setFromDate(DateTime date) {
+    _fromDate = date;
+    _selectedDateFilterIndex = -1;
+    formatDate();
+    notifyListeners();
+  }
+
+  void setToDate(DateTime date) {
+    _toDate = date;
+    _selectedDateFilterIndex = -1;
+    formatDate();
+    notifyListeners();
+  }
+
+  Future<void> selectDate(BuildContext context, bool isFromDate) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: isFromDate
+          ? (_fromDate ?? DateTime.now())
+          : (_toDate ?? DateTime.now()),
+      firstDate: DateTime(2000), // Minimum date
+      lastDate: DateTime(2101), // Maximum date
+    );
+
+    if (pickedDate != null) {
+      if (isFromDate) {
+        setFromDate(pickedDate); // Set the 'from' date in provider
+      } else {
+        setToDate(pickedDate); // Set the 'to' date in provider
+      }
+    }
+    notifyListeners();
+  }
+
+  void formatDate() {
+    if (fromDate != null) {
+      _formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate!);
+    } else {
+      _formattedFromDate = '';
+    }
+
+    if (toDate != null) {
+      _formattedToDate = DateFormat('yyyy-MM-dd').format(toDate!);
+    } else {
+      _formattedToDate = '';
     }
   }
 }

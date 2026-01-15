@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/models/lead_conversion_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/custom_table_widget.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/customer_work_summary.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/financial_report_graph.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
 
 class WorkOverViewTab extends StatefulWidget {
@@ -31,11 +27,6 @@ class WorkOverViewTab extends StatefulWidget {
 class _WorkOverViewTabState extends State<WorkOverViewTab> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      DashboardProvider dashBoardProvider =
-          Provider.of<DashboardProvider>(context, listen: false);
-      dashBoardProvider.getWorkData();
-    });
     super.initState();
   }
 

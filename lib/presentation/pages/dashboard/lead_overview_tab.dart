@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/models/follow_up_summary_model.dart';
 import 'package:vidyanexis/controller/models/lead_conversion_model.dart';
 import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_enquiry_for_report_card.dart';
@@ -37,12 +34,6 @@ class LeadsOverViewTab extends StatefulWidget {
 class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
   @override
   void initState() {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      DashboardProvider dashBoardProvider =
-          Provider.of<DashboardProvider>(context, listen: false);
-      dashBoardProvider.getLeadData();
-      dashBoardProvider.getLeadEnquiryReport(isFilter: false);
-    });
     super.initState();
   }
 
