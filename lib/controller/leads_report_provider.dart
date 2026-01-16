@@ -846,7 +846,7 @@ class LeadReportProvider extends ChangeNotifier {
       }
       notifyListeners();
 
-      // _search = search;
+      _search = search;
       // _fromDateS = fromDate;
       // _toDateS = toDate;
       // _status = status;
