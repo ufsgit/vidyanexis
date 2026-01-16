@@ -542,13 +542,16 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
   Widget filterWidget({required DashboardProvider dashBoardProvider}) {
     return Container(
+      width: MediaQuery.of(context).size.width,
       margin: const EdgeInsets.symmetric(horizontal: 0.0),
       padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(20),
       ),
-      child: Row(
+      child: Wrap(
+        spacing: 10,
+        runSpacing: 10,
         children: [
           GestureDetector(
             onTap: () {
@@ -567,6 +570,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         : Colors.grey[300]!),
               ),
               child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   if (dashBoardProvider.fromDate == null &&
                       dashBoardProvider.toDate == null)
