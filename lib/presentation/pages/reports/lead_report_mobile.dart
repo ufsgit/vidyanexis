@@ -54,6 +54,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
 
       provider.getEnquirySource(context);
+      provider.getEnquiryFor(context);
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
@@ -211,15 +212,25 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             DropdownButton<int>(
                               value: leadReportProvider.selectedStatus,
                               hint: const Text('All'),
-                              items: provider.followUpData
-                                  .map((status) => DropdownMenuItem<int>(
-                                        value: status.statusId,
-                                        child: Text(
-                                          status.statusName ?? '',
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ))
-                                  .toList(),
+                              items: [
+                                const DropdownMenuItem<int>(
+                                  value: 0,
+                                  child: Text(
+                                    'All',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                ...provider.followUpData
+                                    .map((status) => DropdownMenuItem<int>(
+                                          value: status.statusId,
+                                          child: Text(
+                                            status.statusName ?? '',
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ],
                               onChanged: (int? newValue) {
                                 if (newValue != null) {
                                   leadReportProvider.setStatus(newValue);
@@ -310,15 +321,25 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             DropdownButton<int>(
                               value: leadReportProvider.selectedUser,
                               hint: const Text('All'),
-                              items: provider.searchUserDetails
-                                  .map((user) => DropdownMenuItem<int>(
-                                        value: user.userDetailsId!,
-                                        child: Text(
-                                          user.userDetailsName ?? '',
-                                          style: const TextStyle(fontSize: 14),
-                                        ),
-                                      ))
-                                  .toList(),
+                              items: [
+                                const DropdownMenuItem<int>(
+                                  value: 0,
+                                  child: Text(
+                                    'All',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                ...provider.searchUserDetails
+                                    .map((user) => DropdownMenuItem<int>(
+                                          value: user.userDetailsId!,
+                                          child: Text(
+                                            user.userDetailsName ?? '',
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ],
                               onChanged: (int? newValue) {
                                 if (newValue != null) {
                                   leadReportProvider.setUserFilterStatus(
@@ -353,10 +374,136 @@ class _leadReportMobile extends State<LeadReportMobile> {
                       const SizedBox(
                         width: 10,
                       ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color:
+                                  leadReportProvider.selectedEnquiryFor != null
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            const Text('Enquiry For: '),
+                            DropdownButton<int>(
+                              value: provider.enquiryForList.any((element) =>
+                                      element.enquiryForId ==
+                                      leadReportProvider.selectedEnquiryFor)
+                                  ? leadReportProvider.selectedEnquiryFor
+                                  : null,
+                              hint: const Text('All'),
+                              items: [
+                                const DropdownMenuItem<int>(
+                                  value: 0,
+                                  child: Text(
+                                    'All',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                ...provider.enquiryForList
+                                    .map((enquiry) => DropdownMenuItem<int>(
+                                          value: enquiry.enquiryForId!,
+                                          child: Text(
+                                            enquiry.enquiryForName ?? '',
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ],
+                              onChanged: (int? newValue) {
+                                leadReportProvider
+                                    .setEnquiryForFilter(newValue ?? 0);
+
+                                leadReportProvider.getSearchLeadReports(
+                                    searchController.text,
+                                    leadReportProvider.formattedFromDate,
+                                    leadReportProvider.formattedToDate,
+                                    leadReportProvider.selectedStatus
+                                        .toString(),
+                                    context);
+                              },
+                              underline: Container(),
+                              isDense: true,
+                              iconSize: 18,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: leadReportProvider.selectedEnquirySource !=
+                                      null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            const Text('Enquiry Source: '),
+                            DropdownButton<int>(
+                              value: provider.enquiryData.any((element) =>
+                                      element.enquirySourceId ==
+                                      leadReportProvider.selectedEnquirySource)
+                                  ? leadReportProvider.selectedEnquirySource
+                                  : null,
+                              hint: const Text('All'),
+                              items: [
+                                const DropdownMenuItem<int>(
+                                  value: 0,
+                                  child: Text(
+                                    'All',
+                                    style: TextStyle(fontSize: 14),
+                                  ),
+                                ),
+                                ...provider.enquiryData
+                                    .map((source) => DropdownMenuItem<int>(
+                                          value: source.enquirySourceId!,
+                                          child: Text(
+                                            source.enquirySourceName ?? '',
+                                            style:
+                                                const TextStyle(fontSize: 14),
+                                          ),
+                                        ))
+                                    .toList(),
+                              ],
+                              onChanged: (int? newValue) {
+                                leadReportProvider
+                                    .setEnquirySourceFilter(newValue ?? 0);
+
+                                leadReportProvider.getSearchLeadReports(
+                                    searchController.text,
+                                    leadReportProvider.formattedFromDate,
+                                    leadReportProvider.formattedToDate,
+                                    leadReportProvider.selectedStatus
+                                        .toString(),
+                                    context);
+                              },
+                              underline: Container(),
+                              isDense: true,
+                              iconSize: 18,
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(
+                        width: 10,
+                      ),
                       if (leadReportProvider.fromDate != null ||
                           leadReportProvider.toDate != null ||
                           leadReportProvider.selectedStatus != null ||
-                          leadReportProvider.selectedUser != null)
+                          leadReportProvider.selectedUser != null ||
+                          leadReportProvider.selectedEnquiryFor != null ||
+                          leadReportProvider.selectedEnquirySource != null)
                         ElevatedButton(
                           onPressed: () {
                             leadReportProvider.selectDateFilterOption(null);
