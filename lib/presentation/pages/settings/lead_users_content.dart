@@ -22,7 +22,6 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
     DropdownItem<int>(id: 2, name: 'Customer'),
     DropdownItem<int>(id: 3, name: 'Task'),
   ];
-  int viewId = 0;
 
   @override
   void initState() {
@@ -30,7 +29,8 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
 
-      settingsProvider.getSearchLeadStatus('', viewId.toString(), context);
+      settingsProvider.getSearchLeadStatus(
+          '', settingsProvider.viewInId.toString(), context);
       settingsProvider.searchStatusController.clear();
     });
     super.initState();
@@ -78,8 +78,8 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
                           controller: settingsProvider.searchStatusController,
                           onChanged: (query) {
                             print(query);
-                            settingsProvider.getSearchLeadStatus(
-                                query, "0", context);
+                            settingsProvider.getSearchLeadStatus(query,
+                                settingsProvider.viewInId.toString(), context);
                           },
                           decoration: const InputDecoration(
                             hintText: 'Search here....',
@@ -128,14 +128,14 @@ class _LeadUsersContentState extends State<LeadUsersContent> {
                 SizedBox(
                   width: 250,
                   child: CommonDropdown<int>(
-                    hintText: 'Caption View',
+                    hintText: 'View',
                     selectedValue: null,
                     items: viewInOptions,
                     onItemSelected: (selectedId) {
-                      viewId = selectedId;
+                      settingsProvider.setViewInId(selectedId);
                       settingsProvider.getSearchLeadStatus(
                         settingsProvider.searchStatusController.text,
-                        viewId.toString(),
+                        selectedId.toString(),
                         context,
                       );
                     },

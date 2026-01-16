@@ -68,7 +68,9 @@ class _StatusPageState extends State<StatusPage> {
                         child: TextField(
                           controller:
                               settingsProvider.statusPageSearchController,
-                          onChanged: (query) {},
+                          onChanged: (query) {
+                            settingsProvider.searchStatus(context, '0');
+                          },
                           decoration: const InputDecoration(
                             hintText: 'Search here....',
                             prefixIcon: Icon(Icons.search),
@@ -199,7 +201,12 @@ class _StatusPageState extends State<StatusPage> {
                                                 TextButton(
                                                   onPressed: () async {
                                                     Navigator.pop(context);
-                                                    Navigator.pop(context);
+                                                    settingsProvider
+                                                        .deleteStatus(
+                                                            context,
+                                                            settingsProvider
+                                                                .status[index]
+                                                                .statusId);
                                                   },
                                                   child: const Text(
                                                     'Delete',

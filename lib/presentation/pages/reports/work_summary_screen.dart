@@ -585,6 +585,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                           'User Name',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 14,
                                             color: Color(0xFF607185),
                                           ),
                                         ),
@@ -600,6 +601,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                           'Follow up',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 14,
                                             color: Color(0xFF607185),
                                           ),
                                         ),
@@ -615,6 +617,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                           'Details',
                                           style: TextStyle(
                                             fontWeight: FontWeight.bold,
+                                            fontSize: 14,
                                             color: Color(0xFF607185),
                                           ),
                                         ),
@@ -699,7 +702,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  fontSize: 14,
+                                                                  fontSize: 12,
                                                                 ),
                                                               ),
                                                             ),
@@ -722,7 +725,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                 ),
@@ -740,6 +743,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                                 task.noOfFollowUp.toString(),
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                             ),
@@ -813,20 +817,24 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                         child: Text('No.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 14,
                                                 color: Color(0xFF607185))),
                                       ),
                                     ),
                                     TableWidget(
                                         flex: 2,
                                         title: 'User Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'No of Follow up',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'View Details',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                   ],
                                 ),
@@ -873,6 +881,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                                   (index + 1).toString(),
                                                   style: const TextStyle(
                                                     fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
                                                   )),
                                             ),
                                           ),
@@ -921,7 +930,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                         const SizedBox(
@@ -953,6 +962,7 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                           ),
                                           TableWidget(
                                               flex: 1,
+                                              fontSize: 12,
                                               title:
                                                   task.noOfFollowUp.toString()),
 
