@@ -75,7 +75,7 @@ class LeadEnquiryForReportCard extends StatelessWidget {
                           dataLabelSettings:
                               const DataLabelSettings(isVisible: true),
                           onPointTap: (ChartPointDetails details) async {
-                            final statusId =
+                            final enquiryForId =
                                 data[details.pointIndex!].enquiryForId;
                             final leadReportProvider =
                                 Provider.of<LeadReportProvider>(context,
@@ -85,8 +85,15 @@ class LeadEnquiryForReportCard extends StatelessWidget {
                             int userId = int.tryParse(
                                     preferences.getString('userId') ?? "0") ??
                                 0;
-                            leadReportProvider.setStatus(statusId);
-                            leadReportProvider.setUserFilterStatus(userId);
+                                
+                            leadReportProvider.setStatus(0);
+                            leadReportProvider.setUserFilterStatus(
+                                dashboardProvider.selectedUser);
+                            leadReportProvider
+                                .setEnquiryForFilter(enquiryForId);
+                            leadReportProvider.setFromandToDate(
+                                dashboardProvider.formattedFromDate,
+                                dashboardProvider.formattedToDate);
 
                             Navigator.of(context).push(
                               MaterialPageRoute(

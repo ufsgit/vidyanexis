@@ -52,6 +52,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
 
       provider.getEnquirySource(context);
+      provider.getEnquiryFor(context);
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
@@ -270,6 +271,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                       ),
                     ),
                   ),
+                  if (!widget.fromDashBoard)
                   if (leadReportProvider.isFilter)
                     SliverToBoxAdapter(
                       child: Container(
@@ -382,7 +384,12 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 children: [
                                   const Text('Assigned Staff: '),
                                   DropdownButton<int>(
-                                    value: leadReportProvider.selectedUser,
+                                    value: provider.searchUserDetails.any(
+                                            (element) =>
+                                                element.userDetailsId ==
+                                                leadReportProvider.selectedUser)
+                                        ? leadReportProvider.selectedUser
+                                        : null,
                                     hint: const Text('All'),
                                     items: provider.searchUserDetails
                                         .map((user) => DropdownMenuItem<int>(
@@ -398,6 +405,138 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       if (newValue != null) {
                                         leadReportProvider.setUserFilterStatus(
                                             newValue); // Update the status in the provider
+                                      } else {
+                                        leadReportProvider
+                                            .selectDateFilterOption(null);
+                                        leadReportProvider.removeStatus();
+                                        leadReportProvider.getSearchLeadReports(
+                                            '', '', '', '', context);
+                                      }
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                    color:
+                                        leadReportProvider.selectedEnquiryFor !=
+                                                null
+                                            ? AppColors.primaryBlue
+                                            : Colors.grey[300]!),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Text('Enquiry For: '),
+                                  DropdownButton<int>(
+                                    value: provider.enquiryForList.any(
+                                            (element) =>
+                                                element.enquiryForId ==
+                                                leadReportProvider
+                                                    .selectedEnquiryFor)
+                                        ? leadReportProvider.selectedEnquiryFor
+                                        : null,
+                                    hint: const Text('All'),
+                                    items: provider.enquiryForList
+                                        .map((enquiry) => DropdownMenuItem<int>(
+                                              value: enquiry.enquiryForId!,
+                                              child: Text(
+                                                enquiry.enquiryForName ?? '',
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider.setEnquiryForFilter(
+                                            newValue); // Update the status in the provider
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            leadReportProvider.status,
+                                            context);
+                                      } else {
+                                        leadReportProvider
+                                            .selectDateFilterOption(null);
+                                        leadReportProvider.removeStatus();
+                                        leadReportProvider.getSearchLeadReports(
+                                            '', '', '', '', context);
+                                      }
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            Container(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                    color: leadReportProvider
+                                                .selectedEnquirySource !=
+                                            null
+                                        ? AppColors.primaryBlue
+                                        : Colors.grey[300]!),
+                              ),
+                              child: Row(
+                                children: [
+                                  const Text('Enquiry Source: '),
+                                  DropdownButton<int>(
+                                    value: provider.enquiryData.any((element) =>
+                                            element.enquirySourceId ==
+                                            leadReportProvider
+                                                .selectedEnquirySource)
+                                        ? leadReportProvider
+                                            .selectedEnquirySource
+                                        : null,
+                                    hint: const Text('All'),
+                                    items: provider.enquiryData
+                                        .map((source) => DropdownMenuItem<int>(
+                                              value: source.enquirySourceId!,
+                                              child: Text(
+                                                source.enquirySourceName ?? '',
+                                                style: const TextStyle(
+                                                    fontSize: 14),
+                                              ),
+                                            ))
+                                        .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider
+                                            .setEnquirySourceFilter(newValue);
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            leadReportProvider.status,
+                                            context);
+                                      } else {
+                                        leadReportProvider
+                                            .selectDateFilterOption(null);
+                                        leadReportProvider.removeStatus();
+                                        leadReportProvider.getSearchLeadReports(
+                                            '', '', '', '', context);
                                       }
                                     },
                                     underline: Container(),
@@ -440,7 +579,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             if (leadReportProvider.fromDate != null ||
                                 leadReportProvider.toDate != null ||
                                 leadReportProvider.selectedStatus != null ||
-                                leadReportProvider.selectedUser != null)
+                                leadReportProvider.selectedUser != null ||
+                                leadReportProvider.selectedEnquiryFor != null ||
+                                leadReportProvider.selectedEnquirySource !=
+                                    null)
                               ElevatedButton(
                                 onPressed: () {
                                   leadReportProvider

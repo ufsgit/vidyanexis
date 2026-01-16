@@ -91,8 +91,14 @@ class WeeklyReportCard extends StatelessWidget {
                               int userId = int.tryParse(
                                       preferences.getString('userId') ?? "0") ??
                                   0;
+                                  
                               leadReportProvider.setStatus(statusId);
-                              leadReportProvider.setUserFilterStatus(userId);
+                              leadReportProvider.setUserFilterStatus(
+                                  dashBoardProvider.selectedUser);
+                              leadReportProvider.setEnquiryForFilter(0);
+                              leadReportProvider.setFromandToDate(
+                                  dashBoardProvider.formattedFromDate,
+                                  dashBoardProvider.formattedToDate);
 
                               Navigator.of(context).push(
                                 MaterialPageRoute(
