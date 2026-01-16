@@ -829,20 +829,24 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                         child: Text('No.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 14,
                                                 color: Color(0xFF607185))),
                                       ),
                                     ),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Date',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Time',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     // TableWidget(
                                     //     flex: 1,
@@ -904,6 +908,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
+                                                          fontSize: 12,
                                                         )),
                                               ),
                                             ),
@@ -936,7 +941,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 14,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
@@ -945,10 +950,12 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
 
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: formatDate(
                                                     task.attendanceDate)),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: formatTime(
                                                     task.attendanceTime)),
                                             // TableWidget(

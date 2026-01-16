@@ -924,12 +924,14 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                         child: Text('No.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 14,
                                                 color: Color(0xFF607185))),
                                       ),
                                     ),
                                     TableWidget(
                                         flex: 2,
                                         title: 'Customer Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     // TableWidget(
                                     //     flex: 1,
@@ -942,30 +944,37 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                     TableWidget(
                                         flex: 1,
                                         title: 'Complaint Type',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Complaint Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 2,
                                         title: 'Complaint Description',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Added Date',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Amount',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Status',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'View Details',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                   ],
                                 ),
@@ -1019,6 +1028,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
+                                                          fontSize: 12,
                                                         )),
                                               ),
                                             ),
@@ -1079,7 +1089,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                               ),
                                                             ),
                                                             const SizedBox(
@@ -1105,7 +1115,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                 ),
@@ -1118,16 +1128,20 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                             //     title: Service.address1),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: Service.serviceTypeName),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: Service.serviceName
                                                     .toString()),
                                             TableWidget(
                                                 flex: 2,
+                                                fontSize: 12,
                                                 title: Service.description),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: (Service
                                                         .createDate.isNotEmpty)
                                                     ? DateFormat('dd MMM yyyy')
@@ -1136,6 +1150,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                     : ''),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title:
                                                     "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
                                             TableWidget(
@@ -1169,7 +1184,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                         .getStatusTextColor(
                                                             Service
                                                                 .serviceStatusId),
-                                                    fontSize: 13,
+                                                    fontSize: 12,
                                                   ),
                                                 ),
                                               ),
