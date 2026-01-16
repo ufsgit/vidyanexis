@@ -2,7 +2,7 @@ class HttpUrls {
   //baseurls
   //live
 
-  //static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   //static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   //static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
 
