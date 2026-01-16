@@ -52,6 +52,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
 
       provider.getEnquirySource(context);
+      provider.getEnquiryFor(context);
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
@@ -460,6 +461,12 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       if (newValue != null) {
                                         leadReportProvider.setEnquiryForFilter(
                                             newValue); // Update the status in the provider
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            leadReportProvider.status,
+                                            context);
                                       } else {
                                         leadReportProvider
                                             .selectDateFilterOption(null);
@@ -517,6 +524,12 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                       if (newValue != null) {
                                         leadReportProvider
                                             .setEnquirySourceFilter(newValue);
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            leadReportProvider.status,
+                                            context);
                                       } else {
                                         leadReportProvider
                                             .selectDateFilterOption(null);
