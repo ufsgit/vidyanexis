@@ -50,6 +50,9 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
+      leadReportProvider.setStatus(0);
+      leadReportProvider.setEnquiryForFilter(0);
+      leadReportProvider.setFromandToDate('', '');
 
       provider.getEnquirySource(context);
       provider.getEnquiryFor(context);

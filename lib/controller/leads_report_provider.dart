@@ -254,6 +254,11 @@ class LeadReportProvider extends ChangeNotifier {
     _selectedEnquirySource = value;
     notifyListeners();
   }
+  void setFromandToDate(String fromDate, String toDate) {
+    _fromDateS = fromDate;
+    _toDateS = toDate;
+    notifyListeners();
+  }
 
   //invertor and panel details
   final TextEditingController invertorBrandController = TextEditingController();
@@ -841,10 +846,10 @@ class LeadReportProvider extends ChangeNotifier {
       }
       notifyListeners();
 
-      _search = search;
-      _fromDateS = fromDate;
-      _toDateS = toDate;
-      _status = status;
+      // _search = search;
+      // _fromDateS = fromDate;
+      // _toDateS = toDate;
+      // _status = status;
 
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
@@ -875,7 +880,7 @@ class LeadReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Status_Id=${_selectedStatus ?? 0}&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
 
       if (response.statusCode == 200) {
         final data = response.data;
