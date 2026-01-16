@@ -3,7 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -36,6 +39,7 @@ class QuotationDetailsPagePhone extends StatefulWidget {
   final List<QuotationDetail> quotation_details;
   final List<BillOfMaterial> bill_of_materials;
   final List<ProductionChartModel> productiopnChart;
+  final QuatationListModel quotation;
 
   const QuotationDetailsPagePhone(
       {super.key,
@@ -56,7 +60,8 @@ class QuotationDetailsPagePhone extends StatefulWidget {
       required this.advance,
       required this.completion,
       required this.onDelivery,
-      required this.productiopnChart});
+      required this.productiopnChart,
+      required this.quotation});
 
   @override
   State<QuotationDetailsPagePhone> createState() =>
@@ -108,124 +113,208 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
               color: AppColors.textBlack),
         ),
         actions: [
-          if (settingsprovider.menuIsViewMap[32] == 1)
-            CustomOutlinedSvgButton(
-              onPressed: () async {
-                await Loader.showLoader(context);
-                await customerDetailsProvider.getQuatationListByMasterId(
-                    widget.quotationId, context);
-                await customerDetailsProvider.fetchLeadDetails(
-                    widget.customerId, context);
-                await settingsprovider.getCompanyDetails();
-                generateAndPrintPDFs(
-                    context: context, //     companyDetails:
-                    companyDetails: settingsprovider.companyDetails[0],
-                    customerDetails: customerDetailsProvider.leadDetails![0],
-                    quotationData:
-                        customerDetailsProvider.quotationListByMaster[0]);
-                // await QuotationPDFPrinter.printQuotationDialog(
-                //     title: 'Quotation',
-                //     companyDetails:
-                //         settingsprovider.companyDetails[0],
-                //     customerDetails:
-                //         customerDetailsProvider.leadDetails![0],
-                //     quotationData: customerDetailsProvider
-                //         .quotationListByMaster[0]);
-                Loader.stopLoader(context);
-              },
-              svgPath: 'assets/images/Print.svg',
-              label: 'Print',
-              breakpoint: 860,
-              foregroundColor: AppColors.primaryBlue,
-              backgroundColor: Colors.white,
-              borderSide: BorderSide(color: AppColors.primaryBlue),
-            ),
+          if (settingsprovider.menuIsViewMap[32] == 1) ...[
+            if (widget.quotation.quotationTypeId == 2)
+              CustomOutlinedSvgButton(
+                onPressed: () async {
+                  await Loader.showLoader(context);
+                  await customerDetailsProvider.getQuatationListByMasterId(
+                      widget.quotationId, context);
+                  await customerDetailsProvider.fetchLeadDetails(
+                      widget.customerId, context);
+                  await settingsprovider.getCompanyDetails();
+                  printCommercialPDFs(
+                      context: context, //     companyDetails:
+                      companyDetails: settingsprovider.companyDetails[0],
+                      customerDetails: customerDetailsProvider.leadDetails![0],
+                      quotationData:
+                          customerDetailsProvider.quotationListByMaster[0]);
+                  Loader.stopLoader(context);
+                },
+                svgPath: 'assets/images/Print.svg',
+                label: 'Print Commercial',
+                breakpoint: 860,
+                foregroundColor: AppColors.primaryBlue,
+                backgroundColor: Colors.white,
+                borderSide: BorderSide(color: AppColors.primaryBlue),
+              ),
+            if (widget.quotation.quotationTypeId == 1)
+              CustomOutlinedSvgButton(
+                onPressed: () async {
+                  await Loader.showLoader(context);
+                  await customerDetailsProvider.getQuatationListByMasterId(
+                      widget.quotationId, context);
+                  await customerDetailsProvider.fetchLeadDetails(
+                      widget.customerId, context);
+                  await settingsprovider.getCompanyDetails();
+                  printResidentialPDFs(
+                      context: context, //     companyDetails:
+                      companyDetails: settingsprovider.companyDetails[0],
+                      customerDetails: customerDetailsProvider.leadDetails![0],
+                      quotationData:
+                          customerDetailsProvider.quotationListByMaster[0]);
+                  Loader.stopLoader(context);
+                },
+                svgPath: 'assets/images/Print.svg',
+                label: 'Print Residential',
+                breakpoint: 860,
+                foregroundColor: AppColors.primaryBlue,
+                backgroundColor: Colors.white,
+                borderSide: BorderSide(color: AppColors.primaryBlue),
+              ),
+          ],
           CustomPopMenuButtonWidget(
             onOptionSelected: (PopupMenuOptions option) async {
               // Add async keyword here
               switch (option) {
                 case PopupMenuOptions.edit:
-                  customerDetailsProvider.customerId = widget.customerId;
-                  customerDetailsProvider.qproductnameController.text =
-                      widget.title;
-                  customerDetailsProvider.advanceController.text =
-                      widget.advance;
-                  customerDetailsProvider.deliveryController.text =
-                      widget.onDelivery;
-                  customerDetailsProvider.workCompletionController.text =
-                      widget.completion;
-                  customerDetailsProvider.qsubsidyAmountController.text =
-                      widget.subsidy;
-                  customerDetailsProvider.qwarrentyController.text =
-                      widget.warranty;
-                  customerDetailsProvider.qtermsConditionsController.text =
-                      widget.terms;
-                  // customerDetailsProvider.updateItemsFromQuotationDetails(
-                  //     widget.quotation_details,
-                  //     widget.bill_of_materials,
-                  //     widget.productiopnChart);
-                  customerDetailsProvider.selectedQuotationStatus =
-                      int.parse(widget.statusId);
-                  customerDetailsProvider.selectedQuotationStatusName =
-                      widget.status;
-
-                  customerDetailsProvider.quotationStatusController.text =
-                      widget.status;
-                  customerDetailsProvider.updateSubtotal();
                   await customerDetailsProvider.getQuatationListByMasterId(
                       widget.quotationId, context);
+                  final quotation =
+                      customerDetailsProvider.quotationListByMaster.first;
+
+                  // ---- BASIC DETAILS ----
+                  customerDetailsProvider.customerId = widget.customerId;
+                  customerDetailsProvider.qproductnameController.text =
+                      quotation.productName;
+                  customerDetailsProvider.advanceController.text =
+                      quotation.advancePercentage;
+                  customerDetailsProvider.deliveryController.text =
+                      quotation.onDeliveryPercentage;
+                  customerDetailsProvider.workCompletionController.text =
+                      quotation.workCompletionPercentage;
+                  customerDetailsProvider.qsubsidyAmountController.text =
+                      quotation.subsidyAmount;
+                  customerDetailsProvider.qwarrentyController.text =
+                      quotation.warranty;
+                  customerDetailsProvider.qtermsConditionsController.text =
+                      quotation.termsAndConditions;
+
+                  // ---- STATUS ----
+                  customerDetailsProvider.selectedQuotationStatus =
+                      quotation.quotationStatusId;
+                  customerDetailsProvider.selectedQuotationStatusName =
+                      quotation.quotationStatusName;
+
+                  // ---- FEES ----
+                  customerDetailsProvider.registrationFeeController.text =
+                      quotation.ksebRegistrationFee.toString();
+                  customerDetailsProvider.feasibilityFeeController.text =
+                      quotation.ksebFeasibilityFee.toString();
+                  customerDetailsProvider.systemPriceController.text =
+                      quotation.ksebSystemPrice.toString();
+                  customerDetailsProvider.additionalStructureController.text =
+                      quotation.additionalStructure.toString();
+
+                  // ---- TOTALS ----
                   customerDetailsProvider.subtotalController.text =
-                      customerDetailsProvider
-                          .quotationListByMaster[0].totalAmount
-                          .toString();
+                      quotation.totalAmount.toString();
                   customerDetailsProvider.totalController.text =
-                      customerDetailsProvider.quotationListByMaster[0].netTotal
-                          .toString();
+                      quotation.netTotal.toString();
+
+                  // ---- ITEMS ----
                   customerDetailsProvider.updateItemsFromQuotationDetailsNew(
-                      customerDetailsProvider
-                          .quotationListByMaster[0].quotationDetails,
-                      customerDetailsProvider
-                          .quotationListByMaster[0].billOfMaterials,
-                      customerDetailsProvider
-                          .quotationListByMaster[0].productionChart);
-                  final taxableAmount = double.tryParse(customerDetailsProvider
-                          .quotationListByMaster[0].taxableAmount) ??
-                      0.0;
-                  final gstAmount = double.tryParse(customerDetailsProvider
-                          .quotationListByMaster[0].gstAmount) ??
-                      0.0;
-                  final gstPer = double.tryParse(customerDetailsProvider
-                          .quotationListByMaster[0].gstPer) ??
-                      0.0;
+                    quotation.quotationDetails,
+                    quotation.billOfMaterials,
+                    quotation.productionChart,
+                  );
+
+                  // ---- GST ----
+                  final taxable = double.tryParse(quotation.taxableAmount) ?? 0;
+                  final gst = double.tryParse(quotation.gstAmount) ?? 0;
+                  final gstPer = double.tryParse(quotation.gstPer) ?? 0;
 
                   customerDetailsProvider.gstTaxableAmountController.text =
-                      taxableAmount.toStringAsFixed(2);
+                      taxable.toStringAsFixed(2);
                   customerDetailsProvider.cgstTaxableAmountController.text =
-                      (taxableAmount / 2).toStringAsFixed(2);
+                      (taxable / 2).toStringAsFixed(2);
                   customerDetailsProvider.sgstTaxableAmountController.text =
-                      (taxableAmount / 2).toStringAsFixed(2);
+                      (taxable / 2).toStringAsFixed(2);
 
                   customerDetailsProvider.totalGstAmountController.text =
-                      gstAmount.toStringAsFixed(2);
+                      gst.toStringAsFixed(2);
                   customerDetailsProvider.totalCgstAmountController.text =
-                      (gstAmount / 2).toStringAsFixed(2);
+                      (gst / 2).toStringAsFixed(2);
                   customerDetailsProvider.totalSgstAmountController.text =
-                      (gstAmount / 2).toStringAsFixed(2);
+                      (gst / 2).toStringAsFixed(2);
 
                   customerDetailsProvider.totalGstPerController.text =
                       gstPer.toStringAsFixed(2);
-                  customerDetailsProvider.totalSgstPerController.text =
-                      (gstPer / 2).toStringAsFixed(2);
                   customerDetailsProvider.totalCgstPerController.text =
                       (gstPer / 2).toStringAsFixed(2);
+                  customerDetailsProvider.totalSgstPerController.text =
+                      (gstPer / 2).toStringAsFixed(2);
 
+                  // ---- QUOTATION TYPE ----
+                  customerDetailsProvider.quotationTypeController.text =
+                      quotation.quotationTypeName;
+                  customerDetailsProvider.selectedQuotationType =
+                      quotation.quotationTypeId;
+
+                  // ---- CABLE DETAILS ----
+                  customerDetailsProvider.cableStructureController.text =
+                      quotation.cableStructure;
+                  customerDetailsProvider.cableTypeController.text =
+                      quotation.cableType;
+                  customerDetailsProvider.cableShortCircuitTempController.text =
+                      quotation.cableShortCircuitTemp;
+                  customerDetailsProvider.cableStandardController.text =
+                      quotation.cableStandard;
+                  customerDetailsProvider.cableConductorClassController.text =
+                      quotation.cableConductorClass;
+                  customerDetailsProvider.cableMaterialController.text =
+                      quotation.cableMaterial;
+                  customerDetailsProvider.cableProtectionController.text =
+                      quotation.cableProtection;
+                  customerDetailsProvider.cableWarrantyController.text =
+                      quotation.cableWarranty;
+                  customerDetailsProvider.cableTensileStrengthController.text =
+                      quotation.cableTensileStrength;
+
+                  // ---- OTHER DETAILS ----
+                  customerDetailsProvider.plantCapacityController.text =
+                      quotation.plantCapacity;
+                  customerDetailsProvider.moduleTechnologiesController.text =
+                      quotation.moduleTechnologies;
+                  customerDetailsProvider
+                      .mountingStructureTechnologiesController
+                      .text = quotation.mountingStructureTechnologies;
+                  customerDetailsProvider.projectSchemeController.text =
+                      quotation.projectScheme;
+                  customerDetailsProvider.powerEvacuationController.text =
+                      quotation.powerEvacuation;
+                  customerDetailsProvider.areaApproximateController.text =
+                      quotation.areaApproximate;
+                  customerDetailsProvider.solarPlantOutputConnectionController
+                      .text = quotation.solarPlantOutputConnection;
+                  customerDetailsProvider.schemeController.text =
+                      quotation.scheme;
+                  customerDetailsProvider.qvalidityController.text =
+                      quotation.validity;
+                  customerDetailsProvider.qtendorNumberController.text =
+                      quotation.tendorNumber;
+                  customerDetailsProvider.paymentTermsController.text =
+                      quotation.paymentTermsName;
+                  customerDetailsProvider.incoTermsController.text =
+                      quotation.incoTerms;
+                  customerDetailsProvider.shippingChargesController.text =
+                      quotation.shippingCharges;
                   customerDetailsProvider.totalAdCESSController.text =
-                      customerDetailsProvider.quotationListByMaster[0].adCess
-                          .toString();
+                      quotation.otherTax;
+                  customerDetailsProvider.totalCgstAmountController.text =
+                      quotation.totalCgstAmount;
+                  customerDetailsProvider.totalSgstAmountController.text =
+                      quotation.totalSgstAmount;
+
+                  customerDetailsProvider.commercialItems =
+                      quotation.commercialItems;
+
+                  customerDetailsProvider.scopeOfWorkItems =
+                      quotation.scopeOfWorkItems;
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (c) => AddQuotationWidgetMobile(
+                      builder: (c) => QuotationCreationWidget(
                         customerId: widget.customerId,
                         quotationId: widget.quotationId,
                         isEdit: true,

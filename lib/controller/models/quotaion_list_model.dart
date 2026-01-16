@@ -227,7 +227,7 @@ class QuotationDetail {
   int quantity;
   double unitPrice;
   int quotationDetailsId;
-  double MRP;
+  String MRP;
 
   QuotationDetail({
     required this.amount,
@@ -245,7 +245,7 @@ class QuotationDetail {
         itemName: json["ItemName"] ?? '',
         quantity: json["Quantity"] ?? 0,
         unitPrice: json["UnitPrice"] ?? 0,
-        MRP: json["MRP"] ?? 0,
+        MRP: json["MRP"]?.toString() ?? '',
         quotationDetailsId: json["Quotation_Details_Id"] ?? 0,
       );
 

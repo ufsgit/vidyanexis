@@ -43,30 +43,30 @@ class QuotationDetailsWidget extends StatelessWidget {
                 ),
               ),
               const Spacer(),
-              if (settingsprovider.menuIsViewMap[32] == 1)
-                CustomOutlinedSvgButton(
-                  onPressed: () async {
-                    await Loader.showLoader(context);
-                    await customerDetailsProvider.fetchLeadDetails(
-                        customerId, context);
-                    await settingsprovider.getCompanyDetails();
+              // if (settingsprovider.menuIsViewMap[32] == 1)
+              //   CustomOutlinedSvgButton(
+              //     onPressed: () async {
+              //       await Loader.showLoader(context);
+              //       await customerDetailsProvider.fetchLeadDetails(
+              //           customerId, context);
+              //       await settingsprovider.getCompanyDetails();
 
-                    await generateAndPrintPDFs(
-                        context: context,
-                        companyDetails: settingsprovider.companyDetails[0],
-                        customerDetails:
-                            customerDetailsProvider.leadDetails![0],
-                        quotationData:
-                            customerDetailsProvider.quotationListByMaster[0]);
-                    Loader.stopLoader(context);
-                  },
-                  svgPath: 'assets/images/Print.svg',
-                  label: 'Print',
-                  breakpoint: 860,
-                  foregroundColor: AppColors.primaryBlue,
-                  backgroundColor: Colors.white,
-                  borderSide: BorderSide(color: AppColors.primaryBlue),
-                ),
+              //       await generateAndPrintPDFs(
+              //           context: context,
+              //           companyDetails: settingsprovider.companyDetails[0],
+              //           customerDetails:
+              //               customerDetailsProvider.leadDetails![0],
+              //           quotationData:
+              //               customerDetailsProvider.quotationListByMaster[0]);
+              //       Loader.stopLoader(context);
+              //     },
+              //     svgPath: 'assets/images/Print.svg',
+              //     label: 'Print',
+              //     breakpoint: 860,
+              //     foregroundColor: AppColors.primaryBlue,
+              //     backgroundColor: Colors.white,
+              //     borderSide: BorderSide(color: AppColors.primaryBlue),
+              //   ),
               const SizedBox(width: 12),
               if (settingsprovider.menuIsEditMap[16] == 1)
                 CustomOutlinedSvgButton(
