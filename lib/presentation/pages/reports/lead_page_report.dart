@@ -10,6 +10,9 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/http/loader.dart';
+
 import 'package:vidyanexis/presentation/widgets/home/add_followup_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
@@ -624,7 +627,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 width: 70,
                                 child: Padding(
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 12.0, horizontal: 25.0),
+                                      vertical: 12.0, horizontal: 16.0),
                                   child: Text('No',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
@@ -633,6 +636,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               ),
                               TableWidget(
                                   flex: 1,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0, horizontal: 24.0),
                                   title: 'Lead name',
                                   color: Color(0xFF607185)),
                               TableWidget(
@@ -657,6 +662,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   width: 150,
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0, horizontal: 24.0),
                                   title: 'Status',
                                   color: Color(0xFF607185)),
                             ],
@@ -668,6 +675,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                   SliverList(
                     delegate: SliverChildBuilderDelegate(
                       (context, index) {
+                        if (index < 0 ||
+                            index >= leadReportProvider.leadReportData.length) {
+                          return null; // Return null to indicate end of list, though childCount handles it
+                        }
                         var lead = leadReportProvider.leadReportData[index];
                         return Container(
                           color: Colors.grey[50], // Match bg
@@ -703,7 +714,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     width: 70,
                                     child: Padding(
                                       padding: const EdgeInsets.symmetric(
-                                          vertical: 12.0, horizontal: 25.0),
+                                          vertical: 12.0, horizontal: 16.0),
                                       child: Text(
                                           ((index + 1) +
                                                   leadReportProvider
@@ -799,30 +810,109 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   TableWidget(
                                     width: 130,
                                     data: InkWell(
-                                      onTap: () {
+                                      onTap: () async {
                                         setState(() {
                                           viewProfile = false;
                                           viewFollowUp = true;
                                         });
-                                        leadReportProvider
-                                            .setCutomerId(lead.customerId);
-                                        leadReportProvider.statusController
-                                            .text = lead.statusName;
 
-                                        leadReportProvider
-                                            .assignToFollowUpController
-                                            .text = lead.toUserName;
-                                        leadReportProvider
-                                                .nextFollowUpDateController
-                                                .text =
-                                            lead.nextFollowUpDate.isNotEmpty
-                                                ? _formatDateSafely(
-                                                    lead.nextFollowUpDate)
-                                                : '';
-                                        // leadReportProvider.messageController.text =
-                                        //     lead.remark;
+                                        // Show loader while fetching details
+                                        Loader.showLoader(context);
 
-                                        Scaffold.of(context).openEndDrawer();
+                                        try {
+                                          // Fetch full details to populate Branch, Dept, etc.
+                                          await Provider.of<
+                                                      LeadDetailsProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .fetchLeadDetails(
+                                                  lead.customerId.toString(),
+                                                  context);
+
+                                          // Stop Loader
+                                          Loader.stopLoader(context);
+
+                                          // Update LeadReportProvider (for local view state if needed)
+                                          leadReportProvider
+                                              .setCutomerId(lead.customerId);
+                                          leadReportProvider.statusController
+                                              .text = lead.statusName;
+                                          leadReportProvider
+                                              .assignToFollowUpController
+                                              .text = lead.toUserName;
+                                          leadReportProvider
+                                                  .nextFollowUpDateController
+                                                  .text =
+                                              lead.nextFollowUpDate.isNotEmpty
+                                                  ? _formatDateSafely(
+                                                      lead.nextFollowUpDate)
+                                                  : '';
+
+                                          // Update LeadsProvider and DropDownProvider for AddFollowupDrawerWidget
+                                          // Overwrite fields that fetchLeadDetails might have set incorrectly for this context
+                                          final leadsProvider =
+                                              Provider.of<LeadsProvider>(
+                                                  context,
+                                                  listen: false);
+                                          final dropDownProvider =
+                                              Provider.of<DropDownProvider>(
+                                                  context,
+                                                  listen: false);
+                                          final settingsProvider =
+                                              Provider.of<SettingsProvider>(
+                                                  context,
+                                                  listen: false);
+
+                                          leadsProvider
+                                              .setCutomerId(lead.customerId);
+
+                                          // Populate the staff list based on the fetched branch/dept
+                                          dropDownProvider
+                                              .filterStaffByBranchAndDepartment(
+                                            branchId: settingsProvider
+                                                .selectedBranchId,
+                                            departmentId: settingsProvider
+                                                .selectedDepartmentId,
+                                          );
+
+                                          // Ensure Status is correct (fetchLeadDetails sets followUpStatusController, drawer uses statusController)
+                                          leadsProvider.statusController.text =
+                                              lead.statusName;
+                                          dropDownProvider.selectedStatusId =
+                                              int.tryParse(
+                                                  lead.statusId.toString());
+
+                                          // Ensure Assigned Staff is correct (drawer uses searchUserController)
+                                          leadsProvider.searchUserController
+                                              .text = lead.toUserName;
+                                          dropDownProvider.selectedUserId =
+                                              int.tryParse(
+                                                  lead.toUserId.toString());
+
+                                          // Ensure Next Follow Up Date
+                                          leadsProvider
+                                                  .nextFollowUpDateController
+                                                  .text =
+                                              lead.nextFollowUpDate.isNotEmpty
+                                                  ? _formatDateSafely(
+                                                      lead.nextFollowUpDate)
+                                                  : '';
+
+                                          // Ensure Remarks
+                                          leadsProvider.messageController.text =
+                                              lead.remark;
+
+                                          // Branch and Department are already handled by fetchLeadDetails,
+                                          // but we can double check/force if needed.
+                                          // fetchLeadDetails uses the API response which should be accurate.
+                                        } catch (e) {
+                                          Loader.stopLoader(context);
+                                          print('Error updating providers: $e');
+                                        }
+
+                                        if (context.mounted) {
+                                          Scaffold.of(context).openEndDrawer();
+                                        }
                                       },
                                       child: Image.asset(
                                         lead.lateFollowUp == '0'
@@ -851,7 +941,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           : const EdgeInsets.all(0),
                                       decoration: BoxDecoration(
                                         color: StatusUtils.getStatusColor(
-                                            int.parse(lead.statusId)),
+                                            int.tryParse(lead.statusId) ?? 0),
                                         borderRadius: BorderRadius.circular(6),
                                         border: Border.all(
                                             color: Colors.black45, width: 0.1),
@@ -860,7 +950,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         lead.statusName,
                                         style: TextStyle(
                                           color: StatusUtils.getStatusTextColor(
-                                              int.parse(lead.statusId)),
+                                              int.tryParse(lead.statusId) ?? 0),
                                           fontSize: 12,
                                         ),
                                       ),
@@ -893,7 +983,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                 ],
               ),
             ),
-            // bottomNavigationBar: _buildPaginationControls(context),
+            bottomNavigationBar: _buildPaginationControls(context),
             endDrawer: viewProfile
                 ? LeadDetailsWidget(
                     onEditPressed: () async {
@@ -1084,6 +1174,96 @@ class _LeadsPageReportState extends State<LeadPageReport> {
     }
   }
 
+  Widget _buildPaginationControls(BuildContext context) {
+    return Consumer<LeadReportProvider>(
+      builder: (context, provider, child) {
+        if (provider.totalPages <= 0) return const SizedBox.shrink();
+
+        return Container(
+          height: 80,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(top: BorderSide(color: Colors.grey[200]!)),
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text(
+                  'Total Tasks: ${provider.totalSize}',
+                  style: const TextStyle(
+                    color: Color(0xFF6C7C93),
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ...List.generate(provider.totalPages, (index) {
+                    int page = index + 1;
+                    // Logic to show limited pages if many (simple version for now: max 5 pages or smart check)
+                    // If pages > 7, show 1, 2, ..., current-1, current, current+1, ..., last
+                    if (provider.totalPages > 7) {
+                      if (index > 1 &&
+                          index < provider.totalPages - 2 &&
+                          (page < provider.pageIndex - 1 ||
+                              page > provider.pageIndex + 1)) {
+                        if (page == provider.pageIndex - 2 ||
+                            page == provider.pageIndex + 2) {
+                          return const Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 4),
+                              child: Text('...'));
+                        }
+                        return const SizedBox.shrink();
+                      }
+                    }
+
+                    bool isSelected = page == provider.pageIndex;
+                    return InkWell(
+                      onTap: () {
+                        provider.goToPage(page);
+                        // Use stored filters from provider
+                        provider.getSearchLeadReports(
+                            provider.search,
+                            provider.fromDateS,
+                            provider.toDateS,
+                            provider.status,
+                            context);
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 4),
+                        width: 32,
+                        height: 32,
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primaryBlue
+                              : const Color(0xFFEaeaeb),
+                          shape: BoxShape.circle,
+                        ),
+                        alignment: Alignment.center,
+                        child: Text(
+                          '$page',
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   void _showTransferDialog(BuildContext parentContext) {
     final leadReportProvider =
         Provider.of<LeadReportProvider>(parentContext, listen: false);
@@ -1103,21 +1283,28 @@ class _LeadsPageReportState extends State<LeadPageReport> {
     settingsProvider.selectedBranchId = null;
     settingsProvider.selectedDepartmentId = null;
     dropDownProvider.selectedStatusId = null; // Set to null using setter
-    dropDownProvider.selectedUserId = null; // Set to null using setter
     dropDownProvider.filteredStaffData = []; // Clear staff list
 
     // Local controllers for display text (optional if not used for submit)
     final statusController = TextEditingController();
     final branchController = TextEditingController();
     final departmentController = TextEditingController();
-    final staffController = TextEditingController();
     final remarkController = TextEditingController();
     final nextFollowUpDateController = TextEditingController();
+
+    // Config for distribution
+    Map<int, int> assignments = {}; // UserId -> Count
+    Map<int, TextEditingController> assignmentControllers = {};
 
     showDialog(
       context: parentContext,
       builder: (dialogContext) {
         return StatefulBuilder(builder: (context, setState) {
+          int totalSelected = leadReportProvider.selectedLeadIds.length;
+          int assignedTotal =
+              assignments.values.fold(0, (sum, count) => sum + count);
+          int balance = totalSelected - assignedTotal;
+
           return AlertDialog(
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
@@ -1126,8 +1313,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
             ),
             contentPadding: const EdgeInsets.all(24),
             content: SizedBox(
-              width: MediaQuery.of(context).size.width > 600
-                  ? 500
+              width: MediaQuery.of(context).size.width > 900
+                  ? 800
                   : MediaQuery.of(context).size.width * 0.9,
               child: SingleChildScrollView(
                 child: Consumer2<DropDownProvider, SettingsProvider>(
@@ -1199,8 +1386,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                         selectedBranch.branchName ?? '';
                                     settingsProvider.setSelectedDepartmentId(0);
                                     departmentController.clear();
-                                    dropDownProvider.setSelectedUserId(0);
-                                    staffController.clear();
+
+                                    // Clear assignments when branch changes
+                                    setState(() {
+                                      assignments.clear();
+                                      assignmentControllers.clear();
+                                    });
+
                                     dropDownProvider
                                         .filterStaffByBranchAndDepartment(
                                       branchId: selectedId,
@@ -1236,8 +1428,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                             dept.departmentId == selectedId);
                                     departmentController.text =
                                         selectedDepartment.departmentName ?? '';
-                                    dropDownProvider.setSelectedUserId(0);
-                                    staffController.clear();
+
+                                    // Clear assignments when department changes
+                                    setState(() {
+                                      assignments.clear();
+                                      assignmentControllers.clear();
+                                    });
+
                                     dropDownProvider
                                         .filterStaffByBranchAndDepartment(
                                       branchId:
@@ -1250,31 +1447,127 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 16),
+                        const SizedBox(height: 24),
 
-                        // Assigned Staff
-                        CommonDropdown<int>(
-                          hintText: 'Assigned Staff*',
-                          items: dropDownProvider.filteredStaffData
-                              .map((staff) => DropdownItem<int>(
-                                    id: staff.userDetailsId,
-                                    name: staff.userDetailsName,
-                                  ))
-                              .toList(),
-                          controller: staffController,
-                          onItemSelected: (selectedId) {
-                            dropDownProvider.setSelectedUserId(selectedId);
-                            final selectedStaff = dropDownProvider
-                                .filteredStaffData
-                                .firstWhere((staff) =>
-                                    staff.userDetailsId == selectedId);
-                            staffController.text =
-                                selectedStaff.userDetailsName;
-                          },
-                          selectedValue: dropDownProvider.selectedUserId,
-                          enabled: settingsProvider.selectedBranchId != null &&
-                              settingsProvider.selectedDepartmentId != null,
+                        // Count Indicators
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Total Selected Lead : $totalSelected",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold)),
+                            Text("Balance Selected lead : $balance",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: balance < 0
+                                        ? Colors.red
+                                        : Colors.black)),
+                          ],
                         ),
+                        const Divider(),
+
+                        // Staff Table Header
+                        Container(
+                          color: const Color(0xFFF3F4F6),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 8, horizontal: 8),
+                          child: Row(
+                            children: [
+                              const SizedBox(
+                                  width: 40,
+                                  child: Text("No",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                              Expanded(
+                                  flex: 3,
+                                  child: const Text("Staff",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                              // Expanded(flex: 2, child: const Text("Currently Assigned", style: TextStyle(fontWeight: FontWeight.bold))),
+                              Expanded(
+                                  flex: 2,
+                                  child: const Text("New Assign",
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.bold))),
+                            ],
+                          ),
+                        ),
+
+                        // Staff List
+                        if (dropDownProvider.filteredStaffData.isNotEmpty)
+                          Container(
+                            height: 200, // Limit height
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.grey.shade300)),
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              itemCount:
+                                  dropDownProvider.filteredStaffData.length,
+                              separatorBuilder: (c, i) =>
+                                  const Divider(height: 1),
+                              itemBuilder: (context, index) {
+                                final staff =
+                                    dropDownProvider.filteredStaffData[index];
+                                final userId = staff.userDetailsId;
+
+                                if (!assignmentControllers
+                                    .containsKey(userId)) {
+                                  assignmentControllers[userId] =
+                                      TextEditingController();
+                                }
+
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4.0, horizontal: 8),
+                                  child: Row(
+                                    children: [
+                                      SizedBox(
+                                          width: 40,
+                                          child: Text("${index + 1}")),
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text(staff.userDetailsName)),
+                                      // Expanded(flex: 2, child: Text("0")), // Placeholder
+                                      Expanded(
+                                          flex: 2,
+                                          child: SizedBox(
+                                            height: 35,
+                                            child: TextField(
+                                              controller:
+                                                  assignmentControllers[userId],
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 0),
+                                              ),
+                                              onChanged: (val) {
+                                                int count =
+                                                    int.tryParse(val) ?? 0;
+                                                setState(() {
+                                                  assignments[userId] = count;
+                                                });
+                                              },
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        else
+                          const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(
+                                child: Text(
+                                    "Select Branch/Department to see staff")),
+                          ),
+
                         const SizedBox(height: 16),
 
                         // Remarks
@@ -1330,28 +1623,55 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             ),
                             const SizedBox(width: 8),
                             CustomElevatedButton(
-                              buttonText:
-                                  'Transfer', // Or "Add follow-up" if keeping text
+                              buttonText: 'Transfer',
                               onPressed: () {
-                                if (dropDownProvider.selectedStatusId == null ||
-                                    dropDownProvider.selectedUserId == null) {
+                                if (dropDownProvider.selectedStatusId == null) {
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Please select Status')),
+                                  );
+                                  return;
+                                }
+
+                                int assigned = assignments.values
+                                    .fold(0, (sum, count) => sum + count);
+                                if (assigned == 0) {
                                   ScaffoldMessenger.of(dialogContext)
                                       .showSnackBar(
                                     const SnackBar(
                                         content: Text(
-                                            'Please select Status and Staff')),
+                                            'Please assign leads to at least one staff member')),
+                                  );
+                                  return;
+                                }
+
+                                if (assigned > totalSelected) {
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Assigned count exceeds selected leads')),
                                   );
                                   return;
                                 }
 
                                 Navigator.pop(dialogContext); // Close dialog
 
-                                leadReportProvider.transferLeads(
+                                // Create map of userIds to Names for the API call
+                                Map<int, String> userNames = {};
+                                for (var staff
+                                    in dropDownProvider.filteredStaffData) {
+                                  userNames[staff.userDetailsId] =
+                                      staff.userDetailsName;
+                                }
+
+                                leadReportProvider.transferLeadsMultiUser(
                                   context: parentContext,
                                   statusId: dropDownProvider.selectedStatusId!,
                                   statusName: statusController.text,
-                                  toUserId: dropDownProvider.selectedUserId!,
-                                  toUserName: staffController.text,
+                                  assignments: assignments,
+                                  userNames: userNames,
                                   remark: remarkController.text,
                                   nextFollowUpDate:
                                       nextFollowUpDateController.text,

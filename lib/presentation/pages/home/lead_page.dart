@@ -1179,6 +1179,11 @@ class _LeadsPageState extends State<LeadPage> {
                                               itemCount:
                                                   leadProvider.leadData.length,
                                               itemBuilder: (context, index) {
+                                                if (index >=
+                                                    leadProvider
+                                                        .leadData.length) {
+                                                  return const SizedBox();
+                                                }
                                                 var lead = leadProvider
                                                     .leadData[index];
                                                 return MouseRegion(
@@ -1634,6 +1639,10 @@ class _LeadsPageState extends State<LeadPage> {
                                           itemCount:
                                               leadProvider.leadData.length,
                                           itemBuilder: (context, index) {
+                                            if (index >=
+                                                leadProvider.leadData.length) {
+                                              return const SizedBox();
+                                            }
                                             var lead =
                                                 leadProvider.leadData[index];
                                             return MouseRegion(

@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/task_summary_page.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -25,6 +27,10 @@ class DashBoardPage extends StatefulWidget {
 }
 
 class _DashBoardPageState extends State<DashBoardPage> {
+  int userId = 0;
+  String userName = "";
+  String userType = "";
+
   @override
   initState() {
     super.initState();
@@ -33,6 +39,22 @@ class _DashBoardPageState extends State<DashBoardPage> {
       final dashBoardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
       await dashBoardProvider.getTaskInfoDashBoard(context);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      dropDownProvider.getUserDetails(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
+      userName = preferences.getString('userName') ?? "";
+      userType = preferences.getString('userType') ?? "";
+      //not admin type assign user filter
+      if (userType != "1") {
+        dashBoardProvider.setUserFilterStatus(userId);
+      }
+
+      // Load initial data
+      await dashBoardProvider.getLeadData();
+      await dashBoardProvider.getWorkData();
+      await dashBoardProvider.getCustomers();
     });
   }
 
@@ -148,39 +170,40 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
             switch (activeTab) {
               case 0:
-                return dashBoardProvider.isDashBoardLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : AnimatedAlign(
-                        duration: const Duration(milliseconds: 600),
-                        alignment: safeIndex == 0
-                            ? const Alignment(0, 0)
-                            : const Alignment(-100, 0),
-                        child: LeadsOverViewTab(
-                          dashBoardProvider: dashBoardProvider,
-                          taskAllocationData:
-                              dashBoardProvider.taskAllocationSummaryData,
-                          followUpLeadData:
-                              dashBoardProvider.followUpSummaryData,
-                          leadConversionData: dashBoardProvider.conversionData,
-                          countLeadData: dashBoardProvider.conversionCountData,
-                          pieData: dashBoardProvider.leadProgressReport,
-                        ),
-                      );
+                return AnimatedAlign(
+                  duration: const Duration(milliseconds: 600),
+                  alignment: safeIndex == 0
+                      ? const Alignment(0, 0)
+                      : const Alignment(-100, 0),
+                  child: Column(
+                    children: [
+                      filterWidget(dashBoardProvider: dashBoardProvider),
+                      const SizedBox(height: 20),
+                      LeadsOverViewTab(
+                        dashBoardProvider: dashBoardProvider,
+                        taskAllocationData:
+                            dashBoardProvider.taskAllocationSummaryData,
+                        followUpLeadData: dashBoardProvider.followUpSummaryData,
+                        leadConversionData: dashBoardProvider.conversionData,
+                        countLeadData: dashBoardProvider.conversionCountData,
+                        pieData: dashBoardProvider.leadProgressReport,
+                      ),
+                    ],
+                  ),
+                );
               case 1:
-                return dashBoardProvider.isDashBoardLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : AnimatedAlign(
-                        duration: const Duration(milliseconds: 600),
-                        alignment: safeIndex == 1
-                            ? const Alignment(0, 0)
-                            : const Alignment(0, -100),
-                        child: WorkOverViewTab(
-                          dashboardProvider: dashBoardProvider,
-                          taskData: dashBoardProvider.taskAllocationSummaryData,
-                          data: dashBoardProvider.conversionData,
-                          countLeadData: dashBoardProvider.conversionCountData,
-                        ),
-                      );
+                return AnimatedAlign(
+                  duration: const Duration(milliseconds: 600),
+                  alignment: safeIndex == 1
+                      ? const Alignment(0, 0)
+                      : const Alignment(0, -100),
+                  child: WorkOverViewTab(
+                    dashboardProvider: dashBoardProvider,
+                    taskData: dashBoardProvider.taskAllocationSummaryData,
+                    data: dashBoardProvider.conversionData,
+                    countLeadData: dashBoardProvider.conversionCountData,
+                  ),
+                );
               case 2:
                 return AnimatedAlign(
                   duration: const Duration(milliseconds: 600),
@@ -201,6 +224,398 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 return Container();
             }
           }),
+        ],
+      ),
+    );
+  }
+
+  void onClickTopButton(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (contextx) => Consumer<DashboardProvider>(
+        builder: (contextx, dashBoardProvider, child) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            contentPadding: const EdgeInsets.all(10),
+            content: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'Choose Date',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
+                        String title = dateButtonTitles[index];
+                        return ActionChip(
+                          onPressed: () {
+                            dashBoardProvider.setDateFilter(title);
+                            dashBoardProvider.selectDateFilterOption(index);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          label: Text(title),
+                          backgroundColor:
+                              dashBoardProvider.selectedDateFilterIndex == index
+                                  ? AppColors.primaryBlue
+                                  : Colors.white,
+                          labelStyle: TextStyle(
+                            color: dashBoardProvider.selectedDateFilterIndex ==
+                                    index
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Pick a date',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                dashBoardProvider.selectDate(context, true),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              hintText: dashBoardProvider.fromDate != null
+                                  ? '${dashBoardProvider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () =>
+                                dashBoardProvider.selectDate(context, false),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              hintText: dashBoardProvider.toDate != null
+                                  ? '${dashBoardProvider.toDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+
+                          dashBoardProvider.formatDate();
+
+                          print(dashBoardProvider.formattedFromDate);
+                          print(dashBoardProvider.formattedToDate);
+                          dashBoardProvider.getLeadData();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Apply',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          dashBoardProvider.selectDateFilterOption(null);
+                          dashBoardProvider.getLeadData();
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.textRed.withOpacity(0.1),
+                          foregroundColor: AppColors.textRed,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Clear',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  List<String> dateButtonTitles = [
+    'Yesterday',
+    'Today',
+    'Tomorrow',
+    'This Week',
+    'This Month',
+  ];
+
+  // Filters (no date): User, Client, Project Type, Expense Type
+  Widget _buildAssignedStaffFilter(DashboardProvider dashBoardProvider) {
+    return Consumer<DropDownProvider>(
+      builder: (context, dropDownProvider, child) {
+        // Get current user details from SharedPreferences
+        return FutureBuilder<Map<String, dynamic>>(
+          future: _getCurrentUserDetailsWithAdmin(),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData) {
+              return Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: const Text('Loading...'),
+              );
+            }
+
+            final userData = snapshot.data!;
+            bool isAdmin = userData['isAdmin'] as bool;
+            int? currentUserId = userData['userId'] as int?;
+            String? currentUserName = userData['userName'] as String?;
+            print('isAdmin: $isAdmin');
+            print('currentUserId: $currentUserId');
+            print('currentUserName: $currentUserName');
+
+            // Build dropdown items based on user role, using list from dashBoardProvider
+            List<DropdownMenuItem<int>> dropdownItems;
+            int dropdownValue;
+
+            if (isAdmin) {
+              // Admin: Show all users with "All" option, using dashBoardProvider's list
+              dropdownItems = [
+                    const DropdownMenuItem<int>(
+                      value: 0, // Use 0 or null to represent "All"
+                      child: Text(
+                        'All',
+                        style: TextStyle(fontSize: 14),
+                      ),
+                    ),
+                  ] +
+                  dropDownProvider.searchUserDetails
+                      .map((user) => DropdownMenuItem<int>(
+                            value: user.userDetailsId!,
+                            child: ConstrainedBox(
+                              constraints: const BoxConstraints(maxWidth: 150),
+                              child: Text(
+                                user.userDetailsName ?? '',
+                                overflow: TextOverflow
+                                    .ellipsis, // Adds ellipsis when the text is too long
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                            ),
+                          ))
+                      .toList();
+              // For admin, use the selected value from provider
+              dropdownValue = dashBoardProvider.selectedUser ?? 0;
+            } else {
+              // Non-admin staff: Show only their own name
+              dropdownItems = [
+                DropdownMenuItem<int>(
+                  value: currentUserId ?? 0,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 150),
+                    child: Text(
+                      currentUserName ?? 'Current User',
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ),
+              ];
+              // For non-admin, always use their own ID
+              dropdownValue = currentUserId ?? 0;
+            }
+
+            return Container(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: (dashBoardProvider.selectedUser != null &&
+                          dashBoardProvider.selectedUser != 0)
+                      ? AppColors.primaryBlue
+                      : Colors.grey[300]!,
+                ),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Text('Assigned Staff: '),
+                  DropdownButton<int>(
+                    value: dropdownValue,
+                    hint: const Text('All'),
+                    items: dropdownItems,
+                    onChanged: isAdmin
+                        ? (int? newValue) {
+                            if (newValue != null) {
+                              dashBoardProvider.setUserFilterStatus(
+                                  newValue); // Update the status in the provider
+                              dashBoardProvider.getLeadData();
+                            }
+                          }
+                        : null, // Disable dropdown for non-admin users
+                    underline: Container(),
+                    isDense: true,
+                    iconSize: 18,
+                    disabledHint: Text(
+                      currentUserName ?? 'Current User',
+                      style:
+                          const TextStyle(fontSize: 14, color: Colors.black87),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // Helper method to get current user details from SharedPreferences
+  Future<Map<String, dynamic>> _getCurrentUserDetailsWithAdmin() async {
+    final preferences = await SharedPreferences.getInstance();
+
+    // Get user type from SharedPreferences
+    // Usually admin user type is 1, but check your backend logic
+    String userType = preferences.getString('userType') ?? '0';
+    print('userType: $userType');
+
+    return {
+      'userId': int.tryParse(preferences.getString('userId') ?? '0'),
+      'userName': preferences.getString('userName') ?? 'Current User',
+      'isAdmin':
+          userType == '1', // Adjust this based on your admin user type value
+    };
+  }
+
+  Widget filterWidget({required DashboardProvider dashBoardProvider}) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 0.0),
+      padding: const EdgeInsets.all(10.0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        children: [
+          GestureDetector(
+            onTap: () {
+              onClickTopButton(context);
+            },
+            child: Container(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 1.5),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                    color: dashBoardProvider.fromDate != null ||
+                            dashBoardProvider.toDate != null
+                        ? AppColors.primaryBlue
+                        : Colors.grey[300]!),
+              ),
+              child: Row(
+                children: [
+                  if (dashBoardProvider.fromDate == null &&
+                      dashBoardProvider.toDate == null)
+                    const Text('Follow-Up Date: All'),
+                  if (dashBoardProvider.fromDate != null &&
+                      dashBoardProvider.toDate != null)
+                    Text(
+                        'Date : ${dashBoardProvider.formattedFromDate} - ${dashBoardProvider.formattedToDate}'),
+                  const SizedBox(
+                    width: 10,
+                  ),
+                  const Icon(
+                    Icons.arrow_drop_down_outlined,
+                    color: Colors.black45,
+                    size: 20,
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(
+            width: 10,
+          ),
+          _buildAssignedStaffFilter(dashBoardProvider),
+          const Spacer(),
+          if (dashBoardProvider.fromDate != null ||
+              dashBoardProvider.toDate != null ||
+              dashBoardProvider.selectedUser != 0)
+            ElevatedButton(
+              onPressed: () {
+                dashBoardProvider.selectDateFilterOption(null);
+                if (userType != "1") {
+                  dashBoardProvider.setUserFilterStatus(userId);
+                } else {
+                  dashBoardProvider.setUserFilterStatus(0);
+                }
+                dashBoardProvider.getLeadData();
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
+                foregroundColor: AppColors.textRed,
+                side: BorderSide(color: AppColors.textRed),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
+              ),
+              child: const Text('Reset'),
+            ),
         ],
       ),
     );

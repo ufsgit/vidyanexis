@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/models/lead_conversion_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 
 class LeadGraphBarChart extends StatelessWidget {
   const LeadGraphBarChart({
@@ -18,7 +15,7 @@ class LeadGraphBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dashboardProvider = Provider.of<DashboardProvider>(context);
+    // final dashboardProvider = Provider.of<DashboardProvider>(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(10),
@@ -43,12 +40,12 @@ class LeadGraphBarChart extends StatelessWidget {
                       fontSize: 14, fontColor: AppColors.textGrey3),
                 ),
               ),
-              CustomDropDown(
-                value: dashboardProvider.selectedeLeadConversionValue,
-                onChanged: (v) => dashboardProvider.getLeadConversionChartData(
-                    isFilter: v != "all", filterValue: v == "all" ? null : v),
-                dashboardProvider: dashboardProvider,
-              ),
+              // CustomDropDown(
+              //   value: dashboardProvider.selectedeLeadConversionValue,
+              //   onChanged: (v) => dashboardProvider.getLeadData(
+              //       filterValue: v == "all" ? null : v),
+              //   dashboardProvider: dashboardProvider,
+              // ),
             ],
           ),
           const SizedBox(height: 8),
@@ -228,7 +225,7 @@ class TaskAllocationBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final dashboardProvider = Provider.of<DashboardProvider>(context);
+    // final dashboardProvider = Provider.of<DashboardProvider>(context);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
@@ -242,12 +239,12 @@ class TaskAllocationBarChart extends StatelessWidget {
       ),
       child: Column(
         children: [
-          CustomDropDown(
-            value: dashboardProvider.selectedeTaskAllocationValue,
-            onChanged: (v) => dashboardProvider.getTaskAllocationSummary(
-                isFilter: v != "all", filterValue: v == "all" ? null : v),
-            dashboardProvider: dashboardProvider,
-          ),
+          // CustomDropDown(
+          //   value: dashboardProvider.selectedeTaskAllocationValue,
+          //   onChanged: (v) => dashboardProvider.getTaskAllocationSummary(
+          //       isFilter: v != "all", filterValue: v == "all" ? null : v),
+          //   dashboardProvider: dashboardProvider,
+          // ),
           SfCartesianChart(
             primaryXAxis: AppStyles.isWebScreen(context)
                 ? const CategoryAxis(

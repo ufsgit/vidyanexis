@@ -369,6 +369,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+
+      await leadProvider.loadLoginDetails();
+
       if (widget.isEdit) {
         leadProvider.getCustomFieldsByEnquiryForId(
           context,
@@ -378,9 +383,26 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
       } else {
         leadProvider.clearAllLeadControllers(context);
 
+        // Populate defaults from login
+        leadProvider.branchController.text = leadProvider.loginBranchName;
+        leadProvider.departmentController.text =
+            leadProvider.loginDepartmentName;
+        leadProvider.searchUserController.text = leadProvider.loginUserName;
+        leadProvider.followUpDateController.text =
+            DateFormat('dd MMM yyyy').format(DateTime.now());
+
+        dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
+        settingsProvider.selectedBranchId = leadProvider.loginBranchId;
+        settingsProvider
+            .setSelectedDepartmentId(leadProvider.loginDepartmentId);
+
+        // Filter staff initially
+        dropDownProvider.filterStaffByBranchAndDepartment(
+          branchId: leadProvider.loginBranchId,
+          departmentId: leadProvider.loginDepartmentId,
+        );
+
         //default source category
-        final settingsProvider =
-            Provider.of<SettingsProvider>(context, listen: false);
         int? selectedSourceId;
         if (settingsProvider.searchSourceCategory.isNotEmpty) {
           selectedSourceId =
@@ -628,13 +650,28 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             leadingWidth: 36,
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
-            title: Text(
-              widget.isEdit ? 'Edit Lead details' : 'Add New Lead',
-              style: GoogleFonts.plusJakartaSans(
-                color: AppColors.textBlack,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  widget.isEdit ? 'Edit Lead details' : 'Add New Lead',
+                  style: GoogleFonts.plusJakartaSans(
+                    color: AppColors.textBlack,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                if (!widget.isEdit)
+                  Text(
+                    '${leadProvider.loginBranchName} | ${leadProvider.loginDepartmentName} | ${leadProvider.loginUserTypeName}',
+                    style: GoogleFonts.plusJakartaSans(
+                      color: AppColors.primaryBlue,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+              ],
             ),
             actions: [
               TextButton(
