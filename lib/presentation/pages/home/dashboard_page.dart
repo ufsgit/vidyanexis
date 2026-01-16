@@ -595,7 +595,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
             width: 10,
           ),
           _buildAssignedStaffFilter(dashBoardProvider),
-          const Spacer(),
+          // const Spacer(),
           if (dashBoardProvider.fromDate != null ||
               dashBoardProvider.toDate != null ||
               dashBoardProvider.selectedUser != 0)
