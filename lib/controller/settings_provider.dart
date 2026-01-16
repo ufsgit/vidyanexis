@@ -736,12 +736,15 @@ class SettingsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
+      // Use provided query or fall back to controller text
+      String searchQuery = query;
+
       // Build endpoint and include ViewIn_Id only when provided
       String endPoint =
-          '${HttpUrls.searchStatus}?status_Name=$query&Page_Index=1&PageSize=1000';
+          '${HttpUrls.searchStatus}?status_Name=$searchQuery&Page_Index=1&PageSize=1000';
       if (viewId.isNotEmpty) {
         endPoint =
-            '${HttpUrls.searchStatus}?status_Name=$query&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000';
+            '${HttpUrls.searchStatus}?status_Name=$searchQuery&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000';
       }
       final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 
@@ -792,8 +795,8 @@ class SettingsProvider extends ChangeNotifier {
         } else {
           _searchUserDetails
               .removeWhere((user) => user.userDetailsId == userId);
-          getSearchLeadStatus('', "0", context);
-          searchStatusController.clear();
+          getSearchLeadStatus(
+              searchStatusController.text, viewInId.toString(), context);
           notifyListeners();
 
           ScaffoldMessenger.of(context).showSnackBar(
@@ -1847,8 +1850,8 @@ class SettingsProvider extends ChangeNotifier {
         setSelectedColor(null);
 
         final data = response.data;
-        getSearchLeadStatus('', '0', context);
-        searchStatusController.clear();
+        getSearchLeadStatus(
+            searchStatusController.text, viewInId.toString(), context);
         Navigator.pop(context);
         Loader.stopLoader(context);
         print(data);
@@ -2749,6 +2752,39 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
+  void deleteStatus(BuildContext context, int statusId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteStatus}/$statusId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['status_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete a Status \n that is currently in use!");
+        } else {
+          searchStatus(context, '0');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Status deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete status')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
   searchDocumentType(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -2785,11 +2821,12 @@ class SettingsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       // Build endpoint and include ViewIn_Id only when provided
+      String query = statusPageSearchController.text;
       String endPoint =
-          '${HttpUrls.searchStatus}?status_Name=&Page_Index=1&PageSize=1000';
+          '${HttpUrls.searchStatus}?status_Name=$query&Page_Index=1&PageSize=1000';
       if (viewId.isNotEmpty) {
         endPoint =
-            '${HttpUrls.searchStatus}?status_Name=&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000';
+            '${HttpUrls.searchStatus}?status_Name=$query&ViewIn_Id=$viewId&Page_Index=1&PageSize=1000';
       }
       final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 

@@ -140,29 +140,42 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                                   const EdgeInsets.symmetric(horizontal: 16),
                               child: Row(
                                 children: [
-                                  Container(
-                                    height: 22,
-                                    decoration: BoxDecoration(
-                                        color: AppColors.surfaceGrey,
-                                        borderRadius:
-                                            BorderRadius.circular(12)),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 8, right: 8),
-                                        child: Text(
-                                          settingsProvider
-                                              .taskType[index].taskTypeName,
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w500,
-                                              color: Colors.black),
+                                  SizedBox(
+                                    width: 300,
+                                    child: Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Container(
+                                        height: 22,
+                                        decoration: BoxDecoration(
+                                            color: AppColors.surfaceGrey,
+                                            borderRadius:
+                                                BorderRadius.circular(12)),
+                                        child: Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 10),
+                                          child: Text(
+                                            settingsProvider
+                                                .taskType[index].taskTypeName,
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.black),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-
-                                  const Spacer(),
+                                  Expanded(
+                                    child: Text(
+                                      settingsProvider
+                                              .taskType[index].departmentName ??
+                                          '',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.black),
+                                    ),
+                                  ),
 
                                   // ActionChip(
                                   //     shape: RoundedRectangleBorder(

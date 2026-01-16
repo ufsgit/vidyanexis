@@ -116,7 +116,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
 
         title: widget.userName,
         titleStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 16,
+            fontSize: 20,
             fontWeight: FontWeight.w600,
             color: AppColors.textBlack),
         searchHintText: 'Search Reports...',
@@ -476,7 +476,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
+                                fontSize: 12,
                                 fontWeight: FontWeight.w400,
                                 color: AppColors.textGrey3),
                           ),
@@ -489,7 +489,7 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                             RichText(
                               text: TextSpan(
                                 style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
+                                  fontSize: 12,
                                   fontWeight: FontWeight.w400,
                                   color: AppColors.textBlack.withAlpha(102),
                                 ),

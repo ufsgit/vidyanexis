@@ -39,7 +39,7 @@ class _UsersContentState extends State<UsersContent> {
 
   @override
   Widget build(BuildContext context) {
-    const double minContentWidth = 800.0;
+    const double minContentWidth = 1200.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -190,8 +190,7 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width:
-                                        250, // Fixed width for username column
+                                    width: 200,
                                     child: Text(
                                       'Username',
                                       style: GoogleFonts.plusJakartaSans(
@@ -200,17 +199,27 @@ class _UsersContentState extends State<UsersContent> {
                                           color: AppColors.textGrey1),
                                     ),
                                   ),
+                                  SizedBox(
+                                    width: 150,
+                                    child: Text(
+                                      'Department',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textGrey1),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 150,
+                                    child: Text(
+                                      'Branch',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textGrey1),
+                                    ),
+                                  ),
                                   const Spacer(),
-                                  // SizedBox(
-                                  //   width: 120,
-                                  //   child: Text(
-                                  //     'User type',
-                                  //     style: GoogleFonts.plusJakartaSans(
-                                  //         fontSize: 14,
-                                  //         fontWeight: FontWeight.w500,
-                                  //         color: AppColors.textGrey1),
-                                  //   ),
-                                  // ),
                                   SizedBox(
                                     width: 120,
                                     child: Text(
@@ -256,17 +265,14 @@ class _UsersContentState extends State<UsersContent> {
                                           width: 50,
                                           child: Text(
                                             (index + 1).toString(),
-                                            // settingsProvider.searchUserDetails[index]
-                                            //     .userDetailsId
-                                            //     .toString(),
                                             style: GoogleFonts.plusJakartaSans(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w700,
                                                 color: AppColors.textBlack),
                                           ),
                                         ),
-                                        Padding(
-                                          padding: const EdgeInsets.all(4.0),
+                                        SizedBox(
+                                          width: 200,
                                           child: Row(
                                             children: [
                                               const CircleAvatar(
@@ -277,143 +283,53 @@ class _UsersContentState extends State<UsersContent> {
                                                     color: Colors.grey),
                                               ),
                                               const SizedBox(width: 8),
-                                              Text(
-                                                settingsProvider
-                                                    .searchUserDetails[index]
-                                                    .userDetailsName,
-                                                overflow: TextOverflow.ellipsis,
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: AppColors
-                                                            .textBlack),
+                                              Expanded(
+                                                child: Text(
+                                                  settingsProvider
+                                                      .searchUserDetails[index]
+                                                      .userDetailsName,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: AppColors
+                                                              .textBlack),
+                                                ),
                                               ),
-                                              const SizedBox(width: 12),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  // Department
-                                                  Text(
-                                                    "Department",
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color:
-                                                          AppColors.textGrey1,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    settingsProvider
-                                                            .searchUserDetails[
-                                                                index]
-                                                            .departmentName ??
-                                                        "",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color:
-                                                          AppColors.textGrey1,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  // Department
-                                                  // Branch
-                                                  Text(
-                                                    "Branch",
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w700,
-                                                      color:
-                                                          AppColors.textGrey1,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    settingsProvider
-                                                            .searchUserDetails[
-                                                                index]
-                                                            .branchName ??
-                                                        "",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color:
-                                                          AppColors.textGrey1,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )
-
-                                              // IconButton(
-                                              //     onPressed: () async {
-                                              //       showDialog(
-                                              //         barrierDismissible: false,
-                                              //         context: context,
-                                              //         builder:
-                                              //             (BuildContext context) {
-                                              //           return SettingsAddUserWidget(
-                                              //               appLogin:
-                                              //                   settingsProvider.searchUserDetails[index].allowAppLogin == 1
-                                              //                       ? true
-                                              //                       : false,
-                                              //               userType: settingsProvider
-                                              //                   .searchUserDetails[
-                                              //                       index]
-                                              //                   .userType
-                                              //                   .toString(),
-                                              //               userStatusId: settingsProvider
-                                              //                   .searchUserDetails[
-                                              //                       index]
-                                              //                   .workingStatus
-                                              //                   .toString(),
-                                              //               userId: settingsProvider
-                                              //                   .searchUserDetails[
-                                              //                       index]
-                                              //                   .userDetailsId
-                                              //                   .toString(),
-                                              //               email: settingsProvider
-                                              //                   .searchUserDetails[
-                                              //                       index]
-                                              //                   .email,
-                                              //               userName: settingsProvider
-                                              //                   .searchUserDetails[
-                                              //                       index]
-                                              //                   .userDetailsName,
-                                              //               password: settingsProvider
-                                              //                   .searchUserDetails[index]
-                                              //                   .password,
-                                              //               newPassword: settingsProvider.searchUserDetails[index].password,
-                                              //               mobileNo: settingsProvider.searchUserDetails[index].mobile,
-                                              //               isEdit: true);
-                                              //         },
-                                              //       );
-                                              //     },
-                                              //     icon: Icon(
-                                              //       Icons.edit,
-                                              //       size: 16,
-                                              //       color: AppColors.textGrey2,
-                                              //     ))
                                             ],
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 150,
+                                          child: Text(
+                                            settingsProvider
+                                                    .searchUserDetails[index]
+                                                    .departmentName ??
+                                                "",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.textGrey1,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: 150,
+                                          child: Text(
+                                            settingsProvider
+                                                    .searchUserDetails[index]
+                                                    .branchName ??
+                                                "",
+                                            overflow: TextOverflow.ellipsis,
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColors.textGrey1,
+                                            ),
                                           ),
                                         ),
                                         const Spacer(),
