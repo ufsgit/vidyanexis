@@ -1072,12 +1072,14 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                         child: Text('No.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 14,
                                                 color: Color(0xFF607185))),
                                       ),
                                     ),
                                     TableWidget(
                                         flex: 2,
                                         title: 'Customer Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     // TableWidget(
                                     //     flex: 1,
@@ -1090,26 +1092,32 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                     TableWidget(
                                         flex: 1,
                                         title: 'Registered By',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 2,
                                         title: 'Creation Date',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Registered Date',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Enquiry For',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Status',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'View Details',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                   ],
                                 ),
@@ -1163,6 +1171,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
+                                                          fontSize: 12,
                                                         )),
                                               ),
                                             ),
@@ -1223,7 +1232,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                               ),
                                                             ),
                                                             const SizedBox(
@@ -1250,7 +1259,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                 ),
@@ -1264,10 +1273,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                             //     title: conversion.address1),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: conversion.registerdBy),
 
                                             TableWidget(
                                                 flex: 2,
+                                                fontSize: 12,
                                                 title: (conversion.creationDate
                                                         .toString()
                                                         .isNotEmpty)
@@ -1279,6 +1290,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                     : ''),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: (conversion
                                                         .registeredDate
                                                         .toString()
@@ -1292,6 +1304,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
 
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: conversion.enquiryForName
                                                     .toString()),
                                             TableWidget(
@@ -1320,7 +1333,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                   maxLines: 1,
                                                   style: TextStyle(
                                                     color: AppColors.textGreen,
-                                                    fontSize: 13,
+                                                    fontSize: 12,
                                                   ),
                                                 ),
                                               ),

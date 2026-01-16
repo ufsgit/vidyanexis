@@ -549,40 +549,49 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                                   child: Text('No.',
                                       style: TextStyle(
                                           fontWeight: FontWeight.bold,
+                                          fontSize: 14,
                                           color: Color(0xFF607185))),
                                 ),
                               ),
                               TableWidget(
                                   flex: 2,
                                   title: 'Customer Name',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   flex: 1,
                                   title: 'Mobile',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   flex: 2,
                                   title: 'Address',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   flex: 1,
                                   title: 'Follow Up By',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   flex: 3,
                                   title: 'Remark',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   flex: 1,
                                   title: 'Entry Date',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   flex: 1,
                                   title: 'Follow Up Date',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                               TableWidget(
                                   flex: 1,
                                   title: 'Status',
+                                  fontSize: 14,
                                   color: Color(0xFF607185)),
                             ],
                           ),
@@ -629,6 +638,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                                           child: Text((index + 1).toString(),
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 12,
                                               )),
                                         ),
                                       ),
@@ -679,7 +689,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                                                           color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: 14,
+                                                          fontSize: 12,
                                                         ),
                                                       ),
                                                       const SizedBox(
@@ -704,24 +714,36 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                                                       color: Colors.black,
                                                       fontWeight:
                                                           FontWeight.bold,
-                                                      fontSize: 14,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
                                           ),
                                         ),
                                       ),
-                                      TableWidget(flex: 1, title: task.mobile),
                                       TableWidget(
-                                          flex: 2, title: task.address1),
+                                          flex: 1,
+                                          fontSize: 12,
+                                          title: task.mobile),
                                       TableWidget(
-                                          flex: 1, title: task.followUpBy),
-                                      TableWidget(flex: 3, title: task.remark),
+                                          flex: 2,
+                                          fontSize: 12,
+                                          title: task.address1),
+                                      TableWidget(
+                                          flex: 1,
+                                          fontSize: 12,
+                                          title: task.followUpBy),
+                                      TableWidget(
+                                          flex: 3,
+                                          fontSize: 12,
+                                          title: task.remark),
                                       TableWidget(
                                         flex: 1,
+                                        fontSize: 12,
                                         title: task.entryDate,
                                       ),
                                       TableWidget(
                                         flex: 1,
+                                        fontSize: 12,
                                         title: task.followUp,
                                       ),
                                       // TableWidget(

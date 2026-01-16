@@ -990,12 +990,14 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                         child: Text('No.',
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
+                                                fontSize: 14,
                                                 color: Color(0xFF607185))),
                                       ),
                                     ),
                                     TableWidget(
                                         flex: 2,
                                         title: 'Customer Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     // TableWidget(
                                     //     flex: 1,
@@ -1008,34 +1010,42 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     TableWidget(
                                         flex: 2,
                                         title: 'Description',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'From Date',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'To Date',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Product Name',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Amount',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Status',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'Service',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
                                         title: 'View Details',
+                                        fontSize: 14,
                                         color: Color(0xFF607185)),
                                   ],
                                 ),
@@ -1088,6 +1098,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                         style: const TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
+                                                          fontSize: 12,
                                                         )),
                                               ),
                                             ),
@@ -1148,7 +1159,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 14,
+                                                                fontSize: 12,
                                                               ),
                                                             ),
                                                             const SizedBox(
@@ -1174,7 +1185,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 14,
+                                                            fontSize: 12,
                                                           ),
                                                         ),
                                                 ),
@@ -1186,10 +1197,12 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                             //     flex: 2, title: amc.address1),
                                             TableWidget(
                                                 flex: 2,
+                                                fontSize: 12,
                                                 title: amc.description),
 
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: (amc.fromDate
                                                         .toString()
                                                         .isNotEmpty)
@@ -1199,6 +1212,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                     : ''),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title: (amc.toDate
                                                         .toString()
                                                         .isNotEmpty)
@@ -1208,10 +1222,12 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                     : ''),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title:
                                                     amc.productName.toString()),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title:
                                                     "₹${double.parse(amc.amount).toStringAsFixed(1)}"),
                                             TableWidget(
@@ -1243,13 +1259,14 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                     color: StatusUtils
                                                         .getTaskTextColor(
                                                             amc.amcStatusId),
-                                                    fontSize: 13,
+                                                    fontSize: 12,
                                                   ),
                                                 ),
                                               ),
                                             ),
                                             TableWidget(
                                                 flex: 1,
+                                                fontSize: 12,
                                                 title:
                                                     amc.serviceName.toString()),
                                             Expanded(
