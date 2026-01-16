@@ -50,12 +50,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
-      // if (!widget.fromDashBoard) {
-      // leadReportProvider.setStatus(0);
-      // leadReportProvider.setEnquiryForFilter(0);
-      // leadReportProvider.setFromandToDate('', '');
-      // leadReportProvider.setUserFilterStatus(0);
-      // }
+      if (!widget.fromDashBoard) {
+        leadReportProvider.setStatus(0);
+        leadReportProvider.setEnquiryForFilter(0);
+        leadReportProvider.setFromandToDate('', '');
+        leadReportProvider.setUserFilterStatus(0);
+        leadReportProvider.setEnquirySourceFilter(0);
+      }
 
       provider.getEnquirySource(context);
       provider.getEnquiryFor(context);
@@ -305,24 +306,36 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 child: Row(
                                   children: [
                                     const Text('Status: '),
-                                    DropdownButton<int>(
+                                    DropdownButton<int?>(
                                       value: leadReportProvider.selectedStatus,
                                       hint: const Text('All'),
-                                      items: provider.followUpData
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.statusId,
-                                                    child: Text(
-                                                      status.statusName ?? '',
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
-                                          .toList(),
+                                      items: [
+                                        const DropdownMenuItem<int?>(
+                                          value: 0,
+                                          child: Text(
+                                            'All',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        ...provider.followUpData
+                                            .map((status) =>
+                                                DropdownMenuItem<int?>(
+                                                  value: status.statusId,
+                                                  child: Text(
+                                                    status.statusName ?? '',
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ],
                                       onChanged: (int? newValue) {
-                                        if (newValue != null) {
-                                          leadReportProvider.setStatus(
-                                              newValue); // Update the status in the provider
+                                        leadReportProvider.setStatus(newValue ??
+                                            0); // Update the status in the provider
+                                        if (newValue == null) {
+                                          leadReportProvider
+                                              .getSearchLeadReports(
+                                                  '', '', '', '', context);
                                         }
                                       },
                                       underline: Container(),
@@ -392,7 +405,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 child: Row(
                                   children: [
                                     const Text('Assigned Staff: '),
-                                    DropdownButton<int>(
+                                    DropdownButton<int?>(
                                       value: provider.searchUserDetails.any(
                                               (element) =>
                                                   element.userDetailsId ==
@@ -401,24 +414,30 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           ? leadReportProvider.selectedUser
                                           : null,
                                       hint: const Text('All'),
-                                      items: provider.searchUserDetails
-                                          .map((user) => DropdownMenuItem<int>(
-                                                value: user.userDetailsId!,
-                                                child: Text(
-                                                  user.userDetailsName ?? '',
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
-                                                ),
-                                              ))
-                                          .toList(),
+                                      items: [
+                                        const DropdownMenuItem<int?>(
+                                          value: 0,
+                                          child: Text(
+                                            'All',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        ...provider.searchUserDetails
+                                            .map((user) =>
+                                                DropdownMenuItem<int?>(
+                                                  value: user.userDetailsId!,
+                                                  child: Text(
+                                                    user.userDetailsName ?? '',
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ],
                                       onChanged: (int? newValue) {
-                                        if (newValue != null) {
-                                          leadReportProvider.setUserFilterStatus(
-                                              newValue); // Update the status in the provider
-                                        } else {
-                                          leadReportProvider
-                                              .selectDateFilterOption(null);
-                                          leadReportProvider.removeStatus();
+                                        leadReportProvider
+                                            .setUserFilterStatus(newValue ?? 0);
+                                        if (newValue == null) {
                                           leadReportProvider
                                               .getSearchLeadReports(
                                                   '', '', '', '', context);
@@ -450,7 +469,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 child: Row(
                                   children: [
                                     const Text('Enquiry For: '),
-                                    DropdownButton<int>(
+                                    DropdownButton<int?>(
                                       value: provider.enquiryForList.any(
                                               (element) =>
                                                   element.enquiryForId ==
@@ -460,36 +479,37 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                               .selectedEnquiryFor
                                           : null,
                                       hint: const Text('All'),
-                                      items: provider.enquiryForList
-                                          .map((enquiry) =>
-                                              DropdownMenuItem<int>(
-                                                value: enquiry.enquiryForId!,
-                                                child: Text(
-                                                  enquiry.enquiryForName ?? '',
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
-                                                ),
-                                              ))
-                                          .toList(),
+                                      items: [
+                                        const DropdownMenuItem<int?>(
+                                          value: 0,
+                                          child: Text(
+                                            'All',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        ...provider.enquiryForList
+                                            .map((enquiry) =>
+                                                DropdownMenuItem<int?>(
+                                                  value: enquiry.enquiryForId!,
+                                                  child: Text(
+                                                    enquiry.enquiryForName ??
+                                                        '',
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ],
                                       onChanged: (int? newValue) {
-                                        if (newValue != null) {
-                                          leadReportProvider.setEnquiryForFilter(
-                                              newValue); // Update the status in the provider
-                                          leadReportProvider
-                                              .getSearchLeadReports(
-                                                  leadReportProvider.search,
-                                                  leadReportProvider.fromDateS,
-                                                  leadReportProvider.toDateS,
-                                                  leadReportProvider.status,
-                                                  context);
-                                        } else {
-                                          leadReportProvider
-                                              .selectDateFilterOption(null);
-                                          leadReportProvider.removeStatus();
-                                          leadReportProvider
-                                              .getSearchLeadReports(
-                                                  '', '', '', '', context);
-                                        }
+                                        leadReportProvider
+                                            .setEnquiryForFilter(newValue ?? 0);
+
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            leadReportProvider.status,
+                                            context);
                                       },
                                       underline: Container(),
                                       isDense: true,
@@ -517,7 +537,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 child: Row(
                                   children: [
                                     const Text('Enquiry Source: '),
-                                    DropdownButton<int>(
+                                    DropdownButton<int?>(
                                       value: provider.enquiryData.any(
                                               (element) =>
                                                   element.enquirySourceId ==
@@ -527,37 +547,39 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                               .selectedEnquirySource
                                           : null,
                                       hint: const Text('All'),
-                                      items: provider.enquiryData
-                                          .map((source) =>
-                                              DropdownMenuItem<int>(
-                                                value: source.enquirySourceId!,
-                                                child: Text(
-                                                  source.enquirySourceName ??
-                                                      '',
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
-                                                ),
-                                              ))
-                                          .toList(),
+                                      items: [
+                                        const DropdownMenuItem<int?>(
+                                          value: 0,
+                                          child: Text(
+                                            'All',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ),
+                                        ...provider.enquiryData
+                                            .map((source) =>
+                                                DropdownMenuItem<int?>(
+                                                  value:
+                                                      source.enquirySourceId!,
+                                                  child: Text(
+                                                    source.enquirySourceName ??
+                                                        '',
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                      ],
                                       onChanged: (int? newValue) {
-                                        if (newValue != null) {
-                                          leadReportProvider
-                                              .setEnquirySourceFilter(newValue);
-                                          leadReportProvider
-                                              .getSearchLeadReports(
-                                                  leadReportProvider.search,
-                                                  leadReportProvider.fromDateS,
-                                                  leadReportProvider.toDateS,
-                                                  leadReportProvider.status,
-                                                  context);
-                                        } else {
-                                          leadReportProvider
-                                              .selectDateFilterOption(null);
-                                          leadReportProvider.removeStatus();
-                                          leadReportProvider
-                                              .getSearchLeadReports(
-                                                  '', '', '', '', context);
-                                        }
+                                        leadReportProvider
+                                            .setEnquirySourceFilter(
+                                                newValue ?? 0);
+
+                                        leadReportProvider.getSearchLeadReports(
+                                            leadReportProvider.search,
+                                            leadReportProvider.fromDateS,
+                                            leadReportProvider.toDateS,
+                                            leadReportProvider.status,
+                                            context);
                                       },
                                       underline: Container(),
                                       isDense: true,
