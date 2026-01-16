@@ -271,6 +271,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                       ),
                     ),
                   ),
+                  if (!widget.fromDashBoard)
                   if (leadReportProvider.isFilter)
                     SliverToBoxAdapter(
                       child: Container(
