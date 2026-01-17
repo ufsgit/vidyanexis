@@ -34,10 +34,21 @@ class _LoginPageState extends State<LoginPage> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/images/On boarding.png'),
-                    fit: BoxFit.cover)),
+            decoration: BoxDecoration(
+                
+                //   image: DecorationImage(
+                //       image: AssetImage('assets/images/On boarding.png'),
+                //       fit: BoxFit.cover)),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.textBlue800, // Dark Blue
+                  AppColors.secondaryBlue, // Blue
+                  const Color.fromARGB(255, 0, 19, 68), // Light Green
+                ],
+              ),
+            ),
           ),
           Center(
             child: Container(
@@ -89,12 +100,25 @@ class SignUpForm extends StatelessWidget {
           children: [
             // Logo with perfect centering
             Center(
-              child: Image.network(
-                HttpUrls.imgBaseUrl + settingsProvider.logo,
-                height: 50,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container();
-                },
+              child: ClipOval(
+                child: Image.network(
+                  HttpUrls.imgBaseUrl + settingsProvider.logo,
+                  height: 60,
+                  width: 60,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 60,
+                      width: 60,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.withOpacity(0.1),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.apartment_rounded,
+                          color: Colors.grey),
+                    );
+                  },
+                ),
               ),
             ),
             const SizedBox(height: 16),

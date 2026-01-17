@@ -36,10 +36,15 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
       body: Stack(
         children: [
           Container(
-              decoration: const BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage('assets/images/On boarding.png'),
-                  fit: BoxFit.cover,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    AppColors.textBlue800,
+                    AppColors.secondaryBlue,
+                    Colors.lightGreen,
+                  ],
                 ),
               ),
               child: Padding(
