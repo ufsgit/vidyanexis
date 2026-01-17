@@ -206,10 +206,10 @@ class _FollowUpCardState extends State<FollowUpCard> {
                         ),
                         child: Row(
                           children: [
-                            Image.asset(
-                              'assets/images/profile.png',
-                              width: 18,
-                              height: 18,
+                            Icon(
+                              Icons.account_circle,
+                              size: 18,
+                              color: Color(0xFF8E97A3),
                             ),
                             const SizedBox(width: 6),
                             Text(widget.entry.toUserName,
@@ -235,10 +235,10 @@ class _FollowUpCardState extends State<FollowUpCard> {
                         ),
                         child: Row(
                           children: [
-                            Image.asset(
-                              'assets/images/profile.png',
-                              width: 18,
-                              height: 18,
+                            Icon(
+                              Icons.account_circle,
+                              size: 18,
+                              color: Color(0xFF8E97A3),
                             ),
                             const SizedBox(width: 6),
                             Text(widget.entry.byUserName,

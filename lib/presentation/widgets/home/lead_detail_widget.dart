@@ -294,10 +294,10 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                           const SizedBox(height: 4),
                           Row(
                             children: [
-                              Image.asset(
-                                'assets/images/call.png',
-                                width: 20,
-                                height: 20,
+                              Icon(
+                                Icons.phone,
+                                size: 20,
+                                color: Colors.grey,
                               ),
                               const SizedBox(
                                 width: 5,

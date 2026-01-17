@@ -288,7 +288,7 @@ class LeadCard extends StatelessWidget {
                       }
                     }
                   },
-                  imagePath: "assets/images/lead_icon_1.png",
+                  icon: Icons.chat_bubble_outline,
                   text: 'Chat',
                 ),
                 // ------------------------------------------------------------------
@@ -319,7 +319,7 @@ class LeadCard extends StatelessWidget {
                                     )),
                           );
                         },
-                  imagePath: 'assets/images/lead_icon_3.png',
+                  icon: Icons.visibility_outlined,
                   text: 'View',
                   // imageColor: AppColors.violet,
                 ),
@@ -384,9 +384,7 @@ class LeadCard extends StatelessWidget {
                   imageColor: lead.lateFollowUp == 0
                       ? AppColors.darkGreen
                       : AppColors.textRed,
-                  imagePath: lead.lateFollowUp == 0
-                      ? 'assets/images/lead_icon_4.png'
-                      : 'assets/images/lead_icon_4.png',
+                  icon: Icons.note_add_outlined,
                   text: 'Note',
                 ),
                 const SizedBox(width: 15),
@@ -403,7 +401,7 @@ class LeadCard extends StatelessWidget {
                       print('Could not launch phone app');
                     }
                   },
-                  imagePath: "assets/images/lead_icon_2.png",
+                  icon: Icons.call,
                   text: 'Call',
                 ),
               ],
