@@ -285,7 +285,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                 const SizedBox(height: 16),
 
                 // Audio Recording Section
-                if (settingsProvider.menuIsViewMap[67].toString() == '1')
+                if ((settingsProvider.menuIsViewMap[67] ?? 0) == 1)
                   _buildAudioSection(audioProvider),
                 if (dropDownProvider.isFollowupRequiredNew())
                   const SizedBox(height: 20),

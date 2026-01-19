@@ -134,10 +134,10 @@ class CustomAutocomplete<T extends Object> extends StatelessWidget {
                     },
                     child: suffixIcon ??
                         (textEditingController.text.isNullOrEmpty()
-                            ? Image.asset(
-                                "assets/icons/arrow_down_icon.png",
-                                width: 22,
-                                height: 22,
+                            ? Icon(
+                                Icons.keyboard_arrow_down,
+                                size: 22,
+                                color: AppColors.textBlack,
                               )
                             : Icon(
                                 textEditingController.text.isNullOrEmpty()

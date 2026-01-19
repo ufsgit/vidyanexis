@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -48,10 +49,15 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Stack(
         children: [
           Container(
-            decoration: const BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/On boarding.png'),
-                fit: BoxFit.cover,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.textBlue800,
+                  AppColors.secondaryBlue,
+                  const Color.fromARGB(255, 0, 19, 68),
+                ],
               ),
             ),
           ),

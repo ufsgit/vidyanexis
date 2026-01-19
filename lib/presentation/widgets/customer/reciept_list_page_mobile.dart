@@ -287,7 +287,8 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                   Container(
                       height: 24,
                       width: 24,
-                      child: Image.asset('assets/images/invoice_icon.png')),
+                      child: Icon(Icons.receipt,
+                          size: 24, color: Color(0xFF152D70))),
                   SizedBox(
                     width: 8,
                   ),
@@ -372,7 +373,8 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                   Container(
                       height: 24,
                       width: 24,
-                      child: Image.asset('assets/images/payment_rupees.png')),
+                      child: Icon(Icons.currency_rupee,
+                          size: 24, color: Color(0xFF48A365))),
                   SizedBox(
                     width: 8,
                   ),

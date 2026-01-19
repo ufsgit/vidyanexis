@@ -1698,8 +1698,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   'Error in Chat button: $e');
                                                             }
                                                           },
-                                                          imagePath:
-                                                              "assets/images/lead_icon_1.png",
+                                                          icon: Icons
+                                                              .chat_bubble_outline,
                                                           text: 'Chat',
                                                         ),
                                                         const SizedBox(
@@ -1743,8 +1743,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   'Error in Call button: $e');
                                                             }
                                                           },
-                                                          imagePath:
-                                                              "assets/images/lead_icon_2.png",
+                                                          icon: Icons.call,
                                                           text: 'Call',
                                                         ),
                                                         const SizedBox(
@@ -1837,72 +1836,31 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           BorderRadius.circular(
                                                               50),
                                                     ),
-                                                    child:
-                                                        MediaQuery.of(context)
-                                                                    .size
-                                                                    .width >
-                                                                1700
-                                                            ? Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min,
-                                                                children: [
-                                                                  Image.asset(
-                                                                    'assets/images/lead_profile.png',
-                                                                    width: 15,
-                                                                    height: 15,
-                                                                    errorBuilder: (context,
-                                                                            error,
-                                                                            stackTrace) =>
-                                                                        const Icon(
-                                                                            Icons
-                                                                                .person,
-                                                                            size:
-                                                                                15),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width: 8),
-                                                                  Text(
-                                                                    task.customerName.length >
-                                                                            20
-                                                                        ? '${task.customerName.substring(0, 20)}...'
-                                                                        : task.customerName ??
-                                                                            'Unknown',
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          12,
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width: 8),
-                                                                  Image.asset(
-                                                                    'assets/images/forward.png',
-                                                                    width: 12,
-                                                                    height: 12,
-                                                                    errorBuilder: (context,
-                                                                            error,
-                                                                            stackTrace) =>
-                                                                        const Icon(
-                                                                            Icons
-                                                                                .arrow_forward,
-                                                                            size:
-                                                                                12),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            : Text(
-                                                                task.customerName ??
-                                                                    'Unknown',
+                                                    child: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width >
+                                                            1700
+                                                        ? Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons.person,
+                                                                size: 15,
+                                                                color: Color(
+                                                                    0xFF152D70),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                task.customerName
+                                                                            .length >
+                                                                        20
+                                                                    ? '${task.customerName.substring(0, 20)}...'
+                                                                    : task.customerName ??
+                                                                        'Unknown',
                                                                 overflow:
                                                                     TextOverflow
                                                                         .ellipsis,
@@ -1917,6 +1875,34 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   fontSize: 12,
                                                                 ),
                                                               ),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              const Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios,
+                                                                size: 12,
+                                                                color: Color(
+                                                                    0xFF152D70),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : Text(
+                                                            task.customerName ??
+                                                                'Unknown',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                            style:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
                                                   ),
                                                 ),
                                               ),

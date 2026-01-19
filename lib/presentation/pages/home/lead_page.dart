@@ -242,10 +242,10 @@ class _LeadsPageState extends State<LeadPage> {
                       onTap: () {
                         Navigator.pop(context);
                       },
-                      child: Image.asset(
-                        'assets/images/ArrowRight.png',
-                        width: 24,
-                        height: 24,
+                      child: Icon(
+                        Icons.arrow_back,
+                        size: 24,
+                        color: Color(0xFF152D70),
                       ),
                     ),
                   if (widget.fromDashBoard)

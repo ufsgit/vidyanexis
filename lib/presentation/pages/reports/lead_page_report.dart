@@ -109,10 +109,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 onTap: () {
                                   Navigator.pop(context);
                                 },
-                                child: Image.asset(
-                                  'assets/images/ArrowRight.png',
-                                  width: 24,
-                                  height: 24,
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  size: 24,
+                                  color: Color(0xFF152D70),
                                 ),
                               ),
                             if (widget.fromDashBoard)
@@ -812,12 +812,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                     .min, // Ensures the Row takes only as much space as needed
                                                 children: [
                                                   // Front image (before text)
-                                                  Image.asset(
-                                                    'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                    width:
-                                                        15, // You can adjust the size of the image
-                                                    height:
-                                                        15, // You can adjust the size of the image
+                                                  Icon(
+                                                    Icons.account_circle,
+                                                    size: 16,
+                                                    color:
+                                                        AppColors.primaryBlue,
                                                   ),
                                                   const SizedBox(
                                                       width:
@@ -838,12 +837,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                       width:
                                                           8), // Space between the text and back image
                                                   // Back image (after text)
-                                                  Image.asset(
-                                                    'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                    width:
-                                                        12, // Adjust the size of the image
-                                                    height:
-                                                        12, // Adjust the size of the image
+                                                  Icon(
+                                                    Icons.arrow_forward_ios,
+                                                    size: 12,
+                                                    color: Colors.grey,
                                                   ),
                                                 ],
                                               )
@@ -972,15 +969,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                           Scaffold.of(context).openEndDrawer();
                                         }
                                       },
-                                      child: Image.asset(
+                                      child: Icon(
                                         lead.lateFollowUp == '0'
-                                            ? 'assets/images/followup_yes.png'
-                                            : 'assets/images/followup_no.png',
+                                            ? Icons.event_available
+                                            : Icons.event_busy,
                                         color: lead.lateFollowUp == '0'
                                             ? Colors.green
                                             : Colors.red,
-                                        width: 20,
-                                        height: 20,
+                                        size: 20,
                                       ),
                                     ),
                                   ),

@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/add_quotation_widget_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_details_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -101,7 +102,8 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                             terms: item.termsAndConditions,
                             subsidy: item.subsidyAmount,
                             quotation_details: item.quotationDetails ?? [],
-                            bill_of_materials: item.billOfMaterials ?? []),
+                            bill_of_materials: item.billOfMaterials ?? [],
+                            quotation: item),
                       ),
                     );
                     // context.push(
@@ -215,11 +217,18 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
           onPressed: () => Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (c) => AddQuotationWidgetMobile(
+              builder: (c) => QuotationCreationWidget(
                 customerId: widget.customerId,
                 quotationId: '0',
+                isEdit: false,
               ),
             ),
+            // MaterialPageRoute(
+            //   builder: (c) => AddQuotationWidgetMobile(
+            //     customerId: widget.customerId,
+            //     quotationId: '0',
+            //   ),
+            // ),
           ),
           backgroundColor: AppColors.bluebutton,
           borderColor: AppColors.bluebutton,

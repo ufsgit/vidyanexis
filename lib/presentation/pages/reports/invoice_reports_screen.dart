@@ -1308,12 +1308,12 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                               .min, // Ensures the Row takes only as much space as needed
                                                           children: [
                                                             // Front image (before text)
-                                                            Image.asset(
-                                                              'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  15, // You can adjust the size of the image
-                                                              height:
-                                                                  15, // You can adjust the size of the image
+                                                            Icon(
+                                                              Icons
+                                                                  .account_circle,
+                                                              size: 15,
+                                                              color: Color(
+                                                                  0xFF152D70),
                                                             ),
                                                             const SizedBox(
                                                                 width:
@@ -1343,12 +1343,12 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                                 width:
                                                                     8), // Space between the text and back image
                                                             // Back image (after text)
-                                                            Image.asset(
-                                                              'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  12, // Adjust the size of the image
-                                                              height:
-                                                                  12, // Adjust the size of the image
+                                                            Icon(
+                                                              Icons
+                                                                  .arrow_forward_ios,
+                                                              size: 12,
+                                                              color: Color(
+                                                                  0xFF152D70),
                                                             ),
                                                           ],
                                                         )
@@ -1541,12 +1541,12 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                               .min, // Ensures the Row takes only as much space as needed
                                                           children: [
                                                             // Front image (before text)
-                                                            Image.asset(
-                                                              'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  15, // You can adjust the size of the image
-                                                              height:
-                                                                  15, // You can adjust the size of the image
+                                                            Icon(
+                                                              Icons
+                                                                  .account_circle,
+                                                              size: 15,
+                                                              color: Color(
+                                                                  0xFF152D70),
                                                             ),
                                                             const SizedBox(
                                                                 width:
@@ -1576,12 +1576,12 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                                 width:
                                                                     8), // Space between the text and back image
                                                             // Back image (after text)
-                                                            Image.asset(
-                                                              'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  12, // Adjust the size of the image
-                                                              height:
-                                                                  12, // Adjust the size of the image
+                                                            Icon(
+                                                              Icons
+                                                                  .arrow_forward_ios,
+                                                              size: 12,
+                                                              color: Color(
+                                                                  0xFF152D70),
                                                             ),
                                                           ],
                                                         )

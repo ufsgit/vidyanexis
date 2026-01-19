@@ -86,10 +86,10 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       context.go(HomePage.route);
                     }
                   },
-                  child: Image.asset(
-                    'assets/images/ArrowRight.png',
-                    width: 24,
-                    height: 24,
+                  child: Icon(
+                    Icons.arrow_back,
+                    size: 24,
+                    color: Color(0xFF152D70),
                   ),
                 ),
                 const SizedBox(width: 8),

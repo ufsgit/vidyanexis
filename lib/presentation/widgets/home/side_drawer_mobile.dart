@@ -155,8 +155,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
                             ),
-                            child:
-                                Image.asset('assets/images/user-circle1.png'),
+                            child: Icon(
+                              Icons.account_circle,
+                              size: 32,
+                              color: AppColors.textGrey4,
+                            ),
                           ),
                           const SizedBox(width: 8),
                           FutureBuilder<String>(

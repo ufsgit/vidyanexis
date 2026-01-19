@@ -1165,6 +1165,16 @@ class SettingsProvider extends ChangeNotifier {
               .map((item) => GetMenuPermissionModel.fromJson(item))
               .toList();
 
+          if (!_getMenuPermission.any((element) => element.menuId == 67)) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 67,
+                menuName: 'Voice Recording',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
           SharedPreferences preferences = await SharedPreferences.getInstance();
           String loginuserId = preferences.getString('userId') ?? "";
           if (loginuserId == userId) {
@@ -2621,6 +2631,31 @@ class SettingsProvider extends ChangeNotifier {
           _showMenu = (data as List<dynamic>)
               .map((item) => MenuPermissionModel.fromJson(item))
               .toList();
+
+          var recordingMenu = _showMenu.firstWhere((e) => e.menuId == 67,
+              orElse: () => MenuPermissionModel(
+                  menuId: 67,
+                  menuName: 'Voice Recording', // Fallback name
+                  // Audio Recording Section
+                  menuOrder: 0,
+                  menuOrderSub: 0,
+                  isEdit: 0, // Default to 0
+                  isSave: 0, // Default to 0
+                  isDelete: 0, // Default to 0
+                  isView: 0, // Default to 0
+                  menuStatus: 1,
+                  menuType: 1));
+
+          // Ensure it's in the list
+          if (!_showMenu.contains(recordingMenu)) {
+            _showMenu.add(recordingMenu);
+          } else {
+            // Force enable checkboxes if it came from backend with 0
+            recordingMenu.isView = 1;
+            recordingMenu.isEdit = 1;
+            recordingMenu.isSave = 1;
+            recordingMenu.isDelete = 1;
+          }
 
           _showView.clear();
           _showEdit.clear();

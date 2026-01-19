@@ -44,7 +44,8 @@ class CustomPopMenuButtonWidget extends StatelessWidget {
               SizedBox(
                   height: 14,
                   width: 14,
-                  child: Image.asset('assets/images/edit_pop.png')),
+                  child:
+                      Icon(Icons.edit, size: 14, color: AppColors.textBlack)),
               SizedBox(width: 8),
               CustomText(
                 'Edit',
@@ -63,7 +64,7 @@ class CustomPopMenuButtonWidget extends StatelessWidget {
               SizedBox(
                   height: 14,
                   width: 14,
-                  child: Image.asset('assets/images/delete_pop.png')),
+                  child: Icon(Icons.delete, size: 14, color: AppColors.btnRed)),
               SizedBox(width: 8),
               CustomText(
                 'Delete',

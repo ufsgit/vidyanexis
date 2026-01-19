@@ -3,25 +3,26 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
 class CustomActionButton extends StatelessWidget {
-  final String imagePath;
+  final IconData icon;
   final String text;
   final VoidCallback? onTap;
   final Color? backgroundColor;
-  final Color? imageColor;
+  final Color?
+      imageColor; // Keeping variable name for compatibility or renaming to iconColor
   final Color? textColor;
   final double? height;
-  final double? imageSize;
+  final double? iconSize; // Renamed from imageSize
 
   const CustomActionButton({
     Key? key,
-    required this.imagePath,
+    required this.icon,
     required this.text,
     this.onTap,
     this.backgroundColor,
     this.imageColor,
     this.textColor,
     this.height = 30,
-    this.imageSize = 15,
+    this.iconSize = 15,
   }) : super(key: key);
 
   @override
@@ -40,10 +41,9 @@ class CustomActionButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Image.asset(
-                  imagePath,
-                  height: imageSize,
-                  width: imageSize,
+                Icon(
+                  icon,
+                  size: iconSize,
                   color: imageColor ?? AppColors.textGrey3,
                 ),
                 const SizedBox(width: 4),

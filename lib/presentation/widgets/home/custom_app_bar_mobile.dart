@@ -107,10 +107,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
         onTap: () {
           Scaffold.of(context).openDrawer();
         },
-        child: Image.asset(
-          'assets/images/menu.png',
-          height: widget.leadingIconSize,
-          width: widget.leadingIconSize,
+        child: Icon(
+          Icons.menu,
+          size: widget.leadingIconSize,
           color: widget.iconColor,
         ),
       ),
