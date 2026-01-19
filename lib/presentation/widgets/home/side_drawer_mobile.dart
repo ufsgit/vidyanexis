@@ -200,7 +200,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                               if (value == 'logout') {
                                 showDialog(
                                   context: context,
-                                  builder: (BuildContext context) {
+                                  builder: (BuildContext dialogContext) {
                                     return AlertDialog(
                                       title: const Text('Logout'),
                                       content: const Text(
@@ -208,12 +208,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                                       actions: [
                                         TextButton(
                                           onPressed: () =>
-                                              Navigator.of(context).pop(),
+                                              Navigator.of(dialogContext).pop(),
                                           child: const Text('Cancel'),
                                         ),
                                         TextButton(
                                           onPressed: () async {
-                                            Navigator.of(context).pop();
+                                            Navigator.of(dialogContext).pop();
                                             SharedPreferences prefs =
                                                 await SharedPreferences
                                                     .getInstance();
@@ -227,7 +227,9 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                                                       '${AppStyles.name()}-$userId');
                                             }
                                             await prefs.clear();
-                                            context.go(LoginPageMobile.route);
+                                            if (context.mounted) {
+                                              context.go(LoginPageMobile.route);
+                                            }
                                           },
                                           child: const Text(
                                             'Confirm',

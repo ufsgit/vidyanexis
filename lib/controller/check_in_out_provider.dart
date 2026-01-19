@@ -219,15 +219,15 @@ class CheckInOutProvider extends ChangeNotifier {
       // SharedPreferences preferences = await SharedPreferences.getInstance();
       // String userId = preferences.getString('userId') ?? "";
 
-      // String toUserId = (_selectedUser ?? 0).toString();
+      String toUserId = (_selectedUser ?? 0).toString();
 
-      // if (_TaskType.isEmpty || _TaskType == 'null') {
-      //   _TaskType = '0';
-      // }
+      if (_TaskType.isEmpty || _TaskType == 'null') {
+        _TaskType = '0';
+      }
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.getAttendanceByDate}?fromDate=$_fromDateS&toDate=$_toDateS');
+              '${HttpUrls.getAttendanceByDate}?fromDate=$_fromDateS&toDate=$_toDateS&userId=$toUserId');
 
       if (response.statusCode == 200) {
         final data = response.data;
