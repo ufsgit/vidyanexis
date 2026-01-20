@@ -1368,7 +1368,11 @@ class _LeadsPageState extends State<LeadPage> {
                                                                       Container(
                                                                     width: 125,
                                                                     child: Text(
-                                                                      '${lead.customerName[0].toUpperCase()}${lead.customerName.substring(1)}',
+                                                                      (lead.customerName?.isNotEmpty ??
+                                                                              false)
+                                                                          ? '${lead.customerName![0].toUpperCase()}${lead.customerName!.substring(1)}'
+                                                                          : lead.customerName ??
+                                                                              '',
                                                                       overflow:
                                                                           TextOverflow
                                                                               .ellipsis,

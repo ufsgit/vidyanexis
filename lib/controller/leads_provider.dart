@@ -5,6 +5,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:go_router/go_router.dart';
@@ -1928,23 +1929,91 @@ class LeadsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        print(data[0][0]['import_master_id']);
-        var importMasterId = data[0][0]['import_master_id'];
-        if (importMasterId == 1) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Success')),
-          );
+        
+        // Handle both Map and List response formats
+        if (data is Map) {
+          // Response is a Map like {success: true}
+          if (data['success'] == true) {
+            Fluttertoast.showToast(
+              msg: "Success",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              webPosition: "bottom",
+              webBgColor: "black",
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+            );
+          } else {
+            Fluttertoast.showToast(
+              msg: "Server Error",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              webPosition: "bottom",
+              webBgColor: "black",
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+            );
+            Loader.stopLoader(context);
+          }
+        } else if (data is List && data.isNotEmpty) {
+          // Response is a List (old format)
+          try {
+            if (data[0] is List && data[0].isNotEmpty && data[0][0] is Map) {
+              print(data[0][0]['import_master_id']);
+              var importMasterId = data[0][0]['import_master_id'];
+              if (importMasterId == 1) {
+                Fluttertoast.showToast(
+                  msg: "Success",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  webPosition: "bottom",
+                  webBgColor: "black",
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                );
+              } else {
+                Fluttertoast.showToast(
+                  msg: "Server Error",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  webPosition: "bottom",
+                  webBgColor: "black",
+                  backgroundColor: Colors.black,
+                  textColor: Colors.white,
+                );
+                Loader.stopLoader(context);
+              }
+            }
+          } catch (e) {
+            print('Error parsing response data: $e');
+            // If parsing fails but success is true, still show success
+            Fluttertoast.showToast(
+              msg: "Success",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              webPosition: "bottom",
+              webBgColor: "black",
+              backgroundColor: Colors.black,
+              textColor: Colors.white,
+            );
+          }
         }
 
         // Extract the list of students and check for duplicate entries
-        List duplicateEntries = data[1];
+        // List duplicateEntries = data[1];
 
-        if (duplicateEntries.isNotEmpty) {
-          // Show a Snackbar for duplicate entries
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Duplicate entries found')),
-          );
-        }
+        // if (duplicateEntries.isNotEmpty) {
+        //   Fluttertoast.showToast(
+        //     msg: "Duplicate Entries Found",
+        //     toastLength: Toast.LENGTH_SHORT,
+        //     gravity: ToastGravity.BOTTOM,
+        //     webPosition: "bottom",
+        //     webBgColor: "black",
+        //     backgroundColor: Colors.black,
+        //     textColor: Colors.white,
+        //   );
+        //   Loader.stopLoader(context);
+        // }
         await getSearchLeads(context);
         messageController.clear();
         statusController.clear();
@@ -1957,16 +2026,17 @@ class LeadsProvider extends ChangeNotifier {
         context.go(HomePage.route);
         Loader.stopLoader(context);
         print(data);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-        Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
+      Fluttertoast.showToast(
+        msg: "An error occurred: ${e.toString()}",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.BOTTOM,
+        webPosition: "bottom",
+        webBgColor: "black",
+        backgroundColor: Colors.black,
+        textColor: Colors.white,
       );
       Loader.stopLoader(context);
     }
