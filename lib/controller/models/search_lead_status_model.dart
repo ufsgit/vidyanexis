@@ -20,7 +20,7 @@ class SearchLeadStatusModel {
   String? viewInName;
   int? viewInId;
   int? followup;
-  int? isRegistered;
+  dynamic isRegistered;
   int? stageId;
   String? stageName;
   int? progressValue;
@@ -49,7 +49,7 @@ class SearchLeadStatusModel {
     String? viewInName,
     int? viewInId,
     int? followup,
-    int? isRegistered,
+    dynamic isRegistered,
     int? stageId,
     String? stageName,
     int? progressValue,
@@ -79,7 +79,7 @@ class SearchLeadStatusModel {
         viewInName: json["ViewIn_Name"],
         viewInId: json["ViewIn_Id"],
         followup: json["Followup"],
-        isRegistered: json["Is_Registered"],
+        isRegistered: json["Is_Registered"] ?? json["registered"],
         stageId: json["Stage_Id"],
         stageName: json["Stage_Name"],
         progressValue: json["Progress_Value"],
@@ -97,7 +97,7 @@ class SearchLeadStatusModel {
         "ViewIn_Name": viewInName,
         "ViewIn_Id": viewInId,
         "Followup": followup,
-        "Is_Registered": isRegistered,
+        "registered": isRegistered,
         "Stage_Id": stageId,
         "Stage_Name": stageName,
         "Progress_Value": progressValue,

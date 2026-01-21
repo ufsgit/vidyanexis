@@ -262,13 +262,13 @@ class SettingsProvider extends ChangeNotifier {
   List<UnitModel> _searchUnit = [];
   List<UnitModel> get searchUnit => _searchUnit;
   int? selectedUserId;
-  int _selectedFollowUp = 0;
-  int get selectedFollowUp => _selectedFollowUp;
+  int? _selectedFollowUp;
+  int? get selectedFollowUp => _selectedFollowUp;
   int _viewInId = 0;
   int get viewInId => _viewInId;
 
-  int _isRegister = 0;
-  int get isRegister => _isRegister;
+  dynamic _isRegister;
+  dynamic get isRegister => _isRegister;
 
   final Map<int, int> _menuIsViewMap = {};
   Map<int, int> get menuIsViewMap => _menuIsViewMap;
@@ -1842,6 +1842,7 @@ class SettingsProvider extends ChangeNotifier {
             "Status_Order": statusOrder,
             "Followup": followUp,
             "Is_Registered": isRegistered,
+            "registered": isRegistered,
             "Color_Code": colorCode,
             "ViewIn_Id": viewInId,
             "ViewIn_Name": viewInController.text.toString(),
@@ -1852,19 +1853,12 @@ class SettingsProvider extends ChangeNotifier {
           });
 
       if (response!.statusCode == 200) {
-        statusController.clear();
-        folloupController.clear();
-        stageStatusController.clear();
-        progressValueController.clear();
-        isRegisterController.clear();
-        setSelectedColor(null);
-
-        final data = response.data;
+        // notifyListeners() might be enough to refresh the list,
+        // but we don't clear form fields here to prevent flicker/reset before pop.
         getSearchLeadStatus(
             searchStatusController.text, viewInId.toString(), context);
         Navigator.pop(context);
         Loader.stopLoader(context);
-        print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
@@ -2238,7 +2232,7 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedFollowUp(int value) {
+  void setSelectedFollowUp(int? value) {
     _selectedFollowUp = value;
     notifyListeners();
   }
@@ -2310,7 +2304,7 @@ class SettingsProvider extends ChangeNotifier {
     clearEditing();
   }
 
-  void setIsRegistered(int value) {
+  void setIsRegistered(dynamic value) {
     _isRegister = value;
     notifyListeners();
   }

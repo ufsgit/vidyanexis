@@ -50,7 +50,7 @@ class SearchLeadModel {
   final int tp;
   final String address;
   final String phoneNumber;
-  final int isRegistered;
+  final dynamic isRegistered;
   final String registeredBy;
   final String registeredDate;
   final String registrationNo;
@@ -223,7 +223,7 @@ class SearchLeadModel {
       tp: parseInt(json['tp']),
       address: parseString(json['address']),
       phoneNumber: parseString(json['Phone_Number']),
-      isRegistered: parseInt(json['Is_Registered']),
+      isRegistered: json['Is_Registered'],
       registeredBy: parseString(json['Registered_By']),
       registeredDate: parseString(json['Registered_Date']),
       registrationNo: parseString(json['Registration_No']),
@@ -391,7 +391,7 @@ class SearchLeadModel {
     int? tp,
     String? address,
     String? phoneNumber,
-    int? isRegistered,
+    dynamic isRegistered,
     String? registeredBy,
     String? registeredDate,
     String? registrationNo,
