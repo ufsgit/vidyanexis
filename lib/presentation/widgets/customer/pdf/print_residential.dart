@@ -213,14 +213,15 @@ Future<void> _addItemPage(pw.Document pdf) async {
                 pw.Container(
                   padding: const pw.EdgeInsets.all(5),
                   decoration: pw.BoxDecoration(
-                    border: pw.Border.all(color: PdfColors.blue, width: 1),
+                    border: pw.Border.all(
+                        color: PdfColor.fromHex('#679900'), width: 1),
                   ),
                   child: pw.Center(
                     child: pw.Text(
                       'Bill of Material with Price',
                       style: pw.TextStyle(
                           font: boldFont,
-                          color: PdfColor.fromHex('#207cb7'),
+                          color: PdfColor.fromHex('#679900'),
                           fontSize: 11),
                     ),
                   ),
@@ -230,7 +231,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                 pw.Table(
                   border: pw.TableBorder.symmetric(
                       outside: pw.BorderSide(
-                          color: PdfColor.fromHex('#207cb7'), width: 1)),
+                          color: PdfColor.fromHex('#679900'), width: 1)),
                   columnWidths: {
                     0: pw.FixedColumnWidth(35), // S.N.
                     1: pw.FlexColumnWidth(2), // Product Name
@@ -248,7 +249,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                     // Header Row
                     pw.TableRow(
                       decoration:
-                          pw.BoxDecoration(color: PdfColor.fromHex('#207cb7')),
+                          pw.BoxDecoration(color: PdfColor.fromHex('#679900')),
                       children: [
                         _tableHeader('S.N.', color: PdfColors.white),
                         _tableHeader('Product Name',
@@ -317,7 +318,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                 // Summary Section
                 pw.Table(
                   border: pw.TableBorder.all(
-                      color: PdfColor.fromHex('#207cb7'), width: 1),
+                      color: PdfColor.fromHex('#679900'), width: 1),
                   columnWidths: const {
                     0: pw.FlexColumnWidth(2),
                     1: pw.FlexColumnWidth(1),
@@ -350,7 +351,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                                   quotation?.shippingCharges.toString() ?? '0'),
                               pw.Container(
                                 padding: const pw.EdgeInsets.all(8.0),
-                                color: PdfColor.fromHex('#207cb7'),
+                                color: PdfColor.fromHex('#679900'),
                                 child: pw.Row(
                                   mainAxisAlignment: pw.MainAxisAlignment.end,
                                   children: [
@@ -382,13 +383,13 @@ Future<void> _addItemPage(pw.Document pdf) async {
                 pw.Text('BANK ACCOUNT DETAILS',
                     style: pw.TextStyle(font: boldFont, fontSize: 12)),
                 pw.SizedBox(height: 8),
-                pw.Text('Account Number:074205001157',
+                pw.Text('Account Number: 0915102000006552',
                     style: pw.TextStyle(font: font, fontSize: 11)),
-                pw.Text('IFSC Code: ICIC0000216',
+                pw.Text('IFSC Code: IBKL0000339',
                     style: pw.TextStyle(font: font, fontSize: 11)),
-                pw.Text('Account Name :Virgin Power and Engineering Pvt Ltd',
+                pw.Text('Account Name : A3S ECOSAVE PRIVATE LIMITED',
                     style: pw.TextStyle(font: font, fontSize: 11)),
-                pw.Text('Bank :ICICI Bank',
+                pw.Text('Bank : IDBI BANK',
                     style: pw.TextStyle(font: font, fontSize: 11)),
               ],
             ),
@@ -452,14 +453,15 @@ Future<void> _addBillOfMaterialsPage(pw.Document pdf) async {
             margin: const pw.EdgeInsets.symmetric(horizontal: 30),
             padding: const pw.EdgeInsets.all(5),
             decoration: pw.BoxDecoration(
-              border: pw.Border.all(color: PdfColors.blue, width: 1),
+              border:
+                  pw.Border.all(color: PdfColor.fromHex('#679900'), width: 1),
             ),
             child: pw.Center(
               child: pw.Text(
                 'Bill of Materials',
                 style: pw.TextStyle(
                     font: boldFont,
-                    color: PdfColor.fromHex('#207cb7'),
+                    color: PdfColor.fromHex('#679900'),
                     fontSize: 11),
               ),
             ),
@@ -470,7 +472,7 @@ Future<void> _addBillOfMaterialsPage(pw.Document pdf) async {
             margin: const pw.EdgeInsets.symmetric(horizontal: 30),
             child: pw.Table(
               border: pw.TableBorder.all(
-                  color: PdfColor.fromHex('#207cb7'), width: 1),
+                  color: PdfColor.fromHex('#679900'), width: 1),
               columnWidths: const {
                 0: pw.FixedColumnWidth(60),
                 1: pw.FlexColumnWidth(2),
@@ -483,7 +485,7 @@ Future<void> _addBillOfMaterialsPage(pw.Document pdf) async {
                 // Header
                 pw.TableRow(
                   decoration: pw.BoxDecoration(
-                    color: PdfColor.fromHex('#207cb7'),
+                    color: PdfColor.fromHex('#679900'),
                   ),
                   children: [
                     _tableHeader('No',
