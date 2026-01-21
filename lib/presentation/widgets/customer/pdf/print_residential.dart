@@ -35,7 +35,7 @@ Future<void> printResidentialPDFs({
     await _addPlaceholderPage(pdf, 10);
     await _addPlaceholderPage(pdf, 11);
     await _addPlaceholderPage(pdf, 12);
-    await _addPlaceholderPage(pdf, 13);
+    // await _addPlaceholderPage(pdf, 13);
 
     final Uint8List pdfBytes = await pdf.save();
     await Printing.layoutPdf(
