@@ -3,12 +3,14 @@ class HttpUrls {
   //live
 
   //static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
-//   static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
-  //static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
+  // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
+  // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
+  // static String baseUrl = 'https://oxysolarapi.trackbox.net.in';
 
   //dev
-//   static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
-//   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
   static String baseUrl = 'https://3pm19pm4-3511.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
