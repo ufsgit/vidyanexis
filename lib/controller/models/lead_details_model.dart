@@ -24,7 +24,7 @@ class LeadDetails {
   final String statusName;
   final int byUserId;
   final String byUserName;
-  final int isRegistered;
+  final dynamic isRegistered;
   final int? registeredBy;
   final String? registeredDate;
   final String? registrationNo;
@@ -270,7 +270,7 @@ class LeadDetails {
       statusName: parseString(json['Status_Name']),
       byUserId: parseInt(json['By_User_Id']),
       byUserName: parseString(json['By_User_Name']),
-      isRegistered: parseInt(json['Is_Registered']),
+      isRegistered: json['Is_Registered'],
       registeredBy: parseInt(json['Registered_By']),
       registeredDate: parseString(json['Registered_Date']),
       registrationNo: parseString(json['Registration_No']),
@@ -502,7 +502,7 @@ class LeadDetails {
     String? statusName,
     int? byUserId,
     String? byUserName,
-    int? isRegistered,
+    dynamic isRegistered,
     int? registeredBy,
     String? registeredDate,
     String? registrationNo,

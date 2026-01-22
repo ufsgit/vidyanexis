@@ -19,7 +19,7 @@ class TaskTypeStatusModel {
   String? statusName;
   int? statusOrder;
   int? followup;
-  int? isRegistered;
+  dynamic isRegistered;
   Color? colorCode;
   int? taskTypeId;
   int? enquiryForId; // Added field
@@ -40,7 +40,7 @@ class TaskTypeStatusModel {
     String? statusName,
     int? statusOrder,
     int? followup,
-    int? isRegistered,
+    dynamic isRegistered,
     Color? colorCode,
     int? taskTypeId,
     int? enquiryForId, // Added parameter
@@ -62,7 +62,7 @@ class TaskTypeStatusModel {
         statusName: json["Status_Name"],
         statusOrder: json["Status_Order"],
         followup: json["Followup"],
-        isRegistered: json["Is_Registered"],
+        isRegistered: json["registered"] ?? json["Is_Registered"],
         colorCode: json["Color_Code"] == null
             ? Colors.black
             : AppColors.parseColor(json["Color_Code"]),
@@ -75,7 +75,7 @@ class TaskTypeStatusModel {
         "Status_Name": statusName,
         "Status_Order": statusOrder,
         "Followup": followup,
-        "Is_Registered": isRegistered,
+        "registered": isRegistered,
         "Color_Code": colorCode,
         "Enquiry_For_Id": enquiryForId, // Added field to JSON map
       };

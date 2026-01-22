@@ -17,7 +17,7 @@ class SearchStatusModel {
   String statusName;
   int statusOrder;
   int followup;
-  int isRegistered;
+  dynamic isRegistered;
   String colorCode;
 
   SearchStatusModel({
@@ -35,7 +35,7 @@ class SearchStatusModel {
         statusName: json["Status_Name"],
         statusOrder: json["Status_Order"],
         followup: json["Followup"],
-        isRegistered: json["Is_Registered"],
+        isRegistered: json["Is_Registered"] ?? json["registered"],
         colorCode: json["Color_Code"],
       );
 
@@ -44,7 +44,7 @@ class SearchStatusModel {
         "Status_Name": statusName,
         "Status_Order": statusOrder,
         "Followup": followup,
-        "Is_Registered": isRegistered,
+        "registered": isRegistered,
         "Color_Code": colorCode,
       };
 }

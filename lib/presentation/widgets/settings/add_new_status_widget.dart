@@ -314,12 +314,45 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
         selectedFields =
             widget.data!.customFields?.map((e) => e.toJson()).toList() ?? [];
         settingsProvider.statusController.text = widget.status;
-        settingsProvider.folloupController.text =
-            widget.followUp == "1" ? "Yes" : "No";
-        settingsProvider.setSelectedFollowUp(widget.followUp == "1" ? 1 : 0);
-        settingsProvider.isRegisterController.text =
-            widget.isRegister == "1" ? "Yes" : "No";
-        settingsProvider.setIsRegistered(widget.isRegister == "1" ? 1 : 0);
+        final List<DropdownItem<dynamic>> followUpOptions = [
+          DropdownItem<dynamic>(id: 1, name: 'Yes'),
+          DropdownItem<dynamic>(id: 0, name: 'No'),
+          DropdownItem<dynamic>(id: 2, name: 'Lost'),
+        ];
+        final List<DropdownItem<dynamic>> registrationOptions = [
+          DropdownItem<dynamic>(id: 'yes', name: 'Yes'),
+          DropdownItem<dynamic>(id: 'no', name: 'No'),
+          DropdownItem<dynamic>(id: 'lost', name: 'Lost'),
+          DropdownItem<dynamic>(id: 'sales_closed', name: 'Sales Closed'),
+        ];
+
+        settingsProvider.folloupController.text = followUpOptions
+            .firstWhere((e) => e.id.toString() == widget.followUp.toString(),
+                orElse: () => DropdownItem(id: 0, name: 'No'))
+            .name;
+        settingsProvider.setSelectedFollowUp(followUpOptions
+            .firstWhere((e) => e.id.toString() == widget.followUp.toString(),
+                orElse: () => DropdownItem(id: 0, name: 'No'))
+            .id);
+
+        String regVal = widget.isRegister.toString().toLowerCase();
+        String preselectedId = 'no';
+        if (regVal == '1' || regVal == 'yes') {
+          preselectedId = 'yes';
+        } else if (regVal == '0' || regVal == 'no') {
+          preselectedId = 'no';
+        } else if (regVal == '2' || regVal == 'lost') {
+          preselectedId = 'lost';
+        } else if (regVal == 'sales_closed' || regVal == 'sales closed') {
+          preselectedId = 'sales_closed';
+        }
+
+        final selectedRegItem = registrationOptions.firstWhere(
+            (e) => e.id == preselectedId,
+            orElse: () => registrationOptions[1]); // Default to 'no'
+
+        settingsProvider.isRegisterController.text = selectedRegItem.name;
+        settingsProvider.setIsRegistered(selectedRegItem.id);
         settingsProvider.setSelectedColor(widget.colorCode);
         settingsProvider.setViewInId(widget.data!.viewInId ?? 0);
         settingsProvider.setStageId(widget.data!.stageId ?? 0);
@@ -330,11 +363,19 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
 
         settingsProvider.viewInController.text = widget.data!.viewInName ?? "";
       } else {
+        // INITIALIZE FOR ADD NEW STATUS
+        settingsProvider.statusController.clear();
+        settingsProvider.folloupController.clear();
+        settingsProvider.isRegisterController.clear();
+        settingsProvider.setSelectedColor(null);
+        settingsProvider.setIsRegistered(null); // Show hint by default
+        settingsProvider.setSelectedFollowUp(null); // Show hint by default
+
         settingsProvider.setViewInId(0);
         settingsProvider.setStageId(0);
         settingsProvider.stageStatusController.text = '';
-
         settingsProvider.viewInController.text = '';
+        settingsProvider.progressValueController.text = '';
       }
     });
   }
@@ -352,10 +393,16 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
       const Color(0xff4D4D4D),
     ];
 
-    final List<DropdownItem<int>> followUpOptions = [
-      DropdownItem<int>(id: 1, name: 'Yes'),
-      DropdownItem<int>(id: 0, name: 'No'),
-      DropdownItem<int>(id: 2, name: 'Lost'),
+    final List<DropdownItem<dynamic>> followUpOptions = [
+      DropdownItem<dynamic>(id: 1, name: 'Yes'),
+      DropdownItem<dynamic>(id: 0, name: 'No'),
+      DropdownItem<dynamic>(id: 2, name: 'Lost'),
+    ];
+    final List<DropdownItem<dynamic>> registrationOptions = [
+      DropdownItem<dynamic>(id: 'yes', name: 'Yes'),
+      DropdownItem<dynamic>(id: 'no', name: 'No'),
+      DropdownItem<dynamic>(id: 'lost', name: 'Lost'),
+      DropdownItem<dynamic>(id: 'sales_closed', name: 'Sales Closed'),
     ];
     final List<DropdownItem<int>> viewInOptions = [
       DropdownItem<int>(id: 1, name: 'Lead'),
@@ -411,11 +458,9 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                   const SizedBox(width: 10),
                   Expanded(
                     child: Container(
-                      child: CommonDropdown<int>(
+                      child: CommonDropdown<dynamic>(
                         hintText: 'Follow Up*',
-                        selectedValue: widget.isEdit
-                            ? settingsProvider.selectedFollowUp
-                            : null,
+                        selectedValue: settingsProvider.selectedFollowUp,
                         items: followUpOptions,
                         controller: settingsProvider.folloupController,
                         onItemSelected: (selectedId) {
@@ -432,11 +477,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
               Row(
                 children: [
                   Expanded(
-                    child: CommonDropdown<int>(
+                    child: CommonDropdown<dynamic>(
                       hintText: 'Registered*',
-                      selectedValue:
-                          widget.isEdit ? settingsProvider.isRegister : null,
-                      items: followUpOptions,
+                      selectedValue: settingsProvider.isRegister,
+                      items: registrationOptions,
                       controller: settingsProvider.isRegisterController,
                       onItemSelected: (selectedId) {
                         settingsProvider.setIsRegistered(selectedId);
