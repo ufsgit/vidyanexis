@@ -1561,7 +1561,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                             icon: const Icon(
                                                                 Icons.add),
                                                             label: const Text(
-                                                                'Quotation Detail'),
+                                                                'New Quotation '),
                                                             style:
                                                                 ElevatedButton
                                                                     .styleFrom(
