@@ -39,7 +39,7 @@ class _UsersContentState extends State<UsersContent> {
 
   @override
   Widget build(BuildContext context) {
-    const double minContentWidth = 1200.0;
+    const double minContentWidth = 1400.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -312,32 +312,37 @@ class _UsersContentState extends State<UsersContent> {
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
-                                                    Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color: Colors
-                                                            .purple.shade50,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(4),
-                                                      ),
-                                                      child: Text(
-                                                        settingsProvider
-                                                                .searchUserDetails[
-                                                                    index]
-                                                                .departmentName ??
-                                                            "",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.purple,
+                                                    Flexible(
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .purple.shade50,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(4),
+                                                        ),
+                                                        child: Text(
+                                                          settingsProvider
+                                                                  .searchUserDetails[
+                                                                      index]
+                                                                  .departmentName ??
+                                                              "",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .plusJakartaSans(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color:
+                                                                Colors.purple,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
@@ -352,33 +357,39 @@ class _UsersContentState extends State<UsersContent> {
                                                       .branchName !=
                                                   null)
                                               ? Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
                                                   children: [
-                                                    Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color:
-                                                            Colors.blue.shade50,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(4),
-                                                      ),
-                                                      child: Text(
-                                                        settingsProvider
-                                                                .searchUserDetails[
-                                                                    index]
-                                                                .branchName ??
-                                                            "",
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: Colors.blue,
+                                                    Flexible(
+                                                      child: Container(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: Colors
+                                                              .blue.shade50,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(4),
+                                                        ),
+                                                        child: Text(
+                                                          settingsProvider
+                                                                  .searchUserDetails[
+                                                                      index]
+                                                                  .branchName ??
+                                                              "",
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .plusJakartaSans(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: Colors.blue,
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
