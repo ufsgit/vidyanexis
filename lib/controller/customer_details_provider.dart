@@ -434,12 +434,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addOrEditItem(BuildContext context) {
     // Validate input fields
-    if (itemNameController.text.isEmpty || itemPriceController.text.isEmpty
-        // ||
-        // itemMrpController.text.isEmpty ||
-        // itemQuantityController.text.isEmpty
-
-        ) {
+    if (itemNameController.text.isEmpty || itemPriceController.text.isEmpty) {
       showDialog(
         context: context,
         builder: (BuildContext context) {

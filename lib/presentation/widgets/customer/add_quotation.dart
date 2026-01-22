@@ -1290,7 +1290,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: false,
                       height: 54,
                       controller: customerDetailsProvider.itemMrpController,
-                      hintText: 'HSN CODE',
+                      hintText: 'HSN CODE (Optional)',
                       labelText: '',
                     ),
                   ),
