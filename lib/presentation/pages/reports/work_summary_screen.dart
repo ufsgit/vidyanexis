@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/reports/work_summary_graph_widget.dart';
 
 class WorkSummaryScreen extends StatefulWidget {
   const WorkSummaryScreen({super.key});
@@ -69,9 +70,11 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
           : null,
       body: Container(
         color: Colors.grey[50],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+        child: DefaultTabController(
+          length: 2,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             // Header
             !AppStyles.isWebScreen(context)
                 ? Container(
@@ -168,6 +171,30 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                       ],
                     ),
                   ),
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                height: 45,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(25),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: TabBar(
+                  indicatorSize: TabBarIndicatorSize.tab,
+                  indicator: BoxDecoration(
+                    color: AppColors.primaryBlue,
+                    borderRadius: BorderRadius.circular(25),
+                  ),
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.grey,
+                  dividerColor: Colors.transparent,
+                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
+                  tabs: const [
+                    Tab(text: 'Data'),
+                    Tab(text: 'Graph'),
+                  ],
+                ),
+              ),
 
             if (reportsProvider.isFilter)
               !AppStyles.isWebScreen(context)
@@ -542,126 +569,110 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                         ],
                       ),
                     ),
-            !AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Row(
-                                  children: [
-                                    // Number column
-                                    // const SizedBox(
-                                    //   width: 80,
-                                    //   child: Padding(
-                                    //     padding: EdgeInsets.symmetric(
-                                    //         vertical: 12.0, horizontal: 25.0),
-                                    //     child: Text('No.',
-                                    //         style: TextStyle(
-                                    //             fontWeight: FontWeight.bold,
-                                    //             color: Color(0xFF607185))),
-                                    //   ),
-                                    // ),
-                                    // Username column
-                                    Expanded(
-                                      flex: 2,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0, vertical: 8),
-                                        child: Text(
-                                          'User Name',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Color(0xFF607185),
+
+            Expanded(
+              child: TabBarView(
+                physics: const NeverScrollableScrollPhysics(),
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: AppStyles.isWebScreen(context)
+                        ? Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  // Header Row (Table Column Titles)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFEFF2F5),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 80,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal: 25.0),
+                                            child: Text('No.',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                    color: Color(0xFF607185))),
                                           ),
                                         ),
-                                      ),
-                                    ),
-                                    // Follow up column
-                                    Expanded(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0, vertical: 8),
-                                        child: Text(
-                                          'Follow up',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Color(0xFF607185),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    // View Details column
-                                    Expanded(
-                                      flex: 1,
-                                      child: Padding(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 16.0, vertical: 8),
-                                        child: Text(
-                                          'Details',
-                                          style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: Color(0xFF607185),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider.taskReport.length,
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.taskReport[index];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 == 0
-                                            ? Colors.white
-                                            : const Color(0xFFF6F7F9),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.center,
-                                        children: [
-                                          Expanded(
+                                        TableWidget(
                                             flex: 2,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: InkWell(
-                                                onTap: () {
-                                                  // Navigation code here
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
+                                            title: 'User Name',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'No of Follow up',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'View Details',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                      ],
+                                    ),
+                                  ),
+                                  // Data Rows
+                                  Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(),
+                                      itemCount: reportsProvider
+                                          .taskReport.length,
+                                      itemBuilder: (context, index) {
+                                        var task = reportsProvider
+                                            .taskReport[index];
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index % 2 == 0
+                                                ? Colors.white
+                                                : const Color(0xFFF6F7F9),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 80,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 12.0,
+                                                          horizontal: 25.0),
+                                                  child: Text(
+                                                      (index + 1).toString(),
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12,
+                                                      )),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                flex: 2,
+                                                data: Container(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
                                                   decoration: BoxDecoration(
                                                     color:
                                                         const Color(0xFFE9EDF1),
@@ -684,26 +695,25 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                                             ),
                                                             const SizedBox(
                                                                 width: 8),
-                                                            Flexible(
-                                                              child: Text(
-                                                                task.toStaff.length >
-                                                                        20
-                                                                    ? '${task.toStaff.substring(0, 20)}...'
-                                                                    : task
-                                                                        .toStaff,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 12,
-                                                                ),
+                                                            Text(
+                                                              task.toStaff
+                                                                          .length >
+                                                                      20
+                                                                  ? '${task.toStaff.substring(0, 20)}...'
+                                                                  : task
+                                                                      .toStaff,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 12,
                                                               ),
                                                             ),
                                                             const SizedBox(
@@ -725,283 +735,287 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                                             color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
-                                                            fontSize: 12,
+                                                            fontSize: 14,
                                                           ),
                                                         ),
                                                 ),
                                               ),
-                                            ),
-                                          ),
-                                          // Follow up column
-                                          Expanded(
-                                            flex: 1,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 16.0),
-                                              child: Text(
-                                                task.noOfFollowUp.toString(),
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
+                                              TableWidget(
+                                                  flex: 1,
                                                   fontSize: 12,
+                                                  title: task.noOfFollowUp
+                                                      .toString()),
+                                              Expanded(
+                                                child: CustomOutlinedSvgButton(
+                                                  showIcon: false,
+                                                  onPressed: () async {
+                                                    String userId = task
+                                                        .userDetailsId
+                                                        .toString();
+                                                    context.push(
+                                                        '${WorkReportScreen.route}$userId');
+                                                  },
+                                                  svgPath:
+                                                      'assets/images/Print.svg',
+                                                  label: 'View Details',
+                                                  breakpoint: 860,
+                                                  foregroundColor:
+                                                      AppColors.primaryBlue,
+                                                  backgroundColor: Colors.white,
+                                                  borderSide: BorderSide(
+                                                      color: AppColors
+                                                          .primaryBlue),
                                                 ),
                                               ),
-                                            ),
+                                            ],
                                           ),
-                                          // View Details column
-
-                                          Expanded(
-                                              flex: 1,
-                                              child: Container(
-                                                width: 36,
-                                                height: 36,
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            100)),
-                                                child: IconButton(
-                                                    onPressed: () async {
-                                                      String userId = task
-                                                          .userDetailsId
-                                                          .toString();
-                                                      context.push(
-                                                          '${WorkReportScreen.route}$userId');
-                                                    },
-                                                    icon: Icon(
-                                                      Icons
-                                                          .arrow_forward_ios_rounded,
-                                                      size: 18,
-                                                      color:
-                                                          AppColors.textBlack,
-                                                    )),
-                                              )),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                  )
-                : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  // Header Row (Table Column Titles)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFEFF2F5),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Expanded(
+                                          flex: 2,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0, vertical: 8),
+                                            child: Text(
+                                              'User Name',
+                                              style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 14,
-                                                color: Color(0xFF607185))),
-                                      ),
-                                    ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'User Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'No of Follow up',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'View Details',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                  ],
-                                ),
-                              ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of tasks
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.taskReport[index];
-                                    return Container(
-                                      decoration: BoxDecoration(
-                                        color: index % 2 == 0
-                                            ? Colors.white
-                                            : const Color(0xFFF6F7F9),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      // Alternate row colors
-                                      child: Row(
-                                        // mainAxisAlignment: MainAxisAlignment.start,
-                                        children: [
-                                          // Padding(
-                                          //   padding: const EdgeInsets.symmetric(
-                                          //       vertical: 12.0, horizontal: 25.0),
-                                          //   child: Text(task.customerId.toString(),
-                                          //       style: const TextStyle(
-                                          //         fontWeight: FontWeight.bold,
-                                          //       )),
-                                          // ),
-                                          SizedBox(
-                                            width: 80,
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 25.0),
-                                              child: Text(
-                                                  (index + 1).toString(),
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 12,
-                                                  )),
-                                            ),
-                                          ),
-                                          // TableWidget(title: task.orderNo),
-                                          TableWidget(
-                                            flex: 2,
-                                            data: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                              decoration: BoxDecoration(
-                                                color: const Color(0xFFE9EDF1),
-                                                borderRadius:
-                                                    BorderRadius.circular(50),
+                                                color: Color(0xFF607185),
                                               ),
-                                              child: MediaQuery.of(context)
-                                                          .size
-                                                          .width >
-                                                      1700
-                                                  ? Row(
-                                                      mainAxisSize: MainAxisSize
-                                                          .min, // Ensures the Row takes only as much space as needed
-                                                      children: [
-                                                        // Front image (before text)
-                                                        Image.asset(
-                                                          'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                          width:
-                                                              15, // You can adjust the size of the image
-                                                          height:
-                                                              15, // You can adjust the size of the image
-                                                        ),
-                                                        const SizedBox(
-                                                            width:
-                                                                8), // Space between the image and text
-                                                        Text(
-                                                          task.toStaff.length >
-                                                                  20
-                                                              ? '${task.toStaff.substring(0, 20)}...'
-                                                              : task.toStaff,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
-                                                        const SizedBox(
-                                                            width:
-                                                                8), // Space between the text and back image
-                                                        // Back image (after text)
-                                                        Image.asset(
-                                                          'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                          width:
-                                                              12, // Adjust the size of the image
-                                                          height:
-                                                              12, // Adjust the size of the image
-                                                        ),
-                                                      ],
-                                                    )
-                                                  : Text(
-                                                      task.toStaff,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: const TextStyle(
-                                                        color: Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0, vertical: 8),
+                                            child: Text(
+                                              'Follow up',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                                color: Color(0xFF607185),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(
+                                          flex: 1,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16.0, vertical: 8),
+                                            child: Text(
+                                              'Details',
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14,
+                                                color: Color(0xFF607185),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  // Data Rows
+                                  Expanded(
+                                    child: ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const AlwaysScrollableScrollPhysics(),
+                                      itemCount:
+                                          reportsProvider.taskReport.length,
+                                      itemBuilder: (context, index) {
+                                        var task =
+                                            reportsProvider.taskReport[index];
+                                        return Container(
+                                          decoration: BoxDecoration(
+                                            color: index % 2 == 0
+                                                ? Colors.white
+                                                : const Color(0xFFF6F7F9),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Expanded(
+                                                flex: 2,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16.0),
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      // Navigation code here
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 8,
+                                                          vertical: 4),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFE9EDF1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50),
                                                       ),
+                                                      child: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width >
+                                                              1700
+                                                          ? Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                Image.asset(
+                                                                  'assets/images/lead_profile.png',
+                                                                  width: 15,
+                                                                  height: 15,
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 8),
+                                                                Flexible(
+                                                                  child: Text(
+                                                                    task.toStaff.length >
+                                                                            20
+                                                                        ? '${task.toStaff.substring(0, 20)}...'
+                                                                        : task
+                                                                            .toStaff,
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          12,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                                const SizedBox(
+                                                                    width: 8),
+                                                                Image.asset(
+                                                                  'assets/images/forward.png',
+                                                                  width: 12,
+                                                                  height: 12,
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : Text(
+                                                              task.toStaff,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                              maxLines: 1,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
                                                     ),
-                                            ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 16.0),
+                                                  child: Text(
+                                                    task.noOfFollowUp
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              Expanded(
+                                                  flex: 1,
+                                                  child: Container(
+                                                    width: 36,
+                                                    height: 36,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100)),
+                                                    child: IconButton(
+                                                        onPressed: () async {
+                                                          String userId = task
+                                                              .userDetailsId
+                                                              .toString();
+                                                          context.push(
+                                                              '${WorkReportScreen.route}$userId');
+                                                        },
+                                                        icon: Icon(
+                                                          Icons
+                                                              .arrow_forward_ios_rounded,
+                                                          size: 18,
+                                                          color: AppColors
+                                                              .textBlack,
+                                                        )),
+                                                  )),
+                                            ],
                                           ),
-                                          TableWidget(
-                                              flex: 1,
-                                              fontSize: 12,
-                                              title:
-                                                  task.noOfFollowUp.toString()),
-
-                                          Expanded(
-                                            child: CustomOutlinedSvgButton(
-                                              showIcon: false,
-                                              onPressed: () async {
-                                                String userId = task
-                                                    .userDetailsId
-                                                    .toString();
-                                                print('User ID: $userId');
-                                                context.push(
-                                                    '${WorkReportScreen.route}$userId');
-                                              },
-                                              svgPath:
-                                                  'assets/images/Print.svg',
-                                              label: 'View Details',
-                                              breakpoint: 860,
-                                              foregroundColor:
-                                                  AppColors.primaryBlue,
-                                              backgroundColor: Colors.white,
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryBlue),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  )
+                  ),
+                  const WorkSummaryGraphWidget(),
+                ],
+              ),
+            )
           ],
         ),
+      ),
       ),
     );
   }
