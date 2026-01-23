@@ -1929,7 +1929,7 @@ class LeadsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        
+
         // Handle both Map and List response formats
         if (data is Map) {
           // Response is a Map like {success: true}
@@ -1945,7 +1945,7 @@ class LeadsProvider extends ChangeNotifier {
             );
           } else {
             Fluttertoast.showToast(
-              msg: "Server Error",
+              msg: "Duplicate Entries Found",
               toastLength: Toast.LENGTH_SHORT,
               gravity: ToastGravity.BOTTOM,
               webPosition: "bottom",
@@ -1953,7 +1953,6 @@ class LeadsProvider extends ChangeNotifier {
               backgroundColor: Colors.black,
               textColor: Colors.white,
             );
-            Loader.stopLoader(context);
           }
         } else if (data is List && data.isNotEmpty) {
           // Response is a List (old format)
@@ -1973,7 +1972,7 @@ class LeadsProvider extends ChangeNotifier {
                 );
               } else {
                 Fluttertoast.showToast(
-                  msg: "Server Error",
+                  msg: "Duplicate Entries Found",
                   toastLength: Toast.LENGTH_SHORT,
                   gravity: ToastGravity.BOTTOM,
                   webPosition: "bottom",
@@ -1981,7 +1980,6 @@ class LeadsProvider extends ChangeNotifier {
                   backgroundColor: Colors.black,
                   textColor: Colors.white,
                 );
-                Loader.stopLoader(context);
               }
             }
           } catch (e) {
@@ -1998,7 +1996,7 @@ class LeadsProvider extends ChangeNotifier {
             );
           }
         }
-
+        Loader.stopLoader(context);
         // Extract the list of students and check for duplicate entries
         // List duplicateEntries = data[1];
 
@@ -2014,23 +2012,24 @@ class LeadsProvider extends ChangeNotifier {
         //   );
         //   Loader.stopLoader(context);
         // }
-        await getSearchLeads(context);
-        messageController.clear();
-        statusController.clear();
-        assignToFollowUpController.clear();
-        nextFollowUpDateController.clear();
-        enquirySourceController.clear();
-        sourceCategoryController.clear();
-        final provider = Provider.of<SidebarProvider>(context, listen: false);
-        provider.setMenuId(1, 0);
-        context.go(HomePage.route);
-        Loader.stopLoader(context);
-        print(data);
+        // await getSearchLeads(context);
+        // messageController.clear();
+        // statusController.clear();
+        // assignToFollowUpController.clear();
+        // nextFollowUpDateController.clear();
+        // enquirySourceController.clear();
+        // sourceCategoryController.clear();
+        // Loader.stopLoader(context);
+        // final provider = Provider.of<SidebarProvider>(context, listen: false);
+        // provider.setMenuId(1, 0);
+        // context.go(HomePage.route);
+        // Loader.stopLoader(context);
+        // print(data);
       }
     } catch (e) {
       print('Exception occurred: $e');
       Fluttertoast.showToast(
-        msg: "An error occurred: ${e.toString()}",
+        msg: "",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
         webPosition: "bottom",
