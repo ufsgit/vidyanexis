@@ -112,6 +112,12 @@ class LeadDetails {
   final String creName;
   final int leadTypeId;
   final String leadTypeName;
+  final String engineerName;
+  final String organization;
+  final String engineerMobile;
+  final String engineerCity;
+  final String engineerDistrict;
+  final String firestationName;
   final List<AudioFileLead> audioFiles;
 
   LeadDetails({
@@ -225,6 +231,12 @@ class LeadDetails {
     required this.creName,
     required this.leadTypeId,
     required this.leadTypeName,
+    required this.engineerName,
+    required this.organization,
+    required this.engineerMobile,
+    required this.engineerCity,
+    required this.engineerDistrict,
+    required this.firestationName,
   });
 
   factory LeadDetails.fromJson(Map<String, dynamic> json) {
@@ -353,6 +365,12 @@ class LeadDetails {
       creName: parseString(json['CRE_Name']),
       leadTypeId: parseInt(json['Lead_Type_Id']),
       leadTypeName: parseString(json['Lead_Type_Name']),
+      engineerName: parseString(json['Engineer_Name']),
+      organization: parseString(json['Organization']),
+      engineerMobile: parseString(json['Engineer_Mobile']),
+      engineerCity: parseString(json['Engineer_City']),
+      engineerDistrict: parseString(json['Engineer_District']),
+      firestationName: parseString(json['Firestation']),
       audioFiles: (json['Audio_Files'] != null && json['Audio_Files'] is List)
           ? (json['Audio_Files'] as List<dynamic>)
               .map((item) => AudioFileLead.fromJson(item))
@@ -472,6 +490,12 @@ class LeadDetails {
       'CRE_Name': creName,
       'Lead_Type_Id': leadTypeId,
       'Lead_Type_Name': leadTypeName,
+      'Engineer_Name': engineerName,
+      'Organization': organization,
+      'Engineer_Mobile': engineerMobile,
+      'Engineer_City': engineerCity,
+      'Engineer_District': engineerDistrict,
+      'Firestation': firestationName,
     };
   }
 
@@ -575,6 +599,12 @@ class LeadDetails {
     String? creName,
     int? leadTypeId,
     String? leadTypeName,
+    String? engineerName,
+    String? organization,
+    String? engineerMobile,
+    String? engineerCity,
+    String? engineerDistrict,
+    String? firestationName,
     List<AudioFileLead>? audioFiles,
   }) {
     return LeadDetails(
@@ -692,6 +722,12 @@ class LeadDetails {
       creName: creName ?? this.creName,
       leadTypeId: leadTypeId ?? this.leadTypeId,
       leadTypeName: leadTypeName ?? this.leadTypeName,
+      engineerName: engineerName ?? this.engineerName,
+      organization: organization ?? this.organization,
+      engineerMobile: engineerMobile ?? this.engineerMobile,
+      engineerCity: engineerCity ?? this.engineerCity,
+      engineerDistrict: engineerDistrict ?? this.engineerDistrict,
+      firestationName: firestationName ?? this.firestationName,
     );
   }
 
