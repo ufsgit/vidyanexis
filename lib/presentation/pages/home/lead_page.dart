@@ -1556,8 +1556,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 controller: _horizontalScrollController,
                                 scrollDirection: Axis.horizontal,
                                 child: SizedBox(
-                                  width:
-                                      1000, // Reduced column widths for better responsive layout
+                                  width: 1160, // Increased for new column
                                   child: Column(
                                     children: [
                                       // Header row
@@ -1628,6 +1627,18 @@ class _LeadsPageState extends State<LeadPage> {
                                                 _HeaderCell('Follow-Up Date',
                                                     width: 160),
                                                 // _HeaderCell('', width: 160),
+                                              ],
+                                            ),
+                                            Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                _HeaderCell(
+                                                  'Total ,t',
+                                                  width: 160,
+                                                ),
                                               ],
                                             ),
                                           ],
@@ -1829,6 +1840,19 @@ class _LeadsPageState extends State<LeadPage> {
                                                         _DataCell(
                                                             lead.nextFollowUpDate
                                                                 .toDayMonthYearFormat(), // appointment
+                                                            width: 160),
+                                                      ],
+                                                    ),
+                                                    Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        _DataCell(
+                                                            lead.totalProjectCost,
                                                             width: 160),
                                                       ],
                                                     ),

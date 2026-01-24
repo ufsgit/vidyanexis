@@ -45,6 +45,7 @@ class SearchLeadModel {
   final String enquiryFor;
   final int enquirySourceId;
   final String enquirySourceName;
+  final String totalProjectCost;
 
   // ─────────────────── Additional Fields ───────────────────
   final int tp;
@@ -162,6 +163,7 @@ class SearchLeadModel {
     this.peId,
     this.creId,
     this.creName,
+    required this.totalProjectCost,
   });
 
   factory SearchLeadModel.fromJson(Map<String, dynamic> json) {
@@ -259,6 +261,7 @@ class SearchLeadModel {
               .map((item) => AudioFileLead.fromJson(item))
               .toList()
           : [],
+      totalProjectCost: parseString(json['Total_Project_Cost']),
     );
   }
 
@@ -341,6 +344,7 @@ class SearchLeadModel {
       "PE_Id": peId,
       "CRE_Id": creId,
       "CRE_Name": creName,
+      "Total_Project_Cost": totalProjectCost,
     };
   }
 
@@ -422,6 +426,7 @@ class SearchLeadModel {
     String? peId,
     String? creId,
     String? creName,
+    String? totalProjectCost,
     List<AudioFileLead>? audioFiles,
   }) {
     return SearchLeadModel(
@@ -504,6 +509,7 @@ class SearchLeadModel {
       peId: peId ?? this.peId,
       creId: creId ?? this.creId,
       creName: creName ?? this.creName,
+      totalProjectCost: totalProjectCost ?? this.totalProjectCost,
     );
   }
 

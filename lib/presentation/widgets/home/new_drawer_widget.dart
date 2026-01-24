@@ -753,6 +753,30 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ],
                           ),
                           const SizedBox(height: 8),
+                          // Row 3: Total Project Cost
+                          Row(
+                            children: [
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 8.0),
+                                  child: CustomTextField(
+                                    height: 54,
+                                    controller:
+                                        leadProvider.projectCostController,
+                                    hintText: 'Total Project Cost',
+                                    labelText: '',
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const Spacer(),
+                              const Spacer(),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
                           // // Row 3: PE, CRE, Lead Type
                           // Row(
                           //   children: [

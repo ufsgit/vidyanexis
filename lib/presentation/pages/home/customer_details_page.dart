@@ -813,221 +813,225 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         ],
                                       ),
                                       // Basic Information
-                                        CustomerCard(
-                                          title: "Basic",
-                                          content: [
-                                            DetailRow(
-                                              label: "Lead Name",
-                                              value: customerDetailsProvider
-                                                      .leadDetails![0]
-                                                      .customerName ??
-                                                  '',
-                                            ),
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                              label: "Source",
-                                              value: customerDetailsProvider
-                                                      .leadDetails![0]
-                                                      .sourceCategoryName ??
-                                                  '',
-                                            ),
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                              label: "Mobile No",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].contactNumber
-                                                  .toString(),
-                                            ),
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                              label: "Enquiry Source",
-                                              value: customerDetailsProvider
-                                                      .leadDetails![0]
-                                                      .enquirySourceName ??
-                                                  '',
-                                            ),
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                              label: "Enquiry For",
-                                              value: customerDetailsProvider
-                                                      .leadDetails![0]
-                                                      .enquiryForName ??
-                                                  '',
-                                            ),
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                              label: "Engineer",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].engineerName,
-                                            ),
-                                            DetailRow(
-                                              label: "Engineer Organization",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].organization,
-                                            ),
-                                            DetailRow(
-                                              label: "Engineer Mobile",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].engineerMobile,
-                                            ),
-                                            DetailRow(
-                                              label: "Engineer City",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].engineerCity,
-                                            ),
-                                            DetailRow(
-                                              label: "Engineer District",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].engineerDistrict,
-                                            ),
-                                          ],
-                                        ),
-
-                                        // Address Details
-                                        CustomerCard(
-                                          title: "Address Details",
-                                          content: [
-                                            // Address
-                                            DetailRow(
-                                                label: "Address",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .address ??
-                                                    ''),
-
-                                            // Latitude
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                                label: "Latitude",
-                                                value: customerDetailsProvider
-                                                    .leadDetails![0].latitude
-                                                    .toString()),
-
-                                            // Longitude
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                                label: "Longitude",
-                                                value: customerDetailsProvider
-                                                    .leadDetails![0].longitude
-                                                    .toString()),
-
-                                            // District
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                                label: "District",
-                                                value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .districtName ??
-                                                    ''),
-
-                                            // Firestation
-                                            const SizedBox(height: 8),
-                                            DetailRow(
-                                                label: "Firestation",
-                                                value: customerDetailsProvider
+                                      CustomerCard(
+                                        title: "Basic",
+                                        content: [
+                                          DetailRow(
+                                            label: "Lead Name",
+                                            value: customerDetailsProvider
                                                     .leadDetails![0]
-                                                    .firestationName),
-                                            const SizedBox(height: 8),
-                                            const Text(
-                                              'Location',
-                                              style: TextStyle(
-                                                  color: Color(0xFF8E97A3)),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Expanded(
-                                                  child: InkWell(
-                                                    onTap: () {
-                                                      String locationData =
+                                                    .customerName ??
+                                                '',
+                                          ),
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                            label: "Source",
+                                            value: customerDetailsProvider
+                                                    .leadDetails![0]
+                                                    .sourceCategoryName ??
+                                                '',
+                                          ),
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                            label: "Mobile No",
+                                            value: customerDetailsProvider
+                                                .leadDetails![0].contactNumber
+                                                .toString(),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                            label: "Enquiry Source",
+                                            value: customerDetailsProvider
+                                                    .leadDetails![0]
+                                                    .enquirySourceName ??
+                                                '',
+                                          ),
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                            label: "Enquiry For",
+                                            value: customerDetailsProvider
+                                                    .leadDetails![0]
+                                                    .enquiryForName ??
+                                                '',
+                                          ),
+                                          const SizedBox(height: 8),
+                                           
+                                          DetailRow(
+                                            label: "Total project cost :",
+                                            value: customerDetailsProvider
+                                                    .leadDetails![0]
+                                                    .totalProjectCost.toString() ??
+                                                '',
+                                          ),
+                                          // DetailRow(
+                                          //   label: "Engineer",
+                                          //   value: customerDetailsProvider
+                                          //       .leadDetails![0].engineerName,
+                                          // ),
+                                          // DetailRow(
+                                          //   label: "Engineer Organization",
+                                          //   value: customerDetailsProvider
+                                          //       .leadDetails![0].organization,
+                                          // ),
+                                          // DetailRow(
+                                          //   label: "Engineer Mobile",
+                                          //   value: customerDetailsProvider
+                                          //       .leadDetails![0].engineerMobile,
+                                          // ),
+                                          // DetailRow(
+                                          //   label: "Engineer City",
+                                          //   value: customerDetailsProvider
+                                          //       .leadDetails![0].engineerCity,
+                                          // ),
+                                          // DetailRow(
+                                          //   label: "Engineer District",
+                                          //   value: customerDetailsProvider
+                                          //       .leadDetails![0].engineerDistrict,
+                                          // ),
+                                        ],
+                                      ),
+
+                                      // Address Details
+                                      CustomerCard(
+                                        title: "Address Details",
+                                        content: [
+                                          // Address
+                                          DetailRow(
+                                              label: "Address",
+                                              value: customerDetailsProvider
+                                                      .leadDetails![0]
+                                                      .address ??
+                                                  ''),
+
+                                          // Latitude
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                              label: "Latitude",
+                                              value: customerDetailsProvider
+                                                  .leadDetails![0].latitude
+                                                  .toString()),
+
+                                          // Longitude
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                              label: "Longitude",
+                                              value: customerDetailsProvider
+                                                  .leadDetails![0].longitude
+                                                  .toString()),
+
+                                          // District
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                              label: "District",
+                                              value: customerDetailsProvider
+                                                      .leadDetails![0]
+                                                      .districtName ??
+                                                  ''),
+
+                                          // Firestation
+                                          const SizedBox(height: 8),
+                                          DetailRow(
+                                              label: "Firestation",
+                                              value: customerDetailsProvider
+                                                  .leadDetails![0]
+                                                  .firestationName),
+                                          const SizedBox(height: 8),
+                                          const Text(
+                                            'Location',
+                                            style: TextStyle(
+                                                color: Color(0xFF8E97A3)),
+                                          ),
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    String locationData =
+                                                        customerDetailsProvider
+                                                            .leadDetails![0]
+                                                            .location
+                                                            .toString();
+
+                                                    print(
+                                                        'DEBUG: Raw location data: "$locationData"');
+                                                    print(
+                                                        'DEBUG: Location length: ${locationData.length}');
+                                                    print(
+                                                        'DEBUG: Location characters: ${locationData.codeUnits}');
+
+                                                    _openMaps(locationData);
+                                                  },
+                                                  child: Text(
+                                                    customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .location
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                        color: Colors.blue),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                color: Colors.grey,
+                                                onPressed: () {
+                                                  Clipboard.setData(
+                                                    ClipboardData(
+                                                      text:
                                                           customerDetailsProvider
                                                               .leadDetails![0]
                                                               .location
-                                                              .toString();
-
-                                                      print(
-                                                          'DEBUG: Raw location data: "$locationData"');
-                                                      print(
-                                                          'DEBUG: Location length: ${locationData.length}');
-                                                      print(
-                                                          'DEBUG: Location characters: ${locationData.codeUnits}');
-
-                                                      _openMaps(locationData);
-                                                    },
-                                                    child: Text(
-                                                      customerDetailsProvider
-                                                          .leadDetails![0]
-                                                          .location
-                                                          .toString(),
-                                                      style: const TextStyle(
-                                                          color: Colors.blue),
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
+                                                              .toString(),
                                                     ),
+                                                  );
+                                                  ScaffoldMessenger.of(context)
+                                                      .showSnackBar(
+                                                    const SnackBar(
+                                                      content: Text(
+                                                          'Link copied to clipboard!'),
+                                                    ),
+                                                  );
+                                                },
+                                                icon: const Icon(Icons.copy),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+
+                                      // Additional
+                                      CustomerCard(
+                                        title: "Additional Details",
+                                        content: leadProvider
+                                                .customFieldEnquiryFor
+                                                .isNotEmpty
+                                            ? leadProvider.customFieldEnquiryFor
+                                                .where((field) =>
+                                                    (field.customFieldName !=
+                                                            null &&
+                                                        field.customFieldName
+                                                            .toString()
+                                                            .isNotEmpty) &&
+                                                    (field.datavalue !=
+                                                            null &&
+                                                        field.datavalue
+                                                            .toString()
+                                                            .isNotEmpty))
+                                                .map<Widget>(
+                                                  (field) => DetailRow(
+                                                    label: field.customFieldName
+                                                        .toString()
+                                                        .replaceAll('_', ' '),
+                                                    value: field.datavalue
+                                                            ?.toString() ??
+                                                        '',
                                                   ),
-                                                ),
-                                                IconButton(
-                                                  color: Colors.grey,
-                                                  onPressed: () {
-                                                    Clipboard.setData(
-                                                      ClipboardData(
-                                                        text:
-                                                            customerDetailsProvider
-                                                                .leadDetails![0]
-                                                                .location
-                                                                .toString(),
-                                                      ),
-                                                    );
-                                                    ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
-                                                      const SnackBar(
-                                                        content: Text(
-                                                            'Link copied to clipboard!'),
-                                                      ),
-                                                    );
-                                                  },
-                                                  icon: const Icon(Icons.copy),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-
-                                        // Additional
-                                        CustomerCard(
-                                          title: "Additional Details",
-                                          content: leadProvider
-                                                  .customFieldEnquiryFor
-                                                  .isNotEmpty
-                                              ? leadProvider
-                                                  .customFieldEnquiryFor
-                                                  // .where((field) =>
-                                                  //     (field.customFieldName !=
-                                                  //             null &&
-                                                  //         field.customFieldName
-                                                  //             .toString()
-                                                  //             .isNotEmpty) &&
-                                                  //     (field.datavalue !=
-                                                  //             null &&
-                                                  //         field.datavalue
-                                                  //             .toString()
-                                                  //             .isNotEmpty))
-                                                  .map<Widget>(
-                                                    (field) => DetailRow(
-                                                      label: field
-                                                          .customFieldName
-                                                          .toString()
-                                                          .replaceAll('_', ' '),
-                                                      value: field.datavalue
-                                                              ?.toString() ??
-                                                          '',
-                                                    ),
-                                                  )
-                                                  .toList()
-                                              : [],
-                                        )
-                                      
+                                                )
+                                                .toList()
+                                            : [],
+                                      )
                                     ],
                                   )
                                 : Container(),

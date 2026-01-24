@@ -1929,7 +1929,7 @@ class LeadsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        
+
         // Handle both Map and List response formats
         if (data is Map) {
           // Response is a Map like {success: true}

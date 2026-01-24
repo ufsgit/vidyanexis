@@ -46,7 +46,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
     ).listen((Position position) {
       setState(() {
         // currentLocation = LatLng(position.latitude, position.longitude);
-        mapController.move(latLng[0], mapController.zoom);
+        mapController.move(latLng[0], mapController.camera.zoom);
       });
     });
     // routePoints.addAll(f); // Update route points
@@ -91,7 +91,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
   //   ).listen((Position position) {
   //     setState(() {
   //       currentLocation = LatLng(position.latitude, position.longitude);
-  //       mapController.move(currentLocation, mapController.zoom);
+  //       mapController.move(currentLocation, mapController.camera.zoom);
   //     });
   //   });
   // }
@@ -129,8 +129,8 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
           FlutterMap(
             mapController: mapController,
             options: MapOptions(
-              center: latLng[0],
-              zoom: 8.0,
+              initialCenter: latLng[0],
+              initialZoom: 8.0,
             ),
             children: [
               // Base map layer
@@ -148,7 +148,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                       point: e,
                       width: 40.0,
                       height: 40.0,
-                      builder: (context) => Tooltip(
+                      child: Tooltip(
                         preferBelow: false,
                         margin: const EdgeInsets.only(bottom: 12),
                         decoration: BoxDecoration(
@@ -390,7 +390,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
       // // Add a floating button to recenter the map
       // floatingActionButton: FloatingActionButton(
       //   onPressed: () {
-      //     mapController.move(latLng[0], mapController.zoom);
+      //     mapController.move(latLng[0], mapController.camera.zoom);
       //   },
       //   child: const Icon(Icons.my_location),
       // ),

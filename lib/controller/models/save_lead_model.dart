@@ -74,6 +74,7 @@ class Lead {
   String enquirySourceName;
   String mapLink;
   String pincode;
+  double projectCost;
 
   Lead({
     required this.customerId,
@@ -102,6 +103,7 @@ class Lead {
     required this.enquirySourceName,
     required this.mapLink,
     required this.pincode,
+    required this.projectCost,
   });
 
   factory Lead.fromJson(Map<String, dynamic> json) => Lead(
@@ -131,6 +133,7 @@ class Lead {
         enquirySourceName: json["Enquiry_Source_Name"],
         mapLink: json["Map_Link"],
         pincode: json["Pincode"],
+        projectCost: json["project_cost"]?.toDouble() ?? 0.0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -161,5 +164,6 @@ class Lead {
         "Enquiry_Source_Name": enquirySourceName,
         "Map_Link": mapLink,
         "Pincode": pincode,
+        "project_cost": projectCost,
       };
 }

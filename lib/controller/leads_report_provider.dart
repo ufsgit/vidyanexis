@@ -254,6 +254,7 @@ class LeadReportProvider extends ChangeNotifier {
     _selectedEnquirySource = value;
     notifyListeners();
   }
+
   void setFromandToDate(String fromDate, String toDate) {
     _fromDateS = fromDate;
     _toDateS = toDate;
