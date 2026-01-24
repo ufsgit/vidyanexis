@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -36,6 +37,7 @@ class _LeadsPageState extends State<LeadPage> {
   final _horizontalScrollController = ScrollController();
   late final ScrollController _fixedVerticalController;
   late final ScrollController _scrollableVerticalController;
+  Timer? _debounce;
 
   // Dummy data
   final List<String> emails = [
@@ -84,6 +86,7 @@ class _LeadsPageState extends State<LeadPage> {
 
   @override
   void dispose() {
+    _debounce?.cancel();
     _horizontalScrollController.dispose();
     _fixedVerticalController.dispose();
     _scrollableVerticalController.dispose();
@@ -148,6 +151,22 @@ class _LeadsPageState extends State<LeadPage> {
       //   print(query);
       //   leadProvider.getSearchLeads(query, '', '', '', context);
       // });
+    });
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      leadProvider.setSearchCriteria(
+        query,
+        leadProvider.fromDateS,
+        leadProvider.toDateS,
+        leadProvider.status,
+        leadProvider.enquiryForS,
+      );
+      leadProvider.getSearchLeads(context);
     });
   }
 
@@ -263,18 +282,18 @@ class _LeadsPageState extends State<LeadPage> {
                   Flexible(child: Container()),
                   Container(
                     width: MediaQuery.of(context).size.width / 4,
-                    height: 40,
+                    height: 38,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey[300]!),
+                      borderRadius: BorderRadius.circular(30),
+                      border: Border.all(color: Colors.black, width: 1.5),
                     ),
                     child: TextField(
                       controller: searchController,
+                      textAlignVertical: TextAlignVertical.center,
+                      onChanged: _onSearchChanged,
                       onSubmitted: (query) {
-                        // leadProvider.selectDateFilterOption(null);
-                        // leadProvider.removeStatus();
-                        print(query);
+                        if (_debounce?.isActive ?? false) _debounce!.cancel();
                         leadProvider.setSearchCriteria(
                           query,
                           leadProvider.fromDateS,
@@ -286,53 +305,23 @@ class _LeadsPageState extends State<LeadPage> {
                       },
                       decoration: InputDecoration(
                         hintText: 'Search here....',
-                        prefixIcon: const Icon(Icons.search),
                         border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 4,
-                        ),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(4.0),
-                          child: ElevatedButton(
-                            onPressed: () {
-                              String query = searchController.text;
-                              // leadProvider.selectDateFilterOption(null);
-                              // leadProvider.removeStatus();
-                              print(query);
-                              if (leadProvider.search.isNotEmpty) {
-                                searchController.clear();
-                                leadProvider.setSearchCriteria(
-                                  '',
-                                  leadProvider.fromDateS,
-                                  leadProvider.toDateS,
-                                  leadProvider.status,
-                                  leadProvider.enquiryForS,
-                                );
-                                leadProvider.getSearchLeads(context);
-                              } else {
-                                leadProvider.setSearchCriteria(
-                                  query,
-                                  leadProvider.fromDateS,
-                                  leadProvider.toDateS,
-                                  leadProvider.status,
-                                  leadProvider.enquiryForS,
-                                );
-                                leadProvider.getSearchLeads(context);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.textGrey4,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                            ),
-                            child: Text(leadProvider.search.isNotEmpty
-                                ? 'Clear'
-                                : 'Search'),
-                          ),
+                        contentPadding: const EdgeInsets.only(
+                            left: 16, right: 16, bottom: 11),
+                        suffixIcon: GestureDetector(
+                          onTap: () {
+                            if (_debounce?.isActive ?? false)
+                              _debounce!.cancel();
+                            leadProvider.setSearchCriteria(
+                              searchController.text,
+                              leadProvider.fromDateS,
+                              leadProvider.toDateS,
+                              leadProvider.status,
+                              leadProvider.enquiryForS,
+                            );
+                            leadProvider.getSearchLeads(context);
+                          },
+                          child: const Icon(Icons.search, color: Colors.black),
                         ),
                       ),
                     ),

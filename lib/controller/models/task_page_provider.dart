@@ -326,9 +326,10 @@ class TaskPageProvider extends ChangeNotifier {
 
   //task report
   //task report
-  Future<void> searchTaskByCustomer(BuildContext context) async {
+  Future<void> searchTaskByCustomer(BuildContext context,
+      {bool isShowLoader = true}) async {
     try {
-      Loader.showLoader(context);
+      if (isShowLoader) Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
@@ -385,17 +386,17 @@ class TaskPageProvider extends ChangeNotifier {
             _taskReport = newTasks;
           }
 
-          Loader.stopLoader(context);
+          if (isShowLoader) Loader.stopLoader(context);
           notifyListeners();
         }
       } else {
-        Loader.stopLoader(context);
+        if (isShowLoader) Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
-      Loader.stopLoader(context);
+      if (isShowLoader) Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),

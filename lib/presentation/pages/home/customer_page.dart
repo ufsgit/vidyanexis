@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -33,6 +34,7 @@ class CustomerPage extends StatefulWidget {
 class _CustomerPageState extends State<CustomerPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
   final sideProvider =
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context);
 
@@ -70,6 +72,28 @@ class _CustomerPageState extends State<CustomerPage> {
       //   print(query);
       //   customerProvider.getSearchCustomers(query, '', '', '', context);
       // });
+    });
+  }
+
+  @override
+  void dispose() {
+    _debounce?.cancel();
+    super.dispose();
+  }
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final customerProvider =
+          Provider.of<CustomerProvider>(context, listen: false);
+      customerProvider.setSearchCriteria(
+        query,
+        customerProvider.fromDateS,
+        customerProvider.toDateS,
+        customerProvider.status,
+      );
+      customerProvider.getSearchCustomers(context);
     });
   }
 
@@ -156,17 +180,20 @@ class _CustomerPageState extends State<CustomerPage> {
                           Flexible(child: Container()),
                           Container(
                             width: MediaQuery.of(context).size.width / 4,
-                            height: 40,
+                            height: 38,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(30),
+                              border:
+                                  Border.all(color: Colors.black, width: 1.5),
                             ),
                             child: TextField(
                               controller: searchController,
+                              textAlignVertical: TextAlignVertical.center,
+                              onChanged: _onSearchChanged,
                               onSubmitted: (query) {
-                                // customerProvider.selectDateFilterOption(null);
-                                // customerProvider.removeStatus();
+                                if (_debounce?.isActive ?? false)
+                                  _debounce!.cancel();
                                 customerProvider.setSearchCriteria(
                                   query,
                                   customerProvider.fromDateS,
@@ -177,54 +204,24 @@ class _CustomerPageState extends State<CustomerPage> {
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
-                                prefixIcon: const Icon(Icons.search),
                                 border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 4,
-                                ),
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      String query = searchController.text;
-                                      // leadsProvider.selectDateFilterOption(null);
-                                      // leadsProvider.removeStatus();
-                                      print(query);
-                                      if (customerProvider.search.isNotEmpty) {
-                                        searchController.clear();
-                                        customerProvider.setSearchCriteria(
-                                          '',
-                                          customerProvider.fromDateS,
-                                          customerProvider.toDateS,
-                                          customerProvider.status,
-                                        );
-                                        customerProvider
-                                            .getSearchCustomers(context);
-                                      } else {
-                                        customerProvider.setSearchCriteria(
-                                          query,
-                                          customerProvider.fromDateS,
-                                          customerProvider.toDateS,
-                                          customerProvider.status,
-                                        );
-                                        customerProvider
-                                            .getSearchCustomers(context);
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.textGrey4,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 12,
-                                      ),
-                                    ),
-                                    child: Text(
-                                        customerProvider.search.isNotEmpty
-                                            ? 'Clear'
-                                            : 'Search'),
-                                  ),
+                                contentPadding: const EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 11),
+                                suffixIcon: GestureDetector(
+                                  onTap: () {
+                                    if (_debounce?.isActive ?? false)
+                                      _debounce!.cancel();
+                                    customerProvider.setSearchCriteria(
+                                      searchController.text,
+                                      customerProvider.fromDateS,
+                                      customerProvider.toDateS,
+                                      customerProvider.status,
+                                    );
+                                    customerProvider
+                                        .getSearchCustomers(context);
+                                  },
+                                  child: const Icon(Icons.search,
+                                      color: Colors.black),
                                 ),
                               ),
                             ),
@@ -279,17 +276,20 @@ class _CustomerPageState extends State<CustomerPage> {
                           ),
                           Container(
                             width: double.infinity,
-                            height: 40,
+                            height: 38,
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(color: Colors.grey[300]!),
+                              borderRadius: BorderRadius.circular(30),
+                              border:
+                                  Border.all(color: Colors.black, width: 1.5),
                             ),
                             child: TextField(
                               controller: searchController,
+                              textAlignVertical: TextAlignVertical.center,
+                              onChanged: _onSearchChanged,
                               onSubmitted: (query) {
-                                // customerProvider.selectDateFilterOption(null);
-                                // customerProvider.removeStatus();
+                                if (_debounce?.isActive ?? false)
+                                  _debounce!.cancel();
                                 customerProvider.setSearchCriteria(
                                   query,
                                   customerProvider.fromDateS,
@@ -300,54 +300,24 @@ class _CustomerPageState extends State<CustomerPage> {
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
-                                prefixIcon: const Icon(Icons.search),
                                 border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                                suffixIcon: Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: ElevatedButton(
-                                    onPressed: () {
-                                      String query = searchController.text;
-                                      // leadsProvider.selectDateFilterOption(null);
-                                      // leadsProvider.removeStatus();
-                                      print(query);
-                                      if (customerProvider.search.isNotEmpty) {
-                                        searchController.clear();
-                                        customerProvider.setSearchCriteria(
-                                          '',
-                                          customerProvider.fromDateS,
-                                          customerProvider.toDateS,
-                                          customerProvider.status,
-                                        );
-                                        customerProvider
-                                            .getSearchCustomers(context);
-                                      } else {
-                                        customerProvider.setSearchCriteria(
-                                          query,
-                                          customerProvider.fromDateS,
-                                          customerProvider.toDateS,
-                                          customerProvider.status,
-                                        );
-                                        customerProvider
-                                            .getSearchCustomers(context);
-                                      }
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.textGrey4,
-                                      foregroundColor: Colors.white,
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 16,
-                                        vertical: 0,
-                                      ),
-                                    ),
-                                    child: Text(
-                                        customerProvider.search.isNotEmpty
-                                            ? 'Clear'
-                                            : 'Search'),
-                                  ),
+                                contentPadding: const EdgeInsets.only(
+                                    left: 16, right: 16, bottom: 11),
+                                suffixIcon: GestureDetector(
+                                  onTap: () {
+                                    if (_debounce?.isActive ?? false)
+                                      _debounce!.cancel();
+                                    customerProvider.setSearchCriteria(
+                                      searchController.text,
+                                      customerProvider.fromDateS,
+                                      customerProvider.toDateS,
+                                      customerProvider.status,
+                                    );
+                                    customerProvider
+                                        .getSearchCustomers(context);
+                                  },
+                                  child: const Icon(Icons.search,
+                                      color: Colors.black),
                                 ),
                               ),
                             ),

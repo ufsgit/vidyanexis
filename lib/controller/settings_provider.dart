@@ -2447,7 +2447,7 @@ class SettingsProvider extends ChangeNotifier {
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCompany);
 
-      if (response.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
         final data = response.data;
 
         if (data != null) {
@@ -2460,9 +2460,13 @@ class SettingsProvider extends ChangeNotifier {
 
           notifyListeners();
         }
-      } else {}
-    } catch (e) {
-      print('Exception occurred: $e');
+      } else {
+        print(
+            'getCompanyDetails failed: ${response?.statusCode} - ${response?.statusMessage}');
+      }
+    } catch (e, stackTrace) {
+      print('Exception occurred in getCompanyDetails: $e');
+      print(stackTrace);
     }
   }
 

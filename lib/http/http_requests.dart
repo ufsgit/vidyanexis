@@ -1,4 +1,6 @@
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/main.dart';
@@ -7,9 +9,28 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 
 class HttpRequest {
-  static final sideBarProvider = Provider.of<SidebarProvider>(
-      navigatorKey.currentState!.context,
-      listen: false);
+  static SidebarProvider get sideBarProvider =>
+      Provider.of<SidebarProvider>(navigatorKey.currentState!.context,
+          listen: false);
+
+  static Dio _getDio() {
+    final Dio dio = Dio();
+    if (!kIsWeb) {
+      try {
+        (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
+          final client = HttpClient();
+          client.badCertificateCallback =
+              (X509Certificate cert, String host, int port) => true;
+          return client;
+        };
+      } catch (e) {
+        if (kDebugMode) {
+          print("Error configuring Dio adapter: $e");
+        }
+      }
+    }
+    return dio;
+  }
 
   static Future<Response> httpGetRequest(
       {Map<String, dynamic>? bodyData, String endPoint = ''}) async {
@@ -17,27 +38,38 @@ class HttpRequest {
       print('get request ====> $endPoint $bodyData ');
     }
 
-    final Dio dio = Dio();
+    final Dio dio = _getDio();
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
     print(token);
 
-    final response = await dio.get(
-      '${HttpUrls.baseUrl}$endPoint',
-      options: Options(headers: {
-        'ngrok-skip-browser-warning': 'true',
-        "Content-Type": "application/json",
-        "Authorization": "Bearer $token",
-        "menuId": sideBarProvider.menuId
-      }),
-      queryParameters: bodyData,
-    );
+    try {
+      final response = await dio.get(
+        '${HttpUrls.baseUrl}$endPoint',
+        options: Options(headers: {
+          'ngrok-skip-browser-warning': 'true',
+          "Content-Type": "application/json",
+          "Authorization": "Bearer $token",
+          "menuId": sideBarProvider.menuId
+        }),
+        queryParameters: bodyData,
+      );
 
-    if (kDebugMode) {
-      print('get result $endPoint ====> $response  ');
+      if (kDebugMode) {
+        print('get result $endPoint ====> $response  ');
+      }
+
+      return response;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Request failed: $e');
+      }
+      return Response(
+        requestOptions: RequestOptions(path: endPoint),
+        statusCode: 0,
+        statusMessage: e.toString(),
+      );
     }
-
-    return response;
   }
 
   static Future<Response?> httpPostRequest(
@@ -45,7 +77,7 @@ class HttpRequest {
     if (kDebugMode) {
       print('post request ====> $endPoint $bodyData');
     }
-    final Dio dio = Dio();
+    final Dio dio = _getDio();
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
 
@@ -69,7 +101,11 @@ class HttpRequest {
       if (kDebugMode) {
         print('Request failed: $e');
       }
-      return null;
+      return Response(
+        requestOptions: RequestOptions(path: endPoint),
+        statusCode: 0,
+        statusMessage: e.toString(),
+      );
     }
   }
 
@@ -78,7 +114,7 @@ class HttpRequest {
     if (kDebugMode) {
       print('delete request ====> $endPoint $bodyData');
     }
-    final Dio dio = Dio();
+    final Dio dio = _getDio();
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
 
@@ -102,7 +138,11 @@ class HttpRequest {
       if (kDebugMode) {
         print('Request failed: $e');
       }
-      return null;
+      return Response(
+        requestOptions: RequestOptions(path: endPoint),
+        statusCode: 0,
+        statusMessage: e.toString(),
+      );
     }
   }
 
@@ -111,7 +151,7 @@ class HttpRequest {
     if (kDebugMode) {
       print('put request ====> $endPoint $bodyData');
     }
-    final Dio dio = Dio();
+    final Dio dio = _getDio();
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
 
@@ -135,7 +175,11 @@ class HttpRequest {
       if (kDebugMode) {
         print('Request failed: $e');
       }
-      return null;
+      return Response(
+        requestOptions: RequestOptions(path: endPoint),
+        statusCode: 0,
+        statusMessage: e.toString(),
+      );
     }
   }
 
@@ -144,7 +188,7 @@ class HttpRequest {
     if (kDebugMode) {
       print('put request ====> $endPoint $bodyData');
     }
-    final Dio dio = Dio();
+    final Dio dio = _getDio();
     final prefs = await SharedPreferences.getInstance();
     final String token = prefs.getString('token') ?? "";
 

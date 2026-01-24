@@ -112,7 +112,7 @@ class HttpUrls {
   static String addEnquiryFor = "lead/Save_Enquiry_For";
   static String searchEnquiryFor = "lead/Search_Enquiry_For";
   static String deleteEnquiryFor = "lead/Delete_Enquiry_For";
-  static String getCompany = "Get_Company_Details";
+  static String getCompany = "settings/Get_Company_Details";
   static String saveCompany = "settings/Save_Company";
   static String searchmenu = "menu/Search_menu";
   static String deleteTask = "task/Delete_task";

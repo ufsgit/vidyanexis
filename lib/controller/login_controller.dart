@@ -39,7 +39,7 @@ class LoginController extends ChangeNotifier {
           endPoint: HttpUrls.loginCheck,
           bodyData: {"userName": userName, "password": passWord});
 
-      if (response!.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
         final data = response.data;
         preferences.setString('token', data['token'].toString());
         preferences.setString('userName', data['User_Details_Name'].toString());
@@ -78,14 +78,17 @@ class LoginController extends ChangeNotifier {
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
+          SnackBar(
+              content: Text(response?.statusCode == 0
+                  ? '${response?.statusMessage}'
+                  : 'Server Error: ${response?.statusCode}')),
         );
         Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
+        SnackBar(content: Text('Error: $e')),
       );
       Loader.stopLoader(context);
     }

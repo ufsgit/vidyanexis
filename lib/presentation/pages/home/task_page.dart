@@ -1,4 +1,5 @@
 // Check line 1776
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -50,6 +51,7 @@ class _tasksPageReportState extends State<TaskPage> {
   final ScrollController _scrollController = ScrollController();
   bool _isLoadingMore = false;
   late bool _isMobile;
+  Timer? _debounce;
   @override
   void initState() {
     super.initState();
@@ -83,6 +85,7 @@ class _tasksPageReportState extends State<TaskPage> {
   void didChangeDependencies() {
     super.didChangeDependencies();
     _updateScreenType();
+    reportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
   }
 
   void _updateScreenType() {
@@ -127,8 +130,25 @@ class _tasksPageReportState extends State<TaskPage> {
     }
   }
 
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      reportsProvider.setTaskSearchCriteria(
+        query,
+        reportsProvider.fromDateS,
+        reportsProvider.toDateS,
+        reportsProvider.Status,
+        reportsProvider.AssignedTo,
+        reportsProvider.TaskType,
+      );
+      reportsProvider.searchTaskByCustomer(context, isShowLoader: false);
+    });
+  }
+
   @override
   void dispose() {
+    _debounce?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -284,17 +304,24 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       (screenWidth > 860
                                                           ? 5
                                                           : 4),
-                                              height: 40,
+                                              height: 38,
                                               decoration: BoxDecoration(
                                                 color: Colors.white,
                                                 borderRadius:
-                                                    BorderRadius.circular(20),
+                                                    BorderRadius.circular(30),
                                                 border: Border.all(
-                                                    color: Colors.grey[300]!),
+                                                    color: Colors.black,
+                                                    width: 1.5),
                                               ),
                                               child: TextField(
                                                 controller: searchController,
+                                                textAlignVertical:
+                                                    TextAlignVertical.center,
+                                                onChanged: _onSearchChanged,
                                                 onSubmitted: (query) {
+                                                  if (_debounce?.isActive ??
+                                                      false)
+                                                    _debounce!.cancel();
                                                   reportsProvider
                                                       .setTaskSearchCriteria(
                                                     query,
@@ -310,83 +337,36 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 },
                                                 decoration: InputDecoration(
                                                   hintText: 'Search here....',
-                                                  prefixIcon:
-                                                      const Icon(Icons.search),
                                                   border: InputBorder.none,
                                                   contentPadding:
-                                                      const EdgeInsets
-                                                          .symmetric(
-                                                    horizontal: 16,
-                                                    vertical: 4,
-                                                  ),
-                                                  suffixIcon: Padding(
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            4.0),
-                                                    child: ElevatedButton(
-                                                      onPressed: () {
-                                                        String query =
-                                                            searchController
-                                                                .text;
-                                                        print(query);
-                                                        if (reportsProvider
-                                                            .Search
-                                                            .isNotEmpty) {
-                                                          searchController
-                                                              .clear();
-                                                          reportsProvider
-                                                              .setTaskSearchCriteria(
-                                                            '',
-                                                            reportsProvider
-                                                                .fromDateS,
-                                                            reportsProvider
-                                                                .toDateS,
-                                                            reportsProvider
-                                                                .Status,
-                                                            reportsProvider
-                                                                .AssignedTo,
-                                                            reportsProvider
-                                                                .TaskType,
-                                                          );
-                                                        } else {
-                                                          reportsProvider
-                                                              .setTaskSearchCriteria(
-                                                            query,
-                                                            reportsProvider
-                                                                .fromDateS,
-                                                            reportsProvider
-                                                                .toDateS,
-                                                            reportsProvider
-                                                                .Status,
-                                                            reportsProvider
-                                                                .AssignedTo,
-                                                            reportsProvider
-                                                                .TaskType,
-                                                          );
-                                                        }
+                                                      const EdgeInsets.only(
+                                                          left: 16,
+                                                          right: 16,
+                                                          bottom: 11),
+                                                  suffixIcon: GestureDetector(
+                                                    onTap: () {
+                                                      if (_debounce?.isActive ??
+                                                          false)
+                                                        _debounce!.cancel();
+                                                      reportsProvider
+                                                          .setTaskSearchCriteria(
+                                                        searchController.text,
                                                         reportsProvider
-                                                            .searchTaskByCustomer(
-                                                                context);
-                                                      },
-                                                      style: ElevatedButton
-                                                          .styleFrom(
-                                                        backgroundColor:
-                                                            AppColors.textGrey4,
-                                                        foregroundColor:
-                                                            Colors.white,
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                          horizontal: 16,
-                                                          vertical: 12,
-                                                        ),
-                                                      ),
-                                                      child: Text(
-                                                          reportsProvider.Search
-                                                                  .isNotEmpty
-                                                              ? 'Cancel'
-                                                              : 'Search'),
-                                                    ),
+                                                            .fromDateS,
+                                                        reportsProvider.toDateS,
+                                                        reportsProvider.Status,
+                                                        reportsProvider
+                                                            .AssignedTo,
+                                                        reportsProvider
+                                                            .TaskType,
+                                                      );
+                                                      reportsProvider
+                                                          .searchTaskByCustomer(
+                                                              context);
+                                                    },
+                                                    child: const Icon(
+                                                        Icons.search,
+                                                        color: Colors.black),
                                                   ),
                                                 ),
                                               ),
