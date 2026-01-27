@@ -218,533 +218,785 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     //   ),
     // ];
 
-    return Scaffold(
-      key: _scaffoldKey,
-      // appBar: screenWidth < _breakpoint
-      //     ? AppBar(
-      //         backgroundColor: Colors.white,
-      //         elevation: 0,
-      //         title: const Image(
-      //           image: AssetImage('assets/images/logo.png'),
-      //           height: 40,
-      //         ),
-      //         centerTitle: false,
-      //       )
-      //     : null,
-      // drawer: screenWidth < _breakpoint
-      //     ? Drawer(
-      //         child: FutureBuilder<String>(
-      //           future: getUserName(),
-      //           builder: (context, snapshot) {
-      //             if (snapshot.hasError) {
-      //               return const Center(child: Text('Error loading username'));
-      //             } else {
-      //               final userName = snapshot.data ?? '';
-      //               return CustomSidebar(
-      //                 userName: userName,
-      //                 options: sidebarOptions,
-      //                 isDrawer: true,
-      //                 width: screenWidth * 0.85,
-      //               );
-      //             }
-      //           },
-      //         ),
-      //       )
-      //     : null,
-      // endDrawer: TaskDetailsWidget(),
-      body: SafeArea(
-        child: Row(
-          children: [
-            // if (screenWidth >= _breakpoint)
-            //   FutureBuilder<String>(
-            //     future: getUserName(),
-            //     builder: (context, snapshot) {
-            //       if (snapshot.hasError) {
-            //         return const Text('Error loading username');
-            //       } else {
-            //         final userName = snapshot.data ?? '';
-            //         return CustomSidebar(
-            //           onPressed: () {
-            //             // print('Home');
-            //             // context.go(HomePage.route);
-            //           },
-            //           options: sidebarOptions,
-            //           width: 200,
-            //           isDrawer: false,
-            //           userName: userName,
-            //         );
-            //       }
-            //     },
-            //   ),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  //top
-                  if (widget.report == 'true')
-                    const SizedBox(
-                      height: 20,
-                    ),
-                  Padding(
-                    padding: const EdgeInsets.all(20.0),
-                    child: Wrap(
-                      spacing: 10,
-                      runSpacing: 10,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            sideprovider.replaceWidget(true, '');
-                            sideprovider.replaceWidgetCustomer(true, '');
-                            AppStyles.isWebScreen(context)
-                                ? leadProvider.getSearchLeadsNoContext()
-                                : leadProvider.getSearchLeads(context);
-                            AppStyles.isWebScreen(context)
-                                ? customerProvider.getSearchCustomersNoContext()
-                                : customerProvider.getSearchCustomers(context);
-                            leadDetailsProvider
-                                .fetchLeadDetailsNoContext(widget.customerId);
-                            if (widget.report == 'true') {
-                              Navigator.pop(context);
-                            }
-                          },
-                          child: Icon(
-                            Icons.arrow_back,
-                            size: 24,
-                            color: Color(0xFF152D70),
-                          ),
+    return WillPopScope(
+        onWillPop: () async {
+          if (Navigator.of(context).canPop()) {
+            Navigator.of(context).pop();
+            return false; // Prevent default behavior since we popped manually
+          }
+
+          // Existing fallback logic for web dashboard view override
+          sideprovider.replaceWidget(true, '');
+          sideprovider.replaceWidgetCustomer(true, '');
+          AppStyles.isWebScreen(context)
+              ? leadProvider.getSearchLeadsNoContext()
+              : leadProvider.getSearchLeads(context);
+          AppStyles.isWebScreen(context)
+              ? customerProvider.getSearchCustomersNoContext()
+              : customerProvider.getSearchCustomers(context);
+          leadDetailsProvider.fetchLeadDetailsNoContext(widget.customerId);
+
+          return false; // Prevent exiting the app
+        },
+        child: Scaffold(
+          key: _scaffoldKey,
+          // appBar: screenWidth < _breakpoint
+          //     ? AppBar(
+          //         backgroundColor: Colors.white,
+          //         elevation: 0,
+          //         title: const Image(
+          //           image: AssetImage('assets/images/logo.png'),
+          //           height: 40,
+          //         ),
+          //         centerTitle: false,
+          //       )
+          //     : null,
+          // drawer: screenWidth < _breakpoint
+          //     ? Drawer(
+          //         child: FutureBuilder<String>(
+          //           future: getUserName(),
+          //           builder: (context, snapshot) {
+          //             if (snapshot.hasError) {
+          //               return const Center(child: Text('Error loading username'));
+          //             } else {
+          //               final userName = snapshot.data ?? '';
+          //               return CustomSidebar(
+          //                 userName: userName,
+          //                 options: sidebarOptions,
+          //                 isDrawer: true,
+          //                 width: screenWidth * 0.85,
+          //               );
+          //             }
+          //           },
+          //         ),
+          //       )
+          //     : null,
+          // endDrawer: TaskDetailsWidget(),
+          body: SafeArea(
+            child: Row(
+              children: [
+                // if (screenWidth >= _breakpoint)
+                //   FutureBuilder<String>(
+                //     future: getUserName(),
+                //     builder: (context, snapshot) {
+                //       if (snapshot.hasError) {
+                //         return const Text('Error loading username');
+                //       } else {
+                //         final userName = snapshot.data ?? '';
+                //         return CustomSidebar(
+                //           onPressed: () {
+                //             // print('Home');
+                //             // context.go(HomePage.route);
+                //           },
+                //           options: sidebarOptions,
+                //           width: 200,
+                //           isDrawer: false,
+                //           userName: userName,
+                //         );
+                //       }
+                //     },
+                //   ),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //top
+                      if (widget.report == 'true')
+                        const SizedBox(
+                          height: 20,
                         ),
-                        // const SizedBox(
-                        //   width: 10,
-                        // ),
-                        AppStyles.isWebScreen(context)
-                            ? Wrap(
-                                children: [
-                                  Text(
-                                    sideprovider.name,
-                                    style: const TextStyle(
-                                        fontSize: 24,
-                                        color: Color(0xFF5499D9),
-                                        fontWeight: FontWeight.w700),
-                                  ),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Text(
-                                    'Customer details',
-                                    style: TextStyle(
-                                        fontSize: 24,
-                                        color: Color(0xFF152D70),
-                                        fontWeight: FontWeight.w600),
-                                  ),
-                                ],
-                              )
-                            : Text(
-                                customerDetailsProvider.leadDetails != null &&
-                                        customerDetailsProvider
-                                            .leadDetails!.isNotEmpty
-                                    ? customerDetailsProvider
-                                        .leadDetails![0].customerName
-                                    : '',
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w600, fontSize: 24),
-                              ),
-                        // const SizedBox(
-                        //   width: 10,
-                        // ),
-                        if (!AppStyles.isWebScreen(context))
-                          if (settingsprovider.menuIsEditMap[4] == 1)
-                            IconButton(
-                                onPressed: () async {
-                                  await leadDetailsProvider.fetchLeadDetails(
-                                      widget.customerId, context);
-                                  await leadProvider.getLeadDropdowns(context);
-                                  leadProvider.setCutomerId(
-                                      int.parse(widget.customerId));
-                                  leadProvider.enquirySourceController.text =
-                                      leadDetailsProvider
-                                          .leadDetails![0].enquirySourceName
-                                          .toString();
-                                  leadProvider.enquiryForController.text =
-                                      leadDetailsProvider
-                                          .leadDetails![0].enquiryForName
-                                          .toString();
+                      Padding(
+                        padding: const EdgeInsets.all(20.0),
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                // Check if we can pop (pushed via Navigator/GoRouter)
+                                if (Navigator.of(context).canPop()) {
+                                  Navigator.of(context).pop();
+                                  return;
+                                }
 
-                                  dropDownProvider.selectedEnquirySourceId =
-                                      leadDetailsProvider
-                                          .leadDetails![0].enquirySourceId;
-
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return const NewLeadDrawerWidget(
-                                        isEdit: true,
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: const Icon(Icons.edit)),
-                        if (sideprovider.name != 'Lead /')
-                          if (settingsprovider.menuIsDeleteMap[4] == 1)
-                            CustomElevatedButton(
-                              backgroundColor: AppColors.whiteColor,
-                              borderColor: AppColors.textRed,
-                              textColor: AppColors.textRed,
-                              buttonText: 'Remove Registration',
-                              onPressed: () {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext context) {
-                                    return AlertDialog(
-                                      title: const Text('Remove Registration'),
-                                      content: const Text(
-                                          'Are you sure you want to Remove Registration '),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: const Text('Cancel'),
-                                          onPressed: () {
-                                            Navigator.of(context)
-                                                .pop(); // Close the dialog
-                                          },
-                                        ),
-                                        TextButton(
-                                          child:
-                                              const Text('Remove Registration'),
-                                          onPressed: () {
-                                            customerDetailsProvider
-                                                .removeRegister(
-                                                    widget.customerId, context);
-                                          },
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
+                                // Fallback for embedded views (mostly old web logic)
+                                sideprovider.replaceWidget(true, '');
+                                sideprovider.replaceWidgetCustomer(true, '');
+                                AppStyles.isWebScreen(context)
+                                    ? leadProvider.getSearchLeadsNoContext()
+                                    : leadProvider.getSearchLeads(context);
+                                AppStyles.isWebScreen(context)
+                                    ? customerProvider
+                                        .getSearchCustomersNoContext()
+                                    : customerProvider
+                                        .getSearchCustomers(context);
+                                leadDetailsProvider.fetchLeadDetailsNoContext(
+                                    widget.customerId);
                               },
+                              child: Icon(
+                                Icons.arrow_back,
+                                size: 24,
+                                color: Color(0xFF152D70),
+                              ),
                             ),
-                        if (settingsprovider.menuIsViewMap[61] == 1 &&
-                            sideprovider.name != 'Lead /')
-                          CustomElevatedButton(
-                            backgroundColor: AppColors.whiteColor,
-                            borderColor: AppColors.bluebutton,
-                            textColor: AppColors.bluebutton,
-                            buttonText: 'KSEB',
-                            onPressed: () async {
-                              final customer = (customerDetailsProvider
-                                              .leadDetails !=
-                                          null &&
-                                      customerDetailsProvider
-                                          .leadDetails!.isNotEmpty)
-                                  ? customerDetailsProvider.leadDetails?.first
-                                  : null;
-                              ksebPdf(
-                                  customerDetails: customer, context: context);
-                            },
-                          ),
-                        if (settingsprovider.menuIsViewMap[63] == 1 &&
-                            sideprovider.name != 'Lead /')
-                          CustomElevatedButton(
-                            backgroundColor: AppColors.whiteColor,
-                            borderColor: AppColors.bluebutton,
-                            textColor: AppColors.bluebutton,
-                            buttonText: 'Vendor Agreement',
-                            onPressed: () async {
-                              final customer = (customerDetailsProvider
-                                              .leadDetails !=
-                                          null &&
-                                      customerDetailsProvider
-                                          .leadDetails!.isNotEmpty)
-                                  ? customerDetailsProvider.leadDetails?.first
-                                  : null;
-                              vendorAgreementPdf(
-                                  customerDetails: customer, context: context);
-                            },
-                          ),
-                        if (settingsprovider.menuIsViewMap[62] == 1 &&
-                            sideprovider.name != 'Lead /')
-                          CustomElevatedButton(
-                            backgroundColor: AppColors.whiteColor,
-                            borderColor: AppColors.bluebutton,
-                            textColor: AppColors.bluebutton,
-                            buttonText: 'Vendor Feasibility',
-                            onPressed: () async {
-                              final customer = (customerDetailsProvider
-                                              .leadDetails !=
-                                          null &&
-                                      customerDetailsProvider
-                                          .leadDetails!.isNotEmpty)
-                                  ? customerDetailsProvider.leadDetails?.first
-                                  : null;
-
-                              rtsFeasibilityReportPdf(
-                                  customerDetails: customer, context: context);
-                            },
-                          ),
-                      ],
-                    ),
-                  ),
-                  //down
-                  Expanded(
-                    child: Row(
-                      children: [
-                        // Left Panel
-                        if (AppStyles.isWebScreen(context))
-                          Expanded(
-                            flex: 2,
-                            child: customerDetailsProvider.leadDetails !=
-                                        null &&
-                                    customerDetailsProvider
-                                        .leadDetails!.isNotEmpty
-                                ? ListView(
-                                    padding: const EdgeInsets.all(16.0),
+                            // const SizedBox(
+                            //   width: 10,
+                            // ),
+                            AppStyles.isWebScreen(context)
+                                ? Wrap(
                                     children: [
-                                      Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: Colors.white,
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            const CircleAvatar(
-                                              radius: 20,
-                                              backgroundColor:
-                                                  Color(0xFFA2C6EB),
-                                              child: Icon(Icons.person_rounded,
-                                                  size: 30,
-                                                  color: Color(0xFFE5F0FF)),
-                                            ),
-                                            const SizedBox(
-                                              width: 10,
-                                            ),
-                                            Expanded(
-                                              child: Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      customerDetailsProvider
-                                                          .leadDetails![0]
-                                                          .customerName,
-                                                      maxLines: 2,
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                  ),
-                                                  // Text(
-                                                  //   'Order No : 20392',
-                                                  //   style: TextStyle(
-                                                  //       fontWeight: FontWeight.w500),
-                                                  // )
-                                                  const SizedBox(
-                                                    width: 10,
-                                                  ),
-                                                  if (settingsprovider
-                                                          .menuIsEditMap[4] ==
-                                                      1)
-                                                    IconButton(
-                                                        onPressed: () async {
-                                                          await leadDetailsProvider
-                                                              .fetchLeadDetails(
-                                                                  widget
-                                                                      .customerId,
-                                                                  context);
-                                                          await leadProvider
-                                                              .getLeadDropdowns(
-                                                                  context);
-
-                                                          leadProvider.setCutomerId(
-                                                              int.parse(widget
-                                                                  .customerId));
-                                                          final leadsProvider =
-                                                              Provider.of<
-                                                                      LeadsProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
-                                                          leadsProvider
-                                                                  .enquirySourceController
-                                                                  .text =
-                                                              leadDetailsProvider
-                                                                  .leadDetails![
-                                                                      0]
-                                                                  .enquirySourceName
-                                                                  .toString();
-                                                          final dropDownProvider =
-                                                              Provider.of<
-                                                                      DropDownProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
-                                                          dropDownProvider
-                                                                  .selectedEnquirySourceId =
-                                                              leadDetailsProvider
-                                                                  .leadDetails![
-                                                                      0]
-                                                                  .enquirySourceId;
-                                                          // sideprovider
-                                                          //     .setSelectedIndex(1);
-                                                          // context
-                                                          //     .go(HomePage.route);
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return const NewLeadDrawerWidget(
-                                                                isEdit: true,
-                                                              );
-                                                            },
-                                                          );
-                                                          // customerDetailsProvider
-                                                          //         .nameController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .customerName;
-                                                          // customerDetailsProvider
-                                                          //         .phoneController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .contactNumber;
-                                                          // customerDetailsProvider
-                                                          //         .emailController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .email;
-                                                          // customerDetailsProvider
-                                                          //         .addressController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .address1;
-                                                          // customerDetailsProvider
-                                                          //         .cityController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .address2;
-                                                          // customerDetailsProvider
-                                                          //         .districtController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .address3;
-                                                          // customerDetailsProvider
-                                                          //         .pincodeController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .pincode;
-                                                          // customerDetailsProvider
-                                                          //         .maplinkController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .mapLink;
-                                                          // customerDetailsProvider
-                                                          //         .stateController
-                                                          //         .text =
-                                                          //     customerDetailsProvider
-                                                          //         .leadDetails![0]
-                                                          //         .address4;
-                                                          // editProfile(context);
-                                                        },
-                                                        icon: const Icon(
-                                                            Icons.edit))
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        ),
+                                      Text(
+                                        sideprovider.name,
+                                        style: const TextStyle(
+                                            fontSize: 24,
+                                            color: Color(0xFF5499D9),
+                                            fontWeight: FontWeight.w700),
                                       ),
                                       const SizedBox(
-                                        height: 15,
+                                        width: 10,
                                       ),
-                                      CustomerCard(
-                                        title: "Contact",
-                                        content: [
-                                          // DetailRow(
-                                          //     label: "Email",
-                                          //     value: customerDetailsProvider
-                                          //         .leadDetails![0].email),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Divider(
-                                              color: Colors.grey.withOpacity(
-                                                  0.4), // You can adjust the color as per your design
-                                              thickness: 0.4,
-                                              height: 1,
+                                      const Text(
+                                        'Customer details',
+                                        style: TextStyle(
+                                            fontSize: 24,
+                                            color: Color(0xFF152D70),
+                                            fontWeight: FontWeight.w600),
+                                      ),
+                                    ],
+                                  )
+                                : Text(
+                                    customerDetailsProvider.leadDetails !=
+                                                null &&
+                                            customerDetailsProvider
+                                                .leadDetails!.isNotEmpty
+                                        ? customerDetailsProvider
+                                            .leadDetails![0].customerName
+                                        : '',
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 24),
+                                  ),
+                            // const SizedBox(
+                            //   width: 10,
+                            // ),
+                            if (!AppStyles.isWebScreen(context))
+                              if (settingsprovider.menuIsEditMap[4] == 1)
+                                IconButton(
+                                    onPressed: () async {
+                                      await leadDetailsProvider
+                                          .fetchLeadDetails(
+                                              widget.customerId, context);
+                                      await leadProvider
+                                          .getLeadDropdowns(context);
+                                      leadProvider.setCutomerId(
+                                          int.parse(widget.customerId));
+                                      leadProvider
+                                              .enquirySourceController.text =
+                                          leadDetailsProvider
+                                              .leadDetails![0].enquirySourceName
+                                              .toString();
+                                      leadProvider.enquiryForController.text =
+                                          leadDetailsProvider
+                                              .leadDetails![0].enquiryForName
+                                              .toString();
+
+                                      dropDownProvider.selectedEnquirySourceId =
+                                          leadDetailsProvider
+                                              .leadDetails![0].enquirySourceId;
+
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return const NewLeadDrawerWidget(
+                                            isEdit: true,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.edit)),
+                            if (sideprovider.name != 'Lead /')
+                              if (settingsprovider.menuIsDeleteMap[4] == 1)
+                                CustomElevatedButton(
+                                  backgroundColor: AppColors.whiteColor,
+                                  borderColor: AppColors.textRed,
+                                  textColor: AppColors.textRed,
+                                  buttonText: 'Remove Registration',
+                                  onPressed: () {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title:
+                                              const Text('Remove Registration'),
+                                          content: const Text(
+                                              'Are you sure you want to Remove Registration '),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: const Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Close the dialog
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: const Text(
+                                                  'Remove Registration'),
+                                              onPressed: () {
+                                                customerDetailsProvider
+                                                    .removeRegister(
+                                                        widget.customerId,
+                                                        context);
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                ),
+                            if (settingsprovider.menuIsViewMap[61] == 1 &&
+                                sideprovider.name != 'Lead /')
+                              CustomElevatedButton(
+                                backgroundColor: AppColors.whiteColor,
+                                borderColor: AppColors.bluebutton,
+                                textColor: AppColors.bluebutton,
+                                buttonText: 'KSEB',
+                                onPressed: () async {
+                                  final customer =
+                                      (customerDetailsProvider.leadDetails !=
+                                                  null &&
+                                              customerDetailsProvider
+                                                  .leadDetails!.isNotEmpty)
+                                          ? customerDetailsProvider
+                                              .leadDetails?.first
+                                          : null;
+                                  ksebPdf(
+                                      customerDetails: customer,
+                                      context: context);
+                                },
+                              ),
+                            if (settingsprovider.menuIsViewMap[63] == 1 &&
+                                sideprovider.name != 'Lead /')
+                              CustomElevatedButton(
+                                backgroundColor: AppColors.whiteColor,
+                                borderColor: AppColors.bluebutton,
+                                textColor: AppColors.bluebutton,
+                                buttonText: 'Vendor Agreement',
+                                onPressed: () async {
+                                  final customer =
+                                      (customerDetailsProvider.leadDetails !=
+                                                  null &&
+                                              customerDetailsProvider
+                                                  .leadDetails!.isNotEmpty)
+                                          ? customerDetailsProvider
+                                              .leadDetails?.first
+                                          : null;
+                                  vendorAgreementPdf(
+                                      customerDetails: customer,
+                                      context: context);
+                                },
+                              ),
+                            if (settingsprovider.menuIsViewMap[62] == 1 &&
+                                sideprovider.name != 'Lead /')
+                              CustomElevatedButton(
+                                backgroundColor: AppColors.whiteColor,
+                                borderColor: AppColors.bluebutton,
+                                textColor: AppColors.bluebutton,
+                                buttonText: 'Vendor Feasibility',
+                                onPressed: () async {
+                                  final customer =
+                                      (customerDetailsProvider.leadDetails !=
+                                                  null &&
+                                              customerDetailsProvider
+                                                  .leadDetails!.isNotEmpty)
+                                          ? customerDetailsProvider
+                                              .leadDetails?.first
+                                          : null;
+
+                                  rtsFeasibilityReportPdf(
+                                      customerDetails: customer,
+                                      context: context);
+                                },
+                              ),
+                          ],
+                        ),
+                      ),
+                      //down
+                      Expanded(
+                        child: Row(
+                          children: [
+                            // Left Panel
+                            if (AppStyles.isWebScreen(context))
+                              Expanded(
+                                flex: 2,
+                                child: customerDetailsProvider.leadDetails !=
+                                            null &&
+                                        customerDetailsProvider
+                                            .leadDetails!.isNotEmpty
+                                    ? ListView(
+                                        padding: const EdgeInsets.all(16.0),
+                                        children: [
+                                          Container(
+                                            padding: const EdgeInsets.all(10),
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                            ),
+                                            child: Row(
+                                              children: [
+                                                const CircleAvatar(
+                                                  radius: 20,
+                                                  backgroundColor:
+                                                      Color(0xFFA2C6EB),
+                                                  child: Icon(
+                                                      Icons.person_rounded,
+                                                      size: 30,
+                                                      color: Color(0xFFE5F0FF)),
+                                                ),
+                                                const SizedBox(
+                                                  width: 10,
+                                                ),
+                                                Expanded(
+                                                  child: Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: Text(
+                                                          customerDetailsProvider
+                                                              .leadDetails![0]
+                                                              .customerName,
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600),
+                                                        ),
+                                                      ),
+                                                      // Text(
+                                                      //   'Order No : 20392',
+                                                      //   style: TextStyle(
+                                                      //       fontWeight: FontWeight.w500),
+                                                      // )
+                                                      const SizedBox(
+                                                        width: 10,
+                                                      ),
+                                                      if (settingsprovider
+                                                                  .menuIsEditMap[
+                                                              4] ==
+                                                          1)
+                                                        IconButton(
+                                                            onPressed:
+                                                                () async {
+                                                              await leadDetailsProvider
+                                                                  .fetchLeadDetails(
+                                                                      widget
+                                                                          .customerId,
+                                                                      context);
+                                                              await leadProvider
+                                                                  .getLeadDropdowns(
+                                                                      context);
+
+                                                              leadProvider
+                                                                  .setCutomerId(
+                                                                      int.parse(
+                                                                          widget
+                                                                              .customerId));
+                                                              final leadsProvider =
+                                                                  Provider.of<
+                                                                          LeadsProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false);
+                                                              leadsProvider
+                                                                      .enquirySourceController
+                                                                      .text =
+                                                                  leadDetailsProvider
+                                                                      .leadDetails![
+                                                                          0]
+                                                                      .enquirySourceName
+                                                                      .toString();
+                                                              final dropDownProvider =
+                                                                  Provider.of<
+                                                                          DropDownProvider>(
+                                                                      context,
+                                                                      listen:
+                                                                          false);
+                                                              dropDownProvider
+                                                                      .selectedEnquirySourceId =
+                                                                  leadDetailsProvider
+                                                                      .leadDetails![
+                                                                          0]
+                                                                      .enquirySourceId;
+                                                              // sideprovider
+                                                              //     .setSelectedIndex(1);
+                                                              // context
+                                                              //     .go(HomePage.route);
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return const NewLeadDrawerWidget(
+                                                                    isEdit:
+                                                                        true,
+                                                                  );
+                                                                },
+                                                              );
+                                                              // customerDetailsProvider
+                                                              //         .nameController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .customerName;
+                                                              // customerDetailsProvider
+                                                              //         .phoneController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .contactNumber;
+                                                              // customerDetailsProvider
+                                                              //         .emailController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .email;
+                                                              // customerDetailsProvider
+                                                              //         .addressController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .address1;
+                                                              // customerDetailsProvider
+                                                              //         .cityController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .address2;
+                                                              // customerDetailsProvider
+                                                              //         .districtController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .address3;
+                                                              // customerDetailsProvider
+                                                              //         .pincodeController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .pincode;
+                                                              // customerDetailsProvider
+                                                              //         .maplinkController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .mapLink;
+                                                              // customerDetailsProvider
+                                                              //         .stateController
+                                                              //         .text =
+                                                              //     customerDetailsProvider
+                                                              //         .leadDetails![0]
+                                                              //         .address4;
+                                                              // editProfile(context);
+                                                            },
+                                                            icon: const Icon(
+                                                                Icons.edit))
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
-                                          DetailRow(
-                                              label: "Phone no",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].contactNumber
-                                                  .toString()),
-                                        ],
-                                      ),
-                                      CustomerCard(
-                                        title: "More Info",
-                                        content: [
-                                          Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
+                                          const SizedBox(
+                                            height: 15,
+                                          ),
+                                          CustomerCard(
+                                            title: "Contact",
+                                            content: [
+                                              // DetailRow(
+                                              //     label: "Email",
+                                              //     value: customerDetailsProvider
+                                              //         .leadDetails![0].email),
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Divider(
+                                                  color: Colors.grey.withOpacity(
+                                                      0.4), // You can adjust the color as per your design
+                                                  thickness: 0.4,
+                                                  height: 1,
+                                                ),
+                                              ),
+                                              DetailRow(
+                                                  label: "Phone no",
+                                                  value: customerDetailsProvider
+                                                      .leadDetails![0]
+                                                      .contactNumber
+                                                      .toString()),
+                                            ],
+                                          ),
+                                          CustomerCard(
+                                            title: "More Info",
+                                            content: [
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  DetailRow(
+                                                      label: "Address",
+                                                      value:
+                                                          customerDetailsProvider
+                                                                  .leadDetails![
+                                                                      0]
+                                                                  .address ??
+                                                              ''),
+                                                  SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  DetailRow(
+                                                      label: "Enquiry For",
+                                                      value: customerDetailsProvider
+                                                              .leadDetails![0]
+                                                              .enquiryForName ??
+                                                          ''),
+                                                  SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  DetailRow(
+                                                      label: "Enquiry Source",
+                                                      value: customerDetailsProvider
+                                                              .leadDetails![0]
+                                                              .enquirySourceName ??
+                                                          ''),
+                                                  SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  DetailRow(
+                                                      label: "Consumer Number",
+                                                      value: customerDetailsProvider
+                                                              .leadDetails![0]
+                                                              .consumerNumber ??
+                                                          ''),
+                                                  // SizedBox(
+                                                  //   height: 8,
+                                                  // ),
+                                                  // DetailRow(
+                                                  //     label: "Contact Number",
+                                                  //     value: customerDetailsProvider
+                                                  //             .leadDetails![0]
+                                                  //             .phoneNumber ??
+                                                  //         ''),
+                                                  const SizedBox(
+                                                    height: 8,
+                                                  ),
+                                                  const Text(
+                                                    "Location: ",
+                                                    style: TextStyle(
+                                                        color:
+                                                            Color(0xFF8E97A3)),
+                                                  ),
+                                                  Row(
+                                                    children: [
+                                                      Expanded(
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            String
+                                                                locationData =
+                                                                customerDetailsProvider
+                                                                    .leadDetails![
+                                                                        0]
+                                                                    .location
+                                                                    .toString();
+
+                                                            print(
+                                                                'DEBUG: Raw location data: "$locationData"');
+                                                            print(
+                                                                'DEBUG: Location length: ${locationData.length}');
+                                                            print(
+                                                                'DEBUG: Location characters: ${locationData.codeUnits}');
+
+                                                            _openMaps(
+                                                                locationData);
+                                                          },
+                                                          child: Text(
+                                                            customerDetailsProvider
+                                                                .leadDetails![0]
+                                                                .location
+                                                                .toString(),
+                                                            style:
+                                                                const TextStyle(
+                                                                    color: Colors
+                                                                        .blue),
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      IconButton(
+                                                        color: Colors.grey,
+                                                        onPressed: () {
+                                                          Clipboard.setData(
+                                                            ClipboardData(
+                                                              text: customerDetailsProvider
+                                                                  .leadDetails![
+                                                                      0]
+                                                                  .location
+                                                                  .toString(),
+                                                            ),
+                                                          );
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                            const SnackBar(
+                                                              content: Text(
+                                                                  'Link copied to clipboard!'),
+                                                            ),
+                                                          );
+                                                        },
+                                                        icon: const Icon(
+                                                            Icons.copy),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
+                                          // Basic Information
+                                          CustomerCard(
+                                            title: "Basic",
+                                            content: [
+                                              DetailRow(
+                                                label: "Lead Name",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .customerName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 8),
+                                              DetailRow(
+                                                label: "Source",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .sourceCategoryName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 8),
+                                              DetailRow(
+                                                label: "Mobile No",
+                                                value: customerDetailsProvider
+                                                    .leadDetails![0]
+                                                    .contactNumber
+                                                    .toString(),
+                                              ),
+                                              const SizedBox(height: 8),
+                                              DetailRow(
+                                                label: "Enquiry Source",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .enquirySourceName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 8),
+                                              DetailRow(
+                                                label: "Enquiry For",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .enquiryForName ??
+                                                    '',
+                                              ),
+                                              const SizedBox(height: 8),
+
+                                              DetailRow(
+                                                label: "Total project cost :",
+                                                value: customerDetailsProvider
+                                                        .leadDetails![0]
+                                                        .totalProjectCost
+                                                        .toString() ??
+                                                    '',
+                                              ),
+                                              // DetailRow(
+                                              //   label: "Engineer",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerName,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer Organization",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].organization,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer Mobile",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerMobile,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer City",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerCity,
+                                              // ),
+                                              // DetailRow(
+                                              //   label: "Engineer District",
+                                              //   value: customerDetailsProvider
+                                              //       .leadDetails![0].engineerDistrict,
+                                              // ),
+                                            ],
+                                          ),
+
+                                          // Address Details
+                                          CustomerCard(
+                                            title: "Address Details",
+                                            content: [
+                                              // Address
                                               DetailRow(
                                                   label: "Address",
                                                   value: customerDetailsProvider
                                                           .leadDetails![0]
                                                           .address ??
                                                       ''),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
+
+                                              // Latitude
+                                              const SizedBox(height: 8),
                                               DetailRow(
-                                                  label: "Enquiry For",
+                                                  label: "Latitude",
+                                                  value: customerDetailsProvider
+                                                      .leadDetails![0].latitude
+                                                      .toString()),
+
+                                              // Longitude
+                                              const SizedBox(height: 8),
+                                              DetailRow(
+                                                  label: "Longitude",
+                                                  value: customerDetailsProvider
+                                                      .leadDetails![0].longitude
+                                                      .toString()),
+
+                                              // District
+                                              const SizedBox(height: 8),
+                                              DetailRow(
+                                                  label: "District",
                                                   value: customerDetailsProvider
                                                           .leadDetails![0]
-                                                          .enquiryForName ??
+                                                          .districtName ??
                                                       ''),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
+
+                                              // Firestation
+                                              const SizedBox(height: 8),
                                               DetailRow(
-                                                  label: "Enquiry Source",
+                                                  label: "Firestation",
                                                   value: customerDetailsProvider
-                                                          .leadDetails![0]
-                                                          .enquirySourceName ??
-                                                      ''),
-                                              SizedBox(
-                                                height: 8,
-                                              ),
-                                              DetailRow(
-                                                  label: "Consumer Number",
-                                                  value: customerDetailsProvider
-                                                          .leadDetails![0]
-                                                          .consumerNumber ??
-                                                      ''),
-                                              // SizedBox(
-                                              //   height: 8,
-                                              // ),
-                                              // DetailRow(
-                                              //     label: "Contact Number",
-                                              //     value: customerDetailsProvider
-                                              //             .leadDetails![0]
-                                              //             .phoneNumber ??
-                                              //         ''),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
+                                                      .leadDetails![0]
+                                                      .firestationName),
+                                              const SizedBox(height: 8),
                                               const Text(
-                                                "Location: ",
+                                                'Location',
                                                 style: TextStyle(
                                                     color: Color(0xFF8E97A3)),
                                               ),
@@ -810,197 +1062,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               ),
                                             ],
                                           ),
-                                        ],
-                                      ),
-                                      // Basic Information
-                                      CustomerCard(
-                                        title: "Basic",
-                                        content: [
-                                          DetailRow(
-                                            label: "Lead Name",
-                                            value: customerDetailsProvider
-                                                    .leadDetails![0]
-                                                    .customerName ??
-                                                '',
-                                          ),
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                            label: "Source",
-                                            value: customerDetailsProvider
-                                                    .leadDetails![0]
-                                                    .sourceCategoryName ??
-                                                '',
-                                          ),
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                            label: "Mobile No",
-                                            value: customerDetailsProvider
-                                                .leadDetails![0].contactNumber
-                                                .toString(),
-                                          ),
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                            label: "Enquiry Source",
-                                            value: customerDetailsProvider
-                                                    .leadDetails![0]
-                                                    .enquirySourceName ??
-                                                '',
-                                          ),
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                            label: "Enquiry For",
-                                            value: customerDetailsProvider
-                                                    .leadDetails![0]
-                                                    .enquiryForName ??
-                                                '',
-                                          ),
-                                          const SizedBox(height: 8),
-
-                                          DetailRow(
-                                            label: "Total project cost :",
-                                            value: customerDetailsProvider
-                                                    .leadDetails![0]
-                                                    .totalProjectCost
-                                                    .toString() ??
-                                                '',
-                                          ),
-                                          // DetailRow(
-                                          //   label: "Engineer",
-                                          //   value: customerDetailsProvider
-                                          //       .leadDetails![0].engineerName,
-                                          // ),
-                                          // DetailRow(
-                                          //   label: "Engineer Organization",
-                                          //   value: customerDetailsProvider
-                                          //       .leadDetails![0].organization,
-                                          // ),
-                                          // DetailRow(
-                                          //   label: "Engineer Mobile",
-                                          //   value: customerDetailsProvider
-                                          //       .leadDetails![0].engineerMobile,
-                                          // ),
-                                          // DetailRow(
-                                          //   label: "Engineer City",
-                                          //   value: customerDetailsProvider
-                                          //       .leadDetails![0].engineerCity,
-                                          // ),
-                                          // DetailRow(
-                                          //   label: "Engineer District",
-                                          //   value: customerDetailsProvider
-                                          //       .leadDetails![0].engineerDistrict,
-                                          // ),
-                                        ],
-                                      ),
-
-                                      // Address Details
-                                      CustomerCard(
-                                        title: "Address Details",
-                                        content: [
-                                          // Address
-                                          DetailRow(
-                                              label: "Address",
-                                              value: customerDetailsProvider
-                                                      .leadDetails![0]
-                                                      .address ??
-                                                  ''),
-
-                                          // Latitude
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                              label: "Latitude",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].latitude
-                                                  .toString()),
-
-                                          // Longitude
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                              label: "Longitude",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0].longitude
-                                                  .toString()),
-
-                                          // District
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                              label: "District",
-                                              value: customerDetailsProvider
-                                                      .leadDetails![0]
-                                                      .districtName ??
-                                                  ''),
-
-                                          // Firestation
-                                          const SizedBox(height: 8),
-                                          DetailRow(
-                                              label: "Firestation",
-                                              value: customerDetailsProvider
-                                                  .leadDetails![0]
-                                                  .firestationName),
-                                          const SizedBox(height: 8),
-                                          const Text(
-                                            'Location',
-                                            style: TextStyle(
-                                                color: Color(0xFF8E97A3)),
-                                          ),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: InkWell(
-                                                  onTap: () {
-                                                    String locationData =
-                                                        customerDetailsProvider
-                                                            .leadDetails![0]
-                                                            .location
-                                                            .toString();
-
-                                                    print(
-                                                        'DEBUG: Raw location data: "$locationData"');
-                                                    print(
-                                                        'DEBUG: Location length: ${locationData.length}');
-                                                    print(
-                                                        'DEBUG: Location characters: ${locationData.codeUnits}');
-
-                                                    _openMaps(locationData);
-                                                  },
-                                                  child: Text(
-                                                    customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .location
-                                                        .toString(),
-                                                    style: const TextStyle(
-                                                        color: Colors.blue),
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                  ),
-                                                ),
-                                              ),
-                                              IconButton(
-                                                color: Colors.grey,
-                                                onPressed: () {
-                                                  Clipboard.setData(
-                                                    ClipboardData(
-                                                      text:
-                                                          customerDetailsProvider
-                                                              .leadDetails![0]
-                                                              .location
-                                                              .toString(),
-                                                    ),
-                                                  );
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                    const SnackBar(
-                                                      content: Text(
-                                                          'Link copied to clipboard!'),
-                                                    ),
-                                                  );
-                                                },
-                                                icon: const Icon(Icons.copy),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
 
                                       // Additional
                                       CustomerCard(
@@ -1066,1280 +1127,1278 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     tabs: tabs,
                                   ),
 
-                                  // Tab views
-                                  Expanded(
-                                    child: TabBarView(
-                                      children: [
-                                        // Tasks Tab
-                                        if (settingsprovider
-                                                .menuIsViewMap[13] ==
-                                            1)
-                                          customerDetailsProvider.isLoading
-                                              ? const Center(
-                                                  child:
-                                                      CircularProgressIndicator())
-                                              : Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceEvenly,
+                                      // Tab views
+                                      Expanded(
+                                        child: TabBarView(
+                                          children: [
+                                            // Tasks Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[13] ==
+                                                1)
+                                              customerDetailsProvider.isLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : Column(
                                                       crossAxisAlignment:
                                                           CrossAxisAlignment
-                                                              .center,
+                                                              .start,
                                                       children: [
-                                                        if (AppStyles
-                                                            .isWebScreen(
-                                                                context))
-                                                          Expanded(
-                                                            child:
-                                                                TaskChipsScroller(
-                                                              chips: [
-                                                                _buildTaskChip(
-                                                                    'All tasks',
-                                                                    null),
-                                                                ...dropDownProvider
-                                                                    .taskType
-                                                                    .map(
-                                                                        (task) {
-                                                                  return Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            8.0),
-                                                                    child: _buildTaskChip(
-                                                                        task.taskTypeName,
-                                                                        task.taskTypeId),
-                                                                  );
-                                                                }).toList(),
-                                                              ],
-                                                            ),
-                                                          )
-                                                        // Expanded(
-                                                        //   child: Container(
-                                                        //     height: 40,
-                                                        //     margin:
-                                                        //         const EdgeInsets
-                                                        //             .all(4.0),
-                                                        //     padding:
-                                                        //         const EdgeInsets
-                                                        //             .symmetric(
-                                                        //             horizontal:
-                                                        //                 8),
-                                                        //     decoration:
-                                                        //         BoxDecoration(
-                                                        //       color: const Color(
-                                                        //           0xFFEFF2F5),
-                                                        //       borderRadius:
-                                                        //           BorderRadius
-                                                        //               .circular(
-                                                        //                   8),
-                                                        //     ),
-                                                        //     child:
-                                                        //         ScrollConfiguration(
-                                                        //       behavior: ScrollConfiguration.of(
-                                                        //               context)
-                                                        //           .copyWith(
-                                                        //         scrollbars:
-                                                        //             true,
-                                                        //         dragDevices: {
-                                                        //           PointerDeviceKind
-                                                        //               .touch,
-                                                        //           PointerDeviceKind
-                                                        //               .mouse,
-                                                        //         },
-                                                        //       ),
-                                                        //       child:
-                                                        //           SingleChildScrollView(
-                                                        //         scrollDirection:
-                                                        //             Axis.horizontal,
-                                                        //         child: Row(
-                                                        //           children: [
-                                                        //             _buildTaskChip(
-                                                        //                 'All tasks',
-                                                        //                 null),
-                                                        //             ...dropDownProvider
-                                                        //                 .taskType
-                                                        //                 .map(
-                                                        //                     (task) {
-                                                        //               return Padding(
-                                                        //                 padding: const EdgeInsets
-                                                        //                     .only(
-                                                        //                     left: 8.0),
-                                                        //                 child: _buildTaskChip(
-                                                        //                     task.taskTypeName,
-                                                        //                     task.taskTypeId),
-                                                        //               );
-                                                        //             }).toList(),
-                                                        //           ],
-                                                        //         ),
-                                                        //       ),
-                                                        //     ),
-                                                        //   ),
-                                                        // )
-                                                        else
-                                                          Container(
-                                                            margin:
-                                                                const EdgeInsets
-                                                                    .all(30),
-                                                          ),
-
-                                                        // Create Task Button
-                                                        if (settingsprovider
-                                                                    .menuIsSaveMap[
-                                                                13] ==
-                                                            1)
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .all(8.0),
-                                                            child:
-                                                                ElevatedButton
-                                                                    .icon(
-                                                              onPressed: () {
-                                                                customerDetailsProvider
-                                                                        .customerId =
-                                                                    widget
-                                                                        .customerId;
-                                                                customerDetailsProvider
-                                                                    .clearTaskDetails();
-                                                                showDialog(
-                                                                  barrierDismissible:
-                                                                      false,
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return TaskCreationWidget(
-                                                                      isEdit:
-                                                                          false,
-                                                                      taskId:
-                                                                          '0',
-                                                                    );
-                                                                  },
-                                                                );
-                                                              },
-                                                              icon: const Icon(
-                                                                  Icons.add),
-                                                              label: const Text(
-                                                                  'Create Task'),
-                                                              style:
-                                                                  ElevatedButton
-                                                                      .styleFrom(
-                                                                backgroundColor:
-                                                                    AppColors
-                                                                        .primaryBlue,
-                                                                foregroundColor:
-                                                                    Colors
-                                                                        .white,
-                                                                padding: AppStyles
-                                                                        .isWebScreen(
-                                                                            context)
-                                                                    ? const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            12)
-                                                                    : const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            0),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                      ],
-                                                    ),
-
-                                                    // Filtered Task List
-                                                    _buildFilteredTaskList(
-                                                      onTap: (taskMasterId) {
-                                                        leadProvider.setCutomerId(
-                                                            int.parse(widget
-                                                                .customerId));
-                                                        print(
-                                                            'Task ID: $taskMasterId');
-                                                        customerDetailsProvider
-                                                            .getTaskDetails(
-                                                                taskMasterId
-                                                                    .toString(),
-                                                                context);
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return TaskDetailsWidget(
-                                                              taskId: taskMasterId
-                                                                  .toString(),
-                                                              customerId: widget
-                                                                  .customerId
-                                                                  .toString(),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                      taskTypeId:
-                                                          selectedTaskTypeId,
-                                                    )
-                                                  ],
-                                                ),
-
-                                        // Complaints Tab (can be customized as needed)
-                                        if (settingsprovider
-                                                .menuIsViewMap[14] ==
-                                            1)
-                                          if (sideprovider.name != 'Lead /')
-                                            customerDetailsProvider.isLoading
-                                                ? const Center(
-                                                    child:
-                                                        CircularProgressIndicator())
-                                                : Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      // Display 4 Chips based on Task_Type_Id filter
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          //chips
-                                                          AppStyles.isWebScreen(
-                                                                  context)
-                                                              ? Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          8.0),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: const Color(
-                                                                        0xFFEFF2F5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            4.0),
-                                                                    child: Wrap(
-                                                                      spacing:
-                                                                          8.0, // Space between chips
-                                                                      runSpacing:
-                                                                          4.0, // Space between rows
-                                                                      children: [
-                                                                        _buildServiceChip(
-                                                                            'All Complaints',
-                                                                            null), // All tasks (no filter)
-                                                                        _buildServiceChip(
-                                                                            'Completed',
-                                                                            2), // Task Type Id 1
-                                                                        _buildServiceChip(
-                                                                            'Pending',
-                                                                            1), // Task Type Id 2
-                                                                        // _buildServiceChip(
-                                                                        //     'In Progress',
-                                                                        //     2), // Task Type Id 3
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                )
-                                                              : Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          30),
-                                                                ),
-                                                          if (settingsprovider
-                                                                      .menuIsSaveMap[
-                                                                  14] ==
-                                                              1)
-                                                            ElevatedButton.icon(
-                                                              onPressed: () {
-                                                                customerDetailsProvider
-                                                                        .customerId =
-                                                                    widget
-                                                                        .customerId;
-                                                                customerDetailsProvider
-                                                                    .clearServiceDetails();
-                                                                showDialog(
-                                                                  context:
-                                                                      context,
-                                                                  barrierDismissible:
-                                                                      false,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return ServiceCreationWidget(
-                                                                        taskId:
-                                                                            '0',
-                                                                        isEdit:
-                                                                            false,
-                                                                        customerId:
-                                                                            widget.customerId);
-                                                                  },
-                                                                );
-                                                              },
-                                                              icon: const Icon(
-                                                                  Icons.add),
-                                                              label: const Text(
-                                                                  'Add Complaint'),
-                                                              style:
-                                                                  ElevatedButton
-                                                                      .styleFrom(
-                                                                backgroundColor:
-                                                                    AppColors
-                                                                        .primaryBlue,
-                                                                foregroundColor:
-                                                                    Colors
-                                                                        .white,
-                                                                padding: AppStyles
-                                                                        .isWebScreen(
-                                                                            context)
-                                                                    ? const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            12)
-                                                                    : const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            0),
-                                                              ),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                      // Display filtered task list
-                                                      _buildFilteredServiceList(
-                                                        onTap: (serviceId) {
-                                                          leadProvider.setCutomerId(
-                                                              int.parse(widget
-                                                                  .customerId));
-                                                          print(
-                                                              'Service ID: $serviceId');
-                                                          customerDetailsProvider
-                                                              .getServiceDetails(
-                                                                  serviceId
-                                                                      .toString(),
-                                                                  context);
-                                                          // _scaffoldKey.currentState
-                                                          //     ?.openEndDrawer();
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return ServiceDetailsWidget(
-                                                                customerId: widget
-                                                                    .customerId,
-                                                                serviceId: serviceId
-                                                                    .toString(),
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        serviceId:
-                                                            selectedServiceStatusId,
-                                                      )
-                                                    ],
-                                                  ),
-
-                                        // Periodic Service Tab (can be customized as needed)
-                                        if (settingsprovider
-                                                .menuIsViewMap[15] ==
-                                            1)
-                                          if (sideprovider.name != 'Lead /')
-                                            customerDetailsProvider.isLoading
-                                                ? const Center(
-                                                    child:
-                                                        CircularProgressIndicator())
-                                                : Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Row(
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          AppStyles.isWebScreen(
-                                                                  context)
-                                                              ? Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          8.0),
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: const Color(
-                                                                        0xFFEFF2F5),
-                                                                    borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
-                                                                  ),
-                                                                  child:
-                                                                      Padding(
-                                                                    padding:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            4.0),
-                                                                    child: Wrap(
-                                                                      spacing:
-                                                                          8.0, // Space between chips
-                                                                      runSpacing:
-                                                                          4.0, // Space between rows
-                                                                      children: [
-                                                                        _buildAMCChip(
-                                                                            'All Periodic Service',
-                                                                            null), // All tasks (no filter)
-                                                                        Wrap(
-                                                                          spacing:
-                                                                              8.0, // Space between chips
-                                                                          runSpacing:
-                                                                              4.0,
-                                                                          children: dropDownProvider
-                                                                              .amcStatus
-                                                                              .map((task) {
-                                                                            return _buildAMCChip(task.amcStatusName,
-                                                                                task.amcStatusId);
-                                                                          }).toList(),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ),
-                                                                )
-                                                              : Container(
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          30),
-                                                                ),
-                                                          const Spacer(),
-                                                          if (settingsprovider
-                                                                      .menuIsSaveMap[
-                                                                  15] ==
-                                                              1)
-                                                            ElevatedButton.icon(
-                                                              onPressed: () {
-                                                                customerDetailsProvider
-                                                                        .customerId =
-                                                                    widget
-                                                                        .customerId;
-                                                                showDialog(
-                                                                  barrierDismissible:
-                                                                      false,
-                                                                  context:
-                                                                      context,
-                                                                  builder:
-                                                                      (BuildContext
-                                                                          context) {
-                                                                    return AmcCreationWidget(
-                                                                        amcId:
-                                                                            '0',
-                                                                        customerId:
-                                                                            widget
-                                                                                .customerId,
-                                                                        isEdit:
-                                                                            false);
-                                                                  },
-                                                                );
-                                                              },
-                                                              icon: const Icon(
-                                                                  Icons.add),
-                                                              label: const Text(
-                                                                  'Add Periodic Service'),
-                                                              style:
-                                                                  ElevatedButton
-                                                                      .styleFrom(
-                                                                backgroundColor:
-                                                                    AppColors
-                                                                        .primaryBlue,
-                                                                foregroundColor:
-                                                                    Colors
-                                                                        .white,
-                                                                padding: AppStyles
-                                                                        .isWebScreen(
-                                                                            context)
-                                                                    ? const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            12)
-                                                                    : const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            16,
-                                                                        vertical:
-                                                                            0),
-                                                              ),
-                                                            ),
-                                                        ],
-                                                      ),
-                                                      // const SizedBox(
-                                                      //   height: 16,
-                                                      // ),
-                                                      _buildAmcTaskWidget(
-                                                        onTap: (taskId,
-                                                            productName,
-                                                            service,
-                                                            entryDate,
-                                                            amount,
-                                                            description,
-                                                            amcStatus,
-                                                            customerName,
-                                                            amcId,
-                                                            fromDate,
-                                                            toDate) {
-                                                          leadProvider.setCutomerId(
-                                                              int.parse(widget
-                                                                  .customerId));
-                                                          print(
-                                                              'Task ID: $taskId');
-
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return AmcWidget(
-                                                                onPressed: () {
-                                                                  customerDetailsProvider
-                                                                          .customerId =
-                                                                      widget
-                                                                          .customerId;
-                                                                  showDialog(
-                                                                    barrierDismissible:
-                                                                        false,
-                                                                    context:
-                                                                        context,
-                                                                    builder:
-                                                                        (BuildContext
-                                                                            context) {
-                                                                      return AmcCreationWidget(
-                                                                          amcId: amcId
-                                                                              .toString(),
-                                                                          amcAmountController:
-                                                                              amount,
-                                                                          amcDescriptionController:
-                                                                              description,
-                                                                          amcProductNameController:
-                                                                              productName,
-                                                                          amcServiceController:
-                                                                              service,
-                                                                          fromDateController:
-                                                                              fromDate,
-                                                                          toDateController:
-                                                                              toDate,
-                                                                          customerId: widget
-                                                                              .customerId,
-                                                                          isEdit:
-                                                                              true);
-                                                                    },
-                                                                  );
-                                                                },
-                                                                customerName:
-                                                                    customerName,
-                                                                customerStatus:
-                                                                    amcStatus,
-                                                                amount:
-                                                                    '₹${double.parse(amount)}',
-                                                                description:
-                                                                    description,
-                                                                productName:
-                                                                    productName,
-                                                                service:
-                                                                    service,
-                                                                entryDate:
-                                                                    entryDate,
-                                                              );
-                                                            },
-                                                          );
-                                                        },
-                                                        amcId:
-                                                            selectedAmcStatusId,
-                                                      )
-                                                    ],
-                                                  ),
-
-                                        // Quotations Tab (can be customized as needed)
-                                        if (settingsprovider
-                                                .menuIsViewMap[16] ==
-                                            1)
-                                          customerDetailsProvider.isLoading
-                                              ? const Center(
-                                                  child:
-                                                      CircularProgressIndicator())
-                                              : Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    // Display 4 Chips based on Task_Type_Id filter
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        //chips
-                                                        AppStyles.isWebScreen(
-                                                                context)
-                                                            ? Container(
-                                                                margin:
-                                                                    const EdgeInsets
-                                                                        .all(
-                                                                        8.0),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  color: const Color(
-                                                                      0xFFEFF2F5),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              8),
-                                                                ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                          .all(
-                                                                          4.0),
-                                                                  child: Wrap(
-                                                                    spacing:
-                                                                        8.0, // Space between chips
-                                                                    runSpacing:
-                                                                        4.0, // Space between rows
-                                                                    children: [
-                                                                      _buildQuatationChip(
-                                                                          'All Quotations',
-                                                                          null), // All tasks (no filter)
-                                                                      _buildQuatationChip(
-                                                                          'Approved',
-                                                                          2), // Task Type Id 1
-                                                                      _buildQuatationChip(
-                                                                          'Rejected',
-                                                                          3), // Task Type Id 2
-                                                                      _buildQuatationChip(
-                                                                          'Pending',
-                                                                          1), // Task Type Id 2
-                                                                      // _buildServiceChip(
-                                                                      //     'In Progress',
-                                                                      //     2), // Task Type Id 3
-                                                                    ],
-                                                                  ),
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceEvenly,
+                                                          crossAxisAlignment:
+                                                              CrossAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            if (AppStyles
+                                                                .isWebScreen(
+                                                                    context))
+                                                              Expanded(
+                                                                child:
+                                                                    TaskChipsScroller(
+                                                                  chips: [
+                                                                    _buildTaskChip(
+                                                                        'All tasks',
+                                                                        null),
+                                                                    ...dropDownProvider
+                                                                        .taskType
+                                                                        .map(
+                                                                            (task) {
+                                                                      return Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .only(
+                                                                            left:
+                                                                                8.0),
+                                                                        child: _buildTaskChip(
+                                                                            task.taskTypeName,
+                                                                            task.taskTypeId),
+                                                                      );
+                                                                    }).toList(),
+                                                                  ],
                                                                 ),
                                                               )
-                                                            : Container(
+                                                            // Expanded(
+                                                            //   child: Container(
+                                                            //     height: 40,
+                                                            //     margin:
+                                                            //         const EdgeInsets
+                                                            //             .all(4.0),
+                                                            //     padding:
+                                                            //         const EdgeInsets
+                                                            //             .symmetric(
+                                                            //             horizontal:
+                                                            //                 8),
+                                                            //     decoration:
+                                                            //         BoxDecoration(
+                                                            //       color: const Color(
+                                                            //           0xFFEFF2F5),
+                                                            //       borderRadius:
+                                                            //           BorderRadius
+                                                            //               .circular(
+                                                            //                   8),
+                                                            //     ),
+                                                            //     child:
+                                                            //         ScrollConfiguration(
+                                                            //       behavior: ScrollConfiguration.of(
+                                                            //               context)
+                                                            //           .copyWith(
+                                                            //         scrollbars:
+                                                            //             true,
+                                                            //         dragDevices: {
+                                                            //           PointerDeviceKind
+                                                            //               .touch,
+                                                            //           PointerDeviceKind
+                                                            //               .mouse,
+                                                            //         },
+                                                            //       ),
+                                                            //       child:
+                                                            //           SingleChildScrollView(
+                                                            //         scrollDirection:
+                                                            //             Axis.horizontal,
+                                                            //         child: Row(
+                                                            //           children: [
+                                                            //             _buildTaskChip(
+                                                            //                 'All tasks',
+                                                            //                 null),
+                                                            //             ...dropDownProvider
+                                                            //                 .taskType
+                                                            //                 .map(
+                                                            //                     (task) {
+                                                            //               return Padding(
+                                                            //                 padding: const EdgeInsets
+                                                            //                     .only(
+                                                            //                     left: 8.0),
+                                                            //                 child: _buildTaskChip(
+                                                            //                     task.taskTypeName,
+                                                            //                     task.taskTypeId),
+                                                            //               );
+                                                            //             }).toList(),
+                                                            //           ],
+                                                            //         ),
+                                                            //       ),
+                                                            //     ),
+                                                            //   ),
+                                                            // )
+                                                            else
+                                                              Container(
                                                                 margin:
                                                                     const EdgeInsets
                                                                         .all(
                                                                         30),
                                                               ),
-                                                        if (settingsprovider
-                                                                    .menuIsSaveMap[
-                                                                16] ==
-                                                            1)
-                                                          ElevatedButton.icon(
-                                                            onPressed: () {
+
+                                                            // Create Task Button
+                                                            if (settingsprovider
+                                                                        .menuIsSaveMap[
+                                                                    13] ==
+                                                                1)
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child:
+                                                                    ElevatedButton
+                                                                        .icon(
+                                                                  onPressed:
+                                                                      () {
+                                                                    customerDetailsProvider
+                                                                            .customerId =
+                                                                        widget
+                                                                            .customerId;
+                                                                    customerDetailsProvider
+                                                                        .clearTaskDetails();
+                                                                    showDialog(
+                                                                      barrierDismissible:
+                                                                          false,
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return TaskCreationWidget(
+                                                                          isEdit:
+                                                                              false,
+                                                                          taskId:
+                                                                              '0',
+                                                                        );
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .add),
+                                                                  label: const Text(
+                                                                      'Create Task'),
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .primaryBlue,
+                                                                    foregroundColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    padding: AppStyles.isWebScreen(
+                                                                            context)
+                                                                        ? const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                16,
+                                                                            vertical:
+                                                                                12)
+                                                                        : const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                16,
+                                                                            vertical:
+                                                                                0),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+
+                                                        // Filtered Task List
+                                                        _buildFilteredTaskList(
+                                                          onTap:
+                                                              (taskMasterId) {
+                                                            leadProvider.setCutomerId(
+                                                                int.parse(widget
+                                                                    .customerId));
+                                                            print(
+                                                                'Task ID: $taskMasterId');
+                                                            customerDetailsProvider
+                                                                .getTaskDetails(
+                                                                    taskMasterId
+                                                                        .toString(),
+                                                                    context);
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return TaskDetailsWidget(
+                                                                  taskId: taskMasterId
+                                                                      .toString(),
+                                                                  customerId: widget
+                                                                      .customerId
+                                                                      .toString(),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          taskTypeId:
+                                                              selectedTaskTypeId,
+                                                        )
+                                                      ],
+                                                    ),
+
+                                            // Complaints Tab (can be customized as needed)
+                                            if (settingsprovider
+                                                    .menuIsViewMap[14] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                customerDetailsProvider
+                                                        .isLoading
+                                                    ? const Center(
+                                                        child:
+                                                            CircularProgressIndicator())
+                                                    : Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // Display 4 Chips based on Task_Type_Id filter
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              //chips
+                                                              AppStyles.isWebScreen(
+                                                                      context)
+                                                                  ? Container(
+                                                                      margin: const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: const Color(
+                                                                            0xFFEFF2F5),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            4.0),
+                                                                        child:
+                                                                            Wrap(
+                                                                          spacing:
+                                                                              8.0, // Space between chips
+                                                                          runSpacing:
+                                                                              4.0, // Space between rows
+                                                                          children: [
+                                                                            _buildServiceChip('All Complaints',
+                                                                                null), // All tasks (no filter)
+                                                                            _buildServiceChip('Completed',
+                                                                                2), // Task Type Id 1
+                                                                            _buildServiceChip('Pending',
+                                                                                1), // Task Type Id 2
+                                                                            // _buildServiceChip(
+                                                                            //     'In Progress',
+                                                                            //     2), // Task Type Id 3
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : Container(
+                                                                      margin: const EdgeInsets
+                                                                          .all(
+                                                                          30),
+                                                                    ),
+                                                              if (settingsprovider
+                                                                          .menuIsSaveMap[
+                                                                      14] ==
+                                                                  1)
+                                                                ElevatedButton
+                                                                    .icon(
+                                                                  onPressed:
+                                                                      () {
+                                                                    customerDetailsProvider
+                                                                            .customerId =
+                                                                        widget
+                                                                            .customerId;
+                                                                    customerDetailsProvider
+                                                                        .clearServiceDetails();
+                                                                    showDialog(
+                                                                      context:
+                                                                          context,
+                                                                      barrierDismissible:
+                                                                          false,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return ServiceCreationWidget(
+                                                                            taskId:
+                                                                                '0',
+                                                                            isEdit:
+                                                                                false,
+                                                                            customerId:
+                                                                                widget.customerId);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .add),
+                                                                  label: const Text(
+                                                                      'Add Complaint'),
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .primaryBlue,
+                                                                    foregroundColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    padding: AppStyles.isWebScreen(
+                                                                            context)
+                                                                        ? const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                16,
+                                                                            vertical:
+                                                                                12)
+                                                                        : const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                16,
+                                                                            vertical:
+                                                                                0),
+                                                                  ),
+                                                                ),
+                                                            ],
+                                                          ),
+                                                          // Display filtered task list
+                                                          _buildFilteredServiceList(
+                                                            onTap: (serviceId) {
+                                                              leadProvider
+                                                                  .setCutomerId(
+                                                                      int.parse(
+                                                                          widget
+                                                                              .customerId));
+                                                              print(
+                                                                  'Service ID: $serviceId');
                                                               customerDetailsProvider
-                                                                      .customerId =
-                                                                  widget
-                                                                      .customerId;
-                                                              customerDetailsProvider
-                                                                  .qsubsidyAmountController
-                                                                  .text = '0';
+                                                                  .getServiceDetails(
+                                                                      serviceId
+                                                                          .toString(),
+                                                                      context);
+                                                              // _scaffoldKey.currentState
+                                                              //     ?.openEndDrawer();
                                                               showDialog(
                                                                 context:
                                                                     context,
-                                                                barrierDismissible:
-                                                                    false,
                                                                 builder:
                                                                     (BuildContext
                                                                         context) {
-                                                                  return QuotationCreationWidget(
-                                                                      quotationId:
-                                                                          '0',
-                                                                      isEdit:
-                                                                          false,
-                                                                      customerId:
-                                                                          widget
-                                                                              .customerId);
+                                                                  return ServiceDetailsWidget(
+                                                                    customerId:
+                                                                        widget
+                                                                            .customerId,
+                                                                    serviceId:
+                                                                        serviceId
+                                                                            .toString(),
+                                                                  );
                                                                 },
                                                               );
                                                             },
-                                                            icon: const Icon(
-                                                                Icons.add),
-                                                            label: const Text(
-                                                                'New Quotation '),
-                                                            style:
+                                                            serviceId:
+                                                                selectedServiceStatusId,
+                                                          )
+                                                        ],
+                                                      ),
+
+                                            // Periodic Service Tab (can be customized as needed)
+                                            if (settingsprovider
+                                                    .menuIsViewMap[15] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                customerDetailsProvider
+                                                        .isLoading
+                                                    ? const Center(
+                                                        child:
+                                                            CircularProgressIndicator())
+                                                    : Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              AppStyles.isWebScreen(
+                                                                      context)
+                                                                  ? Container(
+                                                                      margin: const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                      decoration:
+                                                                          BoxDecoration(
+                                                                        color: const Color(
+                                                                            0xFFEFF2F5),
+                                                                        borderRadius:
+                                                                            BorderRadius.circular(8),
+                                                                      ),
+                                                                      child:
+                                                                          Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .all(
+                                                                            4.0),
+                                                                        child:
+                                                                            Wrap(
+                                                                          spacing:
+                                                                              8.0, // Space between chips
+                                                                          runSpacing:
+                                                                              4.0, // Space between rows
+                                                                          children: [
+                                                                            _buildAMCChip('All Periodic Service',
+                                                                                null), // All tasks (no filter)
+                                                                            Wrap(
+                                                                              spacing: 8.0, // Space between chips
+                                                                              runSpacing: 4.0,
+                                                                              children: dropDownProvider.amcStatus.map((task) {
+                                                                                return _buildAMCChip(task.amcStatusName, task.amcStatusId);
+                                                                              }).toList(),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    )
+                                                                  : Container(
+                                                                      margin: const EdgeInsets
+                                                                          .all(
+                                                                          30),
+                                                                    ),
+                                                              const Spacer(),
+                                                              if (settingsprovider
+                                                                          .menuIsSaveMap[
+                                                                      15] ==
+                                                                  1)
                                                                 ElevatedButton
-                                                                    .styleFrom(
-                                                              backgroundColor:
-                                                                  AppColors
-                                                                      .primaryBlue,
-                                                              foregroundColor:
-                                                                  Colors.white,
-                                                              padding: AppStyles
-                                                                      .isWebScreen(
-                                                                          context)
-                                                                  ? const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          16,
-                                                                      vertical:
-                                                                          12)
-                                                                  : const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          16,
-                                                                      vertical:
-                                                                          0),
-                                                            ),
+                                                                    .icon(
+                                                                  onPressed:
+                                                                      () {
+                                                                    customerDetailsProvider
+                                                                            .customerId =
+                                                                        widget
+                                                                            .customerId;
+                                                                    showDialog(
+                                                                      barrierDismissible:
+                                                                          false,
+                                                                      context:
+                                                                          context,
+                                                                      builder:
+                                                                          (BuildContext
+                                                                              context) {
+                                                                        return AmcCreationWidget(
+                                                                            amcId:
+                                                                                '0',
+                                                                            customerId:
+                                                                                widget.customerId,
+                                                                            isEdit: false);
+                                                                      },
+                                                                    );
+                                                                  },
+                                                                  icon: const Icon(
+                                                                      Icons
+                                                                          .add),
+                                                                  label: const Text(
+                                                                      'Add Periodic Service'),
+                                                                  style: ElevatedButton
+                                                                      .styleFrom(
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .primaryBlue,
+                                                                    foregroundColor:
+                                                                        Colors
+                                                                            .white,
+                                                                    padding: AppStyles.isWebScreen(
+                                                                            context)
+                                                                        ? const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                16,
+                                                                            vertical:
+                                                                                12)
+                                                                        : const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                16,
+                                                                            vertical:
+                                                                                0),
+                                                                  ),
+                                                                ),
+                                                            ],
                                                           ),
-                                                      ],
-                                                    ),
-                                                    // Display filtered task list
-                                                    _buildFilteredQuatationList(
-                                                      onTap: (quatationId) {
-                                                        leadProvider.setCutomerId(
-                                                            int.parse(widget
-                                                                .customerId));
-                                                        print(
-                                                            'Quotation ID: $quatationId');
-                                                        customerDetailsProvider
-                                                            .getQuatationListByMasterId(
-                                                                quatationId
-                                                                    .toString(),
-                                                                context);
-                                                        // _scaffoldKey.currentState
-                                                        //     ?.openEndDrawer();
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                              context) {
-                                                            return QuotationDetailsWidget(
-                                                              customerId: widget
-                                                                  .customerId,
-                                                              serviceId:
-                                                                  quatationId
-                                                                      .toString(),
-                                                            );
-                                                          },
-                                                        );
-                                                      },
-                                                      quatationId:
-                                                          selectedQuotationStatusId,
-                                                    )
-                                                  ],
-                                                ),
+                                                          // const SizedBox(
+                                                          //   height: 16,
+                                                          // ),
+                                                          _buildAmcTaskWidget(
+                                                            onTap: (taskId,
+                                                                productName,
+                                                                service,
+                                                                entryDate,
+                                                                amount,
+                                                                description,
+                                                                amcStatus,
+                                                                customerName,
+                                                                amcId,
+                                                                fromDate,
+                                                                toDate) {
+                                                              leadProvider
+                                                                  .setCutomerId(
+                                                                      int.parse(
+                                                                          widget
+                                                                              .customerId));
+                                                              print(
+                                                                  'Task ID: $taskId');
 
-                                        //Images Tab
-                                        if (settingsprovider
-                                                .menuIsViewMap[19] ==
-                                            1)
-                                          Padding(
-                                            padding: const EdgeInsets.all(16.0),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                if (settingsprovider
-                                                        .menuIsSaveMap[19] ==
-                                                    1)
-                                                  InkWell(
-                                                    onTap: () {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (context) =>
-                                                            ImageUploadAlert(
-                                                                customerId: widget
-                                                                    .customerId),
-                                                      );
-                                                    },
-                                                    child: Image.asset(
-                                                      'assets/images/add_photo.png',
-                                                      height: 50,
-                                                    ),
-                                                  ),
-                                                Expanded(
-                                                  child: ListView.builder(
-                                                    itemCount:
-                                                        customerDetailsProvider
-                                                            .documentList
-                                                            .length,
-                                                    itemBuilder:
-                                                        (context, index) {
-                                                      var userData =
-                                                          customerDetailsProvider
-                                                                  .documentList[
-                                                              index];
-                                                      userData.userName;
-                                                      List<ImageDetail> images =
-                                                          userData.imageDetails;
+                                                              showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
+                                                                  return AmcWidget(
+                                                                    onPressed:
+                                                                        () {
+                                                                      customerDetailsProvider
+                                                                              .customerId =
+                                                                          widget
+                                                                              .customerId;
+                                                                      showDialog(
+                                                                        barrierDismissible:
+                                                                            false,
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return AmcCreationWidget(
+                                                                              amcId: amcId.toString(),
+                                                                              amcAmountController: amount,
+                                                                              amcDescriptionController: description,
+                                                                              amcProductNameController: productName,
+                                                                              amcServiceController: service,
+                                                                              fromDateController: fromDate,
+                                                                              toDateController: toDate,
+                                                                              customerId: widget.customerId,
+                                                                              isEdit: true);
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                    customerName:
+                                                                        customerName,
+                                                                    customerStatus:
+                                                                        amcStatus,
+                                                                    amount:
+                                                                        '₹${double.parse(amount)}',
+                                                                    description:
+                                                                        description,
+                                                                    productName:
+                                                                        productName,
+                                                                    service:
+                                                                        service,
+                                                                    entryDate:
+                                                                        entryDate,
+                                                                  );
+                                                                },
+                                                              );
+                                                            },
+                                                            amcId:
+                                                                selectedAmcStatusId,
+                                                          )
+                                                        ],
+                                                      ),
 
-                                                      return ExpansionTile(
-                                                        enabled: false,
-                                                        initiallyExpanded: true,
-                                                        shape:
-                                                            const RoundedRectangleBorder(
-                                                          borderRadius:
-                                                              BorderRadius.zero,
-                                                        ),
-                                                        title: Wrap(
-                                                          crossAxisAlignment:
-                                                              WrapCrossAlignment
-                                                                  .center,
-                                                          runSpacing: 10,
+                                            // Quotations Tab (can be customized as needed)
+                                            if (settingsprovider
+                                                    .menuIsViewMap[16] ==
+                                                1)
+                                              customerDetailsProvider.isLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Display 4 Chips based on Task_Type_Id filter
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
                                                           children: [
-                                                            const Icon(
-                                                                Icons.person),
-                                                            Text(
-                                                              '  Uploaded By ',
-                                                              style: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .textGrey4),
-                                                            ),
-                                                            Text(
-                                                              userData.userName,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
+                                                            //chips
+                                                            AppStyles
+                                                                    .isWebScreen(
+                                                                        context)
+                                                                ? Container(
+                                                                    margin:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: const Color(
+                                                                          0xFFEFF2F5),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          4.0),
+                                                                      child:
+                                                                          Wrap(
+                                                                        spacing:
+                                                                            8.0, // Space between chips
+                                                                        runSpacing:
+                                                                            4.0, // Space between rows
+                                                                        children: [
+                                                                          _buildQuatationChip(
+                                                                              'All Quotations',
+                                                                              null), // All tasks (no filter)
+                                                                          _buildQuatationChip(
+                                                                              'Approved',
+                                                                              2), // Task Type Id 1
+                                                                          _buildQuatationChip(
+                                                                              'Rejected',
+                                                                              3), // Task Type Id 2
+                                                                          _buildQuatationChip(
+                                                                              'Pending',
+                                                                              1), // Task Type Id 2
+                                                                          // _buildServiceChip(
+                                                                          //     'In Progress',
+                                                                          //     2), // Task Type Id 3
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Container(
+                                                                    margin:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            30),
+                                                                  ),
+                                                            if (settingsprovider
+                                                                        .menuIsSaveMap[
+                                                                    16] ==
+                                                                1)
+                                                              ElevatedButton
+                                                                  .icon(
+                                                                onPressed: () {
+                                                                  customerDetailsProvider
+                                                                          .customerId =
+                                                                      widget
+                                                                          .customerId;
+                                                                  customerDetailsProvider
+                                                                      .qsubsidyAmountController
+                                                                      .text = '0';
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    barrierDismissible:
+                                                                        false,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                            context) {
+                                                                      return QuotationCreationWidget(
+                                                                          quotationId:
+                                                                              '0',
+                                                                          isEdit:
+                                                                              false,
+                                                                          customerId:
+                                                                              widget.customerId);
+                                                                    },
+                                                                  );
+                                                                },
+                                                                icon: const Icon(
+                                                                    Icons.add),
+                                                                label: const Text(
+                                                                    'New Quotation '),
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .primaryBlue,
+                                                                  foregroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  padding: AppStyles
+                                                                          .isWebScreen(
+                                                                              context)
+                                                                      ? const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              16,
+                                                                          vertical:
+                                                                              12)
+                                                                      : const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              16,
+                                                                          vertical:
+                                                                              0),
+                                                                ),
                                                               ),
-                                                            ),
                                                           ],
                                                         ),
-                                                        children: [
-                                                          MouseRegion(
-                                                            cursor:
-                                                                SystemMouseCursors
-                                                                    .click,
-                                                            child: SizedBox(
-                                                              height: 140,
-                                                              child: Scrollbar(
-                                                                controller:
-                                                                    customerDetailsProvider
-                                                                        .imageScrollController,
-                                                                thumbVisibility:
-                                                                    true,
-                                                                child: ListView
-                                                                    .separated(
-                                                                  controller:
-                                                                      customerDetailsProvider
-                                                                          .imageScrollController,
-                                                                  scrollDirection:
-                                                                      Axis.horizontal,
-                                                                  separatorBuilder: (context,
-                                                                          index) =>
-                                                                      const SizedBox(
-                                                                          width:
-                                                                              10),
-                                                                  physics:
-                                                                      const ClampingScrollPhysics(),
-                                                                  itemCount:
-                                                                      images
-                                                                          .length,
-                                                                  itemBuilder:
-                                                                      (context,
-                                                                          index) {
-                                                                    final image =
-                                                                        images[
-                                                                            index];
-                                                                    return Column(
-                                                                      children: [
-                                                                        Stack(
+                                                        // Display filtered task list
+                                                        _buildFilteredQuatationList(
+                                                          onTap: (quatationId) {
+                                                            leadProvider.setCutomerId(
+                                                                int.parse(widget
+                                                                    .customerId));
+                                                            print(
+                                                                'Quotation ID: $quatationId');
+                                                            customerDetailsProvider
+                                                                .getQuatationListByMasterId(
+                                                                    quatationId
+                                                                        .toString(),
+                                                                    context);
+                                                            // _scaffoldKey.currentState
+                                                            //     ?.openEndDrawer();
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return QuotationDetailsWidget(
+                                                                  customerId: widget
+                                                                      .customerId,
+                                                                  serviceId:
+                                                                      quatationId
+                                                                          .toString(),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          quatationId:
+                                                              selectedQuotationStatusId,
+                                                        )
+                                                      ],
+                                                    ),
+
+                                            //Images Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[19] ==
+                                                1)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    if (settingsprovider
+                                                                .menuIsSaveMap[
+                                                            19] ==
+                                                        1)
+                                                      InkWell(
+                                                        onTap: () {
+                                                          showDialog(
+                                                            barrierDismissible:
+                                                                false,
+                                                            context: context,
+                                                            builder: (context) =>
+                                                                ImageUploadAlert(
+                                                                    customerId:
+                                                                        widget
+                                                                            .customerId),
+                                                          );
+                                                        },
+                                                        child: Image.asset(
+                                                          'assets/images/add_photo.png',
+                                                          height: 50,
+                                                        ),
+                                                      ),
+                                                    Expanded(
+                                                      child: ListView.builder(
+                                                        itemCount:
+                                                            customerDetailsProvider
+                                                                .documentList
+                                                                .length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          var userData =
+                                                              customerDetailsProvider
+                                                                      .documentList[
+                                                                  index];
+                                                          userData.userName;
+                                                          List<ImageDetail>
+                                                              images = userData
+                                                                  .imageDetails;
+
+                                                          return ExpansionTile(
+                                                            enabled: false,
+                                                            initiallyExpanded:
+                                                                true,
+                                                            shape:
+                                                                const RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .zero,
+                                                            ),
+                                                            title: Wrap(
+                                                              crossAxisAlignment:
+                                                                  WrapCrossAlignment
+                                                                      .center,
+                                                              runSpacing: 10,
+                                                              children: [
+                                                                const Icon(Icons
+                                                                    .person),
+                                                                Text(
+                                                                  '  Uploaded By ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: AppColors
+                                                                          .textGrey4),
+                                                                ),
+                                                                Text(
+                                                                  userData
+                                                                      .userName,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            children: [
+                                                              MouseRegion(
+                                                                cursor:
+                                                                    SystemMouseCursors
+                                                                        .click,
+                                                                child: SizedBox(
+                                                                  height: 140,
+                                                                  child:
+                                                                      Scrollbar(
+                                                                    controller:
+                                                                        customerDetailsProvider
+                                                                            .imageScrollController,
+                                                                    thumbVisibility:
+                                                                        true,
+                                                                    child: ListView
+                                                                        .separated(
+                                                                      controller:
+                                                                          customerDetailsProvider
+                                                                              .imageScrollController,
+                                                                      scrollDirection:
+                                                                          Axis.horizontal,
+                                                                      separatorBuilder: (context,
+                                                                              index) =>
+                                                                          const SizedBox(
+                                                                              width: 10),
+                                                                      physics:
+                                                                          const ClampingScrollPhysics(),
+                                                                      itemCount:
+                                                                          images
+                                                                              .length,
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              index) {
+                                                                        final image =
+                                                                            images[index];
+                                                                        return Column(
                                                                           children: [
-                                                                            Center(
-                                                                              child: InkWell(
-                                                                                onTap: () {
-                                                                                  int currentIndex = index;
-                                                                                  _showFullScreenImage(context, currentIndex, images, true);
-                                                                                },
-                                                                                child: ClipRRect(
-                                                                                  borderRadius: BorderRadius.circular(8),
-                                                                                  child: Image.network(
-                                                                                    image.filePath,
-                                                                                    width: 100,
-                                                                                    height: 100,
-                                                                                    fit: BoxFit.fill,
-                                                                                    // Display a loading indicator while the image is loading
-                                                                                    loadingBuilder: (context, child, loadingProgress) {
-                                                                                      if (loadingProgress == null) {
-                                                                                        return child; // Image is fully loaded
-                                                                                      }
-                                                                                      return SizedBox(
-                                                                                        height: 100,
+                                                                            Stack(
+                                                                              children: [
+                                                                                Center(
+                                                                                  child: InkWell(
+                                                                                    onTap: () {
+                                                                                      int currentIndex = index;
+                                                                                      _showFullScreenImage(context, currentIndex, images, true);
+                                                                                    },
+                                                                                    child: ClipRRect(
+                                                                                      borderRadius: BorderRadius.circular(8),
+                                                                                      child: Image.network(
+                                                                                        image.filePath,
                                                                                         width: 100,
-                                                                                        child: Center(
-                                                                                          child: CircularProgressIndicator(
-                                                                                            value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
-                                                                                          ),
-                                                                                        ),
-                                                                                      );
-                                                                                    },
-                                                                                    // Display an error image if the image fails to load
-                                                                                    errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                                                                      return GestureDetector(
-                                                                                        onTap: () async {
-                                                                                          final Uri url = Uri.parse(image.filePath);
-                                                                                          try {
-                                                                                            await launchUrl(url, mode: LaunchMode.externalApplication);
-                                                                                          } catch (e) {
-                                                                                            print('Could not launch $url: $e');
+                                                                                        height: 100,
+                                                                                        fit: BoxFit.fill,
+                                                                                        // Display a loading indicator while the image is loading
+                                                                                        loadingBuilder: (context, child, loadingProgress) {
+                                                                                          if (loadingProgress == null) {
+                                                                                            return child; // Image is fully loaded
                                                                                           }
+                                                                                          return SizedBox(
+                                                                                            height: 100,
+                                                                                            width: 100,
+                                                                                            child: Center(
+                                                                                              child: CircularProgressIndicator(
+                                                                                                value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
+                                                                                              ),
+                                                                                            ),
+                                                                                          );
                                                                                         },
-                                                                                        child: Container(
-                                                                                          color: Colors.grey[200],
-                                                                                          width: 100,
-                                                                                          height: 100,
-                                                                                          child: const Column(
-                                                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                                                            children: [
-                                                                                              Icon(
-                                                                                                Icons.picture_as_pdf,
-                                                                                                color: Colors.red,
-                                                                                                size: 50,
+                                                                                        // Display an error image if the image fails to load
+                                                                                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                                                          return GestureDetector(
+                                                                                            onTap: () async {
+                                                                                              final Uri url = Uri.parse(image.filePath);
+                                                                                              try {
+                                                                                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                                                                                              } catch (e) {
+                                                                                                print('Could not launch $url: $e');
+                                                                                              }
+                                                                                            },
+                                                                                            child: Container(
+                                                                                              color: Colors.grey[200],
+                                                                                              width: 100,
+                                                                                              height: 100,
+                                                                                              child: const Column(
+                                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                children: [
+                                                                                                  Icon(
+                                                                                                    Icons.picture_as_pdf,
+                                                                                                    color: Colors.red,
+                                                                                                    size: 50,
+                                                                                                  ),
+                                                                                                  SizedBox(height: 8),
+                                                                                                  Text(
+                                                                                                    'Open PDF',
+                                                                                                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                                                                                                  ),
+                                                                                                ],
                                                                                               ),
-                                                                                              SizedBox(height: 8),
-                                                                                              Text(
-                                                                                                'Open PDF',
-                                                                                                style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                                                                                              ),
-                                                                                            ],
-                                                                                          ),
-                                                                                        ),
-                                                                                      );
-                                                                                    },
-                                                                                  ),
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            if (settingsprovider.menuIsDeleteMap[19] ==
-                                                                                1)
-                                                                              Positioned(
-                                                                                top: 5,
-                                                                                right: 5,
-                                                                                child: GestureDetector(
-                                                                                  onTap: () {
-                                                                                    showConfirmationDialog(
-                                                                                      isLoading: customerDetailsProvider.isDeleteLoading,
-                                                                                      context: context,
-                                                                                      title: 'Confirm Deletion',
-                                                                                      content: 'Are you sure you want to delete this file?',
-                                                                                      onCancel: () {
-                                                                                        Navigator.of(context).pop();
-                                                                                      },
-                                                                                      onConfirm: () {
-                                                                                        customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
-                                                                                        Navigator.of(context).pop();
-                                                                                      },
-                                                                                      confirmButtonText: 'Delete',
-                                                                                    );
-                                                                                  },
-                                                                                  child: const CircleAvatar(
-                                                                                    radius: 15,
-                                                                                    backgroundColor: Colors.grey,
-                                                                                    child: Icon(
-                                                                                      Icons.delete,
-                                                                                      size: 18,
-                                                                                      color: Colors.white,
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
                                                                                     ),
                                                                                   ),
                                                                                 ),
-                                                                              ),
+                                                                                if (settingsprovider.menuIsDeleteMap[19] == 1)
+                                                                                  Positioned(
+                                                                                    top: 5,
+                                                                                    right: 5,
+                                                                                    child: GestureDetector(
+                                                                                      onTap: () {
+                                                                                        showConfirmationDialog(
+                                                                                          isLoading: customerDetailsProvider.isDeleteLoading,
+                                                                                          context: context,
+                                                                                          title: 'Confirm Deletion',
+                                                                                          content: 'Are you sure you want to delete this file?',
+                                                                                          onCancel: () {
+                                                                                            Navigator.of(context).pop();
+                                                                                          },
+                                                                                          onConfirm: () {
+                                                                                            customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
+                                                                                            Navigator.of(context).pop();
+                                                                                          },
+                                                                                          confirmButtonText: 'Delete',
+                                                                                        );
+                                                                                      },
+                                                                                      child: const CircleAvatar(
+                                                                                        radius: 15,
+                                                                                        backgroundColor: Colors.grey,
+                                                                                        child: Icon(
+                                                                                          Icons.delete,
+                                                                                          size: 18,
+                                                                                          color: Colors.white,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            Text(
+                                                                              image.documentTypeName,
+                                                                              style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                            ),
+                                                                            Text(
+                                                                              DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
+                                                                              style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
+                                                                            ),
                                                                           ],
-                                                                        ),
-                                                                        const SizedBox(
-                                                                          height:
-                                                                              5,
-                                                                        ),
-                                                                        Text(
-                                                                          image
-                                                                              .documentTypeName,
-                                                                          style: TextStyle(
-                                                                              fontSize: 12,
-                                                                              color: AppColors.textBlack),
-                                                                        ),
-                                                                        Text(
-                                                                          DateFormat('dd/MM/yyyy h:mm a')
-                                                                              .format(DateTime.parse(image.entryDate)),
-                                                                          style: TextStyle(
-                                                                              fontSize: 10,
-                                                                              color: AppColors.textGrey4),
-                                                                        ),
-                                                                      ],
-                                                                    );
-                                                                  },
+                                                                        );
+                                                                      },
+                                                                    ),
+                                                                  ),
                                                                 ),
-                                                              ),
-                                                            ),
-                                                          )
-                                                        ],
-                                                      );
-                                                    },
-                                                  ),
+                                                              )
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
-                                              ],
-                                            ),
-                                          ),
+                                              ),
 
-                                        //Reciepts Tab
-                                        if (settingsprovider
-                                                .menuIsViewMap[18] ==
-                                            1)
-                                          if (sideprovider.name != 'Lead /')
-                                            ReceiptScreen(widget.customerId),
+                                            //Reciepts Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[18] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                ReceiptScreen(
+                                                    widget.customerId),
 
-                                        //Task Documents
-                                        // if (settingsprovider
-                                        //         .menuIsViewMap[30] ==
-                                        //     1)
-                                        // Padding(
-                                        //   padding: const EdgeInsets.all(16.0),
-                                        //   child: Column(
-                                        //     crossAxisAlignment:
-                                        //         CrossAxisAlignment.start,
-                                        //     children: [
-                                        //       Expanded(
-                                        //         child: ListView.builder(
-                                        //           itemCount:
-                                        //               customerDetailsProvider
-                                        //                   .taskDocuments
-                                        //                   .length,
-                                        //           itemBuilder:
-                                        //               (context, index) {
-                                        //             var userData =
-                                        //                 customerDetailsProvider
-                                        //                         .taskDocuments[
-                                        //                     index];
-                                        //             List<DocumentList>
-                                        //                 images =
-                                        //                 userData.documents;
+                                            //Task Documents
+                                            // if (settingsprovider
+                                            //         .menuIsViewMap[30] ==
+                                            //     1)
+                                            // Padding(
+                                            //   padding: const EdgeInsets.all(16.0),
+                                            //   child: Column(
+                                            //     crossAxisAlignment:
+                                            //         CrossAxisAlignment.start,
+                                            //     children: [
+                                            //       Expanded(
+                                            //         child: ListView.builder(
+                                            //           itemCount:
+                                            //               customerDetailsProvider
+                                            //                   .taskDocuments
+                                            //                   .length,
+                                            //           itemBuilder:
+                                            //               (context, index) {
+                                            //             var userData =
+                                            //                 customerDetailsProvider
+                                            //                         .taskDocuments[
+                                            //                     index];
+                                            //             List<DocumentList>
+                                            //                 images =
+                                            //                 userData.documents;
 
-                                        //             return ExpansionTile(
-                                        //               shape:
-                                        //                   const RoundedRectangleBorder(
-                                        //                 borderRadius:
-                                        //                     BorderRadius.zero,
-                                        //               ),
-                                        //               initiallyExpanded: true,
-                                        //               title: Wrap(
-                                        //                 crossAxisAlignment:
-                                        //                     WrapCrossAlignment
-                                        //                         .center,
-                                        //                 runSpacing: 10,
-                                        //                 children: [
-                                        //                   const Icon(
-                                        //                       Icons.person),
-                                        //                   Text(
-                                        //                     '  Uploaded By ',
-                                        //                     style: TextStyle(
-                                        //                         fontWeight:
-                                        //                             FontWeight
-                                        //                                 .bold,
-                                        //                         fontSize: 14,
-                                        //                         color: AppColors
-                                        //                             .textGrey4),
-                                        //                   ),
-                                        //                   Text(
-                                        //                     userData
-                                        //                         .toUserName,
-                                        //                     style:
-                                        //                         const TextStyle(
-                                        //                       fontWeight:
-                                        //                           FontWeight
-                                        //                               .bold,
-                                        //                       fontSize: 14,
-                                        //                     ),
-                                        //                   ),
-                                        //                   const SizedBox(
-                                        //                     width: 20,
-                                        //                   ),
-                                        //                   Text(
-                                        //                     userData
-                                        //                         .taskTypeName,
-                                        //                     style:
-                                        //                         const TextStyle(
-                                        //                       fontWeight:
-                                        //                           FontWeight
-                                        //                               .w600,
-                                        //                       fontSize: 14,
-                                        //                     ),
-                                        //                   ),
-                                        //                   const SizedBox(
-                                        //                     width: 20,
-                                        //                   ),
-                                        //                   Text(
-                                        //                     userData.taskDate,
-                                        //                     style: const TextStyle(
-                                        //                         fontWeight:
-                                        //                             FontWeight
-                                        //                                 .w500,
-                                        //                         fontSize: 14,
-                                        //                         color: Colors
-                                        //                             .grey),
-                                        //                   ),
-                                        //                 ],
-                                        //               ),
-                                        //               children: [
-                                        //                 MouseRegion(
-                                        //                   cursor:
-                                        //                       SystemMouseCursors
-                                        //                           .click,
-                                        //                   child: SizedBox(
-                                        //                     height: 140,
-                                        //                     child: Scrollbar(
-                                        //                       controller:
-                                        //                           customerDetailsProvider
-                                        //                               .taskScrollController,
-                                        //                       thumbVisibility:
-                                        //                           true,
-                                        //                       child: ListView
-                                        //                           .separated(
-                                        //                         controller:
-                                        //                             customerDetailsProvider
-                                        //                                 .taskScrollController,
-                                        //                         scrollDirection:
-                                        //                             Axis.horizontal,
-                                        //                         separatorBuilder: (context,
-                                        //                                 index) =>
-                                        //                             const SizedBox(
-                                        //                                 width:
-                                        //                                     10),
-                                        //                         physics:
-                                        //                             const ClampingScrollPhysics(),
-                                        //                         itemCount:
-                                        //                             images
-                                        //                                 .length,
-                                        //                         itemBuilder:
-                                        //                             (context,
-                                        //                                 index) {
-                                        //                           final image =
-                                        //                               images[
-                                        //                                   index];
-                                        //                           return Column(
-                                        //                             children: [
-                                        //                               Stack(
-                                        //                                 children: [
-                                        //                                   Center(
-                                        //                                     child: InkWell(
-                                        //                                       onTap: () {
-                                        //                                         int currentIndex = index;
-                                        //                                         _showFullScreenImage(context, currentIndex, images, false);
-                                        //                                       },
-                                        //                                       child: ClipRRect(
-                                        //                                         borderRadius: BorderRadius.circular(8),
-                                        //                                         child: Image.network(
-                                        //                                           HttpUrls.imgBaseUrl + image.filePath,
-                                        //                                           width: 100,
-                                        //                                           height: 100,
-                                        //                                           fit: BoxFit.fill,
-                                        //                                           // Display a loading indicator while the image is loading
-                                        //                                           loadingBuilder: (context, child, loadingProgress) {
-                                        //                                             if (loadingProgress == null) {
-                                        //                                               return child; // Image is fully loaded
-                                        //                                             }
-                                        //                                             return SizedBox(
-                                        //                                               height: 100,
-                                        //                                               width: 100,
-                                        //                                               child: Center(
-                                        //                                                 child: CircularProgressIndicator(
-                                        //                                                   value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
-                                        //                                                 ),
-                                        //                                               ),
-                                        //                                             );
-                                        //                                           },
-                                        //                                           // Display an error image if the image fails to load
-                                        //                                           errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                        //                                             return Container(
-                                        //                                               decoration: BoxDecoration(
-                                        //                                                 color: const Color(0xFFEFF2F5),
-                                        //                                                 borderRadius: BorderRadius.circular(8),
-                                        //                                               ),
-                                        //                                               width: 100,
-                                        //                                               height: 100,
-                                        //                                               child: const Icon(
-                                        //                                                 Icons.image,
-                                        //                                                 color: Colors.grey,
-                                        //                                                 size: 50,
-                                        //                                               ),
-                                        //                                             );
-                                        //                                           },
-                                        //                                         ),
-                                        //                                       ),
-                                        //                                     ),
-                                        //                                   ),
-                                        //                                 ],
-                                        //                               ),
-                                        //                               const SizedBox(
-                                        //                                 height:
-                                        //                                     5,
-                                        //                               ),
-                                        //                             ],
-                                        //                           );
-                                        //                         },
-                                        //                       ),
-                                        //                     ),
-                                        //                   ),
-                                        //                 )
-                                        //               ],
-                                        //             );
-                                        //           },
-                                        //         ),
-                                        //       ),
-                                        //     ],
-                                        //   ),
-                                        // ),
+                                            //             return ExpansionTile(
+                                            //               shape:
+                                            //                   const RoundedRectangleBorder(
+                                            //                 borderRadius:
+                                            //                     BorderRadius.zero,
+                                            //               ),
+                                            //               initiallyExpanded: true,
+                                            //               title: Wrap(
+                                            //                 crossAxisAlignment:
+                                            //                     WrapCrossAlignment
+                                            //                         .center,
+                                            //                 runSpacing: 10,
+                                            //                 children: [
+                                            //                   const Icon(
+                                            //                       Icons.person),
+                                            //                   Text(
+                                            //                     '  Uploaded By ',
+                                            //                     style: TextStyle(
+                                            //                         fontWeight:
+                                            //                             FontWeight
+                                            //                                 .bold,
+                                            //                         fontSize: 14,
+                                            //                         color: AppColors
+                                            //                             .textGrey4),
+                                            //                   ),
+                                            //                   Text(
+                                            //                     userData
+                                            //                         .toUserName,
+                                            //                     style:
+                                            //                         const TextStyle(
+                                            //                       fontWeight:
+                                            //                           FontWeight
+                                            //                               .bold,
+                                            //                       fontSize: 14,
+                                            //                     ),
+                                            //                   ),
+                                            //                   const SizedBox(
+                                            //                     width: 20,
+                                            //                   ),
+                                            //                   Text(
+                                            //                     userData
+                                            //                         .taskTypeName,
+                                            //                     style:
+                                            //                         const TextStyle(
+                                            //                       fontWeight:
+                                            //                           FontWeight
+                                            //                               .w600,
+                                            //                       fontSize: 14,
+                                            //                     ),
+                                            //                   ),
+                                            //                   const SizedBox(
+                                            //                     width: 20,
+                                            //                   ),
+                                            //                   Text(
+                                            //                     userData.taskDate,
+                                            //                     style: const TextStyle(
+                                            //                         fontWeight:
+                                            //                             FontWeight
+                                            //                                 .w500,
+                                            //                         fontSize: 14,
+                                            //                         color: Colors
+                                            //                             .grey),
+                                            //                   ),
+                                            //                 ],
+                                            //               ),
+                                            //               children: [
+                                            //                 MouseRegion(
+                                            //                   cursor:
+                                            //                       SystemMouseCursors
+                                            //                           .click,
+                                            //                   child: SizedBox(
+                                            //                     height: 140,
+                                            //                     child: Scrollbar(
+                                            //                       controller:
+                                            //                           customerDetailsProvider
+                                            //                               .taskScrollController,
+                                            //                       thumbVisibility:
+                                            //                           true,
+                                            //                       child: ListView
+                                            //                           .separated(
+                                            //                         controller:
+                                            //                             customerDetailsProvider
+                                            //                                 .taskScrollController,
+                                            //                         scrollDirection:
+                                            //                             Axis.horizontal,
+                                            //                         separatorBuilder: (context,
+                                            //                                 index) =>
+                                            //                             const SizedBox(
+                                            //                                 width:
+                                            //                                     10),
+                                            //                         physics:
+                                            //                             const ClampingScrollPhysics(),
+                                            //                         itemCount:
+                                            //                             images
+                                            //                                 .length,
+                                            //                         itemBuilder:
+                                            //                             (context,
+                                            //                                 index) {
+                                            //                           final image =
+                                            //                               images[
+                                            //                                   index];
+                                            //                           return Column(
+                                            //                             children: [
+                                            //                               Stack(
+                                            //                                 children: [
+                                            //                                   Center(
+                                            //                                     child: InkWell(
+                                            //                                       onTap: () {
+                                            //                                         int currentIndex = index;
+                                            //                                         _showFullScreenImage(context, currentIndex, images, false);
+                                            //                                       },
+                                            //                                       child: ClipRRect(
+                                            //                                         borderRadius: BorderRadius.circular(8),
+                                            //                                         child: Image.network(
+                                            //                                           HttpUrls.imgBaseUrl + image.filePath,
+                                            //                                           width: 100,
+                                            //                                           height: 100,
+                                            //                                           fit: BoxFit.fill,
+                                            //                                           // Display a loading indicator while the image is loading
+                                            //                                           loadingBuilder: (context, child, loadingProgress) {
+                                            //                                             if (loadingProgress == null) {
+                                            //                                               return child; // Image is fully loaded
+                                            //                                             }
+                                            //                                             return SizedBox(
+                                            //                                               height: 100,
+                                            //                                               width: 100,
+                                            //                                               child: Center(
+                                            //                                                 child: CircularProgressIndicator(
+                                            //                                                   value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
+                                            //                                                 ),
+                                            //                                               ),
+                                            //                                             );
+                                            //                                           },
+                                            //                                           // Display an error image if the image fails to load
+                                            //                                           errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                            //                                             return Container(
+                                            //                                               decoration: BoxDecoration(
+                                            //                                                 color: const Color(0xFFEFF2F5),
+                                            //                                                 borderRadius: BorderRadius.circular(8),
+                                            //                                               ),
+                                            //                                               width: 100,
+                                            //                                               height: 100,
+                                            //                                               child: const Icon(
+                                            //                                                 Icons.image,
+                                            //                                                 color: Colors.grey,
+                                            //                                                 size: 50,
+                                            //                                               ),
+                                            //                                             );
+                                            //                                           },
+                                            //                                         ),
+                                            //                                       ),
+                                            //                                     ),
+                                            //                                   ),
+                                            //                                 ],
+                                            //                               ),
+                                            //                               const SizedBox(
+                                            //                                 height:
+                                            //                                     5,
+                                            //                               ),
+                                            //                             ],
+                                            //                           );
+                                            //                         },
+                                            //                       ),
+                                            //                     ),
+                                            //                   ),
+                                            //                 )
+                                            //               ],
+                                            //             );
+                                            //           },
+                                            //         ),
+                                            //       ),
+                                            //     ],
+                                            //   ),
+                                            // ),
 
-                                        if (settingsprovider
-                                                .menuIsViewMap[37] ==
-                                            1)
-                                          if (sideprovider.name != 'Lead /')
-                                            CheckListManagementWidget(
-                                                customerId: widget.customerId),
+                                            if (settingsprovider
+                                                    .menuIsViewMap[37] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                CheckListManagementWidget(
+                                                    customerId:
+                                                        widget.customerId),
 
-                                        if (settingsprovider
-                                                .menuIsViewMap[37] ==
-                                            1)
-                                          if (sideprovider.name != 'Lead /')
-                                            RefundFormPage(widget.customerId),
-                                      ],
-                                    ),
+                                            if (settingsprovider
+                                                    .menuIsViewMap[37] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                RefundFormPage(
+                                                    widget.customerId),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
-                                ],
+                                ),
                               ),
                             ),
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
 //service
@@ -3182,13 +3241,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(const SnackBar(
                                                   content: Text(
-                                                      'Could not open WhatsApp.')));
+                                                      'Could not open WhatsApp.')));;
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: Text(
-                                                    'Could not share image: $e')));
+                                                    'Could not share image: $e')));;
                                       }
                                     },
                                   ),
@@ -3208,13 +3267,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(const SnackBar(
                                                   content: Text(
-                                                      'Could not open mail client.')));
+                                                      'Could not open mail client.')));;
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: Text(
-                                                    'Could not share via mail: $e')));
+                                                    'Could not share via mail: $e')));;
                                       }
                                     },
                                   ),
