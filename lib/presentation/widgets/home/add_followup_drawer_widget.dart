@@ -357,47 +357,47 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
     );
 
     // Check for missing mandatory documents
-    // List<String> missingDocs = [];
-    // for (var field in leadProvider.customFieldList) {
-    //   if (field.missingMandatoryDocumentNames != null &&
-    //       field.missingMandatoryDocumentNames!.isNotEmpty) {
-    //     missingDocs.addAll(field.missingMandatoryDocumentNames!);
-    //   }
-    // }
+    List<String> missingDocs = [];
+    for (var field in leadProvider.customFieldList) {
+      if (field.missingMandatoryDocumentNames != null &&
+          field.missingMandatoryDocumentNames!.isNotEmpty) {
+        missingDocs.addAll(field.missingMandatoryDocumentNames!);
+      }
+    }
 
-    // if (missingDocs.isNotEmpty) {
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) => AlertDialog(
-    //       title: const Text('Missing Documents'),
-    //       content: SingleChildScrollView(
-    //         child: Column(
-    //           mainAxisSize: MainAxisSize.min,
-    //           crossAxisAlignment: CrossAxisAlignment.start,
-    //           children: [
-    //             const Text('Please upload the following mandatory documents:'),
-    //             const SizedBox(height: 10),
-    //             ...missingDocs
-    //                 .map((doc) => Padding(
-    //                       padding: const EdgeInsets.only(bottom: 4.0),
-    //                       child: Text('• $doc',
-    //                           style:
-    //                               const TextStyle(fontWeight: FontWeight.w500)),
-    //                     ))
-    //                 .toList(),
-    //           ],
-    //         ),
-    //       ),
-    //       actions: [
-    //         TextButton(
-    //           onPressed: () => Navigator.pop(context),
-    //           child: const Text('OK'),
-    //         ),
-    //       ],
-    //     ),
-    //   );
-    //   return;
-    // }
+    if (missingDocs.isNotEmpty) {
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Missing Documents'),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('Please upload the following mandatory documents:'),
+                const SizedBox(height: 10),
+                ...missingDocs
+                    .map((doc) => Padding(
+                          padding: const EdgeInsets.only(bottom: 4.0),
+                          child: Text('• $doc',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w500)),
+                        ))
+                    .toList(),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+      return;
+    }
 
     if (!_validateFollowUpForm(
       leadProvider,

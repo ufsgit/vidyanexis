@@ -855,12 +855,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 '',
                                           ),
                                           const SizedBox(height: 8),
-                                           
+
                                           DetailRow(
                                             label: "Total project cost :",
                                             value: customerDetailsProvider
                                                     .leadDetails![0]
-                                                    .totalProjectCost.toString() ??
+                                                    .totalProjectCost
+                                                    .toString() ??
                                                 '',
                                           ),
                                           // DetailRow(
@@ -1014,8 +1015,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         field.customFieldName
                                                             .toString()
                                                             .isNotEmpty) &&
-                                                    (field.datavalue !=
-                                                            null &&
+                                                    (field.datavalue != null &&
                                                         field.datavalue
                                                             .toString()
                                                             .isNotEmpty))
