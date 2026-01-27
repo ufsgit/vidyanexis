@@ -4,6 +4,8 @@ import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 
 class TaskSummaryPage extends StatefulWidget {
   const TaskSummaryPage({
@@ -124,12 +126,23 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
           children: [
             SizedBox(
               width: 120,
-              child: CustomText(
-                taskInfo.customerName ?? "Unknown Customer",
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-                overflow: TextOverflow.ellipsis,
+              child: Material(
+                color: Colors.transparent,
+                child: InkWell(
+                  onTap: () {
+                    if (taskInfo.customerId != null) {
+                      context.push(
+                          '${CustomerDetailsScreen.route}${taskInfo.customerId}/false');
+                    }
+                  },
+                  child: CustomText(
+                    taskInfo.customerName ?? "Unknown Customer",
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
               ),
             ),
             const SizedBox(width: 16),
@@ -205,13 +218,13 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-              if (task.duration != null)
-                CustomText(
-                  "${task.duration}",
-                  fontSize: 11,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textGrey4,
-                ),
+              // if (task.duration != null)
+              //   CustomText(
+              //     "${task.duration}",
+              //     fontSize: 11,
+              //     fontWeight: FontWeight.w500,
+              //     color: AppColors.textGrey4,
+              //   ),
             ],
           ),
         ],
