@@ -325,7 +325,43 @@ class _CustomSidebarState extends State<CustomSidebar> {
                       Navigator.of(context).pop();
                       SharedPreferences prefs =
                           await SharedPreferences.getInstance();
+
+                      // Backup attendance state
+                      String? userId = prefs.getString('userId');
+                      bool? isCheckedIn;
+                      String? checkInDate;
+                      String? checkInTime;
+                      int? attendanceId;
+
+                      if (userId != null) {
+                        isCheckedIn = prefs.getBool('is_checked_in_$userId');
+                        checkInDate = prefs.getString('check_in_date_$userId');
+                        checkInTime = prefs.getString('check_in_time_$userId');
+                        attendanceId = prefs.getInt('attendance_id_$userId');
+                      }
+
                       await prefs.clear();
+
+                      // Restore attendance state
+                      if (userId != null) {
+                        if (isCheckedIn != null) {
+                          await prefs.setBool(
+                              'is_checked_in_$userId', isCheckedIn);
+                        }
+                        if (checkInDate != null) {
+                          await prefs.setString(
+                              'check_in_date_$userId', checkInDate);
+                        }
+                        if (checkInTime != null) {
+                          await prefs.setString(
+                              'check_in_time_$userId', checkInTime);
+                        }
+                        if (attendanceId != null) {
+                          await prefs.setInt(
+                              'attendance_id_$userId', attendanceId);
+                        }
+                      }
+
                       context.go(LoginPage.route);
                     },
                     child: const Text(

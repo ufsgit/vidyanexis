@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:developer' as dev;
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -92,6 +93,8 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
 
   int userId = 0;
   String userName = '';
+  String userType = '';
+  bool isCheckedIn = false;
 
   Future<void> _initUserData() async {
     try {
@@ -114,12 +117,15 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? prefUserId = preferences.getString('userId');
       String? prefUserName = preferences.getString('userName');
+      String? prefUserType = preferences.getString('userType');
 
-      dev.log('Fetched from SharedPreferences: userId=$prefUserId, userName=$prefUserName',
+      dev.log(
+          'Fetched from SharedPreferences: userId=$prefUserId, userName=$prefUserName, userType=$prefUserType',
           name: 'AddAttendance');
 
       userId = int.tryParse(prefUserId ?? "0") ?? 0;
       userName = prefUserName ?? "";
+      userType = prefUserType ?? "";
 
       // Fallback: If SharedPreferences is empty or incomplete, try to resolve from DropDownProvider
       if ((userId == 0 || userName.isEmpty) &&
@@ -151,6 +157,10 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
 
       if (userId != 0) {
         dropDownProvider.setSelectedUserId(userId);
+        bool status = await attendanceProvider.checkIsCheckedIn(userId);
+        isCheckedIn = status;
+        dev.log('User status checked: isCheckedIn=$isCheckedIn',
+            name: 'AddAttendance');
       }
       if (userName.isNotEmpty) {
         attendanceProvider.assignToFollowUpController.text = userName;
@@ -158,10 +168,11 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
 
       dev.log('User data bound: userId=$userId, userName=$userName',
           name: 'AddAttendance');
-      
+
       if (mounted) setState(() {});
     } catch (e) {
-      dev.log('Error initializing user data: $e', name: 'AddAttendance', error: e);
+      dev.log('Error initializing user data: $e',
+          name: 'AddAttendance', error: e);
     }
   }
 
@@ -178,9 +189,9 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
           Provider.of<DropDownProvider>(context, listen: false);
 
       attendanceProvider.assignToFollowUpController.clear();
-      
+
       // Fetch user details first to ensure we have the list for matching if needed
-       dropDownProvider.getUserDetails(context);
+      dropDownProvider.getUserDetails(context);
       //  if (widget.isEdit) {
       //   attendanceProvider.assignToFollowUpController.text = widget.user;
       //   dropDownProvider.setSelectedUserId(widget.userId);
@@ -246,7 +257,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                               .toList(),
                           controller:
                               attendanceProvider.assignToFollowUpController,
-                          onItemSelected: (selectedId) {
+                          onItemSelected: (selectedId) async {
                             dropDownProvider.setSelectedUserId(selectedId);
                             final selectedItem =
                                 dropDownProvider.searchUserDetails.firstWhere(
@@ -254,15 +265,59 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                             );
                             attendanceProvider.assignToFollowUpController.text =
                                 selectedItem.userDetailsName ?? '';
+
+                            // Check status for the newly selected user
+                            bool status = await attendanceProvider
+                                .checkIsCheckedIn(selectedId);
+                            setState(() {
+                              isCheckedIn = status;
+                            });
                           },
-                          enabled: userId == 1,
-                          selectedValue: dropDownProvider.selectedUserId),
+                          enabled: userType == "1" || userId == 1,
+                          selectedValue: dropDownProvider.searchUserDetails.any(
+                                  (item) =>
+                                      item.userDetailsId ==
+                                      dropDownProvider.selectedUserId)
+                              ? dropDownProvider.selectedUserId
+                              : null),
                     ),
                   ),
                   // const SizedBox(width: 10),
                   // const Spacer()
                 ],
               ),
+              if (isCheckedIn &&
+                  attendanceProvider.currentCheckInTime.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Builder(builder: (context) {
+                  String formattedTime = attendanceProvider.currentCheckInTime;
+                  try {
+                    DateTime dt = DateTime.parse(formattedTime);
+                    formattedTime = DateFormat('hh:mm a').format(dt);
+                  } catch (_) {}
+
+                  return Row(
+                    children: [
+                      Text(
+                        'Checked in at: ',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textBlack,
+                        ),
+                      ),
+                      Text(
+                        formattedTime,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.appViolet,
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ],
               const SizedBox(height: 40.0),
             ],
           ),
@@ -281,8 +336,15 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
           textColor: AppColors.appViolet,
         ),
         CustomElevatedButton(
-          buttonText: 'Save',
+          buttonText: isCheckedIn
+              ? 'Check Out'
+              : (attendanceProvider.isCompletedToday
+                  ? 'Attendance Completed'
+                  : 'Check In'),
           onPressed: () async {
+            if (!isCheckedIn && attendanceProvider.isCompletedToday) {
+              return; // Already completed today
+            }
             final validationErrorBeforeRetry =
                 validateInputs(context, attendanceProvider);
             if (validationErrorBeforeRetry != null) {
@@ -296,13 +358,55 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                 return;
               }
             }
+            String employeeCode = "";
+            try {
+              if (dropDownProvider.selectedUserId != null) {
+                final user = dropDownProvider.searchUserDetails.firstWhere(
+                  (u) => u.userDetailsId == dropDownProvider.selectedUserId,
+                );
+                employeeCode = user.empCode ?? "";
+              }
+            } catch (_) {}
+
             await attendanceProvider.getLocation(context: context);
-            attendanceProvider.saveAttendance(
-                dropDownProvider.selectedUserId ?? 0, context);
+
+            bool success = false;
+            if (isCheckedIn) {
+              success = await attendanceProvider.saveAttendance(
+                dropDownProvider.selectedUserId ?? 0,
+                context,
+                checkOutTime: DateTime.now().toString(),
+                employeeCode: employeeCode,
+                closeOnSuccess: true,
+              );
+            } else {
+              success = await attendanceProvider.saveAttendance(
+                dropDownProvider.selectedUserId ?? 0,
+                context,
+                checkInTime: DateTime.now().toString(),
+                employeeCode: employeeCode,
+                closeOnSuccess: false,
+              );
+              if (success) {
+                setState(() {
+                  isCheckedIn = true;
+                });
+              }
+            }
           },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
+          backgroundColor: isCheckedIn
+              ? AppColors.btnRed
+              : (attendanceProvider.isCompletedToday
+                  ? AppColors.grey
+                  : AppColors.bluebutton),
+          borderColor: isCheckedIn
+              ? AppColors.btnRed
+              : (attendanceProvider.isCompletedToday
+                  ? AppColors.grey
+                  : AppColors.bluebutton),
+          textColor: (!isCheckedIn && attendanceProvider.isCompletedToday)
+              ? AppColors.textRed
+              : AppColors.whiteColor,
         ),
       ],
     );

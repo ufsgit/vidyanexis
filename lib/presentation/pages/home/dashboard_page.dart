@@ -55,6 +55,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       await dashBoardProvider.getLeadData();
       await dashBoardProvider.getWorkData();
       await dashBoardProvider.getCustomers();
+      if (mounted) setState(() {});
     });
   }
 
@@ -401,143 +402,94 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Widget _buildAssignedStaffFilter(DashboardProvider dashBoardProvider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
-        // Get current user details from SharedPreferences
-        return FutureBuilder<Map<String, dynamic>>(
-          future: _getCurrentUserDetailsWithAdmin(),
-          builder: (context, snapshot) {
-            if (!snapshot.hasData) {
-              return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: const Text('Loading...'),
-              );
-            }
+        bool isAdmin = true; // Enabled for all as per request
+        int dropdownValue;
+        List<DropdownMenuItem<int>> dropdownItems;
 
-            final userData = snapshot.data!;
-            bool isAdmin = userData['isAdmin'] as bool;
-            int? currentUserId = userData['userId'] as int?;
-            String? currentUserName = userData['userName'] as String?;
-            print('isAdmin: $isAdmin');
-            print('currentUserId: $currentUserId');
-            print('currentUserName: $currentUserName');
-
-            // Build dropdown items based on user role, using list from dashBoardProvider
-            List<DropdownMenuItem<int>> dropdownItems;
-            int dropdownValue;
-
-            if (isAdmin) {
-              // Admin: Show all users with "All" option, using dashBoardProvider's list
-              dropdownItems = [
-                    const DropdownMenuItem<int>(
-                      value: 0, // Use 0 or null to represent "All"
-                      child: Text(
-                        'All',
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ),
-                  ] +
-                  dropDownProvider.searchUserDetails
-                      .map((user) => DropdownMenuItem<int>(
-                            value: user.userDetailsId!,
-                            child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 150),
-                              child: Text(
-                                user.userDetailsName ?? '',
-                                overflow: TextOverflow
-                                    .ellipsis, // Adds ellipsis when the text is too long
-                                style: const TextStyle(fontSize: 14),
-                              ),
-                            ),
-                          ))
-                      .toList();
-              // For admin, use the selected value from provider
-              dropdownValue = dashBoardProvider.selectedUser ?? 0;
-            } else {
-              // Non-admin staff: Show only their own name
-              dropdownItems = [
-                DropdownMenuItem<int>(
-                  value: currentUserId ?? 0,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
-                    child: Text(
-                      currentUserName ?? 'Current User',
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(fontSize: 14),
-                    ),
+        if (isAdmin) {
+          // Admin: Show all users with "All" option
+          dropdownItems = [
+                const DropdownMenuItem<int>(
+                  value: 0,
+                  child: Text(
+                    'All',
+                    style: TextStyle(fontSize: 14),
                   ),
                 ),
-              ];
-              // For non-admin, always use their own ID
-              dropdownValue = currentUserId ?? 0;
-            }
-
-            return Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(
-                  color: (dashBoardProvider.selectedUser != null &&
-                          dashBoardProvider.selectedUser != 0)
-                      ? AppColors.primaryBlue
-                      : Colors.grey[300]!,
+              ] +
+              dropDownProvider.searchUserDetails
+                  .map((user) => DropdownMenuItem<int>(
+                        value: user.userDetailsId!,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 150),
+                          child: Text(
+                            user.userDetailsName ?? '',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ))
+                  .toList();
+          dropdownValue = dashBoardProvider.selectedUser ?? 0;
+        } else {
+          // Non-admin staff: Show only their own name
+          dropdownItems = [
+            DropdownMenuItem<int>(
+              value: userId, // Use userId from state
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: Text(
+                  userName.isNotEmpty ? userName : 'Current User',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 14),
                 ),
               ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('Assigned Staff: '),
-                  DropdownButton<int>(
-                    value: dropdownValue,
-                    hint: const Text('All'),
-                    items: dropdownItems,
-                    onChanged: isAdmin
-                        ? (int? newValue) {
-                            if (newValue != null) {
-                              dashBoardProvider.setUserFilterStatus(
-                                  newValue); // Update the status in the provider
-                              dashBoardProvider.getLeadData();
-                            }
-                          }
-                        : null, // Disable dropdown for non-admin users
-                    underline: Container(),
-                    isDense: true,
-                    iconSize: 18,
-                    disabledHint: Text(
-                      currentUserName ?? 'Current User',
-                      style:
-                          const TextStyle(fontSize: 14, color: Colors.black87),
-                    ),
-                  ),
-                ],
+            ),
+          ];
+          dropdownValue = userId;
+        }
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: (dashBoardProvider.selectedUser != null &&
+                      dashBoardProvider.selectedUser != 0)
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Assigned Staff: '),
+              DropdownButton<int>(
+                value: dropdownValue,
+                hint: const Text('All'),
+                items: dropdownItems,
+                onChanged: isAdmin
+                    ? (int? newValue) {
+                        if (newValue != null) {
+                          dashBoardProvider.setUserFilterStatus(newValue);
+                          dashBoardProvider.getLeadData();
+                        }
+                      }
+                    : null,
+                underline: Container(),
+                isDense: true,
+                iconSize: 18,
+                disabledHint: Text(
+                  userName.isNotEmpty ? userName : 'Current User',
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
               ),
-            );
-          },
+            ],
+          ),
         );
       },
     );
-  }
-
-  // Helper method to get current user details from SharedPreferences
-  Future<Map<String, dynamic>> _getCurrentUserDetailsWithAdmin() async {
-    final preferences = await SharedPreferences.getInstance();
-
-    // Get user type from SharedPreferences
-    // Usually admin user type is 1, but check your backend logic
-    String userType = preferences.getString('userType') ?? '0';
-    print('userType: $userType');
-
-    return {
-      'userId': int.tryParse(preferences.getString('userId') ?? '0'),
-      'userName': preferences.getString('userName') ?? 'Current User',
-      'isAdmin':
-          userType == '1', // Adjust this based on your admin user type value
-    };
   }
 
   Widget filterWidget({required DashboardProvider dashBoardProvider}) {
