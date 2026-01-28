@@ -1540,9 +1540,11 @@ class LeadsProvider extends ChangeNotifier {
             // If data is a List, parse it directly
             _customFieldList =
                 data.map((e) => CustomFieldByStatusId.fromJson(e)).toList();
-            // If the API returns a list, missing_mandatory_document_count might be at root level
-            // Check if response has extra fields (though Dio typically doesn't support this)
-            _missingMandatoryDocumentCount = 0;
+            // If the API returns a list, missing_mandatory_document_count might be in the first element
+            _missingMandatoryDocumentCount = int.tryParse(
+                    data[0]['missing_mandatory_document_count']?.toString() ??
+                        '0') ??
+                0;
           } else if (data is List && data.isEmpty) {
             _customFieldList = [];
             _missingMandatoryDocumentCount = 0;
