@@ -430,7 +430,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   style:
                                                       ElevatedButton.styleFrom(
                                                     backgroundColor:
-                                                        AppColors.primaryBlue,
+                                                        const Color(0xFFEAB308),
                                                     foregroundColor:
                                                         Colors.white,
                                                     padding: const EdgeInsets
@@ -812,61 +812,78 @@ class _tasksPageReportState extends State<TaskPage> {
                           const SizedBox()
                         else
                           Container(
-                            decoration: BoxDecoration(
-                              color: const Color.fromARGB(255, 0, 90, 69),
-                              borderRadius: BorderRadius.circular(8),
+                            decoration: const BoxDecoration(
+                              color: Color(0xFF005A45),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(6),
+                                topRight: Radius.circular(6),
+                              ),
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
                               children: [
                                 SizedBox(
-                                  width: 80,
+                                  width: 60,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 12.0, horizontal: 25.0),
+                                        vertical: 10.0, horizontal: 16.0),
                                     child: Text('No.',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 14,
-                                            color: const Color(0xFFFFFFFF))),
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                            color: Colors.white)),
                                   ),
                                 ),
                                 TableWidget(
                                     flex: 2,
                                     title: 'Customer',
-                                    fontSize: 14,
-                                    color: const Color(0xFFFFFFFF)),
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    color: Colors.white),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Task',
-                                    fontSize: 14,
-                                    color: const Color(0xFFFFFFFF)),
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    color: Colors.white),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Staff',
-                                    fontSize: 14,
-                                    color: const Color(0xFFFFFFFF)),
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    color: Colors.white),
                                 TableWidget(
                                     flex: 2,
                                     title: 'Description',
-                                    fontSize: 14,
-                                    color: const Color(0xFFFFFFFF)),
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    color: Colors.white),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Date',
-                                    fontSize: 14,
-                                    color: const Color(0xFFFFFFFF)),
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    color: Colors.white),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Status',
-                                    fontSize: 14,
-                                    color: const Color(0xFFFFFFFF)),
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    color: Colors.white),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Details',
-                                    fontSize: 14,
-                                    color: const Color(0xFFFFFFFF)),
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 10.0, horizontal: 10.0),
+                                    color: Colors.white),
                               ],
                             ),
                           ),
@@ -1317,37 +1334,45 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ],
                                       );
                                     } else {
-                                      return GestureDetector(
+                                      return InkWell(
                                         onTap: () {},
+                                        hoverColor: const Color(0xFFF8FAFC),
                                         child: Container(
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
                                                 ? Colors.white
-                                                : const Color(0xFFF6F7F9),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
+                                                : const Color(0xFFF8FAFC),
+                                            border: const Border(
+                                              bottom: BorderSide(
+                                                  color: Color(0xFFF1F5F9)),
+                                            ),
                                           ),
                                           child: Row(
                                             children: [
                                               SizedBox(
-                                                width: 80,
+                                                width: 60,
                                                 child: Padding(
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 25.0),
+                                                      vertical: 8.0,
+                                                      horizontal: 16.0),
                                                   child: Text(
                                                     itemNumber.toString(),
                                                     style: const TextStyle(
                                                       fontWeight:
-                                                          FontWeight.bold,
+                                                          FontWeight.w500,
                                                       fontSize: 12,
+                                                      color: Color(0xFF64748B),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               TableWidget(
                                                 flex: 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8.0,
+                                                        horizontal: 10.0),
                                                 data: InkWell(
                                                   onTap: () {
                                                     if (task.customerId !=
@@ -1356,111 +1381,68 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                     }
                                                   },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFE9EDF1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
+                                                  child: Text(
+                                                    task.customerName ??
+                                                        'Unknown',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      color: Color(0xFF0F172A),
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 12,
                                                     ),
-                                                    child: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width >
-                                                            1700
-                                                        ? Row(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              const Icon(
-                                                                Icons.person,
-                                                                size: 15,
-                                                                color: Color(
-                                                                    0xFF152D70),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 8),
-                                                              Text(
-                                                                task.customerName
-                                                                            .length >
-                                                                        20
-                                                                    ? '${task.customerName.substring(0, 20)}...'
-                                                                    : task.customerName ??
-                                                                        'Unknown',
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                              const SizedBox(
-                                                                  width: 8),
-                                                              const Icon(
-                                                                Icons
-                                                                    .arrow_forward_ios,
-                                                                size: 12,
-                                                                color: Color(
-                                                                    0xFF152D70),
-                                                              ),
-                                                            ],
-                                                          )
-                                                        : Text(
-                                                            task.customerName ??
-                                                                'Unknown',
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            maxLines: 1,
-                                                            style:
-                                                                const TextStyle(
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
                                                   ),
                                                 ),
                                               ),
                                               TableWidget(
                                                   flex: 1,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 8.0,
+                                                          horizontal: 10.0),
                                                   fontSize: 12,
+                                                  color: const Color(0xFF334155),
                                                   title:
                                                       task.taskTypeName ?? ''),
                                               TableWidget(
                                                   flex: 1,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 8.0,
+                                                          horizontal: 10.0),
                                                   fontSize: 12,
+                                                  color: const Color(0xFF334155),
                                                   title: task.toUserName ?? ''),
                                               TableWidget(
                                                   flex: 2,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 8.0,
+                                                          horizontal: 10.0),
                                                   fontSize: 12,
+                                                  color: const Color(0xFF334155),
                                                   title:
                                                       task.description ?? ''),
                                               TableWidget(
                                                   flex: 1,
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 8.0,
+                                                          horizontal: 10.0),
                                                   fontSize: 12,
+                                                  color: const Color(0xFF334155),
                                                   title: task.taskDate != null
                                                       ? task.taskDate
                                                           .toDayMonthYearFormat()
                                                       : ''),
                                               TableWidget(
                                                 flex: 1,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 8.0,
+                                                        horizontal: 10.0),
                                                 data: InkWell(
                                                   onTap: () {
                                                     reportsProvider
@@ -1470,7 +1452,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         .taskTypeModel
                                                         .clear();
                                                     if (task.customerName ==
-                                                            'kozhichena banath' || // 'test' // check here
+                                                            null ||
                                                         task.customerName!
                                                             .isEmpty) {
                                                       updateStatusDialogWithoutTask(
@@ -1506,26 +1488,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     }
                                                   },
                                                   child: Container(
-                                                    padding: task.taskStatusName !=
-                                                                null &&
-                                                            task.taskStatusName
-                                                                .isNotEmpty
-                                                        ? const EdgeInsets
+                                                    padding:
+                                                        const EdgeInsets
                                                             .symmetric(
-                                                            horizontal: 8,
-                                                            vertical: 2)
-                                                        : const EdgeInsets.all(
-                                                            0),
+                                                            horizontal: 12,
+                                                            vertical: 4),
                                                     decoration: BoxDecoration(
                                                       color: (task.colorCode ??
                                                               Colors.black)
-                                                          .withAlpha(20),
+                                                          .withOpacity(0.1),
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              6),
-                                                      border: Border.all(
-                                                          color: Colors.black45,
-                                                          width: 0.1),
+                                                              20),
                                                     ),
                                                     child: Text(
                                                       task.taskStatusName ?? '',
@@ -1535,7 +1509,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       style: TextStyle(
                                                         color: task.colorCode ??
                                                             Colors.black,
-                                                        fontSize: 12,
+                                                        fontWeight: FontWeight.w600,
+                                                        fontSize: 11,
                                                       ),
                                                     ),
                                                   ),
@@ -1544,8 +1519,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               Expanded(
                                                 child: Row(
                                                   children: [
-                                                    CustomOutlinedSvgButton(
-                                                      showIcon: false,
+                                                    OutlinedButton(
                                                       onPressed: () async {
                                                         final taskId = task
                                                                 .taskId
@@ -1576,28 +1550,44 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           );
                                                         }
                                                       },
-                                                      svgPath:
-                                                          'assets/images/Print.svg',
-                                                      label: 'Details',
-                                                      textStyle: GoogleFonts
-                                                          .plusJakartaSans(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w600,
+                                                      style: OutlinedButton
+                                                          .styleFrom(
+                                                        side: const BorderSide(
+                                                            color: Color(
+                                                                0xFFEAB308)),
+                                                        foregroundColor:
+                                                            const Color(
+                                                                0xFFEAB308),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 12,
+                                                                vertical: 0),
+                                                        minimumSize:
+                                                            const Size(0, 32),
+                                                        shape: RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        4)),
                                                       ),
-                                                      breakpoint: 860,
-                                                      foregroundColor:
-                                                          AppColors.primaryBlue,
-                                                      backgroundColor:
-                                                          Colors.white,
-                                                      borderSide: BorderSide(
-                                                          color: AppColors
-                                                              .primaryBlue),
+                                                      child: const Text(
+                                                          'Details',
+                                                          style: TextStyle(
+                                                              fontSize: 12)),
                                                     ),
+                                                    const SizedBox(width: 8),
                                                     IconButton(
-                                                      icon: Icon(
+                                                      icon: const Icon(
                                                         Icons.edit_outlined,
+                                                        size: 18,
+                                                        color:
+                                                            Color(0xFFEAB308),
                                                       ),
+                                                      tooltip: 'Edit',
+                                                      padding: EdgeInsets.zero,
+                                                      constraints:
+                                                          const BoxConstraints(),
                                                       onPressed: () {
                                                         showDialog(
                                                           context: context,
@@ -1695,104 +1685,81 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   Widget _buildPaginationControls(
-      BuildContext contex, TaskPageProvider reportsProvidert) {
-    final pagination = Provider.of<TaskPageProvider>(context);
+      BuildContext context, TaskPageProvider reportsProvider) {
+    final int currentPage = reportsProvider.pageIndex;
+    final int totalPages = reportsProvider.totalPages;
+    final int totalSize = reportsProvider.totalSize;
+    final int pageSize = reportsProvider.pageSize ?? 10;
 
-    final int currentPage = pagination.pageIndex;
-    final int totalPages = pagination.totalPages;
-    final int totalSize = pagination.totalSize;
+    final int startItem = ((currentPage - 1) * pageSize) + 1;
+    final int endItem = (currentPage * pageSize) > totalSize
+        ? totalSize
+        : (currentPage * pageSize);
 
-    final TextEditingController sizeController =
-        TextEditingController(text: pagination.pageSize.toString());
-
-    return SizedBox(
-      height: 80,
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Stack(
-          alignment: Alignment.center,
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            // Page Number Buttons
-            Center(
-              child: Wrap(
-                spacing: 8.0,
-                runSpacing: 8.0,
-                children: () {
-                  List<Widget> pageButtons = [];
-
-                  const int visiblePages = 5;
-                  int startPage = currentPage - (visiblePages ~/ 2);
-                  int endPage = currentPage + (visiblePages ~/ 2);
-
-                  if (startPage < 1) {
-                    endPage += (1 - startPage);
-                    startPage = 1;
-                  }
-                  if (endPage > totalPages) {
-                    startPage -= (endPage - totalPages);
-                    endPage = totalPages;
-                  }
-                  if (startPage < 1) startPage = 1;
-
-                  // Add starting ellipsis if needed
-                  if (startPage > 1) {
-                    pageButtons
-                        .add(const Text("...", style: TextStyle(fontSize: 18)));
-                  }
-
-                  // Main page buttons
-                  for (int i = startPage; i <= endPage; i++) {
-                    pageButtons.add(
-                      SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            pagination.goToPage(i);
-                            pagination.searchTaskByCustomer(context);
-                          },
-                          style: ElevatedButton.styleFrom(
-                            shape: const CircleBorder(),
-                            padding: EdgeInsets.zero,
-                            backgroundColor: currentPage == i
-                                ? Colors.blue
-                                : Colors.grey.shade300,
-                            foregroundColor:
-                                currentPage == i ? Colors.white : Colors.black,
-                          ),
-                          child: Text(
-                            i.toString(),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-
-                  // Add ending ellipsis if needed
-                  if (endPage < totalPages) {
-                    pageButtons
-                        .add(const Text("...", style: TextStyle(fontSize: 18)));
-                  }
-
-                  return pageButtons;
-                }(),
-              ),
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          top: BorderSide(color: Color(0xFFF1F5F9)),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            "Showing $startItem-$endItem of $totalSize",
+            style: const TextStyle(
+              fontSize: 12,
+              color: Color(0xFF64748B),
+              fontWeight: FontWeight.w500,
             ),
-
-            Row(
-              children: [
-                CustomText(
-                  "Total Tasks: $totalSize",
+          ),
+          Row(
+            children: [
+              IconButton(
+                onPressed: currentPage > 1
+                    ? () {
+                        reportsProvider.goToPage(currentPage - 1);
+                        reportsProvider.searchTaskByCustomer(context);
+                      }
+                    : null,
+                icon: const Icon(Icons.chevron_left, size: 20),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                color: currentPage > 1
+                    ? const Color(0xFFEAB308)
+                    : const Color(0xFF64748B),
+                tooltip: "Previous",
+              ),
+              const SizedBox(width: 16),
+              Text(
+                "Page $currentPage of $totalPages",
+                style: const TextStyle(
                   fontSize: 12,
-                  color: AppColors.textGrey4,
+                  color: Color(0xFF334155),
                   fontWeight: FontWeight.w500,
                 ),
-              ],
-            ),
-          ],
-        ),
+              ),
+              const SizedBox(width: 16),
+              IconButton(
+                onPressed: currentPage < totalPages
+                    ? () {
+                        reportsProvider.goToPage(currentPage + 1);
+                        reportsProvider.searchTaskByCustomer(context);
+                      }
+                    : null,
+                icon: const Icon(Icons.chevron_right, size: 20),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(),
+                color: currentPage < totalPages
+                    ? const Color(0xFFEAB308)
+                    : const Color(0xFF64748B),
+                tooltip: "Next",
+              ),
+            ],
+          ),
+        ],
       ),
     );
   }

@@ -74,7 +74,7 @@ class TaskPageProvider extends ChangeNotifier {
   }
 
   int _pageIndex = 1;
-  int _pageSize = 10;
+  int _pageSize = 20;
   int _totalSize = 0;
   int _totalPages = 1;
 
@@ -320,7 +320,7 @@ class TaskPageProvider extends ChangeNotifier {
     _AssignedTo = assignedTo;
     _TaskType = taskType;
     _pageIndex = 1;
-    _pageSize = 10;
+    _pageSize = 20;
     notifyListeners(); // Notify listeners so that UI can rebuild
   }
 
