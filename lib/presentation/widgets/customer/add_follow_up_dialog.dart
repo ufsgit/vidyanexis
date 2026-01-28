@@ -23,6 +23,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 
 class AddFollowupDialog extends StatefulWidget {
   final String customerName;
@@ -84,6 +85,19 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 appBar: CustomAppBarWidget(
                   title: 'Add follow up\n',
                   richText: widget.customerName,
+                  isRichTextClickable: true,
+                  onRichTextPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomerDetailPageMobile(
+                          customerId:
+                              int.parse(leadProvider.customerId.toString()),
+                          fromLead: true,
+                        ),
+                      ),
+                    );
+                  },
                   onLeadingPressed: () {
                     Navigator.of(context).pop();
                   },
