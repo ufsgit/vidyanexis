@@ -518,7 +518,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
             children: [
               const Text('Assigned Staff: '),
               DropdownButton<int>(
-                value: dropdownValue,
+                value: dropdownItems.any((item) => item.value == dropdownValue)
+                    ? dropdownValue
+                    : 0,
                 hint: const Text('All'),
                 items: dropdownItems,
                 onChanged: isAdmin

@@ -157,7 +157,8 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
 
       if (userId != 0) {
         dropDownProvider.setSelectedUserId(userId);
-        bool status = await attendanceProvider.checkIsCheckedIn(userId);
+        bool status =
+            await attendanceProvider.checkIsCheckedIn(userId, forceApi: true);
         isCheckedIn = status;
         dev.log('User status checked: isCheckedIn=$isCheckedIn',
             name: 'AddAttendance');
@@ -268,7 +269,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
 
                             // Check status for the newly selected user
                             bool status = await attendanceProvider
-                                .checkIsCheckedIn(selectedId);
+                                .checkIsCheckedIn(selectedId, forceApi: true);
                             setState(() {
                               isCheckedIn = status;
                             });
@@ -312,6 +313,39 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
                           color: AppColors.appViolet,
+                        ),
+                      ),
+                    ],
+                  );
+                }),
+              ],
+              if (!isCheckedIn &&
+                  attendanceProvider.isCompletedToday &&
+                  attendanceProvider.currentCheckOutTime.isNotEmpty) ...[
+                const SizedBox(height: 20),
+                Builder(builder: (context) {
+                  String formattedTime = attendanceProvider.currentCheckOutTime;
+                  try {
+                    DateTime dt = DateTime.parse(formattedTime);
+                    formattedTime = DateFormat('hh:mm a').format(dt);
+                  } catch (_) {}
+
+                  return Row(
+                    children: [
+                      Text(
+                        'Checked out at: ',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textBlack,
+                        ),
+                      ),
+                      Text(
+                        formattedTime,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.btnRed,
                         ),
                       ),
                     ],
