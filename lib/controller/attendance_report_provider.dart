@@ -6,14 +6,14 @@ import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vidyanexis/controller/models/attendance_record_model.dart';
+import 'package:vidyanexis/controller/models/attendance_details_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 
 class AttendanceReportProvider extends ChangeNotifier {
-  List<AttendanceRecord> _taskReport = [];
-  List<AttendanceRecord> get taskReport => _taskReport;
+  List<AttendanceDetails> _taskReport = [];
+  List<AttendanceDetails> get taskReport => _taskReport;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -229,7 +229,7 @@ class AttendanceReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.getAttendance}?fromDate=$_fromDateS&toDate=$_toDateS&userId=$toUserId&searchName=$_Search');
+              '${HttpUrls.getAttendanceByDate}?fromDate=$_fromDateS&toDate=$_toDateS&userId=$toUserId&searchName=$_Search');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -239,7 +239,7 @@ class AttendanceReportProvider extends ChangeNotifier {
           final dataItem = data['data'] ?? [];
 
           _taskReport = (dataItem as List<dynamic>)
-              .map((item) => AttendanceRecord.fromJson(item))
+              .map((item) => AttendanceDetails.fromJson(item))
               .toList();
 
           Loader.stopLoader(context);
@@ -286,7 +286,7 @@ class AttendanceReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.getAttendance}?fromDate=$_fromDateS&toDate=$_toDateS&userId=$toUserId&searchName=$_Search');
+              '${HttpUrls.getAttendanceByDate}?fromDate=$_fromDateS&toDate=$_toDateS&userId=$toUserId&searchName=$_Search');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -297,7 +297,7 @@ class AttendanceReportProvider extends ChangeNotifier {
           final dataItem = data['data'] ?? [];
 
           _taskReport = (dataItem as List<dynamic>)
-              .map((item) => AttendanceRecord.fromJson(item))
+              .map((item) => AttendanceDetails.fromJson(item))
               .toList();
 
           notifyListeners();
@@ -409,10 +409,8 @@ class AttendanceReportProvider extends ChangeNotifier {
       //... rest of the function
 
       final response = await HttpRequest.httpPostRequest(
-        endPoint: HttpUrls.saveAttendanceMultiple,
-        bodyData: {
-          "attendanceList": [bodyData]
-        },
+        endPoint: HttpUrls.saveAttendance,
+        bodyData: bodyData,
       );
 
       if (response!.statusCode == 200) {
@@ -432,7 +430,9 @@ class AttendanceReportProvider extends ChangeNotifier {
             await prefs.setString('check_in_date_$selectedUserId', todayStr);
             await prefs.setString('check_in_time_$selectedUserId', checkInTime);
             await prefs.setBool('is_completed_today_$selectedUserId', false);
+            await prefs.remove('check_out_time_$selectedUserId');
             _currentCheckInTime = checkInTime;
+            _currentCheckOutTime = '';
 
             // We don't have the ID yet, so we must fetch it.
             // Add delay to allow server validation/indexing.
@@ -458,8 +458,11 @@ class AttendanceReportProvider extends ChangeNotifier {
             await prefs.setString('check_in_date_$selectedUserId', todayStr);
             await prefs.remove('attendance_id_$selectedUserId');
             await prefs.remove('check_in_time_$selectedUserId');
+            await prefs.setString(
+                'check_out_time_$selectedUserId', checkOutTime);
             await prefs.setBool('is_completed_today_$selectedUserId', true);
             _currentCheckInTime = '';
+            _currentCheckOutTime = checkOutTime;
             _currentAttendanceDetailId = 0;
           }
         } catch (e) {
@@ -495,11 +498,16 @@ class AttendanceReportProvider extends ChangeNotifier {
   String _currentCheckInTime = '';
   String get currentCheckInTime => _currentCheckInTime;
 
+  String _currentCheckOutTime = '';
+  String get currentCheckOutTime => _currentCheckOutTime;
+
   bool _isCompletedToday = false;
   bool get isCompletedToday => _isCompletedToday;
 
   Future<bool> checkIsCheckedIn(int userId, {bool forceApi = false}) async {
     _isCompletedToday = false;
+    _currentCheckInTime = '';
+    _currentCheckOutTime = '';
     try {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyy-MM-dd').format(now);
@@ -514,6 +522,8 @@ class AttendanceReportProvider extends ChangeNotifier {
                 prefs.getInt('attendance_id_$userId') ?? 0;
             _currentCheckInTime =
                 prefs.getString('check_in_time_$userId') ?? '';
+            _currentCheckOutTime =
+                prefs.getString('check_out_time_$userId') ?? '';
             bool status = prefs.getBool('is_checked_in_$userId') ?? false;
 
             // Check implicit completion (new pref)
@@ -559,6 +569,8 @@ class AttendanceReportProvider extends ChangeNotifier {
               if (checkIn.isNotEmpty &&
                   (checkOut.isNotEmpty && checkOut != 'null')) {
                 _isCompletedToday = true;
+                _currentCheckOutTime = checkOut;
+                await prefs.setString('check_out_time_$userId', checkOut);
               }
             }
             // If we found records but none were active check-ins (all checked out)
@@ -583,8 +595,10 @@ class AttendanceReportProvider extends ChangeNotifier {
             await prefs.remove('check_in_time_$userId');
             await prefs.setBool(
                 'is_completed_today_$userId', false); // Explicitly false
+            await prefs.remove('check_out_time_$userId');
             _currentAttendanceDetailId = 0;
             _currentCheckInTime = '';
+            _currentCheckOutTime = '';
           }
         }
       }

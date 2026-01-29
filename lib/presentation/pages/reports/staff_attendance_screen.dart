@@ -220,17 +220,24 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             exportToExcel(
                               headers: [
                                 'Name',
-                                'Date',
-                                'Time',
+                                'Check In Date',
+                                'Check In Time',
+                                'Check Out Date',
+                                'Check Out Time',
                               ],
                               data: reportsProvider.taskReport.map((task) {
                                 return {
                                   'Name': task.userDetailsName,
-                                  'Date': task.attendanceDate.isNotEmpty
+                                  'Check In Date': task.checkInDate.isNotEmpty
                                       ? DateFormat('dd MMM yyyy').format(
-                                          DateTime.parse(task.attendanceDate))
+                                          DateTime.parse(task.checkInDate))
                                       : '',
-                                  'Time': task.attendanceTime,
+                                  'Check In Time': task.checkInTimeOnly,
+                                  'Check Out Date': task.checkOutDate.isNotEmpty
+                                      ? DateFormat('dd MMM yyyy').format(
+                                          DateTime.parse(task.checkOutDate))
+                                      : '',
+                                  'Check Out Time': task.checkOutTimeOnly,
                                 };
                               }).toList(),
                               fileName: 'Attendance_Report',
@@ -392,17 +399,24 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             exportToExcel(
                               headers: [
                                 'Name',
-                                'Date',
-                                'Time',
+                                'Check In Date',
+                                'Check In Time',
+                                'Check Out Date',
+                                'Check Out Time',
                               ],
                               data: reportsProvider.taskReport.map((task) {
                                 return {
                                   'Name': task.userDetailsName,
-                                  'Date': task.attendanceDate.isNotEmpty
+                                  'Check In Date': task.checkInDate.isNotEmpty
                                       ? DateFormat('dd MMM yyyy').format(
-                                          DateTime.parse(task.attendanceDate))
+                                          DateTime.parse(task.checkInDate))
                                       : '',
-                                  'Time': task.attendanceTime,
+                                  'Check In Time': task.checkInTimeOnly,
+                                  'Check Out Date': task.checkOutDate.isNotEmpty
+                                      ? DateFormat('dd MMM yyyy').format(
+                                          DateTime.parse(task.checkOutDate))
+                                      : '',
+                                  'Check Out Time': task.checkOutTimeOnly,
                                 };
                               }).toList(),
                               fileName: 'Attendance_Report',
@@ -840,12 +854,22 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
-                                        title: 'Date',
+                                        title: 'Check In Date',
                                         fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
-                                        title: 'Time',
+                                        title: 'Check In Time',
+                                        fontSize: 14,
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        flex: 1,
+                                        title: 'Check Out Date',
+                                        fontSize: 14,
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        flex: 1,
+                                        title: 'Check Out Time',
                                         fontSize: 14,
                                         color: Color(0xFF607185)),
                                     // TableWidget(
@@ -952,12 +976,22 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                 flex: 1,
                                                 fontSize: 12,
                                                 title: formatDate(
-                                                    task.attendanceDate)),
+                                                    task.checkInDate)),
                                             TableWidget(
                                                 flex: 1,
                                                 fontSize: 12,
                                                 title: formatTime(
-                                                    task.attendanceTime)),
+                                                    task.checkInTimeOnly)),
+                                            TableWidget(
+                                                flex: 1,
+                                                fontSize: 12,
+                                                title: formatDate(
+                                                    task.checkOutDate)),
+                                            TableWidget(
+                                                flex: 1,
+                                                fontSize: 12,
+                                                title: formatTime(
+                                                    task.checkOutTimeOnly)),
                                             // TableWidget(
                                             //     flex: 1, title: task.location),
                                             // task.photo.isNotEmpty
@@ -1060,33 +1094,76 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                       color: Colors.grey.shade100,
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                    child: Column(
                                       children: [
                                         Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const Icon(Icons.calendar_today,
-                                                size: 16, color: Colors.grey),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              formatDate(task.attendanceDate),
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey.shade700),
+                                            const Text('Check In:',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                            Row(
+                                              children: [
+                                                const Icon(Icons.calendar_today,
+                                                    size: 14,
+                                                    color: Colors.grey),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  formatDate(task.checkInDate),
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                const Icon(Icons.access_time,
+                                                    size: 14,
+                                                    color: Colors.grey),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  formatTime(
+                                                      task.checkInTimeOnly),
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
+                                        const SizedBox(height: 4),
                                         Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
                                           children: [
-                                            const Icon(Icons.access_time,
-                                                size: 16, color: Colors.grey),
-                                            const SizedBox(width: 5),
-                                            Text(
-                                              formatTime(task.attendanceTime),
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey.shade700),
+                                            const Text('Check Out:',
+                                                style: TextStyle(
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w600)),
+                                            Row(
+                                              children: [
+                                                const Icon(Icons.calendar_today,
+                                                    size: 14,
+                                                    color: Colors.grey),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  formatDate(task.checkOutDate),
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                ),
+                                                const SizedBox(width: 8),
+                                                const Icon(Icons.access_time,
+                                                    size: 14,
+                                                    color: Colors.grey),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  formatTime(
+                                                      task.checkOutTimeOnly),
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),

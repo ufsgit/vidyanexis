@@ -536,7 +536,34 @@ class _tasksPageReportState extends State<TaskPage> {
                               children: [
                                 const Text('Status: '),
                                 DropdownButton<int>(
-                                  value: reportsProvider.selectedStatus,
+                                  value: ([
+                                                const DropdownMenuItem<int>(
+                                                  value: 0,
+                                                  child: Text(
+                                                    'All',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ),
+                                              ] +
+                                              provider.followUpData
+                                                  .map((status) =>
+                                                      DropdownMenuItem<int>(
+                                                        value: status.statusId,
+                                                        child: Text(
+                                                          status.statusName ??
+                                                              '',
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 14),
+                                                        ),
+                                                      ))
+                                                  .toList())
+                                          .any((item) =>
+                                              item.value ==
+                                              reportsProvider.selectedStatus)
+                                      ? reportsProvider.selectedStatus
+                                      : 0,
                                   hint: const Text('All'),
                                   items: [
                                         const DropdownMenuItem<int>(
@@ -637,7 +664,45 @@ class _tasksPageReportState extends State<TaskPage> {
                               children: [
                                 const Text('Staff: '),
                                 DropdownButton<int>(
-                                  value: reportsProvider.selectedUser,
+                                  value: ([
+                                                const DropdownMenuItem<int>(
+                                                  value: 0,
+                                                  child: Text(
+                                                    'All',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ),
+                                              ] +
+                                              provider.searchUserDetails
+                                                  .map((user) =>
+                                                      DropdownMenuItem<int>(
+                                                        value:
+                                                            user.userDetailsId,
+                                                        child: ConstrainedBox(
+                                                          constraints:
+                                                              const BoxConstraints(
+                                                                  maxWidth:
+                                                                      150),
+                                                          child: Text(
+                                                            user.userDetailsName ??
+                                                                '',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        14),
+                                                          ),
+                                                        ),
+                                                      ))
+                                                  .toList())
+                                          .any((item) =>
+                                              item.value ==
+                                              reportsProvider.selectedUser)
+                                      ? reportsProvider.selectedUser
+                                      : 0,
                                   hint: const Text('All'),
                                   items: [
                                         const DropdownMenuItem<int>(
@@ -708,7 +773,33 @@ class _tasksPageReportState extends State<TaskPage> {
                               children: [
                                 const Text('Task Type: '),
                                 DropdownButton<int>(
-                                  value: reportsProvider.selectedTaskType,
+                                  value: ([
+                                                const DropdownMenuItem<int>(
+                                                  value: 0,
+                                                  child: Text(
+                                                    'All',
+                                                    style:
+                                                        TextStyle(fontSize: 14),
+                                                  ),
+                                                ),
+                                              ] +
+                                              provider.taskType
+                                                  .map((type) =>
+                                                      DropdownMenuItem<int>(
+                                                        value: type.taskTypeId,
+                                                        child: Text(
+                                                          type.taskTypeName,
+                                                          style:
+                                                              const TextStyle(
+                                                                  fontSize: 14),
+                                                        ),
+                                                      ))
+                                                  .toList())
+                                          .any((item) =>
+                                              item.value ==
+                                              reportsProvider.selectedTaskType)
+                                      ? reportsProvider.selectedTaskType
+                                      : 0,
                                   hint: const Text('All'),
                                   items: [
                                         const DropdownMenuItem<int>(
@@ -1398,41 +1489,45 @@ class _tasksPageReportState extends State<TaskPage> {
                                               ),
                                               TableWidget(
                                                   flex: 1,
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                          vertical: 8.0,
-                                                          horizontal: 10.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 10.0),
                                                   fontSize: 12,
-                                                  color: const Color(0xFF334155),
+                                                  color:
+                                                      const Color(0xFF334155),
                                                   title:
                                                       task.taskTypeName ?? ''),
                                               TableWidget(
                                                   flex: 1,
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                          vertical: 8.0,
-                                                          horizontal: 10.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 10.0),
                                                   fontSize: 12,
-                                                  color: const Color(0xFF334155),
+                                                  color:
+                                                      const Color(0xFF334155),
                                                   title: task.toUserName ?? ''),
                                               TableWidget(
                                                   flex: 2,
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                          vertical: 8.0,
-                                                          horizontal: 10.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 10.0),
                                                   fontSize: 12,
-                                                  color: const Color(0xFF334155),
+                                                  color:
+                                                      const Color(0xFF334155),
                                                   title:
                                                       task.description ?? ''),
                                               TableWidget(
                                                   flex: 1,
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                          vertical: 8.0,
-                                                          horizontal: 10.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 8.0,
+                                                      horizontal: 10.0),
                                                   fontSize: 12,
-                                                  color: const Color(0xFF334155),
+                                                  color:
+                                                      const Color(0xFF334155),
                                                   title: task.taskDate != null
                                                       ? task.taskDate
                                                           .toDayMonthYearFormat()
@@ -1488,11 +1583,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     }
                                                   },
                                                   child: Container(
-                                                    padding:
-                                                        const EdgeInsets
-                                                            .symmetric(
-                                                            horizontal: 12,
-                                                            vertical: 4),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 12,
+                                                        vertical: 4),
                                                     decoration: BoxDecoration(
                                                       color: (task.colorCode ??
                                                               Colors.black)
@@ -1509,7 +1603,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       style: TextStyle(
                                                         color: task.colorCode ??
                                                             Colors.black,
-                                                        fontWeight: FontWeight.w600,
+                                                        fontWeight:
+                                                            FontWeight.w600,
                                                         fontSize: 11,
                                                       ),
                                                     ),
@@ -1565,11 +1660,12 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 vertical: 0),
                                                         minimumSize:
                                                             const Size(0, 32),
-                                                        shape: RoundedRectangleBorder(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        4)),
+                                                        shape:
+                                                            RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            4)),
                                                       ),
                                                       child: const Text(
                                                           'Details',
