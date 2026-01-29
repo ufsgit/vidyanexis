@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:vidyanexis/presentation/pages/home/task_summary_page.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -96,6 +98,56 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
+              actions: [
+                Consumer<NotificationProvider>(
+                  builder: (context, notificationProvider, child) {
+                    final count = notificationProvider.totalCount;
+
+                    return Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications_active_outlined,
+                            size: 28,
+                          ),
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const NotificationsPage();
+                              },
+                            ));
+                          },
+                        ),
+                        if (count > 0)
+                          Positioned(
+                            right: 4,
+                            top: 4,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                count > 99 ? '99+' : count.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ],
             )
           : null,
       drawer: const SidebarDrawer(),

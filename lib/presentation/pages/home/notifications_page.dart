@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -9,9 +12,13 @@ import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
+import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_followup_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:vidyanexis/controller/models/notification_model.dart';
 import 'package:intl/intl.dart';
@@ -42,7 +49,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
   Widget build(BuildContext context) {
     final provider = Provider.of<NotificationProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
-    final isWeb = screenWidth > 768;
+    final isWeb = AppStyles.isWebScreen(context);
     final leadProvider = Provider.of<LeadsProvider>(context);
 
     return Scaffold(
@@ -313,6 +320,9 @@ class _NotificationTileState extends State<_NotificationTile> {
 
   Widget _buildWebTile(String createdStr) {
     final leadProvider = Provider.of<LeadsProvider>(context);
+    final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
     final isRead = widget.notification.isRead == '1';
 
     return InkWell(
@@ -320,6 +330,47 @@ class _NotificationTileState extends State<_NotificationTile> {
         // Mark notification as read when clicked
         MicrotecSocket.readNotification(
             id: int.tryParse(widget.notification.notificationId ?? '0'));
+
+        // final customerId =
+        //     int.tryParse(widget.notification.customerId?.toString() ?? '0') ??
+        //         0;
+        // final taskId =
+        //     int.tryParse(widget.notification.masterId?.toString() ?? '0') ?? 0;
+
+        final customerId = 21869;
+        final taskId = 13;
+        final redirectId = 1;
+        print("customerId: $customerId");
+        print("taskId: $taskId");
+        print("redirectId: $redirectId");
+
+        leadProvider.setCutomerId(customerId);
+
+        if (redirectId == 1) {
+          //task
+          customerDetailsProvider.getTaskDetails(taskId.toString(), context);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return TaskDetailsWidget(
+                taskId: taskId.toString(),
+                customerId: customerId.toString(),
+                showEdit: false,
+              );
+            },
+          );
+        } else if (redirectId == 2) {
+          //lead
+          leadDetailsProvider.fetchLeadDetails(customerId.toString(), context);
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return NewLeadDrawerWidget(
+                isEdit: true,
+              );
+            },
+          );
+        }
       },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -506,6 +557,9 @@ class _NotificationTileState extends State<_NotificationTile> {
 
   Widget _buildMobileTile(String createdStr) {
     final leadProvider = Provider.of<LeadsProvider>(context);
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context);
+    final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
     final isRead = widget.notification.isRead == '1';
 
     return Card(
@@ -522,6 +576,49 @@ class _NotificationTileState extends State<_NotificationTile> {
           // Mark notification as read when clicked
           MicrotecSocket.readNotification(
               id: int.tryParse(widget.notification.notificationId ?? '0'));
+
+          // final customerId =
+          //     int.tryParse(widget.notification.customerId?.toString() ?? '0') ??
+          //         0;
+          // final taskId =
+          //     int.tryParse(widget.notification.masterId?.toString() ?? '0') ?? 0;
+
+          final customerId = 21869;
+          final taskId = 13;
+          final redirectId = 2;
+          print("customerId: $customerId");
+          print("taskId: $taskId");
+          print("redirectId: $redirectId");
+
+          leadProvider.setCutomerId(customerId);
+
+          if (redirectId == 1) {
+            //task
+            customerDetailsProvider.getTaskDetails(taskId.toString(), context);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return TaskDetailsPagePhone(
+                  taskId: taskId.toString(),
+                  customerId: customerId.toString(),
+                  taskMasterId: taskId.toString(),
+                );
+              },
+            );
+          } else if (redirectId == 2) {
+            //lead
+            leadDetailsProvider.fetchLeadDetails(
+                customerId.toString(), context);
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return NewLeadDrawerMobileWidget(
+                  isEdit: true,
+                  customerId: customerId.toString(),
+                );
+              },
+            );
+          }
         },
         child: ListTile(
           contentPadding:
