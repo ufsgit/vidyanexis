@@ -129,9 +129,13 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       const SizedBox(width: 16.0),
                       Expanded(
                         child: DropdownButtonFormField<int>(
-                          value:
-                              customerDetailsProvider.selectedQuotationStatus ??
-                                  1,
+                          value: (customerDetailsProvider
+                                          .selectedQuotationStatus !=
+                                      null &&
+                                  [1, 2, 3].contains(customerDetailsProvider
+                                      .selectedQuotationStatus))
+                              ? customerDetailsProvider.selectedQuotationStatus
+                              : 1,
                           items: const [
                             DropdownMenuItem<int>(
                               value: 1,

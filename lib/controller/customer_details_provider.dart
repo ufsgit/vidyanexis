@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' as math;
 
@@ -3049,12 +3050,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   Future<void> loadQuotationFromCustomFields(BuildContext context) async {
     try {
-      final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.loadQuotationFromCustomFields}?custom_fields=${customFieldQuotationKey.currentState?.getFieldValuesAsJson()}');
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.loadQuotationFromCustomFields,
+          bodyData: {
+            "custom_fields":
+                customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
+                    []
+          });
 
-      if (response.statusCode == 200) {
-        final data = response.data;
+      if (response?.statusCode == 200) {
+        final data = response?.data;
 
         if (data != null) {
           log('API Response: ${data.toString()}');
@@ -3080,7 +3085,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           }
         }
       } else {
-        log('Server Error: ${response.statusCode}');
+        log('Server Error: ${response?.statusCode}');
         // Optional: Show error only for non-200 status codes
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

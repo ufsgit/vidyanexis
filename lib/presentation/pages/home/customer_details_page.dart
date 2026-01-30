@@ -1063,69 +1063,74 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             ],
                                           ),
 
-                                      // Additional
-                                      CustomerCard(
-                                        title: "Additional Details",
-                                        content: leadProvider
-                                                .customFieldEnquiryFor
-                                                .isNotEmpty
-                                            ? leadProvider.customFieldEnquiryFor
-                                                .where((field) =>
-                                                    (field.customFieldName !=
-                                                            null &&
-                                                        field.customFieldName
+                                          // Additional
+                                          CustomerCard(
+                                            title: "Additional Details",
+                                            content: leadProvider
+                                                    .customFieldEnquiryFor
+                                                    .isNotEmpty
+                                                ? leadProvider
+                                                    .customFieldEnquiryFor
+                                                    .where((field) =>
+                                                        (field.customFieldName !=
+                                                                null &&
+                                                            field
+                                                                .customFieldName
+                                                                .toString()
+                                                                .isNotEmpty) &&
+                                                        (field.datavalue !=
+                                                                null &&
+                                                            field.datavalue
+                                                                .toString()
+                                                                .isNotEmpty))
+                                                    .map<Widget>(
+                                                      (field) => DetailRow(
+                                                        label: field
+                                                            .customFieldName
                                                             .toString()
-                                                            .isNotEmpty) &&
-                                                    (field.datavalue != null &&
-                                                        field.datavalue
-                                                            .toString()
-                                                            .isNotEmpty))
-                                                .map<Widget>(
-                                                  (field) => DetailRow(
-                                                    label: field.customFieldName
-                                                        .toString()
-                                                        .replaceAll('_', ' '),
-                                                    value: field.datavalue
-                                                            ?.toString() ??
-                                                        '',
-                                                  ),
-                                                )
-                                                .toList()
-                                            : [],
+                                                            .replaceAll(
+                                                                '_', ' '),
+                                                        value: field.datavalue
+                                                                ?.toString() ??
+                                                            '',
+                                                      ),
+                                                    )
+                                                    .toList()
+                                                : [],
+                                          )
+                                        ],
                                       )
-                                    ],
-                                  )
-                                : Container(),
-                          ),
-                        // Right Panel
-                        if (!AppStyles.isWebScreen(context))
-                          const SizedBox(
-                            width: 15,
-                          ),
-                        Expanded(
-                          flex: 4,
-                          child: Padding(
-                            padding: const EdgeInsets.only(right: 15.0),
-                            child: DefaultTabController(
-                              length: tabs.length,
-                              child: Column(
-                                children: [
-                                  // Tabs
-                                  TabBar(
-                                    labelColor: AppColors.primaryBlue,
-                                    unselectedLabelColor: Colors.black54,
-                                    indicatorColor: AppColors.primaryBlue,
-                                    tabAlignment: TabAlignment.start,
-                                    isScrollable: true,
-                                    dividerColor: Colors.white,
-                                    labelStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    unselectedLabelStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                    tabs: tabs,
-                                  ),
+                                    : Container(),
+                              ),
+                            // Right Panel
+                            if (!AppStyles.isWebScreen(context))
+                              const SizedBox(
+                                width: 15,
+                              ),
+                            Expanded(
+                              flex: 4,
+                              child: Padding(
+                                padding: const EdgeInsets.only(right: 15.0),
+                                child: DefaultTabController(
+                                  length: tabs.length,
+                                  child: Column(
+                                    children: [
+                                      // Tabs
+                                      TabBar(
+                                        labelColor: AppColors.primaryBlue,
+                                        unselectedLabelColor: Colors.black54,
+                                        indicatorColor: AppColors.primaryBlue,
+                                        tabAlignment: TabAlignment.start,
+                                        isScrollable: true,
+                                        dividerColor: Colors.white,
+                                        labelStyle: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        unselectedLabelStyle: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                        tabs: tabs,
+                                      ),
 
                                       // Tab views
                                       Expanded(
@@ -2656,53 +2661,219 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             .where((task) => task.taskTypeId == taskTypeId)
             .toList();
 
+    const borderColor = Color(0xFFE9EDF1);
+
     return filteredTasks.isEmpty
         ? const Center(child: Text("No tasks available."))
         : Expanded(
-            child: ListView.builder(
-              itemCount: filteredTasks.length,
-              itemBuilder: (context, taskIndex) {
-                var task = filteredTasks[taskIndex];
-                return GestureDetector(
-                  onTap: () {
-                    if (onTap != null) {
-                      onTap(task.taskMasterId);
-                      customerDetailsProvider.setTaskEditDropDown(
-                          task.taskTypeId,
-                          task.taskTypeName,
-                          task.toUserId,
-                          task.toUsername,
-                          task.taskStatusId,
-                          task.taskStatusName);
-                      customerDetailsProvider.taskDescriptionController.text =
-                          task.description.toString();
-                      customerDetailsProvider.taskChoosedateController
-                          .text = task.taskDate.toString() != 'null' &&
-                              task.taskDate.toString().isNotEmpty
-                          ? DateFormat('dd MMM yyyy')
-                              .format(DateTime.parse(task.taskDate.toString()))
-                          : '';
-                      customerDetailsProvider.taskChoosetimeController.text =
-                          task.taskTime.toString();
-                    }
-                  },
-                  child: TaskCard(
-                      taskId: task.taskId.toString(),
-                      taskMasterId: task.taskMasterId.toString(),
-                      customerId: widget.customerId.toString(),
-                      category: task.taskTypeId.toString(),
-                      title: task.description,
-                      toUser: task.toUsername,
-                      assignedTo: task.taskStatusName,
-                      date: task.taskDate.toString(),
-                      time: task.taskTime.toString(),
-                      status: task.taskStatusName,
-                      posted: task.entryDate.toString(),
-                      task: task),
-                );
-              },
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: borderColor),
+                  left: BorderSide(color: borderColor),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildHeaderCell('#', flex: 1),
+                        _buildHeaderCell('TITLE', flex: 3),
+                        _buildHeaderCell('ACTION REQUIRED', flex: 3),
+                        _buildHeaderCell('SCHEDULE', flex: 2),
+                        _buildHeaderCell('CREATED DATE', flex: 2),
+                        _buildHeaderCell('STATUS', flex: 2),
+                      ],
+                    ),
+                  ),
+                  // List
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredTasks.length,
+                      itemBuilder: (context, index) {
+                        var task = filteredTasks[index];
+                        return GestureDetector(
+                          onTap: () {
+                            if (onTap != null) {
+                              onTap(task.taskMasterId);
+                              customerDetailsProvider.setTaskEditDropDown(
+                                  task.taskTypeId,
+                                  task.taskTypeName,
+                                  task.toUserId,
+                                  task.toUsername,
+                                  task.taskStatusId,
+                                  task.taskStatusName);
+                              customerDetailsProvider.taskDescriptionController
+                                  .text = task.description.toString();
+                              customerDetailsProvider.taskChoosedateController
+                                  .text = task.taskDate.toString() != 'null' &&
+                                      task.taskDate.toString().isNotEmpty
+                                  ? DateFormat('dd MMM yyyy').format(
+                                      DateTime.parse(task.taskDate.toString()))
+                                  : '';
+                              customerDetailsProvider.taskChoosetimeController
+                                  .text = task.taskTime.toString();
+                            }
+                          },
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildDataCell((index + 1).toString(), flex: 1),
+                                _buildDataCell(task.description,
+                                    flex: 3, isBold: true),
+                                _buildWidgetCell(
+                                  flex: 3,
+                                  child: Row(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 12,
+                                        backgroundColor: getAvatarColor(
+                                            task.toUsername.isNotEmpty
+                                                ? task.toUsername
+                                                : 'A'),
+                                        child: Text(
+                                          (task.toUsername.isNotEmpty
+                                                  ? task.toUsername
+                                                  : 'A')[0]
+                                              .toUpperCase(),
+                                          style: const TextStyle(
+                                              fontSize: 10,
+                                              color: Colors.white),
+                                        ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Expanded(
+                                          child: Text(task.toUsername,
+                                              overflow: TextOverflow.ellipsis)),
+                                    ],
+                                  ),
+                                ),
+                                _buildDataCell(
+                                    task.taskDate.toString() != 'null'
+                                        ? DateFormat('dd MMM yyyy')
+                                            .format(task.taskDate)
+                                        : '',
+                                    flex: 2),
+                                _buildDataCell(
+                                    task.entryDate != null
+                                        ? DateFormat('dd MMM yyyy')
+                                            .format(task.entryDate!)
+                                        : '',
+                                    flex: 2),
+                                _buildWidgetCell(
+                                  flex: 2,
+                                  child: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 4),
+                                      decoration: BoxDecoration(
+                                        color: StatusUtils.getTaskColor(
+                                            task.taskStatusId),
+                                        borderRadius: BorderRadius.circular(4),
+                                      ),
+                                      child: Text(
+                                        task.taskStatusName,
+                                        style: TextStyle(
+                                          color: StatusUtils.getTaskTextColor(
+                                              task.taskStatusId),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
+  }
+
+  Widget _buildHeaderCell(String text, {int flex = 1, bool isAction = false}) {
+    const borderColor = Color(0xFFE9EDF1);
+    return Expanded(
+      flex: flex,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            right: BorderSide(color: borderColor),
+            bottom: BorderSide(color: borderColor),
+          ),
+        ),
+        child: isAction
+            ? const Center(child: Icon(Icons.add, color: Colors.grey, size: 20))
+            : Text(
+                text,
+                style: const TextStyle(
+                  color: Color(0xFF7D8B9B),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 11,
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget _buildDataCell(String text, {int flex = 1, bool isBold = false}) {
+    const borderColor = Color(0xFFE9EDF1);
+    return Expanded(
+      flex: flex,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            right: BorderSide(color: borderColor),
+            bottom: BorderSide(color: borderColor),
+          ),
+        ),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+              fontSize: 13,
+              color: AppColors.textBlack,
+            ),
+            overflow: TextOverflow.ellipsis,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWidgetCell({required Widget child, int flex = 1}) {
+    const borderColor = Color(0xFFE9EDF1);
+    return Expanded(
+      flex: flex,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            right: BorderSide(color: borderColor),
+            bottom: BorderSide(color: borderColor),
+          ),
+        ),
+        child: Align(alignment: Alignment.centerLeft, child: child),
+      ),
+    );
   }
 
   //quatations
@@ -3241,13 +3412,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(const SnackBar(
                                                   content: Text(
-                                                      'Could not open WhatsApp.')));;
+                                                      'Could not open WhatsApp.')));
+                                          ;
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: Text(
-                                                    'Could not share image: $e')));;
+                                                    'Could not share image: $e')));
+                                        ;
                                       }
                                     },
                                   ),
@@ -3267,13 +3440,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(const SnackBar(
                                                   content: Text(
-                                                      'Could not open mail client.')));;
+                                                      'Could not open mail client.')));
+                                          ;
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: Text(
-                                                    'Could not share via mail: $e')));;
+                                                    'Could not share via mail: $e')));
+                                        ;
                                       }
                                     },
                                   ),
