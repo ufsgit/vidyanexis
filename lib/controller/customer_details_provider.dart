@@ -10,6 +10,9 @@ import 'package:vidyanexis/controller/models/quotation_type_model.dart';
 import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
+import 'package:vidyanexis/http/aws_upload.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -67,6 +70,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isQuotationListLoading => _isQuotationListLoading;
   bool _isAmcListLoading = false;
   bool get isAmcListLoading => _isAmcListLoading;
+  bool _isLoadingQuotationCustomFields = false;
+  bool get isLoadingQuotationCustomFields => _isLoadingQuotationCustomFields;
+  List<CustomFieldByStatusId> _customFieldQuotation = [];
+  List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
   String customerId = '';
   String _selectedTaskTypeName = '';
 
@@ -388,6 +395,38 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   set yearInterval(int value) {
     _yearInterval = value;
+  }
+
+  Future<void> getCustomFieldsByQuotationId(BuildContext context) async {
+    try {
+      _isLoadingQuotationCustomFields = true;
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getCustomFieldQuotation}');
+
+      if (response.statusCode == 200) {
+        _isLoadingQuotationCustomFields = false;
+
+        final data = response.data;
+        print('Custom fields by quotation ID: ${data}');
+        if (data != null && data.isNotEmpty) {
+          _customFieldQuotation = (data as List<dynamic>)
+              .map((e) => CustomFieldByStatusId.fromJson(e))
+              .toList();
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('An error occurred')));
+    } finally {
+      _isLoadingQuotationCustomFields = false;
+      notifyListeners();
+    }
   }
 
   set selectedQuotationStatus(int? value) {
@@ -1466,6 +1505,27 @@ class CustomerDetailsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
       String userName = preferences.getString('userName') ?? "";
       // double totalAmount = getTotalAmount();
+
+      // Before API call: upload any pending files from quotation custom fields
+      final quotationWidgetState = customFieldQuotationKey.currentState;
+      if (quotationWidgetState != null) {
+        final pendingBytes = quotationWidgetState.getPendingFileBytes();
+        final pendingTypes = quotationWidgetState.getPendingFileContentTypes();
+        if (pendingBytes.isNotEmpty) {
+          for (final entry in pendingBytes.entries) {
+            final fieldId = entry.key;
+            final bytes = entry.value;
+            final contentType =
+                pendingTypes[fieldId] ?? 'application/octet-stream';
+            final uploadKey = await AwsUpload.uploadToAws(
+                bytes, contentType, '$fieldId', context);
+            if (uploadKey != null) {
+              final fullUrl = HttpUrls.imgBaseUrl + uploadKey;
+              quotationWidgetState.updateFieldValue(fieldId, fullUrl);
+            }
+          }
+        }
+      }
       // print("Total Amount: Rs$totalAmount");
       // double netTotal =
       //     totalAmount - double.parse(qsubsidyAmountController.text.toString());
@@ -1547,6 +1607,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Shipping_Charges":
             double.tryParse(shippingChargesController.text) ?? 0.0,
         "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
+        "customFields":
+            customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
       });
 
       if (response!.statusCode == 200) {
@@ -1692,6 +1754,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     a3SScopeController.clear();
     clientScopeController.clear();
     _scopeOfWorkItems.clear();
+    _customFieldQuotation.clear();
+    customFieldQuotationKey.currentState?.resetForm();
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {
@@ -2981,5 +3045,61 @@ class CustomerDetailsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+  }
+
+  Future<void> loadQuotationFromCustomFields(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.loadQuotationFromCustomFields}?custom_fields=${customFieldQuotationKey.currentState?.getFieldValuesAsJson()}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          log('API Response: ${data.toString()}');
+
+          try {
+            // Handle single object response
+            if (data is Map<String, dynamic>) {
+              _quotationListByMaster = [
+                ql.GetQuotationbyMasterIdmodel.fromJson(data)
+              ];
+            }
+            // Handle list response
+            else if (data is List) {
+              _quotationListByMaster = data
+                  .map((item) => ql.GetQuotationbyMasterIdmodel.fromJson(item))
+                  .toList();
+            }
+
+            log('Parsed Quotations: ${_quotationListByMaster.length}');
+          } catch (parseError) {
+            log('Data parsing error: $parseError');
+            // Don't show error to user, just log it
+          }
+        }
+      } else {
+        log('Server Error: ${response.statusCode}');
+        // Optional: Show error only for non-200 status codes
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Unable to load data. Please try again.')),
+          );
+        }
+      }
+    } catch (e) {
+      log('Network error: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+              content: Text('Connection error. Please check your internet.')),
+        );
+      }
+    }
+
+    // Notify listeners only once at the end
+    notifyListeners();
   }
 }

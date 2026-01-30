@@ -240,4 +240,8 @@ class HttpUrls {
   static String leadEnquiryReport = "lead/Lead_Enquiry_Report";
   static String leadReport = "lead/Lead_Report";
   static String getQuotationTypes = "quotation_master/get_quotation_types";
+  static String getCustomFieldQuotation =
+      "quotation_details/get_custom_field_for_quotation";
+  static String loadQuotationFromCustomFields =
+      "quotation_master/load_quotation_from_custom_fields";
 }

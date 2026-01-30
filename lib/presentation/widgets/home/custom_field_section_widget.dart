@@ -18,6 +18,8 @@ final GlobalKey<_CustomFieldSectionWidgetState> customFieldLeadStatusKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldEnquirySourceKey =
     GlobalKey<_CustomFieldSectionWidgetState>();
+final GlobalKey<_CustomFieldSectionWidgetState> customFieldQuotationKey =
+    GlobalKey<_CustomFieldSectionWidgetState>();
 
 class CustomFieldSectionWidget extends StatefulWidget {
   final List<CustomFieldByStatusId> customFields;

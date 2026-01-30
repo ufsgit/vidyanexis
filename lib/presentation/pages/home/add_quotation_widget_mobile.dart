@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mob
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
+import '../../widgets/home/custom_field_section_widget.dart';
 
 class AddQuotationWidgetMobile extends StatefulWidget {
   const AddQuotationWidgetMobile(
@@ -34,6 +35,11 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
     // TODO: implement initState
     super.initState();
     statusNode = FocusNode();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.getCustomFieldsByQuotationId(context);
+    });
   }
 
   @override
@@ -203,6 +209,16 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       },
                       onChanged: (value) {},
                     ),
+                    if (customerDetailsProvider
+                        .customFieldQuotation.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      CustomFieldSectionWidget(
+                        key: customFieldQuotationKey,
+                        customFields:
+                            customerDetailsProvider.customFieldQuotation,
+                        controllerKey: 'quotation',
+                      ),
+                    ],
                     const SizedBox(height: 16),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
