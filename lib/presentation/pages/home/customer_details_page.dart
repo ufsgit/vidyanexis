@@ -2688,11 +2688,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildHeaderCell('#', flex: 1),
-                        _buildHeaderCell('TITLE', flex: 3),
+                        _buildHeaderCell('Service Type', flex: 3),
                         _buildHeaderCell('ACTION REQUIRED', flex: 3),
                         _buildHeaderCell('SCHEDULE', flex: 2),
                         _buildHeaderCell('CREATED DATE', flex: 2),
                         _buildHeaderCell('STATUS', flex: 2),
+                        _buildHeaderCell('Options', flex: 1),
                       ],
                     ),
                   ),
@@ -2730,34 +2731,74 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 _buildDataCell((index + 1).toString(), flex: 1),
-                                _buildDataCell(task.description,
+                                _buildDataCell(task.taskTypeName,
                                     flex: 3, isBold: true),
                                 _buildWidgetCell(
                                   flex: 3,
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 12,
-                                        backgroundColor: getAvatarColor(
-                                            task.toUsername.isNotEmpty
-                                                ? task.toUsername
-                                                : 'A'),
-                                        child: Text(
-                                          (task.toUsername.isNotEmpty
-                                                  ? task.toUsername
-                                                  : 'A')[0]
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.white),
+                                  child: Builder(builder: (context) {
+                                    String assignedTo = task.toUsername;
+
+                                    if (assignedTo.isEmpty ||
+                                        assignedTo == 'null') {
+                                      // First try to look up by ID from DropDownProvider
+                                      final dropDownProvider =
+                                          Provider.of<DropDownProvider>(context,
+                                              listen: false);
+                                      if (task.toUserId > 0 &&
+                                          dropDownProvider
+                                              .searchUserDetails.isNotEmpty) {
+                                        final user = dropDownProvider
+                                            .searchUserDetails
+                                            .firstWhere(
+                                          (u) =>
+                                              u.userDetailsId ==
+                                              task.toUserId, // Assuming userDetailsId is int
+                                          orElse: () => dropDownProvider
+                                              .searchUserDetails.first,
+                                        );
+                                        // check if we actually found a match or just the first one (dummy)
+                                        if (user.userDetailsId ==
+                                            task.toUserId) {
+                                          assignedTo =
+                                              user.userDetailsName ?? '';
+                                        }
+                                      }
+
+                                      // If still empty, check taskUser list
+                                      if ((assignedTo.isEmpty ||
+                                              assignedTo == 'null') &&
+                                          task.taskUser.isNotEmpty) {
+                                        assignedTo = task.taskUser
+                                            .map((e) => e.toUsername)
+                                            .join(', ');
+                                      }
+                                    }
+                                    return Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 12,
+                                          backgroundColor: getAvatarColor(
+                                              assignedTo.isNotEmpty
+                                                  ? assignedTo
+                                                  : 'A'),
+                                          child: Text(
+                                            (assignedTo.isNotEmpty
+                                                    ? assignedTo
+                                                    : 'A')[0]
+                                                .toUpperCase(),
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                          child: Text(task.toUsername,
-                                              overflow: TextOverflow.ellipsis)),
-                                    ],
-                                  ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                            child: Text(assignedTo,
+                                                overflow:
+                                                    TextOverflow.ellipsis)),
+                                      ],
+                                    );
+                                  }),
                                 ),
                                 _buildDataCell(
                                     task.taskDate.toString() != 'null'
@@ -2793,6 +2834,93 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         ),
                                       ),
                                     ),
+                                  ),
+                                ),
+                                _buildWidgetCell(
+                                  flex: 1,
+                                  child: PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert,
+                                        size: 20, color: Colors.grey),
+                                    onSelected: (value) {
+                                      if (value == 'edit') {
+                                        if (onTap != null) {
+                                          onTap(task.taskMasterId);
+                                          customerDetailsProvider
+                                              .setTaskEditDropDown(
+                                                  task.taskTypeId,
+                                                  task.taskTypeName,
+                                                  task.toUserId,
+                                                  task.toUsername,
+                                                  task.taskStatusId,
+                                                  task.taskStatusName);
+                                          customerDetailsProvider
+                                                  .taskDescriptionController
+                                                  .text =
+                                              task.description.toString();
+                                          customerDetailsProvider
+                                              .taskChoosedateController
+                                              .text = task.taskDate
+                                                          .toString() !=
+                                                      'null' &&
+                                                  task.taskDate
+                                                      .toString()
+                                                      .isNotEmpty
+                                              ? DateFormat('dd MMM yyyy')
+                                                  .format(DateTime.parse(
+                                                      task.taskDate.toString()))
+                                              : '';
+                                          customerDetailsProvider
+                                              .taskChoosetimeController
+                                              .text = task.taskTime.toString();
+                                        }
+                                      } else if (value == 'delete') {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return ConfirmationDialog(
+                                              title: 'Delete Task',
+                                              content:
+                                                  'Are you sure you want to delete this task?',
+                                              onCancel: () =>
+                                                  Navigator.of(context).pop(),
+                                              onConfirm: () {
+                                                customerDetailsProvider
+                                                    .deleteTask(
+                                                        task.taskMasterId
+                                                            .toString(),
+                                                        widget.customerId,
+                                                        context);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'edit',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.edit,
+                                                size: 18, color: Colors.blue),
+                                            SizedBox(width: 8),
+                                            Text('Edit'),
+                                          ],
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.delete,
+                                                size: 18, color: Colors.red),
+                                            SizedBox(width: 8),
+                                            Text('Delete'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
