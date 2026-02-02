@@ -33,7 +33,7 @@ Future<void> printResidentialPDFs({
     await _addBillOfMaterialsPage(pdf);
     await _addPlaceholderPage(pdf, 9);
     await _addPlaceholderPage(pdf, 10);
-    await _addPlaceholderPage(pdf, 11);
+    await _addPaymentTermsPage(pdf, 11);
     await _addPlaceholderPage(pdf, 12);
     // await _addPlaceholderPage(pdf, 13);
 
@@ -583,6 +583,150 @@ pw.Widget _tableCell(String text, {pw.Alignment? align, bool isBold = false}) {
               : pw.TextAlign.left,
     ),
   );
+}
+
+Future<void> _addPaymentTermsPage(pw.Document pdf, int pageNumber) async {
+  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  Uint8List? contentImageBytes;
+  pw.MemoryImage? contentImage;
+
+  final font = await PdfGoogleFonts.openSansRegular();
+  final boldFont = await PdfGoogleFonts.openSansBold();
+
+  try {
+    final ByteData contentImageData = await rootBundle.load(contentImagePath);
+    contentImageBytes = contentImageData.buffer.asUint8List();
+    contentImage = pw.MemoryImage(contentImageBytes);
+    pdf.addPage(
+      pw.Page(
+        margin: pw.EdgeInsets.zero,
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Container(
+                width: PdfPageFormat.a4.width,
+                height: PdfPageFormat.a4.height,
+                child: pw.Image(
+                  contentImage!,
+                  fit: pw.BoxFit.fill,
+                ),
+              ),
+              pw.Positioned(
+                top: 390,
+                right: 70,
+                left: 70,
+                child: pw.Table(
+                  border: pw.TableBorder.all(
+                      color: PdfColor.fromHex('#679900'), width: 1),
+                  columnWidths: {
+                    0: const pw.FixedColumnWidth(50),
+                    1: const pw.FlexColumnWidth(3),
+                    2: const pw.FlexColumnWidth(2),
+                  },
+                  children: [
+                    pw.TableRow(
+                      decoration:
+                          pw.BoxDecoration(color: PdfColor.fromHex('#679900')),
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('SR.No',
+                              style: pw.TextStyle(
+                                  font: boldFont, color: PdfColors.white)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('STAGES',
+                              style: pw.TextStyle(
+                                  font: boldFont, color: PdfColors.white)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('PAYMENT SCHEDULE',
+                              textAlign: pw.TextAlign.center,
+                              style: pw.TextStyle(
+                                  font: boldFont, color: PdfColors.white)),
+                        ),
+                      ],
+                    ),
+                    pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('1',
+                              textAlign: pw.TextAlign.center,
+                              style: pw.TextStyle(font: font)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('Advance payment up on conformation',
+                              style: pw.TextStyle(font: font)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('${quotation?.advancePercentage}%',
+                              textAlign: pw.TextAlign.center,
+                              style: pw.TextStyle(font: font)),
+                        ),
+                      ],
+                    ),
+                    pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('2',
+                              textAlign: pw.TextAlign.center,
+                              style: pw.TextStyle(font: font)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('Upon the material ready for dispatch',
+                              style: pw.TextStyle(font: font)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('${quotation?.onDeliveryPercentage}%',
+                              textAlign: pw.TextAlign.center,
+                              style: pw.TextStyle(font: font)),
+                        ),
+                      ],
+                    ),
+                    pw.TableRow(
+                      children: [
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('3',
+                              textAlign: pw.TextAlign.center,
+                              style: pw.TextStyle(font: font)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text('Installation Completion',
+                              style: pw.TextStyle(font: font)),
+                        ),
+                        pw.Padding(
+                          padding: const pw.EdgeInsets.all(5),
+                          child: pw.Text(
+                              '${quotation?.workCompletionPercentage}%',
+                              textAlign: pw.TextAlign.center,
+                              style: pw.TextStyle(font: font)),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  } catch (e) {
+    print('Content image not found: $contentImagePath');
+    _addFallbackPage(pdf, pageNumber);
+    return;
+  }
 }
 
 Future<void> _addPlaceholderPage(pw.Document pdf, int pageNumber) async {

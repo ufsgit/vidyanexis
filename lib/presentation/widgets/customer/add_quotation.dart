@@ -516,14 +516,25 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   const SizedBox(
                     height: 5,
                   ),
-                  CustomTextField(
-                    readOnly: false,
-                    height: 54,
-                    controller: customerDetailsProvider.qwarrentyController,
-                    hintText: 'Warranty',
-                    labelText: '',
-                    minLines: 4,
-                    keyboardType: TextInputType.multiline,
+                  SizedBox(
+                    child: TextFormField(
+                      controller: customerDetailsProvider.qwarrentyController,
+                      readOnly: false,
+                      minLines: 12,
+                      maxLines: 12,
+                      keyboardType: TextInputType.multiline,
+                      decoration: InputDecoration(
+                          hintText: 'Warranty',
+                          border: OutlineInputBorder(
+                            borderRadius:
+                                BorderRadius.circular(10), // Rounded corners
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2, // Border color
+                              width: 1, // Border width
+                            ),
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior.auto),
+                    ),
                   ),
                   const SizedBox(height: 16),
                 ],
@@ -553,7 +564,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           readOnly: false,
                           height: 54,
                           controller: customerDetailsProvider.advanceController,
-                          hintText: 'Advance Against Purchase Order %',
+                          hintText:
+                              customerDetailsProvider.selectedQuotationType == 1
+                                  ? 'Advance payment up on conformation'
+                                  : 'Advance Against Purchase Order %',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -569,7 +583,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           controller:
                               customerDetailsProvider.deliveryController,
                           hintText:
-                              'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
+                              customerDetailsProvider.selectedQuotationType == 1
+                                  ? 'Upon the material ready for dispatch'
+                                  : 'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -588,7 +604,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           height: 54,
                           controller:
                               customerDetailsProvider.workCompletionController,
-                          hintText: 'After project completion %',
+                          hintText:
+                              customerDetailsProvider.selectedQuotationType == 1
+                                  ? 'Installation Completion'
+                                  : 'After project completion %',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
