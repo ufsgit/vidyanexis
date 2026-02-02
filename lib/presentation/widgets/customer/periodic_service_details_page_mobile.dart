@@ -98,6 +98,7 @@ class _PeriodicServiceDetailsPageMobileState
                               "yyyy-MM-dd",
                               "dd-MM-yyyy",
                             ),
+                            amc: widget.item,
                             isEdit: true),
                       ),
                     );

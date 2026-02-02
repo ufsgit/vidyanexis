@@ -164,12 +164,41 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
             .setSelectedAmcTotalDurationId(widget.amc!.totalDurationId);
         customerDetailsProvider.yearInterval = widget.amc!.totalDurationNo;
         customerDetailsProvider.monthInterval = widget.amc!.periodIntervalNo;
+
+        // Set text controllers with fallback if names are empty
         customerDetailsProvider.amcTotalDurationController.text =
-            widget.amc!.totalDurationName;
+            widget.amc!.totalDurationName.isNotEmpty
+                ? widget.amc!.totalDurationName
+                : _getDurationName(widget.amc!.totalDurationId);
+
+        customerDetailsProvider.amcPeriodIntervalController.text =
+            widget.amc!.periodIntervalName.isNotEmpty
+                ? widget.amc!.periodIntervalName
+                : _getIntervalName(widget.amc!.periodIntervalId);
+
         customerDetailsProvider.maintenanceDates = widget.amc!.maintenanceDate;
         super.initState();
       }
     });
+  }
+
+  String _getIntervalName(int id) {
+    switch (id) {
+      case 1:
+        return 'Monthly';
+      case 2:
+        return 'Quarterly';
+      case 3:
+        return 'Half Yearly';
+      case 4:
+        return 'Yearly';
+      default:
+        return '';
+    }
+  }
+
+  String _getDurationName(int id) {
+    return '$id Year${id > 1 ? 's' : ''}';
   }
 
   // final List<DropdownItem<int>> durationItems = [
@@ -436,35 +465,107 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                   const SizedBox(width: 10),
                   //periodic interval
                   Expanded(
-                    child: CommonDropdown<int>(
-                        hintText: 'Periodic Interval',
-                        items: dropDownProvider.amcInterval
-                            .map((status) => DropdownItem<int>(
-                                  id: status.intervalsId,
-                                  name: status.intervalsName,
-                                  no: status.intervalsNo,
-                                ))
-                            .toList(),
+                    child: Builder(builder: (context) {
+                      var items = dropDownProvider.amcInterval
+                          .map((status) => DropdownItem<int>(
+                                id: status.intervalsId,
+                                name: status.intervalsName,
+                                no: status.intervalsNo,
+                              ))
+                          .toList();
+
+                      // Ensure selected item exists in list
+                      if (widget.isEdit &&
+                          widget.amc != null &&
+                          !items.any(
+                              (e) => e.id == widget.amc!.periodIntervalId)) {
+                        items.add(DropdownItem(
+                          id: widget.amc!.periodIntervalId,
+                          name: _getIntervalName(widget.amc!.periodIntervalId),
+                          no: widget.amc!.periodIntervalNo,
+                        ));
+                      }
+
+                      return CommonDropdown<int>(
+                          hintText: 'Periodic Interval',
+                          items: items,
+                          controller: customerDetailsProvider
+                              .amcPeriodIntervalController,
+                          onItemSelected: (selectedId) {
+                            dropDownProvider
+                                .setSelectedAmcPeriodicIntervalId(selectedId);
+
+                            final selectedItem = items.firstWhere(
+                              (status) => status.id == selectedId,
+                            );
+
+                            customerDetailsProvider.amcPeriodIntervalController
+                                .text = selectedItem.name;
+
+                            String installationDate = (customerDetailsProvider
+                                    .fromDateController.text)
+                                .toyyyymmdd();
+
+                            customerDetailsProvider.monthInterval =
+                                selectedItem.no!;
+
+                            customerDetailsProvider.calculateMaintenanceDates(
+                              monthInterval:
+                                  customerDetailsProvider.monthInterval,
+                              context: context,
+                              installationDate: installationDate,
+                              totalDuration:
+                                  customerDetailsProvider.yearInterval,
+                            );
+                          },
+                          selectedValue: dropDownProvider.amcPeriodIntervalId);
+                    }),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      var items = dropDownProvider.amcDuration
+                          .map((status) => DropdownItem<int>(
+                                id: status.durationId,
+                                name: status.durationName,
+                                no: status.durationNo,
+                              ))
+                          .toList();
+
+                      // Ensure selected item exists in list
+                      if (widget.isEdit &&
+                          widget.amc != null &&
+                          !items.any(
+                              (e) => e.id == widget.amc!.totalDurationId)) {
+                        items.add(DropdownItem(
+                          id: widget.amc!.totalDurationId,
+                          name: _getDurationName(widget.amc!.totalDurationId),
+                          no: widget.amc!.totalDurationNo,
+                        ));
+                      }
+
+                      return CommonDropdown<int>(
+                        hintText: 'Select Total Duration',
+                        items: items,
                         controller:
-                            customerDetailsProvider.amcPeriodIntervalController,
+                            customerDetailsProvider.amcTotalDurationController,
                         onItemSelected: (selectedId) {
                           dropDownProvider
-                              .setSelectedAmcPeriodicIntervalId(selectedId);
+                              .setSelectedAmcTotalDurationId(selectedId);
 
-                          final selectedItem =
-                              dropDownProvider.amcInterval.firstWhere(
-                            (status) => status.intervalsId == selectedId,
+                          final selectedItem = items.firstWhere(
+                            (status) => status.id == selectedId,
                           );
 
-                          customerDetailsProvider.amcPeriodIntervalController
-                              .text = selectedItem.intervalsName;
+                          customerDetailsProvider.amcTotalDurationController
+                              .text = selectedItem.name;
 
                           String installationDate =
                               (customerDetailsProvider.fromDateController.text)
                                   .toyyyymmdd();
 
-                          customerDetailsProvider.monthInterval =
-                              selectedItem.intervalsNo;
+                          customerDetailsProvider.yearInterval =
+                              selectedItem.no!;
 
                           customerDetailsProvider.calculateMaintenanceDates(
                             monthInterval:
@@ -474,49 +575,9 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                             totalDuration: customerDetailsProvider.yearInterval,
                           );
                         },
-                        selectedValue: dropDownProvider.amcPeriodIntervalId),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CommonDropdown<int>(
-                      hintText: 'Select Total Duration',
-                      items: dropDownProvider.amcDuration
-                          .map((status) => DropdownItem<int>(
-                                id: status.durationId,
-                                name: status.durationName,
-                                no: status.durationNo,
-                              ))
-                          .toList(),
-                      controller:
-                          customerDetailsProvider.amcTotalDurationController,
-                      onItemSelected: (selectedId) {
-                        dropDownProvider
-                            .setSelectedAmcTotalDurationId(selectedId);
-
-                        final selectedItem =
-                            dropDownProvider.amcDuration.firstWhere(
-                          (status) => status.durationId == selectedId,
-                        );
-
-                        customerDetailsProvider.amcTotalDurationController
-                            .text = selectedItem.durationName;
-
-                        String installationDate =
-                            (customerDetailsProvider.fromDateController.text)
-                                .toyyyymmdd();
-
-                        customerDetailsProvider.yearInterval =
-                            selectedItem.durationNo;
-
-                        customerDetailsProvider.calculateMaintenanceDates(
-                          monthInterval: customerDetailsProvider.monthInterval,
-                          context: context,
-                          installationDate: installationDate,
-                          totalDuration: customerDetailsProvider.yearInterval,
-                        );
-                      },
-                      selectedValue: dropDownProvider.amcTotalDurationlId,
-                    ),
+                        selectedValue: dropDownProvider.amcTotalDurationlId,
+                      );
+                    }),
                   ),
                   const SizedBox(width: 10),
                   Expanded(

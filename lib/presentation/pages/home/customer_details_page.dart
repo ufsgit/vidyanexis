@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
@@ -1666,7 +1667,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 customerName,
                                                                 amcId,
                                                                 fromDate,
-                                                                toDate) {
+                                                                toDate,
+                                                                amc) {
                                                               leadProvider
                                                                   .setCutomerId(
                                                                       int.parse(
@@ -1705,6 +1707,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               fromDateController: fromDate,
                                                                               toDateController: toDate,
                                                                               customerId: widget.customerId,
+                                                                              amc: amc,
                                                                               isEdit: true);
                                                                         },
                                                                       );
@@ -2541,6 +2544,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         String amcId,
         String fromDate,
         String toDate,
+        AmcReportModeld amc,
       )? onTap}) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
@@ -2570,7 +2574,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                     DateFormat('dd-MM-yyyy')
                         .format(DateTime.parse(amc.fromDate.toString())),
                     DateFormat('dd-MM-yyyy')
-                        .format(DateTime.parse(amc.toDate.toString())));
+                        .format(DateTime.parse(amc.toDate.toString())),
+                    amc);
               }
             },
             child: AmcCardWidget(
@@ -2594,6 +2599,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                         toDateController: DateFormat('dd-MM-yyyy')
                             .format(DateTime.parse(amc.toDate.toString())),
                         customerId: widget.customerId,
+                        amc: amc,
                         isEdit: true);
                   },
                 );

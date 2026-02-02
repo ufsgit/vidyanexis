@@ -229,7 +229,10 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                             exportToExcel(
                               headers: [
                                 'Customer Name',
+                                'Address',
+                                'Phone',
                                 'Description',
+                                'AMC Date',
                                 'From Date',
                                 'To Date',
                                 'Product Name',
@@ -240,12 +243,15 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               data: reportsProvider.amcReport.map((task) {
                                 return {
                                   'Customer Name': task.customerName,
+                                  'Address': task.address1,
+                                  'Phone': task.mobile,
                                   'Description': task.description,
+                                  'AMC Date': task.intervalDate,
                                   'From Date': formatDate(task.fromDate),
                                   'To Date': formatDate(task.toDate),
                                   'Product Name': task.productName,
                                   'Amount': task.amount.toString(),
-                                  'Status': task.amcStatusName,
+                                  'Status': task.displayStatus,
                                   'Service': task.serviceName,
                                 };
                               }).toList(),
@@ -388,7 +394,10 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     exportToExcel(
                                       headers: [
                                         'Customer Name',
+                                        'Address',
+                                        'Phone',
                                         'Description',
+                                        'AMC Date',
                                         'From Date',
                                         'To Date',
                                         'Product Name',
@@ -400,7 +409,10 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                           reportsProvider.amcReport.map((task) {
                                         return {
                                           'Customer Name': task.customerName,
+                                          'Address': task.address1,
+                                          'Phone': task.mobile,
                                           'Description': task.description,
+                                          'AMC Date': task.intervalDate,
                                           'From Date': task.fromDate
                                                   .toString()
                                                   .isNotEmpty
@@ -417,7 +429,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                               : '',
                                           'Product Name': task.productName,
                                           'Amount': task.amount.toString(),
-                                          'Status': task.amcStatusName,
+                                          'Status': task.displayStatus,
                                           'Service': task.serviceName,
                                         };
                                       }).toList(),
@@ -477,15 +489,15 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                         ),
                                       ] +
                                       provider.amcStatus
-                                          .map((status) =>
-                                              DropdownMenuItem<int>(
-                                                value: status.amcStatusId,
-                                                child: Text(
-                                                  status.amcStatusName ?? '',
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
-                                                ),
-                                              ))
+                                          .map(
+                                              (status) => DropdownMenuItem<int>(
+                                                    value: status.amcStatusId,
+                                                    child: Text(
+                                                      status.displayStatus,
+                                                      style: const TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ))
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
@@ -739,15 +751,15 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                         ),
                                       ] +
                                       provider.amcStatus
-                                          .map((status) =>
-                                              DropdownMenuItem<int>(
-                                                value: status.amcStatusId,
-                                                child: Text(
-                                                  status.amcStatusName ?? '',
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
-                                                ),
-                                              ))
+                                          .map(
+                                              (status) => DropdownMenuItem<int>(
+                                                    value: status.amcStatusId,
+                                                    child: Text(
+                                                      status.displayStatus,
+                                                      style: const TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ))
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
@@ -999,6 +1011,16 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                         title: 'Customer Name',
                                         fontSize: 14,
                                         color: Color(0xFF607185)),
+                                    TableWidget(
+                                        flex: 2,
+                                        title: 'Address',
+                                        fontSize: 14,
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        flex: 1,
+                                        title: 'Phone',
+                                        fontSize: 14,
+                                        color: Color(0xFF607185)),
                                     // TableWidget(
                                     //     flex: 1,
                                     //     title: 'Mobile',
@@ -1010,6 +1032,11 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     TableWidget(
                                         flex: 2,
                                         title: 'Description',
+                                        fontSize: 14,
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        flex: 2,
+                                        title: 'AMC Date',
                                         fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
@@ -1193,12 +1220,22 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                             ),
                                             // TableWidget(
                                             //     flex: 1, title: amc.mobile),
-                                            // TableWidget(
-                                            //     flex: 2, title: amc.address1),
+                                            TableWidget(
+                                                flex: 2,
+                                                fontSize: 12,
+                                                title: amc.address1),
+                                            TableWidget(
+                                                flex: 1,
+                                                fontSize: 12,
+                                                title: amc.mobile),
                                             TableWidget(
                                                 flex: 2,
                                                 fontSize: 12,
                                                 title: amc.description),
+                                            TableWidget(
+                                                flex: 2,
+                                                fontSize: 12,
+                                                title: amc.intervalDate),
 
                                             TableWidget(
                                                 flex: 1,
@@ -1251,7 +1288,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                       width: 0.1),
                                                 ),
                                                 child: Text(
-                                                  amc.amcStatusName,
+                                                  amc.displayStatus,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,
@@ -1456,7 +1493,15 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                             ),
                                             TableWidget(
                                                 width: 180,
+                                                title: amc.address1),
+                                            TableWidget(
+                                                width: 150, title: amc.mobile),
+                                            TableWidget(
+                                                width: 180,
                                                 title: amc.description),
+                                            TableWidget(
+                                                width: 180,
+                                                title: amc.intervalDate),
                                             TableWidget(
                                                 width: 150,
                                                 title: (amc.fromDate
@@ -1505,7 +1550,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                       width: 0.1),
                                                 ),
                                                 child: Text(
-                                                  amc.amcStatusName,
+                                                  amc.displayStatus,
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,

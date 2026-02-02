@@ -22,4 +22,13 @@ class AMCStatusModel {
       'AMC_Status_Name': amcStatusName,
     };
   }
+
+  String get displayStatus {
+    if (amcStatusName == '1') {
+      return 'Completed';
+    } else if (amcStatusName == '0') {
+      return 'Pending';
+    }
+    return amcStatusName;
+  }
 }

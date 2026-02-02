@@ -213,9 +213,14 @@ class AMCReportProvider extends ChangeNotifier {
         if (data != null) {
           // log(data.toString());
 
-          _amcReport = (data as List<dynamic>)
-              .map((item) => AmcReportModeld.fromJson(item))
-              .toList();
+          if (data is List) {
+            _amcReport = (data as List<dynamic>)
+                .map((item) => AmcReportModeld.fromJson(item))
+                .toList();
+          } else {
+            print('Expected List but got: $data');
+            _amcReport = [];
+          }
 
           Loader.stopLoader(context);
           notifyListeners();
