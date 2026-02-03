@@ -46,6 +46,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
+import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
 
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
@@ -111,6 +112,39 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<ql.GetQuotationbyMasterIdmodel> _quotationListByMaster = [];
   List<ql.GetQuotationbyMasterIdmodel> get quotationListByMaster =>
       _quotationListByMaster;
+
+  List<FollowUpHistoryModel> _followUpHistory = [];
+  List<FollowUpHistoryModel> get followUpHistory => _followUpHistory;
+  bool _isFollowUpHistoryLoading = false;
+  bool get isFollowUpHistoryLoading => _isFollowUpHistoryLoading;
+
+  Future<void> getFollowUpHistory(
+      String customerId, BuildContext context) async {
+    try {
+      _isFollowUpHistoryLoading = true;
+      notifyListeners();
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.followUpHistory}?Customer_Id=$customerId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _followUpHistory =
+              data.map((e) => FollowUpHistoryModel.fromJson(e)).toList();
+        } else {
+          _followUpHistory = [];
+        }
+      } else {
+        _followUpHistory = [];
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      _followUpHistory = [];
+    } finally {
+      _isFollowUpHistoryLoading = false;
+      notifyListeners();
+    }
+  }
 
 //task
   final TextEditingController taskChoosedateController =

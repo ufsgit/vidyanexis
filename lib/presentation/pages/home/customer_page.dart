@@ -851,6 +851,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
+                                                        fontSize: 12,
                                                       )),
                                                 ),
                                               ),
@@ -915,7 +916,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                           FontWeight
                                                                               .bold,
                                                                       fontSize:
-                                                                          14,
+                                                                          12,
                                                                     ),
                                                                   ),
                                                                   const SizedBox(
@@ -944,7 +945,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .bold,
-                                                                  fontSize: 14,
+                                                                  fontSize: 12,
                                                                 ),
                                                               ),
                                                   ),
@@ -952,12 +953,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                               ),
                                               TableWidget(
                                                   flex: 1,
+                                                  fontSize: 12,
                                                   title: lead.contactNumber),
                                               TableWidget(
                                                   flex: 2,
+                                                  fontSize: 12,
                                                   title: lead.toUserName),
                                               TableWidget(
                                                   flex: 2,
+                                                  fontSize: 12,
                                                   title: '${lead.remark}'),
                                               TableWidget(
                                                 flex: 1,
@@ -1118,6 +1122,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               ),
                                               TableWidget(
                                                   flex: 1,
+                                                  fontSize: 12,
                                                   title: (lead.nextFollowUpDate
                                                           .isNotEmpty)
                                                       ? DateFormat(

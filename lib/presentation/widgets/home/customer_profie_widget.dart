@@ -47,12 +47,13 @@ class DetailRow extends StatelessWidget {
             "$label: ",
             overflow: TextOverflow.fade,
             maxLines: 1,
-            style: const TextStyle(color: Color(0xFF8E97A3)),
+            style: const TextStyle(color: Color(0xFF8E97A3), fontSize: 14),
           )),
           Expanded(
               child: Text(value,
                   textAlign: TextAlign.end,
-                  style: const TextStyle(fontWeight: FontWeight.w600))),
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w600, fontSize: 14))),
         ],
       ),
     );
