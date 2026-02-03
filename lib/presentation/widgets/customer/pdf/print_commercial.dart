@@ -870,98 +870,14 @@ String formatAddress(String address) {
 
 //
 String convertNumberToWords(double number) {
-  // Define word lists
-  const List<String> units = [
-    '',
-    'One',
-    'Two',
-    'Three',
-    'Four',
-    'Five',
-    'Six',
-    'Seven',
-    'Eight',
-    'Nine',
-    'Ten',
-    'Eleven',
-    'Twelve',
-    'Thirteen',
-    'Fourteen',
-    'Fifteen',
-    'Sixteen',
-    'Seventeen',
-    'Eighteen',
-    'Nineteen'
-  ];
-
-  const List<String> tens = [
-    '',
-    '',
-    'Twenty',
-    'Thirty',
-    'Forty',
-    'Fifty',
-    'Sixty',
-    'Seventy',
-    'Eighty',
-    'Ninety'
-  ];
-
-  // For zero amount
   if (number == 0) return "Zero Rupees Only";
 
-  // Store original for decimal calculation
-  double originalNumber = number;
-  int intNumber = number.toInt();
-  String words = '';
-
-  // Handle crores (up to 100 crore)
-  if (intNumber >= 10000000) {
-    int crores = (intNumber ~/ 10000000);
-    words += "${_convertSmallNumber(crores)} Crore ";
-    intNumber %= 10000000;
-  }
-
-  // Handle lakhs
-  if (intNumber >= 100000) {
-    int lakhs = (intNumber ~/ 100000);
-    words += "${_convertSmallNumber(lakhs)} Lakh ";
-    intNumber %= 100000;
-  }
-
-  // Handle thousands
-  if (intNumber >= 1000) {
-    int thousands = (intNumber ~/ 1000);
-    words += "${_convertSmallNumber(thousands)} Thousand ";
-    intNumber %= 1000;
-  }
-
-  // Handle hundreds
-  if (intNumber >= 100) {
-    words += "${units[intNumber ~/ 100]} Hundred ";
-    intNumber %= 100;
-  }
-
-  // Handle remaining number
-  if (intNumber > 0) {
-    if (words.isNotEmpty) {
-      words += "and ";
-    }
-
-    if (intNumber < 20) {
-      words += units[intNumber];
-    } else {
-      words += tens[intNumber ~/ 10];
-      if (intNumber % 10 > 0) {
-        words += " ${units[intNumber % 10]}";
-      }
-    }
-  }
+  String words = _convertNumberToWordsRecursive(number.toInt());
 
   words = "${words.trim()} Rupees Only";
 
   // Handle decimal part
-  int decimalPart = ((originalNumber - originalNumber.toInt()) * 100).toInt();
+  int decimalPart = ((number - number.toInt()) * 100).toInt();
   if (decimalPart > 0) {
     words = words.replaceAll("Only", "");
     words += " and $decimalPart Paise";
@@ -970,8 +886,7 @@ String convertNumberToWords(double number) {
   return words;
 }
 
-// Helper function to convert small numbers (less than 100)
-String _convertSmallNumber(int number) {
+String _convertNumberToWordsRecursive(int number) {
   const List<String> units = [
     '',
     'One',
@@ -1008,15 +923,49 @@ String _convertSmallNumber(int number) {
     'Ninety'
   ];
 
-  if (number < 20) {
-    return units[number];
-  } else {
-    if (number % 10 == 0) {
-      return tens[number ~/ 10];
+  if (number == 0) return "";
+
+  String words = "";
+
+  if (number >= 10000000) {
+    words += "${_convertNumberToWordsRecursive(number ~/ 10000000)} Crore ";
+    number %= 10000000;
+  }
+
+  if (number >= 100000) {
+    words += "${_convertNumberToWordsRecursive(number ~/ 100000)} Lakh ";
+    number %= 100000;
+  }
+
+  if (number >= 1000) {
+    words += "${_convertNumberToWordsRecursive(number ~/ 1000)} Thousand ";
+    number %= 1000;
+  }
+
+  if (number >= 100) {
+    words += "${units[number ~/ 100]} Hundred ";
+    number %= 100;
+  }
+
+  if (number > 0) {
+    if (words.isNotEmpty) words += "and ";
+
+    if (number < 20) {
+      words += units[number];
     } else {
-      return "${tens[number ~/ 10]} ${units[number % 10]}";
+      words += tens[number ~/ 10];
+      if (number % 10 > 0) {
+        words += " ${units[number % 10]}";
+      }
     }
   }
+
+  return words;
+}
+
+// _convertSmallNumber is no longer needed but kept for compatibility if used elsewhere (it was private though)
+String _convertSmallNumber(int number) {
+  return _convertNumberToWordsRecursive(number);
 }
 
 // Common Header Widget

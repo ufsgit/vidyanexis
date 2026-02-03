@@ -51,6 +51,9 @@ import 'package:vidyanexis/presentation/widgets/home/customer_profie_widget.dart
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/utils/file_share_function.dart';
+import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
   static const String route = '/customerDetails/';
@@ -162,7 +165,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "Periodic Service"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
-      const Tab(text: "Follow-Up Details"),
+      const Tab(text: "History"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
@@ -348,26 +351,18 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             //   width: 10,
                             // ),
                             AppStyles.isWebScreen(context)
-                                ? Wrap(
-                                    children: [
-                                      Text(
-                                        sideprovider.name,
-                                        style: const TextStyle(
-                                            fontSize: 24,
-                                            color: Color(0xFF5499D9),
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text(
-                                        'Customer details',
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            color: Color(0xFF152D70),
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
+                                ? Text(
+                                    customerDetailsProvider.leadDetails !=
+                                                null &&
+                                            customerDetailsProvider
+                                                .leadDetails!.isNotEmpty
+                                        ? customerDetailsProvider
+                                            .leadDetails![0].customerName
+                                        : '',
+                                    style: const TextStyle(
+                                        fontSize: 24,
+                                        color: Color(0xFF152D70),
+                                        fontWeight: FontWeight.w600),
                                   )
                                 : Text(
                                     customerDetailsProvider.leadDetails !=
@@ -3164,67 +3159,366 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       {int? quatationId, void Function(int)? onTap}) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
-    var filteredService = quatationId == null
+    final settingsprovider = Provider.of<SettingsProvider>(context);
+
+    var filteredQuotations = quatationId == null
         ? customerDetailsProvider.quotationList
         : customerDetailsProvider.quotationList
             .where((task) => task.quotationStatusId == quatationId)
             .toList();
 
-    return filteredService.isEmpty
+    const borderColor = Color(0xFFE9EDF1);
+
+    return filteredQuotations.isEmpty
         ? const Center(child: Text("No Quotations available."))
         : Expanded(
-            child: ListView.builder(
-              itemCount: filteredService.length,
-              itemBuilder: (context, taskIndex) {
-                var task = filteredService[taskIndex];
-                return GestureDetector(
-                  onTap: () {
-                    if (onTap != null) {
-                      onTap(task.quotationMasterId);
-                      // customerDetailsProvider.setServiceEditDropDown(
-                      //     task.serviceTypeId,
-                      //     task.serviceTypeName,
-                      //     task.serviceStatusId,
-                      //     task.serviceStatusName);
-                      // customerDetailsProvider.taskDescriptionController.text =
-                      //     task.description.toString();
-                      // customerDetailsProvider.serviceController.text =
-                      //     task.serviceName.toString();
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: borderColor),
+                  left: BorderSide(color: borderColor),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildHeaderCell('#', flex: 1),
+                        _buildHeaderCell('Product Name', flex: 3),
+                        _buildHeaderCell('Total Amount', flex: 2),
+                        _buildHeaderCell('Options', flex: 2),
+                      ],
+                    ),
+                  ),
+                  // List
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredQuotations.length,
+                      itemBuilder: (context, index) {
+                        var task = filteredQuotations[index];
 
-                      // customerDetailsProvider.qproductnameController.text =
-                      //     task.productName.toString();
-                      // customerDetailsProvider.qsubsidyAmountController.text =
-                      //     task.subsidyAmount.toString();
-                      // customerDetailsProvider.qwarrentyController.text =
-                      //     task.warranty.toString();
-                      // customerDetailsProvider.qtermsConditionsController.text =
-                      //     task.termsAndConditions.toString();
-                    }
-                  },
-                  child: QuotationCard(
-                      productionChartModel: task.productionChartModel ?? [],
-                      category: "0",
-                      advancePercentage: task.advancePercentage,
-                      completionPercentage: task.workCompletionPercentage,
-                      deliveryPercentage: task.onDeliveryPercentage,
-                      taskId: task.quotationMasterId.toString(),
-                      title: task.productName.toString(),
-                      servicename: task.totalAmount.toString(),
-                      statusId: task.quotationStatusId.toString(),
-                      createdBy: task.createdByName.toString(),
-                      status: task.quotationStatusName.toString(),
-                      posted: task.orderDate.toString(),
-                      customerId: widget.customerId.toString(),
-                      warranty: task.warranty,
-                      terms: task.termsAndConditions,
-                      subsidy: task.subsidyAmount,
-                      quotation_details: task.quotationDetails ?? [],
-                      bill_of_materials: task.billOfMaterials ?? [],
-                      quotation: task),
-                );
-              },
+                        // Status Color Logic
+                        Color statusColor = task.quotationStatusId == 1
+                            ? Colors.orange
+                            : task.quotationStatusId == 2
+                                ? Colors.green
+                                : Colors.red;
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (onTap != null) {
+                              onTap(task.quotationMasterId);
+                            }
+                          },
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildDataCell((index + 1).toString(), flex: 1),
+                                _buildDataCell(task.productName,
+                                    flex: 3, isBold: true),
+                                _buildDataCell('₹ ${task.netTotal}', flex: 2),
+                                _buildWidgetCell(
+                                  flex: 2,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Generic Print Button
+                                      if (settingsprovider.menuIsViewMap[32] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Print',
+                                          icon: const Icon(Icons.print,
+                                              size: 20, color: Colors.blue),
+                                          onPressed: () async {
+                                            await Loader.showLoader(context);
+                                            await customerDetailsProvider
+                                                .getQuotationMasterPdf(
+                                                    task.quotationMasterId
+                                                        .toString(),
+                                                    context);
+                                            Loader.stopLoader(context);
+                                          },
+                                        ),
+                                      // Specific Print Button
+                                      if (settingsprovider.menuIsViewMap[32] ==
+                                          1)
+                                        if (task.quotationTypeId == 2)
+                                          IconButton(
+                                            tooltip: 'Print Commercial',
+                                            icon: const Icon(
+                                                Icons.print_outlined,
+                                                size: 20,
+                                                color: Colors.blue),
+                                            onPressed: () async {
+                                              await Loader.showLoader(context);
+                                              await customerDetailsProvider
+                                                  .getQuatationListByMasterId(
+                                                      task.quotationMasterId
+                                                          .toString(),
+                                                      context);
+                                              await customerDetailsProvider
+                                                  .fetchLeadDetails(
+                                                      widget.customerId,
+                                                      context);
+                                              await settingsprovider
+                                                  .getCompanyDetails();
+                                              printCommercialPDFs(
+                                                  context: context,
+                                                  companyDetails:
+                                                      settingsprovider
+                                                          .companyDetails[0],
+                                                  customerDetails:
+                                                      customerDetailsProvider
+                                                          .leadDetails![0],
+                                                  quotationData:
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster[0]);
+                                              Loader.stopLoader(context);
+                                            },
+                                          ),
+                                      if (settingsprovider.menuIsViewMap[32] ==
+                                          1)
+                                        if (task.quotationTypeId == 1)
+                                          IconButton(
+                                            tooltip: 'Print Residential',
+                                            icon: const Icon(
+                                                Icons.print_outlined,
+                                                size: 20,
+                                                color: Colors.blue),
+                                            onPressed: () async {
+                                              await Loader.showLoader(context);
+                                              await customerDetailsProvider
+                                                  .getQuatationListByMasterId(
+                                                      task.quotationMasterId
+                                                          .toString(),
+                                                      context);
+                                              await customerDetailsProvider
+                                                  .fetchLeadDetails(
+                                                      widget.customerId,
+                                                      context);
+                                              await settingsprovider
+                                                  .getCompanyDetails();
+                                              printResidentialPDFs(
+                                                  context: context,
+                                                  companyDetails:
+                                                      settingsprovider
+                                                          .companyDetails[0],
+                                                  customerDetails:
+                                                      customerDetailsProvider
+                                                          .leadDetails![0],
+                                                  quotationData:
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster[0]);
+                                              Loader.stopLoader(context);
+                                            },
+                                          ),
+                                      if (settingsprovider.menuIsEditMap[16] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Edit',
+                                          icon: const Icon(Icons.edit,
+                                              size: 20, color: Colors.blue),
+                                          onPressed: () async {
+                                            await _handleEditQuotation(
+                                                task.quotationMasterId
+                                                    .toString(),
+                                                customerDetailsProvider);
+                                          },
+                                        ),
+                                      if (settingsprovider
+                                              .menuIsDeleteMap[16] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Delete',
+                                          icon: const Icon(Icons.delete,
+                                              size: 20, color: Colors.red),
+                                          onPressed: () {
+                                            showConfirmationDialog(
+                                              isLoading: customerDetailsProvider
+                                                  .isDeleteLoading,
+                                              context: context,
+                                              title: 'Confirm Deletion',
+                                              content:
+                                                  'Are you sure you want to delete this Quotation?',
+                                              onCancel: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              onConfirm: () {
+                                                customerDetailsProvider
+                                                    .deleteQuotation(
+                                                        task.quotationMasterId
+                                                            .toString(),
+                                                        widget.customerId,
+                                                        context);
+                                                Navigator.of(context).pop();
+                                              },
+                                              confirmButtonText: 'Delete',
+                                              confirmButtonColor: Colors.red,
+                                            );
+                                          },
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
+  }
+
+  Future<void> _handleEditQuotation(
+      String taskId, CustomerDetailsProvider customerDetailsProvider) async {
+    await customerDetailsProvider.getQuatationListByMasterId(taskId, context);
+    final quotation = customerDetailsProvider.quotationListByMaster.first;
+
+    // ---- BASIC DETAILS ----
+    customerDetailsProvider.customerId = widget.customerId;
+    customerDetailsProvider.qproductnameController.text = quotation.productName;
+    customerDetailsProvider.advanceController.text =
+        quotation.advancePercentage;
+    customerDetailsProvider.deliveryController.text =
+        quotation.onDeliveryPercentage;
+    customerDetailsProvider.workCompletionController.text =
+        quotation.workCompletionPercentage;
+    customerDetailsProvider.qsubsidyAmountController.text =
+        quotation.subsidyAmount;
+    customerDetailsProvider.qwarrentyController.text = quotation.warranty;
+    customerDetailsProvider.qtermsConditionsController.text =
+        quotation.termsAndConditions;
+
+    // ---- STATUS ----
+    customerDetailsProvider.selectedQuotationStatus =
+        quotation.quotationStatusId;
+    customerDetailsProvider.selectedQuotationStatusName =
+        quotation.quotationStatusName;
+
+    // ---- FEES ----
+    customerDetailsProvider.registrationFeeController.text =
+        quotation.ksebRegistrationFee.toString();
+    customerDetailsProvider.feasibilityFeeController.text =
+        quotation.ksebFeasibilityFee.toString();
+    customerDetailsProvider.systemPriceController.text =
+        quotation.ksebSystemPrice.toString();
+    customerDetailsProvider.additionalStructureController.text =
+        quotation.additionalStructure.toString();
+
+    // ---- TOTALS ----
+    customerDetailsProvider.subtotalController.text =
+        quotation.totalAmount.toString();
+    customerDetailsProvider.totalController.text =
+        quotation.netTotal.toString();
+
+    // ---- ITEMS ----
+    customerDetailsProvider.updateItemsFromQuotationDetailsNew(
+      quotation.quotationDetails,
+      quotation.billOfMaterials,
+      quotation.productionChart,
+    );
+
+    // ---- GST ----
+    final taxable = double.tryParse(quotation.taxableAmount) ?? 0;
+    final gst = double.tryParse(quotation.gstAmount) ?? 0;
+    final gstPer = double.tryParse(quotation.gstPer) ?? 0;
+
+    customerDetailsProvider.gstTaxableAmountController.text =
+        taxable.toStringAsFixed(2);
+    customerDetailsProvider.cgstTaxableAmountController.text =
+        (taxable / 2).toStringAsFixed(2);
+    customerDetailsProvider.sgstTaxableAmountController.text =
+        (taxable / 2).toStringAsFixed(2);
+
+    customerDetailsProvider.totalGstAmountController.text =
+        gst.toStringAsFixed(2);
+    customerDetailsProvider.totalCgstAmountController.text =
+        (gst / 2).toStringAsFixed(2);
+    customerDetailsProvider.totalSgstAmountController.text =
+        (gst / 2).toStringAsFixed(2);
+
+    customerDetailsProvider.totalGstPerController.text =
+        gstPer.toStringAsFixed(2);
+    customerDetailsProvider.totalCgstPerController.text =
+        (gstPer / 2).toStringAsFixed(2);
+    customerDetailsProvider.totalSgstPerController.text =
+        (gstPer / 2).toStringAsFixed(2);
+
+    // ---- QUOTATION TYPE ----
+    customerDetailsProvider.quotationTypeController.text =
+        quotation.quotationTypeName;
+    customerDetailsProvider.selectedQuotationType = quotation.quotationTypeId;
+
+    // ---- CABLE DETAILS ----
+    customerDetailsProvider.cableStructureController.text =
+        quotation.cableStructure;
+    customerDetailsProvider.cableTypeController.text = quotation.cableType;
+    customerDetailsProvider.cableShortCircuitTempController.text =
+        quotation.cableShortCircuitTemp;
+    customerDetailsProvider.cableStandardController.text =
+        quotation.cableStandard;
+    customerDetailsProvider.cableConductorClassController.text =
+        quotation.cableConductorClass;
+    customerDetailsProvider.cableMaterialController.text =
+        quotation.cableMaterial;
+    customerDetailsProvider.cableProtectionController.text =
+        quotation.cableProtection;
+    customerDetailsProvider.cableWarrantyController.text =
+        quotation.cableWarranty;
+    customerDetailsProvider.cableTensileStrengthController.text =
+        quotation.cableTensileStrength;
+
+    // ---- OTHER DETAILS ----
+    customerDetailsProvider.plantCapacityController.text =
+        quotation.plantCapacity;
+    customerDetailsProvider.moduleTechnologiesController.text =
+        quotation.moduleTechnologies;
+    customerDetailsProvider.mountingStructureTechnologiesController.text =
+        quotation.mountingStructureTechnologies;
+    customerDetailsProvider.projectSchemeController.text =
+        quotation.projectScheme;
+    customerDetailsProvider.powerEvacuationController.text =
+        quotation.powerEvacuation;
+    customerDetailsProvider.areaApproximateController.text =
+        quotation.areaApproximate;
+    customerDetailsProvider.solarPlantOutputConnectionController.text =
+        quotation.solarPlantOutputConnection;
+    customerDetailsProvider.schemeController.text = quotation.scheme;
+    customerDetailsProvider.qvalidityController.text = quotation.validity;
+    customerDetailsProvider.qtendorNumberController.text =
+        quotation.tendorNumber;
+    customerDetailsProvider.paymentTermsController.text =
+        quotation.paymentTermsName;
+    customerDetailsProvider.incoTermsController.text = quotation.incoTerms;
+    customerDetailsProvider.shippingChargesController.text =
+        quotation.shippingCharges;
+    customerDetailsProvider.totalAdCESSController.text = quotation.otherTax;
+    customerDetailsProvider.totalCgstAmountController.text =
+        quotation.totalCgstAmount;
+    customerDetailsProvider.totalSgstAmountController.text =
+        quotation.totalSgstAmount;
+
+    customerDetailsProvider.commercialItems = quotation.commercialItems;
+
+    customerDetailsProvider.scopeOfWorkItems = quotation.scopeOfWorkItems;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return QuotationCreationWidget(
+            quotationId: taskId, isEdit: true, customerId: widget.customerId);
+      },
+    );
   }
 
   Future<void> _openMaps(String location) async {
