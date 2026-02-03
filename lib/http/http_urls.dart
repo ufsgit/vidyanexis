@@ -244,4 +244,8 @@ class HttpUrls {
       "quotation_details/get_custom_field_for_quotation";
   static String loadQuotationFromCustomFields =
       "quotation_master/load_quotation_from_custom_fields";
+
+  static String getPaymentSchedule = "service/Get_Payment_Schedule_By_Customer";
+  static String savePaymentSchedule = "service/Save_Payment_Schedule";
+  static String deletePaymentSchedule = "service/Delete_Payment_Schedule";
 }

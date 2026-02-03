@@ -40,6 +40,7 @@ import 'package:vidyanexis/presentation/widgets/customer/service_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/service_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_cark_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_chips_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
@@ -163,6 +164,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
+      const Tab(text: "Payment Schedule"),
       // if (settingsprovider.menuIsViewMap[30] == 1)
       //   const Tab(text: "Task Documents"),
       if (settingsprovider.menuIsViewMap[37] == 1 &&
@@ -2170,6 +2172,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               if (sideprovider.name != 'Lead /')
                                                 ReceiptScreen(
                                                     widget.customerId),
+                                            PaymentScheduleTabWidget(
+                                                customerId: widget.customerId),
 
                                             //Task Documents
                                             // if (settingsprovider
