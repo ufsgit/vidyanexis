@@ -180,6 +180,22 @@ class QuotationCard extends StatelessWidget {
                 // ),
                 const Spacer(),
                 if (settingsprovider.menuIsViewMap[32] == 1) ...[
+                  // New Print Button
+                  CustomOutlinedSvgButton(
+                    onPressed: () async {
+                      await Loader.showLoader(context);
+                      await customerDetailsProvider.getQuotationMasterPdf(
+                          taskId, context);
+                      Loader.stopLoader(context);
+                    },
+                    svgPath: 'assets/images/Print.svg',
+                    label: 'Print',
+                    breakpoint: 860,
+                    foregroundColor: AppColors.primaryBlue,
+                    backgroundColor: Colors.white,
+                    borderSide: BorderSide(color: AppColors.primaryBlue),
+                  ),
+                  const SizedBox(width: 8),
                   if (quotation?.quotationTypeId == 2)
                     CustomOutlinedSvgButton(
                       onPressed: () async {
@@ -189,13 +205,27 @@ class QuotationCard extends StatelessWidget {
                         await customerDetailsProvider.fetchLeadDetails(
                             customerId, context);
                         await settingsprovider.getCompanyDetails();
-                        printCommercialPDFs(
-                            context: context, //     companyDetails:
-                            companyDetails: settingsprovider.companyDetails[0],
-                            customerDetails:
-                                customerDetailsProvider.leadDetails![0],
-                            quotationData: customerDetailsProvider
-                                .quotationListByMaster[0]);
+
+                        if (settingsprovider.companyDetails.isNotEmpty &&
+                            (customerDetailsProvider.leadDetails?.isNotEmpty ??
+                                false) &&
+                            customerDetailsProvider
+                                .quotationListByMaster.isNotEmpty) {
+                          printCommercialPDFs(
+                              context: context, //     companyDetails:
+                              companyDetails:
+                                  settingsprovider.companyDetails[0],
+                              customerDetails:
+                                  customerDetailsProvider.leadDetails![0],
+                              quotationData: customerDetailsProvider
+                                  .quotationListByMaster[0]);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Unable to load details for printing')),
+                          );
+                        }
                         Loader.stopLoader(context);
                       },
                       svgPath: 'assets/images/Print.svg',
@@ -214,13 +244,27 @@ class QuotationCard extends StatelessWidget {
                         await customerDetailsProvider.fetchLeadDetails(
                             customerId, context);
                         await settingsprovider.getCompanyDetails();
-                        printResidentialPDFs(
-                            context: context, //     companyDetails:
-                            companyDetails: settingsprovider.companyDetails[0],
-                            customerDetails:
-                                customerDetailsProvider.leadDetails![0],
-                            quotationData: customerDetailsProvider
-                                .quotationListByMaster[0]);
+
+                        if (settingsprovider.companyDetails.isNotEmpty &&
+                            (customerDetailsProvider.leadDetails?.isNotEmpty ??
+                                false) &&
+                            customerDetailsProvider
+                                .quotationListByMaster.isNotEmpty) {
+                          printResidentialPDFs(
+                              context: context, //     companyDetails:
+                              companyDetails:
+                                  settingsprovider.companyDetails[0],
+                              customerDetails:
+                                  customerDetailsProvider.leadDetails![0],
+                              quotationData: customerDetailsProvider
+                                  .quotationListByMaster[0]);
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                                content: Text(
+                                    'Unable to load details for printing')),
+                          );
+                        }
                         Loader.stopLoader(context);
                       },
                       svgPath: 'assets/images/Print.svg',

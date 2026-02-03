@@ -1,6 +1,10 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' as math;
+import 'package:url_launcher/url_launcher.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:flutter/foundation.dart';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -46,6 +50,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
+import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
 
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
@@ -111,6 +116,39 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<ql.GetQuotationbyMasterIdmodel> _quotationListByMaster = [];
   List<ql.GetQuotationbyMasterIdmodel> get quotationListByMaster =>
       _quotationListByMaster;
+
+  List<FollowUpHistoryModel> _followUpHistory = [];
+  List<FollowUpHistoryModel> get followUpHistory => _followUpHistory;
+  bool _isFollowUpHistoryLoading = false;
+  bool get isFollowUpHistoryLoading => _isFollowUpHistoryLoading;
+
+  Future<void> getFollowUpHistory(
+      String customerId, BuildContext context) async {
+    try {
+      _isFollowUpHistoryLoading = true;
+      notifyListeners();
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.followUpHistory}?Customer_Id=$customerId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _followUpHistory =
+              data.map((e) => FollowUpHistoryModel.fromJson(e)).toList();
+        } else {
+          _followUpHistory = [];
+        }
+      } else {
+        _followUpHistory = [];
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      _followUpHistory = [];
+    } finally {
+      _isFollowUpHistoryLoading = false;
+      notifyListeners();
+    }
+  }
 
 //task
   final TextEditingController taskChoosedateController =
@@ -3106,5 +3144,104 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // Notify listeners only once at the end
     notifyListeners();
+  }
+
+  Future<void> getQuotationMasterPdf(
+      String masterId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.getQuotationMasterPdf}?quotation_master_id=$masterId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        print("getQuotationMasterPdf response received");
+
+        // Check if data is raw PDF content
+        List<int>? bytes;
+        bool isPdfData = false;
+
+        if (data is List<int>) {
+          bytes = data;
+          isPdfData = true;
+        } else if (data is String) {
+          // Check for PDF signature or assume binary if not JSON structure
+          if (data.contains('%PDF') ||
+              (data.length > 100 && !data.trim().startsWith('{'))) {
+            bytes = data.codeUnits;
+            isPdfData = true;
+          }
+        }
+
+        if (isPdfData && bytes != null) {
+          if (kIsWeb) {
+            final blob =
+                html.Blob([Uint8List.fromList(bytes)], 'application/pdf');
+            final url = html.Url.createObjectUrlFromBlob(blob);
+            final anchor = html.AnchorElement(href: url)
+              ..setAttribute("download", "Quotation_$masterId.pdf")
+              ..click();
+            html.Url.revokeObjectUrl(url);
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Downloading PDF...')));
+            }
+          } else {
+            // For mobile/desktop, logging for now or handle accordingly
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text(
+                      'PDF data received (Download supported on Web only currently)')));
+            }
+          }
+          return;
+        }
+
+        // Handle URL response
+        if (data != null) {
+          String? url;
+          if (data is String && data.startsWith('http')) {
+            url = data;
+          } else if (data is Map && data.containsKey('url')) {
+            url = data['url'];
+          } else if (data is Map &&
+              data['data'] is String &&
+              data['data'].startsWith('http')) {
+            url = data['data'];
+          }
+
+          if (url != null) {
+            final uri = Uri.parse(url);
+            if (await canLaunchUrl(uri)) {
+              await launchUrl(uri);
+            } else {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Could not launch PDF URL')));
+              }
+            }
+          } else {
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                  content: Text(
+                      'PDF generated successfully but no download URL found')));
+            }
+          }
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
+    }
   }
 }

@@ -19,6 +19,7 @@ class AmcReportModeld {
   String customerName;
   final String mobile;
   final String address1;
+  final String intervalDate;
   final String periodIntervalName;
   final int periodIntervalId;
   final int periodIntervalNo;
@@ -46,6 +47,7 @@ class AmcReportModeld {
     required this.customerName,
     required this.mobile,
     required this.address1,
+    required this.intervalDate,
     required this.periodIntervalId,
     required this.periodIntervalNo,
     required this.periodIntervalName,
@@ -57,31 +59,34 @@ class AmcReportModeld {
 
   factory AmcReportModeld.fromJson(Map<String, dynamic> json) =>
       AmcReportModeld(
-        amcId: json["AMC_Id"] ?? 0,
-        amcNo: json["AMC_No"] ?? '',
-        date: json["Date"] != null ? DateTime.tryParse(json["Date"]) : null,
-        amcStatusId: json["AMC_Status_Id"] ?? 0,
-        amcStatusName: json["AMC_Status_Name"] ?? '',
-        productName: json["Product_Name"] ?? '',
-        serviceName: json["Service_Name"] ?? '',
-        description: json["Description"] ?? '',
-        amount: json["Amount"] ?? '',
-        createdBy: json["Created_By"] ?? 0,
-        customerId: json["Customer_Id"] ?? 0,
+        amcId: int.tryParse(json["AMC_Id"].toString()) ?? 0,
+        amcNo: json["AMC_No"]?.toString() ?? '',
+        date: json["Date"] != null
+            ? DateTime.tryParse(json["Date"].toString())
+            : null,
+        amcStatusId: int.tryParse(json["AMC_Status_Id"].toString()) ?? 0,
+        amcStatusName: json["Completed_Status"]?.toString() ?? '',
+        productName: json["Product_Name"]?.toString() ?? '',
+        serviceName: json["Service_Name"]?.toString() ?? '',
+        description: json["Description"]?.toString() ?? '',
+        amount: json["Amount"]?.toString() ?? '',
+        createdBy: int.tryParse(json["Created_By"].toString()) ?? 0,
+        customerId: int.tryParse(json["Customer_Id"].toString()) ?? 0,
         fromDate: json["From_Date"]?.toString() ?? '',
         toDate: json["To_Date"]?.toString() ?? '',
-        deleteStatus: json["DeleteStatus"] ?? 0,
-        createdByName: json["Created_By_Name"] ?? '',
-        customerName: json["Customer_Name"] ?? '',
-        mobile: json['Contact_Number'] ?? '',
-        address1: json['address'] ?? '',
-        periodIntervalId: json['Interval_Id'] ?? 0,
-        periodIntervalNo: json['Intervals_No'] ?? 0,
-        periodIntervalName: json['Interval_Name'] ?? '',
-        totalDurationId: json['Duration_Id'] ?? 0,
-        totalDurationNo: json['Duration_No'] ?? 0,
-        totalDurationName: json['Duration_Name'] ?? '',
-        maintenanceDate: json['interval_details'] != null
+        deleteStatus: int.tryParse(json["DeleteStatus"].toString()) ?? 0,
+        createdByName: json["Created_By_Name"]?.toString() ?? '',
+        customerName: json["Customer_Name"]?.toString() ?? '',
+        mobile: json['Contact_Number']?.toString() ?? '',
+        address1: json['address']?.toString() ?? '',
+        intervalDate: json['Interval_Date']?.toString() ?? '',
+        periodIntervalId: int.tryParse(json['Interval_Id'].toString()) ?? 0,
+        periodIntervalNo: int.tryParse(json['Intervals_No'].toString()) ?? 0,
+        periodIntervalName: json['Interval_Name']?.toString() ?? '',
+        totalDurationId: int.tryParse(json['Duration_Id'].toString()) ?? 0,
+        totalDurationNo: int.tryParse(json['Duration_No'].toString()) ?? 0,
+        totalDurationName: json['Duration_Name']?.toString() ?? '',
+        maintenanceDate: (json['interval_details'] is List)
             ? (json['interval_details'] as List)
                 .map((item) => MaintenanceDate.fromJson(item))
                 .toList()
@@ -107,5 +112,14 @@ class AmcReportModeld {
         "Customer_Name": customerName,
         'Contact_Number': mobile,
         'Address1': address1,
+        "Interval_Date": intervalDate,
       };
+  String get displayStatus {
+    if (amcStatusName == '1') {
+      return 'Completed';
+    } else if (amcStatusName == '0') {
+      return 'Pending';
+    }
+    return amcStatusName;
+  }
 }

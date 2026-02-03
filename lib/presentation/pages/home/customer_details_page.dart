@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
@@ -30,7 +31,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_service.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
-import 'package:vidyanexis/presentation/widgets/customer/amc_card_widget.dart';
+
 import 'package:vidyanexis/presentation/widgets/customer/amc_creation_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/amc_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_card.dart';
@@ -40,6 +41,7 @@ import 'package:vidyanexis/presentation/widgets/customer/service_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/service_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_cark_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_chips_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/follow_up_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
@@ -50,6 +52,9 @@ import 'package:vidyanexis/presentation/widgets/home/customer_profie_widget.dart
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/utils/file_share_function.dart';
+import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
   static const String route = '/customerDetails/';
@@ -88,6 +93,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       customerDetailsProvider.getDocument(widget.customerId, context);
       customerDetailsProvider.getTaskDocument(widget.customerId, context);
       customerDetailsProvider.getRecieptListApi(widget.customerId, context);
+      customerDetailsProvider.getFollowUpHistory(widget.customerId, context);
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       dropDownProvider.getUserDetails(context);
@@ -160,6 +166,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "Periodic Service"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
+      const Tab(text: "History"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
@@ -346,26 +353,18 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             //   width: 10,
                             // ),
                             AppStyles.isWebScreen(context)
-                                ? Wrap(
-                                    children: [
-                                      Text(
-                                        sideprovider.name,
-                                        style: const TextStyle(
-                                            fontSize: 24,
-                                            color: Color(0xFF5499D9),
-                                            fontWeight: FontWeight.w700),
-                                      ),
-                                      const SizedBox(
-                                        width: 10,
-                                      ),
-                                      const Text(
-                                        'Customer details',
-                                        style: TextStyle(
-                                            fontSize: 24,
-                                            color: Color(0xFF152D70),
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                    ],
+                                ? Text(
+                                    customerDetailsProvider.leadDetails !=
+                                                null &&
+                                            customerDetailsProvider
+                                                .leadDetails!.isNotEmpty
+                                        ? customerDetailsProvider
+                                            .leadDetails![0].customerName
+                                        : '',
+                                    style: const TextStyle(
+                                        fontSize: 24,
+                                        color: Color(0xFF152D70),
+                                        fontWeight: FontWeight.w600),
                                   )
                                 : Text(
                                     customerDetailsProvider.leadDetails !=
@@ -1127,9 +1126,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         dividerColor: Colors.white,
                                         labelStyle: const TextStyle(
                                           fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                         ),
                                         unselectedLabelStyle: const TextStyle(
                                           fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                         ),
                                         tabs: tabs,
                                       ),
@@ -1668,7 +1669,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 customerName,
                                                                 amcId,
                                                                 fromDate,
-                                                                toDate) {
+                                                                toDate,
+                                                                amc) {
                                                               leadProvider
                                                                   .setCutomerId(
                                                                       int.parse(
@@ -1707,6 +1709,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               fromDateController: fromDate,
                                                                               toDateController: toDate,
                                                                               customerId: widget.customerId,
+                                                                              amc: amc,
                                                                               isEdit: true);
                                                                         },
                                                                       );
@@ -1906,6 +1909,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         )
                                                       ],
                                                     ),
+
+                                            // Follow-Up Details Tab
+                                            const FollowUpTabWidget(),
 
                                             //Images Tab
                                             if (settingsprovider
@@ -2417,6 +2423,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold, // Make text bold
+          fontSize: 14,
           color: selectedServiceStatusId == serviceStatusId
               ? AppColors.primaryBlue
               : const Color(0xFF607085),
@@ -2506,6 +2513,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold, // Make text bold
+          fontSize: 14,
           color: selectedAmcStatusId == taskTypeId
               ? AppColors.primaryBlue
               : const Color(0xFF607085),
@@ -2545,6 +2553,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         String amcId,
         String fromDate,
         String toDate,
+        AmcReportModeld amc,
       )? onTap}) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
@@ -2553,74 +2562,181 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         : customerDetailsProvider.amcList
             .where((task) => task.amcStatusId == amcId)
             .toList();
-    return Expanded(
-      child: ListView.builder(
-        itemCount: filteredAmcList.length,
-        itemBuilder: (context, taskIndex) {
-          var amc = filteredAmcList[taskIndex];
-          return GestureDetector(
-            onTap: () {
-              if (onTap != null) {
-                onTap(
-                    amc.amcId,
-                    amc.productName,
-                    amc.serviceName,
-                    amc.date.toString(),
-                    amc.amount,
-                    amc.description,
-                    amc.amcStatusName,
-                    amc.customerName,
-                    amc.amcId.toString(),
-                    DateFormat('dd-MM-yyyy')
-                        .format(DateTime.parse(amc.fromDate.toString())),
-                    DateFormat('dd-MM-yyyy')
-                        .format(DateTime.parse(amc.toDate.toString())));
-              }
-            },
-            child: AmcCardWidget(
-              onPressed: () {
-                customerDetailsProvider.customerId = widget.customerId;
-                customerDetailsProvider.setAmcDropDown(
-                    amc.amcStatusId, amc.amcStatusName);
 
-                showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (BuildContext context) {
-                    return AmcCreationWidget(
-                        amcId: amc.amcId.toString(),
-                        amcAmountController: amc.amount,
-                        amcDescriptionController: amc.description,
-                        amcProductNameController: amc.productName,
-                        amcServiceController: amc.serviceName,
-                        fromDateController: DateFormat('dd-MM-yyyy')
-                            .format(DateTime.parse(amc.fromDate.toString())),
-                        toDateController: DateFormat('dd-MM-yyyy')
-                            .format(DateTime.parse(amc.toDate.toString())),
-                        customerId: widget.customerId,
-                        isEdit: true);
-                  },
-                );
-              },
-              amcId: amc.amcId.toString(),
-              customerId: widget.customerId,
-              category: "4",
-              title: amc.serviceName,
-              productName: amc.productName,
-              servicename: amc.serviceName,
-              productNo: amc.amcNo,
-              date: DateFormat('MMM d, yyyy')
-                  .format(DateTime.parse(amc.date.toString())),
-              status: amc.amcStatusName,
-              posted: DateFormat('MMM d, yyyy')
-                  .format(DateTime.parse(amc.fromDate.toString())),
-              description: amc.description,
-              price: "₹${double.parse(amc.amount)}",
+    const borderColor = Color(0xFFE9EDF1);
+
+    return filteredAmcList.isEmpty
+        ? const Center(child: Text('No Periodic Service found.'))
+        : Expanded(
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: borderColor),
+                  left: BorderSide(color: borderColor),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildHeaderCell('#', flex: 1),
+                        _buildHeaderCell('Service Name', flex: 3),
+                        _buildHeaderCell('Product Name', flex: 3),
+                        _buildHeaderCell('Amount', flex: 2),
+                        _buildHeaderCell('From Date', flex: 2),
+                        _buildHeaderCell('To Date', flex: 2),
+                        _buildHeaderCell('Options', flex: 1),
+                      ],
+                    ),
+                  ),
+                  // List
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredAmcList.length,
+                      itemBuilder: (context, index) {
+                        var amc = filteredAmcList[index];
+                        return GestureDetector(
+                          onTap: () {
+                            if (onTap != null) {
+                              onTap(
+                                  amc.amcId,
+                                  amc.productName,
+                                  amc.serviceName,
+                                  amc.date.toString(),
+                                  amc.amount,
+                                  amc.description,
+                                  amc.amcStatusName,
+                                  amc.customerName,
+                                  amc.amcId.toString(),
+                                  DateFormat('dd-MM-yyyy').format(
+                                      DateTime.parse(amc.fromDate.toString())),
+                                  DateFormat('dd-MM-yyyy').format(
+                                      DateTime.parse(amc.toDate.toString())),
+                                  amc);
+                            }
+                          },
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildDataCell((index + 1).toString(), flex: 1),
+                                _buildDataCell(amc.serviceName,
+                                    flex: 3, isBold: true),
+                                _buildDataCell(amc.productName, flex: 3),
+                                _buildDataCell("₹${double.parse(amc.amount)}",
+                                    flex: 2),
+                                _buildDataCell(
+                                    DateFormat('dd MMM yyyy')
+                                        .format(DateTime.parse(amc.fromDate)),
+                                    flex: 2),
+                                _buildDataCell(
+                                    DateFormat('dd MMM yyyy')
+                                        .format(DateTime.parse(amc.toDate)),
+                                    flex: 2),
+                                _buildWidgetCell(
+                                  flex: 1,
+                                  child: PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert,
+                                        size: 20, color: Colors.grey),
+                                    onSelected: (value) {
+                                      if (value == 'edit') {
+                                        customerDetailsProvider.customerId =
+                                            widget.customerId;
+                                        customerDetailsProvider.setAmcDropDown(
+                                            amc.amcStatusId, amc.amcStatusName);
+
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AmcCreationWidget(
+                                                amcId: amc.amcId.toString(),
+                                                amcAmountController: amc.amount,
+                                                amcDescriptionController:
+                                                    amc.description,
+                                                amcProductNameController:
+                                                    amc.productName,
+                                                amcServiceController:
+                                                    amc.serviceName,
+                                                fromDateController:
+                                                    DateFormat('dd-MM-yyyy')
+                                                        .format(DateTime.parse(
+                                                            amc.fromDate
+                                                                .toString())),
+                                                toDateController: DateFormat(
+                                                        'dd-MM-yyyy')
+                                                    .format(DateTime.parse(
+                                                        amc.toDate.toString())),
+                                                customerId: widget.customerId,
+                                                amc: amc,
+                                                isEdit: true);
+                                          },
+                                        );
+                                      } else if (value == 'delete') {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return ConfirmationDialog(
+                                              title: 'Delete Periodic Service',
+                                              content:
+                                                  'Are you sure you want to delete this service?',
+                                              onCancel: () =>
+                                                  Navigator.of(context).pop(),
+                                              onConfirm: () {
+                                                Navigator.of(context).pop();
+                                                customerDetailsProvider
+                                                    .deleteAMC(
+                                                        amc.amcId.toString(),
+                                                        widget.customerId,
+                                                        context);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'edit',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.edit,
+                                                size: 18, color: Colors.blue),
+                                            SizedBox(width: 8),
+                                            Text('Edit'),
+                                          ],
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.delete,
+                                                size: 18, color: Colors.red),
+                                            SizedBox(width: 8),
+                                            Text('Delete'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
-        },
-      ),
-    );
   }
 
 //task
@@ -2630,6 +2746,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         label,
         style: TextStyle(
           fontWeight: FontWeight.normal, // Make text bold
+          fontSize: 14,
           color: selectedTaskTypeId == taskTypeId
               ? AppColors.primaryBlue
               : const Color(0xFF607085),
@@ -2686,11 +2803,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildHeaderCell('#', flex: 1),
-                        _buildHeaderCell('TITLE', flex: 3),
+                        _buildHeaderCell('Service Type', flex: 3),
                         _buildHeaderCell('ACTION REQUIRED', flex: 3),
                         _buildHeaderCell('SCHEDULE', flex: 2),
                         _buildHeaderCell('CREATED DATE', flex: 2),
                         _buildHeaderCell('STATUS', flex: 2),
+                        _buildHeaderCell('Options', flex: 1),
                       ],
                     ),
                   ),
@@ -2728,34 +2846,74 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
                                 _buildDataCell((index + 1).toString(), flex: 1),
-                                _buildDataCell(task.description,
+                                _buildDataCell(task.taskTypeName,
                                     flex: 3, isBold: true),
                                 _buildWidgetCell(
                                   flex: 3,
-                                  child: Row(
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 12,
-                                        backgroundColor: getAvatarColor(
-                                            task.toUsername.isNotEmpty
-                                                ? task.toUsername
-                                                : 'A'),
-                                        child: Text(
-                                          (task.toUsername.isNotEmpty
-                                                  ? task.toUsername
-                                                  : 'A')[0]
-                                              .toUpperCase(),
-                                          style: const TextStyle(
-                                              fontSize: 10,
-                                              color: Colors.white),
+                                  child: Builder(builder: (context) {
+                                    String assignedTo = task.toUsername;
+
+                                    if (assignedTo.isEmpty ||
+                                        assignedTo == 'null') {
+                                      // First try to look up by ID from DropDownProvider
+                                      final dropDownProvider =
+                                          Provider.of<DropDownProvider>(context,
+                                              listen: false);
+                                      if (task.toUserId > 0 &&
+                                          dropDownProvider
+                                              .searchUserDetails.isNotEmpty) {
+                                        final user = dropDownProvider
+                                            .searchUserDetails
+                                            .firstWhere(
+                                          (u) =>
+                                              u.userDetailsId ==
+                                              task.toUserId, // Assuming userDetailsId is int
+                                          orElse: () => dropDownProvider
+                                              .searchUserDetails.first,
+                                        );
+                                        // check if we actually found a match or just the first one (dummy)
+                                        if (user.userDetailsId ==
+                                            task.toUserId) {
+                                          assignedTo =
+                                              user.userDetailsName ?? '';
+                                        }
+                                      }
+
+                                      // If still empty, check taskUser list
+                                      if ((assignedTo.isEmpty ||
+                                              assignedTo == 'null') &&
+                                          task.taskUser.isNotEmpty) {
+                                        assignedTo = task.taskUser
+                                            .map((e) => e.toUsername)
+                                            .join(', ');
+                                      }
+                                    }
+                                    return Row(
+                                      children: [
+                                        CircleAvatar(
+                                          radius: 12,
+                                          backgroundColor: getAvatarColor(
+                                              assignedTo.isNotEmpty
+                                                  ? assignedTo
+                                                  : 'A'),
+                                          child: Text(
+                                            (assignedTo.isNotEmpty
+                                                    ? assignedTo
+                                                    : 'A')[0]
+                                                .toUpperCase(),
+                                            style: const TextStyle(
+                                                fontSize: 10,
+                                                color: Colors.white),
+                                          ),
                                         ),
-                                      ),
-                                      const SizedBox(width: 8),
-                                      Expanded(
-                                          child: Text(task.toUsername,
-                                              overflow: TextOverflow.ellipsis)),
-                                    ],
-                                  ),
+                                        const SizedBox(width: 8),
+                                        Expanded(
+                                            child: Text(assignedTo,
+                                                overflow:
+                                                    TextOverflow.ellipsis)),
+                                      ],
+                                    );
+                                  }),
                                 ),
                                 _buildDataCell(
                                     task.taskDate.toString() != 'null'
@@ -2793,6 +2951,93 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     ),
                                   ),
                                 ),
+                                _buildWidgetCell(
+                                  flex: 1,
+                                  child: PopupMenuButton<String>(
+                                    icon: const Icon(Icons.more_vert,
+                                        size: 20, color: Colors.grey),
+                                    onSelected: (value) {
+                                      if (value == 'edit') {
+                                        if (onTap != null) {
+                                          onTap(task.taskMasterId);
+                                          customerDetailsProvider
+                                              .setTaskEditDropDown(
+                                                  task.taskTypeId,
+                                                  task.taskTypeName,
+                                                  task.toUserId,
+                                                  task.toUsername,
+                                                  task.taskStatusId,
+                                                  task.taskStatusName);
+                                          customerDetailsProvider
+                                                  .taskDescriptionController
+                                                  .text =
+                                              task.description.toString();
+                                          customerDetailsProvider
+                                              .taskChoosedateController
+                                              .text = task.taskDate
+                                                          .toString() !=
+                                                      'null' &&
+                                                  task.taskDate
+                                                      .toString()
+                                                      .isNotEmpty
+                                              ? DateFormat('dd MMM yyyy')
+                                                  .format(DateTime.parse(
+                                                      task.taskDate.toString()))
+                                              : '';
+                                          customerDetailsProvider
+                                              .taskChoosetimeController
+                                              .text = task.taskTime.toString();
+                                        }
+                                      } else if (value == 'delete') {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return ConfirmationDialog(
+                                              title: 'Delete Task',
+                                              content:
+                                                  'Are you sure you want to delete this task?',
+                                              onCancel: () =>
+                                                  Navigator.of(context).pop(),
+                                              onConfirm: () {
+                                                Navigator.of(context).pop();
+                                                customerDetailsProvider
+                                                    .deleteTask(
+                                                        task.taskId.toString(),
+                                                        widget.customerId,
+                                                        context);
+                                              },
+                                            );
+                                          },
+                                        );
+                                      }
+                                    },
+                                    itemBuilder: (BuildContext context) =>
+                                        <PopupMenuEntry<String>>[
+                                      const PopupMenuItem<String>(
+                                        value: 'edit',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.edit,
+                                                size: 18, color: Colors.blue),
+                                            SizedBox(width: 8),
+                                            Text('Edit'),
+                                          ],
+                                        ),
+                                      ),
+                                      const PopupMenuItem<String>(
+                                        value: 'delete',
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.delete,
+                                                size: 18, color: Colors.red),
+                                            SizedBox(width: 8),
+                                            Text('Delete'),
+                                          ],
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -2811,7 +3056,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     return Expanded(
       flex: flex,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(
@@ -2826,7 +3071,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                 style: const TextStyle(
                   color: Color(0xFF7D8B9B),
                   fontWeight: FontWeight.bold,
-                  fontSize: 11,
+                  fontSize: 15,
                 ),
               ),
       ),
@@ -2838,7 +3083,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     return Expanded(
       flex: flex,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(
@@ -2852,7 +3097,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             text,
             style: TextStyle(
               fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
-              fontSize: 13,
+              fontSize: 12,
               color: AppColors.textBlack,
             ),
             overflow: TextOverflow.ellipsis,
@@ -2867,7 +3112,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     return Expanded(
       flex: flex,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(
@@ -2887,6 +3132,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         label,
         style: TextStyle(
           fontWeight: FontWeight.bold, // Make text bold
+          fontSize: 14,
           color: selectedQuotationStatusId == serviceStatusId
               ? AppColors.primaryBlue
               : const Color(0xFF607085),
@@ -2917,67 +3163,366 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       {int? quatationId, void Function(int)? onTap}) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
-    var filteredService = quatationId == null
+    final settingsprovider = Provider.of<SettingsProvider>(context);
+
+    var filteredQuotations = quatationId == null
         ? customerDetailsProvider.quotationList
         : customerDetailsProvider.quotationList
             .where((task) => task.quotationStatusId == quatationId)
             .toList();
 
-    return filteredService.isEmpty
+    const borderColor = Color(0xFFE9EDF1);
+
+    return filteredQuotations.isEmpty
         ? const Center(child: Text("No Quotations available."))
         : Expanded(
-            child: ListView.builder(
-              itemCount: filteredService.length,
-              itemBuilder: (context, taskIndex) {
-                var task = filteredService[taskIndex];
-                return GestureDetector(
-                  onTap: () {
-                    if (onTap != null) {
-                      onTap(task.quotationMasterId);
-                      // customerDetailsProvider.setServiceEditDropDown(
-                      //     task.serviceTypeId,
-                      //     task.serviceTypeName,
-                      //     task.serviceStatusId,
-                      //     task.serviceStatusName);
-                      // customerDetailsProvider.taskDescriptionController.text =
-                      //     task.description.toString();
-                      // customerDetailsProvider.serviceController.text =
-                      //     task.serviceName.toString();
+            child: Container(
+              margin: const EdgeInsets.only(top: 10),
+              decoration: const BoxDecoration(
+                border: Border(
+                  top: BorderSide(color: borderColor),
+                  left: BorderSide(color: borderColor),
+                ),
+              ),
+              child: Column(
+                children: [
+                  // Header
+                  IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _buildHeaderCell('#', flex: 1),
+                        _buildHeaderCell('Product Name', flex: 3),
+                        _buildHeaderCell('Total Amount', flex: 2),
+                        _buildHeaderCell('Options', flex: 2),
+                      ],
+                    ),
+                  ),
+                  // List
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: filteredQuotations.length,
+                      itemBuilder: (context, index) {
+                        var task = filteredQuotations[index];
 
-                      // customerDetailsProvider.qproductnameController.text =
-                      //     task.productName.toString();
-                      // customerDetailsProvider.qsubsidyAmountController.text =
-                      //     task.subsidyAmount.toString();
-                      // customerDetailsProvider.qwarrentyController.text =
-                      //     task.warranty.toString();
-                      // customerDetailsProvider.qtermsConditionsController.text =
-                      //     task.termsAndConditions.toString();
-                    }
-                  },
-                  child: QuotationCard(
-                      productionChartModel: task.productionChartModel ?? [],
-                      category: "0",
-                      advancePercentage: task.advancePercentage,
-                      completionPercentage: task.workCompletionPercentage,
-                      deliveryPercentage: task.onDeliveryPercentage,
-                      taskId: task.quotationMasterId.toString(),
-                      title: task.productName.toString(),
-                      servicename: task.totalAmount.toString(),
-                      statusId: task.quotationStatusId.toString(),
-                      createdBy: task.createdByName.toString(),
-                      status: task.quotationStatusName.toString(),
-                      posted: task.orderDate.toString(),
-                      customerId: widget.customerId.toString(),
-                      warranty: task.warranty,
-                      terms: task.termsAndConditions,
-                      subsidy: task.subsidyAmount,
-                      quotation_details: task.quotationDetails ?? [],
-                      bill_of_materials: task.billOfMaterials ?? [],
-                      quotation: task),
-                );
-              },
+                        // Status Color Logic
+                        Color statusColor = task.quotationStatusId == 1
+                            ? Colors.orange
+                            : task.quotationStatusId == 2
+                                ? Colors.green
+                                : Colors.red;
+
+                        return GestureDetector(
+                          onTap: () {
+                            if (onTap != null) {
+                              onTap(task.quotationMasterId);
+                            }
+                          },
+                          child: IntrinsicHeight(
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.stretch,
+                              children: [
+                                _buildDataCell((index + 1).toString(), flex: 1),
+                                _buildDataCell(task.productName,
+                                    flex: 3, isBold: true),
+                                _buildDataCell('₹ ${task.netTotal}', flex: 2),
+                                _buildWidgetCell(
+                                  flex: 2,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      // Generic Print Button
+                                      if (settingsprovider.menuIsViewMap[32] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Print',
+                                          icon: const Icon(Icons.print,
+                                              size: 20, color: Colors.blue),
+                                          onPressed: () async {
+                                            await Loader.showLoader(context);
+                                            await customerDetailsProvider
+                                                .getQuotationMasterPdf(
+                                                    task.quotationMasterId
+                                                        .toString(),
+                                                    context);
+                                            Loader.stopLoader(context);
+                                          },
+                                        ),
+                                      // Specific Print Button
+                                      if (settingsprovider.menuIsViewMap[32] ==
+                                          1)
+                                        if (task.quotationTypeId == 2)
+                                          IconButton(
+                                            tooltip: 'Print Commercial',
+                                            icon: const Icon(
+                                                Icons.print_outlined,
+                                                size: 20,
+                                                color: Colors.blue),
+                                            onPressed: () async {
+                                              await Loader.showLoader(context);
+                                              await customerDetailsProvider
+                                                  .getQuatationListByMasterId(
+                                                      task.quotationMasterId
+                                                          .toString(),
+                                                      context);
+                                              await customerDetailsProvider
+                                                  .fetchLeadDetails(
+                                                      widget.customerId,
+                                                      context);
+                                              await settingsprovider
+                                                  .getCompanyDetails();
+                                              printCommercialPDFs(
+                                                  context: context,
+                                                  companyDetails:
+                                                      settingsprovider
+                                                          .companyDetails[0],
+                                                  customerDetails:
+                                                      customerDetailsProvider
+                                                          .leadDetails![0],
+                                                  quotationData:
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster[0]);
+                                              Loader.stopLoader(context);
+                                            },
+                                          ),
+                                      if (settingsprovider.menuIsViewMap[32] ==
+                                          1)
+                                        if (task.quotationTypeId == 1)
+                                          IconButton(
+                                            tooltip: 'Print Residential',
+                                            icon: const Icon(
+                                                Icons.print_outlined,
+                                                size: 20,
+                                                color: Colors.blue),
+                                            onPressed: () async {
+                                              await Loader.showLoader(context);
+                                              await customerDetailsProvider
+                                                  .getQuatationListByMasterId(
+                                                      task.quotationMasterId
+                                                          .toString(),
+                                                      context);
+                                              await customerDetailsProvider
+                                                  .fetchLeadDetails(
+                                                      widget.customerId,
+                                                      context);
+                                              await settingsprovider
+                                                  .getCompanyDetails();
+                                              printResidentialPDFs(
+                                                  context: context,
+                                                  companyDetails:
+                                                      settingsprovider
+                                                          .companyDetails[0],
+                                                  customerDetails:
+                                                      customerDetailsProvider
+                                                          .leadDetails![0],
+                                                  quotationData:
+                                                      customerDetailsProvider
+                                                          .quotationListByMaster[0]);
+                                              Loader.stopLoader(context);
+                                            },
+                                          ),
+                                      if (settingsprovider.menuIsEditMap[16] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Edit',
+                                          icon: const Icon(Icons.edit,
+                                              size: 20, color: Colors.blue),
+                                          onPressed: () async {
+                                            await _handleEditQuotation(
+                                                task.quotationMasterId
+                                                    .toString(),
+                                                customerDetailsProvider);
+                                          },
+                                        ),
+                                      if (settingsprovider
+                                              .menuIsDeleteMap[16] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Delete',
+                                          icon: const Icon(Icons.delete,
+                                              size: 20, color: Colors.red),
+                                          onPressed: () {
+                                            showConfirmationDialog(
+                                              isLoading: customerDetailsProvider
+                                                  .isDeleteLoading,
+                                              context: context,
+                                              title: 'Confirm Deletion',
+                                              content:
+                                                  'Are you sure you want to delete this Quotation?',
+                                              onCancel: () {
+                                                Navigator.of(context).pop();
+                                              },
+                                              onConfirm: () {
+                                                customerDetailsProvider
+                                                    .deleteQuotation(
+                                                        task.quotationMasterId
+                                                            .toString(),
+                                                        widget.customerId,
+                                                        context);
+                                                Navigator.of(context).pop();
+                                              },
+                                              confirmButtonText: 'Delete',
+                                              confirmButtonColor: Colors.red,
+                                            );
+                                          },
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
+  }
+
+  Future<void> _handleEditQuotation(
+      String taskId, CustomerDetailsProvider customerDetailsProvider) async {
+    await customerDetailsProvider.getQuatationListByMasterId(taskId, context);
+    final quotation = customerDetailsProvider.quotationListByMaster.first;
+
+    // ---- BASIC DETAILS ----
+    customerDetailsProvider.customerId = widget.customerId;
+    customerDetailsProvider.qproductnameController.text = quotation.productName;
+    customerDetailsProvider.advanceController.text =
+        quotation.advancePercentage;
+    customerDetailsProvider.deliveryController.text =
+        quotation.onDeliveryPercentage;
+    customerDetailsProvider.workCompletionController.text =
+        quotation.workCompletionPercentage;
+    customerDetailsProvider.qsubsidyAmountController.text =
+        quotation.subsidyAmount;
+    customerDetailsProvider.qwarrentyController.text = quotation.warranty;
+    customerDetailsProvider.qtermsConditionsController.text =
+        quotation.termsAndConditions;
+
+    // ---- STATUS ----
+    customerDetailsProvider.selectedQuotationStatus =
+        quotation.quotationStatusId;
+    customerDetailsProvider.selectedQuotationStatusName =
+        quotation.quotationStatusName;
+
+    // ---- FEES ----
+    customerDetailsProvider.registrationFeeController.text =
+        quotation.ksebRegistrationFee.toString();
+    customerDetailsProvider.feasibilityFeeController.text =
+        quotation.ksebFeasibilityFee.toString();
+    customerDetailsProvider.systemPriceController.text =
+        quotation.ksebSystemPrice.toString();
+    customerDetailsProvider.additionalStructureController.text =
+        quotation.additionalStructure.toString();
+
+    // ---- TOTALS ----
+    customerDetailsProvider.subtotalController.text =
+        quotation.totalAmount.toString();
+    customerDetailsProvider.totalController.text =
+        quotation.netTotal.toString();
+
+    // ---- ITEMS ----
+    customerDetailsProvider.updateItemsFromQuotationDetailsNew(
+      quotation.quotationDetails,
+      quotation.billOfMaterials,
+      quotation.productionChart,
+    );
+
+    // ---- GST ----
+    final taxable = double.tryParse(quotation.taxableAmount) ?? 0;
+    final gst = double.tryParse(quotation.gstAmount) ?? 0;
+    final gstPer = double.tryParse(quotation.gstPer) ?? 0;
+
+    customerDetailsProvider.gstTaxableAmountController.text =
+        taxable.toStringAsFixed(2);
+    customerDetailsProvider.cgstTaxableAmountController.text =
+        (taxable / 2).toStringAsFixed(2);
+    customerDetailsProvider.sgstTaxableAmountController.text =
+        (taxable / 2).toStringAsFixed(2);
+
+    customerDetailsProvider.totalGstAmountController.text =
+        gst.toStringAsFixed(2);
+    customerDetailsProvider.totalCgstAmountController.text =
+        (gst / 2).toStringAsFixed(2);
+    customerDetailsProvider.totalSgstAmountController.text =
+        (gst / 2).toStringAsFixed(2);
+
+    customerDetailsProvider.totalGstPerController.text =
+        gstPer.toStringAsFixed(2);
+    customerDetailsProvider.totalCgstPerController.text =
+        (gstPer / 2).toStringAsFixed(2);
+    customerDetailsProvider.totalSgstPerController.text =
+        (gstPer / 2).toStringAsFixed(2);
+
+    // ---- QUOTATION TYPE ----
+    customerDetailsProvider.quotationTypeController.text =
+        quotation.quotationTypeName;
+    customerDetailsProvider.selectedQuotationType = quotation.quotationTypeId;
+
+    // ---- CABLE DETAILS ----
+    customerDetailsProvider.cableStructureController.text =
+        quotation.cableStructure;
+    customerDetailsProvider.cableTypeController.text = quotation.cableType;
+    customerDetailsProvider.cableShortCircuitTempController.text =
+        quotation.cableShortCircuitTemp;
+    customerDetailsProvider.cableStandardController.text =
+        quotation.cableStandard;
+    customerDetailsProvider.cableConductorClassController.text =
+        quotation.cableConductorClass;
+    customerDetailsProvider.cableMaterialController.text =
+        quotation.cableMaterial;
+    customerDetailsProvider.cableProtectionController.text =
+        quotation.cableProtection;
+    customerDetailsProvider.cableWarrantyController.text =
+        quotation.cableWarranty;
+    customerDetailsProvider.cableTensileStrengthController.text =
+        quotation.cableTensileStrength;
+
+    // ---- OTHER DETAILS ----
+    customerDetailsProvider.plantCapacityController.text =
+        quotation.plantCapacity;
+    customerDetailsProvider.moduleTechnologiesController.text =
+        quotation.moduleTechnologies;
+    customerDetailsProvider.mountingStructureTechnologiesController.text =
+        quotation.mountingStructureTechnologies;
+    customerDetailsProvider.projectSchemeController.text =
+        quotation.projectScheme;
+    customerDetailsProvider.powerEvacuationController.text =
+        quotation.powerEvacuation;
+    customerDetailsProvider.areaApproximateController.text =
+        quotation.areaApproximate;
+    customerDetailsProvider.solarPlantOutputConnectionController.text =
+        quotation.solarPlantOutputConnection;
+    customerDetailsProvider.schemeController.text = quotation.scheme;
+    customerDetailsProvider.qvalidityController.text = quotation.validity;
+    customerDetailsProvider.qtendorNumberController.text =
+        quotation.tendorNumber;
+    customerDetailsProvider.paymentTermsController.text =
+        quotation.paymentTermsName;
+    customerDetailsProvider.incoTermsController.text = quotation.incoTerms;
+    customerDetailsProvider.shippingChargesController.text =
+        quotation.shippingCharges;
+    customerDetailsProvider.totalAdCESSController.text = quotation.otherTax;
+    customerDetailsProvider.totalCgstAmountController.text =
+        quotation.totalCgstAmount;
+    customerDetailsProvider.totalSgstAmountController.text =
+        quotation.totalSgstAmount;
+
+    customerDetailsProvider.commercialItems = quotation.commercialItems;
+
+    customerDetailsProvider.scopeOfWorkItems = quotation.scopeOfWorkItems;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return QuotationCreationWidget(
+            quotationId: taskId, isEdit: true, customerId: widget.customerId);
+      },
+    );
   }
 
   Future<void> _openMaps(String location) async {
