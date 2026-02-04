@@ -36,7 +36,7 @@ class FollowUpTabWidget extends StatelessWidget {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildHeaderCell('#'),
+                    _buildHeaderCell('#', width: 50),
                     _buildHeaderCell('Date'),
                     _buildHeaderCell('Assigned To', flex: 2),
                     _buildHeaderCell('Assigned By', flex: 2),
@@ -56,7 +56,7 @@ class FollowUpTabWidget extends StatelessWidget {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          _buildDataCell((index + 1).toString()),
+                          _buildDataCell((index + 1).toString(), width: 50),
                           _buildDataCell(_formatDate(history.followUpDate)),
                           _buildWidgetCell(
                             flex: 2,
@@ -102,57 +102,68 @@ class FollowUpTabWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildHeaderCell(String text, {int flex = 1}) {
+  Widget _buildHeaderCell(String text, {int flex = 1, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
-    return Expanded(
-      flex: flex,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            right: BorderSide(color: borderColor),
-            bottom: BorderSide(color: borderColor),
-          ),
+    Widget child = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          right: BorderSide(color: borderColor),
+          bottom: BorderSide(color: borderColor),
         ),
-        child: Text(
-          text,
-          style: const TextStyle(
-            color: Color(0xFF7D8B9B),
-            fontWeight: FontWeight.bold,
-            fontSize: 15,
-          ),
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Color(0xFF7D8B9B),
+          fontWeight: FontWeight.bold,
+          fontSize: 15,
         ),
       ),
     );
-  }
 
-  Widget _buildDataCell(String text, {int flex = 1, bool isBold = false}) {
-    const borderColor = Color(0xFFE9EDF1);
+    if (width != null) {
+      return SizedBox(width: width, child: child);
+    }
     return Expanded(
       flex: flex,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            right: BorderSide(color: borderColor),
-            bottom: BorderSide(color: borderColor),
-          ),
-        ),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            text,
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
-              fontSize: 12,
-              color: AppColors.textBlack,
-            ),
-            // overflow: TextOverflow.ellipsis, // Allow text to wrap if needed, or omit ellipsish
-          ),
+      child: child,
+    );
+  }
+
+  Widget _buildDataCell(String text,
+      {int flex = 1, bool isBold = false, double? width}) {
+    const borderColor = Color(0xFFE9EDF1);
+    Widget child = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          right: BorderSide(color: borderColor),
+          bottom: BorderSide(color: borderColor),
         ),
       ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 12,
+            color: AppColors.textBlack,
+          ),
+          // overflow: TextOverflow.ellipsis, // Allow text to wrap if needed, or omit ellipsish
+        ),
+      ),
+    );
+
+    if (width != null) {
+      return SizedBox(width: width, child: child);
+    }
+    return Expanded(
+      flex: flex,
+      child: child,
     );
   }
 
