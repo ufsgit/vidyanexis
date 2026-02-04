@@ -2583,7 +2583,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildHeaderCell('#', flex: 1),
+                        _buildHeaderCell('#', width: 50.0),
                         _buildHeaderCell('Service Name', flex: 3),
                         _buildHeaderCell('Product Name', flex: 3),
                         _buildHeaderCell('Amount', flex: 2),
@@ -2623,7 +2623,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _buildDataCell((index + 1).toString(), flex: 1),
+                                _buildDataCell((index + 1).toString(),
+                                    width: 50.0),
                                 _buildDataCell(amc.serviceName,
                                     flex: 3, isBold: true),
                                 _buildDataCell(amc.productName, flex: 3),
@@ -2802,8 +2803,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildHeaderCell('#', flex: 1),
-                        _buildHeaderCell('Service Type', flex: 3),
+                        _buildHeaderCell('#', width: 50.0),
+                        _buildHeaderCell('Tasks', flex: 3),
                         _buildHeaderCell('ACTION REQUIRED', flex: 3),
                         _buildHeaderCell('SCHEDULE', flex: 2),
                         _buildHeaderCell('CREATED DATE', flex: 2),
@@ -2845,7 +2846,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _buildDataCell((index + 1).toString(), flex: 1),
+                                _buildDataCell((index + 1).toString(),
+                                    width: 50.0),
                                 _buildDataCell(task.taskTypeName,
                                     flex: 3, isBold: true),
                                 _buildWidgetCell(
@@ -3051,59 +3053,71 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           );
   }
 
-  Widget _buildHeaderCell(String text, {int flex = 1, bool isAction = false}) {
+  Widget _buildHeaderCell(String text,
+      {int flex = 1, bool isAction = false, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
+    Widget child = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          right: BorderSide(color: borderColor),
+          bottom: BorderSide(color: borderColor),
+        ),
+      ),
+      child: isAction
+          ? const Center(child: Icon(Icons.add, color: Colors.grey, size: 20))
+          : Text(
+              text,
+              style: const TextStyle(
+                color: Color(0xFF7D8B9B),
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+              ),
+            ),
+    );
+
+    if (width != null) {
+      return SizedBox(width: width, child: child);
+    }
     return Expanded(
       flex: flex,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            right: BorderSide(color: borderColor),
-            bottom: BorderSide(color: borderColor),
-          ),
-        ),
-        child: isAction
-            ? const Center(child: Icon(Icons.add, color: Colors.grey, size: 20))
-            : Text(
-                text,
-                style: const TextStyle(
-                  color: Color(0xFF7D8B9B),
-                  fontWeight: FontWeight.bold,
-                  fontSize: 15,
-                ),
-              ),
-      ),
+      child: child,
     );
   }
 
-  Widget _buildDataCell(String text, {int flex = 1, bool isBold = false}) {
+  Widget _buildDataCell(String text,
+      {int flex = 1, bool isBold = false, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
-    return Expanded(
-      flex: flex,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-        decoration: const BoxDecoration(
-          color: Colors.white,
-          border: Border(
-            right: BorderSide(color: borderColor),
-            bottom: BorderSide(color: borderColor),
-          ),
-        ),
-        child: Align(
-          alignment: Alignment.centerLeft,
-          child: Text(
-            text,
-            style: TextStyle(
-              fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
-              fontSize: 12,
-              color: AppColors.textBlack,
-            ),
-            overflow: TextOverflow.ellipsis,
-          ),
+    Widget child = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        border: Border(
+          right: BorderSide(color: borderColor),
+          bottom: BorderSide(color: borderColor),
         ),
       ),
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+            fontSize: 12,
+            color: AppColors.textBlack,
+          ),
+          overflow: TextOverflow.ellipsis,
+        ),
+      ),
+    );
+
+    if (width != null) {
+      return SizedBox(width: width, child: child);
+    }
+    return Expanded(
+      flex: flex,
+      child: child,
     );
   }
 
@@ -3191,7 +3205,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        _buildHeaderCell('#', flex: 1),
+                        _buildHeaderCell('#', width: 50.0),
                         _buildHeaderCell('Product Name', flex: 3),
                         _buildHeaderCell('Total Amount', flex: 2),
                         _buildHeaderCell('Options', flex: 2),
@@ -3222,7 +3236,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
                               children: [
-                                _buildDataCell((index + 1).toString(), flex: 1),
+                                _buildDataCell((index + 1).toString(),
+                                    width: 50.0),
                                 _buildDataCell(task.productName,
                                     flex: 3, isBold: true),
                                 _buildDataCell('₹ ${task.netTotal}', flex: 2),
