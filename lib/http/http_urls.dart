@@ -9,8 +9,8 @@ class HttpUrls {
 //   static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
 
   //dev
-  static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
-//   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -250,4 +250,5 @@ class HttpUrls {
   static String deletePaymentSchedule = "service/Delete_Payment_Schedule";
   static String getQuotationMasterPdf =
       "quotation_master/Get_quotation_master_pdf";
+  static String balanceReport = "service/Balance_Report";
 }

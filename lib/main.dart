@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/form_builder_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/controller/quotation_report_provider.dart';
+import 'package:vidyanexis/controller/balance_report_provider.dart';
 import 'package:vidyanexis/controller/payment_schedule_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
@@ -107,6 +108,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => TimeTrackReportProvider()),
         ChangeNotifierProvider(create: (context) => LeadReportProvider()),
         ChangeNotifierProvider(create: (context) => PaymentScheduleProvider()),
+        ChangeNotifierProvider(create: (context) => BalanceReportProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),
