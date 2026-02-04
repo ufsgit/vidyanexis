@@ -3,13 +3,14 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
-import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
 
 class FollowUpTabWidget extends StatelessWidget {
   const FollowUpTabWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    const borderColor = Color(0xFFE9EDF1);
+
     return Consumer<CustomerDetailsProvider>(
       builder: (context, provider, child) {
         if (provider.isFollowUpHistoryLoading) {
@@ -20,267 +21,197 @@ class FollowUpTabWidget extends StatelessWidget {
           return const Center(child: Text("No follow-up history found"));
         }
 
-        return ListView.builder(
-          padding: const EdgeInsets.all(16.0),
-          itemCount: provider.followUpHistory.length,
-          itemBuilder: (context, index) {
-            final followUp = provider.followUpHistory[index];
-            return FollowUpHistoryItem(history: followUp);
-          },
+        return Container(
+          margin: const EdgeInsets.only(top: 10),
+          decoration: const BoxDecoration(
+            border: Border(
+              top: BorderSide(color: borderColor),
+              left: BorderSide(color: borderColor),
+            ),
+          ),
+          child: Column(
+            children: [
+              // Header
+              IntrinsicHeight(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeaderCell('#'),
+                    _buildHeaderCell('Date'),
+                    _buildHeaderCell('Assigned To', flex: 2),
+                    _buildHeaderCell('Assigned By', flex: 2),
+                    _buildHeaderCell('Status'),
+                    _buildHeaderCell('Next Follow-up'),
+                    _buildHeaderCell('Remarks', flex: 2),
+                  ],
+                ),
+              ),
+              // List
+              Expanded(
+                child: ListView.builder(
+                  itemCount: provider.followUpHistory.length,
+                  itemBuilder: (context, index) {
+                    final history = provider.followUpHistory[index];
+                    return IntrinsicHeight(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _buildDataCell((index + 1).toString()),
+                          _buildDataCell(_formatDate(history.followUpDate)),
+                          _buildWidgetCell(
+                            flex: 2,
+                            child: _buildUserCell(history.assignedToName),
+                          ),
+                          _buildWidgetCell(
+                            flex: 2,
+                            child: _buildUserCell(history.assignedByName),
+                          ),
+                          _buildWidgetCell(
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                color: AppColors.lightGreen,
+                                borderRadius: BorderRadius.circular(4),
+                              ),
+                              child: Text(
+                                history.statusName ?? 'Follow up',
+                                style: TextStyle(
+                                  color: AppColors.statusGreen,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          _buildDataCell(_formatDate(history.nextFollowUpDate)),
+                          _buildDataCell(
+                            history.remarks ?? "",
+                            flex: 2,
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
         );
       },
     );
   }
-}
 
-class FollowUpHistoryItem extends StatelessWidget {
-  final FollowUpHistoryModel history;
-
-  const FollowUpHistoryItem({super.key, required this.history});
-
-  @override
-  Widget build(BuildContext context) {
-    DateTime? followUpDate = _parseDate(history.followUpDate);
-
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Date Column
-          Container(
-            width: 60,
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            child: followUpDate != null
-                ? Column(
-                    children: [
-                      Text(
-                        DateFormat('dd').format(followUpDate),
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      Text(
-                        DateFormat('MMM').format(followUpDate),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black54,
-                        ),
-                      ),
-                      Text(
-                        DateFormat('yyyy').format(followUpDate),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        DateFormat('HH:mm').format(followUpDate),
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                    ],
-                  )
-                : const SizedBox(),
+  Widget _buildHeaderCell(String text, {int flex = 1}) {
+    const borderColor = Color(0xFFE9EDF1);
+    return Expanded(
+      flex: flex,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            right: BorderSide(color: borderColor),
+            bottom: BorderSide(color: borderColor),
           ),
-          const SizedBox(width: 12),
-          // Content Card
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.withOpacity(0.2)),
-                // boxShadow: [
-                //   BoxShadow(
-                //     color: Colors.black.withOpacity(0.05),
-                //     blurRadius: 4,
-                //     offset: const Offset(0, 2),
-                //   ),
-                // ],
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Assigned To
-                    Row(
-                      children: [
-                        const Text(
-                          "Assigned To ",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const Icon(
-                          Icons.person,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          history.assignedToName ?? "-",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Text(
-                          "by",
-                          style: TextStyle(
-                            color: Colors.grey,
-                            fontSize: 14,
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        const Icon(
-                          Icons.person,
-                          size: 16,
-                          color: Colors.grey,
-                        ),
-                        const SizedBox(
-                          width: 4,
-                        ),
-                        Text(
-                          history.assignedByName ?? "admin",
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // Status and Next Follow Up
-                    Row(
-                      children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Status",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: AppColors
-                                    .lightGreen, // Assuming this color exists, or greenAccent
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                history.statusName ?? "Follow up",
-                                style: TextStyle(
-                                  color: AppColors.statusGreen,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(width: 24),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text(
-                              "Next Follow-up Date",
-                              style: TextStyle(
-                                color: Colors.grey,
-                                fontSize: 12,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 4,
-                            ),
-                            Row(
-                              children: [
-                                Icon(
-                                  Icons.calendar_today_outlined,
-                                  size: 14,
-                                  color: Colors.grey,
-                                ),
-                                SizedBox(
-                                  width: 4,
-                                ),
-                                Text(
-                                  _getFormattedNextFollowUpDate(),
-                                  style: const TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 12),
-                    // Remark
-                    const Text(
-                      "Remark",
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      history.remarks ?? "",
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+        ),
+        child: Text(
+          text,
+          style: const TextStyle(
+            color: Color(0xFF7D8B9B),
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
           ),
-        ],
+        ),
       ),
     );
   }
 
-  String _getFormattedNextFollowUpDate() {
-    if (history.nextFollowUpDate == null) return "-";
-    final date = _parseDate(history.nextFollowUpDate);
-    if (date == null)
-      return history.nextFollowUpDate!; // Fallback to string if parsing fails
-    return DateFormat('dd-MM-yyyy').format(date);
+  Widget _buildDataCell(String text, {int flex = 1, bool isBold = false}) {
+    const borderColor = Color(0xFFE9EDF1);
+    return Expanded(
+      flex: flex,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            right: BorderSide(color: borderColor),
+            bottom: BorderSide(color: borderColor),
+          ),
+        ),
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            text,
+            style: TextStyle(
+              fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+              fontSize: 12,
+              color: AppColors.textBlack,
+            ),
+            // overflow: TextOverflow.ellipsis, // Allow text to wrap if needed, or omit ellipsish
+          ),
+        ),
+      ),
+    );
   }
 
-  DateTime? _parseDate(String? dateStr) {
-    if (dateStr == null || dateStr.isEmpty) return null;
+  Widget _buildWidgetCell({required Widget child, int flex = 1}) {
+    const borderColor = Color(0xFFE9EDF1);
+    return Expanded(
+      flex: flex,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          border: Border(
+            right: BorderSide(color: borderColor),
+            bottom: BorderSide(color: borderColor),
+          ),
+        ),
+        child: Align(alignment: Alignment.centerLeft, child: child),
+      ),
+    );
+  }
+
+  Widget _buildUserCell(String? userName) {
+    if (userName == null || userName.isEmpty || userName == 'null') {
+      return const Text("-", style: TextStyle(fontSize: 12));
+    }
+    return Row(
+      children: [
+        CircleAvatar(
+          radius: 12,
+          backgroundColor: getAvatarColor(userName),
+          child: Text(
+            userName[0].toUpperCase(),
+            style: const TextStyle(fontSize: 10, color: Colors.white),
+          ),
+        ),
+        const SizedBox(width: 8),
+        Expanded(
+          child: Text(
+            userName,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(String? dateStr) {
+    if (dateStr == null || dateStr.isEmpty || dateStr == 'null') return "-";
     try {
-      // Try ISO format (yyyy-MM-dd)
-      return DateTime.parse(dateStr);
-    } catch (_) {
+      DateTime? date;
       try {
-        // Try dd-MM-yyyy format
-        return DateFormat('dd-MM-yyyy').parse(dateStr);
+        date = DateTime.parse(dateStr);
       } catch (_) {
-        return null;
+        date = DateFormat('dd-MM-yyyy').parse(dateStr);
       }
+      return DateFormat('dd MMM yyyy').format(date);
+    } catch (_) {
+      return dateStr;
     }
   }
 }

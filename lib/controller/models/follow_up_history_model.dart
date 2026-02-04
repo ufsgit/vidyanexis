@@ -20,12 +20,15 @@ class FollowUpHistoryModel {
 
   FollowUpHistoryModel.fromJson(Map<String, dynamic> json) {
     followUpId = json['FollowUp_Id']?.toString();
-    followUpDate = json['FollowUp_Date']?.toString();
+    followUpDate =
+        json['FollowUp_Date']?.toString() ?? json['Entry_Date']?.toString();
     nextFollowUpDate = json['Next_FollowUp_Date']?.toString();
-    remarks = json['Remarks']?.toString();
+    remarks = json['Remarks']?.toString() ?? json['Remark']?.toString();
     statusName = json['Status_Name']?.toString();
-    assignedToName = json['Assigned_To_Name']?.toString();
-    assignedByName = json['Assigned_By_Name']?.toString();
+    assignedToName = json['Assigned_To_Name']?.toString() ??
+        json['To_User_Name']?.toString();
+    assignedByName = json['Assigned_By_Name']?.toString() ??
+        json['By_User_Name']?.toString();
     statusId = json['Status_Id']?.toString();
   }
 
