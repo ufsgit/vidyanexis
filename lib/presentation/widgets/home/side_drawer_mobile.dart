@@ -196,112 +196,6 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                                   );
                                 }
                               }),
-                          PopupMenuButton<String>(
-                            icon: const Icon(Icons.more_vert_outlined),
-                            iconSize: 18,
-                            onSelected: (String value) {
-                              if (value == 'logout') {
-                                showDialog(
-                                  context: context,
-                                  builder: (BuildContext dialogContext) {
-                                    return AlertDialog(
-                                      title: const Text('Logout'),
-                                      content: const Text(
-                                          'Are you sure you want to log out?'),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () =>
-                                              Navigator.of(dialogContext).pop(),
-                                          child: const Text('Cancel'),
-                                        ),
-                                        TextButton(
-                                          onPressed: () async {
-                                            Navigator.of(dialogContext).pop();
-                                            SharedPreferences prefs =
-                                                await SharedPreferences
-                                                    .getInstance();
-                                            String userId =
-                                                prefs.getString('userId') ??
-                                                    "0";
-                                            // Unsubscribe from Firebase topic if not web
-                                            if (!kIsWeb && userId.isNotEmpty) {
-                                              await FirebaseMessaging.instance
-                                                  .unsubscribeFromTopic(
-                                                      '${AppStyles.name()}-$userId');
-                                            }
-                                            // Backup attendance state
-                                            bool? isCheckedIn;
-                                            String? checkInDate;
-                                            String? checkInTime;
-                                            int? attendanceId;
-
-                                            if (userId != "0") {
-                                              isCheckedIn = prefs.getBool(
-                                                  'is_checked_in_$userId');
-                                              checkInDate = prefs.getString(
-                                                  'check_in_date_$userId');
-                                              checkInTime = prefs.getString(
-                                                  'check_in_time_$userId');
-                                              attendanceId = prefs.getInt(
-                                                  'attendance_id_$userId');
-                                            }
-
-                                            await prefs.clear();
-
-                                            // Restore attendance state
-                                            if (userId != "0") {
-                                              if (isCheckedIn != null) {
-                                                await prefs.setBool(
-                                                    'is_checked_in_$userId',
-                                                    isCheckedIn);
-                                              }
-                                              if (checkInDate != null) {
-                                                await prefs.setString(
-                                                    'check_in_date_$userId',
-                                                    checkInDate);
-                                              }
-                                              if (checkInTime != null) {
-                                                await prefs.setString(
-                                                    'check_in_time_$userId',
-                                                    checkInTime);
-                                              }
-                                              if (attendanceId != null) {
-                                                await prefs.setInt(
-                                                    'attendance_id_$userId',
-                                                    attendanceId);
-                                              }
-                                            }
-
-                                            if (context.mounted) {
-                                              context.go(LoginPageMobile.route);
-                                            }
-                                          },
-                                          child: const Text(
-                                            'Confirm',
-                                            style: TextStyle(
-                                                color: Colors.red,
-                                                fontWeight: FontWeight.w500),
-                                          ),
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                );
-                              }
-                            },
-                            itemBuilder: (BuildContext context) =>
-                                <PopupMenuEntry<String>>[
-                              const PopupMenuItem<String>(
-                                value: 'logout',
-                                child: Text(
-                                  'Logout',
-                                  style: TextStyle(
-                                      color: Colors.red,
-                                      fontWeight: FontWeight.w600),
-                                ),
-                              ),
-                            ],
-                          ),
                         ],
                       ),
                     ),
@@ -366,6 +260,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               ],
             ),
           ),
+          _buildLogoutButton(context),
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(null != packageInfo
@@ -373,6 +268,96 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                 : "0.0"),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton(BuildContext context) {
+    return Tooltip(
+      message: 'Logout',
+      child: Center(
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.whiteColor,
+            foregroundColor: AppColors.textRed,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+              side: BorderSide(
+                color: AppColors.textRed,
+              ),
+            ),
+          ),
+          child: const Text('Logout'),
+          onPressed: () {
+            showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  title: const Text('Logout'),
+                  content: const Text('Are you sure you want to log out?'),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      child: const Text('Cancel'),
+                    ),
+                    TextButton(
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        SharedPreferences prefs =
+                            await SharedPreferences.getInstance();
+
+                        // Backup attendance state
+                        String? userId = prefs.getString('userId');
+                        bool? isCheckedIn;
+                        String? checkInDate;
+                        String? checkInTime;
+                        int? attendanceId;
+
+                        if (userId != null) {
+                          isCheckedIn = prefs.getBool('is_checked_in_$userId');
+                          checkInDate =
+                              prefs.getString('check_in_date_$userId');
+                          checkInTime =
+                              prefs.getString('check_in_time_$userId');
+                          attendanceId = prefs.getInt('attendance_id_$userId');
+                        }
+
+                        await prefs.clear();
+
+                        // Restore attendance state
+                        if (userId != null) {
+                          if (isCheckedIn != null) {
+                            await prefs.setBool(
+                                'is_checked_in_$userId', isCheckedIn);
+                          }
+                          if (checkInDate != null) {
+                            await prefs.setString(
+                                'check_in_date_$userId', checkInDate);
+                          }
+                          if (checkInTime != null) {
+                            await prefs.setString(
+                                'check_in_time_$userId', checkInTime);
+                          }
+                          if (attendanceId != null) {
+                            await prefs.setInt(
+                                'attendance_id_$userId', attendanceId);
+                          }
+                        }
+
+                        context.go(LoginPage.route);
+                      },
+                      child: const Text(
+                        'Confirm',
+                        style: TextStyle(
+                            color: Colors.red, fontWeight: FontWeight.w500),
+                      ),
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
