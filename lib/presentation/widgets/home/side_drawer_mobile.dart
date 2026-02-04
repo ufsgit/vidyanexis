@@ -40,6 +40,7 @@ import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.da
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class SidebarDrawer extends StatefulWidget {
@@ -121,6 +122,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
+      // if (settingsProvider.menuIsViewMap[65].toString() == '1')
+      {'title': 'Balance Reports', 'page': const BalanceReportPage()},
     ];
 
     return Drawer(
