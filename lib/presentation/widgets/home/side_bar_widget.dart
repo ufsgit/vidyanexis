@@ -116,6 +116,9 @@ class _CustomSidebarState extends State<CustomSidebar> {
                         //   borderRadius: BorderRadius.circular(8),
                         // ),
                         child: ExpansionTile(
+                          tilePadding:
+                              const EdgeInsets.symmetric(horizontal: 12),
+                          childrenPadding: const EdgeInsets.all(0),
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.zero,
                           ),
@@ -210,7 +213,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
   Widget _buildMenuItem(BuildContext context, SidebarProvider provider,
       SidebarOption option, int index) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.all(0),
       child: Container(
         height: 35,
         decoration: BoxDecoration(
@@ -232,7 +235,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
           },
           child: Row(
             children: [
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               SvgPicture.asset(
                 option.iconPath,
                 width: 24,
@@ -265,7 +268,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
   Widget _buildSubmenuItem(BuildContext context, SidebarProvider provider,
       SidebarOption option, int index) {
     return Padding(
-      padding: const EdgeInsets.only(left: 44, right: 8, top: 4, bottom: 4),
+      padding: const EdgeInsets.only(left: 54, right: 0, top: 0, bottom: 0),
       child: InkWell(
         onTap: () {
           provider.replaceWidget(true, '');
@@ -284,7 +287,7 @@ class _CustomSidebarState extends State<CustomSidebar> {
                 : AppColors.whiteColor,
             borderRadius: BorderRadius.circular(8),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 0),
           child: Align(
             alignment: Alignment.centerLeft,
             child: Text(

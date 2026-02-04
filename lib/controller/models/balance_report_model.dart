@@ -18,8 +18,8 @@ class BalanceReportModel {
   factory BalanceReportModel.fromJson(Map<String, dynamic> json) {
     return BalanceReportModel(
       customerName: json['Customer_Name'] ?? '',
-      phone: json['Contact_Number'] ?? '',
-      address: json['Address1'] ?? '',
+      phone: json['Phone_Number'] ?? '',
+      address: json['Address'] ?? '',
       totalPaymentSchedule:
           double.tryParse(json['Scheduled_Amount']?.toString() ?? '0') ?? 0.0,
       totalReceipt:
