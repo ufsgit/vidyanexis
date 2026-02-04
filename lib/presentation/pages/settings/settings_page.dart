@@ -145,7 +145,7 @@ class _SettingsPageState extends State<SettingsPage> {
             settings.setSelectedMenu(title);
           },
           child: Padding(
-            padding: const EdgeInsets.all(8.0),
+            padding: const EdgeInsets.all(0),
             child: Container(
               height: 35,
               decoration: BoxDecoration(
@@ -153,7 +153,7 @@ class _SettingsPageState extends State<SettingsPage> {
                 color: isSelected ? const Color(0xFFE5F0FF) : null,
               ),
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 12),
                 child: Row(
                   children: [
                     // Icon(
