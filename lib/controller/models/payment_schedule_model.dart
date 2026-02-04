@@ -21,10 +21,10 @@ class PaymentScheduleModel {
 
   factory PaymentScheduleModel.fromJson(Map<String, dynamic> json) {
     return PaymentScheduleModel(
-      paymentScheduleId: json['Payment_Schedule_Id'] ?? 0,
+      paymentScheduleId: json['Schedule_Id'] ?? 0,
       scheduleDate: json['Schedule_Date'] ?? '',
       description: json['Description'] ?? '',
-      amount: double.tryParse(json['Amount']?.toString() ?? '0') ?? 0.0,
+      amount: double.tryParse(json['Schedule_Amount']?.toString() ?? '0') ?? 0.0,
       customerId: json['Customer_Id'] ?? 0,
       deleteStatus: json['DeleteStatus'] ?? 0,
       byUserId: json['By_User_Id']?.toString() ?? '',

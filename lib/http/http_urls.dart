@@ -246,9 +246,9 @@ class HttpUrls {
       "quotation_master/load_quotation_from_custom_fields";
 
   static String getPaymentSchedule = "service/Get_Payment_Schedule_By_Customer";
-  static String savePaymentSchedule = "service/Save_Payment_Schedule";
+  static String savePaymentSchedule = "service/save_schedule";
   static String deletePaymentSchedule = "service/Delete_Payment_Schedule";
   static String getQuotationMasterPdf =
       "quotation_master/Get_quotation_master_pdf";
-  static String balanceReport = "service/Balance_Report";
+  static String balanceReport = "service/Payment_Balance_Report";
 }

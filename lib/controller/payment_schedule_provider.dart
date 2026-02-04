@@ -46,10 +46,10 @@ class PaymentScheduleProvider extends ChangeNotifier {
       Loader.showLoader(context);
 
       final bodyData = {
-        "Payment_Schedule_Id": scheduleId,
+        "Schedule_Id": scheduleId,
         "Customer_Id": customerId,
         "Schedule_Date": scheduleDateController.text,
-        "Amount": amountController.text,
+        "Schedule_Amount": amountController.text,
         "Description": descriptionController.text,
       };
 
@@ -84,8 +84,7 @@ class PaymentScheduleProvider extends ChangeNotifier {
       Loader.showLoader(context);
 
       final response = await HttpRequest.httpGetRequest(
-        endPoint:
-            '${HttpUrls.deletePaymentSchedule}?Payment_Schedule_Id=$scheduleId',
+        endPoint: '${HttpUrls.deletePaymentSchedule}/$scheduleId',
       );
 
       Loader.stopLoader(context);

@@ -21,11 +21,11 @@ class BalanceReportModel {
       phone: json['Contact_Number'] ?? '',
       address: json['Address1'] ?? '',
       totalPaymentSchedule:
-          double.tryParse(json['Total_Payment_Schedule']?.toString() ?? '0') ??
-              0.0,
+          double.tryParse(json['Scheduled_Amount']?.toString() ?? '0') ?? 0.0,
       totalReceipt:
-          double.tryParse(json['Total_Receipt']?.toString() ?? '0') ?? 0.0,
-      balance: double.tryParse(json['Balance']?.toString() ?? '0') ?? 0.0,
+          double.tryParse(json['Received_Amount']?.toString() ?? '0') ?? 0.0,
+      balance:
+          double.tryParse(json['Balance_Amount']?.toString() ?? '0') ?? 0.0,
     );
   }
 
@@ -34,9 +34,9 @@ class BalanceReportModel {
       'Customer_Name': customerName,
       'Contact_Number': phone,
       'Address1': address,
-      'Total_Payment_Schedule': totalPaymentSchedule,
-      'Total_Receipt': totalReceipt,
-      'Balance': balance,
+      'Scheduled_Amount': totalPaymentSchedule,
+      'Received_Amount': totalReceipt,
+      'Balance_Amount': balance,
     };
   }
 }

@@ -64,7 +64,15 @@ class BalanceReportProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final List<dynamic> data = response.data;
+        final rawData = response.data;
+        List<dynamic> data = [];
+
+        if (rawData is List) {
+          data = rawData;
+        } else if (rawData is Map && rawData['data'] is List) {
+          data = rawData['data'];
+        }
+
         _balanceReportList =
             data.map((json) => BalanceReportModel.fromJson(json)).toList();
       } else {
