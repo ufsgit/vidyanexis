@@ -415,33 +415,32 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 const SizedBox(width: 16),
 
                                                 // ✅ NEW TASK BUTTON (ADDED IN BETWEEN FILTER & EXPORT)
-                                                ElevatedButton.icon(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (_) =>
-                                                          const AddTaskWidget(
-                                                        taskId: 0,
-                                                      ),
-                                                    );
-                                                  },
-                                                  icon: const Icon(Icons.add),
-                                                  label: const Text('New Task'),
-                                                  style:
-                                                      ElevatedButton.styleFrom(
-                                                    backgroundColor:
-                                                        const Color(0xFFEAB308),
-                                                    foregroundColor:
-                                                        Colors.white,
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      horizontal: 16,
-                                                      vertical: 12,
-                                                    ),
-                                                  ),
-                                                ),
-
-                                                const SizedBox(width: 16),
+                                                // ElevatedButton.icon(
+                                                //   onPressed: () {
+                                                //     showDialog(
+                                                //       context: context,
+                                                //       builder: (_) =>
+                                                //           const AddTaskWidget(
+                                                //         taskId: 0,
+                                                //       ),
+                                                //     );
+                                                //   },
+                                                //   icon: const Icon(Icons.add),
+                                                //   label: const Text('New Task'),
+                                                //   style:
+                                                //       ElevatedButton.styleFrom(
+                                                //     backgroundColor:
+                                                //         const Color(0xFFEAB308),
+                                                //     foregroundColor:
+                                                //         Colors.white,
+                                                //     padding: const EdgeInsets
+                                                //         .symmetric(
+                                                //       horizontal: 16,
+                                                //       vertical: 12,
+                                                //     ),
+                                                //   ),
+                                                // ),
+                                                // const SizedBox(width: 16),
 
                                                 // Export button
                                                 if (!isMobile ||
@@ -968,13 +967,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                     padding: EdgeInsets.symmetric(
                                         vertical: 10.0, horizontal: 10.0),
                                     color: Colors.white),
-                                TableWidget(
-                                    flex: 1,
-                                    title: 'Details',
-                                    fontSize: 12,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
-                                    color: Colors.white),
+                                // TableWidget(
+                                //     flex: 1,
+                                //     title: 'Details',
+                                //     fontSize: 12,
+                                //     padding: EdgeInsets.symmetric(
+                                //         vertical: 10.0, horizontal: 10.0),
+                                //     color: Colors.white),
                               ],
                             ),
                           ),
@@ -1611,93 +1610,93 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   ),
                                                 ),
                                               ),
-                                              Expanded(
-                                                child: Row(
-                                                  children: [
-                                                    OutlinedButton(
-                                                      onPressed: () async {
-                                                        final taskId = task
-                                                                .taskId
-                                                                ?.toString() ??
-                                                            '';
-                                                        final customerId = task
-                                                                .customerId
-                                                                ?.toString() ??
-                                                            '';
-                                                        if (taskId.isNotEmpty) {
-                                                          customerDetailsProvider
-                                                              .getTaskDetails(
-                                                                  taskId,
-                                                                  context);
+                                              // Expanded(
+                                              //   child: Row(
+                                              //     children: [
+                                              //       OutlinedButton(
+                                              //         onPressed: () async {
+                                              //           final taskId = task
+                                              //                   .taskId
+                                              //                   ?.toString() ??
+                                              //               '';
+                                              //           final customerId = task
+                                              //                   .customerId
+                                              //                   ?.toString() ??
+                                              //               '';
+                                              //           if (taskId.isNotEmpty) {
+                                              //             customerDetailsProvider
+                                              //                 .getTaskDetails(
+                                              //                     taskId,
+                                              //                     context);
 
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return TaskDetailsWidget(
-                                                                taskId: taskId,
-                                                                customerId:
-                                                                    customerId,
-                                                                showEdit: false,
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-                                                      },
-                                                      style: OutlinedButton
-                                                          .styleFrom(
-                                                        side: const BorderSide(
-                                                            color: Color(
-                                                                0xFFEAB308)),
-                                                        foregroundColor:
-                                                            const Color(
-                                                                0xFFEAB308),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 12,
-                                                                vertical: 0),
-                                                        minimumSize:
-                                                            const Size(0, 32),
-                                                        shape:
-                                                            RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            4)),
-                                                      ),
-                                                      child: const Text(
-                                                          'Details',
-                                                          style: TextStyle(
-                                                              fontSize: 12)),
-                                                    ),
-                                                    const SizedBox(width: 8),
-                                                    IconButton(
-                                                      icon: const Icon(
-                                                        Icons.edit_outlined,
-                                                        size: 18,
-                                                        color:
-                                                            Color(0xFFEAB308),
-                                                      ),
-                                                      tooltip: 'Edit',
-                                                      padding: EdgeInsets.zero,
-                                                      constraints:
-                                                          const BoxConstraints(),
-                                                      onPressed: () {
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (_) =>
-                                                              AddTaskWidget(
-                                                            taskId: task
-                                                                .taskMasterId,
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
+                                              //             showDialog(
+                                              //               context: context,
+                                              //               builder:
+                                              //                   (BuildContext
+                                              //                       context) {
+                                              //                 return TaskDetailsWidget(
+                                              //                   taskId: taskId,
+                                              //                   customerId:
+                                              //                       customerId,
+                                              //                   showEdit: false,
+                                              //                 );
+                                              //               },
+                                              //             );
+                                              //           }
+                                              //         },
+                                              //         style: OutlinedButton
+                                              //             .styleFrom(
+                                              //           side: const BorderSide(
+                                              //               color: Color(
+                                              //                   0xFFEAB308)),
+                                              //           foregroundColor:
+                                              //               const Color(
+                                              //                   0xFFEAB308),
+                                              //           padding:
+                                              //               const EdgeInsets
+                                              //                   .symmetric(
+                                              //                   horizontal: 12,
+                                              //                   vertical: 0),
+                                              //           minimumSize:
+                                              //               const Size(0, 32),
+                                              //           shape:
+                                              //               RoundedRectangleBorder(
+                                              //                   borderRadius:
+                                              //                       BorderRadius
+                                              //                           .circular(
+                                              //                               4)),
+                                              //         ),
+                                              //         child: const Text(
+                                              //             'Details',
+                                              //             style: TextStyle(
+                                              //                 fontSize: 12)),
+                                              //       ),
+                                              //       const SizedBox(width: 8),
+                                              //       IconButton(
+                                              //         icon: const Icon(
+                                              //           Icons.edit_outlined,
+                                              //           size: 18,
+                                              //           color:
+                                              //               Color(0xFFEAB308),
+                                              //         ),
+                                              //         tooltip: 'Edit',
+                                              //         padding: EdgeInsets.zero,
+                                              //         constraints:
+                                              //             const BoxConstraints(),
+                                              //         onPressed: () {
+                                              //           showDialog(
+                                              //             context: context,
+                                              //             builder: (_) =>
+                                              //                 AddTaskWidget(
+                                              //               taskId: task
+                                              //                   .taskMasterId,
+                                              //             ),
+                                              //           );
+                                              //         },
+                                              //       ),
+                                              //     ],
+                                              //   ),
+                                              // ),
                                             ],
                                           ),
                                         ),
