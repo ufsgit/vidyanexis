@@ -29,7 +29,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/http/aws_upload.dart';
+import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 // import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -1199,7 +1199,7 @@ class LeadsProvider extends ChangeNotifier {
             final bytes = entry.value;
             final contentType =
                 pendingTypes[fieldId] ?? 'application/octet-stream';
-            final uploadKey = await AwsUpload.uploadToAws(
+            final uploadKey = await CloudflareUpload.uploadToCloudflare(
                 bytes, contentType, '$fieldId', context);
             if (uploadKey != null) {
               final fullUrl = HttpUrls.imgBaseUrl + uploadKey;

@@ -16,7 +16,7 @@ import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
-import 'package:vidyanexis/http/aws_upload.dart';
+import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -1556,7 +1556,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
             final bytes = entry.value;
             final contentType =
                 pendingTypes[fieldId] ?? 'application/octet-stream';
-            final uploadKey = await AwsUpload.uploadToAws(
+            final uploadKey = await CloudflareUpload.uploadToCloudflare(
                 bytes, contentType, '$fieldId', context);
             if (uploadKey != null) {
               final fullUrl = HttpUrls.imgBaseUrl + uploadKey;

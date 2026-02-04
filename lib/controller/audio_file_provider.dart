@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:record/record.dart';
-import 'package:vidyanexis/http/aws_upload.dart';
+import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:universal_html/html.dart' as html;
 import 'package:vidyanexis/helpers/media_stream_helper_stub.dart'
@@ -877,7 +877,8 @@ class AudioFileProvider extends ChangeNotifier {
       String taskId, BuildContext context) async {
     try {
       final String? uploadedFilePath =
-          await AwsUpload.uploadAudioToAws(fileData, fileType, taskId, context);
+          await CloudflareUpload.uploadAudioToCloudflare(
+              fileData, fileType, taskId, context);
       return uploadedFilePath;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

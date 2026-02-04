@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
-import 'package:vidyanexis/http/aws_upload.dart';
+import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -286,7 +286,8 @@ class ImageUploadProvider extends ChangeNotifier {
       BuildContext context) async {
     try {
       final String? uploadedFilePath =
-          await AwsUpload.uploadToAws(fileData, fileType, taskId, context);
+          await CloudflareUpload.uploadToCloudflare(
+              fileData, fileType, taskId, context);
       return uploadedFilePath;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(

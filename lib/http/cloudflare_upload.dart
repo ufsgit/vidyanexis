@@ -10,8 +10,8 @@ import 'package:convert/convert.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/http/loader.dart';
 
-class AwsUpload {
-  static Future<String?> uploadToAws(
+class CloudflareUpload {
+  static Future<String?> uploadToCloudflare(
     Uint8List result,
     String fileType,
     String taskId,
@@ -144,7 +144,7 @@ class AwsUpload {
     }
   }
 
-  static Future<String?> uploadAudioToAws(
+  static Future<String?> uploadAudioToCloudflare(
     Uint8List result,
     String fileType,
     String taskId,

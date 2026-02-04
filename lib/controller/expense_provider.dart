@@ -20,7 +20,7 @@ import 'package:vidyanexis/controller/models/purchase_model.dart';
 import 'package:vidyanexis/controller/models/stock_list_model.dart';
 import 'package:vidyanexis/controller/models/stock_model.dart';
 import 'package:vidyanexis/controller/models/supplier_model.dart';
-import 'package:vidyanexis/http/aws_upload.dart';
+import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/http/http_requests.dart';
@@ -1209,7 +1209,8 @@ class ExpenseProvider extends ChangeNotifier {
       BuildContext context) async {
     try {
       final String? uploadedFilePath =
-          await AwsUpload.uploadToAws(fileData, fileType, taskId, context);
+          await CloudflareUpload.uploadToCloudflare(
+              fileData, fileType, taskId, context);
       return uploadedFilePath;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
