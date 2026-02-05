@@ -166,7 +166,9 @@ class _CustomerPageState extends State<CustomerPage> {
               // Header
               AppStyles.isWebScreen(context)
                   ? Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 4.0), // Further reduced vertical
                       child: Row(
                         children: [
                           const Text(
@@ -261,7 +263,9 @@ class _CustomerPageState extends State<CustomerPage> {
                     )
                   //mobile design
                   : Padding(
-                      padding: const EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16.0,
+                          vertical: 4.0), // Further reduced vertical
                       child: Wrap(
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
@@ -731,7 +735,9 @@ class _CustomerPageState extends State<CustomerPage> {
                       ),
               Expanded(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0,
+                      vertical: 4.0), // Further reduced vertical
                   child: Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -756,7 +762,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                     width: 80,
                                     child: Padding(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 12.0, horizontal: 25.0),
+                                          vertical:
+                                              6.0, // Match data row padding
+                                          horizontal:
+                                              12.0), // Compact horizontal
                                       child: Text('No.',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
@@ -769,30 +778,44 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                       flex: 3,
                                       title: 'Customer Name',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 1,
                                       title: 'Mobile no',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Assigned Staff',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Remarks',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 1,
                                       title: 'Follow-Up',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Status',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 1,
                                       title: 'Follow Up Date',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                 ],
                               ),
@@ -840,8 +863,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 child: Padding(
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 25.0),
+                                                      vertical:
+                                                          6.0, // Compact vertical
+                                                      horizontal: 12.0),
                                                   child: Text(
                                                       ((index + 1) +
                                                               customerProvider
@@ -858,6 +882,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                               // TableWidget(title: lead.orderNo),
                                               TableWidget(
                                                 flex: 3,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
                                                 data: InkWell(
                                                   onTap: () {
                                                     onItemClick(
@@ -954,17 +982,33 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                   flex: 1,
                                                   fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
                                                   title: lead.contactNumber),
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
                                                   title: lead.toUserName),
                                               TableWidget(
                                                   flex: 2,
                                                   fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
                                                   title: '${lead.remark}'),
                                               TableWidget(
                                                 flex: 1,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
                                                 data: InkWell(
                                                   onTap: () async {
                                                     try {
@@ -1080,6 +1124,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                 // width: 200,
                                                 flex: 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
                                                 data: Container(
                                                   padding: lead
                                                           .statusName.isNotEmpty
@@ -1123,6 +1171,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                   flex: 1,
                                                   fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
                                                   title: (lead.nextFollowUpDate
                                                           .isNotEmpty)
                                                       ? DateFormat(
@@ -1469,7 +1521,7 @@ class _CustomerPageState extends State<CustomerPage> {
         : customerProvider.totalCount; // Ensure it doesn't exceed total count
 
     return SizedBox(
-      height: 100,
+      height: 60, // Reduced from 100
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
