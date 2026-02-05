@@ -284,7 +284,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                         'Tasks',
                                         style: TextStyle(
                                           fontSize: 24,
-                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFF152D70),
+                                          fontWeight: FontWeight.w600,
                                         ),
                                       ),
 
@@ -887,8 +888,9 @@ class _tasksPageReportState extends State<TaskPage> {
             ),
             Expanded(
               child: Padding(
-                padding:
-                    EdgeInsets.all(!AppStyles.isWebScreen(context) ? 0 : 16.0),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 4.0), // Match CustomerPage padding
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -902,27 +904,23 @@ class _tasksPageReportState extends State<TaskPage> {
                           const SizedBox()
                         else
                           Container(
-                            decoration: const BoxDecoration(
-                              color: Color(0xFF005A45),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(6),
-                                topRight: Radius.circular(6),
-                              ),
+                            decoration: BoxDecoration(
+                              color: const Color.fromARGB(255, 0, 90, 69),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                             child: const Row(
                               mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.center,
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 SizedBox(
-                                  width: 60,
+                                  width: 80,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 16.0),
+                                        vertical: 6.0, horizontal: 12.0),
                                     child: Text('No.',
                                         style: TextStyle(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 12,
-                                            color: Colors.white)),
+                                            fontWeight: FontWeight.bold,
+                                            color: Color(0xFFFFFFFF))),
                                   ),
                                 ),
                                 TableWidget(
@@ -930,50 +928,43 @@ class _tasksPageReportState extends State<TaskPage> {
                                     title: 'Customer',
                                     fontSize: 12,
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
+                                        vertical: 6.0, horizontal: 8.0),
                                     color: Colors.white),
                                 TableWidget(
-                                    flex: 1,
+                                    flex: 2,
                                     title: 'Task',
                                     fontSize: 12,
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
+                                        vertical: 6.0, horizontal: 8.0),
                                     color: Colors.white),
                                 TableWidget(
-                                    flex: 1,
+                                    flex: 2,
                                     title: 'Staff',
                                     fontSize: 12,
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
+                                        vertical: 6.0, horizontal: 8.0),
                                     color: Colors.white),
                                 TableWidget(
                                     flex: 2,
                                     title: 'Description',
                                     fontSize: 12,
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
+                                        vertical: 6.0, horizontal: 8.0),
                                     color: Colors.white),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Date',
                                     fontSize: 12,
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
+                                        vertical: 6.0, horizontal: 8.0),
                                     color: Colors.white),
                                 TableWidget(
                                     flex: 1,
                                     title: 'Status',
                                     fontSize: 12,
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 10.0, horizontal: 10.0),
+                                        vertical: 6.0, horizontal: 8.0),
                                     color: Colors.white),
-                                // TableWidget(
-                                //     flex: 1,
-                                //     title: 'Details',
-                                //     fontSize: 12,
-                                //     padding: EdgeInsets.symmetric(
-                                //         vertical: 10.0, horizontal: 10.0),
-                                //     color: Colors.white),
                               ],
                             ),
                           ),
@@ -1431,28 +1422,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
                                                 ? Colors.white
-                                                : const Color(0xFFF8FAFC),
-                                            border: const Border(
-                                              bottom: BorderSide(
-                                                  color: Color(0xFFF1F5F9)),
-                                            ),
+                                                : const Color(0xFFF6F7F9),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
                                           ),
                                           child: Row(
                                             children: [
                                               SizedBox(
-                                                width: 60,
+                                                width: 80,
                                                 child: Padding(
                                                   padding: const EdgeInsets
                                                       .symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 16.0),
+                                                      vertical: 6.0,
+                                                      horizontal: 12.0),
                                                   child: Text(
                                                     itemNumber.toString(),
                                                     style: const TextStyle(
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                          FontWeight.bold,
                                                       fontSize: 12,
-                                                      color: Color(0xFF64748B),
                                                     ),
                                                   ),
                                                 ),
@@ -1461,8 +1449,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 flex: 2,
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        vertical: 8.0,
-                                                        horizontal: 10.0),
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
                                                 data: InkWell(
                                                   onTap: () {
                                                     if (task.customerId !=
@@ -1471,72 +1459,126 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                     }
                                                   },
-                                                  child: Text(
-                                                    task.customerName ??
-                                                        'Unknown',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      color: Color(0xFF0F172A),
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 12,
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xFFE9EDF1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                    ),
+                                                    child: Text(
+                                                      task.customerName ??
+                                                          'Unknown',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color:
+                                                            Color(0xFF0F172A),
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        fontSize: 12,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                               TableWidget(
-                                                  flex: 1,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 10.0),
-                                                  fontSize: 12,
-                                                  color:
-                                                      const Color(0xFF334155),
-                                                  title:
-                                                      task.taskTypeName ?? ''),
+                                                flex: 2, // Changed from 1 to 2
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
+                                                data: Tooltip(
+                                                  message:
+                                                      task.taskTypeName ?? '',
+                                                  child: Text(
+                                                    task.taskTypeName ?? '',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Color(0xFF334155),
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                               TableWidget(
-                                                  flex: 1,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 10.0),
-                                                  fontSize: 12,
-                                                  color:
-                                                      const Color(0xFF334155),
-                                                  title: task.toUserName ?? ''),
+                                                flex: 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
+                                                data: Text(
+                                                  task.toUserName ?? '',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Color(0xFF334155),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
                                               TableWidget(
-                                                  flex: 2,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 10.0),
-                                                  fontSize: 12,
-                                                  color:
-                                                      const Color(0xFF334155),
-                                                  title:
-                                                      task.description ?? ''),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 8.0,
-                                                      horizontal: 10.0),
-                                                  fontSize: 12,
-                                                  color:
-                                                      const Color(0xFF334155),
-                                                  title: task.taskDate != null
-                                                      ? task.taskDate
-                                                          .toDayMonthYearFormat()
-                                                      : ''),
+                                                flex: 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
+                                                data: Tooltip(
+                                                  message:
+                                                      task.description ?? '',
+                                                  child: Text(
+                                                    task.description ?? '',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Color(0xFF334155),
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                               TableWidget(
                                                 flex: 1,
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        vertical: 8.0,
-                                                        horizontal: 10.0),
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
+                                                data: Text(
+                                                  task.taskDate != null
+                                                      ? task.taskDate
+                                                          .toDayMonthYearFormat()
+                                                      : '',
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
+                                                    color: Color(0xFF334155),
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                flex: 1,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
                                                 data: InkWell(
                                                   onTap: () {
                                                     reportsProvider
@@ -1589,10 +1631,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     decoration: BoxDecoration(
                                                       color: (task.colorCode ??
                                                               Colors.black)
-                                                          .withOpacity(0.1),
+                                                          .withOpacity(0.1)
+                                                          .withAlpha(30),
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              20),
+                                                              6),
+                                                      border: Border.all(
+                                                          color: Colors.black45,
+                                                          width: 0.1),
                                                     ),
                                                     child: Text(
                                                       task.taskStatusName ?? '',
@@ -1800,17 +1846,19 @@ class _tasksPageReportState extends State<TaskPage> {
         ),
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(
-            "Showing $startItem-$endItem of $totalSize",
-            style: const TextStyle(
-              fontSize: 12,
-              color: Color(0xFF64748B),
-              fontWeight: FontWeight.w500,
+          Expanded(
+            child: Text(
+              "Showing $startItem-$endItem of $totalSize",
+              style: const TextStyle(
+                fontSize: 12,
+                color: Color(0xFF64748B),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
                 onPressed: currentPage > 1
@@ -1853,6 +1901,9 @@ class _tasksPageReportState extends State<TaskPage> {
                 tooltip: "Next",
               ),
             ],
+          ),
+          const Expanded(
+            child: SizedBox(),
           ),
         ],
       ),
