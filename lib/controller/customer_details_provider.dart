@@ -259,6 +259,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _selectedQuotationType = value;
     notifyListeners();
   }
+  final TextEditingController quotationDescriptionController =
+      TextEditingController();
 
   //commercial
   TextEditingController commercialDescriptionController =
@@ -1586,7 +1588,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Quotation_Status_Id": _selectedQuotationStatus ?? 1,
         "Quotation_Status_Name": _selectedQuotationStatusName ?? "Pending",
         "Created_By": userId,
-        "Description": "",
+        "Description": quotationDescriptionController.text.toString(),
         'items': _items.map((item) => item.toJson()).toList(),
         'bill_of_materials': _bomItems.map((item) => item.toJson()).toList(),
         'production_chart':
@@ -1795,6 +1797,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _scopeOfWorkItems.clear();
     _customFieldQuotation.clear();
     customFieldQuotationKey.currentState?.resetForm();
+    quotationDescriptionController.clear();
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {

@@ -267,6 +267,16 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ]),
                   const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller:
+                        customerDetailsProvider.quotationDescriptionController,
+                    hintText: 'Description',
+                    labelText: '',
+                    minLines: 3,
+                  ),
+                  const SizedBox(height: 16),
                   CommonDropdown(
                     hintText: 'Quotation Type',
                     items: customerDetailsProvider.quotationTypeData
@@ -582,10 +592,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           height: 54,
                           controller:
                               customerDetailsProvider.deliveryController,
-                          hintText:
-                              customerDetailsProvider.selectedQuotationType == 1
-                                  ? 'Upon the material ready for dispatch'
-                                  : 'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
+                          hintText: customerDetailsProvider
+                                      .selectedQuotationType ==
+                                  1
+                              ? 'Upon the material ready for dispatch'
+                              : 'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
                           labelText: '',
                           inputFormatters: [
                             FilteringTextInputFormatter.digitsOnly
@@ -2896,6 +2907,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
         customerDetailsProvider.qwarrentyController.text = quotation.warranty;
         customerDetailsProvider.qtermsConditionsController.text =
             quotation.termsAndConditions;
+        customerDetailsProvider.quotationDescriptionController.text =
+            quotation.description;
 
         // ---- STATUS ----
         customerDetailsProvider.selectedQuotationStatus =

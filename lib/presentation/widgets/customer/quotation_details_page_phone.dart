@@ -189,6 +189,8 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                       quotation.warranty;
                   customerDetailsProvider.qtermsConditionsController.text =
                       quotation.termsAndConditions;
+                  customerDetailsProvider.quotationDescriptionController.text =
+                      quotation.description;
 
                   // ---- STATUS ----
                   customerDetailsProvider.selectedQuotationStatus =

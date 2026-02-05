@@ -299,6 +299,8 @@ class QuotationCard extends StatelessWidget {
                           quotation.warranty;
                       customerDetailsProvider.qtermsConditionsController.text =
                           quotation.termsAndConditions;
+                      customerDetailsProvider.quotationDescriptionController
+                          .text = quotation.description;
 
                       // ---- STATUS ----
                       customerDetailsProvider.selectedQuotationStatus =
