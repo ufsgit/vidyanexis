@@ -33,7 +33,9 @@ class HttpRequest {
   }
 
   static Future<Response> httpGetRequest(
-      {Map<String, dynamic>? bodyData, String endPoint = ''}) async {
+      {Map<String, dynamic>? bodyData,
+      String endPoint = '',
+      bool returnBytes = false}) async {
     if (kDebugMode) {
       print('get request ====> $endPoint $bodyData ');
     }
@@ -51,7 +53,7 @@ class HttpRequest {
           "Content-Type": "application/json",
           "Authorization": "Bearer $token",
           "menuId": sideBarProvider.menuId
-        }),
+        }, responseType: returnBytes ? ResponseType.bytes : ResponseType.json),
         queryParameters: bodyData,
       );
 
