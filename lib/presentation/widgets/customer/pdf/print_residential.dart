@@ -27,14 +27,14 @@ Future<void> printResidentialPDFs({
 
     final pw.Document pdf = pw.Document();
     await _addPlaceholderPage(pdf, 1);
-    await _addPlaceholderPage(pdf, 2);
-    await _addPlaceholderPage(pdf, 3);
+    await _addSecondPage(pdf, 2);
+    await _addThirdPage(pdf, 3);
     await _addItemPage(pdf);
     await _addBillOfMaterialsPage(pdf);
     await _addWarrantyPage(pdf, 9);
     await _addPlaceholderPage(pdf, 10);
     await _addPaymentTermsPage(pdf, 11);
-    await _addPlaceholderPage(pdf, 12);
+    await _addTwelthPage(pdf, 12);
     // await _addPlaceholderPage(pdf, 13);
 
     final Uint8List pdfBytes = await pdf.save();
@@ -327,7 +327,8 @@ Future<void> _addItemPage(pw.Document pdf) async {
                       children: [
                         pw.Padding(
                           padding: const pw.EdgeInsets.all(8.0),
-                          child: pw.Text("Description:-",
+                          child: pw.Text(
+                              "Description:-\n${quotation?.description3 ?? ''}",
                               style: pw.TextStyle(
                                   fontSize: 11,
                                   fontWeight: pw.FontWeight.bold)),
@@ -376,20 +377,20 @@ Future<void> _addItemPage(pw.Document pdf) async {
                   ],
                 ),
 
-                pw.SizedBox(height: 30),
+                // pw.SizedBox(height: 30),
 
-                // Bank Details
-                pw.Text('BANK ACCOUNT DETAILS',
-                    style: pw.TextStyle(font: boldFont, fontSize: 12)),
-                pw.SizedBox(height: 8),
-                pw.Text('Account Number: 0915102000006552',
-                    style: pw.TextStyle(font: font, fontSize: 11)),
-                pw.Text('IFSC Code: IBKL0000339',
-                    style: pw.TextStyle(font: font, fontSize: 11)),
-                pw.Text('Account Name : A3S ECOSAVE PRIVATE LIMITED',
-                    style: pw.TextStyle(font: font, fontSize: 11)),
-                pw.Text('Bank : IDBI BANK',
-                    style: pw.TextStyle(font: font, fontSize: 11)),
+                // // Bank Details
+                // pw.Text('BANK ACCOUNT DETAILS',
+                //     style: pw.TextStyle(font: boldFont, fontSize: 12)),
+                // pw.SizedBox(height: 8),
+                // pw.Text('Account Number: 0915102000006552',
+                //     style: pw.TextStyle(font: font, fontSize: 11)),
+                // pw.Text('IFSC Code: IBKL0000339',
+                //     style: pw.TextStyle(font: font, fontSize: 11)),
+                // pw.Text('Account Name : A3S ECOSAVE PRIVATE LIMITED',
+                //     style: pw.TextStyle(font: font, fontSize: 11)),
+                // pw.Text('Bank : IDBI BANK',
+                //     style: pw.TextStyle(font: font, fontSize: 11)),
               ],
             ),
           ),
@@ -582,6 +583,228 @@ pw.Widget _tableCell(String text, {pw.Alignment? align, bool isBold = false}) {
               : pw.TextAlign.left,
     ),
   );
+}
+
+Future<void> _addSecondPage(pw.Document pdf, int pageNumber) async {
+  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  Uint8List? contentImageBytes;
+  pw.MemoryImage? contentImage;
+
+  final font = await PdfGoogleFonts.openSansRegular();
+  final boldFont = await PdfGoogleFonts.openSansBold();
+
+  try {
+    final ByteData contentImageData = await rootBundle.load(contentImagePath);
+    contentImageBytes = contentImageData.buffer.asUint8List();
+    contentImage = pw.MemoryImage(contentImageBytes);
+    pdf.addPage(
+      pw.Page(
+        margin: pw.EdgeInsets.zero,
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Container(
+                width: PdfPageFormat.a4.width,
+                height: PdfPageFormat.a4.height,
+                child: pw.Image(
+                  contentImage!,
+                  fit: pw.BoxFit.fill,
+                ),
+              ),
+              pw.Positioned(
+                top: 575,
+                right: 75,
+                left: 75,
+                child: pw.Text(
+                  quotation?.description ?? '',
+                  style: pw.TextStyle(
+                      font: font,
+                      fontSize: 10,
+                      lineSpacing: 2,
+                      color: PdfColors.black),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  } catch (e) {
+    print('Content image not found: $contentImagePath');
+    _addFallbackPage(pdf, pageNumber);
+    return;
+  }
+}
+
+Future<void> _addThirdPage(pw.Document pdf, int pageNumber) async {
+  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  Uint8List? contentImageBytes;
+  pw.MemoryImage? contentImage;
+
+  final font = await PdfGoogleFonts.openSansRegular();
+  final boldFont = await PdfGoogleFonts.openSansBold();
+
+  try {
+    final ByteData contentImageData = await rootBundle.load(contentImagePath);
+    contentImageBytes = contentImageData.buffer.asUint8List();
+    contentImage = pw.MemoryImage(contentImageBytes);
+    pdf.addPage(
+      pw.Page(
+        margin: pw.EdgeInsets.zero,
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Container(
+                width: PdfPageFormat.a4.width,
+                height: PdfPageFormat.a4.height,
+                child: pw.Image(
+                  contentImage!,
+                  fit: pw.BoxFit.fill,
+                ),
+              ),
+              pw.Positioned(
+                top: 600,
+                right: 75,
+                left: 75,
+                child: pw.Text(
+                  quotation?.description2 ?? '',
+                  style: pw.TextStyle(
+                      font: font,
+                      fontSize: 10,
+                      lineSpacing: 2,
+                      color: PdfColors.black),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  } catch (e) {
+    print('Content image not found: $contentImagePath');
+    _addFallbackPage(pdf, pageNumber);
+    return;
+  }
+}
+
+Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
+  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  Uint8List? contentImageBytes;
+  pw.MemoryImage? contentImage;
+
+  final font = await PdfGoogleFonts.openSansRegular();
+  final boldFont = await PdfGoogleFonts.openSansBold();
+
+  try {
+    final ByteData contentImageData = await rootBundle.load(contentImagePath);
+    contentImageBytes = contentImageData.buffer.asUint8List();
+    contentImage = pw.MemoryImage(contentImageBytes);
+    pdf.addPage(
+      pw.Page(
+        margin: pw.EdgeInsets.zero,
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Container(
+                width: PdfPageFormat.a4.width,
+                height: PdfPageFormat.a4.height,
+                child: pw.Image(
+                  contentImage!,
+                  fit: pw.BoxFit.fill,
+                ),
+              ),
+              pw.Positioned(
+                bottom: 350,
+                right: 75,
+                left: 75,
+                child: pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Column(
+                      children: [
+                        pw.Text(
+                          'Signed By',
+                          style: pw.TextStyle(
+                              font: font,
+                              fontSize: 12,
+                              lineSpacing: 2,
+                              color: PdfColors.black),
+                        ),
+                        pw.Text(
+                          'Consumer',
+                          style: pw.TextStyle(
+                              font: font,
+                              fontSize: 12,
+                              lineSpacing: 2,
+                              color: PdfColors.black),
+                        ),
+                      ],
+                    ),
+                    pw.Column(
+                      children: [
+                        pw.Text(
+                          'Contractor',
+                          style: pw.TextStyle(
+                              font: font,
+                              fontSize: 12,
+                              lineSpacing: 2,
+                              color: PdfColors.black),
+                        ),
+                        pw.Text(
+                          'A3S Ecosave Pvt. Ltd.',
+                          style: pw.TextStyle(
+                              font: font,
+                              fontSize: 12,
+                              lineSpacing: 2,
+                              color: PdfColors.black),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              pw.Positioned(
+                  bottom: 100,
+                  right: 75,
+                  left: 75,
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        'BANK ACCOUNT DETAILS',
+                        style: pw.TextStyle(font: boldFont, fontSize: 12),
+                      ),
+                      pw.Text(
+                        'Account Number: 0915102000006552',
+                        style: pw.TextStyle(font: font, fontSize: 11),
+                      ),
+                      pw.Text(
+                        'IFSC Code: IBKL0000339',
+                        style: pw.TextStyle(font: font, fontSize: 11),
+                      ),
+                      pw.Text(
+                        'Account Name : A3S ECOSAVE PRIVATE LIMITED',
+                        style: pw.TextStyle(font: font, fontSize: 11),
+                      ),
+                      pw.Text(
+                        'Bank : IDBI BANK',
+                        style: pw.TextStyle(font: font, fontSize: 11),
+                      ),
+                    ],
+                  ))
+            ],
+          );
+        },
+      ),
+    );
+  } catch (e) {
+    print('Content image not found: $contentImagePath');
+    _addFallbackPage(pdf, pageNumber);
+    return;
+  }
 }
 
 Future<void> _addWarrantyPage(pw.Document pdf, int pageNumber) async {
