@@ -106,8 +106,56 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     getUserName();
   }
 
+  late TabController _tabController;
+  List<Tab> _tabs = [];
+  bool _isControllerInitialized = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final settingsprovider = Provider.of<SettingsProvider>(context);
+    final sideprovider = Provider.of<SidebarProvider>(context);
+
+    final newTabs = [
+      const Tab(text: "Info"),
+      if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
+      if (settingsprovider.menuIsViewMap[14] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Complaints"),
+      if (settingsprovider.menuIsViewMap[15] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Periodic Service"),
+      if (settingsprovider.menuIsViewMap[16] == 1)
+        const Tab(text: "Quotations"),
+      const Tab(text: "History"),
+      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
+      if (settingsprovider.menuIsViewMap[18] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Receipt"),
+      const Tab(text: "Payment Schedule"),
+      if (settingsprovider.menuIsViewMap[37] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "CheckList Management"),
+      if (settingsprovider.menuIsViewMap[37] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Refund Form"),
+    ];
+
+    if (!_isControllerInitialized || newTabs.length != _tabs.length) {
+      _tabs = newTabs;
+      _tabController = TabController(length: _tabs.length, vsync: this);
+      _tabController.addListener(() {
+        setState(() {});
+      });
+      _isControllerInitialized = true;
+    }
+  }
+
   @override
   void dispose() {
+    if (_isControllerInitialized) {
+      _tabController.dispose();
+    }
     super.dispose();
   }
 
@@ -156,31 +204,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
     final customerProvider = Provider.of<CustomerProvider>(context);
-    final List<Tab> tabs = [
-      if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
-      if (settingsprovider.menuIsViewMap[14] == 1 &&
-          sideprovider.name != 'Lead /')
-        const Tab(text: "Complaints"),
-      if (settingsprovider.menuIsViewMap[15] == 1 &&
-          sideprovider.name != 'Lead /')
-        const Tab(text: "Periodic Service"),
-      if (settingsprovider.menuIsViewMap[16] == 1)
-        const Tab(text: "Quotations"),
-      const Tab(text: "History"),
-      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
-      if (settingsprovider.menuIsViewMap[18] == 1 &&
-          sideprovider.name != 'Lead /')
-        const Tab(text: "Receipt"),
-      const Tab(text: "Payment Schedule"),
-      // if (settingsprovider.menuIsViewMap[30] == 1)
-      //   const Tab(text: "Task Documents"),
-      if (settingsprovider.menuIsViewMap[37] == 1 &&
-          sideprovider.name != 'Lead /')
-        const Tab(text: "CheckList Management"),
-      if (settingsprovider.menuIsViewMap[37] == 1 &&
-          sideprovider.name != 'Lead /')
-        const Tab(text: "Refund Form"),
-    ];
+
     // final List<SidebarOption> sidebarOptions = [
     //   SidebarOption(
     //     title: 'Leads',
@@ -306,84 +330,82 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                 //     },
                 //   ),
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      //top
-                      if (widget.report == 'true')
-                        const SizedBox(
-                          height: 20,
-                        ),
-                      Padding(
-                        padding: const EdgeInsets.all(20.0),
-                        child: Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                // Check if we can pop (pushed via Navigator/GoRouter)
-                                if (Navigator.of(context).canPop()) {
-                                  Navigator.of(context).pop();
-                                  return;
-                                }
+                  child: Container(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        //top
+                        if (widget.report == 'true')
+                          const SizedBox(
+                            height: 20,
+                          ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20.0, vertical: 10),
+                          color: Colors.white,
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  // Check if we can pop (pushed via Navigator/GoRouter)
+                                  if (Navigator.of(context).canPop()) {
+                                    Navigator.of(context).pop();
+                                    return;
+                                  }
 
-                                // Fallback for embedded views (mostly old web logic)
-                                sideprovider.replaceWidget(true, '');
-                                sideprovider.replaceWidgetCustomer(true, '');
-                                AppStyles.isWebScreen(context)
-                                    ? leadProvider.getSearchLeadsNoContext()
-                                    : leadProvider.getSearchLeads(context);
-                                AppStyles.isWebScreen(context)
-                                    ? customerProvider
-                                        .getSearchCustomersNoContext()
-                                    : customerProvider
-                                        .getSearchCustomers(context);
-                                leadDetailsProvider.fetchLeadDetailsNoContext(
-                                    widget.customerId);
-                              },
-                              child: Icon(
-                                Icons.arrow_back,
-                                size: 24,
-                                color: Color(0xFF152D70),
+                                  // Fallback for embedded views (mostly old web logic)
+                                  sideprovider.replaceWidget(true, '');
+                                  sideprovider.replaceWidgetCustomer(true, '');
+                                  AppStyles.isWebScreen(context)
+                                      ? leadProvider.getSearchLeadsNoContext()
+                                      : leadProvider.getSearchLeads(context);
+                                  AppStyles.isWebScreen(context)
+                                      ? customerProvider
+                                          .getSearchCustomersNoContext()
+                                      : customerProvider
+                                          .getSearchCustomers(context);
+                                  leadDetailsProvider.fetchLeadDetailsNoContext(
+                                      widget.customerId);
+                                },
+                                child: Icon(
+                                  Icons.arrow_back,
+                                  size: 24,
+                                  color: Color(0xFF152D70),
+                                ),
                               ),
-                            ),
-                            // const SizedBox(
-                            //   width: 10,
-                            // ),
-                            AppStyles.isWebScreen(context)
-                                ? Text(
-                                    customerDetailsProvider.leadDetails !=
-                                                null &&
-                                            customerDetailsProvider
-                                                .leadDetails!.isNotEmpty
-                                        ? customerDetailsProvider
-                                            .leadDetails![0].customerName
-                                        : '',
-                                    style: const TextStyle(
-                                        fontSize: 24,
-                                        color: Color(0xFF152D70),
-                                        fontWeight: FontWeight.w600),
-                                  )
-                                : Text(
-                                    customerDetailsProvider.leadDetails !=
-                                                null &&
-                                            customerDetailsProvider
-                                                .leadDetails!.isNotEmpty
-                                        ? customerDetailsProvider
-                                            .leadDetails![0].customerName
-                                        : '',
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 24),
-                                  ),
-                            // const SizedBox(
-                            //   width: 10,
-                            // ),
-                            if (!AppStyles.isWebScreen(context))
+                              const SizedBox(width: 10),
+                              AppStyles.isWebScreen(context)
+                                  ? Text(
+                                      customerDetailsProvider.leadDetails !=
+                                                  null &&
+                                              customerDetailsProvider
+                                                  .leadDetails!.isNotEmpty
+                                          ? customerDetailsProvider
+                                              .leadDetails![0].customerName
+                                          : '',
+                                      style: const TextStyle(
+                                          fontSize: 24,
+                                          color: Color(0xFF152D70),
+                                          fontWeight: FontWeight.w600),
+                                    )
+                                  : Expanded(
+                                      child: Text(
+                                        customerDetailsProvider.leadDetails !=
+                                                    null &&
+                                                customerDetailsProvider
+                                                    .leadDetails!.isNotEmpty
+                                            ? customerDetailsProvider
+                                                .leadDetails![0].customerName
+                                            : '',
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 24),
+                                      ),
+                                    ),
+                              const SizedBox(width: 10),
                               if (settingsprovider.menuIsEditMap[4] == 1)
                                 IconButton(
                                     onPressed: () async {
@@ -418,119 +440,68 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       );
                                     },
                                     icon: const Icon(Icons.edit)),
-                            if (sideprovider.name != 'Lead /')
-                              if (settingsprovider.menuIsDeleteMap[4] == 1)
-                                CustomElevatedButton(
-                                  backgroundColor: AppColors.whiteColor,
-                                  borderColor: AppColors.textRed,
-                                  textColor: AppColors.textRed,
-                                  buttonText: 'Remove Registration',
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title:
-                                              const Text('Remove Registration'),
-                                          content: const Text(
-                                              'Are you sure you want to Remove Registration '),
-                                          actions: <Widget>[
-                                            TextButton(
-                                              child: const Text('Cancel'),
-                                              onPressed: () {
-                                                Navigator.of(context)
-                                                    .pop(); // Close the dialog
-                                              },
-                                            ),
-                                            TextButton(
-                                              child: const Text(
-                                                  'Remove Registration'),
-                                              onPressed: () {
-                                                customerDetailsProvider
-                                                    .removeRegister(
-                                                        widget.customerId,
-                                                        context);
-                                              },
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
+                              const SizedBox(width: 20),
+                              Expanded(
+                                child: TabBar(
+                                  controller: _tabController,
+                                  labelColor: AppColors.primaryBlue,
+                                  unselectedLabelColor: Colors.black54,
+                                  indicatorColor: AppColors.primaryBlue,
+                                  tabAlignment: TabAlignment.start,
+                                  isScrollable: true,
+                                  dividerColor: Colors.transparent,
+                                  labelStyle: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                  unselectedLabelStyle: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16),
+                                  tabs: _tabs,
                                 ),
-                            if (settingsprovider.menuIsViewMap[61] == 1 &&
-                                sideprovider.name != 'Lead /')
-                              CustomElevatedButton(
-                                backgroundColor: AppColors.whiteColor,
-                                borderColor: AppColors.bluebutton,
-                                textColor: AppColors.bluebutton,
-                                buttonText: 'KSEB',
-                                onPressed: () async {
-                                  final customer =
-                                      (customerDetailsProvider.leadDetails !=
-                                                  null &&
-                                              customerDetailsProvider
-                                                  .leadDetails!.isNotEmpty)
-                                          ? customerDetailsProvider
-                                              .leadDetails?.first
-                                          : null;
-                                  ksebPdf(
-                                      customerDetails: customer,
-                                      context: context);
-                                },
                               ),
-                            if (settingsprovider.menuIsViewMap[63] == 1 &&
-                                sideprovider.name != 'Lead /')
-                              CustomElevatedButton(
-                                backgroundColor: AppColors.whiteColor,
-                                borderColor: AppColors.bluebutton,
-                                textColor: AppColors.bluebutton,
-                                buttonText: 'Vendor Agreement',
-                                onPressed: () async {
-                                  final customer =
-                                      (customerDetailsProvider.leadDetails !=
-                                                  null &&
-                                              customerDetailsProvider
-                                                  .leadDetails!.isNotEmpty)
-                                          ? customerDetailsProvider
-                                              .leadDetails?.first
-                                          : null;
-                                  vendorAgreementPdf(
-                                      customerDetails: customer,
-                                      context: context);
-                                },
-                              ),
-                            if (settingsprovider.menuIsViewMap[62] == 1 &&
-                                sideprovider.name != 'Lead /')
-                              CustomElevatedButton(
-                                backgroundColor: AppColors.whiteColor,
-                                borderColor: AppColors.bluebutton,
-                                textColor: AppColors.bluebutton,
-                                buttonText: 'Vendor Feasibility',
-                                onPressed: () async {
-                                  final customer =
-                                      (customerDetailsProvider.leadDetails !=
-                                                  null &&
-                                              customerDetailsProvider
-                                                  .leadDetails!.isNotEmpty)
-                                          ? customerDetailsProvider
-                                              .leadDetails?.first
-                                          : null;
-
-                                  rtsFeasibilityReportPdf(
-                                      customerDetails: customer,
-                                      context: context);
-                                },
-                              ),
-                          ],
+                              if (settingsprovider.menuIsSaveMap[13] == 1 &&
+                                  _isControllerInitialized &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text == "Tasks")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      customerDetailsProvider
+                                          .clearTaskDetails();
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return TaskCreationWidget(
+                                            isEdit: false,
+                                            taskId: '0',
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Create Task'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                            ],
+                          ),
                         ),
-                      ),
-                      //down
-                      Expanded(
-                        child: Row(
-                          children: [
-                            // Left Panel
-                            if (AppStyles.isWebScreen(context))
+                        //down
+                        Expanded(
+                          child: Row(
+                            children: [
+                              // Left Panel
+                              /* if (AppStyles.isWebScreen(context))
                               Expanded(
                                 flex: 2,
                                 child: customerDetailsProvider.leadDetails !=
@@ -1102,43 +1073,1143 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         ],
                                       )
                                     : Container(),
-                              ),
-                            // Right Panel
-                            if (!AppStyles.isWebScreen(context))
+                              ), */
+                              // Right Panel
+                              /* if (!AppStyles.isWebScreen(context))
                               const SizedBox(
                                 width: 15,
-                              ),
-                            Expanded(
-                              flex: 4,
-                              child: Padding(
-                                padding: const EdgeInsets.only(right: 15.0),
-                                child: DefaultTabController(
-                                  length: tabs.length,
+                              ), */
+                              Expanded(
+                                // flex: 4,
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 15.0),
                                   child: Column(
                                     children: [
+                                      /* // COMMENTED OUT OLD TAB BAR SECTION
                                       // Tabs
-                                      TabBar(
-                                        labelColor: AppColors.primaryBlue,
-                                        unselectedLabelColor: Colors.black54,
-                                        indicatorColor: AppColors.primaryBlue,
-                                        tabAlignment: TabAlignment.start,
-                                        isScrollable: true,
-                                        dividerColor: Colors.white,
-                                        labelStyle: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        unselectedLabelStyle: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 16,
-                                        ),
-                                        tabs: tabs,
+                                      // Tabs
+                                      Row(
+                                        children: [
+                                          Expanded(
+                                            child: TabBar(
+                                              labelColor: AppColors.primaryBlue,
+                                              unselectedLabelColor:
+                                                  Colors.black54,
+                                              indicatorColor:
+                                                  AppColors.primaryBlue,
+                                              tabAlignment: TabAlignment.start,
+                                              isScrollable: true,
+                                              dividerColor: Colors.white,
+                                              labelStyle: const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                              unselectedLabelStyle:
+                                                  const TextStyle(
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 16,
+                                              ),
+                                              tabs: tabs,
+                                            ),
+                                          ),
+                                          if (settingsprovider
+                                                  .menuIsSaveMap[13] ==
+                                              1)
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(8.0),
+                                              child: ElevatedButton.icon(
+                                                onPressed: () {
+                                                  customerDetailsProvider
+                                                          .customerId =
+                                                      widget.customerId;
+                                                  customerDetailsProvider
+                                                      .clearTaskDetails();
+                                                  showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return TaskCreationWidget(
+                                                        isEdit: false,
+                                                        taskId: '0',
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                icon: const Icon(Icons.add),
+                                                label:
+                                                    const Text('Create Task'),
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor:
+                                                      AppColors.primaryBlue,
+                                                  foregroundColor: Colors.white,
+                                                  padding:
+                                                      AppStyles.isWebScreen(
+                                                              context)
+                                                          ? const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 16,
+                                                              vertical: 12)
+                                                          : const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 16,
+                                                              vertical: 0),
+                                                ),
+                                              ),
+                                            ),
+                                        ],
                                       ),
+                                    */
 
                                       // Tab views
                                       Expanded(
                                         child: TabBarView(
+                                          controller: _tabController,
                                           children: [
+                                            // Info Tab
+                                            customerDetailsProvider
+                                                            .leadDetails !=
+                                                        null &&
+                                                    customerDetailsProvider
+                                                        .leadDetails!.isNotEmpty
+                                                ? (AppStyles.isWebScreen(
+                                                        context)
+                                                    ? Row(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          // Left Half
+                                                          Expanded(
+                                                            child: ListView(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(
+                                                                      16.0),
+                                                              children: [
+                                                                // Contact
+                                                                CustomerCard(
+                                                                  title:
+                                                                      "Contact",
+                                                                  content: [
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          8.0),
+                                                                      child:
+                                                                          Divider(
+                                                                        color: Colors
+                                                                            .grey
+                                                                            .withOpacity(0.4),
+                                                                        thickness:
+                                                                            0.4,
+                                                                        height:
+                                                                            1,
+                                                                      ),
+                                                                    ),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Phone no",
+                                                                        value: customerDetailsProvider
+                                                                            .leadDetails![0]
+                                                                            .contactNumber
+                                                                            .toString()),
+                                                                  ],
+                                                                ),
+                                                                // More Info
+                                                                CustomerCard(
+                                                                  title:
+                                                                      "More Info",
+                                                                  content: [
+                                                                    Column(
+                                                                      crossAxisAlignment:
+                                                                          CrossAxisAlignment
+                                                                              .start,
+                                                                      children: [
+                                                                        DetailRow(
+                                                                            label:
+                                                                                "Address",
+                                                                            value:
+                                                                                customerDetailsProvider.leadDetails![0].address ?? ''),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              8,
+                                                                        ),
+                                                                        DetailRow(
+                                                                            label:
+                                                                                "Enquiry For",
+                                                                            value:
+                                                                                customerDetailsProvider.leadDetails![0].enquiryForName ?? ''),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              8,
+                                                                        ),
+                                                                        DetailRow(
+                                                                            label:
+                                                                                "Enquiry Source",
+                                                                            value:
+                                                                                customerDetailsProvider.leadDetails![0].enquirySourceName ?? ''),
+                                                                        SizedBox(
+                                                                          height:
+                                                                              8,
+                                                                        ),
+                                                                        DetailRow(
+                                                                            label:
+                                                                                "Consumer Number",
+                                                                            value:
+                                                                                customerDetailsProvider.leadDetails![0].consumerNumber ?? ''),
+                                                                        const SizedBox(
+                                                                          height:
+                                                                              8,
+                                                                        ),
+                                                                        const Text(
+                                                                          "Location: ",
+                                                                          style:
+                                                                              TextStyle(color: Color(0xFF8E97A3)),
+                                                                        ),
+                                                                        Row(
+                                                                          children: [
+                                                                            Expanded(
+                                                                              child: InkWell(
+                                                                                onTap: () {
+                                                                                  String locationData = customerDetailsProvider.leadDetails![0].location.toString();
+
+                                                                                  print('DEBUG: Raw location data: "$locationData"');
+                                                                                  print('DEBUG: Location length: ${locationData.length}');
+                                                                                  print('DEBUG: Location characters: ${locationData.codeUnits}');
+
+                                                                                  _openMaps(locationData);
+                                                                                },
+                                                                                child: Text(
+                                                                                  customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                                  style: const TextStyle(color: Colors.blue),
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                  maxLines: 1,
+                                                                                ),
+                                                                              ),
+                                                                            ),
+                                                                            IconButton(
+                                                                              color: Colors.grey,
+                                                                              onPressed: () {
+                                                                                Clipboard.setData(
+                                                                                  ClipboardData(
+                                                                                    text: customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                                  ),
+                                                                                );
+                                                                                ScaffoldMessenger.of(context).showSnackBar(
+                                                                                  const SnackBar(
+                                                                                    content: Text('Link copied to clipboard!'),
+                                                                                  ),
+                                                                                );
+                                                                              },
+                                                                              icon: const Icon(Icons.copy),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                // Basic Information
+                                                                CustomerCard(
+                                                                  title:
+                                                                      "Basic",
+                                                                  content: [
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Lead Name",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .customerName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Source",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .sourceCategoryName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Mobile No",
+                                                                      value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .contactNumber
+                                                                          .toString(),
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Enquiry Source",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .enquirySourceName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Enquiry For",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .enquiryForName ??
+                                                                          '',
+                                                                    ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Total project cost :",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .totalProjectCost
+                                                                              .toString() ??
+                                                                          '',
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                // Address Details
+                                                                CustomerCard(
+                                                                  title:
+                                                                      "Address Details",
+                                                                  content: [
+                                                                    // Address
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Address",
+                                                                        value: customerDetailsProvider.leadDetails![0].address ??
+                                                                            ''),
+
+                                                                    // Latitude
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Latitude",
+                                                                        value: customerDetailsProvider
+                                                                            .leadDetails![0]
+                                                                            .latitude
+                                                                            .toString()),
+
+                                                                    // Longitude
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Longitude",
+                                                                        value: customerDetailsProvider
+                                                                            .leadDetails![0]
+                                                                            .longitude
+                                                                            .toString()),
+
+                                                                    // District
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "District",
+                                                                        value: customerDetailsProvider.leadDetails![0].districtName ??
+                                                                            ''),
+
+                                                                    // Firestation
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    DetailRow(
+                                                                        label:
+                                                                            "Firestation",
+                                                                        value: customerDetailsProvider
+                                                                            .leadDetails![0]
+                                                                            .firestationName),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            8),
+                                                                    const Text(
+                                                                      'Location',
+                                                                      style: TextStyle(
+                                                                          color:
+                                                                              Color(0xFF8E97A3)),
+                                                                    ),
+                                                                    Row(
+                                                                      children: [
+                                                                        Expanded(
+                                                                          child:
+                                                                              InkWell(
+                                                                            onTap:
+                                                                                () {
+                                                                              String locationData = customerDetailsProvider.leadDetails![0].location.toString();
+
+                                                                              print('DEBUG: Raw location data: "$locationData"');
+                                                                              print('DEBUG: Location length: ${locationData.length}');
+                                                                              print('DEBUG: Location characters: ${locationData.codeUnits}');
+
+                                                                              _openMaps(locationData);
+                                                                            },
+                                                                            child:
+                                                                                Text(
+                                                                              customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                              style: const TextStyle(color: Colors.blue),
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              maxLines: 1,
+                                                                            ),
+                                                                          ),
+                                                                        ),
+                                                                        IconButton(
+                                                                          color:
+                                                                              Colors.grey,
+                                                                          onPressed:
+                                                                              () {
+                                                                            Clipboard.setData(
+                                                                              ClipboardData(
+                                                                                text: customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                              ),
+                                                                            );
+                                                                            ScaffoldMessenger.of(context).showSnackBar(
+                                                                              const SnackBar(
+                                                                                content: Text('Link copied to clipboard!'),
+                                                                              ),
+                                                                            );
+                                                                          },
+                                                                          icon:
+                                                                              const Icon(Icons.copy),
+                                                                        ),
+                                                                      ],
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          ),
+                                                          // Right Half
+                                                          Expanded(
+                                                            child: ListView(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                      .all(
+                                                                      16.0),
+                                                              children: [
+                                                                // Additional Details
+                                                                Wrap(
+                                                                  spacing: 10,
+                                                                  runSpacing:
+                                                                      10,
+                                                                  crossAxisAlignment:
+                                                                      WrapCrossAlignment
+                                                                          .center,
+                                                                  children: [
+                                                                    if (sideprovider
+                                                                            .name !=
+                                                                        'Lead /')
+                                                                      if (settingsprovider
+                                                                              .menuIsDeleteMap[4] ==
+                                                                          1)
+                                                                        CustomElevatedButton(
+                                                                          backgroundColor:
+                                                                              AppColors.whiteColor,
+                                                                          borderColor:
+                                                                              AppColors.textRed,
+                                                                          textColor:
+                                                                              AppColors.textRed,
+                                                                          buttonText:
+                                                                              'Remove Registration',
+                                                                          onPressed:
+                                                                              () {
+                                                                            showDialog(
+                                                                              context: context,
+                                                                              builder: (BuildContext context) {
+                                                                                return AlertDialog(
+                                                                                  title: const Text('Remove Registration'),
+                                                                                  content: const Text('Are you sure you want to Remove Registration '),
+                                                                                  actions: <Widget>[
+                                                                                    TextButton(
+                                                                                      child: const Text('Cancel'),
+                                                                                      onPressed: () {
+                                                                                        Navigator.of(context).pop(); // Close the dialog
+                                                                                      },
+                                                                                    ),
+                                                                                    TextButton(
+                                                                                      child: const Text('Remove Registration'),
+                                                                                      onPressed: () {
+                                                                                        customerDetailsProvider.removeRegister(widget.customerId, context);
+                                                                                      },
+                                                                                    ),
+                                                                                  ],
+                                                                                );
+                                                                              },
+                                                                            );
+                                                                          },
+                                                                        ),
+                                                                    if (settingsprovider.menuIsViewMap[61] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'KSEB',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          final customer = (customerDetailsProvider.leadDetails != null && customerDetailsProvider.leadDetails!.isNotEmpty)
+                                                                              ? customerDetailsProvider.leadDetails?.first
+                                                                              : null;
+                                                                          ksebPdf(
+                                                                              customerDetails: customer,
+                                                                              context: context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[63] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Vendor Agreement',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          final customer = (customerDetailsProvider.leadDetails != null && customerDetailsProvider.leadDetails!.isNotEmpty)
+                                                                              ? customerDetailsProvider.leadDetails?.first
+                                                                              : null;
+                                                                          vendorAgreementPdf(
+                                                                              customerDetails: customer,
+                                                                              context: context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[62] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Vendor Feasibility',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          final customer = (customerDetailsProvider.leadDetails != null && customerDetailsProvider.leadDetails!.isNotEmpty)
+                                                                              ? customerDetailsProvider.leadDetails?.first
+                                                                              : null;
+
+                                                                          rtsFeasibilityReportPdf(
+                                                                              customerDetails: customer,
+                                                                              context: context);
+                                                                        },
+                                                                      ),
+                                                                  ],
+                                                                ),
+                                                                const SizedBox(
+                                                                    height: 20),
+                                                                // ACTION BUTTONS (Moved here)
+                                                                CustomerCard(
+                                                                  title:
+                                                                      "Additional Details",
+                                                                  content: leadProvider
+                                                                          .customFieldEnquiryFor
+                                                                          .isNotEmpty
+                                                                      ? leadProvider
+                                                                          .customFieldEnquiryFor
+                                                                          .where((field) =>
+                                                                              (field.customFieldName != null && field.customFieldName.toString().isNotEmpty) &&
+                                                                              (field.datavalue != null && field.datavalue.toString().isNotEmpty))
+                                                                          .map<Widget>((field) => DetailRow(
+                                                                                label: field.customFieldName.toString().replaceAll('_', ' '),
+                                                                                value: field.datavalue?.toString() ?? '',
+                                                                              ))
+                                                                          .toList()
+                                                                      : [
+                                                                          if (leadProvider
+                                                                              .customFieldEnquiryFor
+                                                                              .isEmpty)
+                                                                            const Text('No additional details available')
+                                                                        ],
+                                                                ),
+                                                              ],
+                                                            ),
+                                                          )
+                                                        ],
+                                                      )
+                                                    : ListView(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(16.0),
+                                                        children: [
+                                                          // Duplicate cards for Mobile View
+                                                          // Contact
+                                                          CustomerCard(
+                                                            title: "Contact",
+                                                            content: [
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .all(
+                                                                        8.0),
+                                                                child: Divider(
+                                                                  color: Colors
+                                                                      .grey
+                                                                      .withOpacity(
+                                                                          0.4),
+                                                                  thickness:
+                                                                      0.4,
+                                                                  height: 1,
+                                                                ),
+                                                              ),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Phone no",
+                                                                  value: customerDetailsProvider
+                                                                      .leadDetails![
+                                                                          0]
+                                                                      .contactNumber
+                                                                      .toString()),
+                                                            ],
+                                                          ),
+                                                          // More Info
+                                                          CustomerCard(
+                                                            title: "More Info",
+                                                            content: [
+                                                              Column(
+                                                                crossAxisAlignment:
+                                                                    CrossAxisAlignment
+                                                                        .start,
+                                                                children: [
+                                                                  DetailRow(
+                                                                      label:
+                                                                          "Address",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .address ??
+                                                                          ''),
+                                                                  SizedBox(
+                                                                    height: 8,
+                                                                  ),
+                                                                  DetailRow(
+                                                                      label:
+                                                                          "Enquiry For",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .enquiryForName ??
+                                                                          ''),
+                                                                  SizedBox(
+                                                                    height: 8,
+                                                                  ),
+                                                                  DetailRow(
+                                                                      label:
+                                                                          "Enquiry Source",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .enquirySourceName ??
+                                                                          ''),
+                                                                  SizedBox(
+                                                                    height: 8,
+                                                                  ),
+                                                                  DetailRow(
+                                                                      label:
+                                                                          "Consumer Number",
+                                                                      value: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .consumerNumber ??
+                                                                          ''),
+                                                                  const SizedBox(
+                                                                    height: 8,
+                                                                  ),
+                                                                  const Text(
+                                                                    "Location: ",
+                                                                    style: TextStyle(
+                                                                        color: Color(
+                                                                            0xFF8E97A3)),
+                                                                  ),
+                                                                  Row(
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child:
+                                                                            InkWell(
+                                                                          onTap:
+                                                                              () {
+                                                                            String
+                                                                                locationData =
+                                                                                customerDetailsProvider.leadDetails![0].location.toString();
+                                                                            _openMaps(locationData);
+                                                                          },
+                                                                          child:
+                                                                              Text(
+                                                                            customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                            style:
+                                                                                const TextStyle(color: Colors.blue),
+                                                                            overflow:
+                                                                                TextOverflow.ellipsis,
+                                                                            maxLines:
+                                                                                1,
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                      IconButton(
+                                                                        color: Colors
+                                                                            .grey,
+                                                                        onPressed:
+                                                                            () {
+                                                                          Clipboard
+                                                                              .setData(
+                                                                            ClipboardData(
+                                                                              text: customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                            ),
+                                                                          );
+                                                                          ScaffoldMessenger.of(context)
+                                                                              .showSnackBar(
+                                                                            const SnackBar(
+                                                                              content: Text('Link copied to clipboard!'),
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        icon: const Icon(
+                                                                            Icons.copy),
+                                                                      ),
+                                                                    ],
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          // Basic Information
+                                                          CustomerCard(
+                                                            title: "Basic",
+                                                            content: [
+                                                              DetailRow(
+                                                                label:
+                                                                    "Lead Name",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .customerName ??
+                                                                    '',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                label: "Source",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .sourceCategoryName ??
+                                                                    '',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                label:
+                                                                    "Mobile No",
+                                                                value: customerDetailsProvider
+                                                                    .leadDetails![
+                                                                        0]
+                                                                    .contactNumber
+                                                                    .toString(),
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                label:
+                                                                    "Enquiry Source",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .enquirySourceName ??
+                                                                    '',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                label:
+                                                                    "Enquiry For",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .enquiryForName ??
+                                                                    '',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                label:
+                                                                    "Total project cost :",
+                                                                value: customerDetailsProvider
+                                                                        .leadDetails![
+                                                                            0]
+                                                                        .totalProjectCost
+                                                                        .toString() ??
+                                                                    '',
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          // Address Details
+                                                          CustomerCard(
+                                                            title:
+                                                                "Address Details",
+                                                            content: [
+                                                              // Address
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Address",
+                                                                  value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .address ??
+                                                                      ''),
+
+                                                              // Latitude
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Latitude",
+                                                                  value: customerDetailsProvider
+                                                                      .leadDetails![
+                                                                          0]
+                                                                      .latitude
+                                                                      .toString()),
+
+                                                              // Longitude
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Longitude",
+                                                                  value: customerDetailsProvider
+                                                                      .leadDetails![
+                                                                          0]
+                                                                      .longitude
+                                                                      .toString()),
+
+                                                              // District
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "District",
+                                                                  value: customerDetailsProvider
+                                                                          .leadDetails![
+                                                                              0]
+                                                                          .districtName ??
+                                                                      ''),
+
+                                                              // Firestation
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              DetailRow(
+                                                                  label:
+                                                                      "Firestation",
+                                                                  value: customerDetailsProvider
+                                                                      .leadDetails![
+                                                                          0]
+                                                                      .firestationName),
+                                                              const SizedBox(
+                                                                  height: 8),
+                                                              const Text(
+                                                                'Location',
+                                                                style: TextStyle(
+                                                                    color: Color(
+                                                                        0xFF8E97A3)),
+                                                              ),
+                                                              Row(
+                                                                children: [
+                                                                  Expanded(
+                                                                    child:
+                                                                        InkWell(
+                                                                      onTap:
+                                                                          () {
+                                                                        String locationData = customerDetailsProvider
+                                                                            .leadDetails![0]
+                                                                            .location
+                                                                            .toString();
+                                                                        _openMaps(
+                                                                            locationData);
+                                                                      },
+                                                                      child:
+                                                                          Text(
+                                                                        customerDetailsProvider
+                                                                            .leadDetails![0]
+                                                                            .location
+                                                                            .toString(),
+                                                                        style: const TextStyle(
+                                                                            color:
+                                                                                Colors.blue),
+                                                                        overflow:
+                                                                            TextOverflow.ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  IconButton(
+                                                                    color: Colors
+                                                                        .grey,
+                                                                    onPressed:
+                                                                        () {
+                                                                      Clipboard
+                                                                          .setData(
+                                                                        ClipboardData(
+                                                                          text: customerDetailsProvider
+                                                                              .leadDetails![0]
+                                                                              .location
+                                                                              .toString(),
+                                                                        ),
+                                                                      );
+                                                                      ScaffoldMessenger.of(
+                                                                              context)
+                                                                          .showSnackBar(
+                                                                        const SnackBar(
+                                                                          content:
+                                                                              Text('Link copied to clipboard!'),
+                                                                        ),
+                                                                      );
+                                                                    },
+                                                                    icon: const Icon(
+                                                                        Icons
+                                                                            .copy),
+                                                                  ),
+                                                                ],
+                                                              ),
+                                                            ],
+                                                          ), // Additional Details
+                                                          Wrap(
+                                                            spacing: 10,
+                                                            runSpacing: 10,
+                                                            crossAxisAlignment:
+                                                                WrapCrossAlignment
+                                                                    .center,
+                                                            children: [
+                                                              if (sideprovider
+                                                                      .name !=
+                                                                  'Lead /')
+                                                                if (settingsprovider
+                                                                            .menuIsDeleteMap[
+                                                                        4] ==
+                                                                    1)
+                                                                  CustomElevatedButton(
+                                                                    backgroundColor:
+                                                                        AppColors
+                                                                            .whiteColor,
+                                                                    borderColor:
+                                                                        AppColors
+                                                                            .textRed,
+                                                                    textColor:
+                                                                        AppColors
+                                                                            .textRed,
+                                                                    buttonText:
+                                                                        'Remove Registration',
+                                                                    onPressed:
+                                                                        () {
+                                                                      showDialog(
+                                                                        context:
+                                                                            context,
+                                                                        builder:
+                                                                            (BuildContext
+                                                                                context) {
+                                                                          return AlertDialog(
+                                                                            title:
+                                                                                const Text('Remove Registration'),
+                                                                            content:
+                                                                                const Text('Are you sure you want to Remove Registration '),
+                                                                            actions: <Widget>[
+                                                                              TextButton(
+                                                                                child: const Text('Cancel'),
+                                                                                onPressed: () {
+                                                                                  Navigator.of(context).pop(); // Close the dialog
+                                                                                },
+                                                                              ),
+                                                                              TextButton(
+                                                                                child: const Text('Remove Registration'),
+                                                                                onPressed: () {
+                                                                                  customerDetailsProvider.removeRegister(widget.customerId, context);
+                                                                                },
+                                                                              ),
+                                                                            ],
+                                                                          );
+                                                                        },
+                                                                      );
+                                                                    },
+                                                                  ),
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          61] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'KSEB',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    final customer = (customerDetailsProvider.leadDetails !=
+                                                                                null &&
+                                                                            customerDetailsProvider
+                                                                                .leadDetails!.isNotEmpty)
+                                                                        ? customerDetailsProvider
+                                                                            .leadDetails
+                                                                            ?.first
+                                                                        : null;
+                                                                    ksebPdf(
+                                                                        customerDetails:
+                                                                            customer,
+                                                                        context:
+                                                                            context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          63] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Vendor Agreement',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    final customer = (customerDetailsProvider.leadDetails !=
+                                                                                null &&
+                                                                            customerDetailsProvider
+                                                                                .leadDetails!.isNotEmpty)
+                                                                        ? customerDetailsProvider
+                                                                            .leadDetails
+                                                                            ?.first
+                                                                        : null;
+                                                                    vendorAgreementPdf(
+                                                                        customerDetails:
+                                                                            customer,
+                                                                        context:
+                                                                            context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          62] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Vendor Feasibility',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    final customer = (customerDetailsProvider.leadDetails !=
+                                                                                null &&
+                                                                            customerDetailsProvider
+                                                                                .leadDetails!.isNotEmpty)
+                                                                        ? customerDetailsProvider
+                                                                            .leadDetails
+                                                                            ?.first
+                                                                        : null;
+
+                                                                    rtsFeasibilityReportPdf(
+                                                                        customerDetails:
+                                                                            customer,
+                                                                        context:
+                                                                            context);
+                                                                  },
+                                                                ),
+                                                            ],
+                                                          ),
+                                                          const SizedBox(
+                                                              height: 20),
+                                                          // ACTION BUTTONS (Moved here mobile)
+                                                          CustomerCard(
+                                                            title:
+                                                                "Additional Details",
+                                                            content: leadProvider
+                                                                    .customFieldEnquiryFor
+                                                                    .isNotEmpty
+                                                                ? leadProvider
+                                                                    .customFieldEnquiryFor
+                                                                    .where((field) =>
+                                                                        (field.customFieldName !=
+                                                                                null &&
+                                                                            field.customFieldName
+                                                                                .toString()
+                                                                                .isNotEmpty) &&
+                                                                        (field.datavalue !=
+                                                                                null &&
+                                                                            field.datavalue
+                                                                                .toString()
+                                                                                .isNotEmpty))
+                                                                    .map<Widget>(
+                                                                        (field) =>
+                                                                            DetailRow(
+                                                                              label: field.customFieldName.toString().replaceAll('_', ' '),
+                                                                              value: field.datavalue?.toString() ?? '',
+                                                                            ))
+                                                                    .toList()
+                                                                : [
+                                                                    if (leadProvider
+                                                                        .customFieldEnquiryFor
+                                                                        .isEmpty)
+                                                                      const Text(
+                                                                          'No additional details available')
+                                                                  ],
+                                                          ),
+                                                        ],
+                                                      ))
+                                                : Container(),
                                             // Tasks Tab
                                             if (settingsprovider
                                                     .menuIsViewMap[13] ==
@@ -1152,7 +2223,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           CrossAxisAlignment
                                                               .start,
                                                       children: [
-                                                        Row(
+                                                        /* Row(
                                                           mainAxisAlignment:
                                                               MainAxisAlignment
                                                                   .spaceEvenly,
@@ -1328,6 +2399,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           ],
                                                         ),
 
+                                                        */
                                                         // Filtered Task List
                                                         _buildFilteredTaskList(
                                                           onTap:
@@ -2403,11 +3475,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ],
@@ -2805,10 +3877,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       children: [
                         _buildHeaderCell('#', width: 50.0),
                         _buildHeaderCell('Tasks', flex: 3),
-                        _buildHeaderCell('ACTION REQUIRED', flex: 3),
-                        _buildHeaderCell('SCHEDULE', flex: 2),
-                        _buildHeaderCell('CREATED DATE', flex: 2),
-                        _buildHeaderCell('STATUS', flex: 2),
+                        _buildHeaderCell('Action Required', flex: 3),
+                        _buildHeaderCell('Schedule', flex: 2),
+                        _buildHeaderCell('Created Date', flex: 2),
+                        _buildHeaderCell('Status', flex: 2),
                         _buildHeaderCell('Options', flex: 1),
                       ],
                     ),
@@ -2955,87 +4027,86 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 ),
                                 _buildWidgetCell(
                                   flex: 1,
-                                  child: PopupMenuButton<String>(
-                                    icon: const Icon(Icons.more_vert,
-                                        size: 20, color: Colors.grey),
-                                    onSelected: (value) {
-                                      if (value == 'edit') {
-                                        if (onTap != null) {
-                                          onTap(task.taskMasterId);
-                                          customerDetailsProvider
-                                              .setTaskEditDropDown(
-                                                  task.taskTypeId,
-                                                  task.taskTypeName,
-                                                  task.toUserId,
-                                                  task.toUsername,
-                                                  task.taskStatusId,
-                                                  task.taskStatusName);
-                                          customerDetailsProvider
-                                                  .taskDescriptionController
-                                                  .text =
-                                              task.description.toString();
-                                          customerDetailsProvider
-                                              .taskChoosedateController
-                                              .text = task.taskDate
-                                                          .toString() !=
-                                                      'null' &&
-                                                  task.taskDate
-                                                      .toString()
-                                                      .isNotEmpty
-                                              ? DateFormat('dd MMM yyyy')
-                                                  .format(DateTime.parse(
-                                                      task.taskDate.toString()))
-                                              : '';
-                                          customerDetailsProvider
-                                              .taskChoosetimeController
-                                              .text = task.taskTime.toString();
-                                        }
-                                      } else if (value == 'delete') {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return ConfirmationDialog(
-                                              title: 'Delete Task',
-                                              content:
-                                                  'Are you sure you want to delete this task?',
-                                              onCancel: () =>
-                                                  Navigator.of(context).pop(),
-                                              onConfirm: () {
-                                                Navigator.of(context).pop();
-                                                customerDetailsProvider
-                                                    .deleteTask(
-                                                        task.taskId.toString(),
-                                                        widget.customerId,
-                                                        context);
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        icon: const Icon(Icons.edit,
+                                            size: 20, color: Colors.blue),
+                                        onPressed: () {
+                                          if (onTap != null) {
+                                            // onTap(task.taskMasterId); // Removed to prevent navigation
+                                            customerDetailsProvider
+                                                .setTaskEditDropDown(
+                                                    task.taskTypeId,
+                                                    task.taskTypeName,
+                                                    task.toUserId,
+                                                    task.toUsername,
+                                                    task.taskStatusId,
+                                                    task.taskStatusName);
+                                            customerDetailsProvider
+                                                    .taskDescriptionController
+                                                    .text =
+                                                task.description.toString();
+                                            customerDetailsProvider
+                                                    .taskChoosedateController
+                                                    .text =
+                                                task.taskDate.toString() !=
+                                                            'null' &&
+                                                        task.taskDate
+                                                            .toString()
+                                                            .isNotEmpty
+                                                    ? DateFormat('dd MMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            task.taskDate
+                                                                .toString()))
+                                                    : '';
+                                            customerDetailsProvider
+                                                    .taskChoosetimeController
+                                                    .text =
+                                                task.taskTime.toString();
+
+                                            // Open TaskCreationWidget in edit mode
+                                            showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return TaskCreationWidget(
+                                                  isEdit: true,
+                                                  taskId:
+                                                      task.taskId.toString(),
+                                                );
                                               },
                                             );
-                                          },
-                                        );
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry<String>>[
-                                      const PopupMenuItem<String>(
-                                        value: 'edit',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.edit,
-                                                size: 18, color: Colors.blue),
-                                            SizedBox(width: 8),
-                                            Text('Edit'),
-                                          ],
-                                        ),
+                                          }
+                                        },
                                       ),
-                                      const PopupMenuItem<String>(
-                                        value: 'delete',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.delete,
-                                                size: 18, color: Colors.red),
-                                            SizedBox(width: 8),
-                                            Text('Delete'),
-                                          ],
-                                        ),
+                                      IconButton(
+                                        icon: const Icon(Icons.delete,
+                                            size: 20, color: Colors.red),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return ConfirmationDialog(
+                                                title: 'Delete Task',
+                                                content:
+                                                    'Are you sure you want to delete this task?',
+                                                onCancel: () =>
+                                                    Navigator.of(context).pop(),
+                                                onConfirm: () {
+                                                  Navigator.of(context).pop();
+                                                  customerDetailsProvider
+                                                      .deleteTask(
+                                                          task.taskId
+                                                              .toString(),
+                                                          widget.customerId,
+                                                          context);
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
@@ -3416,12 +4487,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     customerDetailsProvider.qwarrentyController.text = quotation.warranty;
     customerDetailsProvider.qtermsConditionsController.text =
         quotation.termsAndConditions;
-    customerDetailsProvider.quotationDescriptionController.text =
-        quotation.description;
-    customerDetailsProvider.quotationDescription2Controller.text =
-        quotation.description2;
-    customerDetailsProvider.quotationDescription3Controller.text =
-        quotation.description3;
 
     // ---- STATUS ----
     customerDetailsProvider.selectedQuotationStatus =
