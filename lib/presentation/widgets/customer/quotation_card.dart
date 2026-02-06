@@ -179,7 +179,7 @@ class QuotationCard extends StatelessWidget {
                 //       : '',
                 // ),
                 const Spacer(),
-                if (settingsprovider.menuIsViewMap[32] == 1) ...[
+                if (settingsprovider.menuIsViewMap[69] == 1) ...[
                   // New Print Button
                   CustomOutlinedSvgButton(
                     onPressed: () async {
@@ -195,6 +195,8 @@ class QuotationCard extends StatelessWidget {
                     backgroundColor: Colors.white,
                     borderSide: BorderSide(color: AppColors.primaryBlue),
                   ),
+                ],
+                if (settingsprovider.menuIsViewMap[32] == 1) ...[
                   const SizedBox(width: 8),
                   if (quotation?.quotationTypeId == 2)
                     CustomOutlinedSvgButton(
