@@ -31,7 +31,7 @@ Future<void> printResidentialPDFs({
     await _addPlaceholderPage(pdf, 3);
     await _addItemPage(pdf);
     await _addBillOfMaterialsPage(pdf);
-    await _addPlaceholderPage(pdf, 9);
+    await _addWarrantyPage(pdf, 9);
     await _addPlaceholderPage(pdf, 10);
     await _addPaymentTermsPage(pdf, 11);
     await _addPlaceholderPage(pdf, 12);
@@ -87,12 +87,11 @@ Future<void> _addItemPage(pw.Document pdf) async {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(0),
         header: (context) => _buildHeader(headerImage),
-        footer: (context) => _buildFooter(footerImage),
+        footer: (context) => _buildFooter(footerImage, context),
         build: (context) => [
           // Main content starts after header
           pw.Padding(
-            padding:
-                const pw.EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+            padding: const pw.EdgeInsets.symmetric(horizontal: 40, vertical: 0),
             child: pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
@@ -141,7 +140,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                           ],
                         ),
                         pw.SizedBox(height: 4),
-                        pw.Text('GST:',
+                        pw.Text('GST : 32AAXA0127A1Z8',
                             style: pw.TextStyle(font: boldFont, fontSize: 11)),
                         pw.SizedBox(height: 4),
                         pw.Text(
@@ -195,7 +194,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                         pw.SizedBox(height: 4),
                         pw.Row(
                           children: [
-                            pw.Text('Tender Number : ',
+                            pw.Text('MNRE Empanelment Number : ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
                             pw.Text('${quotation?.tendorNumber ?? ''}',
@@ -445,7 +444,7 @@ Future<void> _addBillOfMaterialsPage(pw.Document pdf) async {
         pageFormat: PdfPageFormat.a4,
         margin: const pw.EdgeInsets.all(0),
         header: (context) => _buildHeader(headerImage),
-        footer: (context) => _buildFooter(footerImage),
+        footer: (context) => _buildFooter(footerImage, context),
         build: (context) => [
           pw.SizedBox(height: 20),
           // Title - Now Dynamic
@@ -585,6 +584,58 @@ pw.Widget _tableCell(String text, {pw.Alignment? align, bool isBold = false}) {
   );
 }
 
+Future<void> _addWarrantyPage(pw.Document pdf, int pageNumber) async {
+  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  Uint8List? contentImageBytes;
+  pw.MemoryImage? contentImage;
+
+  final font = await PdfGoogleFonts.openSansRegular();
+  final boldFont = await PdfGoogleFonts.openSansBold();
+
+  try {
+    final ByteData contentImageData = await rootBundle.load(contentImagePath);
+    contentImageBytes = contentImageData.buffer.asUint8List();
+    contentImage = pw.MemoryImage(contentImageBytes);
+    pdf.addPage(
+      pw.Page(
+        margin: pw.EdgeInsets.zero,
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Stack(
+            children: [
+              pw.Container(
+                width: PdfPageFormat.a4.width,
+                height: PdfPageFormat.a4.height,
+                child: pw.Image(
+                  contentImage!,
+                  fit: pw.BoxFit.fill,
+                ),
+              ),
+              pw.Positioned(
+                top: 300,
+                right: 90,
+                left: 90,
+                child: pw.Text(
+                  quotation?.warranty ?? '',
+                  style: pw.TextStyle(
+                      font: font,
+                      fontSize: 10,
+                      lineSpacing: 2,
+                      color: PdfColors.black),
+                ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  } catch (e) {
+    print('Content image not found: $contentImagePath');
+    _addFallbackPage(pdf, pageNumber);
+    return;
+  }
+}
+
 Future<void> _addPaymentTermsPage(pw.Document pdf, int pageNumber) async {
   String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
   Uint8List? contentImageBytes;
@@ -613,7 +664,7 @@ Future<void> _addPaymentTermsPage(pw.Document pdf, int pageNumber) async {
                 ),
               ),
               pw.Positioned(
-                top: 390,
+                top: 370,
                 right: 70,
                 left: 70,
                 child: pw.Table(
@@ -912,7 +963,7 @@ pw.Widget _buildHeader(pw.MemoryImage? headerImage) {
 
   return pw.Container(
     alignment: pw.Alignment.centerRight, // or center/left as needed
-    margin: const pw.EdgeInsets.only(bottom: 10),
+    margin: const pw.EdgeInsets.only(bottom: 0),
     child: pw.Image(
       headerImage,
       height: 150, // Adjust height as needed
@@ -923,7 +974,7 @@ pw.Widget _buildHeader(pw.MemoryImage? headerImage) {
 }
 
 // Common Footer Widget
-pw.Widget _buildFooter(pw.MemoryImage? footerImage) {
+pw.Widget _buildFooter(pw.MemoryImage? footerImage, pw.Context context) {
   return pw.Column(
     children: [
       if (footerImage != null)

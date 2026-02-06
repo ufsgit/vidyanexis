@@ -82,6 +82,8 @@ class GetQuotationbyMasterIdmodel {
   final String totalSgstAmount;
   final String totalIgstAmount;
   final String otherTax;
+  final String description2;
+  final String description3;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -151,6 +153,8 @@ class GetQuotationbyMasterIdmodel {
     required this.totalIgstAmount,
     required this.otherTax,
     required this.scopeOfWorkItems,
+    required this.description2,
+    required this.description3,
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -233,6 +237,8 @@ class GetQuotationbyMasterIdmodel {
       scopeOfWorkItems: (json['ScopeOfWorkItems'] as List? ?? [])
           .map((e) => ScopeOfWorkModel.fromJson(e))
           .toList(),
+      description2: toStr(json['Description_2']),
+      description3: toStr(json['Description_3']),
     );
   }
 }

@@ -277,6 +277,26 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     minLines: 3,
                   ),
                   const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller:
+                        customerDetailsProvider.quotationDescription2Controller,
+                    hintText: 'Description 2',
+                    labelText: '',
+                    minLines: 3,
+                  ),
+                  const SizedBox(height: 16),
+                  CustomTextField(
+                    readOnly: false,
+                    height: 54,
+                    controller:
+                        customerDetailsProvider.quotationDescription3Controller,
+                    hintText: 'Description 3',
+                    labelText: '',
+                    minLines: 3,
+                  ),
+                  const SizedBox(height: 16),
                   CommonDropdown(
                     hintText: 'Quotation Type',
                     items: customerDetailsProvider.quotationTypeData
@@ -2909,6 +2929,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             quotation.termsAndConditions;
         customerDetailsProvider.quotationDescriptionController.text =
             quotation.description;
+        customerDetailsProvider.quotationDescription2Controller.text =
+            quotation.description2;
+        customerDetailsProvider.quotationDescription3Controller.text =
+            quotation.description3;
 
         // ---- STATUS ----
         customerDetailsProvider.selectedQuotationStatus =

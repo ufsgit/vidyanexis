@@ -259,7 +259,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _selectedQuotationType = value;
     notifyListeners();
   }
+
   final TextEditingController quotationDescriptionController =
+      TextEditingController();
+  final TextEditingController quotationDescription2Controller =
+      TextEditingController();
+  final TextEditingController quotationDescription3Controller =
       TextEditingController();
 
   //commercial
@@ -1650,6 +1655,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "ScopeOfWorkItems": scopeOfWorkItems.map((e) => e.toJson()).toList(),
         "customFields":
             customFieldQuotationKey.currentState?.getFieldValuesAsJson(),
+        "Description_2": quotationDescription2Controller.text.toString(),
+        "Description_3": quotationDescription3Controller.text.toString(),
       });
 
       if (response!.statusCode == 200) {
@@ -1798,6 +1805,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _customFieldQuotation.clear();
     customFieldQuotationKey.currentState?.resetForm();
     quotationDescriptionController.clear();
+    quotationDescription2Controller.clear();
+    quotationDescription3Controller.clear();
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {
