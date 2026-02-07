@@ -86,7 +86,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       customerDetailsProvider.getTaskList(widget.customerId, context);
-      customerDetailsProvider.fetchLeadDetails(widget.customerId, context);
+      customerDetailsProvider
+          .fetchLeadDetails(widget.customerId, context)
+          .then((value) {
+        if (customerDetailsProvider.leadDetails != null &&
+            customerDetailsProvider.leadDetails!.isNotEmpty) {
+          final lead = customerDetailsProvider.leadDetails!.first;
+          final leadsProvider =
+              Provider.of<LeadsProvider>(context, listen: false);
+
+          leadsProvider.getCustomFieldsByEnquiryForId(context,
+              enquiryForId: lead.enquiryForId, leadId: lead.customerId);
+        }
+      });
       customerDetailsProvider.getServiceList(widget.customerId, context);
       customerDetailsProvider.getAmc(widget.customerId, '0', context);
       customerDetailsProvider.getQuatationList(widget.customerId, context);
@@ -430,7 +442,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           leadDetailsProvider
                                               .leadDetails![0].enquirySourceId;
 
-                                      showDialog(
+                                      await showDialog(
                                         context: context,
                                         builder: (BuildContext context) {
                                           return const NewLeadDrawerWidget(
@@ -438,6 +450,30 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           );
                                         },
                                       );
+                                      customerDetailsProvider
+                                          .fetchLeadDetails(
+                                              widget.customerId, context)
+                                          .then((value) {
+                                        if (customerDetailsProvider
+                                                    .leadDetails !=
+                                                null &&
+                                            customerDetailsProvider
+                                                .leadDetails!.isNotEmpty) {
+                                          final lead = customerDetailsProvider
+                                              .leadDetails!.first;
+                                          final leadsProvider =
+                                              Provider.of<LeadsProvider>(
+                                                  context,
+                                                  listen: false);
+
+                                          leadsProvider
+                                              .getCustomFieldsByEnquiryForId(
+                                                  context,
+                                                  enquiryForId:
+                                                      lead.enquiryForId,
+                                                  leadId: lead.customerId);
+                                        }
+                                      });
                                     },
                                     icon: const Icon(Icons.edit)),
                               const SizedBox(width: 20),
