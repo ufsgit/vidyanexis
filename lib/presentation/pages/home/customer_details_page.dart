@@ -4321,7 +4321,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       if (settingsprovider.menuIsViewMap[32] ==
                                           1)
                                         IconButton(
-                                          tooltip: 'Print',
+                                          tooltip: 'Print Quotation 1',
                                           icon: const Icon(Icons.print,
                                               size: 20, color: Colors.blue),
                                           onPressed: () async {
@@ -4335,7 +4335,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           },
                                         ),
                                       // Specific Print Button
-                                      if (settingsprovider.menuIsViewMap[32] ==
+                                      if (settingsprovider.menuIsViewMap[55] ==
                                           1)
                                         if (task.quotationTypeId == 2)
                                           IconButton(
@@ -4371,7 +4371,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               Loader.stopLoader(context);
                                             },
                                           ),
-                                      if (settingsprovider.menuIsViewMap[32] ==
+                                      if (settingsprovider.menuIsViewMap[55] ==
                                           1)
                                         if (task.quotationTypeId == 1)
                                           IconButton(

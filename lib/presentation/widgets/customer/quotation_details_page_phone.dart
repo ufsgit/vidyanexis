@@ -113,7 +113,7 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
               color: AppColors.textBlack),
         ),
         actions: [
-          if (settingsprovider.menuIsViewMap[32] == 1) ...[
+          if (settingsprovider.menuIsViewMap[55] == 1) ...[
             if (widget.quotation.quotationTypeId == 2)
               CustomOutlinedSvgButton(
                 onPressed: () async {

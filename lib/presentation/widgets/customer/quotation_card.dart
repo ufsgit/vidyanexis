@@ -179,24 +179,24 @@ class QuotationCard extends StatelessWidget {
                 //       : '',
                 // ),
                 const Spacer(),
-                if (settingsprovider.menuIsViewMap[69] == 1) ...[
+                if (settingsprovider.menuIsViewMap[32] == 1) ...[
                   // New Print Button
                   CustomOutlinedSvgButton(
                     onPressed: () async {
                       await Loader.showLoader(context);
                       await customerDetailsProvider.getQuotationMasterPdf(
-                          taskId, context);
+                          quotation!.quotationMasterId.toString(), context);
                       Loader.stopLoader(context);
                     },
                     svgPath: 'assets/images/Print.svg',
-                    label: 'Print',
+                    label: 'Print Quotation 1',
                     breakpoint: 860,
                     foregroundColor: AppColors.primaryBlue,
                     backgroundColor: Colors.white,
                     borderSide: BorderSide(color: AppColors.primaryBlue),
                   ),
                 ],
-                if (settingsprovider.menuIsViewMap[32] == 1) ...[
+                if (settingsprovider.menuIsViewMap[55] == 1) ...[
                   const SizedBox(width: 8),
                   if (quotation?.quotationTypeId == 2)
                     CustomOutlinedSvgButton(

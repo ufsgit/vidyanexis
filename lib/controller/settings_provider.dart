@@ -1165,6 +1165,32 @@ class SettingsProvider extends ChangeNotifier {
               .map((item) => GetMenuPermissionModel.fromJson(item))
               .toList();
 
+          // Rename permission 32 to Print Quotation 1
+          for (var i = 0; i < _getMenuPermission.length; i++) {
+            if (_getMenuPermission[i].menuId == 32) {
+              _getMenuPermission[i].menuName = 'Print Quotation 1';
+            }
+          }
+
+          // Rename or add permission 55 as Print Quotation 2
+          bool has55 = false;
+          for (var i = 0; i < _getMenuPermission.length; i++) {
+            if (_getMenuPermission[i].menuId == 55) {
+              _getMenuPermission[i].menuName = 'Print Quotation 2';
+              has55 = true;
+            }
+          }
+
+          if (!has55) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 55,
+                menuName: 'Print Quotation 2',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
+          }
+
           if (!_getMenuPermission.any((element) => element.menuId == 67)) {
             _getMenuPermission.add(GetMenuPermissionModel(
                 menuId: 67,
@@ -2630,6 +2656,36 @@ class SettingsProvider extends ChangeNotifier {
           _showMenu = (data as List<dynamic>)
               .map((item) => MenuPermissionModel.fromJson(item))
               .toList();
+
+          // Rename permission 32 to Print Quotation 1
+          for (var i = 0; i < _showMenu.length; i++) {
+            if (_showMenu[i].menuId == 32) {
+              _showMenu[i].menuName = 'Print Quotation 1';
+            }
+          }
+
+          // Rename or add permission 55 as Print Quotation 2
+          bool has55 = false;
+          for (var i = 0; i < _showMenu.length; i++) {
+            if (_showMenu[i].menuId == 55) {
+              _showMenu[i].menuName = 'Print Quotation 2';
+              has55 = true;
+            }
+          }
+
+          if (!has55) {
+            _showMenu.add(MenuPermissionModel(
+                menuId: 55,
+                menuName: 'Print Quotation 2',
+                menuOrder: 0,
+                menuOrderSub: 0,
+                isEdit: 1,
+                isSave: 1,
+                isDelete: 1,
+                isView: 1,
+                menuStatus: 1,
+                menuType: 1));
+          }
 
           var recordingMenu = _showMenu.firstWhere((e) => e.menuId == 67,
               orElse: () => MenuPermissionModel(
