@@ -180,9 +180,9 @@ class _UsersContentState extends State<UsersContent> {
                               child: Row(
                                 children: [
                                   SizedBox(
-                                    width: 50,
+                                    width: 40,
                                     child: Text(
-                                      'No.',
+                                      'No',
                                       style: GoogleFonts.plusJakartaSans(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -190,9 +190,9 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 200,
+                                    width: 180,
                                     child: Text(
-                                      'Username',
+                                      'User name',
                                       style: GoogleFonts.plusJakartaSans(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
@@ -200,7 +200,7 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 150,
+                                    width: 140,
                                     child: Text(
                                       'Department',
                                       style: GoogleFonts.plusJakartaSans(
@@ -210,7 +210,7 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 150,
+                                    width: 120,
                                     child: Text(
                                       'Branch',
                                       style: GoogleFonts.plusJakartaSans(
@@ -219,9 +219,47 @@ class _UsersContentState extends State<UsersContent> {
                                           color: AppColors.textGrey1),
                                     ),
                                   ),
-                                  const Spacer(),
                                   SizedBox(
-                                    width: 120,
+                                    width: 60,
+                                    child: Center(
+                                      child: Text(
+                                        'Edit',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textGrey1),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 32),
+                                  SizedBox(
+                                    width: 70,
+                                    child: Center(
+                                      child: Text(
+                                        'Delete',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textGrey1),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 32),
+                                  SizedBox(
+                                    width: 100,
+                                    child: Center(
+                                      child: Text(
+                                        'Team',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textGrey1),
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 64),
+                                  SizedBox(
+                                    width: 100,
                                     child: Text(
                                       'Status',
                                       style: GoogleFonts.plusJakartaSans(
@@ -230,17 +268,18 @@ class _UsersContentState extends State<UsersContent> {
                                           color: AppColors.textGrey1),
                                     ),
                                   ),
-                                  const SizedBox(width: 16),
+                                  const Expanded(child: SizedBox(width: 80)),
                                   SizedBox(
-                                    width: 180,
+                                    width: 160,
                                     child: Text(
-                                      'View Details',
+                                      'View details',
                                       style: GoogleFonts.plusJakartaSans(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                           color: AppColors.textGrey1),
                                     ),
                                   ),
+                                  const Expanded(child: SizedBox()),
                                 ],
                               ),
                             ),
@@ -262,7 +301,7 @@ class _UsersContentState extends State<UsersContent> {
                                     child: Row(
                                       children: [
                                         SizedBox(
-                                          width: 50,
+                                          width: 40,
                                           child: Text(
                                             (index + 1).toString(),
                                             style: GoogleFonts.plusJakartaSans(
@@ -272,7 +311,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                         SizedBox(
-                                          width: 200,
+                                          width: 180,
                                           child: Row(
                                             children: [
                                               const CircleAvatar(
@@ -303,7 +342,7 @@ class _UsersContentState extends State<UsersContent> {
                                           ),
                                         ),
                                         SizedBox(
-                                          width: 150,
+                                          width: 140,
                                           child: (settingsProvider
                                                       .searchUserDetails[index]
                                                       .departmentName !=
@@ -351,7 +390,7 @@ class _UsersContentState extends State<UsersContent> {
                                               : const SizedBox(),
                                         ),
                                         SizedBox(
-                                          width: 150,
+                                          width: 120,
                                           child: (settingsProvider
                                                       .searchUserDetails[index]
                                                       .branchName !=
@@ -397,167 +436,174 @@ class _UsersContentState extends State<UsersContent> {
                                                 )
                                               : const SizedBox(),
                                         ),
-                                        const Spacer(),
-                                        // SizedBox(
-                                        //   width: 120,
-                                        //   child: Text(
-                                        //     settingsProvider
-                                        //         .searchUserDetails[index].userType
-                                        //         .toString(),
-                                        //     style: GoogleFonts.plusJakartaSans(
-                                        //         fontSize: 14,
-                                        //         fontWeight: FontWeight.w700,
-                                        //         color: AppColors.textBlack),
-                                        //   ),
-                                        // ),
                                         if (settingsProvider.menuIsEditMap[1] ==
                                             1)
-                                          TextButton(
-                                              onPressed: () {
-                                                showDialog(
-                                                  barrierDismissible: false,
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return SettingsAddUserWidget(
-                                                        appLogin: settingsProvider.searchUserDetails[index].allowAppLogin == 1
-                                                            ? true
-                                                            : false,
-                                                        userType:
-                                                            settingsProvider.searchUserDetails[index].userType
-                                                                .toString(),
-                                                        userStatusId:
-                                                            settingsProvider.searchUserDetails[index].workingStatus
-                                                                .toString(),
-                                                        departmentId: int.parse(
-                                                            settingsProvider
-                                                                .searchUserDetails[
-                                                                    index]
-                                                                .departmentId),
-                                                        branchId: int.parse(
-                                                            settingsProvider
-                                                                .searchUserDetails[
-                                                                    index]
-                                                                .branchId),
-                                                        userId: settingsProvider
-                                                            .searchUserDetails[index]
-                                                            .userDetailsId
-                                                            .toString(),
-                                                        email: settingsProvider.searchUserDetails[index].email,
-                                                        userName: settingsProvider.searchUserDetails[index].userDetailsName,
-                                                        password: settingsProvider.searchUserDetails[index].password,
-                                                        newPassword: settingsProvider.searchUserDetails[index].password,
-                                                        mobileNo: settingsProvider.searchUserDetails[index].mobile,
-                                                        empCode: settingsProvider.searchUserDetails[index].empCode,
-                                                        designation: settingsProvider.searchUserDetails[index].designation,
-                                                        doj: settingsProvider.searchUserDetails[index].doj,
-                                                        isEdit: true);
-                                                  },
-                                                );
-                                              },
-                                              child: Text(
-                                                'Edit',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: AppColors
-                                                            .primaryBlue),
-                                              )),
-                                        if (settingsProvider
-                                                .menuIsDeleteMap[1] ==
-                                            1)
-                                          TextButton(
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext contextx) {
-                                                  return AlertDialog(
-                                                    title: const Text(
-                                                        'Confirm Delete'),
-                                                    content: const Text(
-                                                        'Are you sure you want to delete this user?'),
-                                                    actions: [
-                                                      TextButton(
-                                                        onPressed: () =>
-                                                            Navigator.pop(
-                                                                context),
-                                                        child: const Text(
-                                                            'Cancel'),
-                                                      ),
-                                                      TextButton(
-                                                        onPressed: () async {
-                                                          String userId =
+                                          SizedBox(
+                                            width: 60,
+                                            child: Center(
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return SettingsAddUserWidget(
+                                                          appLogin: settingsProvider
+                                                                      .searchUserDetails[
+                                                                          index]
+                                                                      .allowAppLogin ==
+                                                                  1
+                                                              ? true
+                                                              : false,
+                                                          userType: settingsProvider
+                                                              .searchUserDetails[
+                                                                  index]
+                                                              .userType
+                                                              .toString(),
+                                                          userStatusId:
                                                               settingsProvider
                                                                   .searchUserDetails[
                                                                       index]
-                                                                  .userDetailsId
-                                                                  .toString();
-                                                          settingsProvider
-                                                              .deleteUserContent(
-                                                                  context,
-                                                                  userId);
-                                                          Navigator.pop(
-                                                              context);
-                                                          print(userId);
-                                                        },
-                                                        child: const Text(
-                                                          'Delete',
-                                                          style: TextStyle(
-                                                              color:
-                                                                  Colors.red),
-                                                        ),
-                                                      ),
-                                                    ],
+                                                                  .workingStatus
+                                                                  .toString(),
+                                                          departmentId: int.parse(
+                                                              settingsProvider
+                                                                  .searchUserDetails[index]
+                                                                  .departmentId),
+                                                          branchId: int.parse(settingsProvider.searchUserDetails[index].branchId),
+                                                          userId: settingsProvider.searchUserDetails[index].userDetailsId.toString(),
+                                                          email: settingsProvider.searchUserDetails[index].email,
+                                                          userName: settingsProvider.searchUserDetails[index].userDetailsName,
+                                                          password: settingsProvider.searchUserDetails[index].password,
+                                                          newPassword: settingsProvider.searchUserDetails[index].password,
+                                                          mobileNo: settingsProvider.searchUserDetails[index].mobile,
+                                                          empCode: settingsProvider.searchUserDetails[index].empCode,
+                                                          designation: settingsProvider.searchUserDetails[index].designation,
+                                                          doj: settingsProvider.searchUserDetails[index].doj,
+                                                          isEdit: true);
+                                                    },
                                                   );
                                                 },
-                                              );
-                                            },
-                                            child: Text(
-                                              'Delete',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColors.textRed),
+                                                icon: Icon(
+                                                  Icons.edit,
+                                                  color: AppColors.primaryBlue,
+                                                  size: 20,
+                                                ),
+                                                tooltip: 'Edit',
+                                              ),
                                             ),
                                           ),
-                                        const SizedBox(width: 40),
-                                        ActionChip(
-                                            shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.only(
-                                                  bottomLeft:
-                                                      Radius.circular(15),
-                                                  topRight: Radius.circular(15),
+                                        const SizedBox(width: 32),
+                                        if (settingsProvider
+                                                .menuIsDeleteMap[1] ==
+                                            1)
+                                          SizedBox(
+                                            width: 70,
+                                            child: Center(
+                                              child: IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (BuildContext
+                                                        contextx) {
+                                                      return AlertDialog(
+                                                        title: const Text(
+                                                            'Confirm Delete'),
+                                                        content: const Text(
+                                                            'Are you sure you want to delete this user?'),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pop(
+                                                                    context),
+                                                            child: const Text(
+                                                                'Cancel'),
+                                                          ),
+                                                          TextButton(
+                                                            onPressed:
+                                                                () async {
+                                                              String userId =
+                                                                  settingsProvider
+                                                                      .searchUserDetails[
+                                                                          index]
+                                                                      .userDetailsId
+                                                                      .toString();
+                                                              settingsProvider
+                                                                  .deleteUserContent(
+                                                                      context,
+                                                                      userId);
+                                                              Navigator.pop(
+                                                                  context);
+                                                              print(userId);
+                                                            },
+                                                            child: const Text(
+                                                              'Delete',
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .red),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      );
+                                                    },
+                                                  );
+                                                },
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: AppColors.textRed,
+                                                  size: 20,
                                                 ),
-                                                side: BorderSide(
-                                                    color: Colors.transparent)),
-                                            color: WidgetStateProperty.all(
-                                                Colors.blue[50]),
-                                            onPressed: () => assignTeamDialogue(
-                                                context,
-                                                settingsProvider
-                                                    .searchUserDetails[index]),
-                                            avatar: const CircleAvatar(
-                                              radius: 16,
-                                              child: Icon(
-                                                  Icons.person_add_outlined,
-                                                  size: 12,
-                                                  color: Colors.grey),
+                                                tooltip: 'Delete',
+                                              ),
                                             ),
-                                            label: Text(
-                                              'Team',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontWeight:
-                                                          FontWeight.w400),
-                                            )),
-                                        const SizedBox(width: 40),
+                                          ),
+                                        const SizedBox(width: 32),
                                         SizedBox(
-                                          width: 120,
+                                          width: 100,
+                                          child: Center(
+                                            child: ActionChip(
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                        borderRadius:
+                                                            BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  15),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  15),
+                                                        ),
+                                                        side: BorderSide(
+                                                            color: Colors
+                                                                .transparent)),
+                                                color: WidgetStateProperty.all(
+                                                    Colors.blue[50]),
+                                                onPressed: () =>
+                                                    assignTeamDialogue(
+                                                        context,
+                                                        settingsProvider
+                                                                .searchUserDetails[
+                                                            index]),
+                                                avatar: const CircleAvatar(
+                                                  radius: 16,
+                                                  child: Icon(
+                                                      Icons.person_add_outlined,
+                                                      size: 12,
+                                                      color: Colors.grey),
+                                                ),
+                                                label: Text(
+                                                  'Team',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                          fontWeight:
+                                                              FontWeight.w400),
+                                                )),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 64),
+                                        SizedBox(
+                                          width: 100,
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
@@ -593,9 +639,12 @@ class _UsersContentState extends State<UsersContent> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 16),
+                                        const Expanded(
+                                            child: SizedBox(
+                                          width: 80,
+                                        )),
                                         SizedBox(
-                                          width: 180,
+                                          width: 160,
                                           child: CustomOutlinedSvgButton(
                                             showIcon: false,
                                             onPressed: () async {
@@ -642,6 +691,7 @@ class _UsersContentState extends State<UsersContent> {
                                                 color: AppColors.primaryBlue),
                                           ),
                                         ),
+                                        const Expanded(child: SizedBox()),
                                       ],
                                     ),
                                   ),
@@ -789,70 +839,67 @@ class _UsersContentState extends State<UsersContent> {
                                             if (settingsProvider
                                                     .menuIsEditMap[1] ==
                                                 1)
-                                              TextButton(
-                                                  onPressed: () {
-                                                    showDialog(
-                                                      barrierDismissible: false,
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        log(settingsProvider
-                                                            .searchUserDetails[
-                                                                index]
-                                                            .departmentId
-                                                            .toString());
+                                              IconButton(
+                                                onPressed: () {
+                                                  showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      log(settingsProvider
+                                                          .searchUserDetails[
+                                                              index]
+                                                          .departmentId
+                                                          .toString());
 
-                                                        return SettingsAddUserWidget(
-                                                            appLogin:
-                                                                settingsProvider.searchUserDetails[index].allowAppLogin == 1
-                                                                    ? true
-                                                                    : false,
-                                                            userType: settingsProvider
-                                                                .searchUserDetails[
-                                                                    index]
-                                                                .userType
-                                                                .toString(),
-                                                            departmentId: int.parse(
-                                                                settingsProvider
-                                                                    .searchUserDetails[
-                                                                        index]
-                                                                    .departmentId),
-                                                            userStatusId:
-                                                                settingsProvider
-                                                                    .searchUserDetails[
-                                                                        index]
-                                                                    .workingStatus
-                                                                    .toString(),
-                                                            userId: settingsProvider
-                                                                .searchUserDetails[index]
-                                                                .userDetailsId
-                                                                .toString(),
-                                                            email: settingsProvider.searchUserDetails[index].email,
-                                                            userName: settingsProvider.searchUserDetails[index].userDetailsName,
-                                                            password: settingsProvider.searchUserDetails[index].password,
-                                                            newPassword: settingsProvider.searchUserDetails[index].password,
-                                                            mobileNo: settingsProvider.searchUserDetails[index].mobile,
-                                                            empCode: settingsProvider.searchUserDetails[index].empCode,
-                                                            designation: settingsProvider.searchUserDetails[index].designation,
-                                                            doj: settingsProvider.searchUserDetails[index].doj,
-                                                            isEdit: true);
-                                                      },
-                                                    );
-                                                  },
-                                                  child: Text(
-                                                    'Edit',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: AppColors
-                                                                .primaryBlue),
-                                                  )),
+                                                      return SettingsAddUserWidget(
+                                                          appLogin:
+                                                              settingsProvider.searchUserDetails[index].allowAppLogin == 1
+                                                                  ? true
+                                                                  : false,
+                                                          userType: settingsProvider
+                                                              .searchUserDetails[
+                                                                  index]
+                                                              .userType
+                                                              .toString(),
+                                                          departmentId: int.parse(
+                                                              settingsProvider
+                                                                  .searchUserDetails[
+                                                                      index]
+                                                                  .departmentId),
+                                                          userStatusId:
+                                                              settingsProvider
+                                                                  .searchUserDetails[
+                                                                      index]
+                                                                  .workingStatus
+                                                                  .toString(),
+                                                          userId: settingsProvider
+                                                              .searchUserDetails[index]
+                                                              .userDetailsId
+                                                              .toString(),
+                                                          email: settingsProvider.searchUserDetails[index].email,
+                                                          userName: settingsProvider.searchUserDetails[index].userDetailsName,
+                                                          password: settingsProvider.searchUserDetails[index].password,
+                                                          newPassword: settingsProvider.searchUserDetails[index].password,
+                                                          mobileNo: settingsProvider.searchUserDetails[index].mobile,
+                                                          empCode: settingsProvider.searchUserDetails[index].empCode,
+                                                          designation: settingsProvider.searchUserDetails[index].designation,
+                                                          doj: settingsProvider.searchUserDetails[index].doj,
+                                                          isEdit: true);
+                                                    },
+                                                  );
+                                                },
+                                                icon: Icon(
+                                                  Icons.edit,
+                                                  color: AppColors.primaryBlue,
+                                                  size: 20,
+                                                ),
+                                                tooltip: 'Edit',
+                                              ),
                                             if (settingsProvider
                                                     .menuIsDeleteMap[1] ==
                                                 1)
-                                              TextButton(
+                                              IconButton(
                                                 onPressed: () {
                                                   showDialog(
                                                     context: context,
@@ -900,16 +947,12 @@ class _UsersContentState extends State<UsersContent> {
                                                     },
                                                   );
                                                 },
-                                                child: Text(
-                                                  'Delete',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: AppColors
-                                                              .textRed),
+                                                icon: Icon(
+                                                  Icons.delete,
+                                                  color: AppColors.textRed,
+                                                  size: 20,
                                                 ),
+                                                tooltip: 'Delete',
                                               ),
                                           ],
                                         ),
