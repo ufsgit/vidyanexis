@@ -97,12 +97,12 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  Future<String> getCurrentLocation() async {
+  Future<Map<String, dynamic>> getCurrentLocation() async {
     try {
       bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
       if (!serviceEnabled) {
         print("Location services are disabled");
-        return '';
+        return {};
       }
 
       LocationPermission permission = await Geolocator.checkPermission();
@@ -111,7 +111,7 @@ class TaskPageProvider extends ChangeNotifier {
         if (permission == LocationPermission.denied ||
             permission == LocationPermission.deniedForever) {
           print("Location permissions are denied");
-          return '';
+          return {};
         }
       }
 
@@ -120,6 +120,7 @@ class TaskPageProvider extends ChangeNotifier {
           desiredAccuracy: LocationAccuracy.high);
 
       print("Position obtained: ${position.latitude}, ${position.longitude}");
+      String address = "";
 
       try {
         List<Placemark> placemarks = await placemarkFromCoordinates(
@@ -131,16 +132,12 @@ class TaskPageProvider extends ChangeNotifier {
           String? locality = place.locality;
           String? adminArea = place.administrativeArea;
 
-          String address = [
+          address = [
             if (locality != null && locality.isNotEmpty) locality,
             if (adminArea != null && adminArea.isNotEmpty) adminArea,
           ].join(', ');
 
           print("Resolved Address: $address");
-
-          return address.isNotEmpty
-              ? address
-              : "${position.latitude},${position.longitude}";
         } else {
           print("No placemarks found.");
         }
@@ -148,10 +145,16 @@ class TaskPageProvider extends ChangeNotifier {
         print("Error in geocoding: $geoError");
       }
 
-      return "${position.latitude},${position.longitude}";
+      return {
+        "latitude": position.latitude,
+        "longitude": position.longitude,
+        "address": address.isNotEmpty
+            ? address
+            : "${position.latitude},${position.longitude}"
+      };
     } catch (e) {
       print("General error in getCurrentLocation: $e");
-      return '';
+      return {};
     }
   }
 
@@ -404,16 +407,27 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> changeTaskStatus(BuildContext context,
-      TaskTypeStatusModel statusModel, int taskId, String? location) async {
+  Future<bool> changeTaskStatus(
+      BuildContext context,
+      TaskTypeStatusModel statusModel,
+      int taskId,
+      Map<String, dynamic>? locationData) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
+
+      // Extract location data
+      String location = locationData?['address'] ?? "";
+      double latitude = locationData?['latitude'] ?? 0.0;
+      double longitude = locationData?['longitude'] ?? 0.0;
+
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.changeTaskStatus,
           bodyData: {
             "Task_Id": taskId,
             "Location": location,
+            "Latitude": latitude,
+            "Longitude": longitude,
             "Status_Id": statusModel.statusId,
             "Status_Name": statusModel.statusName,
             "By_User_Id": userId,
