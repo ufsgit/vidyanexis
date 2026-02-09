@@ -54,50 +54,50 @@ class PaymentScheduleCard extends StatelessWidget {
                     style: const TextStyle(
                         fontWeight: FontWeight.bold, fontSize: 16)),
                 const Spacer(),
-                // if (settingsprovider.menuIsEditMap[18] == 1)
-                IconButton(
-                  onPressed: () {
-                    paymentScheduleProvider.setControllers(schedule);
-                    showDialog(
-                      context: context,
-                      barrierDismissible: false,
-                      builder: (BuildContext context) {
-                        return AddPaymentScheduleWidget(
-                            scheduleId: schedule.paymentScheduleId.toString(),
-                            isEdit: true,
-                            customerId: customerId);
-                      },
-                    );
-                  },
-                  icon: const Icon(Icons.edit_outlined),
-                ),
-                // if (settingsprovider.menuIsDeleteMap[18] == 1)
-                IconButton(
+                if (settingsprovider.menuIsEditMap[70] == 1)
+                  IconButton(
                     onPressed: () {
-                      showConfirmationDialog(
-                        isLoading: paymentScheduleProvider.isLoading,
+                      paymentScheduleProvider.setControllers(schedule);
+                      showDialog(
                         context: context,
-                        title: 'Confirm Deletion',
-                        content:
-                            'Are you sure you want to delete this Payment Schedule?',
-                        onCancel: () {
-                          Navigator.of(context).pop();
+                        barrierDismissible: false,
+                        builder: (BuildContext context) {
+                          return AddPaymentScheduleWidget(
+                              scheduleId: schedule.paymentScheduleId.toString(),
+                              isEdit: true,
+                              customerId: customerId);
                         },
-                        onConfirm: () {
-                          paymentScheduleProvider.deletePaymentSchedule(
-                              schedule.paymentScheduleId.toString(),
-                              customerId,
-                              context);
-                          Navigator.of(context).pop();
-                        },
-                        confirmButtonText: 'Delete',
-                        confirmButtonColor: Colors.red,
                       );
                     },
-                    icon: Icon(
-                      Icons.delete,
-                      color: AppColors.textRed,
-                    )),
+                    icon: const Icon(Icons.edit_outlined),
+                  ),
+                if (settingsprovider.menuIsDeleteMap[70] == 1)
+                  IconButton(
+                      onPressed: () {
+                        showConfirmationDialog(
+                          isLoading: paymentScheduleProvider.isLoading,
+                          context: context,
+                          title: 'Confirm Deletion',
+                          content:
+                              'Are you sure you want to delete this Payment Schedule?',
+                          onCancel: () {
+                            Navigator.of(context).pop();
+                          },
+                          onConfirm: () {
+                            paymentScheduleProvider.deletePaymentSchedule(
+                                schedule.paymentScheduleId.toString(),
+                                customerId,
+                                context);
+                            Navigator.of(context).pop();
+                          },
+                          confirmButtonText: 'Delete',
+                          confirmButtonColor: Colors.red,
+                        );
+                      },
+                      icon: Icon(
+                        Icons.delete,
+                        color: AppColors.textRed,
+                      )),
                 Text(
                   schedule.scheduleDate != 'null' &&
                           schedule.scheduleDate.isNotEmpty

@@ -65,7 +65,7 @@ class RefundCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (settingsprovider.menuIsEditMap[18] == 1)
+                if (settingsprovider.menuIsEditMap[71] == 1)
                   IconButton(
                     onPressed: () {
                       try {
@@ -106,7 +106,7 @@ class RefundCard extends StatelessWidget {
                     },
                     icon: const Icon(Icons.edit_outlined),
                   ),
-                if (settingsprovider.menuIsDeleteMap[18] == 1)
+                if (settingsprovider.menuIsDeleteMap[71] == 1)
                   IconButton(
                     onPressed: () {
                       try {

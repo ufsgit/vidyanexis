@@ -144,11 +144,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
-      const Tab(text: "Payment Schedule"),
+      if (settingsprovider.menuIsViewMap[70] == 1)
+        const Tab(text: "Payment Schedule"),
       if (settingsprovider.menuIsViewMap[37] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "CheckList Management"),
-      if (settingsprovider.menuIsViewMap[37] == 1 &&
+      if (settingsprovider.menuIsViewMap[71] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
     ];
@@ -3286,8 +3287,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               if (sideprovider.name != 'Lead /')
                                                 ReceiptScreen(
                                                     widget.customerId),
-                                            PaymentScheduleTabWidget(
-                                                customerId: widget.customerId),
+
+                                            //Payment Schedule
+                                            if (settingsprovider
+                                                    .menuIsViewMap[70] ==
+                                                1)
+                                              PaymentScheduleTabWidget(
+                                                  customerId:
+                                                      widget.customerId),
 
                                             //Task Documents
                                             // if (settingsprovider
@@ -3499,7 +3506,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         widget.customerId),
 
                                             if (settingsprovider
-                                                    .menuIsViewMap[37] ==
+                                                    .menuIsViewMap[71] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 RefundFormPage(
@@ -4551,6 +4558,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     customerDetailsProvider.qwarrentyController.text = quotation.warranty;
     customerDetailsProvider.qtermsConditionsController.text =
         quotation.termsAndConditions;
+    customerDetailsProvider.quotationDescriptionController.text =
+        quotation.description;
+    customerDetailsProvider.quotationDescription2Controller.text =
+        quotation.description2;
+    customerDetailsProvider.quotationDescription3Controller.text =
+        quotation.description3;
 
     // ---- STATUS ----
     customerDetailsProvider.selectedQuotationStatus =

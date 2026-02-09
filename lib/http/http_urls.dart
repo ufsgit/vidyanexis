@@ -1,6 +1,6 @@
 class HttpUrls {
-  //baseurls
-  //live
+//baseurls
+//live
 //   static String baseUrl = 'https://baymentapi.trackbox.net.in/';
 //   static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
 //   static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
@@ -8,12 +8,9 @@ class HttpUrls {
 //   static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
 //   static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
 //   static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
-  //dev
-
-//   static String baseUrl = 'https://2jw4dwnj-3511.inc1.devtunnels.ms/';
-//   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
-
-//   static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  
+//dev
+  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';

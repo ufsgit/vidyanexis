@@ -98,29 +98,70 @@ extension DateStringFormatter on String {
   }
 
   String toyyyymmdd() {
-    if (trim().isEmpty) return '';
+    final trimmed = trim();
+    if (trimmed.isEmpty) return '';
 
+    // Common formats people actually type
     final formats = [
-      DateFormat('dd MMM yyyy'),
-      DateFormat('dd/MM/yyyy'),
-      DateFormat('yyyy-MM-dd'),
+      'dd MMM yyyy',
+      'dd/MM/yyyy',
+      'dd-MM-yyyy',
+      'yyyy-MM-dd',
+      'MM/dd/yyyy',
+      'yyyy/MM/dd',
+      'd/M/yy', // ← added
+      'd/M/yyyy',
+      'dd.MM.yyyy',
+      'dd.MM.yy',
     ];
 
-    for (final format in formats) {
+    for (final pattern in formats) {
       try {
-        final parsedDate = format.parse(this);
-        return DateFormat('yyyy-MM-dd').format(parsedDate);
-      } catch (e) {
-        // continue to next format
+        final fmt = DateFormat(pattern);
+        final date = fmt.parseStrict(trimmed);
+        return _normalizeAndFormat(date);
+      } catch (_) {
+        // try next
       }
     }
 
+    // Last resort: try full ISO parsing
     try {
-      final parsedDate = DateTime.parse(this);
-      return DateFormat('yyyy-MM-dd').format(parsedDate);
-    } catch (e) {
-      return ''; // Return empty if all formats fail
+      final date = DateTime.parse(trimmed);
+      return _normalizeAndFormat(date);
+    } catch (_) {}
+
+    // Special handling for very short years like 14-08-19 or 0014-08-19
+    final clean = trimmed.replaceAll(RegExp(r'[^0-9]'), '');
+    if (clean.length == 6 || clean.length == 8) {
+      try {
+        String yearStr = clean.substring(0, clean.length == 6 ? 2 : 4);
+        final year = int.parse(yearStr);
+        final normalizedYear =
+            year < 100 ? (year >= 50 ? 1900 + year : 2000 + year) : year;
+
+        final dt = DateTime(
+          normalizedYear,
+          int.parse(clean.substring(clean.length - 4, clean.length - 2)),
+          int.parse(clean.substring(clean.length - 2)),
+        );
+        return _normalizeAndFormat(dt);
+      } catch (_) {}
     }
+
+    return ''; // nothing worked
+  }
+
+  String _normalizeAndFormat(DateTime dt) {
+    // Force 4-digit year without leading zeros for years < 1000
+    final year = dt.year.toString().padLeft(4, '0');
+    final month = dt.month.toString().padLeft(2, '0');
+    final day = dt.day.toString().padLeft(2, '0');
+
+    // If you really want no leading zeros for year < 1000, do:
+    // final yearStr = dt.year < 1000 ? '$dt.year' : year;
+
+    return '$year-$month-$day';
   }
 
   String toMonthDayYearFormat() {

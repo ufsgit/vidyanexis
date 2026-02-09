@@ -44,33 +44,33 @@ class _PaymentScheduleTabWidgetState extends State<PaymentScheduleTabWidget> {
               Row(
                 children: [
                   const Spacer(),
-                  // if (settingsProvider.menuIsSaveMap[18] == 1)
-                  ElevatedButton.icon(
-                    onPressed: () {
-                      paymentScheduleProvider.clearControllers();
-                      showDialog(
-                        context: context,
-                        barrierDismissible: false,
-                        builder: (BuildContext context) {
-                          return AddPaymentScheduleWidget(
-                              scheduleId: '0',
-                              isEdit: false,
-                              customerId: widget.customerId);
-                        },
-                      );
-                    },
-                    icon: const Icon(Icons.add),
-                    label: const Text('Add Schedule'),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primaryBlue,
-                      foregroundColor: Colors.white,
-                      padding: AppStyles.isWebScreen(context)
-                          ? const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 12)
-                          : const EdgeInsets.symmetric(
-                              horizontal: 16, vertical: 0),
+                  if (settingsProvider.menuIsSaveMap[70] == 1)
+                    ElevatedButton.icon(
+                      onPressed: () {
+                        paymentScheduleProvider.clearControllers();
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return AddPaymentScheduleWidget(
+                                scheduleId: '0',
+                                isEdit: false,
+                                customerId: widget.customerId);
+                          },
+                        );
+                      },
+                      icon: const Icon(Icons.add),
+                      label: const Text('Add Schedule'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue,
+                        foregroundColor: Colors.white,
+                        padding: AppStyles.isWebScreen(context)
+                            ? const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12)
+                            : const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 0),
+                      ),
                     ),
-                  ),
                 ],
               ),
               const SizedBox(height: 10),
