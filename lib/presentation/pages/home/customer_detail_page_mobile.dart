@@ -29,6 +29,7 @@ import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 
 class CustomerDetailPageMobile extends StatefulWidget {
+  static const String route = '/customer-detail-mobile/';
   final SearchLeadModel? lead;
 
   final bool fromLead;
