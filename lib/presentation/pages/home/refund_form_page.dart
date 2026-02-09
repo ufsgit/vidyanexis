@@ -48,7 +48,7 @@ class _RefundFormPageState extends State<RefundFormPage> {
               Row(
                 children: [
                   const Spacer(),
-                  if (settingsProvider.menuIsSaveMap[18] == 1)
+                  if (settingsProvider.menuIsSaveMap[71] == 1)
                     ElevatedButton.icon(
                       onPressed: () {
                         customerDetailsProvider.customerId = widget.customerId;
