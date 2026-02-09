@@ -131,6 +131,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     final newTabs = [
       const Tab(text: "Info"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
+      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[14] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Complaints"),
@@ -140,15 +141,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
       const Tab(text: "History"),
-      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
-      if (settingsprovider.menuIsViewMap[70] == 1)
-        const Tab(text: "Payment Schedule"),
       if (settingsprovider.menuIsViewMap[37] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "CheckList Management"),
+      if (settingsprovider.menuIsViewMap[70] == 1)
+        const Tab(text: "Payment Schedule"),
       if (settingsprovider.menuIsViewMap[71] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
@@ -2472,6 +2472,264 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ],
                                                     ),
 
+                                            //Documents Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[19] ==
+                                                1)
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.all(16.0),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    if (settingsprovider
+                                                                .menuIsSaveMap[
+                                                            19] ==
+                                                        1)
+                                                      InkWell(
+                                                        onTap: () {
+                                                          showDialog(
+                                                            barrierDismissible:
+                                                                false,
+                                                            context: context,
+                                                            builder: (context) =>
+                                                                ImageUploadAlert(
+                                                                    customerId:
+                                                                        widget
+                                                                            .customerId),
+                                                          );
+                                                        },
+                                                        child: Image.asset(
+                                                          'assets/images/add_photo.png',
+                                                          height: 50,
+                                                        ),
+                                                      ),
+                                                    Expanded(
+                                                      child: ListView.builder(
+                                                        itemCount:
+                                                            customerDetailsProvider
+                                                                .documentList
+                                                                .length,
+                                                        itemBuilder:
+                                                            (context, index) {
+                                                          var userData =
+                                                              customerDetailsProvider
+                                                                      .documentList[
+                                                                  index];
+                                                          userData.userName;
+                                                          List<ImageDetail>
+                                                              images = userData
+                                                                  .imageDetails;
+
+                                                          return ExpansionTile(
+                                                            enabled: false,
+                                                            initiallyExpanded:
+                                                                true,
+                                                            shape:
+                                                                const RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .zero,
+                                                            ),
+                                                            title: Wrap(
+                                                              crossAxisAlignment:
+                                                                  WrapCrossAlignment
+                                                                      .center,
+                                                              runSpacing: 10,
+                                                              children: [
+                                                                const Icon(Icons
+                                                                    .person),
+                                                                Text(
+                                                                  '  Uploaded By ',
+                                                                  style: TextStyle(
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                      color: AppColors
+                                                                          .textGrey4),
+                                                                ),
+                                                                Text(
+                                                                  userData
+                                                                      .userName,
+                                                                  style:
+                                                                      const TextStyle(
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .bold,
+                                                                    fontSize:
+                                                                        14,
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            ),
+                                                            children: [
+                                                              MouseRegion(
+                                                                cursor:
+                                                                    SystemMouseCursors
+                                                                        .click,
+                                                                child: SizedBox(
+                                                                  height: 140,
+                                                                  child:
+                                                                      Scrollbar(
+                                                                    controller:
+                                                                        customerDetailsProvider
+                                                                            .imageScrollController,
+                                                                    thumbVisibility:
+                                                                        true,
+                                                                    child: ListView
+                                                                        .separated(
+                                                                      controller:
+                                                                          customerDetailsProvider
+                                                                              .imageScrollController,
+                                                                      scrollDirection:
+                                                                          Axis.horizontal,
+                                                                      separatorBuilder: (context,
+                                                                              index) =>
+                                                                          const SizedBox(
+                                                                              width: 10),
+                                                                      physics:
+                                                                          const ClampingScrollPhysics(),
+                                                                      itemCount:
+                                                                          images
+                                                                              .length,
+                                                                      itemBuilder:
+                                                                          (context,
+                                                                              index) {
+                                                                        final image =
+                                                                            images[index];
+                                                                        return Column(
+                                                                          children: [
+                                                                            Stack(
+                                                                              children: [
+                                                                                Center(
+                                                                                  child: InkWell(
+                                                                                    onTap: () {
+                                                                                      int currentIndex = index;
+                                                                                      _showFullScreenImage(context, currentIndex, images, true);
+                                                                                    },
+                                                                                    child: ClipRRect(
+                                                                                      borderRadius: BorderRadius.circular(8),
+                                                                                      child: Image.network(
+                                                                                        image.filePath,
+                                                                                        width: 100,
+                                                                                        height: 100,
+                                                                                        fit: BoxFit.fill,
+                                                                                        // Display a loading indicator while the image is loading
+                                                                                        loadingBuilder: (context, child, loadingProgress) {
+                                                                                          if (loadingProgress == null) {
+                                                                                            return child; // Image is fully loaded
+                                                                                          }
+                                                                                          return SizedBox(
+                                                                                            height: 100,
+                                                                                            width: 100,
+                                                                                            child: Center(
+                                                                                              child: CircularProgressIndicator(
+                                                                                                value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
+                                                                                              ),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                        // Display an error image if the image fails to load
+                                                                                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
+                                                                                          return GestureDetector(
+                                                                                            onTap: () async {
+                                                                                              final Uri url = Uri.parse(image.filePath);
+                                                                                              try {
+                                                                                                await launchUrl(url, mode: LaunchMode.externalApplication);
+                                                                                              } catch (e) {
+                                                                                                print('Could not launch $url: $e');
+                                                                                              }
+                                                                                            },
+                                                                                            child: Container(
+                                                                                              color: Colors.grey[200],
+                                                                                              width: 100,
+                                                                                              height: 100,
+                                                                                              child: const Column(
+                                                                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                                                                children: [
+                                                                                                  Icon(
+                                                                                                    Icons.picture_as_pdf,
+                                                                                                    color: Colors.red,
+                                                                                                    size: 50,
+                                                                                                  ),
+                                                                                                  SizedBox(height: 8),
+                                                                                                  Text(
+                                                                                                    'Open PDF',
+                                                                                                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
+                                                                                                  ),
+                                                                                                ],
+                                                                                              ),
+                                                                                            ),
+                                                                                          );
+                                                                                        },
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                                if (settingsprovider.menuIsDeleteMap[19] == 1)
+                                                                                  Positioned(
+                                                                                    top: 5,
+                                                                                    right: 5,
+                                                                                    child: GestureDetector(
+                                                                                      onTap: () {
+                                                                                        showConfirmationDialog(
+                                                                                          isLoading: customerDetailsProvider.isDeleteLoading,
+                                                                                          context: context,
+                                                                                          title: 'Confirm Deletion',
+                                                                                          content: 'Are you sure you want to delete this file?',
+                                                                                          onCancel: () {
+                                                                                            Navigator.of(context).pop();
+                                                                                          },
+                                                                                          onConfirm: () {
+                                                                                            customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
+                                                                                            Navigator.of(context).pop();
+                                                                                          },
+                                                                                          confirmButtonText: 'Delete',
+                                                                                        );
+                                                                                      },
+                                                                                      child: const CircleAvatar(
+                                                                                        radius: 15,
+                                                                                        backgroundColor: Colors.grey,
+                                                                                        child: Icon(
+                                                                                          Icons.delete,
+                                                                                          size: 18,
+                                                                                          color: Colors.white,
+                                                                                        ),
+                                                                                      ),
+                                                                                    ),
+                                                                                  ),
+                                                                              ],
+                                                                            ),
+                                                                            const SizedBox(
+                                                                              height: 5,
+                                                                            ),
+                                                                            Text(
+                                                                              image.documentTypeName,
+                                                                              style: TextStyle(fontSize: 12, color: AppColors.textBlack),
+                                                                            ),
+                                                                            Text(
+                                                                              DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
+                                                                              style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
+                                                                            ),
+                                                                          ],
+                                                                        );
+                                                                      },
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              )
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+
                                             // Complaints Tab (can be customized as needed)
                                             if (settingsprovider
                                                     .menuIsViewMap[14] ==
@@ -3022,264 +3280,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             // Follow-Up Details Tab
                                             const FollowUpTabWidget(),
 
-                                            //Images Tab
-                                            if (settingsprovider
-                                                    .menuIsViewMap[19] ==
-                                                1)
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(16.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    if (settingsprovider
-                                                                .menuIsSaveMap[
-                                                            19] ==
-                                                        1)
-                                                      InkWell(
-                                                        onTap: () {
-                                                          showDialog(
-                                                            barrierDismissible:
-                                                                false,
-                                                            context: context,
-                                                            builder: (context) =>
-                                                                ImageUploadAlert(
-                                                                    customerId:
-                                                                        widget
-                                                                            .customerId),
-                                                          );
-                                                        },
-                                                        child: Image.asset(
-                                                          'assets/images/add_photo.png',
-                                                          height: 50,
-                                                        ),
-                                                      ),
-                                                    Expanded(
-                                                      child: ListView.builder(
-                                                        itemCount:
-                                                            customerDetailsProvider
-                                                                .documentList
-                                                                .length,
-                                                        itemBuilder:
-                                                            (context, index) {
-                                                          var userData =
-                                                              customerDetailsProvider
-                                                                      .documentList[
-                                                                  index];
-                                                          userData.userName;
-                                                          List<ImageDetail>
-                                                              images = userData
-                                                                  .imageDetails;
-
-                                                          return ExpansionTile(
-                                                            enabled: false,
-                                                            initiallyExpanded:
-                                                                true,
-                                                            shape:
-                                                                const RoundedRectangleBorder(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .zero,
-                                                            ),
-                                                            title: Wrap(
-                                                              crossAxisAlignment:
-                                                                  WrapCrossAlignment
-                                                                      .center,
-                                                              runSpacing: 10,
-                                                              children: [
-                                                                const Icon(Icons
-                                                                    .person),
-                                                                Text(
-                                                                  '  Uploaded By ',
-                                                                  style: TextStyle(
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          14,
-                                                                      color: AppColors
-                                                                          .textGrey4),
-                                                                ),
-                                                                Text(
-                                                                  userData
-                                                                      .userName,
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .bold,
-                                                                    fontSize:
-                                                                        14,
-                                                                  ),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            children: [
-                                                              MouseRegion(
-                                                                cursor:
-                                                                    SystemMouseCursors
-                                                                        .click,
-                                                                child: SizedBox(
-                                                                  height: 140,
-                                                                  child:
-                                                                      Scrollbar(
-                                                                    controller:
-                                                                        customerDetailsProvider
-                                                                            .imageScrollController,
-                                                                    thumbVisibility:
-                                                                        true,
-                                                                    child: ListView
-                                                                        .separated(
-                                                                      controller:
-                                                                          customerDetailsProvider
-                                                                              .imageScrollController,
-                                                                      scrollDirection:
-                                                                          Axis.horizontal,
-                                                                      separatorBuilder: (context,
-                                                                              index) =>
-                                                                          const SizedBox(
-                                                                              width: 10),
-                                                                      physics:
-                                                                          const ClampingScrollPhysics(),
-                                                                      itemCount:
-                                                                          images
-                                                                              .length,
-                                                                      itemBuilder:
-                                                                          (context,
-                                                                              index) {
-                                                                        final image =
-                                                                            images[index];
-                                                                        return Column(
-                                                                          children: [
-                                                                            Stack(
-                                                                              children: [
-                                                                                Center(
-                                                                                  child: InkWell(
-                                                                                    onTap: () {
-                                                                                      int currentIndex = index;
-                                                                                      _showFullScreenImage(context, currentIndex, images, true);
-                                                                                    },
-                                                                                    child: ClipRRect(
-                                                                                      borderRadius: BorderRadius.circular(8),
-                                                                                      child: Image.network(
-                                                                                        image.filePath,
-                                                                                        width: 100,
-                                                                                        height: 100,
-                                                                                        fit: BoxFit.fill,
-                                                                                        // Display a loading indicator while the image is loading
-                                                                                        loadingBuilder: (context, child, loadingProgress) {
-                                                                                          if (loadingProgress == null) {
-                                                                                            return child; // Image is fully loaded
-                                                                                          }
-                                                                                          return SizedBox(
-                                                                                            height: 100,
-                                                                                            width: 100,
-                                                                                            child: Center(
-                                                                                              child: CircularProgressIndicator(
-                                                                                                value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                        // Display an error image if the image fails to load
-                                                                                        errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                                                                          return GestureDetector(
-                                                                                            onTap: () async {
-                                                                                              final Uri url = Uri.parse(image.filePath);
-                                                                                              try {
-                                                                                                await launchUrl(url, mode: LaunchMode.externalApplication);
-                                                                                              } catch (e) {
-                                                                                                print('Could not launch $url: $e');
-                                                                                              }
-                                                                                            },
-                                                                                            child: Container(
-                                                                                              color: Colors.grey[200],
-                                                                                              width: 100,
-                                                                                              height: 100,
-                                                                                              child: const Column(
-                                                                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                                                                children: [
-                                                                                                  Icon(
-                                                                                                    Icons.picture_as_pdf,
-                                                                                                    color: Colors.red,
-                                                                                                    size: 50,
-                                                                                                  ),
-                                                                                                  SizedBox(height: 8),
-                                                                                                  Text(
-                                                                                                    'Open PDF',
-                                                                                                    style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
-                                                                                                  ),
-                                                                                                ],
-                                                                                              ),
-                                                                                            ),
-                                                                                          );
-                                                                                        },
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
-                                                                                if (settingsprovider.menuIsDeleteMap[19] == 1)
-                                                                                  Positioned(
-                                                                                    top: 5,
-                                                                                    right: 5,
-                                                                                    child: GestureDetector(
-                                                                                      onTap: () {
-                                                                                        showConfirmationDialog(
-                                                                                          isLoading: customerDetailsProvider.isDeleteLoading,
-                                                                                          context: context,
-                                                                                          title: 'Confirm Deletion',
-                                                                                          content: 'Are you sure you want to delete this file?',
-                                                                                          onCancel: () {
-                                                                                            Navigator.of(context).pop();
-                                                                                          },
-                                                                                          onConfirm: () {
-                                                                                            customerDetailsProvider.deleteImage(context, image.imageId.toString(), widget.customerId);
-                                                                                            Navigator.of(context).pop();
-                                                                                          },
-                                                                                          confirmButtonText: 'Delete',
-                                                                                        );
-                                                                                      },
-                                                                                      child: const CircleAvatar(
-                                                                                        radius: 15,
-                                                                                        backgroundColor: Colors.grey,
-                                                                                        child: Icon(
-                                                                                          Icons.delete,
-                                                                                          size: 18,
-                                                                                          color: Colors.white,
-                                                                                        ),
-                                                                                      ),
-                                                                                    ),
-                                                                                  ),
-                                                                              ],
-                                                                            ),
-                                                                            const SizedBox(
-                                                                              height: 5,
-                                                                            ),
-                                                                            Text(
-                                                                              image.documentTypeName,
-                                                                              style: TextStyle(fontSize: 12, color: AppColors.textBlack),
-                                                                            ),
-                                                                            Text(
-                                                                              DateFormat('dd/MM/yyyy h:mm a').format(DateTime.parse(image.entryDate)),
-                                                                              style: TextStyle(fontSize: 10, color: AppColors.textGrey4),
-                                                                            ),
-                                                                          ],
-                                                                        );
-                                                                      },
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              )
-                                                            ],
-                                                          );
-                                                        },
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-
                                             //Reciepts Tab
                                             if (settingsprovider
                                                     .menuIsViewMap[18] ==
@@ -3287,6 +3287,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               if (sideprovider.name != 'Lead /')
                                                 ReceiptScreen(
                                                     widget.customerId),
+
+                                            //CheckList Management
+                                            if (settingsprovider
+                                                    .menuIsViewMap[37] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                CheckListManagementWidget(
+                                                    customerId:
+                                                        widget.customerId),
 
                                             //Payment Schedule
                                             if (settingsprovider
@@ -3296,215 +3305,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   customerId:
                                                       widget.customerId),
 
-                                            //Task Documents
-                                            // if (settingsprovider
-                                            //         .menuIsViewMap[30] ==
-                                            //     1)
-                                            // Padding(
-                                            //   padding: const EdgeInsets.all(16.0),
-                                            //   child: Column(
-                                            //     crossAxisAlignment:
-                                            //         CrossAxisAlignment.start,
-                                            //     children: [
-                                            //       Expanded(
-                                            //         child: ListView.builder(
-                                            //           itemCount:
-                                            //               customerDetailsProvider
-                                            //                   .taskDocuments
-                                            //                   .length,
-                                            //           itemBuilder:
-                                            //               (context, index) {
-                                            //             var userData =
-                                            //                 customerDetailsProvider
-                                            //                         .taskDocuments[
-                                            //                     index];
-                                            //             List<DocumentList>
-                                            //                 images =
-                                            //                 userData.documents;
-
-                                            //             return ExpansionTile(
-                                            //               shape:
-                                            //                   const RoundedRectangleBorder(
-                                            //                 borderRadius:
-                                            //                     BorderRadius.zero,
-                                            //               ),
-                                            //               initiallyExpanded: true,
-                                            //               title: Wrap(
-                                            //                 crossAxisAlignment:
-                                            //                     WrapCrossAlignment
-                                            //                         .center,
-                                            //                 runSpacing: 10,
-                                            //                 children: [
-                                            //                   const Icon(
-                                            //                       Icons.person),
-                                            //                   Text(
-                                            //                     '  Uploaded By ',
-                                            //                     style: TextStyle(
-                                            //                         fontWeight:
-                                            //                             FontWeight
-                                            //                                 .bold,
-                                            //                         fontSize: 14,
-                                            //                         color: AppColors
-                                            //                             .textGrey4),
-                                            //                   ),
-                                            //                   Text(
-                                            //                     userData
-                                            //                         .toUserName,
-                                            //                     style:
-                                            //                         const TextStyle(
-                                            //                       fontWeight:
-                                            //                           FontWeight
-                                            //                               .bold,
-                                            //                       fontSize: 14,
-                                            //                     ),
-                                            //                   ),
-                                            //                   const SizedBox(
-                                            //                     width: 20,
-                                            //                   ),
-                                            //                   Text(
-                                            //                     userData
-                                            //                         .taskTypeName,
-                                            //                     style:
-                                            //                         const TextStyle(
-                                            //                       fontWeight:
-                                            //                           FontWeight
-                                            //                               .w600,
-                                            //                       fontSize: 14,
-                                            //                     ),
-                                            //                   ),
-                                            //                   const SizedBox(
-                                            //                     width: 20,
-                                            //                   ),
-                                            //                   Text(
-                                            //                     userData.taskDate,
-                                            //                     style: const TextStyle(
-                                            //                         fontWeight:
-                                            //                             FontWeight
-                                            //                                 .w500,
-                                            //                         fontSize: 14,
-                                            //                         color: Colors
-                                            //                             .grey),
-                                            //                   ),
-                                            //                 ],
-                                            //               ),
-                                            //               children: [
-                                            //                 MouseRegion(
-                                            //                   cursor:
-                                            //                       SystemMouseCursors
-                                            //                           .click,
-                                            //                   child: SizedBox(
-                                            //                     height: 140,
-                                            //                     child: Scrollbar(
-                                            //                       controller:
-                                            //                           customerDetailsProvider
-                                            //                               .taskScrollController,
-                                            //                       thumbVisibility:
-                                            //                           true,
-                                            //                       child: ListView
-                                            //                           .separated(
-                                            //                         controller:
-                                            //                             customerDetailsProvider
-                                            //                                 .taskScrollController,
-                                            //                         scrollDirection:
-                                            //                             Axis.horizontal,
-                                            //                         separatorBuilder: (context,
-                                            //                                 index) =>
-                                            //                             const SizedBox(
-                                            //                                 width:
-                                            //                                     10),
-                                            //                         physics:
-                                            //                             const ClampingScrollPhysics(),
-                                            //                         itemCount:
-                                            //                             images
-                                            //                                 .length,
-                                            //                         itemBuilder:
-                                            //                             (context,
-                                            //                                 index) {
-                                            //                           final image =
-                                            //                               images[
-                                            //                                   index];
-                                            //                           return Column(
-                                            //                             children: [
-                                            //                               Stack(
-                                            //                                 children: [
-                                            //                                   Center(
-                                            //                                     child: InkWell(
-                                            //                                       onTap: () {
-                                            //                                         int currentIndex = index;
-                                            //                                         _showFullScreenImage(context, currentIndex, images, false);
-                                            //                                       },
-                                            //                                       child: ClipRRect(
-                                            //                                         borderRadius: BorderRadius.circular(8),
-                                            //                                         child: Image.network(
-                                            //                                           HttpUrls.imgBaseUrl + image.filePath,
-                                            //                                           width: 100,
-                                            //                                           height: 100,
-                                            //                                           fit: BoxFit.fill,
-                                            //                                           // Display a loading indicator while the image is loading
-                                            //                                           loadingBuilder: (context, child, loadingProgress) {
-                                            //                                             if (loadingProgress == null) {
-                                            //                                               return child; // Image is fully loaded
-                                            //                                             }
-                                            //                                             return SizedBox(
-                                            //                                               height: 100,
-                                            //                                               width: 100,
-                                            //                                               child: Center(
-                                            //                                                 child: CircularProgressIndicator(
-                                            //                                                   value: loadingProgress.expectedTotalBytes != null ? loadingProgress.cumulativeBytesLoaded / (loadingProgress.expectedTotalBytes ?? 1) : null,
-                                            //                                                 ),
-                                            //                                               ),
-                                            //                                             );
-                                            //                                           },
-                                            //                                           // Display an error image if the image fails to load
-                                            //                                           errorBuilder: (BuildContext context, Object exception, StackTrace? stackTrace) {
-                                            //                                             return Container(
-                                            //                                               decoration: BoxDecoration(
-                                            //                                                 color: const Color(0xFFEFF2F5),
-                                            //                                                 borderRadius: BorderRadius.circular(8),
-                                            //                                               ),
-                                            //                                               width: 100,
-                                            //                                               height: 100,
-                                            //                                               child: const Icon(
-                                            //                                                 Icons.image,
-                                            //                                                 color: Colors.grey,
-                                            //                                                 size: 50,
-                                            //                                               ),
-                                            //                                             );
-                                            //                                           },
-                                            //                                         ),
-                                            //                                       ),
-                                            //                                     ),
-                                            //                                   ),
-                                            //                                 ],
-                                            //                               ),
-                                            //                               const SizedBox(
-                                            //                                 height:
-                                            //                                     5,
-                                            //                               ),
-                                            //                             ],
-                                            //                           );
-                                            //                         },
-                                            //                       ),
-                                            //                     ),
-                                            //                   ),
-                                            //                 )
-                                            //               ],
-                                            //             );
-                                            //           },
-                                            //         ),
-                                            //       ),
-                                            //     ],
-                                            //   ),
-                                            // ),
-
-                                            if (settingsprovider
-                                                    .menuIsViewMap[37] ==
-                                                1)
-                                              if (sideprovider.name != 'Lead /')
-                                                CheckListManagementWidget(
-                                                    customerId:
-                                                        widget.customerId),
-
+                                            //Refund Form
                                             if (settingsprovider
                                                     .menuIsViewMap[71] ==
                                                 1)
