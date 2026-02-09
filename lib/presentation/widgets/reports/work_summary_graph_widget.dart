@@ -21,7 +21,8 @@ class _WorkSummaryGraphWidgetState extends State<WorkSummaryGraphWidget>
   Widget build(BuildContext context) {
     super.build(context); // Required for AutomaticKeepAliveClientMixin
     final summaryReport =
-        context.select<WorkSummaryProvider, List<WorkSummaryModel>>((provider) => provider.taskReport);
+        context.select<WorkSummaryProvider, List<WorkSummaryModel>>(
+            (provider) => provider.taskReport);
 
     if (summaryReport.isEmpty) {
       return const Center(
@@ -36,7 +37,7 @@ class _WorkSummaryGraphWidgetState extends State<WorkSummaryGraphWidget>
       );
     }
 
-    double maxY = 18000;
+    double maxY = 10;
     if (summaryReport.isNotEmpty) {
       double maxData = 0;
       for (var item in summaryReport) {
@@ -44,9 +45,8 @@ class _WorkSummaryGraphWidgetState extends State<WorkSummaryGraphWidget>
           maxData = item.noOfFollowUp.toDouble();
         }
       }
-      if (maxData > 18000) {
-        maxY = (maxData / 500).ceil() * 500;
-      }
+      // Set maxY to maxData + 10% padding, minimum of 10 if all data is 0
+      maxY = maxData > 0 ? (maxData * 1.1).ceilToDouble() : 10;
     }
 
     // Wrap in RepaintBoundary to separate chart rendering from parent updates
@@ -70,7 +70,6 @@ class _WorkSummaryGraphWidgetState extends State<WorkSummaryGraphWidget>
               title: const AxisTitle(text: 'No of Follow up'),
               minimum: 0,
               maximum: maxY,
-              interval: 500,
               majorGridLines: const MajorGridLines(width: 0.5),
             ),
             tooltipBehavior: TooltipBehavior(enable: true),
@@ -88,11 +87,13 @@ class _WorkSummaryGraphWidgetState extends State<WorkSummaryGraphWidget>
                 dataLabelSettings: const DataLabelSettings(
                   isVisible: true,
                   labelAlignment: ChartDataLabelAlignment.outer,
-                  textStyle: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                  textStyle:
+                      TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                 ),
                 width: 0.5,
                 spacing: 0.2,
-                animationDuration: 300, // Reduced to 300ms for better performance
+                animationDuration:
+                    300, // Reduced to 300ms for better performance
               )
             ],
           ),
