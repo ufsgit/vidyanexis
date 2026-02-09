@@ -339,8 +339,8 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             children: [
                               _summaryRow('Discount',
                                   quotation?.subsidyAmount.toString() ?? '0'),
-                              _summaryRow('CGST',
-                                  quotation?.totalCgstAmount.toString() ?? '0'),
+                              // _summaryRow('CGST',
+                              //     quotation?.totalCgstAmount.toString() ?? '0'),
                               _summaryRow('SGST',
                                   quotation?.totalSgstAmount.toString() ?? '0'),
                               _summaryRow('IGST',
@@ -717,7 +717,7 @@ Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
                 ),
               ),
               pw.Positioned(
-                bottom: 350,
+                top: 480,
                 right: 75,
                 left: 75,
                 child: pw.Row(
@@ -767,7 +767,7 @@ Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
                 ),
               ),
               pw.Positioned(
-                  bottom: 100,
+                  bottom: 150,
                   right: 75,
                   left: 75,
                   child: pw.Column(

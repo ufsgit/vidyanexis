@@ -4558,6 +4558,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     customerDetailsProvider.qwarrentyController.text = quotation.warranty;
     customerDetailsProvider.qtermsConditionsController.text =
         quotation.termsAndConditions;
+    customerDetailsProvider.quotationDescriptionController.text =
+        quotation.description;
+    customerDetailsProvider.quotationDescription2Controller.text =
+        quotation.description2;
+    customerDetailsProvider.quotationDescription3Controller.text =
+        quotation.description3;
 
     // ---- STATUS ----
     customerDetailsProvider.selectedQuotationStatus =
