@@ -1626,7 +1626,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   child: Container(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        horizontal: 12,
+                                                        horizontal: 8,
                                                         vertical: 4),
                                                     decoration: BoxDecoration(
                                                       color: (task.colorCode ??
