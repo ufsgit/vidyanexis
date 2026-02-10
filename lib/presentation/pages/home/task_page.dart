@@ -1,17 +1,20 @@
 // Check line 1776
 import 'dart:async';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+import 'package:mime/mime.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
-
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
-
+import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
-
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -21,7 +24,6 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
-
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -30,9 +32,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
-
 import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
-
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -257,8 +257,9 @@ class _tasksPageReportState extends State<TaskPage> {
 
             // Responsive header implementation - modify your existing padding section:
             Padding(
-              padding:
-                  EdgeInsets.all(AppStyles.isWebScreen(context) ? 16.0 : 0),
+              padding: AppStyles.isWebScreen(context)
+                  ? const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0)
+                  : EdgeInsets.zero,
               child: Column(
                 children: [
                   // Main row with adaptive layout
@@ -888,16 +889,15 @@ class _tasksPageReportState extends State<TaskPage> {
             ),
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.symmetric(
-                    horizontal: 16.0,
-                    vertical: 4.0), // Match CustomerPage padding
+                padding:
+                    const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 4.0),
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.all(8.0),
+                    padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
                     child: Column(
                       children: [
                         if (!AppStyles.isWebScreen(context))
@@ -1626,7 +1626,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   child: Container(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        horizontal: 12,
+                                                        horizontal: 8,
                                                         vertical: 4),
                                                     decoration: BoxDecoration(
                                                       color: (task.colorCode ??
@@ -2123,7 +2123,6 @@ class _tasksPageReportState extends State<TaskPage> {
                                 style: const TextStyle(fontSize: 14),
                               ),
                             ),
-                            const SizedBox(height: 24),
                             ValueListenableBuilder<bool>(
                               valueListenable: isSaving,
                               builder: (ctx, saving, child) {
@@ -2792,6 +2791,30 @@ class _tasksPageReportState extends State<TaskPage> {
                                 return Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    OutlinedButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (context) =>
+                                              ImageUploadAlert(
+                                                  customerId:
+                                                      customerId.toString()),
+                                        );
+                                      },
+                                      style: OutlinedButton.styleFrom(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 12),
+                                        side: BorderSide(
+                                            color: theme.dividerColor),
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                      ),
+                                      child: const Text('Upload Documents'),
+                                    ),
+                                    SizedBox(width: 12),
                                     OutlinedButton(
                                       onPressed: saving
                                           ? null

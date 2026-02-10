@@ -1,6 +1,5 @@
 // ignore_for_file: use_build_context_synchronously, unused_local_variable, avoid_print
 
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 // import 'dart:html' as html;
@@ -13,7 +12,6 @@ import 'package:vidyanexis/controller/models/checklist_item_model.dart';
 import 'package:vidyanexis/controller/models/custom_field_dropdown.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
 import 'package:vidyanexis/controller/models/customer_details_model.dart';
-import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/project_model.dart';
 import 'package:vidyanexis/controller/models/project_type_model.dart';
@@ -22,7 +20,6 @@ import 'package:vidyanexis/controller/models/stage_model.dart';
 import 'package:vidyanexis/controller/models/tax_slab_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/main.dart';
-import 'package:vidyanexis/presentation/widgets/settings/add_source_category_page.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
@@ -53,9 +50,6 @@ import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:universal_html/js.dart';
-
-import 'models/custom_field_model.dart';
 
 class SettingsProvider extends ChangeNotifier {
   SidebarProvider? _sideBarProvider;
@@ -2401,6 +2395,22 @@ class SettingsProvider extends ChangeNotifier {
   bool _isLocationTracking = false;
 
   bool get isLocationTracking => _isLocationTracking;
+
+  bool _isQuotationCustom = false;
+  bool get isQuotationCustom => _isQuotationCustom;
+
+  bool _isViewInQuotation = false;
+  bool get isViewInQuotation => _isViewInQuotation;
+
+  void toggleQuotationCustom(bool value) {
+    _isQuotationCustom = value;
+    notifyListeners();
+  }
+
+  void toggleViewInQuotation(bool value) {
+    _isViewInQuotation = value;
+    notifyListeners();
+  }
 
   void toggleLocation(bool value) {
     _isLocationTracking = value;
