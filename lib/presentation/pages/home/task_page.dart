@@ -37,7 +37,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class TaskPage extends StatefulWidget {
-  const TaskPage({super.key});
+  final int? initialStatusFilter;
+  const TaskPage({super.key, this.initialStatusFilter});
 
   @override
   State<TaskPage> createState() => _tasksPageReportState();
@@ -71,7 +72,15 @@ class _tasksPageReportState extends State<TaskPage> {
       customerProvider.resetExpansion();
 
       reportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
+
+      if (widget.initialStatusFilter != null) {
+        reportsProvider.setStatus(widget.initialStatusFilter!);
+        reportsProvider.setTaskSearchCriteria(
+            '', '', '', widget.initialStatusFilter.toString(), '', '');
+      } else {
+        reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
+      }
+
       reportsProvider.searchTaskByCustomer(context);
       provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
@@ -168,8 +177,11 @@ class _tasksPageReportState extends State<TaskPage> {
       backgroundColor:
           AppStyles.isWebScreen(context) ? null : AppColors.whiteColor,
       key: _scaffoldKey,
-      appBar: !AppStyles.isWebScreen(context)
+      appBar: (!AppStyles.isWebScreen(context) || Navigator.canPop(context))
           ? CustomAppBar(
+              leadingWidget: Navigator.canPop(context)
+                  ? const BackButton(color: Colors.black)
+                  : null,
               onExcelTap: () {
                 exportToExcel(
                   headers: [
@@ -264,7 +276,7 @@ class _tasksPageReportState extends State<TaskPage> {
                 children: [
                   // Main row with adaptive layout
 
-                  AppStyles.isWebScreen(context)
+                  (AppStyles.isWebScreen(context) && !Navigator.canPop(context))
                       ? LayoutBuilder(
                           builder: (context, constraints) {
                             final screenWidth =
