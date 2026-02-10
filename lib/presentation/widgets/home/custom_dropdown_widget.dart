@@ -10,6 +10,7 @@ class CommonDropdown<T> extends StatelessWidget {
   final ValueChanged<T> onItemSelected;
   final T? selectedValue;
   final bool enabled; // Added enabled property
+  final bool isMultiLine;
 
   const CommonDropdown({
     super.key,
@@ -19,6 +20,7 @@ class CommonDropdown<T> extends StatelessWidget {
     required this.onItemSelected,
     this.selectedValue,
     this.enabled = true, // Default to true
+    this.isMultiLine = false,
   });
 
   @override
@@ -40,6 +42,8 @@ class CommonDropdown<T> extends StatelessWidget {
               fontWeight: FontWeight.w500,
               color: AppColors.textBlack),
           isDense: true,
+          isExpanded: true,
+          itemHeight: null, // Allow variable height
           iconSize: 18,
           icon: Icon(
             Icons.keyboard_arrow_down_rounded,
@@ -102,8 +106,10 @@ class CommonDropdown<T> extends StatelessWidget {
                     value: item.id,
                     child: Text(
                       item.name,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 1,
+                      overflow: isMultiLine
+                          ? TextOverflow.visible
+                          : TextOverflow.ellipsis,
+                      maxLines: isMultiLine ? null : 1,
                     ),
                   ))
               .toList(),
@@ -119,7 +125,10 @@ class CommonDropdown<T> extends StatelessWidget {
                           fontWeight: FontWeight.w500,
                           color: AppColors.textBlack,
                         ),
-                        overflow: TextOverflow.ellipsis,
+                        overflow: isMultiLine
+                            ? TextOverflow.visible
+                            : TextOverflow.ellipsis,
+                        maxLines: isMultiLine ? null : 1,
                       ),
                     );
                   }).toList();
