@@ -10,6 +10,8 @@ import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.d
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 
+import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
+
 class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
 
@@ -65,6 +67,36 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
         Provider.of<TaskPageProvider>(context, listen: false);
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            OutlinedButton.icon(
+              onPressed: () {
+                showDialog(
+                  barrierDismissible: false,
+                  context: context,
+                  builder: (context) => ImageUploadAlert(
+                      customerId: widget.task.customerId.toString()),
+                );
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primaryBlue,
+                side: BorderSide(color: AppColors.primaryBlue),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              ),
+              icon: const Icon(Icons.upload_file, size: 20),
+              label: const Text('+ Documents'),
+            ),
+          ],
+        ),
+      ),
       appBar: CustomAppBarWidget(
         title: 'Update Status',
         titleFontSize: 14,
