@@ -9,7 +9,7 @@ class AppStyles {
   }
 
   static name() {
-    String name = 'solaris';
+    // String name = 'solaris';
     // String name = 'vidyanexis';
     // String name = 'First Day';
     // String name = 'Neopower';
@@ -20,6 +20,7 @@ class AppStyles {
     // String name = 'Crystal';
     // String name = 'Dyuthi';
     // String name = 'Securagreen';
+    String name = 'Oxy Solar';
 
     return name;
   }

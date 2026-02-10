@@ -243,7 +243,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadPageReport()),
         ),
-      if (settingsProvider.menuIsViewMap[65].toString() == '1')
+      if (settingsProvider.menuIsViewMap[72].toString() == '1')
         SidebarOption(
           title: 'Balance Reports',
           iconPath: 'assets/images/Reports.svg',
