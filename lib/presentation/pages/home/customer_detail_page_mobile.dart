@@ -169,7 +169,11 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                     ),
                     child: Center(
                       child: Text(
-                        leadDetailsProvider.isFetchLoading
+                        (leadDetailsProvider.isFetchLoading ||
+                                leadDetailsProvider.leadDetails == null ||
+                                leadDetailsProvider.leadDetails!.isEmpty ||
+                                leadDetailsProvider
+                                    .leadDetails![0].customerName.isEmpty)
                             ? ''
                             : leadDetailsProvider.leadDetails![0].customerName
                                 .substring(0, 1)
@@ -184,7 +188,9 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    leadDetailsProvider.isFetchLoading
+                    (leadDetailsProvider.isFetchLoading ||
+                            leadDetailsProvider.leadDetails == null ||
+                            leadDetailsProvider.leadDetails!.isEmpty)
                         ? ''
                         : leadDetailsProvider.leadDetails![0].customerName,
                     style: GoogleFonts.plusJakartaSans(
@@ -216,12 +222,16 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                             context,
                             listen: false);
 
-                        leadsProvider.enquirySourceController.text =
-                            leadDetailsProvider
-                                .leadDetails![0].enquirySourceName;
+                        if (leadDetailsProvider.leadDetails != null &&
+                            leadDetailsProvider.leadDetails!.isNotEmpty) {
+                          leadsProvider.enquirySourceController.text =
+                              leadDetailsProvider
+                                  .leadDetails![0].enquirySourceName;
 
-                        leadsProvider.enquiryForController.text =
-                            leadDetailsProvider.leadDetails![0].enquiryForName;
+                          leadsProvider.enquiryForController.text =
+                              leadDetailsProvider
+                                  .leadDetails![0].enquiryForName;
+                        }
                         // log(leadsProvider.enquiryForController.text);
                         dropDownProvider.selectedEnquirySourceId = int.parse(
                             widget.lead?.enquirySourceId.toString() ?? '0');
