@@ -16,6 +16,8 @@ class CustomFieldModel {
   int? customFieldTypeId;
   String? customFieldName;
   int? deletedStatus;
+  int? isQuotationCustom;
+  int? isViewInQuotation;
   List<String>? dropDownValues;
   List<String>? checkBoxValues;
 
@@ -28,6 +30,8 @@ class CustomFieldModel {
     this.customFieldTypeId,
     this.customFieldName,
     this.deletedStatus,
+    this.isQuotationCustom,
+    this.isViewInQuotation,
     this.createdAt,
   });
 
@@ -38,6 +42,8 @@ class CustomFieldModel {
     List<String>? dropDownValues,
     List<String>? checkBoxValues,
     int? deletedStatus,
+    int? isQuotationCustom,
+    int? isViewInQuotation,
     DateTime? createdAt,
   }) =>
       CustomFieldModel(
@@ -45,6 +51,8 @@ class CustomFieldModel {
         customFieldTypeId: customFieldTypeId ?? this.customFieldTypeId,
         customFieldName: customFieldName ?? this.customFieldName,
         deletedStatus: deletedStatus ?? this.deletedStatus,
+        isQuotationCustom: isQuotationCustom ?? this.isQuotationCustom,
+        isViewInQuotation: isViewInQuotation ?? this.isViewInQuotation,
         dropDownValues: dropDownValues ?? this.dropDownValues,
         checkBoxValues: checkBoxValues ?? this.checkBoxValues,
         createdAt: createdAt ?? this.createdAt,
@@ -56,6 +64,8 @@ class CustomFieldModel {
         customFieldTypeId: json["custom_field_type_id"],
         customFieldName: json["custom_field_name"],
         deletedStatus: json["Deleted_Status"],
+        isQuotationCustom: json["quotation_custom"],
+        isViewInQuotation: json["view_in_quotation"],
         dropDownValues: json["Dropdown_Values"] == null
             ? []
             : List<String>.from(json["Dropdown_Values"]!),
@@ -72,6 +82,8 @@ class CustomFieldModel {
         "custom_field_type_id": customFieldTypeId,
         "custom_field_name": customFieldName,
         "Deleted_Status": deletedStatus,
+        "quotation_custom": isQuotationCustom,
+        "view_in_quotation": isViewInQuotation,
         "Dropdown_Values": dropDownValues == null
             ? []
             : List<dynamic>.from(dropDownValues!.map((x) => x)),

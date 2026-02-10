@@ -129,10 +129,16 @@ class _AddCustomFieldState extends State<AddCustomField> {
           settingsProvider.fieldListItems =
               widget.customFieldTypeModel?.checkBoxValues ?? [];
         }
+        settingsProvider.toggleQuotationCustom(
+            widget.customFieldTypeModel?.isQuotationCustom == 1);
+        settingsProvider.toggleViewInQuotation(
+            widget.customFieldTypeModel?.isViewInQuotation == 1);
       } else {
         settingsProvider.fieldNameController.clear();
         settingsProvider.fieldTypeController.clear();
         settingsProvider.fieldListItems.clear();
+        settingsProvider.toggleQuotationCustom(false);
+        settingsProvider.toggleViewInQuotation(false);
         // settingsProvider.setFieldId(0);
       }
     });
@@ -207,6 +213,35 @@ class _AddCustomFieldState extends State<AddCustomField> {
                       onItemSelected: (selectedId) {
                         settingsProvider.setFieldId(selectedId);
                       },
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(
+                height: 10,
+              ),
+              Row(
+                children: [
+                  Expanded(
+                    child: CheckboxListTile(
+                      title: const Text("Quotation Custom"),
+                      value: settingsProvider.isQuotationCustom,
+                      onChanged: (value) {
+                        settingsProvider.toggleQuotationCustom(value!);
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  Expanded(
+                    child: CheckboxListTile(
+                      title: const Text("View In Quotation"),
+                      value: settingsProvider.isViewInQuotation,
+                      onChanged: (value) {
+                        settingsProvider.toggleViewInQuotation(value!);
+                      },
+                      controlAffinity: ListTileControlAffinity.leading,
+                      contentPadding: EdgeInsets.zero,
                     ),
                   ),
                 ],
@@ -469,6 +504,10 @@ class _AddCustomFieldState extends State<AddCustomField> {
                 settingsProvider.fieldNameController.text;
             customFieldTypeModel.customFieldTypeId =
                 settingsProvider.fieldNameid;
+            customFieldTypeModel.isQuotationCustom =
+                settingsProvider.isQuotationCustom ? 1 : 0;
+            customFieldTypeModel.isViewInQuotation =
+                settingsProvider.isViewInQuotation ? 1 : 0;
 
             // customFieldTypeModel.dropDownValues =
             //     settingsProvider.fieldListItems.map((e) => e).join(',');
