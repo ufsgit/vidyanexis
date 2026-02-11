@@ -341,6 +341,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
                           Expanded(
                             child: CommonDropdown<int>(
                               hintText: 'Branch *',
+                              isMultiLine: true,
                               items: branchList
                                   .map((status) => DropdownItem<int>(
                                         id: status.branchId!,

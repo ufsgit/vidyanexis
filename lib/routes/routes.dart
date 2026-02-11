@@ -15,6 +15,7 @@ import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_details_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 
 final GoRouter appRouter = GoRouter(
   debugLogDiagnostics: true, // Helpful for debugging
@@ -104,6 +105,17 @@ final GoRouter appRouter = GoRouter(
         return fadeTransition(CustomerDetailsScreen(
           customerId: customerId,
           report: report,
+        ));
+      },
+    ),
+    GoRoute(
+      path: '${CustomerDetailPageMobile.route}:customerId/:fromLead',
+      pageBuilder: (context, state) {
+        final customerId = int.parse(state.pathParameters['customerId']!);
+        final fromLead = state.pathParameters['fromLead']! == 'true';
+        return fadeTransition(CustomerDetailPageMobile(
+          customerId: customerId,
+          fromLead: fromLead,
         ));
       },
     ),

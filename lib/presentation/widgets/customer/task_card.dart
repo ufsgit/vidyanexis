@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
-import 'package:vidyanexis/utils/status_utils.dart'
-    hide StatusUtils; // Ensure this file exists or replace usage
+import 'package:vidyanexis/utils/status_utils.dart';
 import '../../../../controller/models/task_customer_model.dart';
 // import '../../home/custom_text_widget.dart'; // Removed as it seems unused or path is wrong
 
@@ -25,12 +24,11 @@ class TaskCard extends StatelessWidget {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     // Status Color Logic
-    // Ensure StatusUtils is available or use fallback logic
+    // Status Color Logic
     Color statusColor = Colors.grey;
     try {
       statusColor = StatusUtils.getTaskColor(task.taskStatusId);
     } catch (e) {
-      // Fallback if StatusUtils is missing or fails
       statusColor = task.taskStatusName == "Completed"
           ? Colors.green
           : task.taskStatusName == "Pending"

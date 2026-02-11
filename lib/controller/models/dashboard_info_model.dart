@@ -11,7 +11,7 @@ class TaskInfoDashboardModel {
 
   factory TaskInfoDashboardModel.fromJson(Map<String, dynamic> json) =>
       TaskInfoDashboardModel(
-        customerId: json["Customer_Id"],
+        customerId: json["Customer_Id"] ?? json["customerId"],
         customerName: json["Customer_Name"],
         taskList: json["taskList"] == null
             ? []

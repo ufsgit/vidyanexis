@@ -20,6 +20,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
 import '../../widgets/home/custom_textfield_widget_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/dashboard_task_count_card.dart';
+import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -44,6 +46,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       dropDownProvider.getUserDetails(context);
+      dropDownProvider.getFollowUpStatus(context, "3");
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
@@ -167,6 +170,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
               style: AppStyles.getHeadingTextStyle(
                   fontSize: 24, fontColor: AppColors.primaryViolet),
             ),
+          const SizedBox(height: 20),
+          _buildTaskReports(context, dashBoardProvider),
           const SizedBox(height: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -627,6 +632,103 @@ class _DashBoardPageState extends State<DashBoardPage> {
               child: const Text('Reset'),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildTaskReports(
+      BuildContext context, DashboardProvider dashBoardProvider) {
+    // Access DropDownProvider to map names to IDs for navigation
+    final dropDownProvider = Provider.of<DropDownProvider>(context);
+
+    // Calculate Counts
+    int pendingCount = 0;
+    int currentCount = 0;
+
+    for (var status in dashBoardProvider.taskAllocationSummaryDataStatus) {
+      final name = status.taskStatusName.toLowerCase();
+      if (name.contains('pending') || name.contains('not started')) {
+        pendingCount += status.count;
+      } else if (name.contains('in progress')) {
+        currentCount += status.count;
+      }
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 0.0),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // final isMobile = !AppStyles.isWebScreen(context); // This variable is no longer needed
+
+          return IntrinsicHeight(
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Expanded(
+                  child: DashboardTaskCountCard(
+                    isLoading: dashBoardProvider.isDashBoardLoading,
+                    title: 'Pending Tasks',
+                    count: pendingCount,
+                    baseColor: const Color(0xFFEAB308), // Yellow/Warning
+                    onTap: () {
+                      // Find ID for Pending/Not Started
+                      int? pendingId;
+                      try {
+                        pendingId = dropDownProvider.followUpData.firstWhere(
+                          (element) {
+                            final name =
+                                element.statusName?.toLowerCase() ?? '';
+                            return name.contains('pending') ||
+                                name.contains('not started');
+                          },
+                        ).statusId;
+                      } catch (_) {}
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              TaskPage(initialStatusFilter: pendingId),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+                const SizedBox(
+                    width: 16), // Fixed spacing for both mobile and web
+                Expanded(
+                  child: DashboardTaskCountCard(
+                    isLoading: dashBoardProvider.isDashBoardLoading,
+                    title: 'Current Tasks',
+                    count: currentCount,
+                    baseColor: const Color(0xFF3B82F6), // Blue/Info
+                    onTap: () {
+                      // Find ID for In Progress
+                      int? currentId;
+                      try {
+                        currentId = dropDownProvider.followUpData.firstWhere(
+                          (element) {
+                            final name =
+                                element.statusName?.toLowerCase() ?? '';
+                            return name.contains('in progress');
+                          },
+                        ).statusId;
+                      } catch (_) {}
+
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) =>
+                              TaskPage(initialStatusFilter: currentId),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
       ),
     );
   }

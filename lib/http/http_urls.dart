@@ -8,8 +8,8 @@ class HttpUrls {
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
-  //static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
-  //static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
+  // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
+  // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
 
 //dev
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';

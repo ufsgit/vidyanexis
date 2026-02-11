@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
@@ -132,7 +133,14 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
                   onTap: () {
                     if (taskInfo.customerId != null) {
                       context.push(
-                          '${CustomerDetailsScreen.route}${taskInfo.customerId}/false');
+                          '${CustomerDetailPageMobile.route}${taskInfo.customerId}/false');
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                          content: Text('Customer ID not found'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
                     }
                   },
                   child: CustomText(
