@@ -3098,14 +3098,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> loadQuotationFromCustomFields(BuildContext context) async {
+  Future<void> loadQuotationFromCustomFields(
+      BuildContext context, String type) async {
     try {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.loadQuotationFromCustomFields,
           bodyData: {
             "custom_fields":
                 customFieldQuotationKey.currentState?.getFieldValuesAsJson() ??
-                    []
+                    [],
+            "type": type
           });
 
       if (response?.statusCode == 200) {
