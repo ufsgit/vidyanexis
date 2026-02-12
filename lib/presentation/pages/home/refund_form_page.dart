@@ -85,12 +85,12 @@ class _RefundFormPageState extends State<RefundFormPage> {
                 child: ListView.builder(
                   itemCount: customerDetailsProvider.refundList.length,
                   itemBuilder: (context, index) {
-                    final refundModel =
+                    final refundData =
                         customerDetailsProvider.refundList[index];
                     return GestureDetector(
                       onTap: () {},
                       child: RefundCard(
-                          refundModel: refundModel,
+                          refundData: refundData,
                           customerId: widget.customerId),
                     );
                   },

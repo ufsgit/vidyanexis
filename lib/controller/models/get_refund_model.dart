@@ -1,36 +1,6 @@
-// Generated model for: service/Get_Refund_Details/:Customer_Id
-// Adjust fields to match the actual API response if needed.
-
-class RefundModel {
-  final bool? success;
-  final String? message;
-  final List<RefundDetail>? data;
-
-  RefundModel({this.success, this.message, this.data});
-
-  factory RefundModel.fromJson(Map<String, dynamic> json) {
-    return RefundModel(
-      success: json['success'] as bool?,
-      message: json['message'] as String?,
-      data: json['data'] != null
-          ? List<RefundDetail>.from(
-              (json['data'] as List).map((e) => RefundDetail.fromJson(e)))
-          : null,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'success': success,
-      'message': message,
-      'data': data?.map((e) => e.toJson()).toList(),
-    };
-  }
-}
-
-class RefundDetail {
-  final String? refundId;
-  final String? customerId;
+class RefundData {
+  final int? refundId;
+  final int? customerId;
   final String? electricalSection;
   final String? place;
   final String? consumerNumber;
@@ -39,10 +9,11 @@ class RefundDetail {
   final String? accountNumber;
   final String? bankName;
   final String? ifscCode;
-  final String? byUserId;
-  final String? byUserName;
+  final String? byUserName; // Keeping string as per user API format
+  final String? createdDate;
+  final int? deletedStatus;
 
-  RefundDetail({
+  RefundData({
     this.refundId,
     this.customerId,
     this.electricalSection,
@@ -53,14 +24,19 @@ class RefundDetail {
     this.accountNumber,
     this.bankName,
     this.ifscCode,
-    this.byUserId,
     this.byUserName,
+    this.createdDate,
+    this.deletedStatus,
   });
 
-  factory RefundDetail.fromJson(Map<String, dynamic> json) {
-    return RefundDetail(
-      refundId: json['Refund_Id']?.toString(),
-      customerId: json['Customer_Id']?.toString(),
+  factory RefundData.fromJson(Map<String, dynamic> json) {
+    return RefundData(
+      refundId: json['Refund_Id'] is int
+          ? json['Refund_Id']
+          : int.tryParse(json['Refund_Id']?.toString() ?? ''),
+      customerId: json['Customer_Id'] is int
+          ? json['Customer_Id']
+          : int.tryParse(json['Customer_Id']?.toString() ?? ''),
       electricalSection: json['Electrical_Section']?.toString(),
       place: json['Place']?.toString(),
       consumerNumber: json['Consumer_Number']?.toString(),
@@ -69,8 +45,11 @@ class RefundDetail {
       accountNumber: json['Account_Number']?.toString(),
       bankName: json['Bank_Name']?.toString(),
       ifscCode: json['IFSC_Code']?.toString(),
-      byUserId: json['By_User_Id']?.toString(),
       byUserName: json['By_User_Name']?.toString(),
+      createdDate: json['Created_Date']?.toString(),
+      deletedStatus: json['Deleted_Status'] is int
+          ? json['Deleted_Status']
+          : int.tryParse(json['Deleted_Status']?.toString() ?? ''),
     );
   }
 
@@ -86,8 +65,9 @@ class RefundDetail {
       'Account_Number': accountNumber,
       'Bank_Name': bankName,
       'IFSC_Code': ifscCode,
-      'By_User_Id': byUserId,
       'By_User_Name': byUserName,
+      'Created_Date': createdDate,
+      'Deleted_Status': deletedStatus,
     };
   }
 }
