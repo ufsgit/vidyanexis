@@ -2909,7 +2909,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     );
     return CustomElevatedButton(
       onPressed: () async {
-        await customerDetailsProvider.loadQuotationFromCustomFields(context);
+        await customerDetailsProvider.loadQuotationFromCustomFields(
+            context, "view_in_quotation");
         final quotation = customerDetailsProvider.quotationListByMaster.first;
 
         // ---- BASIC DETAILS ----
