@@ -1709,4 +1709,72 @@ class ExpenseProvider extends ChangeNotifier {
       );
     }
   }
+
+  ExpenseHeaderModel correlationbox = ExpenseHeaderModel();
+
+  Future<void> getExpenseReport(BuildContext context) async {
+    _expenseModelList = [];
+    Loader.showLoader(context);
+    notifyListeners();
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String userId = preferences.getString('userId') ?? "";
+    String assignedTo = selectedUser == null || selectedUser == 0
+        ? userId
+        : selectedUser.toString();
+
+    String expenseTypeId = (selectedExpenseTypeId ?? 0) == 0
+        ? ""
+        : selectedExpenseTypeId.toString();
+    String projectTypeId = (selectedProjectTypeId ?? 0) == 0
+        ? ""
+        : selectedProjectTypeId.toString();
+
+    String from = formattedFromDate;
+    String to = formattedToDate;
+
+    try {
+      String url = '${HttpUrls.getExpenseManagement}?reference_id=$assignedTo';
+      if (expenseTypeId.isNotEmpty) url += '&expense_type_id=$expenseTypeId';
+      if (projectTypeId.isNotEmpty) url += '&project_type_id=$projectTypeId';
+      if (from.isNotEmpty) url += '&s_EntryDate_From=$from';
+      if (to.isNotEmpty) url += '&s_EntryDate_To=$to';
+
+      final response = await HttpRequest.httpGetRequest(endPoint: url);
+
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+
+        if (data != null) {
+          _expenseModelList = (data as List<dynamic>)
+              .map((item) => ExpenseModel.fromJson(item))
+              .toList();
+
+          double totalExpense = 0;
+          for (var item in _expenseModelList) {
+            totalExpense += (item.amount ?? 0);
+          }
+
+          correlationbox = ExpenseHeaderModel(
+              totalExpenseAmount: totalExpense,
+              totalBalance: 0,
+              receivedAmount: 0);
+
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    } finally {
+      Loader.stopLoader(context);
+      notifyListeners();
+    }
+  }
 }

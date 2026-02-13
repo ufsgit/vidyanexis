@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/follow_up_history_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
 
 class LeadDetailsWidget extends StatefulWidget {
   final String customerId;
@@ -355,7 +356,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                 ),
                 const SizedBox(height: 16),
                 DefaultTabController(
-                  length: 2,
+                  length: 3,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -375,6 +376,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                         tabs: const [
                           Tab(text: 'Personal details'),
                           Tab(text: 'Follow-Up history'),
+                          Tab(text: 'Expense'),
                         ],
                       ),
                       SizedBox(
@@ -420,6 +422,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                                         style: TextStyle(
                                             fontWeight: FontWeight.w600),
                                       ))),
+                            ExpenseScreen(widget.customerId),
                           ],
                         ),
                       ),
