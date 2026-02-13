@@ -298,7 +298,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   ),
                   const SizedBox(height: 16),
                   CommonDropdown(
-                    hintText: 'Quotation Type',
+                    hintText: 'Quotation Type*',
                     items: customerDetailsProvider.quotationTypeData
                         .map((status) => DropdownItem<int>(
                               id: status.quotationTypeId,

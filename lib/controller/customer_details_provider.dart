@@ -1695,7 +1695,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "PaymentTerms": 0,
         "Payment_Term_Description": "",
         "TotalAmount": subtotalController.text,
-        "Subsidy_Amount": qsubsidyAmountController.text.toString(),
+        "Subsidy_Amount":
+            double.tryParse(qsubsidyAmountController.text.toString()) ?? 0,
         "NetTotal": totalController.text,
         "Product_Name": qproductnameController.text.toString(),
         "Warranty": qwarrentyController.text.toString(),
