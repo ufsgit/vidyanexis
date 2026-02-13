@@ -8,11 +8,11 @@ import 'package:vidyanexis/presentation/widgets/customer/add_refund.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 
 class RefundCard extends StatelessWidget {
-  final RefundModel refundModel;
+  final RefundData refundData;
   final String customerId;
   const RefundCard({
     super.key,
-    required this.refundModel,
+    required this.refundData,
     required this.customerId,
   });
 
@@ -22,11 +22,7 @@ class RefundCard extends StatelessWidget {
         Provider.of<CustomerDetailsProvider>(context);
     final settingsprovider = Provider.of<SettingsProvider>(context);
 
-    if (refundModel.data == null || refundModel.data!.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final refund = refundModel.data![0];
+    final refund = refundData;
 
     return Container(
       decoration: BoxDecoration(
@@ -93,7 +89,7 @@ class RefundCard extends StatelessWidget {
                             barrierDismissible: false,
                             builder: (BuildContext context) {
                               return RefundCreationWidget(
-                                recieptId: refund.refundId ?? '0',
+                                recieptId: refund.refundId?.toString() ?? '0',
                                 isEdit: true,
                                 customerId: customerId,
                               );

@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' as math;
 
@@ -27,7 +26,7 @@ import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/bill_of_material_model.dart';
 import 'package:vidyanexis/controller/models/customer_invoice_model.dart';
 import 'package:vidyanexis/controller/models/document_list_model.dart';
-import 'package:vidyanexis/controller/models/get_amc_model.dart';
+
 import 'package:vidyanexis/controller/models/get_quotation_master_id_model.dart'
     as ql;
 import 'package:vidyanexis/controller/models/item_model.dart';
@@ -35,7 +34,7 @@ import 'package:vidyanexis/controller/models/lead_details_model.dart';
 import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
 import 'package:vidyanexis/controller/models/reciept_list_model.dart';
 import 'package:vidyanexis/controller/models/serive_report_model.dart';
-import 'package:vidyanexis/controller/models/service_customer_model.dart';
+
 import 'package:vidyanexis/controller/models/service_detail_model.dart';
 import 'package:vidyanexis/controller/models/solar_panel_details_model.dart';
 import 'package:vidyanexis/controller/models/task_customer_model.dart';
@@ -45,7 +44,7 @@ import 'package:vidyanexis/controller/models/task_user_list_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+
 import 'package:vidyanexis/utils/extensions.dart';
 
 import '../http/http_urls.dart';
@@ -514,8 +513,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController refundamountcontroller = TextEditingController();
   final TextEditingController reasoncontroller = TextEditingController();
 
-  List<RefundModel> _refundList = [];
-  List<RefundModel> get refundList => _refundList;
+  List<RefundData> _refundList = [];
+  List<RefundData> get refundList => _refundList;
 
   //reciept
   List<ReceiptListModel> _receiptList = [];
@@ -2399,7 +2398,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
           log(data.toString());
 
           _refundList = (data as List<dynamic>)
-              .map((item) => RefundModel.fromJson(item))
+              .map((item) => RefundData.fromJson(item))
               .toList();
         }
       } else {
