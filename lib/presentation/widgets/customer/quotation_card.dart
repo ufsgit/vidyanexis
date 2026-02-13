@@ -427,6 +427,9 @@ class QuotationCard extends StatelessWidget {
                       customerDetailsProvider.totalSgstAmountController.text =
                           quotation.totalSgstAmount;
 
+                      customerDetailsProvider.selectedBranchId =
+                          quotation.branchId;
+
                       customerDetailsProvider.commercialItems =
                           quotation.commercialItems;
 

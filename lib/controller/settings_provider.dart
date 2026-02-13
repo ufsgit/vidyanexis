@@ -292,6 +292,14 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController emailBranchController = TextEditingController();
   final TextEditingController pinCodeController = TextEditingController();
   final TextEditingController contactPersonController = TextEditingController();
+  final TextEditingController gstNoController = TextEditingController();
+  final TextEditingController panCardNoController = TextEditingController();
+  final TextEditingController bankNameController = TextEditingController();
+  final TextEditingController bankHolderNameController =
+      TextEditingController();
+  final TextEditingController bankAccountNoController = TextEditingController();
+  final TextEditingController ifscCodeController = TextEditingController();
+  final TextEditingController logoController = TextEditingController();
   final TextEditingController branchCampaignController =
       TextEditingController();
   final TextEditingController departmentCampaignController =
@@ -350,7 +358,14 @@ class SettingsProvider extends ChangeNotifier {
             "phone": phoneController.text,
             "pincode": pinCodeController.text,
             "email": emailBranchController.text,
-            "contact_person": contactPersonController.text
+            "contact_person": contactPersonController.text,
+            "logo": logoController.text,
+            "gst_no": gstNoController.text,
+            "pan_card_no": panCardNoController.text,
+            "bank_name": bankNameController.text,
+            "bank_holder_name": bankHolderNameController.text,
+            "bank_account_no": bankAccountNoController.text,
+            "ifsc_code": ifscCodeController.text
           });
 
       if (response!.statusCode == 200) {
@@ -360,6 +375,13 @@ class SettingsProvider extends ChangeNotifier {
         pinCodeController.clear();
         emailBranchController.clear();
         contactPersonController.clear();
+        logoController.clear();
+        gstNoController.clear();
+        panCardNoController.clear();
+        bankNameController.clear();
+        bankHolderNameController.clear();
+        bankAccountNoController.clear();
+        ifscCodeController.clear();
         final data = response.data;
         searchBranch(context);
         Navigator.pop(context);
@@ -387,6 +409,14 @@ class SettingsProvider extends ChangeNotifier {
     pinCodeController.clear();
     emailBranchController.clear();
     contactPersonController.clear();
+    logoController.clear();
+    gstNoController.clear();
+    panCardNoController.clear();
+    bankNameController.clear();
+    bankHolderNameController.clear();
+    bankAccountNoController.clear();
+    ifscCodeController.clear();
+    branchCampaignController.clear();
   }
 
   void searchBranch(BuildContext context) async {
@@ -1868,7 +1898,9 @@ class SettingsProvider extends ChangeNotifier {
             "ViewIn_Name": viewInController.text.toString(),
             "Stage_Id": stageId,
             "Stage_Name": stageStatusController.text.toString(),
-            "Progress_Value": progressValueController.text,
+            "Progress_Value": progressValueController.text.isEmpty
+                ? "0"
+                : progressValueController.text,
             "Custom_Fields": customFields,
           });
 

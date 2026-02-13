@@ -84,6 +84,7 @@ class GetQuotationbyMasterIdmodel {
   final String otherTax;
   final String description2;
   final String description3;
+  final int branchId;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -155,6 +156,7 @@ class GetQuotationbyMasterIdmodel {
     required this.scopeOfWorkItems,
     required this.description2,
     required this.description3,
+    required this.branchId,
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -239,6 +241,7 @@ class GetQuotationbyMasterIdmodel {
           .toList(),
       description2: toStr(json['Description_2']),
       description3: toStr(json['Description_3']),
+      branchId: toInt(json['Branch_Id']),
     );
   }
 }

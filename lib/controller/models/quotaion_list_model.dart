@@ -31,6 +31,7 @@ class QuatationListModel {
   List<BillOfMaterial>? billOfMaterials;
   List<ProductionChartModel>? productionChartModel;
   int quotationTypeId;
+  int branchId;
 
   QuatationListModel({
     required this.quotationMasterId,
@@ -63,6 +64,7 @@ class QuatationListModel {
     this.billOfMaterials,
     this.productionChartModel,
     required this.quotationTypeId,
+    required this.branchId,
   });
 
   factory QuatationListModel.fromMap(Map<String, dynamic> json) =>
@@ -108,6 +110,7 @@ class QuatationListModel {
             ? []
             : List<ProductionChartModel>.from(json["production_chart"]
                 .map((x) => ProductionChartModel.fromJson(x))),
+        branchId: json["Branch_Id"] ?? 0,
       );
 
   Map<String, dynamic> toMap() => {
@@ -145,6 +148,7 @@ class QuatationListModel {
         "production_chart": productionChartModel == null
             ? []
             : List<dynamic>.from(productionChartModel!.map((x) => x.toJson())),
+        "Branch_Id": branchId,
       };
 }
 

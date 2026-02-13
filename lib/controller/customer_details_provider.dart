@@ -266,6 +266,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController quotationDescription3Controller =
       TextEditingController();
 
+  int? _selectedBranchId;
+  int? get selectedBranchId => _selectedBranchId;
+  set selectedBranchId(int? value) {
+    _selectedBranchId = value;
+    notifyListeners();
+  }
+
   //commercial
   TextEditingController commercialDescriptionController =
       TextEditingController();
@@ -1581,6 +1588,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Quotation_Master_Id": quotationId,
         "Customer_Id": customerId,
         "Quotation_No": "",
+        "Branch_Id": _selectedBranchId ?? 0,
         "PaymentTerms": 0,
         "Payment_Term_Description": "",
         "TotalAmount": subtotalController.text,
@@ -1806,6 +1814,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     quotationDescriptionController.clear();
     quotationDescription2Controller.clear();
     quotationDescription3Controller.clear();
+    _selectedBranchId = null;
   }
 
   void setAmcDropDown(int amcStatusId, String amcStatusName) {

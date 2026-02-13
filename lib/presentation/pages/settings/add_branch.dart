@@ -9,6 +9,11 @@ import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:vidyanexis/http/cloudflare_upload.dart';
+import 'package:vidyanexis/http/cloudflare_upload.dart';
+import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 
 class AddBranch extends StatefulWidget {
   final bool isEdit;
@@ -79,6 +84,41 @@ class _AddBranchState extends State<AddBranch> {
     );
   }
 
+  Future<void> _pickAndUploadLogo(SettingsProvider settingsProvider) async {
+    try {
+      FilePickerResult? result = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['jpg', 'jpeg', 'png'],
+        withData: true,
+      );
+
+      if (result != null) {
+        PlatformFile file = result.files.first;
+        if (file.bytes != null) {
+          Loader.showLoader(context);
+
+          String uploadedPath = await CloudflareUpload.uploadToCloudflare(
+                  file.bytes!,
+                  file.extension ?? 'png',
+                  "branch_logos",
+                  context) ??
+              "";
+
+          Loader.stopLoader(context);
+
+          if (uploadedPath.isNotEmpty) {
+            setState(() {
+              settingsProvider.logoController.text = uploadedPath;
+            });
+          }
+        }
+      }
+    } catch (e) {
+      print(e);
+      Loader.stopLoader(context);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -95,6 +135,18 @@ class _AddBranchState extends State<AddBranch> {
         settingsProvider.emailBranchController.text =
             widget.branch!.email ?? "";
         settingsProvider.phoneController.text = widget.branch!.phone ?? "";
+        settingsProvider.gstNoController.text = widget.branch!.gstNo ?? "";
+        settingsProvider.panCardNoController.text =
+            widget.branch!.panCardNo ?? "";
+        settingsProvider.bankNameController.text =
+            widget.branch!.bankName ?? "";
+        settingsProvider.bankHolderNameController.text =
+            widget.branch!.bankHolderName ?? "";
+        settingsProvider.bankAccountNoController.text =
+            widget.branch!.bankAccountNo ?? "";
+        settingsProvider.ifscCodeController.text =
+            widget.branch!.ifscCode ?? "";
+        settingsProvider.logoController.text = widget.branch!.logo ?? "";
       });
     } else {
       final settingsProvider =
@@ -140,6 +192,84 @@ class _AddBranchState extends State<AddBranch> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            CustomElevatedButton(
+              buttonText: 'Upload Logo',
+              onPressed: () async {
+                await _pickAndUploadLogo(settingsProvider);
+              },
+              backgroundColor: AppColors.whiteColor,
+              borderColor: AppColors.appViolet,
+              textColor: AppColors.appViolet,
+            ),
+            const SizedBox(height: 10),
+            if (settingsProvider.logoController.text.isNotEmpty)
+              Stack(
+                children: [
+                  InkWell(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => Dialog(
+                          child: InteractiveViewer(
+                            child: Image.network(
+                              '${HttpUrls.imgBaseUrl}${settingsProvider.logoController.text}',
+                              errorBuilder: (context, error, stackTrace) {
+                                return const SizedBox(
+                                  height: 100,
+                                  width: 100,
+                                  child: Center(
+                                    child: Icon(Icons.broken_image),
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8),
+                      child: Image.network(
+                        '${HttpUrls.imgBaseUrl}${settingsProvider.logoController.text}',
+                        width: 100,
+                        height: 100,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            width: 100,
+                            height: 100,
+                            color: Colors.grey[200],
+                            child: const Center(
+                              child: Icon(Icons.error, color: Colors.red),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    top: 5,
+                    right: 5,
+                    child: GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          settingsProvider.logoController.clear();
+                        });
+                      },
+                      child: const CircleAvatar(
+                        radius: 12,
+                        backgroundColor: Colors.red,
+                        child: Icon(
+                          Icons.delete,
+                          size: 14,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            const SizedBox(height: 20),
             // Task Type Text Field
             CustomTextField(
               readOnly: false,
@@ -193,6 +323,55 @@ class _AddBranchState extends State<AddBranch> {
               height: 54,
               controller: settingsProvider.contactPersonController,
               hintText: 'Contact Person',
+              labelText: '',
+            ),
+
+            const SizedBox(height: 20),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: settingsProvider.gstNoController,
+              hintText: 'GST No',
+              labelText: '',
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: settingsProvider.panCardNoController,
+              hintText: 'PAN Card No',
+              labelText: '',
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: settingsProvider.bankNameController,
+              hintText: 'Bank Name',
+              labelText: '',
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: settingsProvider.bankHolderNameController,
+              hintText: 'Bank Holder Name',
+              labelText: '',
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: settingsProvider.bankAccountNoController,
+              hintText: 'Bank Account No',
+              labelText: '',
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: settingsProvider.ifscCodeController,
+              hintText: 'IFSC Code',
               labelText: '',
             ),
 

@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -33,6 +34,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      settingsProvider.searchBranch(context);
       customerDetailsProvider.getQuotationTypes(context);
       customerDetailsProvider.getCustomFieldsByQuotationId(context);
     });
@@ -44,6 +48,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     final dropDownProvider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     // String? _validateTotal() {
     //   int advance =
     //       int.tryParse(customerDetailsProvider.advanceController.text) ?? 0;
@@ -113,6 +118,22 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 children: [
                   const SizedBox(
                     height: 5,
+                  ),
+                  CommonDropdown(
+                    hintText: 'Branch',
+                    items: settingsProvider.branchModel
+                        .map((branch) => DropdownItem<int>(
+                              id: branch.branchId ?? 0,
+                              name: branch.branchName ?? '',
+                            ))
+                        .toList(),
+                    onItemSelected: (value) {
+                      customerDetailsProvider.selectedBranchId = value;
+                    },
+                    selectedValue: customerDetailsProvider.selectedBranchId,
+                  ),
+                  const SizedBox(
+                    height: 16,
                   ),
                   Row(
                     children: [

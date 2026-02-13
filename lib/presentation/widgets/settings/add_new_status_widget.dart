@@ -51,22 +51,20 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
     }
 
     // Add percentage validation
-    if (settingsProvider.progressValueController.text.trim().isEmpty) {
-      return 'Please enter percentage value';
-    }
+    if (settingsProvider.progressValueController.text.trim().isNotEmpty) {
+      final double? percentage =
+          double.tryParse(settingsProvider.progressValueController.text.trim());
+      if (percentage == null) {
+        return 'Please enter a valid percentage value';
+      }
 
-    final double? percentage =
-        double.tryParse(settingsProvider.progressValueController.text.trim());
-    if (percentage == null) {
-      return 'Please enter a valid percentage value';
-    }
+      if (percentage < 0) {
+        return 'Percentage cannot be negative';
+      }
 
-    if (percentage < 0) {
-      return 'Percentage cannot be negative';
-    }
-
-    if (percentage > 100) {
-      return 'Percentage cannot exceed 100%';
+      if (percentage > 100) {
+        return 'Percentage cannot exceed 100%';
+      }
     }
 
     // if (settingsProvider.selectedColor == null) {
@@ -534,7 +532,7 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
                       readOnly: false,
                       height: 54,
                       controller: settingsProvider.progressValueController,
-                      hintText: 'Percentage* (Max 100%)',
+                      hintText: 'Percentage (Max 100%)',
                       labelText: '',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
