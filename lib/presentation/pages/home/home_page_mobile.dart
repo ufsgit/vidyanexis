@@ -42,7 +42,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
     initDevicePlugin();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await MicrotecSocket.initSocket();
+      await MicrotecSocket.initSocket();
 
       final preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
