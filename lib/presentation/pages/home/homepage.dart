@@ -27,6 +27,7 @@ import 'package:vidyanexis/presentation/pages/reports/feddback_report_screen.dar
 import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
+import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_page.dart';
 import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
@@ -172,6 +173,13 @@ class _HomePageState extends State<HomePage> {
           title: 'Expense Management',
           iconPath: 'assets/images/inventory.svg',
           baseContent: const ExpenseManagement(),
+        ),
+      // Expense Report - linking to the same permission as Expense Management for now
+      if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
+        SidebarOption(
+          title: 'Expense Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: ExpenseReportScreen()),
         ),
       if (settingsProvider.menuIsViewMap[7].toString() == '1')
         SidebarOption(

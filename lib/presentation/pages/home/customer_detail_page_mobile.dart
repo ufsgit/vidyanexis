@@ -8,6 +8,7 @@ import 'package:vidyanexis/presentation/pages/home/reciept_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_document_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
@@ -68,6 +69,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
         const Tab(text: "Receipt"),
       const Tab(text: "Payment Schedule"),
+      const Tab(text: "Payment"),
       // const Tab(text: "Task Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[37] == 1)
         const Tab(text: "CheckList Management"),
@@ -380,6 +382,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
           if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
             RecieptPhone(widget.customerId.toString()),
           PaymentScheduleTabWidget(customerId: widget.customerId.toString()),
+          PaymentTabWidget(customerId: widget.customerId.toString()),
 
           // TaskDocumentsPage(
           //   customerId: widget.customerId.toString(),

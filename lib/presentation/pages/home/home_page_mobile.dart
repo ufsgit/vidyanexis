@@ -42,12 +42,18 @@ class _HomePageMobileState extends State<HomePageMobile> {
     initDevicePlugin();
 
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // await MicrotecSocket.initSocket();
+      await MicrotecSocket.initSocket();
 
       final preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
       if (!kIsWeb && userId.isNotEmpty) {
-        await FirebaseMessaging.instance.subscribeToTopic('${AppStyles.name()}-$userId');
+        try {
+          print("Subscribing to topic: ${AppStyles.name()}-$userId");
+          await FirebaseMessaging.instance
+              .subscribeToTopic('${AppStyles.name()}-$userId');
+        } catch (e) {
+          print(e);
+        }
       }
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);

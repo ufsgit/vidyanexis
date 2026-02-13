@@ -3,21 +3,23 @@ class HttpUrls {
 //live
   // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
-  // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+//  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
 
-//dev
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+//dev\
+  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
-
   //endpoints
+  static String savePayment = "service/Save_payment";
+  static String getPaymentByCustomer = "service/Get_Payment_By_Customer";
+  static String deletePayment = "service/Delete_payment";
   static String loginCheck = "Login/Login_Check";
   static String searchLead = "lead/Search_lead";
   static String saveLead = "lead/Save_lead";
@@ -161,6 +163,12 @@ class HttpUrls {
   static String deleteProjects = "project/Delete_Project";
   static String searchProjects = "project/Get_Project";
   static String deleteProjectType = "project/Delete_Project_Type";
+
+  // Expense Tab Endpoints
+  static String saveExpense = "service/Save_expense";
+  static String getExpenseByCustomer = "service/Get_Expense_By_Customer";
+  static String deleteExpense = "service/Delete_Expense";
+  static String getExpenseById = "service/Get_Expense_By_Id";
   static String getPurchaseData = "item/get_purchase_details";
   static String savePurchase = "item/save_purchase_details";
   static String getInvoiceList = "service/Get_Customer_Invoice";

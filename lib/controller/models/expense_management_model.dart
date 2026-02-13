@@ -31,7 +31,7 @@ class ExpenseModel {
   double? sgstAmount;
   double? netAmount;
   int? entryBy, userDetailsId;
-  String? expenseHead, comment, userName, entryByName;
+  String? expenseHead, comment, userName, entryByName, description;
 
   ExpenseModel(
       {this.expenseManagementId,
@@ -58,7 +58,8 @@ class ExpenseModel {
       this.entryByName,
       this.expenseTypeId,
       this.expenseTypeName,
-      this.userName});
+      this.userName,
+      this.description});
 
   ExpenseModel copyWith(
           {int? expenseManagementId,
@@ -81,9 +82,10 @@ class ExpenseModel {
           int? entryBy,
           userDetailsId,
           String? expenseHead,
-          comment,
-          entryByName,
-          userName}) =>
+          String? comment,
+          String? entryByName,
+          String? userName,
+          String? description}) =>
       ExpenseModel(
         expenseManagementId: expenseManagementId ?? this.expenseManagementId,
         projectTypeName: projectTypeName ?? this.projectTypeName,
@@ -108,33 +110,38 @@ class ExpenseModel {
         expenseTypeName: expenseTypeName ?? this.expenseTypeName,
         entryByName: entryByName ?? this.entryByName,
         userName: userName ?? this.userName,
+        description: description ?? this.description,
       );
 
-  factory ExpenseModel.fromJson(Map<String, dynamic> json) => ExpenseModel(
-        expenseManagementId: json["Expense_Management_Id"],
-        projectTypeName: json["Project_Type_Name"],
-        projectTypeId: json["Project_Type_Id"],
-        projectName: json["project_Name"],
-        projectId: json["project_ID"],
-        customerId: json["Customer_Id"],
-        customerName: json["Customer_Name"],
-        amount: double.parse((json["Amount"] ?? 0).toString()),
-        entryDate: json["Entry_Date"] == null ? null : (json["Entry_Date"]),
-        filePath: json["File_Path"],
-        isGst: json["is_gst"] == 1,
-        gstPercentage: double.parse((json["gst_percentage"] ?? 0).toString()),
-        cgstAmount: double.parse((json["cgst_amount"] ?? 0).toString()),
-        sgstAmount: double.parse((json["sgst_amount"] ?? 0).toString()),
-        netAmount: double.parse((json["net_amount"] ?? 0).toString()),
-        entryBy: json["Entry_By"],
-        userDetailsId: json["User_Details_Id"],
-        expenseHead: json["Expense_Head"],
-        comment: json["Comment"],
-        expenseTypeId: json["Expense_Type_Id"],
-        expenseTypeName: json["Expense_Type_Name"],
-        userName: json["User_Name"],
-        entryByName: json["Entry_By_Name"],
-      );
+  factory ExpenseModel.fromJson(Map<String, dynamic> json) {
+    return ExpenseModel(
+      expenseManagementId: json["Expense_Management_Id"] ?? json["Expense_Id"],
+      projectTypeName: json["Project_Type_Name"],
+      projectTypeId: json["Project_Type_Id"],
+      projectName: json["project_Name"],
+      projectId: json["project_ID"],
+      customerId: json["Customer_Id"],
+      customerName: json["Customer_Name"],
+      amount: double.tryParse((json["Amount"] ?? 0).toString()),
+      entryDate:
+          json["Entry_Date"] ?? json["Date"], // Map 'Date' to 'entryDate'
+      filePath: json["File_Path"],
+      isGst: json["is_gst"] == 1,
+      gstPercentage: double.tryParse((json["gst_percentage"] ?? 0).toString()),
+      cgstAmount: double.tryParse((json["cgst_amount"] ?? 0).toString()),
+      sgstAmount: double.tryParse((json["sgst_amount"] ?? 0).toString()),
+      netAmount: double.tryParse((json["net_amount"] ?? 0).toString()),
+      entryBy: json["Entry_By"],
+      userDetailsId: json["User_Details_Id"],
+      expenseHead: json["Expense_Head"],
+      comment: json["Comment"],
+      expenseTypeId: json["Expense_Type_Id"],
+      expenseTypeName: json["Expense_Type_Name"],
+      userName: json["User_Name"],
+      entryByName: json["Entry_By_Name"],
+      description: json["Description"] ?? json["description"],
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "Expense_Management_Id": expenseManagementId,
@@ -160,5 +167,18 @@ class ExpenseModel {
         "Expense_Type_Name": expenseTypeName,
         "Entry_By_Name": entryByName,
         "User_Name": userName,
+        "Description": description,
       };
+}
+
+class ExpenseHeaderModel {
+  double? totalBalance;
+  double? totalExpenseAmount;
+  double? receivedAmount;
+
+  ExpenseHeaderModel({
+    this.totalBalance,
+    this.totalExpenseAmount,
+    this.receivedAmount,
+  });
 }
