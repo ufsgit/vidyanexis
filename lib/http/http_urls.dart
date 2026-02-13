@@ -3,7 +3,7 @@ class HttpUrls {
 //live
   // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+//  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
@@ -11,13 +11,15 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
 
-//dev
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+//dev\
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
-
   //endpoints
+  static String savePayment = "service/Save_payment";
+  static String getPaymentByCustomer = "service/Get_Payment_By_Customer";
+  static String deletePayment = "service/Delete_payment";
   static String loginCheck = "Login/Login_Check";
   static String searchLead = "lead/Search_lead";
   static String saveLead = "lead/Save_lead";

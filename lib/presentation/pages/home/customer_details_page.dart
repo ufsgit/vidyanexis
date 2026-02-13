@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_checklist_management_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -144,11 +145,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
+      // Payment Tab (New)
+
       if (settingsprovider.menuIsViewMap[37] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "CheckList Management"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
+      if (settingsprovider.menuIsViewMap[18] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Payment"),
       if (settingsprovider.menuIsViewMap[71] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
@@ -3304,6 +3310,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               PaymentScheduleTabWidget(
                                                   customerId:
                                                       widget.customerId),
+                                            // Payment Tab (New)
+                                            if (settingsprovider
+                                                    .menuIsViewMap[18] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                PaymentTabWidget(
+                                                    customerId:
+                                                        widget.customerId),
 
                                             //Refund Form
                                             if (settingsprovider
