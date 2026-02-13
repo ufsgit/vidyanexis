@@ -302,7 +302,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                     ),
                     TextButton(
                       onPressed: () async {
-                        Navigator.of(context).pop();
+                        // Navigator.of(context).pop();
                         SharedPreferences prefs =
                             await SharedPreferences.getInstance();
 
@@ -320,6 +320,18 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                           checkInTime =
                               prefs.getString('check_in_time_$userId');
                           attendanceId = prefs.getInt('attendance_id_$userId');
+
+                          try {
+                            if (!kIsWeb && userId.isNotEmpty) {
+                              print(
+                                  "Unsubscribing from topic: ${AppStyles.name()}-$userId");
+                              await FirebaseMessaging.instance
+                                  .unsubscribeFromTopic(
+                                      '${AppStyles.name()}-$userId');
+                            }
+                          } catch (e) {
+                            print(e);
+                          }
                         }
 
                         await prefs.clear();
@@ -344,7 +356,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                           }
                         }
 
-                        context.go(LoginPage.route);
+                        if (context.mounted) {
+                          Navigator.of(context).pop();
+                          context.go(LoginPage.route);
+                        }
                       },
                       child: const Text(
                         'Confirm',

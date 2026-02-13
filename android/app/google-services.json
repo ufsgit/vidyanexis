@@ -45,6 +45,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:215237081386:android:b69ed9f8ffc7877c86c653",
+        "android_client_info": {
+          "package_name": "com.solaris.bodhie"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFSVfpQLKzBTBG-g9qZEVpnoSHN_L8xfM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:215237081386:android:e52ee2858b0913a686c653",
         "android_client_info": {
           "package_name": "com.solaris.sun_focus"
