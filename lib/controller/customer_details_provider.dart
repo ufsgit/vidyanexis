@@ -51,6 +51,8 @@ import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
 import 'package:vidyanexis/controller/models/payment_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
+import 'package:vidyanexis/controller/models/expense_management_model.dart';
+import 'package:vidyanexis/controller/models/expense_type_model.dart';
 
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
@@ -58,6 +60,18 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool _isLoadingDetails = false;
   bool get isLoading => _isLoading;
+
+  //expense
+  List<ExpenseModel> _expenseList = [];
+  List<ExpenseModel> get expenseList => _expenseList;
+  List<ExpenseTypeModel> _expenseTypeList = [];
+  List<ExpenseTypeModel> get expenseTypeList => _expenseTypeList;
+  final TextEditingController expenseDescriptionController =
+      TextEditingController();
+  final TextEditingController expenseAmountController = TextEditingController();
+  final TextEditingController expenseTypeController = TextEditingController();
+  int? _selectedExpenseType;
+  int? get selectedExpenseType => _selectedExpenseType;
 
   bool get isLoadingDetails => _isLoadingDetails;
   bool _isDeleteLoading = false;
@@ -583,6 +597,202 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _isLoadingQuotationCustomFields = false;
       notifyListeners();
     }
+  }
+
+  set selectedExpenseType(int? value) {
+    _selectedExpenseType = value;
+    notifyListeners();
+  }
+
+  Future<void> getExpenseListApi(
+      String customerId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getExpenseByCustomer}/$customerId');
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _expenseList = data.map((e) => ExpenseModel.fromJson(e)).toList();
+        } else {
+          _expenseList = [];
+        }
+      } else {
+        _expenseList = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Exception occurred: $e');
+      _expenseList = [];
+      notifyListeners();
+    }
+  }
+
+  Future<void> getExpenseTypeApi(BuildContext context) async {
+    try {
+      // Matches logic in SettingsProvider
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getExpenseTypes}?Expense_Type_Name=');
+      if (response.statusCode == 200) {
+        final data = response.data["data"];
+        if (data != null &&
+            data is List &&
+            data.isNotEmpty &&
+            data[0] is List) {
+          List<dynamic> expenseDataList = data[0];
+          _expenseTypeList =
+              expenseDataList.map((e) => ExpenseTypeModel.fromJson(e)).toList();
+        } else {
+          _expenseTypeList = [];
+        }
+      } else {
+        _expenseTypeList = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Exception occurred: $e');
+      _expenseTypeList = [];
+      notifyListeners();
+    }
+  }
+
+  Future<void> saveExpenseApi(
+      String expenseId, String customerId, BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      Loader.showLoader(context);
+      // final prefs = await SharedPreferences.getInstance();
+      // final userId = prefs.getString('user_id') ??
+      //     prefs.getString('UserId') ??
+      //     prefs.getInt('user_id')?.toString() ??
+      //     '1';
+
+      if (_selectedExpenseType == null) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Please select an expense type')),
+        );
+        return;
+      }
+
+      // Find the selected expense type name
+      String expenseTypeName = '';
+      try {
+        expenseTypeName = _expenseTypeList
+                .firstWhere(
+                    (element) => element.expenseTypeId == _selectedExpenseType)
+                .expenseTypeName ??
+            '';
+      } catch (e) {
+        print('Error finding expense type name: $e');
+      }
+
+      final body = {
+        "Expense_Id": expenseId == 'null' ? 0 : int.parse(expenseId),
+        "Expense_Type_Id": selectedExpenseType,
+        "Customer_Id": int.tryParse(customerId),
+        "Expense_Type_Name": expenseTypeName,
+        "Date": DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        "Amount": double.tryParse(expenseAmountController.text) ?? 0,
+        "Description": expenseDescriptionController.text,
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveExpense, bodyData: body);
+
+      if (!context.mounted) return;
+      Loader.stopLoader(context);
+      if (response?.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Expense Saved Successfully')),
+        );
+        getExpenseListApi(customerId, context);
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to save expense')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
+      print('Exception occurred: $e');
+    }
+  }
+
+  Future<void> deleteExpenseApi(
+      String expenseId, String customerId, BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+
+      // Parse expenseId to int, default to 0 if parsing fails
+      final expenseIdInt = int.tryParse(expenseId) ?? 0;
+
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: HttpUrls.deleteExpense,
+        bodyData: {"Expense_Id": expenseIdInt},
+      );
+
+      if (!context.mounted) return;
+      Loader.stopLoader(context);
+      if (response?.statusCode == 200) {
+        getExpenseListApi(customerId, context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Expense Deleted Successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text(
+                  'Failed to delete expense: ${response?.statusCode} ${response?.statusMessage}')),
+        );
+      }
+    } catch (e) {
+      if (context.mounted) {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred: $e')),
+        );
+      }
+      print('Exception occurred: $e');
+    }
+  }
+
+  Future<void> getExpenseByIdApi(String expenseId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getExpenseById}/$expenseId');
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List && data.isNotEmpty) {
+          final expense = ExpenseModel.fromJson(data[0]);
+
+          // Populate form fields
+          expenseAmountController.text = expense.amount?.toString() ?? '';
+          expenseDescriptionController.text = expense.description ?? '';
+          _selectedExpenseType = expense.expenseTypeId;
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      print('Exception occurred in getExpenseByIdApi: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to load expense details')),
+        );
+      }
+    }
+  }
+
+  void clearExpenseDetails() {
+    expenseAmountController.clear();
+    expenseDescriptionController.clear();
+    expenseTypeController.clear();
+    _selectedExpenseType = null;
+    notifyListeners();
   }
 
   set selectedQuotationStatus(int? value) {

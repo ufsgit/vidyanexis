@@ -11,6 +11,7 @@ import 'package:vidyanexis/presentation/pages/login/login_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/login/splash_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_details_page_phone.dart';
@@ -126,6 +127,12 @@ final GoRouter appRouter = GoRouter(
         final taskId = state.uri.queryParameters['taskId'] ?? '';
 
         return FeedbackPage(customerId: customerId, taskId: taskId);
+      },
+    ),
+    GoRoute(
+      path: ExpenseReportScreen.route,
+      pageBuilder: (context, state) {
+        return fadeTransition(const ExpenseReportScreen());
       },
     ),
   ],

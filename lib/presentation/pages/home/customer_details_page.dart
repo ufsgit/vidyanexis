@@ -9,6 +9,7 @@ import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
+import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
@@ -145,6 +146,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
+      if (settingsprovider.menuIsViewMap[18] == 1 &&
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Expense"),
       // Payment Tab (New)
 
       if (settingsprovider.menuIsViewMap[37] == 1 &&
@@ -3292,6 +3296,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 ReceiptScreen(
+                                                    widget.customerId),
+
+                                            //Expense Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[18] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                ExpenseScreen(
                                                     widget.customerId),
 
                                             //CheckList Management

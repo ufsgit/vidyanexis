@@ -163,6 +163,12 @@ class HttpUrls {
   static String deleteProjects = "project/Delete_Project";
   static String searchProjects = "project/Get_Project";
   static String deleteProjectType = "project/Delete_Project_Type";
+
+  // Expense Tab Endpoints
+  static String saveExpense = "service/Save_expense";
+  static String getExpenseByCustomer = "service/Get_Expense_By_Customer";
+  static String deleteExpense = "service/Delete_Expense";
+  static String getExpenseById = "service/Get_Expense_By_Id";
   static String getPurchaseData = "item/get_purchase_details";
   static String savePurchase = "item/save_purchase_details";
   static String getInvoiceList = "service/Get_Customer_Invoice";
