@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -126,6 +127,9 @@ class _AddPaymentWidgetState extends State<AddPaymentWidget> {
                   labelText: 'Enter Amount',
                   height: 50,
                   keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9.]'))
+                  ],
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter amount';
