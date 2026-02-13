@@ -399,10 +399,10 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
       DropdownItem<dynamic>(id: 2, name: 'Lost'),
     ];
     final List<DropdownItem<dynamic>> registrationOptions = [
-      DropdownItem<dynamic>(id: 'yes', name: 'Yes'),
-      DropdownItem<dynamic>(id: 'no', name: 'No'),
-      DropdownItem<dynamic>(id: 'lost', name: 'Lost'),
-      DropdownItem<dynamic>(id: 'sales_closed', name: 'Sales Closed'),
+      DropdownItem<dynamic>(id: 1, name: 'Yes'),
+      DropdownItem<dynamic>(id: 0, name: 'No'),
+      DropdownItem<dynamic>(id: 2, name: 'Lost'),
+      DropdownItem<dynamic>(id: 3, name: 'Sales Closed'),
     ];
     final List<DropdownItem<int>> viewInOptions = [
       DropdownItem<int>(id: 1, name: 'Lead'),
