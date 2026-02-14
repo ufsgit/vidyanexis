@@ -20,7 +20,7 @@ class AppStyles {
     // String name = 'Crystal';
     // String name = 'Dyuthi';
     // String name = 'Securagreen';
-    // String name = 'Oxy Solar';
+    // String name = 'Oxy solar';
 
     return name;
   }
