@@ -364,7 +364,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                           ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10),
+                              horizontal: 20.0, vertical: 0),
                           color: Colors.white,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
