@@ -178,6 +178,9 @@ class _DocumentTypeContentState extends State<DocumentTypeContent> {
                                                     .documentType[index]
                                                     .documentTypeName,
                                                 isEdit: true,
+                                                isMandatory: settingsProvider
+                                                    .documentType[index]
+                                                    .isMandatory,
                                               );
                                             },
                                           );

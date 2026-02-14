@@ -2810,13 +2810,18 @@ class SettingsProvider extends ChangeNotifier {
     required BuildContext context,
     required String forId,
     required String forName,
+    required int isMandatory,
   }) async {
     try {
       Loader.showLoader(context);
 
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.addDocumentType,
-          bodyData: {"Document_Type_Id": forId, "Document_Type_Name": forName});
+          bodyData: {
+            "Document_Type_Id": forId,
+            "Document_Type_Name": forName,
+            "mandatory": isMandatory
+          });
 
       if (response!.statusCode == 200) {
         documentTypeController.clear();

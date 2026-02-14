@@ -10,12 +10,14 @@ class AddDocumentType extends StatefulWidget {
   final bool isEdit;
   final String status;
   final String editId;
+  final bool isMandatory;
 
   const AddDocumentType({
     super.key,
     required this.isEdit,
     required this.status,
     required this.editId,
+    this.isMandatory = false,
   });
 
   @override
@@ -23,6 +25,8 @@ class AddDocumentType extends StatefulWidget {
 }
 
 class _AddDocumentTypeState extends State<AddDocumentType> {
+  bool isMandatory = false;
+
   String? validateInputs(
       BuildContext context, SettingsProvider settingsProvider) {
     if (settingsProvider.documentTypeController.text.trim().isEmpty) {
@@ -80,6 +84,7 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
   @override
   void initState() {
     super.initState();
+    isMandatory = widget.isMandatory;
     if (widget.isEdit) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         final settingsProvider =
@@ -118,7 +123,7 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
       content: Container(
         color: Colors.white,
         width: MediaQuery.sizeOf(context).width / 2,
-        height: MediaQuery.sizeOf(context).height / 6,
+        height: MediaQuery.sizeOf(context).height / 4,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -139,6 +144,27 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
               ),
               const SizedBox(
                 height: 10,
+              ),
+              Row(
+                children: [
+                  Checkbox(
+                    value: isMandatory,
+                    onChanged: (value) {
+                      setState(() {
+                        isMandatory = value!;
+                      });
+                    },
+                    activeColor: AppColors.appViolet,
+                  ),
+                  Text(
+                    'Mandatory',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 24.0),
             ],
@@ -169,6 +195,7 @@ class _AddDocumentTypeState extends State<AddDocumentType> {
               context: context,
               forId: widget.editId,
               forName: settingsProvider.documentTypeController.text,
+              isMandatory: isMandatory ? 1 : 0,
             );
           },
           backgroundColor: AppColors.appViolet,
