@@ -268,7 +268,7 @@ class _UsersContentState extends State<UsersContent> {
                                           color: AppColors.textGrey1),
                                     ),
                                   ),
-                                  const Expanded(child: SizedBox(width: 80)),
+                                  const SizedBox(width: 32),
                                   SizedBox(
                                     width: 160,
                                     child: Text(
@@ -639,10 +639,7 @@ class _UsersContentState extends State<UsersContent> {
                                             ),
                                           ),
                                         ),
-                                        const Expanded(
-                                            child: SizedBox(
-                                          width: 80,
-                                        )),
+                                        const SizedBox(width: 32),
                                         SizedBox(
                                           width: 160,
                                           child: CustomOutlinedSvgButton(
