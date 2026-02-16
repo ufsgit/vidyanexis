@@ -112,10 +112,10 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        Flexible(child: Container()),
+                        // Flexible(child: Container()),
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
-                          height: 40,
+                          // height: 40,
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
@@ -269,11 +269,11 @@ class _tasksPageReportState extends State<TaskPageReport> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const SizedBox(height: 8),
+                        // const SizedBox(height: 8),
                         Column(
                           children: [
                             Container(
-                              height: 40,
+                              // height: 40,
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
@@ -333,7 +333,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 ),
                               ),
                             ),
-                            const SizedBox(height: 8),
+                            // const SizedBox(height: 8),
                             Row(
                               children: [
                                 OutlinedButton.icon(
@@ -1148,89 +1148,98 @@ class _tasksPageReportState extends State<TaskPageReport> {
                       ),
                     ),
             AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                                color: Color(0xFF607185))),
+                ? // Expanded(
+                // child:
+                SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width < 1400
+                          ? 1400
+                          : MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                // Header Row (Table Column Titles)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEFF2F5),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 80,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 12.0, horizontal: 25.0),
+                                          child: Text('No.',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  color: Color(0xFF607185))),
+                                        ),
                                       ),
-                                    ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Customer Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 1,
-                                    //     title: 'Mobile',
-                                    //     color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 2,
-                                    //     title: 'Address',
-                                    //     color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Task',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Staff',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 3,
-                                        title: 'Description',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Status',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Details',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                  ],
+                                      TableWidget(
+                                          flex: 2,
+                                          title: 'Customer Name',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      // TableWidget(
+                                      //     flex: 1,
+                                      //     title: 'Mobile',
+                                      //     color: Color(0xFF607185)),
+                                      // TableWidget(
+                                      //     flex: 2,
+                                      //     title: 'Address',
+                                      //     color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Task',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Staff',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 3,
+                                          title: 'Description',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Date',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Status',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Details',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
+                                // Data Rows
+                                // Expanded(
+                                //   child:
+                                ListView.builder(
                                   shrinkWrap:
                                       true, // To avoid scrolling issues when inside a parent widget
                                   physics:
@@ -1429,53 +1438,50 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                 ),
                                               ),
                                             ),
-                                            Expanded(
-                                              child: CustomOutlinedSvgButton(
-                                                showIcon: false,
-                                                onPressed: () async {
-                                                  String taskId = task
-                                                      .taskMasterId
-                                                      .toString();
-                                                  String customerId = task
-                                                      .customerId
-                                                      .toString();
-                                                  print(
-                                                      'Task Master ID: $taskId');
-                                                  customerDetailsProvider
-                                                      .getTaskDetails(
-                                                          taskId.toString(),
-                                                          context);
+                                            // Expanded(
+                                            // child:
+                                            CustomOutlinedSvgButton(
+                                              showIcon: false,
+                                              onPressed: () async {
+                                                String taskId = task
+                                                    .taskMasterId
+                                                    .toString();
+                                                String customerId =
+                                                    task.customerId.toString();
+                                                print(
+                                                    'Task Master ID: $taskId');
+                                                customerDetailsProvider
+                                                    .getTaskDetails(
+                                                        taskId.toString(),
+                                                        context);
 
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return TaskDetailsWidget(
-                                                        taskId:
-                                                            taskId.toString(),
-                                                        customerId: customerId
-                                                            .toString(),
-                                                        showEdit: false,
-                                                      );
-                                                    },
-                                                  );
-                                                },
-                                                svgPath:
-                                                    'assets/images/Print.svg',
-                                                label: 'Details',
-                                                textStyle:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w600,
-                                                ),
-                                                breakpoint: 860,
-                                                foregroundColor:
-                                                    AppColors.primaryBlue,
-                                                backgroundColor: Colors.white,
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColors.primaryBlue),
+                                                showDialog(
+                                                  context: context,
+                                                  builder:
+                                                      (BuildContext context) {
+                                                    return TaskDetailsWidget(
+                                                      taskId: taskId.toString(),
+                                                      customerId:
+                                                          customerId.toString(),
+                                                      showEdit: false,
+                                                    );
+                                                  },
+                                                );
+                                              },
+                                              svgPath:
+                                                  'assets/images/Print.svg',
+                                              label: 'Details',
+                                              textStyle:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w600,
                                               ),
+                                              breakpoint: 860,
+                                              foregroundColor:
+                                                  AppColors.primaryBlue,
+                                              backgroundColor: Colors.white,
+                                              borderSide: BorderSide(
+                                                  color: AppColors.primaryBlue),
                                             ),
                                           ],
                                         ),
@@ -1483,167 +1489,158 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                     );
                                   },
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   )
-                // mobile
-                : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of tasks
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.taskReport[index];
-                                    return GestureDetector(
-                                      onTap: () {},
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Wrap(
+                : // Expanded(
+                // child:
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            // Expanded(
+                            //   child:
+                            ListView.builder(
+                              shrinkWrap:
+                                  true, // To avoid scrolling issues when inside a parent widget
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: reportsProvider
+                                  .taskReport.length, // Number of tasks
+                              itemBuilder: (context, index) {
+                                var task = reportsProvider.taskReport[index];
+                                return GestureDetector(
+                                  onTap: () {},
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 == 0
+                                          ? Colors.white
+                                          : const Color(0xFFF6F7F9),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Wrap(
+                                      children: [
+                                        Row(
                                           children: [
-                                            Row(
-                                              children: [
-                                                TableWidget(
-                                                  flex: 1,
-                                                  // width: 150,
-                                                  data: InkWell(
-                                                    onTap: () {
-                                                      context.push(
-                                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFE9EDF1),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 0),
-                                                        child: Text(
-                                                          task.customerName,
-                                                          // overflow: TextOverflow
-                                                          //     .ellipsis,
-                                                          // maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          ),
-                                                        ),
+                                            TableWidget(
+                                              flex: 1,
+                                              // width: 150,
+                                              data: InkWell(
+                                                onTap: () {
+                                                  context.push(
+                                                      '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        const Color(0xFFE9EDF1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 0),
+                                                    child: Text(
+                                                      task.customerName,
+                                                      // overflow: TextOverflow
+                                                      //     .ellipsis,
+                                                      // maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12,
                                                       ),
                                                     ),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                            TableWidget(
-                                                width: 150,
-                                                fontSize: 12,
-                                                title: task.taskTypeName),
-                                            TableWidget(
-                                                width: 150,
-                                                fontSize: 12,
-                                                title: task.toUserName),
-                                            Row(
-                                              children: [
-                                                TableWidget(
-                                                    flex: 1,
-                                                    // width: 150,
-                                                    title: task.description),
-                                              ],
-                                            ),
-                                            TableWidget(
-                                                width: 150,
-                                                title: (task
-                                                        .entryDate.isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.entryDate))
-                                                    : ''),
-                                            TableWidget(
-                                              width: 150,
-                                              data: Container(
-                                                padding: task.taskStatusName
-                                                        .isNotEmpty
-                                                    ? const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 2)
-                                                    : const EdgeInsets.all(0),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      StatusUtils.getTaskColor(
-                                                          task.taskStatusId),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  border: Border.all(
-                                                      color: Colors.black45,
-                                                      width: 0.1),
-                                                ),
-                                                child: Text(
-                                                  task.taskStatusName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    color: StatusUtils
-                                                        .getTaskTextColor(
-                                                            task.taskStatusId),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
                                               ),
                                             ),
                                           ],
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                                        TableWidget(
+                                            width: 150,
+                                            fontSize: 12,
+                                            title: task.taskTypeName),
+                                        TableWidget(
+                                            width: 150,
+                                            fontSize: 12,
+                                            title: task.toUserName),
+                                        Row(
+                                          children: [
+                                            TableWidget(
+                                                flex: 1,
+                                                // width: 150,
+                                                title: task.description),
+                                          ],
+                                        ),
+                                        TableWidget(
+                                            width: 150,
+                                            title: (task.entryDate.isNotEmpty)
+                                                ? DateFormat('dd MMM yyyy')
+                                                    .format(DateTime.parse(
+                                                        task.entryDate))
+                                                : ''),
+                                        TableWidget(
+                                          width: 150,
+                                          data: Container(
+                                            padding: task
+                                                    .taskStatusName.isNotEmpty
+                                                ? const EdgeInsets.symmetric(
+                                                    horizontal: 8, vertical: 2)
+                                                : const EdgeInsets.all(0),
+                                            decoration: BoxDecoration(
+                                              color: StatusUtils.getTaskColor(
+                                                  task.taskStatusId),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: Colors.black45,
+                                                  width: 0.1),
+                                            ),
+                                            child: Text(
+                                              task.taskStatusName,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: StatusUtils
+                                                    .getTaskTextColor(
+                                                        task.taskStatusId),
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            // ),
+                          ],
                         ),
                       ),
                     ),
-                  )
+                  ),
+            // ),
           ],
         ),
       ),
