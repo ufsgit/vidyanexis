@@ -63,6 +63,21 @@ class _tasksPageReportState extends State<TaskPageReport> {
     final provider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    const headerHeight = 60;
+    const searchSectionHeight = 80;
+    const paginationHeight = 60;
+    const tableHeaderHeight = 50;
+    const paddingSafety = 40;
+    final availableHeight = screenHeight -
+        headerHeight -
+        searchSectionHeight -
+        paginationHeight -
+        tableHeaderHeight -
+        paddingSafety;
+    final rowHeight = availableHeight / 20;
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: !AppStyles.isWebScreen(context)
@@ -1147,500 +1162,461 @@ class _tasksPageReportState extends State<TaskPageReport> {
                         ],
                       ),
                     ),
-            AppStyles.isWebScreen(context)
-                ? // Expanded(
-                // child:
-                SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Container(
-                      width: MediaQuery.of(context).size.width < 1400
-                          ? 1400
-                          : MediaQuery.of(context).size.width,
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Column(
-                              children: [
-                                // Header Row (Table Column Titles)
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: const Color(0xFFEFF2F5),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  child: const Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 80,
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 12.0, horizontal: 25.0),
-                                          child: Text('No.',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold,
-                                                  fontSize: 14,
-                                                  color: Color(0xFF607185))),
+            SizedBox(
+              height: availableHeight,
+              child: AppStyles.isWebScreen(context)
+                  ? SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Container(
+                        width: MediaQuery.of(context).size.width < 1400
+                            ? 1400
+                            : MediaQuery.of(context).size.width,
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
+                                  // Header Row (Table Column Titles)
+                                  Container(
+                                    decoration: BoxDecoration(
+                                      color: const Color(0xFFEFF2F5),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: const Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        SizedBox(
+                                          width: 80,
+                                          child: Padding(
+                                            padding: EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal: 25.0),
+                                            child: Text('No.',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 14,
+                                                    color: Color(0xFF607185))),
+                                          ),
                                         ),
-                                      ),
-                                      TableWidget(
-                                          flex: 2,
-                                          title: 'Customer Name',
-                                          fontSize: 14,
-                                          color: Color(0xFF607185)),
-                                      // TableWidget(
-                                      //     flex: 1,
-                                      //     title: 'Mobile',
-                                      //     color: Color(0xFF607185)),
-                                      // TableWidget(
-                                      //     flex: 2,
-                                      //     title: 'Address',
-                                      //     color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 1,
-                                          title: 'Task',
-                                          fontSize: 14,
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 1,
-                                          title: 'Staff',
-                                          fontSize: 14,
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 3,
-                                          title: 'Description',
-                                          fontSize: 14,
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 1,
-                                          title: 'Date',
-                                          fontSize: 14,
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 1,
-                                          title: 'Status',
-                                          fontSize: 14,
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          flex: 1,
-                                          title: 'Details',
-                                          fontSize: 14,
-                                          color: Color(0xFF607185)),
-                                    ],
+                                        TableWidget(
+                                            flex: 2,
+                                            title: 'Customer Name',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        // TableWidget(
+                                        //     flex: 1,
+                                        //     title: 'Mobile',
+                                        //     color: Color(0xFF607185)),
+                                        // TableWidget(
+                                        //     flex: 2,
+                                        //     title: 'Address',
+                                        //     color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Task',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Staff',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 3,
+                                            title: 'Description',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Date',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            flex: 1,
+                                            title: 'Status',
+                                            fontSize: 14,
+                                            color: Color(0xFF607185)),
+                                        SizedBox(
+                                            width: 110,
+                                            child: TableWidget(
+                                                title: 'Details',
+                                                fontSize: 14,
+                                                color: Color(0xFF607185))),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                // Data Rows
-                                // Expanded(
-                                //   child:
-                                ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of tasks
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.taskReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(task.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12,
-                                                        )),
+                                  // Data Rows
+                                  // Expanded(
+                                  //   child:
+                                  ListView.builder(
+                                    shrinkWrap:
+                                        true, // To avoid scrolling issues when inside a parent widget
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    itemCount:
+                                        reportsProvider.taskReport.length > 20
+                                            ? 20
+                                            : reportsProvider.taskReport
+                                                .length, // Max 20 rows per page
+                                    itemBuilder: (context, index) {
+                                      var task =
+                                          reportsProvider.taskReport[index];
+                                      return SizedBox(
+                                          height: rowHeight,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              // context.go(
+                                              //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
+                                            },
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color: index % 2 == 0
+                                                    ? Colors.white
+                                                    : const Color(0xFFF6F7F9),
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
                                               ),
-                                            ),
-                                            // TableWidget(title: task.orderNo),
-                                            TableWidget(
-                                              flex: 2,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Image.asset(
-                                                              'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  15, // You can adjust the size of the image
-                                                              height:
-                                                                  15, // You can adjust the size of the image
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              task.customerName
-                                                                          .length >
-                                                                      20
-                                                                  ? '${task.customerName.substring(0, 20)}...'
-                                                                  : task
-                                                                      .customerName,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Image.asset(
-                                                              'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  12, // Adjust the size of the image
-                                                              height:
-                                                                  12, // Adjust the size of the image
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          task.customerName,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
+                                              // Alternate row colors
+                                              child: Row(
+                                                // mainAxisAlignment: MainAxisAlignment.start,
+                                                children: [
+                                                  // Padding(
+                                                  //   padding: const EdgeInsets.symmetric(
+                                                  //       vertical: 12.0, horizontal: 25.0),
+                                                  //   child: Text(task.customerId.toString(),
+                                                  //       style: const TextStyle(
+                                                  //         fontWeight: FontWeight.bold,
+                                                  //       )),
+                                                  // ),
+                                                  SizedBox(
+                                                    width: 80,
+                                                    child: Padding(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          vertical: 12.0,
+                                                          horizontal: 25.0),
+                                                      child: Text(
+                                                          (index + 1)
+                                                              .toString(),
                                                           style:
                                                               const TextStyle(
-                                                            color: Colors.black,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 12,
-                                                          ),
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                            // TableWidget(
-                                            //     flex: 1, title: task.mobile),
-                                            // TableWidget(
-                                            //     flex: 2, title: task.address1),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: task.taskTypeName),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: task.toUserName),
-                                            TableWidget(
-                                                flex: 3,
-                                                fontSize: 12,
-                                                title: task.description),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: (task
-                                                        .entryDate.isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.entryDate))
-                                                    : ''),
-                                            TableWidget(
-                                              flex: 1,
-                                              data: Container(
-                                                padding: task.taskStatusName
-                                                        .isNotEmpty
-                                                    ? const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 2)
-                                                    : const EdgeInsets.all(0),
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      StatusUtils.getTaskColor(
-                                                          task.taskStatusId),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  border: Border.all(
-                                                      color: Colors.black45,
-                                                      width: 0.1),
-                                                ),
-                                                child: Text(
-                                                  task.taskStatusName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    color: StatusUtils
-                                                        .getTaskTextColor(
-                                                            task.taskStatusId),
-                                                    fontSize: 12,
+                                                          )),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
-                                            ),
-                                            // Expanded(
-                                            // child:
-                                            CustomOutlinedSvgButton(
-                                              showIcon: false,
-                                              onPressed: () async {
-                                                String taskId = task
-                                                    .taskMasterId
-                                                    .toString();
-                                                String customerId =
-                                                    task.customerId.toString();
-                                                print(
-                                                    'Task Master ID: $taskId');
-                                                customerDetailsProvider
-                                                    .getTaskDetails(
-                                                        taskId.toString(),
-                                                        context);
+                                                  // TableWidget(title: task.orderNo),
+                                                  TableWidget(
+                                                    flex: 2,
+                                                    data: Align(
+                                                      alignment:
+                                                          Alignment.centerLeft,
+                                                      child: InkWell(
+                                                        onTap: () {
+                                                          context.push(
+                                                              '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                        },
+                                                        child: Text(
+                                                          task.customerName,
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: Colors.blue,
+                                                          ),
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // TableWidget(
+                                                  //     flex: 1, title: task.mobile),
+                                                  // TableWidget(
+                                                  //     flex: 2, title: task.address1),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      fontSize: 12,
+                                                      title: task.taskTypeName),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      fontSize: 12,
+                                                      title: task.toUserName),
+                                                  TableWidget(
+                                                      flex: 3,
+                                                      fontSize: 12,
+                                                      title: task.description),
+                                                  TableWidget(
+                                                      flex: 1,
+                                                      fontSize: 12,
+                                                      title: (task.entryDate
+                                                              .isNotEmpty)
+                                                          ? DateFormat(
+                                                                  'dd MMM yyyy')
+                                                              .format(DateTime
+                                                                  .parse(task
+                                                                      .entryDate))
+                                                          : ''),
+                                                  TableWidget(
+                                                    flex: 1,
+                                                    data: Container(
+                                                      padding: task
+                                                              .taskStatusName
+                                                              .isNotEmpty
+                                                          ? const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 8,
+                                                              vertical: 2)
+                                                          : const EdgeInsets
+                                                              .all(0),
+                                                      decoration: BoxDecoration(
+                                                        color: StatusUtils
+                                                            .getTaskColor(task
+                                                                .taskStatusId),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(6),
+                                                        border: Border.all(
+                                                            color:
+                                                                Colors.black45,
+                                                            width: 0.1),
+                                                      ),
+                                                      child: Text(
+                                                        task.taskStatusName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: TextStyle(
+                                                          color: StatusUtils
+                                                              .getTaskTextColor(
+                                                                  task.taskStatusId),
+                                                          fontSize: 12,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  // Expanded(
+                                                  // child:
+                                                  SizedBox(
+                                                    width: 110,
+                                                    child: Center(
+                                                      child: SizedBox(
+                                                        height: 32,
+                                                        child: ElevatedButton(
+                                                          style: ElevatedButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                AppColors
+                                                                    .primaryBlue,
+                                                            foregroundColor:
+                                                                Colors.white,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        16,
+                                                                    vertical:
+                                                                        6),
+                                                            minimumSize:
+                                                                const Size(
+                                                                    80, 32),
+                                                            shape:
+                                                                RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          4),
+                                                            ),
+                                                          ),
+                                                          onPressed: () async {
+                                                            String taskId = task
+                                                                .taskMasterId
+                                                                .toString();
+                                                            String customerId =
+                                                                task.customerId
+                                                                    .toString();
+                                                            customerDetailsProvider
+                                                                .getTaskDetails(
+                                                                    taskId,
+                                                                    context);
 
-                                                showDialog(
-                                                  context: context,
-                                                  builder:
-                                                      (BuildContext context) {
-                                                    return TaskDetailsWidget(
-                                                      taskId: taskId.toString(),
-                                                      customerId:
-                                                          customerId.toString(),
-                                                      showEdit: false,
-                                                    );
-                                                  },
-                                                );
-                                              },
-                                              svgPath:
-                                                  'assets/images/Print.svg',
-                                              label: 'Details',
-                                              textStyle:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w600,
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return TaskDetailsWidget(
+                                                                  taskId:
+                                                                      taskId,
+                                                                  customerId:
+                                                                      customerId,
+                                                                  showEdit:
+                                                                      false,
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child: const Text(
+                                                              'Details'),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              breakpoint: 860,
-                                              foregroundColor:
-                                                  AppColors.primaryBlue,
-                                              backgroundColor: Colors.white,
-                                              borderSide: BorderSide(
-                                                  color: AppColors.primaryBlue),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ],
+                                          ));
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                  )
-                : // Expanded(
-                // child:
-                Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            // Expanded(
-                            //   child:
-                            ListView.builder(
-                              shrinkWrap:
-                                  true, // To avoid scrolling issues when inside a parent widget
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              itemCount: reportsProvider
-                                  .taskReport.length, // Number of tasks
-                              itemBuilder: (context, index) {
-                                var task = reportsProvider.taskReport[index];
-                                return GestureDetector(
-                                  onTap: () {},
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: index % 2 == 0
-                                          ? Colors.white
-                                          : const Color(0xFFF6F7F9),
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Wrap(
-                                      children: [
-                                        Row(
-                                          children: [
-                                            TableWidget(
-                                              flex: 1,
-                                              // width: 150,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 0),
+                    )
+                  : Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Column(
+                            children: [
+                              // Expanded(
+                              //   child:
+                              ListView.builder(
+                                shrinkWrap:
+                                    true, // To avoid scrolling issues when inside a parent widget
+                                physics: const AlwaysScrollableScrollPhysics(),
+                                itemCount:
+                                    reportsProvider.taskReport.length > 20
+                                        ? 20
+                                        : reportsProvider.taskReport
+                                            .length, // Max 20 rows per page
+                                itemBuilder: (context, index) {
+                                  var task = reportsProvider.taskReport[index];
+                                  return GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: index % 2 == 0
+                                            ? Colors.white
+                                            : const Color(0xFFF6F7F9),
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                      child: Wrap(
+                                        children: [
+                                          Row(
+                                            children: [
+                                              TableWidget(
+                                                flex: 1,
+                                                data: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: InkWell(
+                                                    onTap: () {
+                                                      context.push(
+                                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                    },
                                                     child: Text(
                                                       task.customerName,
-                                                      // overflow: TextOverflow
-                                                      //     .ellipsis,
-                                                      // maxLines: 1,
                                                       style: const TextStyle(
-                                                        color: Colors.black,
+                                                        fontSize: 14,
                                                         fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 12,
+                                                            FontWeight.w600,
+                                                        color: Colors.blue,
                                                       ),
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
                                                     ),
                                                   ),
                                                 ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                        TableWidget(
+                                            ],
+                                          ),
+                                          TableWidget(
+                                              width: 150,
+                                              fontSize: 12,
+                                              title: task.taskTypeName),
+                                          TableWidget(
+                                              width: 150,
+                                              fontSize: 12,
+                                              title: task.toUserName),
+                                          Row(
+                                            children: [
+                                              TableWidget(
+                                                  flex: 1,
+                                                  // width: 150,
+                                                  title: task.description),
+                                            ],
+                                          ),
+                                          TableWidget(
+                                              width: 150,
+                                              title: (task.entryDate.isNotEmpty)
+                                                  ? DateFormat('dd MMM yyyy')
+                                                      .format(DateTime.parse(
+                                                          task.entryDate))
+                                                  : ''),
+                                          TableWidget(
                                             width: 150,
-                                            fontSize: 12,
-                                            title: task.taskTypeName),
-                                        TableWidget(
-                                            width: 150,
-                                            fontSize: 12,
-                                            title: task.toUserName),
-                                        Row(
-                                          children: [
-                                            TableWidget(
-                                                flex: 1,
-                                                // width: 150,
-                                                title: task.description),
-                                          ],
-                                        ),
-                                        TableWidget(
-                                            width: 150,
-                                            title: (task.entryDate.isNotEmpty)
-                                                ? DateFormat('dd MMM yyyy')
-                                                    .format(DateTime.parse(
-                                                        task.entryDate))
-                                                : ''),
-                                        TableWidget(
-                                          width: 150,
-                                          data: Container(
-                                            padding: task
-                                                    .taskStatusName.isNotEmpty
-                                                ? const EdgeInsets.symmetric(
-                                                    horizontal: 8, vertical: 2)
-                                                : const EdgeInsets.all(0),
-                                            decoration: BoxDecoration(
-                                              color: StatusUtils.getTaskColor(
-                                                  task.taskStatusId),
-                                              borderRadius:
-                                                  BorderRadius.circular(6),
-                                              border: Border.all(
-                                                  color: Colors.black45,
-                                                  width: 0.1),
-                                            ),
-                                            child: Text(
-                                              task.taskStatusName,
-                                              overflow: TextOverflow.ellipsis,
-                                              maxLines: 1,
-                                              style: TextStyle(
-                                                color: StatusUtils
-                                                    .getTaskTextColor(
-                                                        task.taskStatusId),
-                                                fontSize: 12,
+                                            data: Container(
+                                              padding: task
+                                                      .taskStatusName.isNotEmpty
+                                                  ? const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 2)
+                                                  : const EdgeInsets.all(0),
+                                              decoration: BoxDecoration(
+                                                color: StatusUtils.getTaskColor(
+                                                    task.taskStatusId),
+                                                borderRadius:
+                                                    BorderRadius.circular(6),
+                                                border: Border.all(
+                                                    color: Colors.black45,
+                                                    width: 0.1),
+                                              ),
+                                              child: Text(
+                                                task.taskStatusName,
+                                                overflow: TextOverflow.ellipsis,
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                  color: StatusUtils
+                                                      .getTaskTextColor(
+                                                          task.taskStatusId),
+                                                  fontSize: 12,
+                                                ),
                                               ),
                                             ),
                                           ),
-                                        ),
-                                      ],
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                            ),
-                            // ),
-                          ],
+                                  );
+                                },
+                              ),
+                              // ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-            // ),
+              // ),
+            ), // end SizedBox
           ],
         ),
       ),

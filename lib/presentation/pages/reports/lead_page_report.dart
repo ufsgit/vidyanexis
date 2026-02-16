@@ -74,6 +74,21 @@ class _LeadsPageReportState extends State<LeadPageReport> {
   Widget build(BuildContext context) {
     final leadReportProvider = Provider.of<LeadReportProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    const headerHeight = 60;
+    const searchSectionHeight = 80;
+    const paginationHeight = 60;
+    const tableHeaderHeight = 50;
+    const paddingSafety = 40;
+    final availableHeight = screenHeight -
+        headerHeight -
+        searchSectionHeight -
+        paginationHeight -
+        tableHeaderHeight -
+        paddingSafety;
+    final rowHeight = availableHeight / 20;
+
     return AppStyles.isWebScreen(context)
         ? Scaffold(
             key: _scaffoldKey,
@@ -607,417 +622,459 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         ],
                       ),
                     ),
-                // Expanded(
-                //   child:
-                SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Container(
-                    width: MediaQuery.of(context).size.width < 1400
-                        ? 1400
-                        : MediaQuery.of(context).size.width,
-                    color: Colors.grey[50], // Match bg
-                    padding: const EdgeInsets.only(
-                        left: 16.0, right: 16.0, top: 16.0),
-                    child: Column(
-                      children: [
-                        Container(
-                          decoration: const BoxDecoration(
-                            color: Colors.white,
-                            borderRadius:
-                                BorderRadius.vertical(top: Radius.circular(14)),
-                          ),
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEFF2F5),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              // mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  width: 50,
-                                  child: Checkbox(
-                                    value:
-                                        leadReportProvider.areAllLeadsSelected,
-                                    onChanged: (value) {
-                                      leadReportProvider
-                                          .toggleAllLeadsSelection(
-                                              value ?? false);
-                                    },
-                                    activeColor: AppColors.primaryBlue,
-                                  ),
-                                ),
-                                const SizedBox(
-                                  width: 70,
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 12.0, horizontal: 16.0),
-                                    child: Text('No',
-                                        style: TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            color: Color(0xFF607185))),
-                                  ),
-                                ),
-                                TableWidget(
-                                    flex: 1,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12.0, horizontal: 24.0),
-                                    title: 'Lead name',
-                                    color: Color(0xFF607185)),
-                                TableWidget(
-                                    width: 130,
-                                    title: 'Mobile no',
-                                    color: Color(0xFF607185)),
-                                TableWidget(
-                                    flex: 2,
-                                    title: 'Remark',
-                                    color: Color(0xFF607185)),
-                                TableWidget(
-                                    flex: 1,
-                                    title: 'Assigned Staff',
-                                    color: Color(0xFF607185)),
-                                TableWidget(
-                                    width: 130,
-                                    title: 'Follow-Up',
-                                    color: Color(0xFF607185)),
-                                TableWidget(
-                                    width: 200,
-                                    title: 'Next Follow-up Date',
-                                    color: Color(0xFF607185)),
-                                TableWidget(
-                                    width: 150,
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 12.0, horizontal: 24.0),
-                                    title: 'Status',
-                                    color: Color(0xFF607185)),
-                              ],
-                            ),
-                          ),
-                        ),
-                        // Expanded(
-                        //   child:
-                        ListView.builder(
-                          itemCount: leadReportProvider.leadReportData.length,
-                          itemBuilder: (context, index) {
-                            var lead = leadReportProvider.leadReportData[index];
-                            return Container(
-                              color: Colors.grey[50], // Match bg
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Container(
-                                color: Colors.white, // Continuation of card
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: index % 2 == 0
-                                        ? Colors.white
-                                        : const Color(0xFFF6F7F9),
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  // Alternate row colors
-                                  child: Row(
-                                    // mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                        width: 50,
-                                        child: Checkbox(
-                                          value: leadReportProvider
-                                              .isLeadSelected(lead.customerId),
-                                          onChanged: (value) {
-                                            leadReportProvider
-                                                .toggleLeadSelection(
-                                                    lead.customerId);
-                                          },
-                                          activeColor: AppColors.primaryBlue,
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: 70,
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 12.0, horizontal: 16.0),
-                                          child: Text(
-                                              ((index + 1) +
-                                                      leadReportProvider
-                                                          .startLimit -
-                                                      1)
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                              )),
-                                        ),
-                                      ),
-                                      TableWidget(
-                                        flex: 1,
-                                        data: InkWell(
-                                          onTap: () {
-                                            setState(() {
-                                              viewProfile = true;
-                                            });
-                                            leadReportProvider
-                                                .setCutomerId(lead.customerId);
-                                            Scaffold.of(context)
-                                                .openEndDrawer();
-                                          },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8, vertical: 4),
-                                            decoration: BoxDecoration(
-                                              color: const Color(0xFFE9EDF1),
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                            ),
-                                            child: MediaQuery.of(context)
-                                                        .size
-                                                        .width >
-                                                    1700
-                                                ? Row(
-                                                    mainAxisSize: MainAxisSize
-                                                        .min, // Ensures the Row takes only as much space as needed
-                                                    children: [
-                                                      // Front image (before text)
-                                                      Icon(
-                                                        Icons.account_circle,
-                                                        size: 16,
-                                                        color: AppColors
-                                                            .primaryBlue,
-                                                      ),
-                                                      const SizedBox(
-                                                          width:
-                                                              8), // Space between the image and text
-                                                      Text(
-                                                        lead.customerName
-                                                                    .length >
-                                                                15
-                                                            ? '${lead.customerName.substring(0, 15)}...'
-                                                            : lead.customerName,
-                                                        style: const TextStyle(
-                                                          color: Colors.black,
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 14,
-                                                        ),
-                                                      ),
-                                                      const SizedBox(
-                                                          width:
-                                                              8), // Space between the text and back image
-                                                      // Back image (after text)
-                                                      Icon(
-                                                        Icons.arrow_forward_ios,
-                                                        size: 12,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ],
-                                                  )
-                                                : Text(
-                                                    lead.customerName,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                          ),
-                                        ),
-                                      ),
-                                      TableWidget(
-                                          width: 130,
-                                          title: lead.contactNumber),
-                                      TableWidget(
-                                        flex: 2,
-                                        title: lead.remark.trim(),
-                                      ),
-                                      TableWidget(
-                                          flex: 1, title: lead.toUserName),
-                                      TableWidget(
-                                        width: 130,
-                                        data: InkWell(
-                                          onTap: () async {
-                                            setState(() {
-                                              viewProfile = false;
-                                              viewFollowUp = true;
-                                            });
-
-                                            // Show loader while fetching details
-                                            Loader.showLoader(context);
-
-                                            try {
-                                              // Fetch full details to populate Branch, Dept, etc.
-                                              await Provider.of<
-                                                          LeadDetailsProvider>(
-                                                      context,
-                                                      listen: false)
-                                                  .fetchLeadDetails(
-                                                      lead.customerId
-                                                          .toString(),
-                                                      context);
-
-                                              // Stop Loader
-                                              Loader.stopLoader(context);
-
-                                              // Update LeadReportProvider (for local view state if needed)
-                                              leadReportProvider.setCutomerId(
-                                                  lead.customerId);
-                                              leadReportProvider
-                                                  .statusController
-                                                  .text = lead.statusName;
-                                              leadReportProvider
-                                                  .assignToFollowUpController
-                                                  .text = lead.toUserName;
-                                              leadReportProvider
-                                                  .nextFollowUpDateController
-                                                  .text = lead.nextFollowUpDate
-                                                      .isNotEmpty
-                                                  ? _formatDateSafely(
-                                                      lead.nextFollowUpDate)
-                                                  : '';
-
-                                              // Update LeadsProvider and DropDownProvider for AddFollowupDrawerWidget
-                                              // Overwrite fields that fetchLeadDetails might have set incorrectly for this context
-                                              final leadsProvider =
-                                                  Provider.of<LeadsProvider>(
-                                                      context,
-                                                      listen: false);
-                                              final dropDownProvider =
-                                                  Provider.of<DropDownProvider>(
-                                                      context,
-                                                      listen: false);
-                                              final settingsProvider =
-                                                  Provider.of<SettingsProvider>(
-                                                      context,
-                                                      listen: false);
-
-                                              leadsProvider.setCutomerId(
-                                                  lead.customerId);
-
-                                              // Populate the staff list based on the fetched branch/dept
-                                              dropDownProvider
-                                                  .filterStaffByBranchAndDepartment(
-                                                branchId: settingsProvider
-                                                    .selectedBranchId,
-                                                departmentId: settingsProvider
-                                                    .selectedDepartmentId,
-                                              );
-
-                                              // Ensure Status is correct (fetchLeadDetails sets followUpStatusController, drawer uses statusController)
-                                              leadsProvider.statusController
-                                                  .text = lead.statusName;
-                                              dropDownProvider
-                                                      .selectedStatusId =
-                                                  int.tryParse(
-                                                      lead.statusId.toString());
-
-                                              // Ensure Assigned Staff is correct (drawer uses searchUserController)
-                                              leadsProvider.searchUserController
-                                                  .text = lead.toUserName;
-                                              dropDownProvider.selectedUserId =
-                                                  int.tryParse(
-                                                      lead.toUserId.toString());
-
-                                              // Ensure Next Follow Up Date
-                                              leadsProvider
-                                                  .nextFollowUpDateController
-                                                  .text = lead.nextFollowUpDate
-                                                      .isNotEmpty
-                                                  ? _formatDateSafely(
-                                                      lead.nextFollowUpDate)
-                                                  : '';
-
-                                              // Ensure Remarks
-                                              leadsProvider.messageController
-                                                  .text = lead.remark;
-
-                                              // Branch and Department are already handled by fetchLeadDetails,
-                                              // but we can double check/force if needed.
-                                              // fetchLeadDetails uses the API response which should be accurate.
-                                            } catch (e) {
-                                              Loader.stopLoader(context);
-                                              print(
-                                                  'Error updating providers: $e');
-                                            }
-
-                                            if (context.mounted) {
-                                              Scaffold.of(context)
-                                                  .openEndDrawer();
-                                            }
-                                          },
-                                          child: Icon(
-                                            lead.lateFollowUp == '0'
-                                                ? Icons.event_available
-                                                : Icons.event_busy,
-                                            color: lead.lateFollowUp == '0'
-                                                ? Colors.green
-                                                : Colors.red,
-                                            size: 20,
-                                          ),
-                                        ),
-                                      ),
-                                      TableWidget(
-                                          width: 200,
-                                          title:
-                                              (lead.nextFollowUpDate.isNotEmpty)
-                                                  ? _formatDateSafely(
-                                                      lead.nextFollowUpDate)
-                                                  : ''),
-                                      TableWidget(
-                                        width: 150,
-                                        data: Container(
-                                          padding: lead.statusName.isNotEmpty
-                                              ? const EdgeInsets.symmetric(
-                                                  horizontal: 8, vertical: 4)
-                                              : const EdgeInsets.all(0),
-                                          decoration: BoxDecoration(
-                                            color: StatusUtils.getStatusColor(
-                                                int.tryParse(lead.statusId) ??
-                                                    0),
-                                            borderRadius:
-                                                BorderRadius.circular(6),
-                                            border: Border.all(
-                                                color: Colors.black45,
-                                                width: 0.1),
-                                          ),
-                                          child: Text(
-                                            lead.statusName,
-                                            style: TextStyle(
-                                              color: StatusUtils
-                                                  .getStatusTextColor(
-                                                      int.tryParse(
-                                                              lead.statusId) ??
-                                                          0),
-                                              fontSize: 12,
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            );
-                          },
-                        ),
-                        // ),
-                        Container(
-                          color: Colors.grey[50],
-                          padding: const EdgeInsets.only(
-                              left: 16.0, right: 16.0, bottom: 16.0),
-                          child: Container(
-                            // height: 16,
+                SizedBox(
+                  height: availableHeight,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width < 1400
+                          ? 1400
+                          : MediaQuery.of(context).size.width,
+                      color: Colors.grey[50], // Match bg
+                      padding: const EdgeInsets.only(
+                          left: 16.0, right: 16.0, top: 16.0),
+                      child: Column(
+                        children: [
+                          Container(
                             decoration: const BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.vertical(
-                                  bottom: Radius.circular(14)),
+                                  top: Radius.circular(14)),
+                            ),
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEFF2F5),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Row(
+                                // mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 50,
+                                    child: Checkbox(
+                                      value: leadReportProvider
+                                          .areAllLeadsSelected,
+                                      onChanged: (value) {
+                                        leadReportProvider
+                                            .toggleAllLeadsSelection(
+                                                value ?? false);
+                                      },
+                                      activeColor: AppColors.primaryBlue,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    width: 70,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 16.0),
+                                      child: Text('No',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              color: Color(0xFF607185))),
+                                    ),
+                                  ),
+                                  TableWidget(
+                                      flex: 1,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 24.0),
+                                      title: 'Lead name',
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      width: 130,
+                                      title: 'Mobile no',
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'Remark',
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 1,
+                                      title: 'Assigned Staff',
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      width: 130,
+                                      title: 'Follow-Up',
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      width: 200,
+                                      title: 'Next Follow-up Date',
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      width: 150,
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 24.0),
+                                      title: 'Status',
+                                      color: Color(0xFF607185)),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                          // Expanded(
+                          //   child:
+                          ListView.builder(
+                            itemCount: leadReportProvider.leadReportData.length,
+                            itemBuilder: (context, index) {
+                              var lead =
+                                  leadReportProvider.leadReportData[index];
+                              return SizedBox(
+                                  height: rowHeight,
+                                  child: Container(
+                                    color: Colors.grey[50], // Match bg
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 16.0),
+                                    child: Container(
+                                      color:
+                                          Colors.white, // Continuation of card
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0),
+                                      child: Container(
+                                        decoration: BoxDecoration(
+                                          color: index % 2 == 0
+                                              ? Colors.white
+                                              : const Color(0xFFF6F7F9),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        // Alternate row colors
+                                        child: Row(
+                                          // mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              width: 50,
+                                              child: Checkbox(
+                                                value: leadReportProvider
+                                                    .isLeadSelected(
+                                                        lead.customerId),
+                                                onChanged: (value) {
+                                                  leadReportProvider
+                                                      .toggleLeadSelection(
+                                                          lead.customerId);
+                                                },
+                                                activeColor:
+                                                    AppColors.primaryBlue,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: 70,
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 12.0,
+                                                        horizontal: 16.0),
+                                                child: Text(
+                                                    ((index + 1) +
+                                                            leadReportProvider
+                                                                .startLimit -
+                                                            1)
+                                                        .toString(),
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    )),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                              flex: 1,
+                                              data: InkWell(
+                                                onTap: () {
+                                                  setState(() {
+                                                    viewProfile = true;
+                                                  });
+                                                  leadReportProvider
+                                                      .setCutomerId(
+                                                          lead.customerId);
+                                                  Scaffold.of(context)
+                                                      .openEndDrawer();
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 4),
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        const Color(0xFFE9EDF1),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            50),
+                                                  ),
+                                                  child: MediaQuery.of(context)
+                                                              .size
+                                                              .width >
+                                                          1700
+                                                      ? Row(
+                                                          mainAxisSize: MainAxisSize
+                                                              .min, // Ensures the Row takes only as much space as needed
+                                                          children: [
+                                                            // Front image (before text)
+                                                            Icon(
+                                                              Icons
+                                                                  .account_circle,
+                                                              size: 16,
+                                                              color: AppColors
+                                                                  .primaryBlue,
+                                                            ),
+                                                            const SizedBox(
+                                                                width:
+                                                                    8), // Space between the image and text
+                                                            Text(
+                                                              lead.customerName
+                                                                          .length >
+                                                                      15
+                                                                  ? '${lead.customerName.substring(0, 15)}...'
+                                                                  : lead
+                                                                      .customerName,
+                                                              style:
+                                                                  const TextStyle(
+                                                                color: Colors
+                                                                    .black,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                                fontSize: 14,
+                                                              ),
+                                                            ),
+                                                            const SizedBox(
+                                                                width:
+                                                                    8), // Space between the text and back image
+                                                            // Back image (after text)
+                                                            Icon(
+                                                              Icons
+                                                                  .arrow_forward_ios,
+                                                              size: 12,
+                                                              color:
+                                                                  Colors.grey,
+                                                            ),
+                                                          ],
+                                                        )
+                                                      : Text(
+                                                          lead.customerName,
+                                                          style:
+                                                              const TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            fontSize: 14,
+                                                          ),
+                                                        ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                                width: 130,
+                                                title: lead.contactNumber),
+                                            TableWidget(
+                                              flex: 2,
+                                              title: lead.remark.trim(),
+                                            ),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: lead.toUserName),
+                                            TableWidget(
+                                              width: 130,
+                                              data: InkWell(
+                                                onTap: () async {
+                                                  setState(() {
+                                                    viewProfile = false;
+                                                    viewFollowUp = true;
+                                                  });
+
+                                                  // Show loader while fetching details
+                                                  Loader.showLoader(context);
+
+                                                  try {
+                                                    // Fetch full details to populate Branch, Dept, etc.
+                                                    await Provider.of<
+                                                                LeadDetailsProvider>(
+                                                            context,
+                                                            listen: false)
+                                                        .fetchLeadDetails(
+                                                            lead.customerId
+                                                                .toString(),
+                                                            context);
+
+                                                    // Stop Loader
+                                                    Loader.stopLoader(context);
+
+                                                    // Update LeadReportProvider (for local view state if needed)
+                                                    leadReportProvider
+                                                        .setCutomerId(
+                                                            lead.customerId);
+                                                    leadReportProvider
+                                                        .statusController
+                                                        .text = lead.statusName;
+                                                    leadReportProvider
+                                                        .assignToFollowUpController
+                                                        .text = lead.toUserName;
+                                                    leadReportProvider
+                                                        .nextFollowUpDateController
+                                                        .text = lead
+                                                            .nextFollowUpDate
+                                                            .isNotEmpty
+                                                        ? _formatDateSafely(lead
+                                                            .nextFollowUpDate)
+                                                        : '';
+
+                                                    // Update LeadsProvider and DropDownProvider for AddFollowupDrawerWidget
+                                                    // Overwrite fields that fetchLeadDetails might have set incorrectly for this context
+                                                    final leadsProvider =
+                                                        Provider.of<
+                                                                LeadsProvider>(
+                                                            context,
+                                                            listen: false);
+                                                    final dropDownProvider =
+                                                        Provider.of<
+                                                                DropDownProvider>(
+                                                            context,
+                                                            listen: false);
+                                                    final settingsProvider =
+                                                        Provider.of<
+                                                                SettingsProvider>(
+                                                            context,
+                                                            listen: false);
+
+                                                    leadsProvider.setCutomerId(
+                                                        lead.customerId);
+
+                                                    // Populate the staff list based on the fetched branch/dept
+                                                    dropDownProvider
+                                                        .filterStaffByBranchAndDepartment(
+                                                      branchId: settingsProvider
+                                                          .selectedBranchId,
+                                                      departmentId: settingsProvider
+                                                          .selectedDepartmentId,
+                                                    );
+
+                                                    // Ensure Status is correct (fetchLeadDetails sets followUpStatusController, drawer uses statusController)
+                                                    leadsProvider
+                                                        .statusController
+                                                        .text = lead.statusName;
+                                                    dropDownProvider
+                                                            .selectedStatusId =
+                                                        int.tryParse(lead
+                                                            .statusId
+                                                            .toString());
+
+                                                    // Ensure Assigned Staff is correct (drawer uses searchUserController)
+                                                    leadsProvider
+                                                        .searchUserController
+                                                        .text = lead.toUserName;
+                                                    dropDownProvider
+                                                            .selectedUserId =
+                                                        int.tryParse(lead
+                                                            .toUserId
+                                                            .toString());
+
+                                                    // Ensure Next Follow Up Date
+                                                    leadsProvider
+                                                        .nextFollowUpDateController
+                                                        .text = lead
+                                                            .nextFollowUpDate
+                                                            .isNotEmpty
+                                                        ? _formatDateSafely(lead
+                                                            .nextFollowUpDate)
+                                                        : '';
+
+                                                    // Ensure Remarks
+                                                    leadsProvider
+                                                        .messageController
+                                                        .text = lead.remark;
+
+                                                    // Branch and Department are already handled by fetchLeadDetails,
+                                                    // but we can double check/force if needed.
+                                                    // fetchLeadDetails uses the API response which should be accurate.
+                                                  } catch (e) {
+                                                    Loader.stopLoader(context);
+                                                    print(
+                                                        'Error updating providers: $e');
+                                                  }
+
+                                                  if (context.mounted) {
+                                                    Scaffold.of(context)
+                                                        .openEndDrawer();
+                                                  }
+                                                },
+                                                child: Icon(
+                                                  lead.lateFollowUp == '0'
+                                                      ? Icons.event_available
+                                                      : Icons.event_busy,
+                                                  color:
+                                                      lead.lateFollowUp == '0'
+                                                          ? Colors.green
+                                                          : Colors.red,
+                                                  size: 20,
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                                width: 200,
+                                                title: (lead.nextFollowUpDate
+                                                        .isNotEmpty)
+                                                    ? _formatDateSafely(
+                                                        lead.nextFollowUpDate)
+                                                    : ''),
+                                            TableWidget(
+                                              width: 150,
+                                              data: Container(
+                                                padding: lead
+                                                        .statusName.isNotEmpty
+                                                    ? const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4)
+                                                    : const EdgeInsets.all(0),
+                                                decoration: BoxDecoration(
+                                                  color: StatusUtils
+                                                      .getStatusColor(
+                                                          int.tryParse(lead
+                                                                  .statusId) ??
+                                                              0),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  border: Border.all(
+                                                      color: Colors.black45,
+                                                      width: 0.1),
+                                                ),
+                                                child: Text(
+                                                  lead.statusName,
+                                                  style: TextStyle(
+                                                    color: StatusUtils
+                                                        .getStatusTextColor(
+                                                            int.tryParse(lead
+                                                                    .statusId) ??
+                                                                0),
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ));
+                            },
+                          ),
+                          // ),
+                          Container(
+                            color: Colors.grey[50],
+                            padding: const EdgeInsets.only(
+                                left: 16.0, right: 16.0, bottom: 16.0),
+                            child: Container(
+                              // height: 16,
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.vertical(
+                                    bottom: Radius.circular(14)),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                // ),
+                ), // end SizedBox
               ],
             ),
             bottomNavigationBar: _buildPaginationControls(context),
