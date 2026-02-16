@@ -16,6 +16,7 @@ import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
@@ -1333,8 +1334,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                 message: lead.statusName,
                                                 child: TextButton(
                                                   onPressed: () {
-                                                    context.push(
-                                                        '/customerDetails/${lead.customerId}/false');
+                                                    _onStatusClick(
+                                                        context, lead);
                                                   },
                                                   style: TextButton.styleFrom(
                                                     backgroundColor:
@@ -1473,6 +1474,50 @@ class _LeadsPageState extends State<LeadPage> {
             _buildPaginationControls(context),
           ],
         ),
+      ),
+    );
+  }
+
+  void _onStatusClick(BuildContext context, SearchLeadModel lead) {
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+    final audioProvider =
+        Provider.of<AudioFileProvider>(context, listen: false);
+
+    dropDownProvider.selectedStatusId = int.tryParse(lead.statusId.toString());
+    leadsProvider.statusController.text = lead.statusName;
+
+    dropDownProvider.selectedUserId = int.tryParse(lead.toUserId.toString());
+    leadsProvider.searchUserController.text = lead.toUserName;
+
+    leadsProvider.setCutomerId(lead.customerId);
+    leadsProvider.branchController.text = lead.branchName;
+    settingsProvider.selectedBranchId = lead.branchId;
+    settingsProvider.selectedDepartmentId =
+        int.tryParse(lead.departmentId.toString()) ?? 0;
+    leadsProvider.departmentController.text = lead.departmentName;
+
+    leadsProvider.nextFollowUpDateController.text =
+        lead.nextFollowUpDate.isNotEmpty
+            ? lead.nextFollowUpDate.toDayMonthYearFormat()
+            : '';
+    leadsProvider.messageController.text = lead.remark;
+
+    dropDownProvider.filterStaffByBranchAndDepartment(
+      branchId: lead.branchId,
+      departmentId: int.tryParse(lead.departmentId.toString()) ?? 0,
+    );
+
+    audioProvider.clearAudios();
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => AddFollowupDialog(
+        customerName: lead.customerName,
       ),
     );
   }

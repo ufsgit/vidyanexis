@@ -16,6 +16,7 @@ import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_checklist_management_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_payment_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -699,6 +700,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Complaint'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text == "Payment")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider
+                                          .clearPaymentDetails();
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) {
+                                          return AddPaymentWidget(
+                                              customerId: widget.customerId);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Payment'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
