@@ -155,6 +155,21 @@ class _CustomerPageState extends State<CustomerPage> {
     final customerProvider = Provider.of<CustomerProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     final leadsProvider = Provider.of<LeadsProvider>(context);
+
+    // Calculate dynamic heights for table
+    final screenHeight = MediaQuery.of(context).size.height;
+    const headerHeight = 60.0;
+    const searchBarHeight = 70.0;
+    const paginationHeight = 60.0;
+    const tableHeaderHeight = 50.0;
+
+    final availableHeight = screenHeight -
+        headerHeight -
+        searchBarHeight -
+        paginationHeight -
+        tableHeaderHeight -
+        40;
+    final rowHeight = availableHeight / 20;
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -825,8 +840,9 @@ class _CustomerPageState extends State<CustomerPage> {
                             child: ListView.builder(
                               shrinkWrap:
                                   true, // To avoid scrolling issues when inside a parent widget
-                              physics:
-                                  const AlwaysScrollableScrollPhysics(), // Disable scrolling here, as parent scroll handles it
+                              physics: AppStyles.isWebScreen(context)
+                                  ? const NeverScrollableScrollPhysics()
+                                  : const AlwaysScrollableScrollPhysics(),
                               itemCount: customerProvider
                                   .customerData.length, // Number of leads
                               itemBuilder: (context, index) {
@@ -839,6 +855,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                     //     '${CustomerDetailsScreen.route}${lead.customerId.toString()}');
                                   },
                                   child: Container(
+                                    height: AppStyles.isWebScreen(context)
+                                        ? rowHeight
+                                        : null,
                                     decoration: BoxDecoration(
                                       color: index % 2 == 0
                                           ? Colors.white

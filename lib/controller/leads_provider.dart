@@ -157,7 +157,7 @@ class LeadsProvider extends ChangeNotifier {
   int? _selectedDateFilterIndex;
   int _customerId = 0;
   int _startLimit = 1;
-  int _endLimit = 25;
+  int _endLimit = 20;
   // final int _limit = 25;
   int _totalCount = 0;
 
@@ -554,8 +554,8 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
-      _startLimit += 25;
-      _endLimit += 25;
+      _startLimit += 20;
+      _endLimit += 20;
 
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
@@ -594,7 +594,7 @@ class LeadsProvider extends ChangeNotifier {
           } else {
             _leadData.addAll(nextData);
             currentPage++;
-            hasMoreData = nextData.length >= 25;
+            hasMoreData = nextData.length >= 20;
           }
         }
       } else {
@@ -666,7 +666,7 @@ class LeadsProvider extends ChangeNotifier {
     _enquiryForS = enquiryFor;
     _selectedEnquirySource = enquirySource;
     _startLimit = 1;
-    _endLimit = 25;
+    _endLimit = 20;
     currentPage = 1;
     hasMoreData = true;
     notifyListeners(); // Notify listeners so that UI can rebuild
@@ -718,8 +718,8 @@ class LeadsProvider extends ChangeNotifier {
   // Fetch previous page data
   Future<void> fetchPreviousPage(BuildContext context) async {
     if (_startLimit > 0) {
-      _startLimit -= 25;
-      _endLimit -= 25;
+      _startLimit -= 20;
+      _endLimit -= 20;
       getSearchLeads(context);
     }
     // print('Start' + _startLimit.toString());
