@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,12 +11,10 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/lead_details_provider.dart';
+
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/add_followup_drawer_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -93,8 +92,6 @@ class _LeadsPageState extends State<LeadPage> {
     super.dispose();
   }
 
-  bool viewProfile = false;
-  bool viewFollowUp = false;
   // bool isEdit = false;
   int? _hoveredRowIndex;
 
@@ -246,7 +243,6 @@ class _LeadsPageState extends State<LeadPage> {
     final leadProvider = Provider.of<LeadsProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
 
     // Calculate dynamic heights for table
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -391,11 +387,6 @@ class _LeadsPageState extends State<LeadPage> {
 
                         await leadProvider.getLeadDropdowns(context);
 
-                        setState(() {
-                          // isEdit = false;
-                          viewProfile = false;
-                          viewFollowUp = false;
-                        });
                         // _scaffoldKey.currentState
                         //     ?.openEndDrawer(); // Open drawer
                         showDialog(
@@ -1051,13 +1042,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                   message: lead.customerName,
                                                   child: GestureDetector(
                                                     onTap: () {
-                                                      setState(() {
-                                                        viewProfile = true;
-                                                      });
-                                                      leadProvider.setCutomerId(
-                                                          lead.customerId);
-                                                      Scaffold.of(context)
-                                                          .openEndDrawer();
+                                                      context.push(
+                                                          '/customerDetails/${lead.customerId}/false');
                                                     },
                                                     child: Container(
                                                       // width: 125,
@@ -1319,105 +1305,22 @@ class _LeadsPageState extends State<LeadPage> {
                                                 ),
                                               ),
                                             ),
-                                            InkWell(
-                                              onTap: () {
-                                                setState(() {
-                                                  viewProfile = false;
-                                                  viewFollowUp = true;
-                                                });
-                                                try {
-                                                  final dropDownProvider =
-                                                      Provider.of<
-                                                              DropDownProvider>(
-                                                          context,
-                                                          listen: false);
-                                                  dropDownProvider
-                                                          .selectedStatusId =
-                                                      int.parse(lead.statusId
-                                                          .toString());
-                                                  leadProvider.statusController
-                                                      .text = lead.statusName;
-                                                  print(
-                                                      'status id ${lead.statusId}');
-                                                  print(
-                                                      'status name ${lead.statusName}');
-                                                  dropDownProvider
-                                                          .selectedUserId =
-                                                      int.parse(lead.toUserId
-                                                          .toString());
-                                                  leadProvider
-                                                      .searchUserController
-                                                      .text = lead.toUserName;
-                                                  print(
-                                                      'assign to ${lead.toUserName}');
-                                                  print(
-                                                      'assign to id ${lead.toUserId}');
-                                                  leadProvider.setCutomerId(
-                                                      lead.customerId);
-                                                  leadProvider.branchController
-                                                      .text = lead.branchName;
-                                                  settingsProvider
-                                                          .selectedBranchId =
-                                                      lead.branchId;
-                                                  print(
-                                                      'branch ${lead.branchId}');
-                                                  print(
-                                                      'branch name ${lead.branchName}');
-                                                  leadProvider
-                                                          .departmentController
-                                                          .text =
-                                                      lead.departmentName;
-                                                  settingsProvider
-                                                          .selectedDepartmentId =
-                                                      int.tryParse(lead
-                                                              .departmentId
-                                                              .toString()) ??
-                                                          0;
-                                                  print(
-                                                      'department id ${lead.departmentId}');
-                                                  print(
-                                                      'department name ${lead.departmentName}');
-
-                                                  leadProvider
-                                                      .nextFollowUpDateController
-                                                      .text = lead
-                                                          .nextFollowUpDate
-                                                          .isNotEmpty
-                                                      ? _formatDateSafely(
-                                                          lead.nextFollowUpDate)
-                                                      : '';
-                                                  leadProvider.messageController
-                                                      .clear();
-                                                  dropDownProvider
-                                                      .filterStaffByBranchAndDepartment(
-                                                    branchId: lead.branchId,
-                                                    departmentId: int.tryParse(
-                                                            lead.departmentId
-                                                                .toString()) ??
-                                                        0,
-                                                  );
-                                                } catch (e) {}
-                                                Scaffold.of(context)
-                                                    .openEndDrawer();
-                                              },
-                                              child: TableWidget(
-                                                width: 175,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Tooltip(
-                                                  message: lead.statusName,
-                                                  child: Text(
-                                                    lead.statusName,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 13,
-                                                      color:
-                                                          AppColors.parseColor(
-                                                              lead.colorCode),
-                                                    ),
+                                            TableWidget(
+                                              width: 175,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.0,
+                                                  horizontal: 8.0),
+                                              data: Tooltip(
+                                                message: lead.statusName,
+                                                child: Text(
+                                                  lead.statusName,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: AppColors.parseColor(
+                                                        lead.colorCode),
                                                   ),
                                                 ),
                                               ),
@@ -1517,100 +1420,6 @@ class _LeadsPageState extends State<LeadPage> {
           ],
         ),
       ),
-      endDrawer: viewProfile
-          ? LeadDetailsWidget(
-              onEditPressed: () async {},
-              onFollowUpPressed: () async {
-                Navigator.pop(context);
-
-                // leadProvider.statusController.clear();
-                // leadProvider.assignToFollowUpController.clear();
-                // leadProvider.nextFollowUpDateController.clear();
-                // leadProvider.messageController.clear();
-                // final dropDownProvider =
-                //     Provider.of<DropDownProvider>(context, listen: false);
-                // dropDownProvider.selectedStatusId = null;
-                // dropDownProvider.selectedUserId = null;
-                // Future.delayed(const Duration(milliseconds: 0), () async {
-                //   setState(() {
-                //     viewProfile = false;
-                //     viewFollowUp = true;
-                //   });
-                //   await loadExistingAudioFiles(
-                //       leadDetailsProvider.leadDetails![0].audioFiles);
-                //   dropDownProvider.selectedStatusId = int.parse(
-                //       leadDetailsProvider.leadDetails![0].statusId.toString());
-                //   dropDownProvider.selectedUserId = int.parse(
-                //       leadDetailsProvider.leadDetails![0].toUserId.toString());
-                //   settingsProvider.selectedBranchId = int.parse(
-                //       leadDetailsProvider.leadDetails![0].branchId.toString());
-
-                //   leadProvider.setCutomerId(
-                //       leadDetailsProvider.leadDetails![0].customerId);
-                //   leadProvider.statusController.text =
-                //       leadDetailsProvider.leadDetails![0].statusName;
-
-                //   leadProvider.searchUserController.text =
-                //       leadDetailsProvider.leadDetails![0].toUserName;
-                //   dropDownProvider.setSelectedUserId(
-                //       leadDetailsProvider.leadDetails![0].toUserId);
-                //   dropDownProvider.filterStaffByBranchAndDepartment(
-                //     branchId: settingsProvider.selectedBranchId,
-                //     departmentId:
-                //         leadDetailsProvider.leadDetails![0].departmentId,
-                //   );
-                //   leadProvider.nextFollowUpDateController.text = leadProvider
-                //           .leadData[0].nextFollowUpDate.isNotEmpty
-                //       ? DateFormat('dd MMM yyyy').format(DateTime.parse(
-                //           leadDetailsProvider.leadDetails![0].nextFollowUpDate))
-                //       : '';
-                //   _scaffoldKey.currentState?.openEndDrawer();
-                // });
-                Future.delayed(const Duration(milliseconds: 0), () async {
-                  setState(() {
-                    viewProfile = false;
-                    viewFollowUp = true;
-                  });
-                  var lead = leadDetailsProvider.leadDetails![0];
-                  final dropDownProvider =
-                      Provider.of<DropDownProvider>(context, listen: false);
-                  dropDownProvider.selectedStatusId =
-                      int.parse(lead.statusId.toString());
-                  leadProvider.statusController.text = lead.statusName;
-                  print('status id ${lead.statusId}');
-                  print('status name ${lead.statusName}');
-                  dropDownProvider.selectedUserId =
-                      int.parse(lead.toUserId.toString());
-                  leadProvider.searchUserController.text = lead.toUserName;
-                  print('assign to ${lead.toUserName}');
-                  print('assign to id ${lead.toUserId}');
-                  leadProvider.setCutomerId(lead.customerId);
-                  leadProvider.branchController.text = lead.branchName;
-                  settingsProvider.selectedBranchId = lead.branchId;
-                  print('branch ${lead.branchId}');
-                  print('branch name ${lead.branchName}');
-                  leadProvider.departmentController.text = lead.departmentName;
-                  settingsProvider.selectedDepartmentId =
-                      int.tryParse(lead.departmentId.toString()) ?? 0;
-                  print('department id ${lead.departmentId}');
-                  print('department name ${lead.departmentName}');
-
-                  leadProvider.nextFollowUpDateController.text =
-                      lead.nextFollowUpDate.isNotEmpty
-                          ? _formatDateSafely(lead.nextFollowUpDate)
-                          : '';
-                  leadProvider.messageController.clear();
-                  dropDownProvider.filterStaffByBranchAndDepartment(
-                    branchId: lead.branchId,
-                    departmentId:
-                        int.tryParse(lead.departmentId.toString()) ?? 0,
-                  );
-                  _scaffoldKey.currentState?.openEndDrawer();
-                });
-              },
-              customerId: leadProvider.customerId.toString(),
-            )
-          : const AddFollowupDrawerWidget(),
     );
   }
 
