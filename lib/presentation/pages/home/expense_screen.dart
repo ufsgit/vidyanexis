@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
+
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/main.dart';
@@ -44,39 +44,6 @@ class _ExpenseScreenState extends State<ExpenseScreen> {
             children: [
               const SizedBox(
                 height: 10,
-              ),
-              Row(
-                children: [
-                  const Spacer(),
-                  // Adjust permission ID if needed, using 18 (Receipt) for now or check if there is a specific one for Expense
-                  if (settingsProvider.menuIsSaveMap[18] == 1)
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        customerDetailsProvider.clearExpenseDetails();
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return AddExpenseWidget(
-                                expenseId: '0',
-                                isEdit: false,
-                                customerId: widget.customerId);
-                          },
-                        );
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add Expense'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.primaryBlue,
-                        foregroundColor: Colors.white,
-                        padding: AppStyles.isWebScreen(context)
-                            ? const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12)
-                            : const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 0),
-                      ),
-                    ),
-                ],
               ),
               const SizedBox(
                 height: 10,

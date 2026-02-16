@@ -1040,27 +1040,46 @@ class _LeadsPageState extends State<LeadPage> {
                                                 alignment: Alignment.centerLeft,
                                                 child: Tooltip(
                                                   message: lead.customerName,
-                                                  child: GestureDetector(
-                                                    onTap: () {
+                                                  child: TextButton(
+                                                    onPressed: () {
                                                       context.push(
                                                           '/customerDetails/${lead.customerId}/false');
                                                     },
-                                                    child: Container(
-                                                      // width: 125,
-                                                      child: Text(
-                                                        (lead.customerName
-                                                                    ?.isNotEmpty ??
-                                                                false)
-                                                            ? '${lead.customerName![0].toUpperCase()}${lead.customerName!.substring(1)}'
-                                                            : lead.customerName ??
-                                                                '',
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: const TextStyle(
-                                                          color: Colors.blue,
-                                                          fontSize: 13,
-                                                        ),
+                                                    style: TextButton.styleFrom(
+                                                      backgroundColor: Colors
+                                                          .blue
+                                                          .withOpacity(0.1),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5)),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 5),
+                                                      minimumSize:
+                                                          const Size(0, 0),
+                                                      tapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                    ),
+                                                    child: Text(
+                                                      (lead.customerName
+                                                                  ?.isNotEmpty ??
+                                                              false)
+                                                          ? '${lead.customerName![0].toUpperCase()}${lead.customerName!.substring(1)}'
+                                                          : lead.customerName ??
+                                                              '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 13,
                                                       ),
                                                     ),
                                                   ),
@@ -1312,15 +1331,45 @@ class _LeadsPageState extends State<LeadPage> {
                                                   horizontal: 8.0),
                                               data: Tooltip(
                                                 message: lead.statusName,
-                                                child: Text(
-                                                  lead.statusName,
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: AppColors.parseColor(
-                                                        lead.colorCode),
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    context.push(
+                                                        '/customerDetails/${lead.customerId}/false');
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                    backgroundColor:
+                                                        AppColors.parseColor(
+                                                                lead.colorCode)
+                                                            .withOpacity(0.2),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                    minimumSize:
+                                                        const Size(0, 0),
+                                                    tapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                  ),
+                                                  child: Text(
+                                                    lead.statusName,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: TextStyle(
+                                                      fontSize: 13,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color:
+                                                          AppColors.parseColor(
+                                                              lead.colorCode),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
@@ -1348,12 +1397,17 @@ class _LeadsPageState extends State<LeadPage> {
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
                                               width: 150,
-                                              data: Text(
-                                                lead.departmentName,
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                style: const TextStyle(
-                                                    fontSize: 13),
+                                              data: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  lead.departmentName,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
                                               ),
                                             ),
                                             TableWidget(

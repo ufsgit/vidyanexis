@@ -270,70 +270,76 @@ class _HomePageState extends State<HomePage> {
       //   ),
     ];
 
+    bool isCustomerDetailsVisible =
+        (sideProvider.selectedName == 'Leads' && !sideProvider.replaceLead) ||
+            (sideProvider.selectedName == 'Customers' &&
+                !sideProvider.replaceCustomer);
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        surfaceTintColor: Colors.white,
-        elevation: 0,
-        title: Image.network(
-          logo,
-          height: 30,
-          errorBuilder: (context, error, stackTrace) {
-            return Container();
-          },
-        ),
-        centerTitle: false,
-        actions: [
-          Consumer<NotificationProvider>(
-            builder: (context, notificationProvider, child) {
-              final count = notificationProvider.totalCount;
+      appBar: isCustomerDetailsVisible
+          ? null
+          : AppBar(
+              backgroundColor: Colors.white,
+              surfaceTintColor: Colors.white,
+              elevation: 0,
+              title: Image.network(
+                logo,
+                height: 30,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container();
+                },
+              ),
+              centerTitle: false,
+              actions: [
+                Consumer<NotificationProvider>(
+                  builder: (context, notificationProvider, child) {
+                    final count = notificationProvider.totalCount;
 
-              return Stack(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.notifications_active_outlined,
-                      size: 28,
-                    ),
-                    onPressed: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return const NotificationsPage();
-                        },
-                      ));
-                    },
-                  ),
-                  if (count > 0)
-                    Positioned(
-                      right: 4,
-                      top: 4,
-                      child: Container(
-                        padding: const EdgeInsets.all(2),
-                        decoration: BoxDecoration(
-                          color: Colors.red,
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 16,
-                          minHeight: 16,
-                        ),
-                        child: Text(
-                          count > 99 ? '99+' : count.toString(),
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                    return Stack(
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.notifications_active_outlined,
+                            size: 28,
                           ),
-                          textAlign: TextAlign.center,
+                          onPressed: () {
+                            Navigator.push(context, MaterialPageRoute(
+                              builder: (context) {
+                                return const NotificationsPage();
+                              },
+                            ));
+                          },
                         ),
-                      ),
-                    ),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+                        if (count > 0)
+                          Positioned(
+                            right: 4,
+                            top: 4,
+                            child: Container(
+                              padding: const EdgeInsets.all(2),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              constraints: const BoxConstraints(
+                                minWidth: 16,
+                                minHeight: 16,
+                              ),
+                              child: Text(
+                                count > 99 ? '99+' : count.toString(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
 
       // drawer: screenWidth < _breakpoint
       //     ?

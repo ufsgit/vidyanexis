@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dar
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_expense.dart';
 import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
@@ -535,6 +536,169 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Create Task'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[37] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text ==
+                                      "CheckList Management")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AddCheckListManagementWidget(
+                                            documentChecklistModel:
+                                                DocumentChecklistModel(),
+                                          );
+                                        },
+                                      ).then((value) {
+                                        if (value == true) {
+                                          setState(() {});
+                                        }
+                                      });
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Checklist'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[15] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text ==
+                                      "Periodic Service")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AmcCreationWidget(
+                                              amcId: '0',
+                                              customerId: widget.customerId,
+                                              isEdit: false);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Periodic Service'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text == "Expense")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider
+                                          .clearExpenseDetails();
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AddExpenseWidget(
+                                              expenseId: '0',
+                                              customerId: widget.customerId,
+                                              isEdit: false);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Expense'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text == "Receipt")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      customerDetailsProvider
+                                          .clearRecieptDetails();
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return RecieptCreationWidget(
+                                              recieptId: '0',
+                                              customerId: widget.customerId,
+                                              isEdit: false);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Receipt'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[14] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text ==
+                                      "Complaints")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      customerDetailsProvider
+                                          .clearServiceDetails();
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) {
+                                          return ServiceCreationWidget(
+                                              taskId: '0',
+                                              isEdit: false,
+                                              customerId: widget.customerId);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Complaint'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
@@ -2811,67 +2975,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .all(
                                                                           30),
                                                                     ),
-                                                              if (settingsprovider
-                                                                          .menuIsSaveMap[
-                                                                      14] ==
-                                                                  1)
-                                                                ElevatedButton
-                                                                    .icon(
-                                                                  onPressed:
-                                                                      () {
-                                                                    customerDetailsProvider
-                                                                            .customerId =
-                                                                        widget
-                                                                            .customerId;
-                                                                    customerDetailsProvider
-                                                                        .clearServiceDetails();
-                                                                    showDialog(
-                                                                      context:
-                                                                          context,
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return ServiceCreationWidget(
-                                                                            taskId:
-                                                                                '0',
-                                                                            isEdit:
-                                                                                false,
-                                                                            customerId:
-                                                                                widget.customerId);
-                                                                      },
-                                                                    );
-                                                                  },
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .add),
-                                                                  label: const Text(
-                                                                      'Add Complaint'),
-                                                                  style: ElevatedButton
-                                                                      .styleFrom(
-                                                                    backgroundColor:
-                                                                        AppColors
-                                                                            .primaryBlue,
-                                                                    foregroundColor:
-                                                                        Colors
-                                                                            .white,
-                                                                    padding: AppStyles.isWebScreen(
-                                                                            context)
-                                                                        ? const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                12)
-                                                                        : const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                0),
-                                                                  ),
-                                                                ),
                                                             ],
                                                           ),
                                                           // Display filtered task list
@@ -2977,65 +3080,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .all(
                                                                           30),
                                                                     ),
-                                                              const Spacer(),
-                                                              if (settingsprovider
-                                                                          .menuIsSaveMap[
-                                                                      15] ==
-                                                                  1)
-                                                                ElevatedButton
-                                                                    .icon(
-                                                                  onPressed:
-                                                                      () {
-                                                                    customerDetailsProvider
-                                                                            .customerId =
-                                                                        widget
-                                                                            .customerId;
-                                                                    showDialog(
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return AmcCreationWidget(
-                                                                            amcId:
-                                                                                '0',
-                                                                            customerId:
-                                                                                widget.customerId,
-                                                                            isEdit: false);
-                                                                      },
-                                                                    );
-                                                                  },
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .add),
-                                                                  label: const Text(
-                                                                      'Add Periodic Service'),
-                                                                  style: ElevatedButton
-                                                                      .styleFrom(
-                                                                    backgroundColor:
-                                                                        AppColors
-                                                                            .primaryBlue,
-                                                                    foregroundColor:
-                                                                        Colors
-                                                                            .white,
-                                                                    padding: AppStyles.isWebScreen(
-                                                                            context)
-                                                                        ? const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                12)
-                                                                        : const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                0),
-                                                                  ),
-                                                                ),
                                                             ],
                                                           ),
                                                           // const SizedBox(
