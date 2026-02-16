@@ -1103,16 +1103,47 @@ class _LeadsPageState extends State<LeadPage> {
                                                           data: Align(
                                                               alignment: Alignment
                                                                   .centerLeft,
-                                                              child: Text(
-                                                                lead.contactNumber,
-                                                                maxLines: 1,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  fontSize: 13,
-                                                                ),
+                                                              child: Row(
+                                                                children: [
+                                                                  IconButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      leadProvider.convertLead(
+                                                                          context,
+                                                                          lead.customerId
+                                                                              .toString());
+                                                                    },
+                                                                    icon: const Icon(
+                                                                        Icons
+                                                                            .published_with_changes,
+                                                                        color: Colors
+                                                                            .green),
+                                                                    tooltip:
+                                                                        'Convert Lead',
+                                                                    padding:
+                                                                        EdgeInsets
+                                                                            .zero,
+                                                                    constraints:
+                                                                        const BoxConstraints(),
+                                                                  ),
+                                                                  const SizedBox(
+                                                                      width: 5),
+                                                                  Expanded(
+                                                                    child: Text(
+                                                                      lead.contactNumber,
+                                                                      maxLines:
+                                                                          1,
+                                                                      overflow:
+                                                                          TextOverflow
+                                                                              .ellipsis,
+                                                                      style:
+                                                                          const TextStyle(
+                                                                        fontSize:
+                                                                            13,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ],
                                                               )),
                                                         ),
                                                       ],
