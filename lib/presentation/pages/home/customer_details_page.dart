@@ -33,6 +33,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_service.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_task_overview_tab.dart';
 
 import 'package:vidyanexis/presentation/widgets/customer/amc_creation_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/amc_widget.dart';
@@ -133,6 +134,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     final newTabs = [
       const Tab(text: "Info"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
+      if (settingsprovider.menuIsViewMap[13] == 1)
+        const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[14] == 1 &&
           sideprovider.name != 'Lead /')
@@ -2481,6 +2484,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         )
                                                       ],
                                                     ),
+
+                                            // Task Overview Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[13] ==
+                                                1)
+                                              CustomerTaskOverviewTab(
+                                                  customerId:
+                                                      widget.customerId),
 
                                             //Documents Tab
                                             if (settingsprovider

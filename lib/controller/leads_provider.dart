@@ -1720,6 +1720,31 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> convertLead(BuildContext context, String customerId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.convertLead,
+        bodyData: {'customer_id': customerId},
+      );
+      Loader.stopLoader(context);
+
+      if (response != null && response.statusCode == 200) {
+        Fluttertoast.showToast(msg: "Lead Converted Successfully");
+        await getSearchLeads(context);
+        if (context.mounted && Navigator.canPop(context)) {
+          Navigator.pop(context); // Close the details/dialog
+        }
+      } else {
+        Fluttertoast.showToast(msg: "Failed to Convert Lead");
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Error converting lead: $e');
+      Fluttertoast.showToast(msg: "An error occurred");
+    }
+  }
+
   void formatDate() {
     if (fromDate != null) {
       _formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate!);

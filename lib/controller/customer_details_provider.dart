@@ -53,6 +53,7 @@ import 'package:vidyanexis/controller/models/payment_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
+import 'package:vidyanexis/controller/models/dashboard_task_model.dart';
 
 class CustomerDetailsProvider extends ChangeNotifier {
   AddTaskModel addTaskModel = AddTaskModel();
@@ -572,6 +573,69 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   set yearInterval(int value) {
     _yearInterval = value;
+  }
+
+  // Task Overview Tab Data
+  List<Department> _customerTaskDepartments = [];
+  List<Department> get customerTaskDepartments => _customerTaskDepartments;
+  bool _isTaskOverviewLoading = false;
+  bool get isTaskOverviewLoading => _isTaskOverviewLoading;
+
+  Future<void> getCustomerTaskOverview(String customerId) async {
+    try {
+      _isTaskOverviewLoading = true;
+      notifyListeners();
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.getTaskByCustomer,
+        bodyData: {
+          "Customer_Id": customerId,
+        },
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          final List<TaskCustomerModel> tasks =
+              data.map((e) => TaskCustomerModel.fromJson(e)).toList();
+
+          // Aggregate tasks by Type
+          Map<String, int> taskTypeCounts = {};
+          for (var task in tasks) {
+            final typeName = task.taskTypeName;
+            taskTypeCounts[typeName] = (taskTypeCounts[typeName] ?? 0) + 1;
+          }
+
+          List<Task> overviewTasks = [];
+          taskTypeCounts.forEach((key, value) {
+            overviewTasks.add(Task(
+              taskTypeName: key,
+              subTaskCount: value,
+              taskTypeId: 0, // Not strictly needed for display
+            ));
+          });
+
+          // Create a single "Overview" department for this customer
+          _customerTaskDepartments = [
+            Department(
+              departmentName: 'Task Summary',
+              taskCount: tasks.length,
+              tasks: overviewTasks,
+            )
+          ];
+        } else {
+          _customerTaskDepartments = [];
+        }
+      } else {
+        _customerTaskDepartments = [];
+      }
+    } catch (e) {
+      print('Exception occurred in getCustomerTaskOverview: $e');
+      _customerTaskDepartments = [];
+    } finally {
+      _isTaskOverviewLoading = false;
+      notifyListeners();
+    }
   }
 
   Future<void> getCustomFieldsByQuotationId(BuildContext context) async {

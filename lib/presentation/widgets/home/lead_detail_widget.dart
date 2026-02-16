@@ -120,6 +120,38 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
 
                             print('............../////////////');
                             break;
+                          case 'convert':
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text('Confirm Convert'),
+                                  content: const Text(
+                                      'Are you sure you want to convert this lead?'),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.pop(context),
+                                      child: const Text('Cancel'),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        Navigator.pop(context); // Close dialog
+                                        final leadsProvider =
+                                            Provider.of<LeadsProvider>(context,
+                                                listen: false);
+                                        await leadsProvider.convertLead(
+                                            context, widget.customerId);
+                                      },
+                                      child: const Text(
+                                        'Convert',
+                                        style: TextStyle(color: Colors.green),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                            break;
                           case 'delete':
                             showDialog(
                               context: context,
@@ -169,6 +201,18 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                               ],
                             ),
                           ),
+                        const PopupMenuItem<String>(
+                          value: 'convert',
+                          child: Row(
+                            children: [
+                              Icon(Icons.change_circle_outlined,
+                                  size: 20, color: Colors.green),
+                              SizedBox(width: 8),
+                              Text('Convert Lead',
+                                  style: TextStyle(color: Colors.green)),
+                            ],
+                          ),
+                        ),
                         if (settingsProvider.menuIsDeleteMap[3] == 1)
                           const PopupMenuItem<String>(
                             value: 'delete',
