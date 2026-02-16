@@ -3,10 +3,10 @@ class HttpUrls {
 //live
   // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-//  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
-  static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
+  // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
