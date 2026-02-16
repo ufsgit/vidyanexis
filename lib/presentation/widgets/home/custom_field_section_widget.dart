@@ -832,6 +832,29 @@ class CustomFieldWidgetBuilder {
       onFieldChanged?.call();
     }
 
+    // Check for specific fields that should only accept digits
+    final lowerName = fieldName.toLowerCase();
+    final isRestrictedNumberField = lowerName.contains('parent number') ||
+        lowerName.contains('alternative number') ||
+        lowerName.contains('alternate number');
+
+    if (isRestrictedNumberField) {
+      return CustomTextField(
+        validator: validator,
+        keyboardType: TextInputType.number,
+        inputFormatters: [
+          FilteringTextInputFormatter.digitsOnly,
+          LengthLimitingTextInputFormatter(15),
+        ],
+        controller: controller,
+        hintText: labelText,
+        height: 50,
+        labelText: labelText,
+        onChanged: onChanged,
+        enabled: enabled,
+      );
+    }
+
     switch (fieldType) {
       case CustomFieldType.numberOnly:
         return CustomTextField(
