@@ -5,6 +5,12 @@ import 'package:vidyanexis/controller/models/lead_conversion_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
+import 'package:vidyanexis/controller/leads_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
+
 class LeadGraphBarChart extends StatelessWidget {
   const LeadGraphBarChart({
     super.key,
@@ -15,7 +21,6 @@ class LeadGraphBarChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final dashboardProvider = Provider.of<DashboardProvider>(context);
     return Container(
       margin: const EdgeInsets.only(bottom: 20),
       padding: const EdgeInsets.all(10),
@@ -76,6 +81,35 @@ class LeadGraphBarChart extends StatelessWidget {
                   yValueMapper: (LeadCoversionChartModel lead, _) =>
                       lead.leadCount ?? 0,
                   dataLabelSettings: const DataLabelSettings(isVisible: true),
+                  onPointTap: (ChartPointDetails details) async {
+                    if (details.pointIndex != null) {
+                      final item = leadData[details.pointIndex!];
+                      final leadReportProvider =
+                          Provider.of<LeadReportProvider>(context,
+                              listen: false);
+                      final dashBoardProvider = Provider.of<DashboardProvider>(
+                          context,
+                          listen: false);
+
+                      leadReportProvider.setStatus(0);
+                      leadReportProvider
+                          .setEnquirySourceFilter(item.enquirySourceId);
+                      leadReportProvider
+                          .setUserFilterStatus(dashBoardProvider.selectedUser);
+                      leadReportProvider.setEnquiryForFilter(0);
+                      leadReportProvider.setFromandToDate(
+                          dashBoardProvider.formattedFromDate,
+                          dashBoardProvider.formattedToDate);
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => LeadPageReport(
+                            fromDashBoard: true,
+                          ),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),
@@ -145,6 +179,35 @@ class ConversionGraphBarChart extends StatelessWidget {
                   yValueMapper: (LeadCoversionChartModel lead, _) =>
                       int.tryParse(lead.convertedCount ?? "0") ?? 0,
                   dataLabelSettings: const DataLabelSettings(isVisible: true),
+                  onPointTap: (ChartPointDetails details) async {
+                    if (details.pointIndex != null) {
+                      final item = leadData[details.pointIndex!];
+                      final leadReportProvider =
+                          Provider.of<LeadReportProvider>(context,
+                              listen: false);
+                      final dashBoardProvider = Provider.of<DashboardProvider>(
+                          context,
+                          listen: false);
+
+                      leadReportProvider.setStatus(0);
+                      leadReportProvider
+                          .setEnquirySourceFilter(item.enquirySourceId);
+                      leadReportProvider
+                          .setUserFilterStatus(dashBoardProvider.selectedUser);
+                      leadReportProvider.setEnquiryForFilter(0);
+                      leadReportProvider.setFromandToDate(
+                          dashBoardProvider.formattedFromDate,
+                          dashBoardProvider.formattedToDate);
+
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => LeadPageReport(
+                            fromDashBoard: true,
+                          ),
+                        ),
+                      );
+                    }
+                  },
                 ),
               ],
             ),

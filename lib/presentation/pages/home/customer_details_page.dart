@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dar
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_expense.dart';
 import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
@@ -396,7 +397,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 },
                                 child: Icon(
                                   Icons.arrow_back,
-                                  size: 24,
+                                  size: 18,
                                   color: Color(0xFF152D70),
                                 ),
                               ),
@@ -411,7 +412,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               .leadDetails![0].customerName
                                           : '',
                                       style: const TextStyle(
-                                          fontSize: 24,
+                                          fontSize: 18,
                                           color: Color(0xFF152D70),
                                           fontWeight: FontWeight.w600),
                                     )
@@ -428,7 +429,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         overflow: TextOverflow.ellipsis,
                                         style: const TextStyle(
                                             fontWeight: FontWeight.w600,
-                                            fontSize: 24),
+                                            fontSize: 18),
                                       ),
                                     ),
                               const SizedBox(width: 10),
@@ -535,6 +536,169 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Create Task'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[37] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text ==
+                                      "CheckList Management")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AddCheckListManagementWidget(
+                                            documentChecklistModel:
+                                                DocumentChecklistModel(),
+                                          );
+                                        },
+                                      ).then((value) {
+                                        if (value == true) {
+                                          setState(() {});
+                                        }
+                                      });
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Checklist'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[15] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text ==
+                                      "Periodic Service")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AmcCreationWidget(
+                                              amcId: '0',
+                                              customerId: widget.customerId,
+                                              isEdit: false);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Periodic Service'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text == "Expense")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider
+                                          .clearExpenseDetails();
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AddExpenseWidget(
+                                              expenseId: '0',
+                                              customerId: widget.customerId,
+                                              isEdit: false);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Expense'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text == "Receipt")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      customerDetailsProvider
+                                          .clearRecieptDetails();
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return RecieptCreationWidget(
+                                              recieptId: '0',
+                                              customerId: widget.customerId,
+                                              isEdit: false);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Receipt'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[14] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text ==
+                                      "Complaints")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      customerDetailsProvider
+                                          .clearServiceDetails();
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) {
+                                          return ServiceCreationWidget(
+                                              taskId: '0',
+                                              isEdit: false,
+                                              customerId: widget.customerId);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Complaint'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
@@ -735,7 +899,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             ),
                                           ),
                                           const SizedBox(
-                                            height: 15,
+                                            height: 2),
                                           ),
                                           CustomerCard(
                                             title: "Contact",
@@ -778,7 +942,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   .address ??
                                                               ''),
                                                   SizedBox(
-                                                    height: 8,
+                                                    height: 2
                                                   ),
                                                   DetailRow(
                                                       label: "Enquiry For",
@@ -787,7 +951,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               .enquiryForName ??
                                                           ''),
                                                   SizedBox(
-                                                    height: 8,
+                                                    height: 2
                                                   ),
                                                   DetailRow(
                                                       label: "Enquiry Source",
@@ -796,7 +960,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               .enquirySourceName ??
                                                           ''),
                                                   SizedBox(
-                                                    height: 8,
+                                                    height: 2
                                                   ),
                                                   DetailRow(
                                                       label: "Consumer Number",
@@ -805,7 +969,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               .consumerNumber ??
                                                           ''),
                                                   // SizedBox(
-                                                  //   height: 8,
+                                                  //   height: 2
                                                   // ),
                                                   // DetailRow(
                                                   //     label: "Contact Number",
@@ -814,7 +978,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   //             .phoneNumber ??
                                                   //         ''),
                                                   const SizedBox(
-                                                    height: 8,
+                                                    height: 2),
                                                   ),
                                                   const Text(
                                                     "Location: ",
@@ -902,7 +1066,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         .customerName ??
                                                     '',
                                               ),
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                 label: "Source",
                                                 value: customerDetailsProvider
@@ -910,7 +1074,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         .sourceCategoryName ??
                                                     '',
                                               ),
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                 label: "Mobile No",
                                                 value: customerDetailsProvider
@@ -918,7 +1082,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     .contactNumber
                                                     .toString(),
                                               ),
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                 label: "Enquiry Source",
                                                 value: customerDetailsProvider
@@ -926,7 +1090,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         .enquirySourceName ??
                                                     '',
                                               ),
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                 label: "Enquiry For",
                                                 value: customerDetailsProvider
@@ -934,7 +1098,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         .enquiryForName ??
                                                     '',
                                               ),
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
 
                                               DetailRow(
                                                 label: "Total project cost :",
@@ -985,7 +1149,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ''),
 
                                               // Latitude
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                   label: "Latitude",
                                                   value: customerDetailsProvider
@@ -993,7 +1157,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       .toString()),
 
                                               // Longitude
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                   label: "Longitude",
                                                   value: customerDetailsProvider
@@ -1001,7 +1165,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       .toString()),
 
                                               // District
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                   label: "District",
                                                   value: customerDetailsProvider
@@ -1010,13 +1174,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ''),
 
                                               // Firestation
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               DetailRow(
                                                   label: "Firestation",
                                                   value: customerDetailsProvider
                                                       .leadDetails![0]
                                                       .firestationName),
-                                              const SizedBox(height: 8),
+                                              const SizedBox(height: 2),
                                               const Text(
                                                 'Location',
                                                 style: TextStyle(
@@ -1282,28 +1446,25 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                 "Address",
                                                                             value:
                                                                                 customerDetailsProvider.leadDetails![0].address ?? ''),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              8,
-                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                2),
                                                                         DetailRow(
                                                                             label:
                                                                                 "Enquiry For",
                                                                             value:
                                                                                 customerDetailsProvider.leadDetails![0].enquiryForName ?? ''),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              8,
-                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                2),
                                                                         DetailRow(
                                                                             label:
                                                                                 "Enquiry Source",
                                                                             value:
                                                                                 customerDetailsProvider.leadDetails![0].enquirySourceName ?? ''),
-                                                                        SizedBox(
-                                                                          height:
-                                                                              8,
-                                                                        ),
+                                                                        const SizedBox(
+                                                                            height:
+                                                                                2),
                                                                         DetailRow(
                                                                             label:
                                                                                 "Consumer Number",
@@ -1311,7 +1472,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                 customerDetailsProvider.leadDetails![0].consumerNumber ?? ''),
                                                                         const SizedBox(
                                                                           height:
-                                                                              8,
+                                                                              2,
                                                                         ),
                                                                         const Text(
                                                                           "Location: ",
@@ -1376,7 +1537,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                       label:
                                                                           "Source",
@@ -1387,7 +1548,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                       label:
                                                                           "Mobile No",
@@ -1399,7 +1560,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                       label:
                                                                           "Enquiry Source",
@@ -1410,7 +1571,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                       label:
                                                                           "Enquiry For",
@@ -1421,7 +1582,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     ),
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                       label:
                                                                           "Total project cost :",
@@ -1448,7 +1609,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     // Latitude
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                         label:
                                                                             "Latitude",
@@ -1460,7 +1621,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     // Longitude
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                         label:
                                                                             "Longitude",
@@ -1472,7 +1633,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     // District
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                         label:
                                                                             "District",
@@ -1482,7 +1643,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     // Firestation
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     DetailRow(
                                                                         label:
                                                                             "Firestation",
@@ -1491,7 +1652,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             .firestationName),
                                                                     const SizedBox(
                                                                         height:
-                                                                            8),
+                                                                            2),
                                                                     const Text(
                                                                       'Location',
                                                                       style: TextStyle(
@@ -1761,9 +1922,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               .leadDetails![0]
                                                                               .address ??
                                                                           ''),
-                                                                  SizedBox(
-                                                                    height: 8,
-                                                                  ),
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          2),
                                                                   DetailRow(
                                                                       label:
                                                                           "Enquiry For",
@@ -1771,9 +1932,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               .leadDetails![0]
                                                                               .enquiryForName ??
                                                                           ''),
-                                                                  SizedBox(
-                                                                    height: 8,
-                                                                  ),
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          2),
                                                                   DetailRow(
                                                                       label:
                                                                           "Enquiry Source",
@@ -1781,9 +1942,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               .leadDetails![0]
                                                                               .enquirySourceName ??
                                                                           ''),
-                                                                  SizedBox(
-                                                                    height: 8,
-                                                                  ),
+                                                                  const SizedBox(
+                                                                      height:
+                                                                          2),
                                                                   DetailRow(
                                                                       label:
                                                                           "Consumer Number",
@@ -1792,8 +1953,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               .consumerNumber ??
                                                                           ''),
                                                                   const SizedBox(
-                                                                    height: 8,
-                                                                  ),
+                                                                      height:
+                                                                          2),
                                                                   const Text(
                                                                     "Location: ",
                                                                     style: TextStyle(
@@ -1865,7 +2026,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     '',
                                                               ),
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                 label: "Source",
                                                                 value: customerDetailsProvider
@@ -1875,7 +2036,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     '',
                                                               ),
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                 label:
                                                                     "Mobile No",
@@ -1886,7 +2047,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     .toString(),
                                                               ),
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                 label:
                                                                     "Enquiry Source",
@@ -1897,7 +2058,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     '',
                                                               ),
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                 label:
                                                                     "Enquiry For",
@@ -1908,7 +2069,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     '',
                                                               ),
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                 label:
                                                                     "Total project cost :",
@@ -1938,7 +2099,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
                                                               // Latitude
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                   label:
                                                                       "Latitude",
@@ -1950,7 +2111,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
                                                               // Longitude
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                   label:
                                                                       "Longitude",
@@ -1962,7 +2123,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
                                                               // District
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                   label:
                                                                       "District",
@@ -1974,7 +2135,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
                                                               // Firestation
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               DetailRow(
                                                                   label:
                                                                       "Firestation",
@@ -1983,7 +2144,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           0]
                                                                       .firestationName),
                                                               const SizedBox(
-                                                                  height: 8),
+                                                                  height: 2),
                                                               const Text(
                                                                 'Location',
                                                                 style: TextStyle(
@@ -2676,7 +2837,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                                     color: Colors.red,
                                                                                                     size: 50,
                                                                                                   ),
-                                                                                                  SizedBox(height: 8),
+                                                                                                  const SizedBox(height: 2),
                                                                                                   Text(
                                                                                                     'Open PDF',
                                                                                                     style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
@@ -2724,9 +2885,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                   ),
                                                                               ],
                                                                             ),
-                                                                            const SizedBox(
-                                                                              height: 5,
-                                                                            ),
+                                                                            const SizedBox(height: 2),
                                                                             Text(
                                                                               image.documentTypeName,
                                                                               style: TextStyle(fontSize: 12, color: AppColors.textBlack),
@@ -2816,67 +2975,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .all(
                                                                           30),
                                                                     ),
-                                                              if (settingsprovider
-                                                                          .menuIsSaveMap[
-                                                                      14] ==
-                                                                  1)
-                                                                ElevatedButton
-                                                                    .icon(
-                                                                  onPressed:
-                                                                      () {
-                                                                    customerDetailsProvider
-                                                                            .customerId =
-                                                                        widget
-                                                                            .customerId;
-                                                                    customerDetailsProvider
-                                                                        .clearServiceDetails();
-                                                                    showDialog(
-                                                                      context:
-                                                                          context,
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return ServiceCreationWidget(
-                                                                            taskId:
-                                                                                '0',
-                                                                            isEdit:
-                                                                                false,
-                                                                            customerId:
-                                                                                widget.customerId);
-                                                                      },
-                                                                    );
-                                                                  },
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .add),
-                                                                  label: const Text(
-                                                                      'Add Complaint'),
-                                                                  style: ElevatedButton
-                                                                      .styleFrom(
-                                                                    backgroundColor:
-                                                                        AppColors
-                                                                            .primaryBlue,
-                                                                    foregroundColor:
-                                                                        Colors
-                                                                            .white,
-                                                                    padding: AppStyles.isWebScreen(
-                                                                            context)
-                                                                        ? const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                12)
-                                                                        : const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                0),
-                                                                  ),
-                                                                ),
                                                             ],
                                                           ),
                                                           // Display filtered task list
@@ -2982,65 +3080,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .all(
                                                                           30),
                                                                     ),
-                                                              const Spacer(),
-                                                              if (settingsprovider
-                                                                          .menuIsSaveMap[
-                                                                      15] ==
-                                                                  1)
-                                                                ElevatedButton
-                                                                    .icon(
-                                                                  onPressed:
-                                                                      () {
-                                                                    customerDetailsProvider
-                                                                            .customerId =
-                                                                        widget
-                                                                            .customerId;
-                                                                    showDialog(
-                                                                      barrierDismissible:
-                                                                          false,
-                                                                      context:
-                                                                          context,
-                                                                      builder:
-                                                                          (BuildContext
-                                                                              context) {
-                                                                        return AmcCreationWidget(
-                                                                            amcId:
-                                                                                '0',
-                                                                            customerId:
-                                                                                widget.customerId,
-                                                                            isEdit: false);
-                                                                      },
-                                                                    );
-                                                                  },
-                                                                  icon: const Icon(
-                                                                      Icons
-                                                                          .add),
-                                                                  label: const Text(
-                                                                      'Add Periodic Service'),
-                                                                  style: ElevatedButton
-                                                                      .styleFrom(
-                                                                    backgroundColor:
-                                                                        AppColors
-                                                                            .primaryBlue,
-                                                                    foregroundColor:
-                                                                        Colors
-                                                                            .white,
-                                                                    padding: AppStyles.isWebScreen(
-                                                                            context)
-                                                                        ? const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                12)
-                                                                        : const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                16,
-                                                                            vertical:
-                                                                                0),
-                                                                  ),
-                                                                ),
                                                             ],
                                                           ),
                                                           // const SizedBox(

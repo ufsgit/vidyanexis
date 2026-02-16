@@ -165,7 +165,7 @@ class LeadReportProvider extends ChangeNotifier {
   int _customerId = 0;
 
   int _pageIndex = 1;
-  int _pageSize = 500;
+  int _pageSize = 20;
   int _totalSize = 0;
   int _totalPages = 1;
 

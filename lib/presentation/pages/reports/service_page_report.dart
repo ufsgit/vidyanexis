@@ -344,6 +344,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                 ),
                               ),
                             ),
+                            // ),
                           ],
                         ),
                         const SizedBox(height: 8),
@@ -894,219 +895,184 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                       ),
                     ),
             AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                                color: Color(0xFF607185))),
-                                      ),
-                                    ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Customer Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 1,
-                                    //     title: 'Mobile',
-                                    //     color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 2,
-                                    //     title: 'Address',
-                                    //     color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Complaint Type',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Complaint Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Complaint Description',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Added Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Amount',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Status',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'View Details',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                  ],
-                                ),
+                ? // Expanded(
+                // child:
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            // Header Row (Table Column Titles)
+                            Container(
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFEFF2F5),
+                                borderRadius: BorderRadius.circular(8),
                               ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider.serviceReport
-                                      .length, // Number of Services
-                                  itemBuilder: (context, index) {
-                                    var Service =
-                                        reportsProvider.serviceReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
+                              child: const Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    width: 80,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 12.0, horizontal: 25.0),
+                                      child: Text('No.',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold,
+                                              fontSize: 14,
+                                              color: Color(0xFF607185))),
+                                    ),
+                                  ),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'Customer Name',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                  // TableWidget(
+                                  //     flex: 1,
+                                  //     title: 'Mobile',
+                                  //     color: Color(0xFF607185)),
+                                  // TableWidget(
+                                  //     flex: 2,
+                                  //     title: 'Address',
+                                  //     color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 1,
+                                      title: 'Complaint Type',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 1,
+                                      title: 'Complaint Name',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'Complaint Description',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 1,
+                                      title: 'Added Date',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 1,
+                                      title: 'Amount',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 1,
+                                      title: 'Status',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                  TableWidget(
+                                      flex: 1,
+                                      title: 'View Details',
+                                      fontSize: 14,
+                                      color: Color(0xFF607185)),
+                                ],
+                              ),
+                            ),
+                            // Data Rows
+                            // Expanded(
+                            //   child:
+                            ListView.builder(
+                              shrinkWrap:
+                                  true, // To avoid scrolling issues when inside a parent widget
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: reportsProvider
+                                  .serviceReport.length, // Number of Services
+                              itemBuilder: (context, index) {
+                                var Service =
+                                    reportsProvider.serviceReport[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    // context.go(
+                                    //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 == 0
+                                          ? Colors.white
+                                          : const Color(0xFFF6F7F9),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    // Alternate row colors
+                                    child: Row(
+                                      // mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        // Padding(
+                                        //   padding: const EdgeInsets.symmetric(
+                                        //       vertical: 12.0, horizontal: 25.0),
+                                        //   child: Text(Service.customerId.toString(),
+                                        //       style: const TextStyle(
+                                        //         fontWeight: FontWeight.bold,
+                                        //       )),
+                                        // ),
+                                        SizedBox(
+                                          width: 80,
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 12.0,
+                                                horizontal: 25.0),
+                                            child: Text((index + 1).toString(),
+                                                style: const TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 12,
+                                                )),
+                                          ),
                                         ),
-                                        // Alternate row colors
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(Service.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12,
-                                                        )),
-                                              ),
-                                            ),
-                                            // TableWidget(title: Service.orderNo),
-                                            TableWidget(
-                                              flex: 2,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
+                                        // TableWidget(title: Service.orderNo),
+                                        TableWidget(
+                                          flex: 2,
+                                          data: InkWell(
+                                            onTap: () {
+                                              context.push(
+                                                  '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                       horizontal: 8,
                                                       vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Icon(
-                                                              Icons
-                                                                  .account_circle,
-                                                              size: 15,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              Service.customerName
-                                                                          .length >
-                                                                      20
-                                                                  ? '${Service.customerName.substring(0, 20)}...'
-                                                                  : Service
-                                                                      .customerName,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                              size: 12,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          Service.customerName,
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFE9EDF1),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              child: MediaQuery.of(context)
+                                                          .size
+                                                          .width >
+                                                      1700
+                                                  ? Row(
+                                                      mainAxisSize: MainAxisSize
+                                                          .min, // Ensures the Row takes only as much space as needed
+                                                      children: [
+                                                        // Front image (before text)
+                                                        Icon(
+                                                          Icons.account_circle,
+                                                          size: 15,
+                                                          color:
+                                                              Color(0xFF152D70),
+                                                        ),
+                                                        const SizedBox(
+                                                            width:
+                                                                8), // Space between the image and text
+                                                        Text(
+                                                          Service.customerName
+                                                                      .length >
+                                                                  20
+                                                              ? '${Service.customerName.substring(0, 20)}...'
+                                                              : Service
+                                                                  .customerName,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           maxLines: 1,
@@ -1118,257 +1084,239 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                             fontSize: 12,
                                                           ),
                                                         ),
-                                                ),
-                                              ),
+                                                        const SizedBox(
+                                                            width:
+                                                                8), // Space between the text and back image
+                                                        // Back image (after text)
+                                                        Icon(
+                                                          Icons
+                                                              .arrow_forward_ios,
+                                                          size: 12,
+                                                          color:
+                                                              Color(0xFF152D70),
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Text(
+                                                      Service.customerName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
                                             ),
-                                            // TableWidget(
-                                            //     flex: 1, title: Service.mobile),
-                                            // TableWidget(
-                                            //     flex: 2,
-                                            //     title: Service.address1),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: Service.serviceTypeName),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: Service.serviceName
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 2,
-                                                fontSize: 12,
-                                                title: Service.description),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: (Service
-                                                        .createDate.isNotEmpty)
+                                          ),
+                                        ),
+                                        // TableWidget(
+                                        //     flex: 1, title: Service.mobile),
+                                        // TableWidget(
+                                        //     flex: 2,
+                                        //     title: Service.address1),
+                                        TableWidget(
+                                            flex: 1,
+                                            fontSize: 12,
+                                            title: Service.serviceTypeName),
+                                        TableWidget(
+                                            flex: 1,
+                                            fontSize: 12,
+                                            title:
+                                                Service.serviceName.toString()),
+                                        TableWidget(
+                                            flex: 2,
+                                            fontSize: 12,
+                                            title: Service.description),
+                                        TableWidget(
+                                            flex: 1,
+                                            fontSize: 12,
+                                            title:
+                                                (Service.createDate.isNotEmpty)
                                                     ? DateFormat('dd MMM yyyy')
                                                         .format(DateTime.parse(
                                                             Service.createDate))
                                                     : ''),
-                                            TableWidget(
-                                                flex: 1,
+                                        TableWidget(
+                                            flex: 1,
+                                            fontSize: 12,
+                                            title:
+                                                "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
+                                        TableWidget(
+                                          flex: 1,
+                                          data: Container(
+                                            padding: Service.serviceStatusName
+                                                    .isNotEmpty
+                                                ? const EdgeInsets.symmetric(
+                                                    horizontal: 8, vertical: 2)
+                                                : const EdgeInsets.all(0),
+                                            decoration: BoxDecoration(
+                                              color: StatusUtils.getStatusColor(
+                                                  Service.serviceStatusId),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: Colors.black45,
+                                                  width: 0.1),
+                                            ),
+                                            child: Text(
+                                              Service.serviceStatusName,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: StatusUtils
+                                                    .getStatusTextColor(Service
+                                                        .serviceStatusId),
                                                 fontSize: 12,
-                                                title:
-                                                    "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
-                                            TableWidget(
-                                              flex: 1,
-                                              data: Container(
-                                                padding: Service
-                                                        .serviceStatusName
-                                                        .isNotEmpty
-                                                    ? const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 2)
-                                                    : const EdgeInsets.all(0),
-                                                decoration: BoxDecoration(
-                                                  color: StatusUtils
-                                                      .getStatusColor(Service
-                                                          .serviceStatusId),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  border: Border.all(
-                                                      color: Colors.black45,
-                                                      width: 0.1),
-                                                ),
-                                                child: Text(
-                                                  Service.serviceStatusName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    color: StatusUtils
-                                                        .getStatusTextColor(
-                                                            Service
-                                                                .serviceStatusId),
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
                                               ),
                                             ),
-                                            Expanded(
-                                              child: CustomOutlinedSvgButton(
-                                                showIcon: false,
-                                                onPressed: () async {
-                                                  String ServiceId = Service
-                                                      .serviceId
-                                                      .toString();
-                                                  String customerId = Service
-                                                      .customerId
-                                                      .toString();
-                                                  print(
-                                                      'Service ID: $ServiceId');
-                                                  customerDetailsProvider
-                                                      .getServiceDetails(
-                                                          ServiceId.toString(),
-                                                          context);
-
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return ServiceDetailsWidget(
-                                                          serviceId: ServiceId
-                                                              .toString(),
-                                                          customerId: customerId
-                                                              .toString(),
-                                                          showEdit: false);
-                                                    },
-                                                  );
-                                                },
-                                                svgPath:
-                                                    'assets/images/Print.svg',
-                                                label: 'View Details',
-                                                breakpoint: 860,
-                                                foregroundColor:
-                                                    AppColors.primaryBlue,
-                                                backgroundColor: Colors.white,
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColors.primaryBlue),
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                                        Expanded(
+                                          child: CustomOutlinedSvgButton(
+                                            showIcon: false,
+                                            onPressed: () async {
+                                              String ServiceId =
+                                                  Service.serviceId.toString();
+                                              String customerId =
+                                                  Service.customerId.toString();
+                                              print('Service ID: $ServiceId');
+                                              customerDetailsProvider
+                                                  .getServiceDetails(
+                                                      ServiceId.toString(),
+                                                      context);
+
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return ServiceDetailsWidget(
+                                                      serviceId:
+                                                          ServiceId.toString(),
+                                                      customerId:
+                                                          customerId.toString(),
+                                                      showEdit: false);
+                                                },
+                                              );
+                                            },
+                                            svgPath: 'assets/images/Print.svg',
+                                            label: 'View Details',
+                                            breakpoint: 860,
+                                            foregroundColor:
+                                                AppColors.primaryBlue,
+                                            backgroundColor: Colors.white,
+                                            borderSide: BorderSide(
+                                                color: AppColors.primaryBlue),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                            // ),
+                          ],
                         ),
                       ),
                     ),
                   )
-                : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider.serviceReport
-                                      .length, // Number of Services
-                                  itemBuilder: (context, index) {
-                                    var Service =
-                                        reportsProvider.serviceReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Wrap(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(Service.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
+                : // Expanded(
+                // child:
+                Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          children: [
+                            // Data Rows
+                            // Expanded(
+                            //   child:
+                            ListView.builder(
+                              shrinkWrap:
+                                  true, // To avoid scrolling issues when inside a parent widget
+                              physics: const AlwaysScrollableScrollPhysics(),
+                              itemCount: reportsProvider
+                                  .serviceReport.length, // Number of Services
+                              itemBuilder: (context, index) {
+                                var Service =
+                                    reportsProvider.serviceReport[index];
+                                return GestureDetector(
+                                  onTap: () {
+                                    // context.go(
+                                    //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
+                                  },
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      color: index % 2 == 0
+                                          ? Colors.white
+                                          : const Color(0xFFF6F7F9),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    // Alternate row colors
+                                    child: Wrap(
+                                      // mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        // Padding(
+                                        //   padding: const EdgeInsets.symmetric(
+                                        //       vertical: 12.0, horizontal: 25.0),
+                                        //   child: Text(Service.customerId.toString(),
+                                        //       style: const TextStyle(
+                                        //         fontWeight: FontWeight.bold,
+                                        //       )),
+                                        // ),
 
-                                            // TableWidget(title: Service.orderNo),
-                                            TableWidget(
-                                              width: 150,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
+                                        // TableWidget(title: Service.orderNo),
+                                        TableWidget(
+                                          width: 150,
+                                          data: InkWell(
+                                            onTap: () {
+                                              context.push(
+                                                  '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
                                                       horizontal: 8,
                                                       vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Image.asset(
-                                                              'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  15, // You can adjust the size of the image
-                                                              height:
-                                                                  15, // You can adjust the size of the image
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              Service.customerName
-                                                                          .length >
-                                                                      20
-                                                                  ? '${Service.customerName.substring(0, 20)}...'
-                                                                  : Service
-                                                                      .customerName,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Image.asset(
-                                                              'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                              width:
-                                                                  12, // Adjust the size of the image
-                                                              height:
-                                                                  12, // Adjust the size of the image
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          Service.customerName,
+                                              decoration: BoxDecoration(
+                                                color: const Color(0xFFE9EDF1),
+                                                borderRadius:
+                                                    BorderRadius.circular(50),
+                                              ),
+                                              child: MediaQuery.of(context)
+                                                          .size
+                                                          .width >
+                                                      1700
+                                                  ? Row(
+                                                      mainAxisSize: MainAxisSize
+                                                          .min, // Ensures the Row takes only as much space as needed
+                                                      children: [
+                                                        // Front image (before text)
+                                                        Image.asset(
+                                                          'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
+                                                          width:
+                                                              15, // You can adjust the size of the image
+                                                          height:
+                                                              15, // You can adjust the size of the image
+                                                        ),
+                                                        const SizedBox(
+                                                            width:
+                                                                8), // Space between the image and text
+                                                        Text(
+                                                          Service.customerName
+                                                                      .length >
+                                                                  20
+                                                              ? '${Service.customerName.substring(0, 20)}...'
+                                                              : Service
+                                                                  .customerName,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           maxLines: 1,
@@ -1380,124 +1328,135 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                             fontSize: 14,
                                                           ),
                                                         ),
-                                                ),
-                                              ),
+                                                        const SizedBox(
+                                                            width:
+                                                                8), // Space between the text and back image
+                                                        // Back image (after text)
+                                                        Image.asset(
+                                                          'assets/images/forward.png', // Replace with your image asset or NetworkImage
+                                                          width:
+                                                              12, // Adjust the size of the image
+                                                          height:
+                                                              12, // Adjust the size of the image
+                                                        ),
+                                                      ],
+                                                    )
+                                                  : Text(
+                                                      Service.customerName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.black,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                      ),
+                                                    ),
                                             ),
-                                            TableWidget(
-                                                width: 150,
-                                                title: Service.serviceTypeName),
-                                            TableWidget(
-                                                width: 150,
-                                                title: Service.serviceName
-                                                    .toString()),
-                                            TableWidget(
-                                                width: 180,
-                                                title: Service.description),
-                                            TableWidget(
-                                                width: 150,
-                                                title: (Service
-                                                        .createDate.isNotEmpty)
+                                          ),
+                                        ),
+                                        TableWidget(
+                                            width: 150,
+                                            title: Service.serviceTypeName),
+                                        TableWidget(
+                                            width: 150,
+                                            title:
+                                                Service.serviceName.toString()),
+                                        TableWidget(
+                                            width: 180,
+                                            title: Service.description),
+                                        TableWidget(
+                                            width: 150,
+                                            title:
+                                                (Service.createDate.isNotEmpty)
                                                     ? DateFormat('dd MMM yyyy')
                                                         .format(DateTime.parse(
                                                             Service.createDate))
                                                     : ''),
-                                            TableWidget(
-                                                width: 150,
-                                                title:
-                                                    "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
-                                            TableWidget(
-                                              width: 150,
-                                              data: Container(
-                                                padding: Service
-                                                        .serviceStatusName
-                                                        .isNotEmpty
-                                                    ? const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 2)
-                                                    : const EdgeInsets.all(0),
-                                                decoration: BoxDecoration(
-                                                  color: StatusUtils
-                                                      .getStatusColor(Service
-                                                          .serviceStatusId),
-                                                  borderRadius:
-                                                      BorderRadius.circular(6),
-                                                  border: Border.all(
-                                                      color: Colors.black45,
-                                                      width: 0.1),
-                                                ),
-                                                child: Text(
-                                                  Service.serviceStatusName,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                  maxLines: 1,
-                                                  style: TextStyle(
-                                                    color: StatusUtils
-                                                        .getStatusTextColor(
-                                                            Service
-                                                                .serviceStatusId),
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
+                                        TableWidget(
+                                            width: 150,
+                                            title:
+                                                "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
+                                        TableWidget(
+                                          width: 150,
+                                          data: Container(
+                                            padding: Service.serviceStatusName
+                                                    .isNotEmpty
+                                                ? const EdgeInsets.symmetric(
+                                                    horizontal: 8, vertical: 2)
+                                                : const EdgeInsets.all(0),
+                                            decoration: BoxDecoration(
+                                              color: StatusUtils.getStatusColor(
+                                                  Service.serviceStatusId),
+                                              borderRadius:
+                                                  BorderRadius.circular(6),
+                                              border: Border.all(
+                                                  color: Colors.black45,
+                                                  width: 0.1),
+                                            ),
+                                            child: Text(
+                                              Service.serviceStatusName,
+                                              overflow: TextOverflow.ellipsis,
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                color: StatusUtils
+                                                    .getStatusTextColor(Service
+                                                        .serviceStatusId),
+                                                fontSize: 13,
                                               ),
                                             ),
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: CustomOutlinedSvgButton(
-                                                showIcon: false,
-                                                onPressed: () async {
-                                                  String ServiceId = Service
-                                                      .serviceId
-                                                      .toString();
-                                                  String customerId = Service
-                                                      .customerId
-                                                      .toString();
-                                                  print(
-                                                      'Service ID: $ServiceId');
-                                                  customerDetailsProvider
-                                                      .getServiceDetails(
-                                                          ServiceId.toString(),
-                                                          context);
-
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return ServiceDetailsWidget(
-                                                          serviceId: ServiceId
-                                                              .toString(),
-                                                          customerId: customerId
-                                                              .toString(),
-                                                          showEdit: false);
-                                                    },
-                                                  );
-                                                },
-                                                svgPath:
-                                                    'assets/images/Print.svg',
-                                                label: 'View Details',
-                                                breakpoint: 860,
-                                                foregroundColor:
-                                                    AppColors.primaryBlue,
-                                                backgroundColor: Colors.white,
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColors.primaryBlue),
-                                              ),
-                                            ),
-                                          ],
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+                                        Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: CustomOutlinedSvgButton(
+                                            showIcon: false,
+                                            onPressed: () async {
+                                              String ServiceId =
+                                                  Service.serviceId.toString();
+                                              String customerId =
+                                                  Service.customerId.toString();
+                                              print('Service ID: $ServiceId');
+                                              customerDetailsProvider
+                                                  .getServiceDetails(
+                                                      ServiceId.toString(),
+                                                      context);
+
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return ServiceDetailsWidget(
+                                                      serviceId:
+                                                          ServiceId.toString(),
+                                                      customerId:
+                                                          customerId.toString(),
+                                                      showEdit: false);
+                                                },
+                                              );
+                                            },
+                                            svgPath: 'assets/images/Print.svg',
+                                            label: 'View Details',
+                                            breakpoint: 860,
+                                            foregroundColor:
+                                                AppColors.primaryBlue,
+                                            backgroundColor: Colors.white,
+                                            borderSide: BorderSide(
+                                                color: AppColors.primaryBlue),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       ),
                     ),
-                  )
+                  ),
           ],
         ),
       ),

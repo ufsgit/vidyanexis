@@ -3,15 +3,15 @@ class HttpUrls {
 //live
   // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-//  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
-  static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
+  // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   //  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-//dev\
+//dev
   // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
@@ -28,6 +28,7 @@ class HttpUrls {
   static String timeTrack = "followup/Time_track_reports";
   static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
+  static String convertLead = "lead/Convert_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
   // static String getAllFollowUpStatus = "status/Search_status";
   static String getItemListStock = "item/Get_All_Items_from_stock";

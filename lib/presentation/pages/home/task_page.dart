@@ -168,6 +168,21 @@ class _tasksPageReportState extends State<TaskPage> {
     // Removed unused leadProvider
 
     final reportsProvider = Provider.of<TaskPageProvider>(context);
+
+    // Calculate dynamic heights for table
+    final screenHeight = MediaQuery.of(context).size.height;
+    const headerHeight = 60.0;
+    const searchBarHeight = 70.0;
+    const paginationHeight = 60.0;
+    const tableHeaderHeight = 50.0;
+
+    final availableHeight = screenHeight -
+        headerHeight -
+        searchBarHeight -
+        paginationHeight -
+        tableHeaderHeight -
+        40;
+    final rowHeight = availableHeight / 20;
     final provider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
@@ -990,8 +1005,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                       _scrollController, // Add this line
 
                                   shrinkWrap: true,
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
+                                  physics: AppStyles.isWebScreen(context)
+                                      ? const NeverScrollableScrollPhysics()
+                                      : const AlwaysScrollableScrollPhysics(),
                                   itemCount: reportsProvider.taskReport.length +
                                       (_isLoadingMore &&
                                               !AppStyles.isWebScreen(context)
@@ -1431,6 +1447,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                         onTap: () {},
                                         hoverColor: const Color(0xFFF8FAFC),
                                         child: Container(
+                                          height: rowHeight,
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
                                                 ? Colors.white

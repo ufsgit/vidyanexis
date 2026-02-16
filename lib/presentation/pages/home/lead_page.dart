@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -10,12 +11,10 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/lead_details_provider.dart';
+
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/presentation/widgets/home/add_followup_drawer_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -93,8 +92,6 @@ class _LeadsPageState extends State<LeadPage> {
     super.dispose();
   }
 
-  bool viewProfile = false;
-  bool viewFollowUp = false;
   // bool isEdit = false;
   int? _hoveredRowIndex;
 
@@ -246,7 +243,25 @@ class _LeadsPageState extends State<LeadPage> {
     final leadProvider = Provider.of<LeadsProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
+
+    // Calculate dynamic heights for table
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double headerHeight = 60.0;
+    // Adjust search section height based on filter visibility
+    final double searchSectionHeight = leadProvider.isFilter ? 130.0 : 70.0;
+    const paginationHeight = 60.0;
+    const tableHeaderHeight = 50.0;
+    const double paddingSafety = 10.0;
+
+    final double availableHeight = screenHeight -
+        headerHeight -
+        searchSectionHeight -
+        paginationHeight -
+        tableHeaderHeight -
+        paddingSafety;
+
+    // Calculate exact row height for 20 rows
+    final double rowHeight = availableHeight / 20;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -372,11 +387,6 @@ class _LeadsPageState extends State<LeadPage> {
 
                         await leadProvider.getLeadDropdowns(context);
 
-                        setState(() {
-                          // isEdit = false;
-                          viewProfile = false;
-                          viewFollowUp = false;
-                        });
                         // _scaffoldKey.currentState
                         //     ?.openEndDrawer(); // Open drawer
                         showDialog(
@@ -785,114 +795,500 @@ class _LeadsPageState extends State<LeadPage> {
                 ),
               ),
             // Fixed version with synchronized scrolling
-            Expanded(
-              child: LayoutBuilder(
-                builder: (context, constraints) {
-                  return Container(
-                    height: constraints.maxHeight,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 0),
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          // Fixed columns section
-                          SizedBox(
-                              width:
-                                  600, // Fixed width to ensure Name & Contact are adjacent (80+60+110+235+115)
-                              child: ScrollConfiguration(
-                                behavior:
-                                    ScrollConfiguration.of(context).copyWith(
-                                  scrollbars: false,
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    // Fixed Header
-                                    Container(
-                                      // height: 48, // Removed fixed height
-                                      decoration: const BoxDecoration(
-                                        color: const Color.fromARGB(
-                                            255, 0, 90, 69),
-                                        borderRadius: BorderRadius.only(
-                                            topLeft: Radius.circular(8),
-                                            bottomLeft: Radius.circular(8)),
+            SizedBox(
+              height: tableHeaderHeight + (rowHeight * 20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  // Fixed columns section
+                  SizedBox(
+                    width: 600,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        // Fixed Header
+                        Container(
+                          height: tableHeaderHeight,
+                          decoration: const BoxDecoration(
+                            color: const Color.fromARGB(255, 0, 90, 69),
+                            borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(8),
+                                bottomLeft: Radius.circular(8)),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                width: 80,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 12.0),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'SL',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFFFFFFFF),
                                       ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            width: 80,
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 6.0,
-                                                  horizontal: 12.0),
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'SL',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Color(0xFFFFFFFF),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: 60,
+                                child: Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 8.0),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      'ID',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              TableWidget(
+                                  width: 110,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 8.0),
+                                  data: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Date',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    ),
+                                  ),
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  flex: 3,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 8.0),
+                                  data: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Name',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    ),
+                                  ),
+                                  color: Color(0xFF607185)),
+                              TableWidget(
+                                  width: 150,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 6.0, horizontal: 8.0),
+                                  data: Align(
+                                    alignment: Alignment.centerLeft,
+                                    child: Text(
+                                      'Contact',
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Color(0xFFFFFFFF),
+                                      ),
+                                    ),
+                                  ),
+                                  color: Color(0xFF607185)),
+                            ],
+                          ),
+                        ),
+
+                        // Fixed Data Rows
+
+                        Expanded(
+                          child: leadProvider.leadData.isEmpty
+                              ? const Center(child: Text('No data available'))
+                              : ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  controller: _fixedVerticalController,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: leadProvider.leadData.length,
+                                  itemBuilder: (context, index) {
+                                    if (index >= leadProvider.leadData.length) {
+                                      return const SizedBox();
+                                    }
+                                    var lead = leadProvider.leadData[index];
+                                    return MouseRegion(
+                                      onEnter: (_) => setState(
+                                          () => _hoveredRowIndex = index),
+                                      onExit: (_) => setState(
+                                          () => _hoveredRowIndex = null),
+                                      child: Container(
+                                        height: rowHeight,
+                                        decoration: BoxDecoration(
+                                          color: index % 2 == 0
+                                              ? Colors.white
+                                              : const Color(0xFFF6F7F9),
+                                          // borderRadius:
+                                          //     BorderRadius.circular(
+                                          //         8),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            Container(
+                                              decoration: BoxDecoration(
+                                                shape: BoxShape.circle,
+                                                color: _hoveredRowIndex == index
+                                                    ? const Color.fromARGB(
+                                                        255, 240, 237, 237)
+                                                    : null,
+                                              ),
+                                              width: 80,
+                                              // Reduced from 80 to 60 -> Back to 80
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 12.0),
+                                                child: Center(
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                          ((index + 1) +
+                                                                  leadProvider
+                                                                      .startLimit -
+                                                                  1)
+                                                              .toString(),
+                                                          style:
+                                                              const TextStyle(
+                                                            fontSize: 13,
+                                                          )),
+                                                      if (lead.leadTypeId ==
+                                                          UserStatusType
+                                                              .hotLead.value)
+                                                        const Padding(
+                                                          padding:
+                                                              EdgeInsets.only(
+                                                                  left: 4.0),
+                                                          child: Text("⭐",
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      10)),
+                                                        )
+                                                    ],
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                            width: 60,
-                                            child: Padding(
+                                            SizedBox(
+                                              width: 60,
+                                              // Reduced from 80 to 60
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 6.0,
+                                                    horizontal: 8.0),
+                                                child: Center(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .center,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Text(
+                                                          lead.customerId
+                                                              .toString(),
+                                                          style:
+                                                              const TextStyle()),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 6.0,
                                                   horizontal: 8.0),
-                                              child: Align(
-                                                alignment: Alignment.center,
-                                                child: Text(
-                                                  'ID',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Color(0xFFFFFFFF),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          TableWidget(
                                               width: 110,
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 6.0,
-                                                  horizontal: 8.0),
                                               data: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
-                                                  'Date',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Color(0xFFFFFFFF),
+                                                  "${_formatDateSafely(lead.entryDate)}",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    fontSize: 12,
                                                   ),
                                                 ),
                                               ),
-                                              color: Color(0xFF607185)),
-                                          TableWidget(
+                                            ),
+                                            TableWidget(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.0,
+                                                  horizontal: 8.0),
                                               flex: 3,
-                                              padding: EdgeInsets.symmetric(
-                                                  vertical: 6.0,
-                                                  horizontal: 8.0),
                                               data: Align(
                                                 alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  'Name',
-                                                  style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: Color(0xFFFFFFFF),
+                                                child: Tooltip(
+                                                  message: lead.customerName,
+                                                  child: TextButton(
+                                                    onPressed: () {
+                                                      context.push(
+                                                          '/customerDetails/${lead.customerId}/false');
+                                                    },
+                                                    style: TextButton.styleFrom(
+                                                      backgroundColor: Colors
+                                                          .blue
+                                                          .withOpacity(0.1),
+                                                      shape:
+                                                          RoundedRectangleBorder(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          5)),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 5),
+                                                      minimumSize:
+                                                          const Size(0, 0),
+                                                      tapTargetSize:
+                                                          MaterialTapTargetSize
+                                                              .shrinkWrap,
+                                                    ),
+                                                    child: Text(
+                                                      (lead.customerName
+                                                                  ?.isNotEmpty ??
+                                                              false)
+                                                          ? '${lead.customerName![0].toUpperCase()}${lead.customerName!.substring(1)}'
+                                                          : lead.customerName ??
+                                                              '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: const TextStyle(
+                                                        color: Colors.blue,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                               ),
-                                              color: Color(0xFF607185)),
-                                          TableWidget(
+                                            ),
+                                            TableWidget(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.0,
+                                                  horizontal: 8.0),
+                                              width: 150,
+                                              data: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    lead.contactNumber,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                    ),
+                                                  )),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Expanded(
+                    child: Scrollbar(
+                      controller: _horizontalScrollController,
+                      thumbVisibility: true,
+                      trackVisibility: true,
+                      interactive: true,
+                      child: SingleChildScrollView(
+                        controller: _horizontalScrollController,
+                        scrollDirection: Axis.horizontal,
+                        child: SizedBox(
+                          height: tableHeaderHeight + (rowHeight * 20),
+                          width: 1520,
+                          child: Column(
+                            children: [
+                              // Header row
+                              Container(
+                                height: tableHeaderHeight,
+                                decoration: const BoxDecoration(
+                                  color: const Color.fromARGB(255, 0, 90, 69),
+                                  borderRadius: BorderRadius.only(
+                                      topRight: Radius.circular(8),
+                                      bottomRight: Radius.circular(8)),
+                                ),
+                                child: const Row(
+                                  children: [
+                                    TableWidget(
+                                        width: 150,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Enquiry for',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFFFFFFF),
+                                            ),
+                                          ),
+                                        ),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 150,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Source',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFFFFFFF),
+                                            ),
+                                          ),
+                                        ),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 120,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Branch',
+                                            overflow: TextOverflow.ellipsis,
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFFFFFFF),
+                                            ),
+                                          ),
+                                        ),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 175,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Text('Status',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13)),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 375,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Text('Remark',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13)),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 150,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Text('Department',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13)),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 150,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Text('Assigned Staff',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13)),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 150,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Text('Follow-Up Date',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13)),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 100,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Text('Total',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 13)),
+                                        color: Color(0xFF607185)),
+                                  ],
+                                ),
+                              ),
+                              // Data rows
+                              Expanded(
+                                child: ListView.builder(
+                                  padding: EdgeInsets.zero,
+                                  controller: _scrollableVerticalController,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: leadProvider.leadData.length,
+                                  itemBuilder: (context, index) {
+                                    if (index >= leadProvider.leadData.length) {
+                                      return const SizedBox();
+                                    }
+                                    var lead = leadProvider.leadData[index];
+                                    return MouseRegion(
+                                      onEnter: (_) => setState(
+                                          () => _hoveredRowIndex = index),
+                                      onExit: (_) => setState(
+                                          () => _hoveredRowIndex = null),
+                                      child: Container(
+                                        height: rowHeight,
+                                        color: index % 2 == 0
+                                            ? Colors.white
+                                            : const Color(0xFFF6F7F9),
+                                        child: Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          children: [
+                                            TableWidget(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 6.0,
+                                                    horizontal: 8.0),
+                                                width: 150,
+                                                data: Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    lead.enquiryFor,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                )),
+                                            TableWidget(
                                               width: 150,
                                               padding: EdgeInsets.symmetric(
                                                   vertical: 6.0,
@@ -900,851 +1296,184 @@ class _LeadsPageState extends State<LeadPage> {
                                               data: Align(
                                                 alignment: Alignment.centerLeft,
                                                 child: Text(
-                                                  'Contact',
-                                                  style: TextStyle(
+                                                  '${lead.sourceCategoryName}${lead.referenceName.isNotEmpty ? ' - ${lead.referenceName}' : ''}',
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontSize: 12),
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.0,
+                                                  horizontal: 8.0),
+                                              width:
+                                                  120, // Reduced from 100 to match Header
+                                              data: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  lead.branchName,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
                                                     fontSize: 13,
-                                                    color: Color(0xFFFFFFFF),
                                                   ),
                                                 ),
                                               ),
-                                              color: Color(0xFF607185)),
-                                        ],
-                                      ),
-                                    ),
-
-                                    // Fixed Data Rows
-
-                                    Expanded(
-                                      child: leadProvider.leadData.isEmpty
-                                          ? const Center(
-                                              child: Text('No data available'))
-                                          : ListView.builder(
-                                              padding: EdgeInsets.zero,
-                                              controller:
-                                                  _fixedVerticalController,
-                                              physics:
-                                                  const AlwaysScrollableScrollPhysics(),
-                                              itemCount:
-                                                  leadProvider.leadData.length,
-                                              itemBuilder: (context, index) {
-                                                if (index >=
-                                                    leadProvider
-                                                        .leadData.length) {
-                                                  return const SizedBox();
-                                                }
-                                                var lead = leadProvider
-                                                    .leadData[index];
-                                                return MouseRegion(
-                                                  onEnter: (_) => setState(() =>
-                                                      _hoveredRowIndex = index),
-                                                  onExit: (_) => setState(() =>
-                                                      _hoveredRowIndex = null),
-                                                  child: Container(
-                                                    // height: 48, // Removed fixed height
-                                                    decoration: BoxDecoration(
-                                                      color: index % 2 == 0
-                                                          ? Colors.white
-                                                          : const Color(
-                                                              0xFFF6F7F9),
-                                                      // borderRadius:
-                                                      //     BorderRadius.circular(
-                                                      //         8),
-                                                    ),
-                                                    child: Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .center,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: _hoveredRowIndex ==
-                                                                    index
-                                                                ? const Color
-                                                                    .fromARGB(
-                                                                    255,
-                                                                    240,
-                                                                    237,
-                                                                    237)
-                                                                : null,
-                                                          ),
-                                                          width: 80,
-                                                          // Reduced from 80 to 60 -> Back to 80
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical:
-                                                                        6.0,
-                                                                    horizontal:
-                                                                        12.0),
-                                                            child: Center(
-                                                              child: Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(
-                                                                      ((index + 1) +
-                                                                              leadProvider
-                                                                                  .startLimit -
-                                                                              1)
-                                                                          .toString(),
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                      )),
-                                                                  if (lead.leadTypeId ==
-                                                                      UserStatusType
-                                                                          .hotLead
-                                                                          .value)
-                                                                    const Padding(
-                                                                      padding: EdgeInsets.only(
-                                                                          left:
-                                                                              4.0),
-                                                                      child: Text(
-                                                                          "⭐",
-                                                                          style:
-                                                                              TextStyle(fontSize: 10)),
-                                                                    )
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        SizedBox(
-                                                          width: 60,
-                                                          // Reduced from 80 to 60
-                                                          child: Padding(
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    vertical:
-                                                                        6.0,
-                                                                    horizontal:
-                                                                        8.0),
-                                                            child: Center(
-                                                              child: Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .center,
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(
-                                                                      lead.customerId
-                                                                          .toString(),
-                                                                      style:
-                                                                          const TextStyle()),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableWidget(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical: 6.0,
-                                                                  horizontal:
-                                                                      8.0),
-                                                          width: 110,
-                                                          data: Align(
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                            child: Text(
-                                                              "${_formatDateSafely(lead.entryDate)}",
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 12,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableWidget(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical: 6.0,
-                                                                  horizontal:
-                                                                      8.0),
-                                                          flex: 3,
-                                                          data: Align(
-                                                            alignment: Alignment
-                                                                .centerLeft,
-                                                            child: Tooltip(
-                                                              message: lead
-                                                                  .customerName,
-                                                              child:
-                                                                  GestureDetector(
-                                                                onTap: () {
-                                                                  setState(() {
-                                                                    viewProfile =
-                                                                        true;
-                                                                  });
-                                                                  leadProvider
-                                                                      .setCutomerId(
-                                                                          lead.customerId);
-                                                                  Scaffold.of(
-                                                                          context)
-                                                                      .openEndDrawer();
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  // width: 125,
-                                                                  child: Text(
-                                                                    (lead.customerName?.isNotEmpty ??
-                                                                            false)
-                                                                        ? '${lead.customerName![0].toUpperCase()}${lead.customerName!.substring(1)}'
-                                                                        : lead.customerName ??
-                                                                            '',
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      color: Colors
-                                                                          .blue,
-                                                                      fontSize:
-                                                                          13,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        TableWidget(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                                  vertical: 6.0,
-                                                                  horizontal:
-                                                                      8.0),
-                                                          width: 150,
-                                                          data: Align(
-                                                              alignment: Alignment
-                                                                  .centerLeft,
-                                                              child: Row(
-                                                                children: [
-                                                                  IconButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      leadProvider.convertLead(
-                                                                          context,
-                                                                          lead.customerId
-                                                                              .toString());
-                                                                    },
-                                                                    icon: const Icon(
-                                                                        Icons
-                                                                            .published_with_changes,
-                                                                        color: Colors
-                                                                            .green),
-                                                                    tooltip:
-                                                                        'Convert Lead',
-                                                                    padding:
-                                                                        EdgeInsets
-                                                                            .zero,
-                                                                    constraints:
-                                                                        const BoxConstraints(),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width: 5),
-                                                                  Expanded(
-                                                                    child: Text(
-                                                                      lead.contactNumber,
-                                                                      maxLines:
-                                                                          1,
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      style:
-                                                                          const TextStyle(
-                                                                        fontSize:
-                                                                            13,
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                ],
-                                                              )),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                );
-                                              },
                                             ),
-                                    ),
-                                  ],
-                                ),
-                              )),
-                          Expanded(
-                            child: Scrollbar(
-                              controller: _horizontalScrollController,
-                              thumbVisibility: true,
-                              trackVisibility: true,
-                              interactive: true,
-                              child: SingleChildScrollView(
-                                controller: _horizontalScrollController,
-                                scrollDirection: Axis.horizontal,
-                                child: SizedBox(
-                                  width:
-                                      1520, // Adjusted for fixed widths (Sum of all columns: 1520)
-                                  child: Column(
-                                    children: [
-                                      // Header row
-                                      Container(
-                                        // height: 48, // Removed fixed height
-                                        decoration: const BoxDecoration(
-                                          color: const Color.fromARGB(
-                                              255, 0, 90, 69),
-                                          borderRadius: BorderRadius.only(
-                                              topRight: Radius.circular(8),
-                                              bottomRight: Radius.circular(8)),
-                                        ),
-                                        child: const Row(
-                                          children: [
                                             TableWidget(
-                                                width: 150,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
+                                              width: 175,
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.0,
+                                                  horizontal: 8.0),
+                                              data: Tooltip(
+                                                message: lead.statusName,
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    context.push(
+                                                        '/customerDetails/${lead.customerId}/false');
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                    backgroundColor:
+                                                        AppColors.parseColor(
+                                                                lead.colorCode)
+                                                            .withOpacity(0.2),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                    minimumSize:
+                                                        const Size(0, 0),
+                                                    tapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                  ),
                                                   child: Text(
-                                                    'Enquiry for',
+                                                    lead.statusName,
+                                                    maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: TextStyle(
                                                       fontSize: 13,
-                                                      color: Color(0xFFFFFFFF),
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color:
+                                                          AppColors.parseColor(
+                                                              lead.colorCode),
                                                     ),
                                                   ),
                                                 ),
-                                                color: Color(0xFF607185)),
+                                              ),
+                                            ),
                                             TableWidget(
-                                                width: 150,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    'Source',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 13,
-                                                      color: Color(0xFFFFFFFF),
-                                                    ),
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.0,
+                                                  horizontal: 8.0),
+                                              width: 375,
+                                              data: Tooltip(
+                                                message: lead.remark,
+                                                child: Text(
+                                                  lead.remark,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                      fontSize: 13),
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              width: 150,
+                                              data: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: Text(
+                                                  lead.departmentName,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: const TextStyle(
+                                                    fontSize: 13,
                                                   ),
                                                 ),
-                                                color: Color(0xFF607185)),
+                                              ),
+                                            ),
                                             TableWidget(
-                                                width: 120,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Align(
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  child: Text(
-                                                    'Branch',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 13,
-                                                      color: Color(0xFFFFFFFF),
-                                                    ),
-                                                  ),
-                                                ),
-                                                color: Color(0xFF607185)),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              width: 150,
+                                              data: Text(
+                                                lead.toUserName,
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontSize: 13),
+                                              ),
+                                            ),
                                             TableWidget(
-                                                width: 175,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Text('Status',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 13)),
-                                                color: Color(0xFF607185)),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              width: 150,
+                                              data: Text(
+                                                lead.nextFollowUpDate
+                                                    .toDayMonthYearFormat(),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontSize: 13),
+                                              ),
+                                            ),
                                             TableWidget(
-                                                width: 375,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Text('Remark',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 13)),
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                width: 150,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Text('Department',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 13)),
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                width: 150,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Text('Assigned Staff',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 13)),
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                width: 150,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Text('Follow-Up Date',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 13)),
-                                                color: Color(0xFF607185)),
-                                            TableWidget(
-                                                width: 100,
-                                                padding: EdgeInsets.symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 8.0),
-                                                data: Text('Total',
-                                                    style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 13)),
-                                                color: Color(0xFF607185)),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                              width: 100,
+                                              data: Text(
+                                                lead.totalProjectCost
+                                                    .toString(),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                                style: const TextStyle(
+                                                    fontSize: 13),
+                                              ),
+                                            ),
                                           ],
                                         ),
                                       ),
-                                      // Data rows
-                                      Expanded(
-                                        child: ListView.builder(
-                                          padding: EdgeInsets.zero,
-                                          controller:
-                                              _scrollableVerticalController,
-                                          physics:
-                                              const AlwaysScrollableScrollPhysics(),
-                                          itemCount:
-                                              leadProvider.leadData.length,
-                                          itemBuilder: (context, index) {
-                                            if (index >=
-                                                leadProvider.leadData.length) {
-                                              return const SizedBox();
-                                            }
-                                            var lead =
-                                                leadProvider.leadData[index];
-                                            return MouseRegion(
-                                              onEnter: (_) => setState(() =>
-                                                  _hoveredRowIndex = index),
-                                              onExit: (_) => setState(() =>
-                                                  _hoveredRowIndex = null),
-                                              child: Container(
-                                                // height: 48, // Removed fixed height
-                                                color: index % 2 == 0
-                                                    ? Colors.white
-                                                    : const Color(0xFFF6F7F9),
-                                                child: Row(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.center,
-                                                  children: [
-                                                    TableWidget(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 6.0,
-                                                                horizontal:
-                                                                    8.0),
-                                                        width: 150,
-                                                        data: Align(
-                                                          alignment: Alignment
-                                                              .centerLeft,
-                                                          child: Text(
-                                                            lead.enquiryFor,
-                                                            maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style:
-                                                                const TextStyle(
-                                                              fontSize: 13,
-                                                            ),
-                                                          ),
-                                                        )),
-                                                    TableWidget(
-                                                      width: 150,
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 6.0,
-                                                              horizontal: 8.0),
-                                                      data: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                          '${lead.sourceCategoryName}${lead.referenceName.isNotEmpty ? ' - ${lead.referenceName}' : ''}',
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 12),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 6.0,
-                                                              horizontal: 8.0),
-                                                      width:
-                                                          120, // Reduced from 100 to match Header
-                                                      data: Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                          lead.branchName,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 13,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        setState(() {
-                                                          viewProfile = false;
-                                                          viewFollowUp = true;
-                                                        });
-                                                        try {
-                                                          final dropDownProvider =
-                                                              Provider.of<
-                                                                      DropDownProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
-                                                          dropDownProvider
-                                                                  .selectedStatusId =
-                                                              int.parse(lead
-                                                                  .statusId
-                                                                  .toString());
-                                                          leadProvider
-                                                                  .statusController
-                                                                  .text =
-                                                              lead.statusName;
-                                                          print(
-                                                              'status id ${lead.statusId}');
-                                                          print(
-                                                              'status name ${lead.statusName}');
-                                                          dropDownProvider
-                                                                  .selectedUserId =
-                                                              int.parse(lead
-                                                                  .toUserId
-                                                                  .toString());
-                                                          leadProvider
-                                                                  .searchUserController
-                                                                  .text =
-                                                              lead.toUserName;
-                                                          print(
-                                                              'assign to ${lead.toUserName}');
-                                                          print(
-                                                              'assign to id ${lead.toUserId}');
-                                                          leadProvider
-                                                              .setCutomerId(lead
-                                                                  .customerId);
-                                                          leadProvider
-                                                                  .branchController
-                                                                  .text =
-                                                              lead.branchName;
-                                                          settingsProvider
-                                                                  .selectedBranchId =
-                                                              lead.branchId;
-                                                          print(
-                                                              'branch ${lead.branchId}');
-                                                          print(
-                                                              'branch name ${lead.branchName}');
-                                                          leadProvider
-                                                                  .departmentController
-                                                                  .text =
-                                                              lead.departmentName;
-                                                          settingsProvider
-                                                                  .selectedDepartmentId =
-                                                              int.tryParse(lead
-                                                                      .departmentId
-                                                                      .toString()) ??
-                                                                  0;
-                                                          print(
-                                                              'department id ${lead.departmentId}');
-                                                          print(
-                                                              'department name ${lead.departmentName}');
-
-                                                          leadProvider
-                                                              .nextFollowUpDateController
-                                                              .text = lead
-                                                                  .nextFollowUpDate
-                                                                  .isNotEmpty
-                                                              ? _formatDateSafely(
-                                                                  lead.nextFollowUpDate)
-                                                              : '';
-                                                          leadProvider
-                                                              .messageController
-                                                              .clear();
-                                                          dropDownProvider
-                                                              .filterStaffByBranchAndDepartment(
-                                                            branchId:
-                                                                lead.branchId,
-                                                            departmentId:
-                                                                int.tryParse(lead
-                                                                        .departmentId
-                                                                        .toString()) ??
-                                                                    0,
-                                                          );
-                                                        } catch (e) {}
-                                                        Scaffold.of(context)
-                                                            .openEndDrawer();
-                                                      },
-                                                      child: TableWidget(
-                                                        width: 175,
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                                vertical: 6.0,
-                                                                horizontal:
-                                                                    8.0),
-                                                        data: Tooltip(
-                                                          message:
-                                                              lead.statusName,
-                                                          child: Text(
-                                                            lead.statusName,
-                                                            maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style: TextStyle(
-                                                              fontSize: 13,
-                                                              color: AppColors
-                                                                  .parseColor(lead
-                                                                      .colorCode),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                              vertical: 6.0,
-                                                              horizontal: 8.0),
-                                                      width: 375,
-                                                      data: Tooltip(
-                                                        message: lead.remark,
-                                                        child: Text(
-                                                          lead.remark,
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 13),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 6.0,
-                                                          horizontal: 8.0),
-                                                      width: 150,
-                                                      data: Text(
-                                                        lead.departmentName,
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontSize: 13),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 6.0,
-                                                          horizontal: 8.0),
-                                                      width: 150,
-                                                      data: Text(
-                                                        lead.toUserName,
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontSize: 13),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 6.0,
-                                                          horizontal: 8.0),
-                                                      width: 150,
-                                                      data: Text(
-                                                        lead.nextFollowUpDate
-                                                            .toDayMonthYearFormat(),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontSize: 13),
-                                                      ),
-                                                    ),
-                                                    TableWidget(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 6.0,
-                                                          horizontal: 8.0),
-                                                      width: 100,
-                                                      data: Text(
-                                                        lead.totalProjectCost
-                                                            .toString(),
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontSize: 13),
-                                                      ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                    );
+                                  },
                                 ),
                               ),
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                       ),
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
             ),
+            _buildPaginationControls(context),
           ],
         ),
       ),
-      bottomNavigationBar: _buildPaginationControls(context),
-      endDrawer: viewProfile
-          ? LeadDetailsWidget(
-              onEditPressed: () async {},
-              onFollowUpPressed: () async {
-                Navigator.pop(context);
-
-                // leadProvider.statusController.clear();
-                // leadProvider.assignToFollowUpController.clear();
-                // leadProvider.nextFollowUpDateController.clear();
-                // leadProvider.messageController.clear();
-                // final dropDownProvider =
-                //     Provider.of<DropDownProvider>(context, listen: false);
-                // dropDownProvider.selectedStatusId = null;
-                // dropDownProvider.selectedUserId = null;
-                // Future.delayed(const Duration(milliseconds: 0), () async {
-                //   setState(() {
-                //     viewProfile = false;
-                //     viewFollowUp = true;
-                //   });
-                //   await loadExistingAudioFiles(
-                //       leadDetailsProvider.leadDetails![0].audioFiles);
-                //   dropDownProvider.selectedStatusId = int.parse(
-                //       leadDetailsProvider.leadDetails![0].statusId.toString());
-                //   dropDownProvider.selectedUserId = int.parse(
-                //       leadDetailsProvider.leadDetails![0].toUserId.toString());
-                //   settingsProvider.selectedBranchId = int.parse(
-                //       leadDetailsProvider.leadDetails![0].branchId.toString());
-
-                //   leadProvider.setCutomerId(
-                //       leadDetailsProvider.leadDetails![0].customerId);
-                //   leadProvider.statusController.text =
-                //       leadDetailsProvider.leadDetails![0].statusName;
-
-                //   leadProvider.searchUserController.text =
-                //       leadDetailsProvider.leadDetails![0].toUserName;
-                //   dropDownProvider.setSelectedUserId(
-                //       leadDetailsProvider.leadDetails![0].toUserId);
-                //   dropDownProvider.filterStaffByBranchAndDepartment(
-                //     branchId: settingsProvider.selectedBranchId,
-                //     departmentId:
-                //         leadDetailsProvider.leadDetails![0].departmentId,
-                //   );
-                //   leadProvider.nextFollowUpDateController.text = leadProvider
-                //           .leadData[0].nextFollowUpDate.isNotEmpty
-                //       ? DateFormat('dd MMM yyyy').format(DateTime.parse(
-                //           leadDetailsProvider.leadDetails![0].nextFollowUpDate))
-                //       : '';
-                //   _scaffoldKey.currentState?.openEndDrawer();
-                // });
-                Future.delayed(const Duration(milliseconds: 0), () async {
-                  setState(() {
-                    viewProfile = false;
-                    viewFollowUp = true;
-                  });
-                  var lead = leadDetailsProvider.leadDetails![0];
-                  final dropDownProvider =
-                      Provider.of<DropDownProvider>(context, listen: false);
-                  dropDownProvider.selectedStatusId =
-                      int.parse(lead.statusId.toString());
-                  leadProvider.statusController.text = lead.statusName;
-                  print('status id ${lead.statusId}');
-                  print('status name ${lead.statusName}');
-                  dropDownProvider.selectedUserId =
-                      int.parse(lead.toUserId.toString());
-                  leadProvider.searchUserController.text = lead.toUserName;
-                  print('assign to ${lead.toUserName}');
-                  print('assign to id ${lead.toUserId}');
-                  leadProvider.setCutomerId(lead.customerId);
-                  leadProvider.branchController.text = lead.branchName;
-                  settingsProvider.selectedBranchId = lead.branchId;
-                  print('branch ${lead.branchId}');
-                  print('branch name ${lead.branchName}');
-                  leadProvider.departmentController.text = lead.departmentName;
-                  settingsProvider.selectedDepartmentId =
-                      int.tryParse(lead.departmentId.toString()) ?? 0;
-                  print('department id ${lead.departmentId}');
-                  print('department name ${lead.departmentName}');
-
-                  leadProvider.nextFollowUpDateController.text =
-                      lead.nextFollowUpDate.isNotEmpty
-                          ? _formatDateSafely(lead.nextFollowUpDate)
-                          : '';
-                  leadProvider.messageController.clear();
-                  dropDownProvider.filterStaffByBranchAndDepartment(
-                    branchId: lead.branchId,
-                    departmentId:
-                        int.tryParse(lead.departmentId.toString()) ?? 0,
-                  );
-                  _scaffoldKey.currentState?.openEndDrawer();
-                });
-              },
-              customerId: leadProvider.customerId.toString(),
-            )
-          : const AddFollowupDrawerWidget(),
     );
   }
 
