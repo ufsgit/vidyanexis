@@ -367,7 +367,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                           ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20.0, vertical: 10),
+                              horizontal: 20.0, vertical: 0),
                           color: Colors.white,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
@@ -3771,11 +3771,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildHeaderCell('#', width: 50.0),
-                            _buildHeaderCell('Tasks', flex: 3),
+                            _buildHeaderCell('Tasks', flex: 2),
                             _buildHeaderCell('Action Required', flex: 3),
                             _buildHeaderCell('Schedule', flex: 2),
                             _buildHeaderCell('Created Date', flex: 2),
-                            _buildHeaderCell('Status', flex: 2),
+                            _buildHeaderCell('Status', flex: 1),
                             _buildHeaderCell('Options', flex: 1),
                           ],
                         ),
@@ -3822,7 +3822,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     _buildDataCell((index + 1).toString(),
                                         width: 50.0),
                                     _buildDataCell(task.taskTypeName,
-                                        flex: 3, isBold: true),
+                                        flex: 2, isBold: true),
                                     _buildWidgetCell(
                                       flex: 3,
                                       child: Builder(builder: (context) {
@@ -3904,7 +3904,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                             : '',
                                         flex: 2),
                                     _buildWidgetCell(
-                                      flex: 2,
+                                      flex: 1,
                                       child: Align(
                                         alignment: Alignment.centerLeft,
                                         child: Container(
@@ -4106,7 +4106,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     return Expanded(
       flex: flex,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
         decoration: const BoxDecoration(
           color: Colors.white,
           border: Border(

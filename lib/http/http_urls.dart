@@ -4,13 +4,13 @@ class HttpUrls {
   // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
 //  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
-  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
-  // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
+  static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
-
+  //  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
 //dev\
   // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 

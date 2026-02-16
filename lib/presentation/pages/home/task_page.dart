@@ -1471,31 +1471,17 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                     }
                                                   },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFE9EDF1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                    ),
-                                                    child: Text(
-                                                      task.customerName ??
-                                                          'Unknown',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: const TextStyle(
-                                                        color:
-                                                            Color(0xFF0F172A),
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 12,
-                                                      ),
+                                                  child: Text(
+                                                    task.customerName ??
+                                                        'Unknown',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      color: Colors.blue,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 12,
                                                     ),
                                                   ),
                                                 ),
@@ -1635,23 +1621,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       }
                                                     }
                                                   },
-                                                  child: Container(
+                                                  child: Padding(
                                                     padding: const EdgeInsets
                                                         .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: (task.colorCode ??
-                                                              Colors.black)
-                                                          .withOpacity(0.1)
-                                                          .withAlpha(30),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
-                                                      border: Border.all(
-                                                          color: Colors.black45,
-                                                          width: 0.1),
-                                                    ),
+                                                        horizontal: 4.0),
                                                     child: Text(
                                                       task.taskStatusName ?? '',
                                                       overflow:
@@ -1662,7 +1635,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             Colors.black,
                                                         fontWeight:
                                                             FontWeight.w600,
-                                                        fontSize: 11,
+                                                        fontSize: 12,
                                                       ),
                                                     ),
                                                   ),
@@ -1850,7 +1823,7 @@ class _tasksPageReportState extends State<TaskPage> {
         : (currentPage * pageSize);
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 6),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
