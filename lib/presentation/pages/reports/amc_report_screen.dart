@@ -972,114 +972,123 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                       ),
                     ),
             AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                                color: Color(0xFF607185))),
+                ? // Expanded(
+                // child:
+                SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width < 1400
+                          ? 1400
+                          : MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                // Header Row (Table Column Titles)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEFF2F5),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 80,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 12.0, horizontal: 25.0),
+                                          child: Text('No.',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  fontSize: 14,
+                                                  color: Color(0xFF607185))),
+                                        ),
                                       ),
-                                    ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Customer Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Address',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Phone',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 1,
-                                    //     title: 'Mobile',
-                                    //     color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 2,
-                                    //     title: 'Address',
-                                    //     color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Description',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'AMC Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'From Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'To Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Product Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Amount',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Status',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Service',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'View Details',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                  ],
+                                      TableWidget(
+                                          flex: 2,
+                                          title: 'Customer Name',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 2,
+                                          title: 'Address',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Phone',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      // TableWidget(
+                                      //     flex: 1,
+                                      //     title: 'Mobile',
+                                      //     color: Color(0xFF607185)),
+                                      // TableWidget(
+                                      //     flex: 2,
+                                      //     title: 'Address',
+                                      //     color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 2,
+                                          title: 'Description',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 2,
+                                          title: 'AMC Date',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'From Date',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'To Date',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Product Name',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Amount',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Status',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Service',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'View Details',
+                                          fontSize: 14,
+                                          color: Color(0xFF607185)),
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
+                                // Data Rows
+                                // Expanded(
+                                //   child:
+                                ListView.builder(
                                   shrinkWrap:
                                       true, // To avoid scrolling issues when inside a parent widget
                                   physics:
@@ -1347,28 +1356,35 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     );
                                   },
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
                   )
-                : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
+                : // Expanded(
+                // child:
+                SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Container(
+                      width: MediaQuery.of(context).size.width < 1400
+                          ? 1400
+                          : MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                // Data Rows
+                                // Data Rows
+                                ListView.builder(
                                   shrinkWrap:
                                       true, // To avoid scrolling issues when inside a parent widget
                                   physics:
@@ -1610,13 +1626,15 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     );
                                   },
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  )
+                  ),
+            // ),
+            // ),
           ],
         ),
       ),

@@ -5,24 +5,13 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
-import 'package:vidyanexis/controller/models/search_leads_model.dart';
-import 'package:vidyanexis/controller/reports_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
@@ -525,246 +514,238 @@ class _leadReportMobile extends State<LeadReportMobile> {
                     ],
                   ),
                 ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          height: 2,
-                          color: AppColors.grey,
-                        );
-                      },
-                      shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: leadReportProvider
-                          .leadReportData.length, // Number of leads
-                      itemBuilder: (context, index) {
-                        var lead = leadReportProvider.leadReportData[index];
+            SingleChildScrollView(
+              child: Column(
+                children: [
+                  ListView.separated(
+                    separatorBuilder: (context, index) {
+                      return Divider(
+                        height: 2,
+                        color: AppColors.grey,
+                      );
+                    },
+                    shrinkWrap: true,
+                    physics: const ClampingScrollPhysics(),
+                    itemCount: leadReportProvider
+                        .leadReportData.length, // Number of leads
+                    itemBuilder: (context, index) {
+                      var lead = leadReportProvider.leadReportData[index];
 
-                        return InkWell(
-                          child: Container(
-                            width: MediaQuery.sizeOf(context).width,
-                            decoration:
-                                BoxDecoration(color: AppColors.whiteColor),
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                          height: 42,
-                                          width: 3,
-                                          decoration: BoxDecoration(
-                                              color: getAvatarColor(
-                                                  lead.statusName),
-                                              borderRadius:
-                                                  BorderRadius.circular(16))),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      Expanded(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            InkWell(
-                                              onTap: () {
-                                                print("object");
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        CustomerDetailPageMobile(
-                                                      customerId:
-                                                          lead.customerId,
-                                                      fromLead: false,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                lead.customerName + ' >',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColors.bluebutton,
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  decorationColor:
-                                                      AppColors.bluebutton,
+                      return InkWell(
+                        child: Container(
+                          width: MediaQuery.sizeOf(context).width,
+                          decoration:
+                              BoxDecoration(color: AppColors.whiteColor),
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            child: Column(
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                        height: 42,
+                                        width: 3,
+                                        decoration: BoxDecoration(
+                                            color:
+                                                getAvatarColor(lead.statusName),
+                                            borderRadius:
+                                                BorderRadius.circular(16))),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    // Expanded(
+                                    //   child:
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        InkWell(
+                                          onTap: () {
+                                            print("object");
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (context) =>
+                                                    CustomerDetailPageMobile(
+                                                  customerId: lead.customerId,
+                                                  fromLead: false,
                                                 ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
                                               ),
+                                            );
+                                          },
+                                          child: Text(
+                                            lead.customerName + ' >',
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.bluebutton,
+                                              decoration:
+                                                  TextDecoration.underline,
+                                              decorationColor:
+                                                  AppColors.bluebutton,
                                             ),
-                                            Text(
-                                              lead.contactNumber,
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
+                                        Text(
+                                          lead.contactNumber,
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textBlack),
+                                        ),
+                                      ],
+                                      // ),
+                                    ),
+                                    Container(
+                                        height: 22,
+                                        decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(30),
+                                            color:
+                                                getAvatarColor(lead.statusName)
+                                                    .withOpacity(.15)),
+                                        child: Center(
+                                          child: Padding(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 2),
+                                            child: Text(
+                                              lead.statusName,
                                               style:
                                                   GoogleFonts.plusJakartaSans(
-                                                      fontSize: 16,
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w500,
+                                                color: getAvatarColor(
+                                                    lead.statusName),
+                                              ),
+                                            ),
+                                          ),
+                                        )),
+                                  ],
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                Align(
+                                  alignment: Alignment.topLeft,
+                                  child: Text(
+                                    lead.description,
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColors.textBlack),
+                                  ),
+                                ),
+                                const SizedBox(
+                                  height: 12,
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      height: 22,
+                                      decoration: BoxDecoration(
+                                          color: AppColors.scaffoldColor,
+                                          border:
+                                              Border.all(color: AppColors.grey),
+                                          borderRadius:
+                                              BorderRadius.circular(6)),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 6,
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            Icon(
+                                              Icons.calendar_month_outlined,
+                                              size: 16,
+                                              color: AppColors.textGrey3,
+                                            ),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            Text(
+                                              lead.nextFollowUpDate
+                                                  .toString()
+                                                  .toFormattedDate(),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                      fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color:
-                                                          AppColors.textBlack),
+                                                          AppColors.textGrey3),
+                                            ),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            Text(
+                                              ' - ${lead.toUserName}',
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color:
+                                                          AppColors.textGrey3),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                          height: 22,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                              color: getAvatarColor(
-                                                      lead.statusName)
-                                                  .withOpacity(.15)),
-                                          child: Center(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 2),
-                                              child: Text(
-                                                lead.statusName,
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: getAvatarColor(
-                                                      lead.statusName),
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      lead.description,
+                                    ),
+                                    // Padding(
+                                    //   padding:
+                                    //       const EdgeInsets.symmetric(horizontal: 5),
+                                    //   child: Text(
+                                    //     '•',
+                                    //     style: GoogleFonts.plusJakartaSans(
+                                    //         fontSize: 10,
+                                    //         fontWeight: FontWeight.w500,
+                                    //         color: AppColors.textGrey3),
+                                    //   ),
+                                    // ),
+                                    // Container(
+                                    //   height: 20,
+                                    //   width: 20,
+                                    //   decoration: BoxDecoration(
+                                    //       borderRadius: BorderRadius.circular(100),
+                                    //       color: AppColors.textRed),
+                                    // ),
+                                    // const SizedBox(width: 4),
+                                    // Text(
+                                    //   'David',
+                                    //   style: GoogleFonts.plusJakartaSans(
+                                    //       fontSize: 14,
+                                    //       fontWeight: FontWeight.w500,
+                                    //       color: AppColors.textGrey3),
+                                    // ),
+                                    const Spacer(),
+                                    Text(
+                                      lead.entryDate.toString().toTimeAgo(),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                       style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.textBlack),
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColors.textGrey3),
                                     ),
-                                  ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        height: 22,
-                                        decoration: BoxDecoration(
-                                            color: AppColors.scaffoldColor,
-                                            border: Border.all(
-                                                color: AppColors.grey),
-                                            borderRadius:
-                                                BorderRadius.circular(6)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 6,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.calendar_month_outlined,
-                                                size: 16,
-                                                color: AppColors.textGrey3,
-                                              ),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                              Text(
-                                                lead.nextFollowUpDate
-                                                    .toString()
-                                                    .toFormattedDate(),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: AppColors
-                                                            .textGrey3),
-                                              ),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                              Text(
-                                                ' - ${lead.toUserName}',
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: AppColors
-                                                            .textGrey3),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                      // Padding(
-                                      //   padding:
-                                      //       const EdgeInsets.symmetric(horizontal: 5),
-                                      //   child: Text(
-                                      //     '•',
-                                      //     style: GoogleFonts.plusJakartaSans(
-                                      //         fontSize: 10,
-                                      //         fontWeight: FontWeight.w500,
-                                      //         color: AppColors.textGrey3),
-                                      //   ),
-                                      // ),
-                                      // Container(
-                                      //   height: 20,
-                                      //   width: 20,
-                                      //   decoration: BoxDecoration(
-                                      //       borderRadius: BorderRadius.circular(100),
-                                      //       color: AppColors.textRed),
-                                      // ),
-                                      // const SizedBox(width: 4),
-                                      // Text(
-                                      //   'David',
-                                      //   style: GoogleFonts.plusJakartaSans(
-                                      //       fontSize: 14,
-                                      //       fontWeight: FontWeight.w500,
-                                      //       color: AppColors.textGrey3),
-                                      // ),
-                                      const Spacer(),
-                                      Text(
-                                        lead.entryDate.toString().toTimeAgo(),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textGrey3),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
+                                  ],
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      },
-                    )
-                  ],
-                ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ],
