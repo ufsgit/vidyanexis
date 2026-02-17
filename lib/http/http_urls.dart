@@ -11,10 +11,10 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   //  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-  static String baseUrl = 'https://demo3api.trackbox.net.in/';
+  // static String baseUrl = 'https://demo3api.trackbox.net.in/';
 
 //dev
-  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
