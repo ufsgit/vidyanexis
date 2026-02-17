@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
@@ -34,6 +35,7 @@ class AddEnquiryFor extends StatefulWidget {
 
 class _AddEnquiryForState extends State<AddEnquiryFor> {
   List<Map<String, dynamic>> selectedFields = [];
+  List<Map<String, dynamic>> selectedTaskTypes = [];
 
   String? validateInputs(
       BuildContext context, SettingsProvider settingsProvider) {
@@ -378,13 +380,141 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
     );
   }
 
+  void _showTaskTypeDialog() {
+    SettingsProvider settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setStateDialog) {
+            return AlertDialog(
+              backgroundColor: Colors.white,
+              title: const Text('Select Task Types'),
+              content: SizedBox(
+                width: AppStyles.isWebScreen(context)
+                    ? MediaQuery.of(context).size.width / 3
+                    : MediaQuery.of(context).size.width * 0.9,
+                height: MediaQuery.of(context).size.height * 0.6,
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: settingsProvider.taskType.length,
+                  itemBuilder: (context, index) {
+                    final task = settingsProvider.taskType[index];
+                    bool isSelected = selectedTaskTypes
+                        .any((e) => e['task_type_id'] == task.taskTypeId);
+
+                    return InkWell(
+                      onTap: () {
+                        setStateDialog(() {
+                          if (isSelected) {
+                            selectedTaskTypes.removeWhere(
+                                (e) => e['task_type_id'] == task.taskTypeId);
+                          } else {
+                            selectedTaskTypes.add({
+                              "task_type_id": task.taskTypeId,
+                              "task_type_name": task.taskTypeName,
+                            });
+                          }
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        padding: const EdgeInsets.all(12),
+                        margin: const EdgeInsets.symmetric(
+                            vertical: 6, horizontal: 4),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: isSelected
+                              ? Colors.green.shade50
+                              : Colors.grey.shade50,
+                          border: Border.all(
+                            color: isSelected
+                                ? Colors.green.shade400
+                                : Colors.grey.shade300,
+                            width: isSelected ? 2 : 1,
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 20,
+                              height: 20,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: isSelected
+                                    ? Colors.green.shade400
+                                    : Colors.transparent,
+                                border: Border.all(
+                                  color: isSelected
+                                      ? Colors.green.shade400
+                                      : Colors.grey.shade400,
+                                  width: 2,
+                                ),
+                              ),
+                              child: isSelected
+                                  ? const Icon(
+                                      Icons.check,
+                                      size: 14,
+                                      color: Colors.white,
+                                    )
+                                  : null,
+                            ),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                task.taskTypeName,
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: isSelected
+                                      ? Colors.green.shade700
+                                      : Colors.black87,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text('Cancel',
+                      style: TextStyle(color: Colors.grey.shade600)),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    setState(() {});
+                    Navigator.pop(context);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppColors.appViolet,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: const Text('Done'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
-    if (widget.isEdit) {
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        final settingsProvider =
-            Provider.of<SettingsProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      settingsProvider.searchTaskType('', context);
+      if (widget.isEdit) {
         settingsProvider.enquiryForController.text = widget.status;
         settingsProvider.sourceCategoryEnquiryController.text =
             widget.sourceName;
@@ -408,13 +538,19 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
             }).toList();
           });
         }
-      });
-    } else {
-      final settingsProvider =
-          Provider.of<SettingsProvider>(context, listen: false);
-      settingsProvider.sourceCategoryEnquiryController.clear();
-      settingsProvider.setSourceId(0);
-    }
+        // Load existing task types if editing
+        if (widget.data?.taskTypes != null) {
+          setState(() {
+            selectedTaskTypes = widget.data!.taskTypes!
+                .map((e) => Map<String, dynamic>.from(e))
+                .toList();
+          });
+        }
+      } else {
+        settingsProvider.sourceCategoryEnquiryController.clear();
+        settingsProvider.setSourceId(0);
+      }
+    });
   }
 
   @override
@@ -506,19 +642,86 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                 ],
               ),
               const SizedBox(height: 10),
-              GestureDetector(
-                onTap: _showCustomFieldDialog,
-                child: AbsorbPointer(
-                  child: CustomTextField(
-                    readOnly: true,
-                    controller: TextEditingController(),
-                    height: 54,
-                    hintText: 'Custom Field',
-                    labelText: '',
-                    suffixIcon: const Icon(Icons.keyboard_arrow_down),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _showCustomFieldDialog,
+                      child: AbsorbPointer(
+                        child: CustomTextField(
+                          readOnly: true,
+                          controller: TextEditingController(),
+                          height: 54,
+                          hintText: 'Custom Field',
+                          labelText: '',
+                          suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  Expanded(
+                    child: GestureDetector(
+                      onTap: _showTaskTypeDialog,
+                      child: AbsorbPointer(
+                        child: CustomTextField(
+                          readOnly: true,
+                          controller: TextEditingController(),
+                          height: 54,
+                          hintText: 'Task Type',
+                          labelText: '',
+                          suffixIcon: const Icon(Icons.keyboard_arrow_down),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              if (selectedTaskTypes.isNotEmpty) ...[
+                const SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: Colors.green.shade50.withOpacity(0.3),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: Colors.green.shade200),
+                  ),
+                  child: Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: selectedTaskTypes.asMap().entries.map((entry) {
+                      final idx = entry.key;
+                      final task = entry.value;
+                      return Chip(
+                        label: Text(
+                          task['task_type_name'],
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                          ),
+                        ),
+                        backgroundColor: Colors.green.shade600,
+                        deleteIcon: const Icon(Icons.close,
+                            size: 14, color: Colors.white),
+                        onDeleted: () {
+                          setState(() {
+                            selectedTaskTypes.removeAt(idx);
+                          });
+                        },
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      );
+                    }).toList(),
                   ),
                 ),
-              ),
+              ],
+              const SizedBox(height: 10),
               if (selectedFields.isNotEmpty) ...[
                 const SizedBox(height: 10),
                 // Improved selected fields display with better mobile layout
@@ -628,9 +831,11 @@ class _AddEnquiryForState extends State<AddEnquiryFor> {
                     forId: widget.editId,
                     forName: settingsProvider.enquiryForController.text,
                     customFields: selectedFields,
+                    taskTypes: selectedTaskTypes,
                   );
                   setState(() {
                     selectedFields.clear();
+                    selectedTaskTypes.clear();
                   });
                 },
                 backgroundColor: AppColors.appViolet,
