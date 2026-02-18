@@ -85,6 +85,8 @@ class GetQuotationbyMasterIdmodel {
   final String description2;
   final String description3;
   final int branchId;
+  final String leadBranchName;
+  final BranchDetails? branchDetails;
 
   GetQuotationbyMasterIdmodel({
     required this.quotationMasterId,
@@ -157,6 +159,8 @@ class GetQuotationbyMasterIdmodel {
     required this.description2,
     required this.description3,
     required this.branchId,
+    required this.leadBranchName,
+    this.branchDetails,
   });
 
   factory GetQuotationbyMasterIdmodel.fromJson(Map<String, dynamic> json) {
@@ -242,6 +246,63 @@ class GetQuotationbyMasterIdmodel {
       description2: toStr(json['Description_2']),
       description3: toStr(json['Description_3']),
       branchId: toInt(json['Branch_Id']),
+      leadBranchName: toStr(json['LeadBranchName']),
+      branchDetails: json['branch_details'] != null
+          ? BranchDetails.fromJson(json['branch_details'])
+          : null,
+    );
+  }
+}
+
+class BranchDetails {
+  final int branchId;
+  final String branchName;
+  final String logo;
+  final String email;
+  final String phone;
+  final String gstNo;
+  final String address;
+  final String pincode;
+  final String bankName;
+  final String ifscCode;
+  final String panCardNo;
+  final String contactPerson;
+  final String bankAccountNo;
+  final String bankHolderName;
+
+  BranchDetails({
+    required this.branchId,
+    required this.branchName,
+    required this.logo,
+    required this.email,
+    required this.phone,
+    required this.gstNo,
+    required this.address,
+    required this.pincode,
+    required this.bankName,
+    required this.ifscCode,
+    required this.panCardNo,
+    required this.contactPerson,
+    required this.bankAccountNo,
+    required this.bankHolderName,
+  });
+
+  factory BranchDetails.fromJson(Map<String, dynamic> json) {
+    return BranchDetails(
+      branchId: toInt(json['Branch_Id']),
+      branchName: toStr(json['Branch_Name']),
+      logo: toStr(json['logo']),
+      email: toStr(json['email']),
+      phone: toStr(json['phone']),
+      gstNo: toStr(json['gst_no']),
+      address: toStr(json['address']),
+      pincode: toStr(json['pincode']),
+      bankName: toStr(json['bank_name']),
+      ifscCode: toStr(json['ifsc_code']),
+      panCardNo: toStr(json['pan_card_no']),
+      contactPerson: toStr(json['contact_person']),
+      bankAccountNo: toStr(json['bank_account_no']),
+      bankHolderName: toStr(json['bank_holder_name']),
     );
   }
 }
