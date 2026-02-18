@@ -369,79 +369,76 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
           borderColor: AppColors.appViolet,
           textColor: AppColors.appViolet,
         ),
-        CustomElevatedButton(
-          buttonText: isCheckedIn
-              ? 'Check Out'
-              : (attendanceProvider.isCompletedToday
-                  ? 'Attendance Completed'
-                  : 'Check In'),
-          onPressed: () async {
-            if (!isCheckedIn && attendanceProvider.isCompletedToday) {
-              return; // Already completed today
-            }
-            final validationErrorBeforeRetry =
-                validateInputs(context, attendanceProvider);
-            if (validationErrorBeforeRetry != null) {
-              dev.log('First validation failed, retrying user detection...',
-                  name: 'AddAttendance');
-              await _initUserData();
-              final validationErrorAfterRetry =
+        if (!isCheckedIn && attendanceProvider.isCompletedToday)
+          Padding(
+            padding: const EdgeInsets.only(right: 15.0),
+            child: Text(
+              'Attendance Completed',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 14,
+                fontWeight: FontWeight.bold,
+                color: AppColors.btnRed,
+              ),
+            ),
+          )
+        else
+          CustomElevatedButton(
+            buttonText: isCheckedIn ? 'Check Out' : 'Check In',
+            onPressed: () async {
+              final validationErrorBeforeRetry =
                   validateInputs(context, attendanceProvider);
-              if (validationErrorAfterRetry != null) {
-                showErrorDialog(context, validationErrorAfterRetry);
-                return;
+              if (validationErrorBeforeRetry != null) {
+                dev.log('First validation failed, retrying user detection...',
+                    name: 'AddAttendance');
+                await _initUserData();
+                final validationErrorAfterRetry =
+                    validateInputs(context, attendanceProvider);
+                if (validationErrorAfterRetry != null) {
+                  showErrorDialog(context, validationErrorAfterRetry);
+                  return;
+                }
               }
-            }
-            String employeeCode = "";
-            try {
-              if (dropDownProvider.selectedUserId != null) {
-                final user = dropDownProvider.searchUserDetails.firstWhere(
-                  (u) => u.userDetailsId == dropDownProvider.selectedUserId,
+              String employeeCode = "";
+              try {
+                if (dropDownProvider.selectedUserId != null) {
+                  final user = dropDownProvider.searchUserDetails.firstWhere(
+                    (u) => u.userDetailsId == dropDownProvider.selectedUserId,
+                  );
+                  employeeCode = user.empCode ?? "";
+                }
+              } catch (_) {}
+
+              await attendanceProvider.getLocation(context: context);
+
+              bool success = false;
+              if (isCheckedIn) {
+                success = await attendanceProvider.saveAttendance(
+                  dropDownProvider.selectedUserId ?? 0,
+                  context,
+                  checkOutTime: DateTime.now().toString(),
+                  employeeCode: employeeCode,
+                  closeOnSuccess: true,
                 );
-                employeeCode = user.empCode ?? "";
+              } else {
+                success = await attendanceProvider.saveAttendance(
+                  dropDownProvider.selectedUserId ?? 0,
+                  context,
+                  checkInTime: DateTime.now().toString(),
+                  employeeCode: employeeCode,
+                  closeOnSuccess: false,
+                );
+                if (success) {
+                  setState(() {
+                    isCheckedIn = true;
+                  });
+                }
               }
-            } catch (_) {}
-
-            await attendanceProvider.getLocation(context: context);
-
-            bool success = false;
-            if (isCheckedIn) {
-              success = await attendanceProvider.saveAttendance(
-                dropDownProvider.selectedUserId ?? 0,
-                context,
-                checkOutTime: DateTime.now().toString(),
-                employeeCode: employeeCode,
-                closeOnSuccess: true,
-              );
-            } else {
-              success = await attendanceProvider.saveAttendance(
-                dropDownProvider.selectedUserId ?? 0,
-                context,
-                checkInTime: DateTime.now().toString(),
-                employeeCode: employeeCode,
-                closeOnSuccess: false,
-              );
-              if (success) {
-                setState(() {
-                  isCheckedIn = true;
-                });
-              }
-            }
-          },
-          backgroundColor: isCheckedIn
-              ? AppColors.btnRed
-              : (attendanceProvider.isCompletedToday
-                  ? AppColors.grey
-                  : AppColors.bluebutton),
-          borderColor: isCheckedIn
-              ? AppColors.btnRed
-              : (attendanceProvider.isCompletedToday
-                  ? AppColors.grey
-                  : AppColors.bluebutton),
-          textColor: (!isCheckedIn && attendanceProvider.isCompletedToday)
-              ? AppColors.textRed
-              : AppColors.whiteColor,
-        ),
+            },
+            backgroundColor:
+                isCheckedIn ? AppColors.btnRed : AppColors.bluebutton,
+            borderColor: isCheckedIn ? AppColors.btnRed : AppColors.bluebutton,
+            textColor: AppColors.whiteColor,
+          ),
       ],
     );
   }
