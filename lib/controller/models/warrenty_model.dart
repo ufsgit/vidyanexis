@@ -37,6 +37,10 @@ class WarrentyModel {
   final String registrationNo;
   final String installationDate;
   final String expiryDate;
+  final String district;
+  final String company;
+  final String projectName;
+  final String serviceName;
 
   WarrentyModel({
     required this.customerId,
@@ -77,6 +81,10 @@ class WarrentyModel {
     required this.registrationNo,
     required this.installationDate,
     required this.expiryDate,
+    required this.district,
+    required this.company,
+    this.projectName = "",
+    this.serviceName = "",
   });
 
   /// Convert JSON to Model (Ensuring Everything is a String)
@@ -87,7 +95,8 @@ class WarrentyModel {
       contactNumber: json['Contact_Number']?.toString() ?? "",
       contactPerson: json['Contact_Person']?.toString() ?? "",
       email: json['Email']?.toString() ?? "",
-      address1: json['Address1']?.toString() ?? "",
+      address1:
+          json['Address1']?.toString() ?? json['address']?.toString() ?? "",
       address2: json['Address2']?.toString() ?? "",
       address3: json['Address3']?.toString() ?? "",
       address4: json['Address4']?.toString() ?? "",
@@ -118,8 +127,17 @@ class WarrentyModel {
       registeredBy: json['Registered_By']?.toString() ?? "",
       registeredDate: json['Registered_Date']?.toString() ?? "",
       registrationNo: json['Registration_No']?.toString() ?? "",
-      installationDate: json['Installation_Date']?.toString() ?? "",
-      expiryDate: json['Expiry_Date']?.toString() ?? "",
+      installationDate: json['Installation_Date']?.toString() ??
+          json['From_Date']?.toString() ??
+          "",
+      expiryDate: json['Expiry_Date']?.toString() ??
+          json['Warranty_End_Date']?.toString() ??
+          "",
+      district:
+          json['District']?.toString() ?? json['District_Id']?.toString() ?? "",
+      company: json['Company']?.toString() ?? "",
+      projectName: json['Project_Name']?.toString() ?? "",
+      serviceName: json['Service_Name']?.toString() ?? "",
     );
   }
 
@@ -162,6 +180,10 @@ class WarrentyModel {
       "Registered_By": registeredBy,
       "Registered_Date": registeredDate,
       "Registration_No": registrationNo,
+      "District": district,
+      "Company": company,
+      "Project_Name": projectName,
+      "Service_Name": serviceName,
     };
   }
 }

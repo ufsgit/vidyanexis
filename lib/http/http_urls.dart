@@ -10,11 +10,11 @@ class HttpUrls {
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
-  //  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
+  // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
   // static String baseUrl = 'https://demo3api.trackbox.net.in/';
 
 //dev
-  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -168,6 +168,7 @@ class HttpUrls {
   static String deleteProjectType = "project/Delete_Project_Type";
 
   // Expense Tab Endpoints
+  static String getExpenseReport = "service/Get_Expense_Report";
   static String saveExpense = "service/Save_expense";
   static String getExpenseByCustomer = "service/Get_Expense_By_Customer";
   static String deleteExpense = "service/Delete_Expense";
@@ -177,6 +178,11 @@ class HttpUrls {
   static String getInvoiceList = "service/Get_Customer_Invoice";
   static String saveInvoiceUrl = "service/Save_Customer_Invoice";
   static String invoiceRecieptTotal = "service/Invoice_Reciept_Total";
+
+  static String searchOutofwarrentyReport =
+      "service/Search_Outofwarrenty_Report";
+  static String searchUpcomingWarrantyReport =
+      "service/Search_Upcoming_Warranty_Report";
   static String billPayementReport = "service/Billing_Payment_Report";
   static String addTaskType = "task_status/Save_task_type";
   static String deleteTaskType = "task_status/Delete_task_type";

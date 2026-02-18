@@ -275,4 +275,119 @@ class WarrentyReportProvider extends ChangeNotifier {
   //     print('Exception occurred: $e');
   //   }
   // }
+  // Out of Warranty Report
+  List<WarrentyModel> _outOfWarrentyReport = [];
+  List<WarrentyModel> get outOfWarrentyReport => _outOfWarrentyReport;
+
+  Future<void> getSearchOutOfWarrentyReport(BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      if (_Status.isEmpty || _Status == 'null') {
+        _Status = '0';
+      }
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        if (_fromDateS.isEmpty) _fromDateS = "";
+        if (_toDateS.isEmpty) _toDateS = "";
+      } else {
+        isDate = "1";
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchOutofwarrentyReport}?Customer_Name=$_Search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          if (data is List) {
+            _outOfWarrentyReport =
+                data.map((item) => WarrentyModel.fromJson(item)).toList();
+          } else {
+            final newData = data['data'];
+            if (newData != null) {
+              _outOfWarrentyReport = (newData as List<dynamic>)
+                  .map((item) => WarrentyModel.fromJson(item))
+                  .toList();
+            } else {
+              _outOfWarrentyReport = [];
+            }
+          }
+
+          Loader.stopLoader(context);
+          notifyListeners();
+        }
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  // Upcoming Warranty Report
+  List<WarrentyModel> _upcomingWarrantyReport = [];
+  List<WarrentyModel> get upcomingWarrantyReport => _upcomingWarrantyReport;
+
+  Future<void> getSearchUpcomingWarrantyReport(BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      if (_Status.isEmpty || _Status == 'null') {
+        _Status = '0';
+      }
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        if (_fromDateS.isEmpty) _fromDateS = "";
+        if (_toDateS.isEmpty) _toDateS = "";
+      } else {
+        isDate = "1";
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchUpcomingWarrantyReport}?Customer_Name=$_Search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          if (data is List) {
+            _upcomingWarrantyReport =
+                data.map((item) => WarrentyModel.fromJson(item)).toList();
+          } else {
+            final newData = data['data'];
+            if (newData != null) {
+              _upcomingWarrantyReport = (newData as List<dynamic>)
+                  .map((item) => WarrentyModel.fromJson(item))
+                  .toList();
+            } else {
+              _upcomingWarrantyReport = [];
+            }
+          }
+
+          Loader.stopLoader(context);
+          notifyListeners();
+        }
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
 }
