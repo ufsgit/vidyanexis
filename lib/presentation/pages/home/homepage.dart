@@ -38,6 +38,7 @@ import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dar
 import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
@@ -271,6 +272,11 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: BalanceReportPage()),
         ),
+      SidebarOption(
+        title: 'Payment Reports',
+        iconPath: 'assets/images/Reports.svg',
+        baseContent: const Center(child: PaymentReportPage()),
+      ),
       // SidebarOption(
       //   title: 'Feedback Reports',
       //   iconPath: 'assets/images/Reports.svg',
