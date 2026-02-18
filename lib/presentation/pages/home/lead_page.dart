@@ -1126,7 +1126,7 @@ class _LeadsPageState extends State<LeadPage> {
                         scrollDirection: Axis.horizontal,
                         child: SizedBox(
                           height: tableHeaderHeight + (rowHeight * 20),
-                          width: 1520,
+                          width: 1620,
                           child: Column(
                             children: [
                               // Header row
@@ -1196,6 +1196,21 @@ class _LeadsPageState extends State<LeadPage> {
                                             style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 13)),
+                                        color: Color(0xFF607185)),
+                                    TableWidget(
+                                        width: 100,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 6.0, horizontal: 8.0),
+                                        data: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: Text(
+                                            'Convert',
+                                            style: TextStyle(
+                                              fontSize: 13,
+                                              color: Color(0xFFFFFFFF),
+                                            ),
+                                          ),
+                                        ),
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         width: 375,
@@ -1370,6 +1385,52 @@ class _LeadsPageState extends State<LeadPage> {
                                                       color:
                                                           AppColors.parseColor(
                                                               lead.colorCode),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                              padding: EdgeInsets.symmetric(
+                                                  vertical: 6.0,
+                                                  horizontal: 8.0),
+                                              width: 100,
+                                              data: Align(
+                                                alignment: Alignment.centerLeft,
+                                                child: TextButton(
+                                                  onPressed: () {
+                                                    leadProvider.convertLead(
+                                                        context,
+                                                        lead.customerId
+                                                            .toString());
+                                                  },
+                                                  style: TextButton.styleFrom(
+                                                    backgroundColor: Colors
+                                                        .orange
+                                                        .withOpacity(0.1),
+                                                    shape:
+                                                        RoundedRectangleBorder(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        5)),
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 5),
+                                                    minimumSize:
+                                                        const Size(0, 0),
+                                                    tapTargetSize:
+                                                        MaterialTapTargetSize
+                                                            .shrinkWrap,
+                                                  ),
+                                                  child: const Text(
+                                                    'Convert',
+                                                    style: TextStyle(
+                                                      color: Colors.orange,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      fontSize: 13,
                                                     ),
                                                   ),
                                                 ),
