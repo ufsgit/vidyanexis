@@ -169,7 +169,7 @@ class _CustomerPageState extends State<CustomerPage> {
         paginationHeight -
         tableHeaderHeight -
         40;
-    final rowHeight = availableHeight / 20;
+    final rowHeight = 35.0;
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
