@@ -24,10 +24,15 @@ import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.da
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/conversion_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/upcoming_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class SidebarDrawer extends StatefulWidget {
@@ -77,6 +82,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           'title': 'Periodic Service Reports',
           'page': const PeriodicServiceReportPageMobile()
         },
+      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+        {
+          'title': 'Out Of Warranty Reports',
+          'page': const OutOfWarrentyReportScreen()
+        },
+      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+        {
+          'title': 'Upcoming Warranty Reports',
+          'page': const UpcomingWarrentyReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[10].toString() == '1')
         {'title': 'Conversion Reports', 'page': const ConversionReportPage()},
       // if (settingsProvider.menuIsViewMap[11].toString() == '1')
@@ -89,6 +104,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Work Reports', 'page': const WorkSummaryPhone()},
       if (settingsProvider.menuIsViewMap[24].toString() == '1')
         {'title': 'Time Track Reports', 'page': const TimeTrackReportPage()},
+      if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
+        {'title': 'Expense Reports', 'page': const ExpenseReportScreen()},
 
       if (settingsProvider.menuIsViewMap[53].toString() == '1')
         {
@@ -116,6 +133,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         'title': 'Upcoming Payment Reports',
         'page': const UpcomingPaymentReportPage()
       },
+      {
+        'title': 'Total Outstanding Reports',
+        'page': const TotalOutstandingReportPage()
+      },
+      {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
     ];
 
     return Drawer(

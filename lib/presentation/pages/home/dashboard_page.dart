@@ -22,6 +22,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import '../../widgets/home/custom_textfield_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/dashboard_task_count_card.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/amc_notification_tab.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
