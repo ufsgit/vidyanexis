@@ -151,9 +151,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
-      if (settingsprovider.menuIsViewMap[18] == 1 &&
+      /*if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
-        const Tab(text: "Expense"),
+        const Tab(text: "Expense"),*/
       // Payment Tab (New)
 
       if (settingsprovider.menuIsViewMap[37] == 1 &&
@@ -161,9 +161,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "CheckList Management"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
-      if (settingsprovider.menuIsViewMap[18] == 1 &&
+      /*if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
-        const Tab(text: "Payment"),
+        const Tab(text: "Payment"),*/
       if (settingsprovider.menuIsViewMap[71] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
@@ -3379,12 +3379,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     widget.customerId),
 
                                             //Expense Tab
-                                            if (settingsprovider
+                                            /*if (settingsprovider
                                                     .menuIsViewMap[18] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 ExpenseScreen(
-                                                    widget.customerId),
+                                                    widget.customerId),*/
 
                                             //CheckList Management
                                             if (settingsprovider
@@ -3403,13 +3403,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   customerId:
                                                       widget.customerId),
                                             // Payment Tab (New)
-                                            if (settingsprovider
+                                            /*if (settingsprovider
                                                     .menuIsViewMap[18] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 PaymentTabWidget(
                                                     customerId:
-                                                        widget.customerId),
+                                                        widget.customerId),*/
 
                                             //Refund Form
                                             if (settingsprovider
