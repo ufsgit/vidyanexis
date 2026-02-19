@@ -30,7 +30,7 @@ class HttpUrls {
   static String timeTrack = "followup/Time_track_reports";
   static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
-  static String convertLead = "lead/Convert_lead";
+  static String convertLead = "followup/Convert_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
   // static String getAllFollowUpStatus = "status/Search_status";
   static String getItemListStock = "item/Get_All_Items_from_stock";

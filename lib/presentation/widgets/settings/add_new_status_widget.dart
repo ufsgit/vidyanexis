@@ -318,39 +318,48 @@ class _AddNewStatusWidgetState extends State<AddNewStatusWidget> {
           DropdownItem<dynamic>(id: 2, name: 'Lost'),
         ];
         final List<DropdownItem<dynamic>> registrationOptions = [
-          DropdownItem<dynamic>(id: 'yes', name: 'Yes'),
-          DropdownItem<dynamic>(id: 'no', name: 'No'),
-          DropdownItem<dynamic>(id: 'lost', name: 'Lost'),
-          DropdownItem<dynamic>(id: 'sales_closed', name: 'Sales Closed'),
+          DropdownItem<dynamic>(id: 1, name: 'Yes'),
+          DropdownItem<dynamic>(id: 0, name: 'No'),
+          DropdownItem<dynamic>(id: 2, name: 'Lost'),
+          DropdownItem<dynamic>(id: 3, name: 'Sales Closed'),
         ];
 
         settingsProvider.folloupController.text = followUpOptions
             .firstWhere((e) => e.id.toString() == widget.followUp.toString(),
-                orElse: () => DropdownItem(id: 0, name: 'No'))
+                orElse: () => followUpOptions[1])
             .name;
         settingsProvider.setSelectedFollowUp(followUpOptions
             .firstWhere((e) => e.id.toString() == widget.followUp.toString(),
-                orElse: () => DropdownItem(id: 0, name: 'No'))
+                orElse: () => followUpOptions[1])
             .id);
 
-        String regVal = widget.isRegister.toString().toLowerCase();
-        String preselectedId = 'no';
-        if (regVal == '1' || regVal == 'yes') {
-          preselectedId = 'yes';
-        } else if (regVal == '0' || regVal == 'no') {
-          preselectedId = 'no';
-        } else if (regVal == '2' || regVal == 'lost') {
-          preselectedId = 'lost';
-        } else if (regVal == 'sales_closed' || regVal == 'sales closed') {
-          preselectedId = 'sales_closed';
-        }
+        settingsProvider.isRegisterController.text = registrationOptions
+            .firstWhere((e) => e.id.toString() == widget.isRegister.toString(),
+                orElse: () => registrationOptions[1])
+            .name;
+        settingsProvider.setIsRegistered(registrationOptions
+            .firstWhere((e) => e.id.toString() == widget.isRegister.toString(),
+                orElse: () => registrationOptions[1])
+            .id);
 
-        final selectedRegItem = registrationOptions.firstWhere(
-            (e) => e.id == preselectedId,
-            orElse: () => registrationOptions[1]); // Default to 'no'
+        // String regVal = widget.isRegister.toString().toLowerCase();
+        // String preselectedId = 'no';
+        // if (regVal == '1' || regVal == 'yes') {
+        //   preselectedId = 'yes';
+        // } else if (regVal == '0' || regVal == 'no') {
+        //   preselectedId = 'no';
+        // } else if (regVal == '2' || regVal == 'lost') {
+        //   preselectedId = 'lost';
+        // } else if (regVal == 'sales_closed' || regVal == 'sales closed') {
+        //   preselectedId = 'sales_closed';
+        // }
 
-        settingsProvider.isRegisterController.text = selectedRegItem.name;
-        settingsProvider.setIsRegistered(selectedRegItem.id);
+        // final selectedRegItem = registrationOptions.firstWhere(
+        //     (e) => e.id == widget.isRegister,
+        //     orElse: () => registrationOptions[1]); // Default to 'no'
+
+        // settingsProvider.isRegisterController.text = selectedRegItem.name;
+        // settingsProvider.setIsRegistered(selectedRegItem.id);
         settingsProvider.setSelectedColor(widget.colorCode);
         settingsProvider.setViewInId(widget.data!.viewInId ?? 0);
         settingsProvider.setStageId(widget.data!.stageId ?? 0);
