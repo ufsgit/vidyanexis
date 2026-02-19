@@ -15,6 +15,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
@@ -251,6 +252,7 @@ class _LeadsPageState extends State<LeadPage> {
     final leadProvider = Provider.of<LeadsProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final sideProvider = Provider.of<SidebarProvider>(context);
 
     // Calculate dynamic heights for table
     final double screenHeight = MediaQuery.of(context).size.height;
@@ -1074,6 +1076,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                           lead.customerName,
                                                       child: TextButton(
                                                         onPressed: () {
+                                                          sideProvider.name =
+                                                              'Lead /';
+
                                                           context.push(
                                                               '/customerDetails/${lead.customerId}/false');
                                                         },
