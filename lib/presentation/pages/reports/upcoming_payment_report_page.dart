@@ -8,21 +8,27 @@ import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/payment_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/table_cell.dart'; // Ensure this exists or use local
-import 'package:vidyanexis/utils/csv_function.dart'; // Ensure this exists
+import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
-class PaymentReportPage extends StatefulWidget {
-  const PaymentReportPage({super.key});
+class UpcomingPaymentReportPage extends StatefulWidget {
+  const UpcomingPaymentReportPage({super.key});
 
   @override
-  State<PaymentReportPage> createState() => _PaymentReportPageState();
+  State<UpcomingPaymentReportPage> createState() =>
+      _UpcomingPaymentReportPageState();
 }
 
-class _PaymentReportPageState extends State<PaymentReportPage> {
+class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
   final TextEditingController searchController = TextEditingController();
-  final TextEditingController customerFilterController =
-      TextEditingController();
   final ScrollController scrollController = ScrollController();
+
+  List<String> dateButtonTitles = [
+    'Yesterday',
+    'Today',
+    'Tomorrow',
+    'This Week',
+    'This Month',
+  ];
 
   @override
   void initState() {
@@ -32,15 +38,19 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
           Provider.of<PaymentReportProvider>(context, listen: false);
       final customerProvider =
           Provider.of<CustomerProvider>(context, listen: false);
-      provider.getPaymentReport(context);
 
-      // Initialize customer fetch
+      // Initialize filters
+      provider.selectedCustomerId = null;
+      provider.selectedCustomerName = null;
+      provider.searchText = '';
+      provider.fromDate = null;
+      provider.toDate = null;
+      provider.isFilter = false;
+
+      provider.getUpcomingPaymentReport(context);
+
       customerProvider.setLimit();
       customerProvider.setSearchCriteria('', '', '', '0');
-      // Ensure we fetch all or enough customers for the dropdown
-      // For a dropdown, ideally we want ALL, but getSearchCustomers uses pagination.
-      // We might need to handle this limits or fetch more.
-      // For now, let's just fetch the default page.
       customerProvider.getSearchCustomers(context);
     });
   }
@@ -51,25 +61,12 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
     final sideProvider = Provider.of<SidebarProvider>(context);
     bool isWeb = AppStyles.isWebScreen(context);
 
-    // Sync controllers if needed, but here we just ensure if provider searchText is empty, clear controllers
-    if (provider.searchText.isEmpty &&
-        (searchController.text.isNotEmpty ||
-            customerFilterController.text.isNotEmpty)) {
-      searchController.clear();
-      customerFilterController.clear();
-    } else if (provider.searchText.isNotEmpty &&
-        customerFilterController.text != provider.searchText) {
-      // Optional: Keep them in sync if you want bidirectional update
-      // customerFilterController.text = provider.searchText;
-    }
-
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
-// ... existing app bar code
       appBar: isWeb
           ? null
           : CustomAppBar(
-              title: 'Payment Reports',
+              title: 'Upcoming Payment Reports',
               onSearchTap: () {
                 sideProvider.startSearch();
               },
@@ -83,25 +80,25 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
               ),
               onSearch: (query) {
                 provider.setSearch(query);
-                provider.getPaymentReport(context);
+                provider.getUpcomingPaymentReport(context);
               },
               onClearTap: () {
                 searchController.clear();
-                customerFilterController.clear();
+                // customerFilterController.clear();
                 sideProvider.stopSearch();
                 provider.setSearch('');
-                provider.getPaymentReport(context);
+                provider.selectedCustomerId = null;
+                provider.selectedCustomerName = null;
+                provider.getUpcomingPaymentReport(context);
               },
               searchController: searchController,
-              showExcel: true,
-              onExcelTap: () => _exportData(provider),
             ),
       body: isWeb ? _buildWebBody(provider) : _buildMobileBody(provider),
     );
   }
 
   Widget _buildWebBody(PaymentReportProvider provider) {
-    if (provider.isLoading) {
+    if (provider.isUpcomingLoading) {
       return const Center(child: CircularProgressIndicator());
     }
 
@@ -113,7 +110,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Payment Report',
+                'Upcoming Payment Report',
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
@@ -145,14 +142,14 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
         ],
         _buildWebTableHeader(),
         Expanded(
-          child: provider.paymentReportList.isEmpty
+          child: provider.upcomingPaymentReportList.isEmpty
               ? const Center(child: Text('No data found'))
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
-                  itemCount: provider.paymentReportList.length,
+                  itemCount: provider.upcomingPaymentReportList.length,
                   itemBuilder: (context, index) {
-                    final item = provider.paymentReportList[index];
+                    final item = provider.upcomingPaymentReportList[index];
                     return _buildWebTableRow(item, index);
                   },
                 ),
@@ -259,8 +256,6 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
                               newValue, selectedCustomer.customerName);
                           provider.setSearch(selectedCustomer.customerName);
                         }
-                        // Optionally trigger search immediately
-                        // provider.getPaymentReport(context);
                       },
                       underline: Container(),
                       isDense: true,
@@ -273,7 +268,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
           ),
           const Spacer(),
           ElevatedButton(
-            onPressed: () => provider.getPaymentReport(context),
+            onPressed: () => provider.getUpcomingPaymentReport(context),
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
               foregroundColor: AppColors.primaryBlue,
@@ -290,9 +285,11 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
             onPressed: () {
               provider.setSearch('');
               searchController.clear();
-              customerFilterController.clear();
+              // customerFilterController.clear();
+              provider.selectedCustomerId = null;
+              provider.selectedCustomerName = null;
               provider.selectDateFilterOption(null);
-              provider.getPaymentReport(context);
+              provider.getUpcomingPaymentReport(context);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.white,
@@ -338,13 +335,14 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
                           color: Color(0xFF607185))),
                 ),
               ),
-              TableWidget(title: 'Date', width: 120, color: Color(0xFF607185)),
               TableWidget(
                   title: 'Customer Name', flex: 2, color: Color(0xFF607185)),
               TableWidget(
-                  title: 'Payment Mode', width: 150, color: Color(0xFF607185)),
+                  title: 'Schedule Date', width: 150, color: Color(0xFF607185)),
               TableWidget(
-                  title: 'Amount', width: 150, color: Color(0xFF607185)),
+                  title: 'Schedule Amount',
+                  width: 150,
+                  color: Color(0xFF607185)),
             ],
           ),
         ),
@@ -375,14 +373,13 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
                       style: const TextStyle(fontWeight: FontWeight.bold)),
                 ),
               ),
-              TableWidget(data: Text(item.paymentDate), width: 120),
               TableWidget(
                   data: Text(item.customerName,
                       style: const TextStyle(fontWeight: FontWeight.w500)),
                   flex: 2),
-              TableWidget(data: Text(item.paymentModeName), width: 150),
+              TableWidget(data: Text(item.scheduleDate), width: 150),
               TableWidget(
-                  data: Text('₹ ${item.payingAmount.toStringAsFixed(2)}'),
+                  data: Text('₹ ${item.scheduleAmount.toStringAsFixed(2)}'),
                   width: 150),
             ],
           ),
@@ -392,10 +389,10 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
   }
 
   Widget _buildMobileBody(PaymentReportProvider provider) {
-    if (provider.isLoading) {
+    if (provider.isUpcomingLoading) {
       return const Center(child: CircularProgressIndicator());
     }
-    if (provider.paymentReportList.isEmpty) {
+    if (provider.upcomingPaymentReportList.isEmpty) {
       return const Center(child: Text('No data found'));
     }
     return Container(
@@ -436,11 +433,11 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
             Expanded(
               child: ListView.separated(
                 padding: const EdgeInsets.all(16),
-                itemCount: provider.paymentReportList.length,
+                itemCount: provider.upcomingPaymentReportList.length,
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 12),
                 itemBuilder: (context, index) {
-                  final item = provider.paymentReportList[index];
+                  final item = provider.upcomingPaymentReportList[index];
                   return _buildMobileCard(item);
                 },
               ),
@@ -481,7 +478,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
                   ),
                 ),
                 Text(
-                  '₹ ${item.payingAmount.toStringAsFixed(2)}',
+                  '₹ ${item.scheduleAmount.toStringAsFixed(2)}',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -495,26 +492,10 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  item.paymentDate,
+                  'Scheduled: ${item.scheduleDate}',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 13,
                     color: AppColors.textGrey3,
-                  ),
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                  decoration: BoxDecoration(
-                    color: AppColors.primaryBlue.withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    item.paymentModeName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primaryBlue,
-                    ),
                   ),
                 ),
               ],
@@ -522,26 +503,6 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
           ],
         ),
       ),
-    );
-  }
-
-  void _exportData(PaymentReportProvider provider) {
-    exportToExcel(
-      headers: [
-        'Date',
-        'Customer Name',
-        'Payment Mode',
-        'Amount',
-      ],
-      data: provider.paymentReportList.map((item) {
-        return {
-          'Date': item.paymentDate,
-          'Customer Name': item.customerName,
-          'Payment Mode': item.paymentModeName,
-          'Amount': '₹ ${item.payingAmount.toStringAsFixed(2)}',
-        };
-      }).toList(),
-      fileName: 'Payment_Report',
     );
   }
 
@@ -647,7 +608,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
                       height: 40,
                       child: TextButton(
                         onPressed: () async {
-                          await provider.getPaymentReport(context);
+                          await provider.getUpcomingPaymentReport(context);
                           Navigator.pop(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -672,12 +633,4 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
       ),
     );
   }
-
-  List<String> dateButtonTitles = [
-    'Yesterday',
-    'Today',
-    'Tomorrow',
-    'This Week',
-    'This Month',
-  ];
 }
