@@ -208,6 +208,7 @@ class CustomTab extends StatelessWidget {
       if (settingsProvider.menuIsViewMap[49].toString() == '1')
         'Leads Overview',
       if (settingsProvider.menuIsViewMap[50].toString() == '1') 'Work Overview',
+      'Amc Notification',
       if (settingsProvider.menuIsViewMap[51].toString() == '1') 'Task Overview',
       if (settingsProvider.menuIsViewMap[52].toString() == '1') 'Task Summary',
     ];
@@ -314,6 +315,8 @@ class CustomTab extends StatelessWidget {
         return 'Leads';
       case 'Work Overview':
         return 'Work';
+      case 'Amc Notification':
+        return 'Amc';
       case 'Task Overview':
         return 'Tasks';
       case 'Task Summary':

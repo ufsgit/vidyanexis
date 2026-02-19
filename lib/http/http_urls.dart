@@ -272,4 +272,6 @@ class HttpUrls {
       "quotation_master/Get_quotation_master_pdf";
   static String balanceReport = "service/Payment_Balance_Report";
   static String upcomingPaymentReport = "service/Get_Upcoming_Payment_Report";
+  static String totalOutstandingReport = "service/Get_Total_Outstanding_Report";
+  static String outstandingReport = "service/Get_Outstanding_Report";
 }

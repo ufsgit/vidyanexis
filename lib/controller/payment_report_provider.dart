@@ -5,14 +5,20 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/payment_report_model.dart';
 import 'package:vidyanexis/controller/models/upcoming_payment_report_model.dart';
+import 'package:vidyanexis/controller/models/total_outstanding_report_model.dart';
+import 'package:vidyanexis/controller/models/outstanding_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 
 class PaymentReportProvider with ChangeNotifier {
   List<PaymentReportModel> paymentReportList = [];
   List<UpcomingPaymentReportModel> upcomingPaymentReportList = [];
+  List<TotalOutstandingReportModel> totalOutstandingReportList = [];
+  List<OutstandingReportModel> outstandingReportList = [];
   bool isLoading = false;
   bool isUpcomingLoading = false;
+  bool isOutstandingLoading = false;
+  bool isOutstandingListLoading = false;
   String searchText = '';
 
   // Filters
@@ -203,6 +209,108 @@ class PaymentReportProvider with ChangeNotifier {
       print('Error fetching upcoming payment report: $e');
     } finally {
       isUpcomingLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getTotalOutstandingReport(BuildContext context) async {
+    isOutstandingLoading = true;
+    notifyListeners();
+
+    // Default dates if null
+    if (fromDate == null) {
+      var now = DateTime.now();
+      fromDate = DateTime(now.year, now.month, 1);
+      toDate = DateTime(now.year, now.month + 1, 0);
+    }
+    formatDate();
+
+    String isDate = "1";
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.totalOutstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Fromdate=$formattedFromDate&Todate=$formattedToDate&Is_Date_Check=$isDate&Is_Date=$isDate&Customer_Name=$searchText');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        print('Total Outstanding Report Response: $data');
+
+        if (data != null) {
+          if (data is List) {
+            totalOutstandingReportList = data
+                .map((e) => TotalOutstandingReportModel.fromJson(e))
+                .toList();
+          } else if (data is Map && data['data'] is List) {
+            totalOutstandingReportList = (data['data'] as List)
+                .map((e) => TotalOutstandingReportModel.fromJson(e))
+                .toList();
+          } else {
+            totalOutstandingReportList = [];
+          }
+        } else {
+          totalOutstandingReportList = [];
+        }
+      } else {
+        totalOutstandingReportList = [];
+        print(
+            'Failed to load total outstanding report: ${response.statusCode}');
+      }
+    } catch (e) {
+      totalOutstandingReportList = [];
+      print('Error fetching total outstanding report: $e');
+    } finally {
+      isOutstandingLoading = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> getOutstandingReport(BuildContext context) async {
+    isOutstandingListLoading = true;
+    notifyListeners();
+
+    // Default dates if null
+    if (fromDate == null) {
+      var now = DateTime.now();
+      fromDate = DateTime(now.year, now.month, 1);
+      toDate = DateTime(now.year, now.month + 1, 0);
+    }
+    formatDate();
+
+    String isDate = "1";
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.outstandingReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Fromdate=$formattedFromDate&Todate=$formattedToDate&Is_Date_Check=$isDate&Is_Date=$isDate&Customer_Name=$searchText');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        print('Outstanding Report Response: $data');
+
+        if (data != null) {
+          if (data is List) {
+            outstandingReportList =
+                data.map((e) => OutstandingReportModel.fromJson(e)).toList();
+          } else if (data is Map && data['data'] is List) {
+            outstandingReportList = (data['data'] as List)
+                .map((e) => OutstandingReportModel.fromJson(e))
+                .toList();
+          } else {
+            outstandingReportList = [];
+          }
+        } else {
+          outstandingReportList = [];
+        }
+      } else {
+        outstandingReportList = [];
+        print('Failed to load outstanding report: ${response.statusCode}');
+      }
+    } catch (e) {
+      outstandingReportList = [];
+      print('Error fetching outstanding report: $e');
+    } finally {
+      isOutstandingListLoading = false;
       notifyListeners();
     }
   }
