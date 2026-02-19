@@ -4,29 +4,30 @@ import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
-
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 
-class AmcNotificationTab extends StatefulWidget {
-  const AmcNotificationTab({super.key});
+class PaymentReminderTab extends StatefulWidget {
+  const PaymentReminderTab({super.key});
 
   @override
-  State<AmcNotificationTab> createState() => _AmcNotificationTabState();
+  State<PaymentReminderTab> createState() => _PaymentReminderTabState();
 }
 
-class _AmcNotificationTabState extends State<AmcNotificationTab> {
+class _PaymentReminderTabState extends State<PaymentReminderTab> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final provider =
           Provider.of<WarrentyReportProvider>(context, listen: false);
       final dropdownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
 
+      // Initialize filters if needed
+      // Fetch users for filter if not already fetched
       dropdownProvider.getUserDetails(context);
-      // Initialize filters if needed, maybe clear them first
-      provider.getAmcNotification(context);
+
+      provider.getPaymentReminders(context);
     });
   }
 
@@ -45,6 +46,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
+                    // User Filter
                     _buildUserFilter(provider, dropdownProvider),
                     const SizedBox(width: 8),
                     // Date Filter
@@ -64,11 +66,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                         if (picked != null) {
                           provider.setFromDate(picked.start);
                           provider.setToDate(picked.end);
-                          provider.getAmcNotification(context);
-                        } else {
-                          // Clear filter? Or keep previous?
-                          // If user cancels, keep previous.
-                          // To clear, maybe we need a clear button.
+                          provider.getPaymentReminders(context);
                         }
                       },
                       child: Container(
@@ -101,7 +99,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                                 onTap: () {
                                   provider.selectDateFilterOption(
                                       null); // Clear dates
-                                  provider.getAmcNotification(context);
+                                  provider.getPaymentReminders(context);
                                 },
                                 child: const Icon(Icons.close,
                                     size: 16, color: Colors.red),
@@ -117,18 +115,17 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
             ),
 
             // List Section
-            // List Section
-            if (provider.isAmcNotificationLoading)
+            if (provider.isPaymentReminderLoading)
               const SizedBox(
                 height: 200,
                 child: Center(child: CircularProgressIndicator()),
               )
-            else if (provider.amcNotificationList.isEmpty)
+            else if (provider.paymentReminderList.isEmpty)
               Container(
                 height: 200,
                 padding: const EdgeInsets.all(20),
                 alignment: Alignment.center,
-                child: const Text('No AMC notifications found'),
+                child: const Text('No Payment Reminders found'),
               )
             else
               ListView.separated(
@@ -136,11 +133,11 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                 physics: const NeverScrollableScrollPhysics(),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                itemCount: provider.amcNotificationList.length,
+                itemCount: provider.paymentReminderList.length,
                 separatorBuilder: (context, index) =>
                     const SizedBox(height: 10),
                 itemBuilder: (context, index) {
-                  final item = provider.amcNotificationList[index];
+                  final item = provider.paymentReminderList[index];
                   return Container(
                     decoration: BoxDecoration(
                       color: Colors.white,
@@ -154,14 +151,14 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       ],
                     ),
                     padding: const EdgeInsets.all(16),
-                    child: Column(
+                    child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Expanded(
-                              child: Text(
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
                                 item.customerName,
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 16,
@@ -169,91 +166,50 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                                   color: AppColors.textBlack,
                                 ),
                               ),
-                            ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.red.withOpacity(0.1),
-                                borderRadius: BorderRadius.circular(8),
+                              const SizedBox(height: 8),
+                              Row(
+                                children: [
+                                  Text(
+                                    "Reminder Date : ",
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                      color: AppColors.textGrey3,
+                                    ),
+                                  ),
+                                  Text(
+                                    _formatDate(item.reminderDate),
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      color: AppColors.textGrey3,
+                                    ),
+                                  ),
+                                ],
                               ),
-                              child: Text(
-                                _formatDate(item.serviceDate),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 16),
+                        Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(
+                                "Balance Amount",
                                 style: GoogleFonts.plusJakartaSans(
                                   fontSize: 12,
+                                  color: AppColors.textGrey3,
+                                ),
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                item.balanceAmount,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 16,
                                   fontWeight: FontWeight.bold,
                                   color: Colors.red,
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        if (item.amcProductName.isNotEmpty) ...[
-                          Row(
-                            children: [
-                              Text(
-                                "Product Name : ",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                              Text(
-                                item.amcProductName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                        ],
-                        if (item.serviceName.isNotEmpty) ...[
-                          Row(
-                            children: [
-                              Text(
-                                "Service Name : ",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                              Text(
-                                item.serviceName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 4),
-                        ],
-                        if (item.staffName.isNotEmpty) ...[
-                          Row(
-                            children: [
-                              Text(
-                                "Staff Name : ",
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                              Text(
-                                item.staffName,
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  color: AppColors.textGrey3,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ]
+                            ])
                       ],
                     ),
                   );
@@ -295,7 +251,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
             color: AppColors.textBlack,
           ),
           items: [
-            const DropdownMenuItem<int>(
+            DropdownMenuItem<int>(
               value: 0,
               child: Text('All Users'),
             ),
@@ -303,7 +259,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
               return DropdownMenuItem<int>(
                 value: user.userDetailsId,
                 child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 150),
+                    constraints: BoxConstraints(maxWidth: 150),
                     child: Text(
                       user.userDetailsName,
                       overflow: TextOverflow.ellipsis,
@@ -313,7 +269,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
           ],
           onChanged: (value) {
             provider.setUserFilterStatus(value ?? 0);
-            provider.getAmcNotification(context);
+            provider.getPaymentReminders(context);
           },
           isDense: true,
         ),
