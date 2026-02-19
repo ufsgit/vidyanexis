@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/controller/models/task_history_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -25,6 +26,12 @@ class TaskPageProvider extends ChangeNotifier {
   List<MandatoryStatusModel> get statusData => _statusData;
   List<TaskReportModel> _taskData = [];
   List<TaskReportModel> get taskData => _taskData;
+
+  List<TaskHistoryModel> _taskHistoryList = [];
+  List<TaskHistoryModel> get taskHistoryList => _taskHistoryList;
+
+  bool _isHistoryLoading = false;
+  bool get isHistoryLoading => _isHistoryLoading;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -534,6 +541,33 @@ class TaskPageProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  Future<void> fetchTaskHistory(int userDetailsId) async {
+    try {
+      _isHistoryLoading = true;
+      notifyListeners();
+
+      final response = await HttpRequest.httpGetRequest(
+        endPoint:
+            '${HttpUrls.getTaskHistory}?User_Details_Id=$userDetailsId&Is_Date=0&Fromdate=&Todate=',
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        final list = data['data'] ?? [];
+
+        _taskHistoryList =
+            (list as List).map((e) => TaskHistoryModel.fromJson(e)).toList();
+      } else {
+        _taskHistoryList = [];
+      }
+    } catch (e) {
+      _taskHistoryList = [];
+    } finally {
+      _isHistoryLoading = false;
+      notifyListeners();
     }
   }
 

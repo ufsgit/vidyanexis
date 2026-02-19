@@ -274,4 +274,6 @@ class HttpUrls {
   static String upcomingPaymentReport = "service/Get_Upcoming_Payment_Report";
   static String totalOutstandingReport = "service/Get_Total_Outstanding_Report";
   static String outstandingReport = "service/Get_Outstanding_Report";
+  static String amcNotification = "task/Get_AMC_Notification";
+  static String getPaymentReminders = "task/Get_Payment_Reminders";
 }

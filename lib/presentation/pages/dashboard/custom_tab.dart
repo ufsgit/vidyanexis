@@ -200,15 +200,16 @@ class CustomTab extends StatelessWidget {
     // Better responsive breakpoints
     final containerWidth = screenWidth < 400
         ? screenWidth * 0.95
-        : screenWidth < 600
-            ? screenWidth * 0.9
-            : 500.0;
+        : screenWidth < 800
+            ? screenWidth * 0.95
+            : 900.0;
 
     final tabOptions = [
       if (settingsProvider.menuIsViewMap[49].toString() == '1')
         'Leads Overview',
       if (settingsProvider.menuIsViewMap[50].toString() == '1') 'Work Overview',
       'Amc Notification',
+      'Payment Reminders',
       if (settingsProvider.menuIsViewMap[51].toString() == '1') 'Task Overview',
       if (settingsProvider.menuIsViewMap[52].toString() == '1') 'Task Summary',
     ];
@@ -242,7 +243,7 @@ class CustomTab extends StatelessWidget {
                         alignment: Alignment.center,
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: Text(
-                          screenWidth < 600
+                          screenWidth < 1000
                               ? _getShortTabName(tabOptions[index])
                               : tabOptions[index],
                           style: AppStyles.getBodyTextStyle(
@@ -286,7 +287,7 @@ class CustomTab extends StatelessWidget {
                         child: Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 4),
                           child: Text(
-                            screenWidth < 500
+                            screenWidth < 1000
                                 ? _getShortTabName(tabOptions[currentIndex])
                                 : tabOptions[currentIndex],
                             style: AppStyles.getBodyTextStyle(
@@ -317,6 +318,8 @@ class CustomTab extends StatelessWidget {
         return 'Work';
       case 'Amc Notification':
         return 'Amc';
+      case 'Payment Reminders':
+        return 'Payment';
       case 'Task Overview':
         return 'Tasks';
       case 'Task Summary':
