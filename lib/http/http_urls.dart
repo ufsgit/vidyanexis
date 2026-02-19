@@ -54,6 +54,7 @@ class HttpUrls {
   static String getServiceDetails = "service/Get_service";
   static String saveAmcDetails = "amc/Save_amc";
   static String searchTaskType = "task_status/Search_task_type";
+  static String getTaskHistory = "task_data/Get_Task_History";
   static String getAmc = "amc/Get_Amc_By_Customer";
   static String getQuatationByCustomer =
       "quotation_master/Get_Quotation_By_Customer";
