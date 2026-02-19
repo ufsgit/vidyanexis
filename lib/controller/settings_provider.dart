@@ -1715,7 +1715,9 @@ class SettingsProvider extends ChangeNotifier {
         showToastInDialog(message, context);
 
         if (data['success']) {
+          getDocumentCheckList(context);
           Navigator.pop(context, true);
+          notifyListeners();
         }
       } else {
         showToastInDialog("Server Error", context);
