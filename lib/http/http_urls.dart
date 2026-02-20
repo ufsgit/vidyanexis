@@ -3,7 +3,7 @@ class HttpUrls {
 //live
   // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
@@ -12,6 +12,7 @@ class HttpUrls {
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
   // static String baseUrl = 'https://demo3api.trackbox.net.in/';
+  static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
 
 //dev
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
@@ -277,5 +278,4 @@ class HttpUrls {
   static String outstandingReport = "service/Get_Outstanding_Report";
   static String amcNotification = "task/Get_AMC_Notification";
   static String getPaymentReminders = "task/Get_Payment_Reminders";
-  static String getTaskHistory = "task_data/Get_Task_History";
 }
