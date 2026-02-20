@@ -1,9 +1,9 @@
 class HttpUrls {
 //baseurls
 //live
-  // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
+  static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
@@ -277,5 +277,5 @@ class HttpUrls {
   static String outstandingReport = "service/Get_Outstanding_Report";
   static String amcNotification = "task/Get_AMC_Notification";
   static String getPaymentReminders = "task/Get_Payment_Reminders";
-  static String getTaskHistory = "task_data/Get_Task_History";
+  
 }
