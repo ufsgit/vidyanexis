@@ -46,6 +46,7 @@ import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:vidyanexis/controller/time_track_report_provider.dart';
 import 'package:vidyanexis/controller/work_report_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
+import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
 import 'package:vidyanexis/routes/routes.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -111,6 +112,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PaymentScheduleProvider()),
         ChangeNotifierProvider(create: (context) => BalanceReportProvider()),
         ChangeNotifierProvider(create: (context) => PaymentReportProvider()),
+        ChangeNotifierProvider(create: (context) => StockReportProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),

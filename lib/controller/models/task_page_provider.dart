@@ -395,10 +395,9 @@ class TaskPageProvider extends ChangeNotifier {
             // For web or first page load, replace the entire list
             _taskReport = newTasks;
           }
-
-          if (isShowLoader) Loader.stopLoader(context);
-          notifyListeners();
         }
+        if (isShowLoader) Loader.stopLoader(context);
+        notifyListeners();
       } else {
         if (isShowLoader) Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
