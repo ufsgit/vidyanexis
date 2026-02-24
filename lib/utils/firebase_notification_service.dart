@@ -21,7 +21,7 @@ class FirebaseNotificationService {
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     await _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse:
           (NotificationResponse notificationResponse) {
         // Handle notification tap
@@ -66,10 +66,10 @@ class FirebaseNotificationService {
       // local notification to show it to users using the created channel.
       if (notification != null && android != null) {
         _flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
+          id: notification.hashCode,
+          title: notification.title,
+          body: notification.body,
+          notificationDetails: NotificationDetails(
             android: AndroidNotificationDetails(
               channel.id,
               channel.name,
