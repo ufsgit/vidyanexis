@@ -45,6 +45,7 @@ import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_scr
 import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/upcoming_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
@@ -230,6 +231,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Work Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: WorkSummaryScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[25].toString() == '1')
+        SidebarOption(
+          title: 'Stock Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: StockReport()),
         ),
 
       if (settingsProvider.menuIsViewMap[24].toString() == '1')

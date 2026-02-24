@@ -232,10 +232,9 @@ class TaskReportProvider extends ChangeNotifier {
           _taskReport = (data as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
               .toList();
-
-          Loader.stopLoader(context);
-          notifyListeners();
         }
+        Loader.stopLoader(context);
+        notifyListeners();
       } else {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -293,10 +292,9 @@ class TaskReportProvider extends ChangeNotifier {
           _taskReport = (data as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
               .toList();
-
-          Loader.stopLoader(context);
-          notifyListeners();
         }
+        Loader.stopLoader(context);
+        notifyListeners();
       } else {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(

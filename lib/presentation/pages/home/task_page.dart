@@ -193,7 +193,7 @@ class _tasksPageReportState extends State<TaskPage> {
       backgroundColor:
           AppStyles.isWebScreen(context) ? null : AppColors.whiteColor,
       key: _scaffoldKey,
-      appBar: (!AppStyles.isWebScreen(context) || Navigator.canPop(context))
+      appBar: !AppStyles.isWebScreen(context)
           ? CustomAppBar(
               leadingWidget: Navigator.canPop(context)
                   ? const BackButton(color: Colors.black)
@@ -292,7 +292,7 @@ class _tasksPageReportState extends State<TaskPage> {
                 children: [
                   // Main row with adaptive layout
 
-                  (AppStyles.isWebScreen(context) && !Navigator.canPop(context))
+                  (AppStyles.isWebScreen(context))
                       ? LayoutBuilder(
                           builder: (context, constraints) {
                             final screenWidth =
