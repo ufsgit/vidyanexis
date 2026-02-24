@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
+import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
@@ -74,6 +75,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       // const Tab(text: "Task Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[37] == 1)
         const Tab(text: "CheckList Management"),
+      const Tab(text: "Invoice"),
     ];
     int tabCount = tabs.length;
     _tabController = TabController(length: tabCount, vsync: this);
@@ -397,6 +399,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
           // RecieptListPageMobile(
           //   customerId: widget.customerId.toString(),
           // ),
+          InvoiceTabPage(customerId: widget.customerId.toString()),
         ],
       ),
     );
