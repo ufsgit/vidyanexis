@@ -3806,8 +3806,10 @@ class SettingsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getAllTax}/$taskId');
+      final String endPoint = taskId == '0' || taskId.isEmpty
+          ? HttpUrls.getAllTax
+          : '${HttpUrls.getAllTax}/$taskId';
+      final response = await HttpRequest.httpGetRequest(endPoint: endPoint);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -3817,6 +3819,10 @@ class SettingsProvider extends ChangeNotifier {
               data.map((item) => TaxSlabModel.fromJson(item)).toList();
 
           notifyListeners();
+        } else if (data != null && data is Map && data.containsKey('message')) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(data['message'].toString())),
+          );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Unexpected data format')),

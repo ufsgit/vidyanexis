@@ -226,6 +226,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: ConversionReportPage()),
         ),
+      if (settingsProvider.menuIsViewMap[21].toString() == '1')
+        SidebarOption(
+          title: 'Invoice Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: InvoiceReportsScreen()),
+        ),
       if (settingsProvider.menuIsViewMap[25].toString() == '1')
         SidebarOption(
           title: 'Work Reports',

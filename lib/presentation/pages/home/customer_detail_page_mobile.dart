@@ -75,7 +75,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       // const Tab(text: "Task Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[37] == 1)
         const Tab(text: "CheckList Management"),
-      const Tab(text: "Invoice"),
+      if (settingsprovider.menuIsViewMap[21] == 1) const Tab(text: "Invoice"),
     ];
     int tabCount = tabs.length;
     _tabController = TabController(length: tabCount, vsync: this);
@@ -399,7 +399,8 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
           // RecieptListPageMobile(
           //   customerId: widget.customerId.toString(),
           // ),
-          InvoiceTabPage(customerId: widget.customerId.toString()),
+          if (settingsprovider.menuIsViewMap[21] == 1)
+            InvoiceTabPage(customerId: widget.customerId.toString()),
         ],
       ),
     );
