@@ -7,6 +7,7 @@ import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
+import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
@@ -147,7 +148,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "Periodic Service"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
-      const Tab(text: "History"),
+      if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "History"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
@@ -161,12 +162,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "CheckList Management"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
-      /*if (settingsprovider.menuIsViewMap[18] == 1 &&
+      if (settingsprovider.menuIsViewMap[72] == 1 &&
           sideprovider.name != 'Lead /')
-        const Tab(text: "Payment"),*/
+        const Tab(text: "Payment"),
       if (settingsprovider.menuIsViewMap[71] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
+      const Tab(text: "Invoice"),
     ];
 
     if (!_isControllerInitialized || newTabs.length != _tabs.length) {
@@ -708,7 +710,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     ),
                                   ),
                                 ),
-                              if (settingsprovider.menuIsSaveMap[18] == 1 &&
+                              if (settingsprovider.menuIsSaveMap[72] == 1 &&
                                   _isControllerInitialized &&
                                   _tabs[_tabController.index].text == "Payment")
                                 Padding(
@@ -3368,7 +3370,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     ),
 
                                             // Follow-Up Details Tab
-                                            const FollowUpTabWidget(),
+                                            if (settingsprovider
+                                                    .menuIsViewMap[73] ==
+                                                1)
+                                              const FollowUpTabWidget(),
 
                                             //Reciepts Tab
                                             if (settingsprovider
@@ -3403,13 +3408,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   customerId:
                                                       widget.customerId),
                                             // Payment Tab (New)
-                                            /*if (settingsprovider
-                                                    .menuIsViewMap[18] ==
+                                            if (settingsprovider
+                                                    .menuIsViewMap[72] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 PaymentTabWidget(
                                                     customerId:
-                                                        widget.customerId),*/
+                                                        widget.customerId),
 
                                             //Refund Form
                                             if (settingsprovider
@@ -3418,6 +3423,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               if (sideprovider.name != 'Lead /')
                                                 RefundFormPage(
                                                     widget.customerId),
+
+                                            InvoiceTabPage(
+                                                customerId: widget.customerId),
                                           ],
                                         ),
                                       ),

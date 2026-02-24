@@ -209,15 +209,17 @@ class _DashBoardPageState extends State<DashBoardPage> {
           // Render tab body only if permitted
           Builder(builder: (context) {
             final allowedTabs = <int>[
-              if ((settingsProvider.menuIsViewMap[49] ?? 0).toString() == '1')
+              if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
                 0, // Leads Overview
-              if ((settingsProvider.menuIsViewMap[50] ?? 0).toString() == '1')
+              if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0')
                 1, // Work Overview
-              4, // Amc Notification
-              5, // Payment Reminders
-              if ((settingsProvider.menuIsViewMap[51] ?? 0).toString() == '1')
+              if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0')
+                4, // Amc Notification
+              if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0')
+                5, // Payment Reminders
+              if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0')
                 2, // Task Overview
-              if ((settingsProvider.menuIsViewMap[52] ?? 0).toString() == '1')
+              if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0')
                 3, // Task Summary
             ];
             //change permissions id in CustomTab also ----------------

@@ -48,13 +48,16 @@ class TableWidget extends StatelessWidget {
                 padding: padding ??
                     const EdgeInsets.symmetric(
                         vertical: 12.0, horizontal: 16.0),
-                child: Text(title,
-                    overflow: TextOverflow.visible,
-                    maxLines: 4,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                        fontSize: fontSize)),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(title,
+                      overflow: TextOverflow.visible,
+                      maxLines: 4,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                          fontSize: fontSize)),
+                ),
               ),
             )
           : SizedBox(
@@ -63,13 +66,16 @@ class TableWidget extends StatelessWidget {
                 padding: padding ??
                     const EdgeInsets.symmetric(
                         vertical: 12.0, horizontal: 16.0),
-                child: Text(title,
-                    overflow: TextOverflow.visible,
-                    maxLines: 4,
-                    style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: color,
-                        fontSize: fontSize)),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(title,
+                      overflow: TextOverflow.visible,
+                      maxLines: 4,
+                      style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: color,
+                          fontSize: fontSize)),
+                ),
               ),
             );
     }

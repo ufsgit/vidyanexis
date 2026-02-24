@@ -3,6 +3,8 @@ class ItemListModel {
   String itemName; // Name of the item
   int categoryId; // ID of the category
   String categoryName; // Name of the category
+  String quantity; // Name of the category
+
   int unitId; // ID of the unit
   String unitName; // Name of the unit
   String unitPrice; // Name of the unit
@@ -11,11 +13,14 @@ class ItemListModel {
   String gst; // Total GST value
   String igst; // IGST value
   int serviceCheckbox; // IGST value
+  int primaryCheckBox; // IGST value
+  int stockId;
   String hsnCode;
 
   // Constructor
   ItemListModel({
     required this.itemId,
+    required this.stockId,
     required this.itemName,
     required this.categoryId,
     required this.categoryName,
@@ -28,12 +33,16 @@ class ItemListModel {
     required this.igst,
     required this.serviceCheckbox,
     required this.hsnCode,
+    required this.quantity,
+    required this.primaryCheckBox,
   });
 
   // Factory method to create an instance from a JSON object
   factory ItemListModel.fromJson(Map<String, dynamic> json) {
     return ItemListModel(
+      quantity: json["quantity"]?.toString() ?? '',
       itemId: json['itemId'] ?? 0,
+      stockId: json['Stock_Id'] ?? 0,
       itemName: json['itemName']?.toString() ?? '',
       categoryId: json['categoryId'] ?? 0,
       categoryName: json['categoryName']?.toString() ?? '',
@@ -45,6 +54,7 @@ class ItemListModel {
       gst: json['gst']?.toString() ?? '0.00',
       igst: json['igst']?.toString() ?? '0.00',
       serviceCheckbox: json['Service_CheckBox'] ?? 0,
+      primaryCheckBox: json["Is_Primary"] ?? 0,
       hsnCode: json['HSNCode']?.toString() ?? '',
     );
   }
@@ -53,6 +63,8 @@ class ItemListModel {
   Map<String, dynamic> toJson() {
     return {
       'itemId': itemId,
+      'Stock_Id': stockId,
+      "quantity": quantity,
       'itemName': itemName,
       'categoryId': categoryId,
       'categoryName': categoryName,

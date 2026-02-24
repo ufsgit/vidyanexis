@@ -121,36 +121,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                             print('............../////////////');
                             break;
                           case 'convert':
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Confirm Convert'),
-                                  content: const Text(
-                                      'Are you sure you want to convert this lead?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Cancel'),
-                                    ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        Navigator.pop(context); // Close dialog
-                                        final leadsProvider =
-                                            Provider.of<LeadsProvider>(context,
-                                                listen: false);
-                                        await leadsProvider.convertLead(
-                                            context, widget.customerId);
-                                      },
-                                      child: const Text(
-                                        'Convert',
-                                        style: TextStyle(color: Colors.green),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+                            _showConvertDialog();
                             break;
                           case 'delete':
                             showDialog(
@@ -295,6 +266,41 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                             const Text(
                               'Follow-Up',
                               style: TextStyle(fontSize: 16),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    ElevatedButton(
+                      onPressed: _showConvertDialog,
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.green,
+                        backgroundColor: Colors.white, // Text color
+                        side: const BorderSide(
+                            color: Colors.green), // Border color
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(5), // Border radius
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 0.0), // Reduced horizontal padding
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.change_circle_outlined,
+                            color: Colors.green,
+                          ),
+                          if (AppStyles.isWebScreen(context))
+                            const Padding(
+                              padding: EdgeInsets.only(left: 4.0),
+                              child: Text(
+                                'Convert Lead',
+                                style: TextStyle(fontSize: 16),
+                              ),
                             ),
                         ],
                       ),
@@ -511,6 +517,36 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showConvertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Convert'),
+          content: const Text('Are you sure you want to convert this lead?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close dialog
+                final leadsProvider =
+                    Provider.of<LeadsProvider>(context, listen: false);
+                await leadsProvider.convertLead(context, widget.customerId);
+              },
+              child: const Text(
+                'Convert',
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 

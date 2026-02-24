@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
+import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
@@ -60,7 +61,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
-      const Tab(text: "Activity"),
+      if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "Activity"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[14] == 1)
         const Tab(text: "Complaints"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[15] == 1)
@@ -68,11 +69,13 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
         const Tab(text: "Receipt"),
-      const Tab(text: "Payment Schedule"),
-      const Tab(text: "Payment"),
+      if (settingsprovider.menuIsViewMap[70] == 1)
+        const Tab(text: "Payment Schedule"),
+      if (settingsprovider.menuIsViewMap[72] == 1) const Tab(text: "Payment"),
       // const Tab(text: "Task Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[37] == 1)
         const Tab(text: "CheckList Management"),
+      const Tab(text: "Invoice"),
     ];
     int tabCount = tabs.length;
     _tabController = TabController(length: tabCount, vsync: this);
@@ -361,11 +364,11 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             QuotationMobileView(
               customerId: widget.customerId.toString(),
             ),
-          // Activity Tab
-          ActivityTabPage(
-            lead: widget.lead,
-            customerId: widget.customerId,
-          ),
+          if (settingsprovider.menuIsViewMap[73] == 1)
+            ActivityTabPage(
+              lead: widget.lead,
+              customerId: widget.customerId,
+            ),
 
           if (!widget.fromLead && settingsprovider.menuIsViewMap[14] == 1)
             ComplaintsPageMobile(
@@ -381,8 +384,10 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             ),
           if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
             RecieptPhone(widget.customerId.toString()),
-          PaymentScheduleTabWidget(customerId: widget.customerId.toString()),
-          PaymentTabWidget(customerId: widget.customerId.toString()),
+          if (settingsprovider.menuIsViewMap[70] == 1)
+            PaymentScheduleTabWidget(customerId: widget.customerId.toString()),
+          if (settingsprovider.menuIsViewMap[72] == 1)
+            PaymentTabWidget(customerId: widget.customerId.toString()),
 
           // TaskDocumentsPage(
           //   customerId: widget.customerId.toString(),
@@ -394,6 +399,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
           // RecieptListPageMobile(
           //   customerId: widget.customerId.toString(),
           // ),
+          InvoiceTabPage(customerId: widget.customerId.toString()),
         ],
       ),
     );

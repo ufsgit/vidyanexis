@@ -205,13 +205,15 @@ class CustomTab extends StatelessWidget {
             : 900.0;
 
     final tabOptions = [
-      if (settingsProvider.menuIsViewMap[49].toString() == '1')
+      if (settingsProvider.menuIsViewMap[49].toString() != '0')
         'Leads Overview',
-      if (settingsProvider.menuIsViewMap[50].toString() == '1') 'Work Overview',
-      'Amc Notification',
-      'Payment Reminders',
-      if (settingsProvider.menuIsViewMap[51].toString() == '1') 'Task Overview',
-      if (settingsProvider.menuIsViewMap[52].toString() == '1') 'Task Summary',
+      if (settingsProvider.menuIsViewMap[50].toString() != '0') 'Work Overview',
+      if (settingsProvider.menuIsViewMap[76].toString() != '0')
+        'Amc Notification',
+      if (settingsProvider.menuIsViewMap[77].toString() != '0')
+        'Payment Reminders',
+      if (settingsProvider.menuIsViewMap[51].toString() != '0') 'Task Overview',
+      if (settingsProvider.menuIsViewMap[52].toString() != '0') 'Task Summary',
     ];
     //change permissions id in dashBoardPage also ----------------
 

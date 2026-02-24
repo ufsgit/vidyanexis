@@ -45,6 +45,7 @@ import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_scr
 import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/upcoming_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
@@ -231,6 +232,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: WorkSummaryScreen()),
         ),
+      if (settingsProvider.menuIsViewMap[25].toString() == '1')
+        SidebarOption(
+          title: 'Stock Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: StockReport()),
+        ),
 
       if (settingsProvider.menuIsViewMap[24].toString() == '1')
         SidebarOption(
@@ -269,32 +276,36 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadPageReport()),
         ),
-      if (settingsProvider.menuIsViewMap[72].toString() == '1')
+      if (settingsProvider.menuIsViewMap[65].toString() == '1')
         SidebarOption(
           title: 'Balance Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: BalanceReportPage()),
         ),
-      SidebarOption(
-        title: 'Payment Reports',
-        iconPath: 'assets/images/Reports.svg',
-        baseContent: const Center(child: PaymentReportPage()),
-      ),
-      SidebarOption(
-        title: 'Upcoming Payment Reports',
-        iconPath: 'assets/images/Reports.svg',
-        baseContent: const Center(child: UpcomingPaymentReportPage()),
-      ),
-      SidebarOption(
-        title: 'Total Outstanding Reports',
-        iconPath: 'assets/images/Reports.svg',
-        baseContent: const Center(child: TotalOutstandingReportPage()),
-      ),
-      SidebarOption(
-        title: 'Outstanding Reports',
-        iconPath: 'assets/images/Reports.svg',
-        baseContent: const Center(child: OutstandingReportPage()),
-      ),
+      if (settingsProvider.menuIsViewMap[72].toString() == '1')
+        SidebarOption(
+          title: 'Payment Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: PaymentReportPage()),
+        ),
+      if (settingsProvider.menuIsViewMap[73].toString() == '1')
+        SidebarOption(
+          title: 'Upcoming Payment Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: UpcomingPaymentReportPage()),
+        ),
+      if (settingsProvider.menuIsViewMap[74].toString() == '1')
+        SidebarOption(
+          title: 'Total Outstanding Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: TotalOutstandingReportPage()),
+        ),
+      if (settingsProvider.menuIsViewMap[75].toString() == '1')
+        SidebarOption(
+          title: 'Outstanding Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: OutstandingReportPage()),
+        ),
       // SidebarOption(
       //   title: 'Feedback Reports',
       //   iconPath: 'assets/images/Reports.svg',
