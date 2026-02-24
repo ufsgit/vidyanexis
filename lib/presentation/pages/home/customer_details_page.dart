@@ -7,6 +7,7 @@ import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
+import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
@@ -167,6 +168,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[71] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
+      const Tab(text: "Invoice"),
     ];
 
     if (!_isControllerInitialized || newTabs.length != _tabs.length) {
@@ -3418,6 +3420,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               if (sideprovider.name != 'Lead /')
                                                 RefundFormPage(
                                                     widget.customerId),
+
+                                            InvoiceTabPage(customerId: widget.customerId),
                                           ],
                                         ),
                                       ),
