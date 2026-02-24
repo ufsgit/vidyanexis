@@ -1225,6 +1225,42 @@ class SettingsProvider extends ChangeNotifier {
                 isDelete: 0));
           }
 
+          // Register Dashboard Tabs and new Report IDs
+          final Map<int, String> customPermissions = {
+            49: 'Leads Overview',
+            50: 'Work Overview',
+            51: 'Task Overview',
+            52: 'Task Summary',
+            65: 'Balance Reports',
+            72: 'Payment Reports',
+            73: 'Upcoming Payment Reports',
+            74: 'Total Outstanding Reports',
+            75: 'Outstanding Reports',
+            76: 'AMC Notification',
+            77: 'Payment Reminders',
+          };
+
+          for (var entry in customPermissions.entries) {
+            bool alreadyExists = false;
+            for (var i = 0; i < _getMenuPermission.length; i++) {
+              if (_getMenuPermission[i].menuId == entry.key) {
+                _getMenuPermission[i].menuName = entry.value;
+                alreadyExists = true;
+                break;
+              }
+            }
+            if (!alreadyExists) {
+              _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: entry.key,
+                menuName: entry.value,
+                isView: 1, // Defaulting to 1 so they show up for now
+                isSave: 1,
+                isEdit: 1,
+                isDelete: 1,
+              ));
+            }
+          }
+
           SharedPreferences preferences = await SharedPreferences.getInstance();
           String loginuserId = preferences.getString('userId') ?? "";
           if (loginuserId == userId) {

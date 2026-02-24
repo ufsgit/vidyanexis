@@ -126,18 +126,22 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
-      // if (settingsProvider.menuIsViewMap[65].toString() == '1')
-      {'title': 'Balance Reports', 'page': const BalanceReportPage()},
-      {'title': 'Payment Reports', 'page': const PaymentReportPage()},
-      {
-        'title': 'Upcoming Payment Reports',
-        'page': const UpcomingPaymentReportPage()
-      },
-      {
-        'title': 'Total Outstanding Reports',
-        'page': const TotalOutstandingReportPage()
-      },
-      {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
+      if (settingsProvider.menuIsViewMap[65].toString() == '1')
+        {'title': 'Balance Reports', 'page': const BalanceReportPage()},
+      if (settingsProvider.menuIsViewMap[72].toString() == '1')
+        {'title': 'Payment Reports', 'page': const PaymentReportPage()},
+      if (settingsProvider.menuIsViewMap[73].toString() == '1')
+        {
+          'title': 'Upcoming Payment Reports',
+          'page': const UpcomingPaymentReportPage()
+        },
+      if (settingsProvider.menuIsViewMap[74].toString() == '1')
+        {
+          'title': 'Total Outstanding Reports',
+          'page': const TotalOutstandingReportPage()
+        },
+      if (settingsProvider.menuIsViewMap[75].toString() == '1')
+        {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
     ];
 
     return Drawer(
