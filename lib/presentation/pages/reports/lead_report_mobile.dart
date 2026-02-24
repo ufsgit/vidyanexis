@@ -77,6 +77,21 @@ class _leadReportMobile extends State<LeadReportMobile> {
     final customerProvider = Provider.of<CustomerProvider>(context);
     // final customerDetailsProvider =
     //     Provider.of<CustomerDetailsProvider>(context);
+
+    final screenHeight = MediaQuery.of(context).size.height;
+    const headerHeight = 60;
+    const searchSectionHeight = 80;
+    const paginationHeight = 60;
+    const tableHeaderHeight = 50;
+    const paddingSafety = 40;
+    final availableHeight = screenHeight -
+        headerHeight -
+        searchSectionHeight -
+        paginationHeight -
+        tableHeaderHeight -
+        paddingSafety;
+    final rowHeight = availableHeight / 20;
+
     return Scaffold(
       key: _scaffoldKey,
       appBar: CustomAppBar(

@@ -16,6 +16,7 @@ import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_checklist_management_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_payment_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -146,13 +147,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "Periodic Service"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
-      const Tab(text: "History"),
+      if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "History"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
-      if (settingsprovider.menuIsViewMap[18] == 1 &&
+      /*if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
-        const Tab(text: "Expense"),
+        const Tab(text: "Expense"),*/
       // Payment Tab (New)
 
       if (settingsprovider.menuIsViewMap[37] == 1 &&
@@ -160,7 +161,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "CheckList Management"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
-      if (settingsprovider.menuIsViewMap[18] == 1 &&
+      if (settingsprovider.menuIsViewMap[72] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Payment"),
       if (settingsprovider.menuIsViewMap[71] == 1 &&
@@ -699,6 +700,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Complaint'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[72] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text == "Payment")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider
+                                          .clearPaymentDetails();
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) {
+                                          return AddPaymentWidget(
+                                              customerId: widget.customerId);
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('Add Payment'),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
@@ -3349,12 +3379,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     widget.customerId),
 
                                             //Expense Tab
-                                            if (settingsprovider
+                                            /*if (settingsprovider
                                                     .menuIsViewMap[18] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 ExpenseScreen(
-                                                    widget.customerId),
+                                                    widget.customerId),*/
 
                                             //CheckList Management
                                             if (settingsprovider
@@ -3374,7 +3404,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       widget.customerId),
                                             // Payment Tab (New)
                                             if (settingsprovider
-                                                    .menuIsViewMap[18] ==
+                                                    .menuIsViewMap[72] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 PaymentTabWidget(

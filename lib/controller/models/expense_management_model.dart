@@ -181,4 +181,14 @@ class ExpenseHeaderModel {
     this.totalExpenseAmount,
     this.receivedAmount,
   });
+
+  factory ExpenseHeaderModel.fromJson(Map<String, dynamic> json) {
+    return ExpenseHeaderModel(
+      totalBalance: double.tryParse((json["total_balance"] ?? 0).toString()),
+      totalExpenseAmount:
+          double.tryParse((json["total_expense_amount"] ?? 0).toString()),
+      receivedAmount:
+          double.tryParse((json["received_amount"] ?? 0).toString()),
+    );
+  }
 }

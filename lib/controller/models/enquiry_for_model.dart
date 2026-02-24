@@ -5,6 +5,7 @@ class EnquiryForModel {
   final int sourceCategoryId;
   final String sourceCategoryName;
   final List<Map<String, dynamic>>? customFields;
+  final List<Map<String, dynamic>>? taskTypes;
 
   // Constructor with default values
   EnquiryForModel({
@@ -14,6 +15,7 @@ class EnquiryForModel {
     required this.sourceCategoryId,
     required this.sourceCategoryName,
     this.customFields,
+    this.taskTypes,
   });
 
   // Factory method to create an instance from JSON, using ?? for null checks
@@ -27,6 +29,9 @@ class EnquiryForModel {
       customFields: json['custom_fields'] != null
           ? List<Map<String, dynamic>>.from(json['custom_fields'])
           : null,
+      taskTypes: json['Task_Types'] != null
+          ? List<Map<String, dynamic>>.from(json['Task_Types'])
+          : null,
     );
   }
 
@@ -37,6 +42,7 @@ class EnquiryForModel {
       'Enquiry_For_Name': enquiryForName,
       'DeleteStatus': deleteStatus,
       if (customFields != null) 'Custom_Fields': customFields,
+      if (taskTypes != null) 'Task_Types': taskTypes,
     };
   }
 }

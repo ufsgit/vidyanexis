@@ -1,14 +1,23 @@
 class ReceiptListModel {
   final int receiptId;
   final String entryDate;
+  final String receiptDate;
+  final String receiptNo;
+
   final String description;
   final double amount;
   final int customerId;
   final int deleteStatus;
   final String byUserId;
   final String byUserName;
+  final int paymentModeId;
+  final String paymentModeName;
 
   ReceiptListModel({
+    required this.paymentModeId,
+    required this.paymentModeName,
+    required this.receiptDate,
+    required this.receiptNo,
     required this.receiptId,
     required this.entryDate,
     required this.description,
@@ -22,6 +31,10 @@ class ReceiptListModel {
   // Factory constructor to parse JSON with null checks
   factory ReceiptListModel.fromJson(Map<String, dynamic> json) {
     return ReceiptListModel(
+      paymentModeId: json['Payment_mode_id'] ?? 0,
+      paymentModeName: json['Payment_mode_name']?.toString() ?? '',
+      receiptDate: json['Reciept_Date'] ?? '',
+      receiptNo: json['Reciept_No']?.toString() ?? '',
       receiptId: json['Receipt_Id'] ?? 0,
       entryDate: json['Entry_Date'] ?? '',
       description: json['Description'] ?? '',

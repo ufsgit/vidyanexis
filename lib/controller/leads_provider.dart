@@ -1725,7 +1725,7 @@ class LeadsProvider extends ChangeNotifier {
       Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
         endPoint: HttpUrls.convertLead,
-        bodyData: {'customer_id': customerId},
+        bodyData: {'customer_id': int.tryParse(customerId) ?? 0},
       );
       Loader.stopLoader(context);
 
@@ -1736,11 +1736,12 @@ class LeadsProvider extends ChangeNotifier {
           Navigator.pop(context); // Close the details/dialog
         }
       } else {
+        log('Failed to convert lead. Status: ${response?.statusCode}, Data: ${response?.data}');
         Fluttertoast.showToast(msg: "Failed to Convert Lead");
       }
     } catch (e) {
       Loader.stopLoader(context);
-      print('Error converting lead: $e');
+      log('Error converting lead: $e');
       Fluttertoast.showToast(msg: "An error occurred");
     }
   }

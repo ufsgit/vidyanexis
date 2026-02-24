@@ -1,18 +1,22 @@
 class HttpUrls {
 //baseurls
 //live
-  // static String baseUrl = 'https://baymentapi.trackbox.net.in/';
+
+  // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
-  //  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
+  // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
+  // static String baseUrl = 'https://demo3api.trackbox.net.in/';
+  // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
+
 //dev
-  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -28,7 +32,7 @@ class HttpUrls {
   static String timeTrack = "followup/Time_track_reports";
   static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
-  static String convertLead = "lead/Convert_lead";
+  static String convertLead = "followup/Convert_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
   // static String getAllFollowUpStatus = "status/Search_status";
   static String getItemListStock = "item/Get_All_Items_from_stock";
@@ -52,6 +56,7 @@ class HttpUrls {
   static String getServiceDetails = "service/Get_service";
   static String saveAmcDetails = "amc/Save_amc";
   static String searchTaskType = "task_status/Search_task_type";
+  static String getTaskHistory = "task_data/Get_Task_History";
   static String getAmc = "amc/Get_Amc_By_Customer";
   static String getQuatationByCustomer =
       "quotation_master/Get_Quotation_By_Customer";
@@ -166,6 +171,7 @@ class HttpUrls {
   static String deleteProjectType = "project/Delete_Project_Type";
 
   // Expense Tab Endpoints
+  static String getExpenseReport = "service/Get_Expense_Report";
   static String saveExpense = "service/Save_expense";
   static String getExpenseByCustomer = "service/Get_Expense_By_Customer";
   static String deleteExpense = "service/Delete_Expense";
@@ -175,6 +181,11 @@ class HttpUrls {
   static String getInvoiceList = "service/Get_Customer_Invoice";
   static String saveInvoiceUrl = "service/Save_Customer_Invoice";
   static String invoiceRecieptTotal = "service/Invoice_Reciept_Total";
+
+  static String searchOutofwarrentyReport =
+      "service/Search_Outofwarrenty_Report";
+  static String searchUpcomingWarrantyReport =
+      "service/Search_Upcoming_Warranty_Report";
   static String billPayementReport = "service/Billing_Payment_Report";
   static String addTaskType = "task_status/Save_task_type";
   static String deleteTaskType = "task_status/Delete_task_type";
@@ -256,10 +267,27 @@ class HttpUrls {
   static String loadQuotationFromCustomFields =
       "quotation_master/load_quotation_from_custom_fields";
 
+  static String getPaymentReport = "service/Get_Payment_Report";
   static String getPaymentSchedule = "service/Get_Payment_Schedule_By_Customer";
   static String savePaymentSchedule = "service/save_schedule";
   static String deletePaymentSchedule = "service/Delete_Payment_Schedule";
   static String getQuotationMasterPdf =
       "quotation_master/Get_quotation_master_pdf";
   static String balanceReport = "service/Payment_Balance_Report";
+  static String upcomingPaymentReport = "service/Get_Upcoming_Payment_Report";
+  static String totalOutstandingReport = "service/Get_Total_Outstanding_Report";
+  static String outstandingReport = "service/Get_Outstanding_Report";
+  static String amcNotification = "task/Get_AMC_Notification";
+  static String getPaymentReminders = "task/Get_Payment_Reminders";
+  static String saveInvoiceTab = "service/Save_Invoice";
+  static String getInvoiceByCustomer = "service/Get_All_Invoices";
+  static String getInvoiceDetails = "service/Get_Invoice";
+  static String deleteInvoiceTab = "service/Delete_Invoice";
+  static String getHSNDetails = "service/Get_HSN_Details";
+  static String getAllItemsInvoice = "item/get_all_items_invoice";
+  static String getInvoicePrintItems = "service/Get_Invoice_Items_Print";
+  static String getQuotationDropDown =
+      "quotation_master/Get_Quotation_Dropdown";
+  static String getQuotationItems =
+      "quotation_master/Get_Quotation_Dropdown_Details";
 }

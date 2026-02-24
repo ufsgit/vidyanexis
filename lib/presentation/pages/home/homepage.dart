@@ -38,9 +38,16 @@ import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dar
 import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/warrenty_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/upcoming_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_bar_widget.dart';
 
@@ -201,6 +208,18 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: AmcReportScreen()),
         ),
+      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+        SidebarOption(
+          title: 'Out Of Warranty Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: OutOfWarrentyReportScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+        SidebarOption(
+          title: 'Upcoming Warranty Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: UpcomingWarrentyReportScreen()),
+        ),
       if (settingsProvider.menuIsViewMap[10].toString() == '1')
         SidebarOption(
           title: 'Conversion Reports',
@@ -212,6 +231,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Work Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: WorkSummaryScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[25].toString() == '1')
+        SidebarOption(
+          title: 'Stock Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: StockReport()),
         ),
 
       if (settingsProvider.menuIsViewMap[24].toString() == '1')
@@ -257,6 +282,26 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: BalanceReportPage()),
         ),
+      SidebarOption(
+        title: 'Payment Reports',
+        iconPath: 'assets/images/Reports.svg',
+        baseContent: const Center(child: PaymentReportPage()),
+      ),
+      SidebarOption(
+        title: 'Upcoming Payment Reports',
+        iconPath: 'assets/images/Reports.svg',
+        baseContent: const Center(child: UpcomingPaymentReportPage()),
+      ),
+      SidebarOption(
+        title: 'Total Outstanding Reports',
+        iconPath: 'assets/images/Reports.svg',
+        baseContent: const Center(child: TotalOutstandingReportPage()),
+      ),
+      SidebarOption(
+        title: 'Outstanding Reports',
+        iconPath: 'assets/images/Reports.svg',
+        baseContent: const Center(child: OutstandingReportPage()),
+      ),
       // SidebarOption(
       //   title: 'Feedback Reports',
       //   iconPath: 'assets/images/Reports.svg',

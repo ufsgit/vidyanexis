@@ -1715,7 +1715,9 @@ class SettingsProvider extends ChangeNotifier {
         showToastInDialog(message, context);
 
         if (data['success']) {
+          getDocumentCheckList(context);
           Navigator.pop(context, true);
+          notifyListeners();
         }
       } else {
         showToastInDialog("Server Error", context);
@@ -2050,20 +2052,17 @@ class SettingsProvider extends ChangeNotifier {
     required String forId,
     required String forName,
     required final customFields,
+    required final taskTypes,
   }) async {
     try {
       Loader.showLoader(context);
-      print('=== addEnquiryForName DEBUG ===');
-      print('customFields type: ${customFields.runtimeType}');
-      print('customFields: $customFields');
-      print('customFields is List: ${customFields is List}');
-      print('customFields length: ${customFields?.length ?? 0}');
       Map<String, dynamic> bodyData = {
         "Enquiry_For_Id": forId,
         "Enquiry_For_Name": forName,
         "Source_Category_Id": sourceCategoryId,
         "Source_Category_Name": sourceCategoryEnquiryController.text,
         "Custom_Fields": customFields,
+        "Task_Types": taskTypes,
       };
 
       final response = await HttpRequest.httpPostRequest(

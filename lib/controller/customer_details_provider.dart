@@ -837,10 +837,27 @@ class CustomerDetailsProvider extends ChangeNotifier {
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.getExpenseById}/$expenseId');
       if (response.statusCode == 200) {
-        final data = response.data;
-        if (data != null && data is List && data.isNotEmpty) {
-          final expense = ExpenseModel.fromJson(data[0]);
+        var data = response.data;
+        ExpenseModel? expense;
 
+        if (data is List && data.isNotEmpty) {
+          expense = ExpenseModel.fromJson(data[0]);
+        } else if (data is Map<String, dynamic>) {
+          if (data.containsKey('data') &&
+              data['data'] is List &&
+              (data['data'] as List).isNotEmpty) {
+            expense = ExpenseModel.fromJson(data['data'][0]);
+          } else {
+            // Direct Map response
+            try {
+              expense = ExpenseModel.fromJson(data);
+            } catch (e) {
+              print('Error parsing direct map: $e');
+            }
+          }
+        }
+
+        if (expense != null) {
           // Populate form fields
           expenseAmountController.text = expense.amount?.toString() ?? '';
           expenseDescriptionController.text = expense.description ?? '';

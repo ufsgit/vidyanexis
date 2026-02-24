@@ -778,19 +778,19 @@ Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
                         style: pw.TextStyle(font: boldFont, fontSize: 12),
                       ),
                       pw.Text(
-                        'Account Name - A3S Ecosave Pvt Ltd',
+                        'Account Name - ${quotation?.branchDetails?.bankHolderName ?? ''}',
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                       pw.Text(
-                        'Ac No. 438705000469',
+                        'Ac No. ${quotation?.branchDetails?.bankAccountNo ?? ''}',
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                       pw.Text(
-                        'IFSC code - ICIC0004387',
+                        'IFSC code - ${quotation?.branchDetails?.ifscCode ?? ''}',
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                       pw.Text(
-                        'SARJAPURA -Brach - KARNATAKA',
+                        '${quotation?.branchDetails?.branchName ?? ''}',
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                     ],

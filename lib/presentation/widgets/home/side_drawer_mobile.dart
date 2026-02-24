@@ -3,15 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/checkin_checkout_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_report_mobile.dart';
-import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
-import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_report_mobile.dart';
-import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report_mobile.dart';
-import 'package:vidyanexis/presentation/pages/reports/staff_location_report_screen.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -19,28 +14,25 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
-import 'package:vidyanexis/presentation/pages/login/login_page_mobile.dart';
-import 'package:vidyanexis/presentation/pages/reports/billing_andpayments_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/periodic_service_report_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
-import 'package:vidyanexis/presentation/pages/home/employee_tracking.dart';
-import 'package:vidyanexis/presentation/pages/reports/amc_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/conversion_report_page.dart';
-import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
-import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
-import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
-import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/upcoming_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
-import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class SidebarDrawer extends StatefulWidget {
@@ -90,6 +82,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
           'title': 'Periodic Service Reports',
           'page': const PeriodicServiceReportPageMobile()
         },
+      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+        {
+          'title': 'Out Of Warranty Reports',
+          'page': const OutOfWarrentyReportScreen()
+        },
+      if (settingsProvider.menuIsViewMap[9].toString() == '1')
+        {
+          'title': 'Upcoming Warranty Reports',
+          'page': const UpcomingWarrentyReportScreen()
+        },
       if (settingsProvider.menuIsViewMap[10].toString() == '1')
         {'title': 'Conversion Reports', 'page': const ConversionReportPage()},
       // if (settingsProvider.menuIsViewMap[11].toString() == '1')
@@ -102,6 +104,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Work Reports', 'page': const WorkSummaryPhone()},
       if (settingsProvider.menuIsViewMap[24].toString() == '1')
         {'title': 'Time Track Reports', 'page': const TimeTrackReportPage()},
+      if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
+        {'title': 'Expense Reports', 'page': const ExpenseReportScreen()},
 
       if (settingsProvider.menuIsViewMap[53].toString() == '1')
         {
@@ -124,6 +128,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
       // if (settingsProvider.menuIsViewMap[65].toString() == '1')
       {'title': 'Balance Reports', 'page': const BalanceReportPage()},
+      {'title': 'Payment Reports', 'page': const PaymentReportPage()},
+      {
+        'title': 'Upcoming Payment Reports',
+        'page': const UpcomingPaymentReportPage()
+      },
+      {
+        'title': 'Total Outstanding Reports',
+        'page': const TotalOutstandingReportPage()
+      },
+      {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
     ];
 
     return Drawer(

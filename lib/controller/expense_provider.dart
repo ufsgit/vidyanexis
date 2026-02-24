@@ -1712,6 +1712,9 @@ class ExpenseProvider extends ChangeNotifier {
 
   ExpenseHeaderModel correlationbox = ExpenseHeaderModel();
 
+  ExpenseHeaderModel? _limitHeader;
+  ExpenseHeaderModel? get limitHeader => _limitHeader;
+
   Future<void> getExpenseReport(BuildContext context) async {
     _expenseModelList = [];
     Loader.showLoader(context);
@@ -1734,7 +1737,7 @@ class ExpenseProvider extends ChangeNotifier {
     String to = formattedToDate;
 
     try {
-      String url = '${HttpUrls.getExpenseManagement}?reference_id=$assignedTo';
+      String url = '${HttpUrls.getExpenseReport}?reference_id=$assignedTo';
       if (expenseTypeId.isNotEmpty) url += '&expense_type_id=$expenseTypeId';
       if (projectTypeId.isNotEmpty) url += '&project_type_id=$projectTypeId';
       if (from.isNotEmpty) url += '&s_EntryDate_From=$from';
@@ -1743,22 +1746,24 @@ class ExpenseProvider extends ChangeNotifier {
       final response = await HttpRequest.httpGetRequest(endPoint: url);
 
       if (response.statusCode == 200) {
-        final data = response.data["data"];
+        final data = response.data;
 
         if (data != null) {
-          _expenseModelList = (data as List<dynamic>)
-              .map((item) => ExpenseModel.fromJson(item))
-              .toList();
-
-          double totalExpense = 0;
-          for (var item in _expenseModelList) {
-            totalExpense += (item.amount ?? 0);
+          if (data["header_data"] != null &&
+              (data["header_data"] as List).isNotEmpty) {
+            _limitHeader = ExpenseHeaderModel.fromJson(data["header_data"][0]);
           }
 
-          correlationbox = ExpenseHeaderModel(
-              totalExpenseAmount: totalExpense,
-              totalBalance: 0,
-              receivedAmount: 0);
+          if (data["expense_data"] != null) {
+            _expenseModelList = (data["expense_data"] as List<dynamic>)
+                .map((item) => ExpenseModel.fromJson(item))
+                .toList();
+          }
+
+          // Fallback for correlationbox if needed, or update it from limitHeader
+          if (_limitHeader != null) {
+            correlationbox = _limitHeader!;
+          }
 
           notifyListeners();
         }

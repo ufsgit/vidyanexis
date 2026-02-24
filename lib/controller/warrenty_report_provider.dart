@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/warrenty_model.dart';
+import 'package:vidyanexis/controller/models/amc_notification_model.dart';
+import 'package:vidyanexis/controller/models/payment_reminder_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -275,4 +277,223 @@ class WarrentyReportProvider extends ChangeNotifier {
   //     print('Exception occurred: $e');
   //   }
   // }
+  // Out of Warranty Report
+  List<WarrentyModel> _outOfWarrentyReport = [];
+  List<WarrentyModel> get outOfWarrentyReport => _outOfWarrentyReport;
+
+  Future<void> getSearchOutOfWarrentyReport(BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      if (_Status.isEmpty || _Status == 'null') {
+        _Status = '0';
+      }
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        if (_fromDateS.isEmpty) _fromDateS = "";
+        if (_toDateS.isEmpty) _toDateS = "";
+      } else {
+        isDate = "1";
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchOutofwarrentyReport}?Customer_Name=$_Search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          if (data is List) {
+            _outOfWarrentyReport =
+                data.map((item) => WarrentyModel.fromJson(item)).toList();
+          } else {
+            final newData = data['data'];
+            if (newData != null) {
+              _outOfWarrentyReport = (newData as List<dynamic>)
+                  .map((item) => WarrentyModel.fromJson(item))
+                  .toList();
+            } else {
+              _outOfWarrentyReport = [];
+            }
+          }
+
+          Loader.stopLoader(context);
+          notifyListeners();
+        }
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  // Upcoming Warranty Report
+  List<WarrentyModel> _upcomingWarrantyReport = [];
+  List<WarrentyModel> get upcomingWarrantyReport => _upcomingWarrantyReport;
+
+  Future<void> getSearchUpcomingWarrantyReport(BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      if (_Status.isEmpty || _Status == 'null') {
+        _Status = '0';
+      }
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        if (_fromDateS.isEmpty) _fromDateS = "";
+        if (_toDateS.isEmpty) _toDateS = "";
+      } else {
+        isDate = "1";
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchUpcomingWarrantyReport}?Customer_Name=$_Search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          if (data is List) {
+            _upcomingWarrantyReport =
+                data.map((item) => WarrentyModel.fromJson(item)).toList();
+          } else {
+            final newData = data['data'];
+            if (newData != null) {
+              _upcomingWarrantyReport = (newData as List<dynamic>)
+                  .map((item) => WarrentyModel.fromJson(item))
+                  .toList();
+            } else {
+              _upcomingWarrantyReport = [];
+            }
+          }
+
+          Loader.stopLoader(context);
+          notifyListeners();
+        }
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  // Amc Notification Report
+  List<AmcNotificationModel> _amcNotificationList = [];
+  List<AmcNotificationModel> get amcNotificationList => _amcNotificationList;
+  bool isAmcNotificationLoading = false;
+
+  Future<void> getAmcNotification(BuildContext context) async {
+    isAmcNotificationLoading = true;
+    notifyListeners();
+
+    // Default dates if null
+    if (fromDate == null) {
+      _selectedDateFilterIndex = null;
+    }
+    formatDate();
+
+    String isDate = "0";
+    if (_formattedFromDate.isNotEmpty && _formattedToDate.isNotEmpty) {
+      isDate = "1";
+    }
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.amcNotification}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Is_Date_Check=$isDate&User_Id=${_selectedUser ?? 0}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        // print('Amc Notification Response: $data');
+
+        if (data != null && data['list'] != null) {
+          if (data['list'] is List) {
+            _amcNotificationList = (data['list'] as List)
+                .map((e) => AmcNotificationModel.fromJson(e))
+                .toList();
+          } else {
+            _amcNotificationList = [];
+          }
+        } else {
+          _amcNotificationList = [];
+        }
+      } else {
+        _amcNotificationList = [];
+        // print('Failed to load amc notification: ${response.statusCode}');
+      }
+    } catch (e) {
+      _amcNotificationList = [];
+      print('Error fetching amc notification: $e');
+    } finally {
+      isAmcNotificationLoading = false;
+      notifyListeners();
+    }
+  }
+
+  // Payment Reminder Report
+  List<PaymentReminderModel> _paymentReminderList = [];
+  List<PaymentReminderModel> get paymentReminderList => _paymentReminderList;
+  bool isPaymentReminderLoading = false;
+
+  Future<void> getPaymentReminders(BuildContext context) async {
+    isPaymentReminderLoading = true;
+    notifyListeners();
+
+    // Default dates if null
+    if (fromDate == null) {
+      _selectedDateFilterIndex = null;
+    }
+    formatDate();
+
+    String isDate = "0";
+    if (_formattedFromDate.isNotEmpty && _formattedToDate.isNotEmpty) {
+      isDate = "1";
+    }
+
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.getPaymentReminders}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Is_Date_Check=$isDate&User_Id=${_selectedUser ?? 0}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data['data'] != null) {
+          if (data['data'] is List) {
+            _paymentReminderList = (data['data'] as List)
+                .map((e) => PaymentReminderModel.fromJson(e))
+                .toList();
+          } else {
+            _paymentReminderList = [];
+          }
+        } else {
+          _paymentReminderList = [];
+        }
+      } else {
+        _paymentReminderList = [];
+      }
+    } catch (e) {
+      _paymentReminderList = [];
+      print('Error fetching payment reminders: $e');
+    } finally {
+      isPaymentReminderLoading = false;
+      notifyListeners();
+    }
+  }
 }

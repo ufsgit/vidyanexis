@@ -22,6 +22,8 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import '../../widgets/home/custom_textfield_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/dashboard_task_count_card.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/amc_notification_tab.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/payment_reminder_tab.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -211,6 +213,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 0, // Leads Overview
               if ((settingsProvider.menuIsViewMap[50] ?? 0).toString() == '1')
                 1, // Work Overview
+              4, // Amc Notification
+              5, // Payment Reminders
               if ((settingsProvider.menuIsViewMap[51] ?? 0).toString() == '1')
                 2, // Task Overview
               if ((settingsProvider.menuIsViewMap[52] ?? 0).toString() == '1')
@@ -262,20 +266,28 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     countLeadData: dashBoardProvider.conversionCountData,
                   ),
                 );
+              case 4:
+                return AnimatedAlign(
+                  duration: const Duration(milliseconds: 600),
+                  alignment: const Alignment(0, 0),
+                  child: const AmcNotificationTab(),
+                );
+              case 5:
+                return AnimatedAlign(
+                  duration: const Duration(milliseconds: 600),
+                  alignment: const Alignment(0, 0),
+                  child: const PaymentReminderTab(),
+                );
               case 2:
                 return AnimatedAlign(
                   duration: const Duration(milliseconds: 600),
-                  alignment: safeIndex == 2
-                      ? const Alignment(0, 0)
-                      : const Alignment(50, 0),
+                  alignment: const Alignment(0, 0),
                   child: const TaskOverviewTab(),
                 );
               case 3:
                 return AnimatedAlign(
                   duration: const Duration(milliseconds: 600),
-                  alignment: safeIndex == 3
-                      ? const Alignment(0, 0)
-                      : const Alignment(50, 0),
+                  alignment: const Alignment(0, 0),
                   child: const TaskSummaryPage(),
                 );
               default:

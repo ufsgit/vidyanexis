@@ -112,6 +112,11 @@ class SidebarProvider extends ChangeNotifier {
   String get selectedName => _selectedName;
   String get customerId => _customerId;
   String get name => _name;
+  set name(String value) {
+    _name = value;
+    notifyListeners();
+  }
+
   bool get replaceLead => _replaceLead;
   bool get replaceCustomer => _replaceCustomer;
   // int get selectedBottomIndex => _selectedBottomIndex;
