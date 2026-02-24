@@ -3370,7 +3370,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                     ),
 
                                             // Follow-Up Details Tab
-                                            const FollowUpTabWidget(),
+                                            if (settingsprovider
+                                                    .menuIsViewMap[73] ==
+                                                1)
+                                              const FollowUpTabWidget(),
 
                                             //Reciepts Tab
                                             if (settingsprovider
@@ -3421,7 +3424,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 RefundFormPage(
                                                     widget.customerId),
 
-                                            InvoiceTabPage(customerId: widget.customerId),
+                                            InvoiceTabPage(
+                                                customerId: widget.customerId),
                                           ],
                                         ),
                                       ),

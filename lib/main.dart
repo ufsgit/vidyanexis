@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/check_in_out_provider.dart';
 import 'package:vidyanexis/controller/followup_reports_provider.dart';
 import 'package:vidyanexis/controller/form_builder_provider.dart';
+import 'package:vidyanexis/controller/invoice_tab_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/controller/quotation_report_provider.dart';
@@ -113,6 +114,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => BalanceReportProvider()),
         ChangeNotifierProvider(create: (context) => PaymentReportProvider()),
         ChangeNotifierProvider(create: (context) => StockReportProvider()),
+        ChangeNotifierProvider(create: (context) => InvoiceTabProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),
