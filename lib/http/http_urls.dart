@@ -142,6 +142,8 @@ class HttpUrls {
   static String getTaskDocumetsByCustomer =
       "task/Get_task_By_Customer_With_Documents";
   static String getStockUse = "item/Get_stock_use_master";
+  static String stockReport = "item/Search_Stock_Report";
+
   static String deleteCategory = "item/Delete_Category";
 
   static String saveVersion = "task/Save_Version";

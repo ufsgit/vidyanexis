@@ -21,7 +21,7 @@ class FirebaseNotificationService {
     const InitializationSettings initializationSettings =
         InitializationSettings(android: initializationSettingsAndroid);
     await _flutterLocalNotificationsPlugin.initialize(
-      initializationSettings,
+      settings: initializationSettings,
       onDidReceiveNotificationResponse:
           (NotificationResponse notificationResponse) {
         // Handle notification tap
@@ -58,18 +58,18 @@ class FirebaseNotificationService {
       sound: true,
     );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
 
       // If `onMessage` is triggered with a notification, construct our own
       // local notification to show it to users using the created channel.
       if (notification != null && android != null) {
-        _flutterLocalNotificationsPlugin.show(
-          notification.hashCode,
-          notification.title,
-          notification.body,
-          NotificationDetails(
+        await _flutterLocalNotificationsPlugin.show(
+          id: notification.hashCode,
+          title: notification.title,
+          body: notification.body,
+          notificationDetails: NotificationDetails(
             android: AndroidNotificationDetails(
               channel.id,
               channel.name,
@@ -78,6 +78,7 @@ class FirebaseNotificationService {
               // other properties...
             ),
           ),
+          payload: message.data.toString(),
         );
       }
     });
