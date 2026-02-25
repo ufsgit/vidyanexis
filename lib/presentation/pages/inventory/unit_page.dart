@@ -81,7 +81,7 @@ class _UnitPageState extends State<UnitPage> {
                       //   ),
                       // ),
                       // const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[37] == 1)
+                      if (settingsProvider.menuIsSaveMap[47] == 1)
                         CustomOutlinedSvgButton(
                           onPressed: () async {
                             showDialog(
@@ -158,7 +158,7 @@ class _UnitPageState extends State<UnitPage> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  if (settingsProvider.menuIsEditMap[37] == 1)
+                                  if (settingsProvider.menuIsEditMap[47] == 1)
                                     TextButton(
                                         onPressed: () {
                                           showDialog(
@@ -183,7 +183,7 @@ class _UnitPageState extends State<UnitPage> {
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.primaryBlue),
                                         )),
-                                  if (settingsProvider.menuIsDeleteMap[37] == 1)
+                                  if (settingsProvider.menuIsDeleteMap[47] == 1)
                                     TextButton(
                                         onPressed: () {
                                           showDialog(

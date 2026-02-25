@@ -170,30 +170,31 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                         ),
                         const SizedBox(width: 16),
                         // New Lead Button
-                        // if (settingsProvider.menuIsSaveMap[3] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return PurchaseWidget(
-                                  editId: '0',
-                                  isEdit: false,
-                                );
-                              },
-                            );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New Purchase',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
+                        if (settingsProvider.menuIsSaveMap[44] == 1)
+                          CustomOutlinedSvgButton(
+                            onPressed: () async {
+                              showDialog(
+                                barrierDismissible: false,
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return PurchaseWidget(
+                                    editId: '0',
+                                    isEdit: false,
+                                  );
+                                },
+                              );
+                            },
+                            svgPath: 'assets/images/Plus.svg',
+                            label: 'New Purchase',
+                            breakpoint: 860,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                            ),
+                            foregroundColor: Colors.white,
+                            backgroundColor: AppColors.primaryBlue,
+                            borderSide:
+                                BorderSide(color: AppColors.primaryBlue),
                           ),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
-                        ),
                         const SizedBox(width: 16),
                       ],
                     ),
@@ -632,79 +633,91 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                   Expanded(
                                     child: Row(
                                       children: [
-                                        TextButton(
-                                          onPressed: () async {
-                                            await expenseProvider
-                                                .searchPurchaseDetails(
-                                                    purchase.purchaseMasterId
+                                        if (settingsProvider
+                                                .menuIsEditMap[44] ==
+                                            1)
+                                          TextButton(
+                                            onPressed: () async {
+                                              await expenseProvider
+                                                  .searchPurchaseDetails(
+                                                      purchase.purchaseMasterId
+                                                          .toString(),
+                                                      context);
+                                              showDialog(
+                                                barrierDismissible: false,
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return PurchaseWidget(
+                                                    editId: purchase
+                                                        .purchaseMasterId
                                                         .toString(),
-                                                    context);
-                                            showDialog(
-                                              barrierDismissible: false,
-                                              context: context,
-                                              builder: (BuildContext context) {
-                                                return PurchaseWidget(
-                                                  editId: purchase
-                                                      .purchaseMasterId
-                                                      .toString(),
-                                                  isEdit: true,
-                                                  data: purchase,
-                                                );
-                                              },
-                                            );
-                                          },
-                                          child: Text(
-                                            'Edit',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.primaryBlue,
+                                                    isEdit: true,
+                                                    data: purchase,
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Text(
+                                              'Edit',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.primaryBlue,
+                                              ),
                                             ),
                                           ),
-                                        ),
-                                        // TextButton(
-                                        //   onPressed: () {
-                                        //     showDialog(
-                                        //       context: context,
-                                        //       builder: (BuildContext context) {
-                                        //         return AlertDialog(
-                                        //           title: const Text(
-                                        //               'Confirm Delete'),
-                                        //           content: const Text(
-                                        //             'Are you sure you want to delete this item?',
-                                        //           ),
-                                        //           actions: [
-                                        //             TextButton(
-                                        //               onPressed: () =>
-                                        //                   Navigator.pop(
-                                        //                       context),
-                                        //               child:
-                                        //                   const Text('Cancel'),
-                                        //             ),
-                                        //             TextButton(
-                                        //               onPressed: () {
-                                        //                 Navigator.pop(context);
-                                        //               },
-                                        //               child: const Text(
-                                        //                 'Delete',
-                                        //                 style: TextStyle(
-                                        //                     color: Colors.red),
-                                        //               ),
-                                        //             ),
-                                        //           ],
-                                        //         );
-                                        //       },
-                                        //     );
-                                        //   },
-                                        //   child: Text(
-                                        //     'Delete',
-                                        //     style: GoogleFonts.plusJakartaSans(
-                                        //       fontSize: 14,
-                                        //       fontWeight: FontWeight.w600,
-                                        //       color: AppColors.textRed,
-                                        //     ),
-                                        //   ),
-                                        // ),
+                                        if (settingsProvider
+                                                .menuIsDeleteMap[44] ==
+                                            1)
+                                          TextButton(
+                                            onPressed: () {
+                                              showDialog(
+                                                context: context,
+                                                builder:
+                                                    (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: const Text(
+                                                        'Confirm Delete'),
+                                                    content: const Text(
+                                                      'Are you sure you want to delete this item?',
+                                                    ),
+                                                    actions: [
+                                                      TextButton(
+                                                        onPressed: () =>
+                                                            Navigator.pop(
+                                                                context),
+                                                        child: const Text(
+                                                            'Cancel'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.pop(
+                                                              context);
+                                                        },
+                                                        child: const Text(
+                                                          'Delete',
+                                                          style: TextStyle(
+                                                              color:
+                                                                  Colors.red),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Text(
+                                              'Delete',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.textRed,
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),

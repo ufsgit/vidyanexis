@@ -3,6 +3,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/invoice_tab_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_invoice_tab.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_invoice_pdf.dart';
@@ -42,6 +43,7 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
     final invoiceProvider = Provider.of<InvoiceTabProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -86,6 +88,7 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                       SizedBox(
                         width: 10,
                       ),
+                      if (settingsProvider.menuIsSaveMap[21] == 1)
                       CustomOutlinedSvgButton(
                         onPressed: () async {
                           showDialog(
@@ -236,7 +239,7 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                                 borderSide:
                                     BorderSide(color: AppColors.primaryBlue),
                               ),
-                              // if (settingsprovider.menuIsEditMap[16] == 1)
+                              if (settingsProvider.menuIsEditMap[21] == 1)
                               IconButton(
                                 onPressed: () async {
                                   showDialog(
@@ -252,7 +255,7 @@ class _StockReturnPageState extends State<InvoiceTabPage> {
                                 },
                                 icon: const Icon(Icons.edit_outlined),
                               ),
-                              // if (settingsprovider.menuIsDeleteMap[16] == 1)
+                              if (settingsProvider.menuIsDeleteMap[21] == 1)
                               IconButton(
                                   onPressed: () {
                                     showConfirmationDialog(
