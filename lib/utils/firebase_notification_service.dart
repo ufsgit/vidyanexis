@@ -75,7 +75,6 @@ class FirebaseNotificationService {
               channel.name,
               channelDescription: channel.description,
               icon: android.smallIcon,
-              // other properties...
             ),
           ),
           payload: message.data.toString(),
