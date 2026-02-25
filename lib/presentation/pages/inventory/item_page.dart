@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
 
@@ -31,7 +30,6 @@ class _ItemPageState extends State<ItemPage> {
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final expenseProvider = Provider.of<ExpenseProvider>(context);
-    final settingsProvider = Provider.of<SettingsProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -83,30 +81,29 @@ class _ItemPageState extends State<ItemPage> {
                       //   ),
                       // ),
                       const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[34] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddItemWidget(
-                                  isEdit: false,
-                                  editId: 0,
-                                  item: null,
-                                );
-                              },
-                            );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'Add Item',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
-                        ),
+                      CustomOutlinedSvgButton(
+                        onPressed: () async {
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const AddItemWidget(
+                                isEdit: false,
+                                editId: 0,
+                                item: null,
+                              );
+                            },
+                          );
+                        },
+                        svgPath: 'assets/images/Plus.svg',
+                        label: 'Add Item',
+                        breakpoint: 860,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        foregroundColor: Colors.white,
+                        backgroundColor: AppColors.primaryBlue,
+                        borderSide: BorderSide(color: AppColors.primaryBlue),
+                      ),
                       const SizedBox(width: 16),
                     ],
                   ),
@@ -161,79 +158,77 @@ class _ItemPageState extends State<ItemPage> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  if (settingsProvider.menuIsEditMap[34] == 1)
-                                    TextButton(
-                                        onPressed: () async {
-                                          expenseProvider.getItemMaterialList(
-                                              expenseProvider
-                                                  .itemList[index].itemId,
-                                              context);
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AddItemWidget(
-                                                  isEdit: true,
-                                                  editId: expenseProvider
-                                                      .itemList[index].itemId,
-                                                  item: expenseProvider
-                                                      .itemList[index]);
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Edit',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.primaryBlue),
-                                        )),
-                                  if (settingsProvider.menuIsDeleteMap[34] == 1)
-                                    TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'Confirm Delete'),
-                                                content: const Text(
-                                                    'Are you sure you want to delete this item?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    child: const Text('Cancel'),
+                                  TextButton(
+                                      onPressed: () async {
+                                        expenseProvider.getItemMaterialList(
+                                            expenseProvider
+                                                .itemList[index].itemId,
+                                            context);
+                                        showDialog(
+                                          barrierDismissible: false,
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AddItemWidget(
+                                                isEdit: true,
+                                                editId: expenseProvider
+                                                    .itemList[index].itemId,
+                                                item: expenseProvider
+                                                    .itemList[index]);
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        'Edit',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primaryBlue),
+                                      )),
+                                  TextButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text(
+                                                  'Confirm Delete'),
+                                              content: const Text(
+                                                  'Are you sure you want to delete this item?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cancel'),
+                                                ),
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    expenseProvider
+                                                        .deleteItemApi(
+                                                            context,
+                                                            expenseProvider
+                                                                .itemList[
+                                                                    index]
+                                                                .itemId);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text(
+                                                    'Delete',
+                                                    style: TextStyle(
+                                                        color: Colors.red),
                                                   ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      expenseProvider
-                                                          .deleteItemApi(
-                                                              context,
-                                                              expenseProvider
-                                                                  .itemList[
-                                                                      index]
-                                                                  .itemId);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text(
-                                                      'Delete',
-                                                      style: TextStyle(
-                                                          color: Colors.red),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Delete',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.textRed),
-                                        ))
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        'Delete',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textRed),
+                                      ))
                                 ],
                               ),
                             ),
