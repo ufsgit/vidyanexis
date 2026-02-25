@@ -1272,6 +1272,22 @@ class CustomerDetailsProvider extends ChangeNotifier {
     amcDescriptionController.clear();
     amcServiceController.clear();
     amcProductNameController.clear();
+    _maintenanceDates = [];
+    notifyListeners();
+  }
+
+  void updateMaintenanceDate(int index,
+      {String? date, int? completed, int? staffId, String? staffName}) {
+    if (index >= 0 && index < _maintenanceDates.length) {
+      final old = _maintenanceDates[index];
+      _maintenanceDates[index] = MaintenanceDate(
+        date: date ?? old.date,
+        completed: completed ?? old.completed,
+        staffId: staffId ?? old.staffId,
+        staffName: staffName ?? old.staffName,
+      );
+      notifyListeners();
+    }
   }
 
   void updateTaskType(int value, String taskTypeName) {

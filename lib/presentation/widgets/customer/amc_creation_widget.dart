@@ -9,7 +9,6 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
-import 'package:vidyanexis/controller/models/maintenance_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
@@ -143,6 +142,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
       dropDownProvider.setSelectedAmcTotalDurationId(0);
       dropDownProvider.getDuration(context);
       dropDownProvider.getIntervals(context);
+      dropDownProvider.getUserDetails(context);
       customerDetailsProvider.yearInterval = 0;
       customerDetailsProvider.monthInterval = 0;
       if (widget.isEdit) {
@@ -177,8 +177,8 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                 : _getIntervalName(widget.amc!.periodIntervalId);
 
         customerDetailsProvider.maintenanceDates = widget.amc!.maintenanceDate;
-        super.initState();
       }
+      super.initState();
     });
   }
 
@@ -663,7 +663,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                               customerDetailsProvider.maintenanceDates.length -
                                   2,
                           itemBuilder: (context, index) {
-                            final dateString = customerDetailsProvider
+                            final maintenanceDate = customerDetailsProvider
                                 .maintenanceDates[index + 1];
 
                             return Container(
@@ -683,43 +683,107 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                               ),
                               child: Row(
                                 children: [
-                                  Icon(Icons.event,
-                                      color: AppColors.primaryBlue, size: 18),
+                                  const Icon(Icons.event,
+                                      color: Colors.orange, size: 18),
                                   const SizedBox(width: 8.0),
-                                  Expanded(
+                                  InkWell(
+                                    onTap: () async {
+                                      final DateTime now = DateTime.now();
+                                      final DateTime? picked =
+                                          await showDatePicker(
+                                        context: context,
+                                        initialDate: DateTime.tryParse(
+                                                maintenanceDate.date) ??
+                                            now,
+                                        firstDate: DateTime(2000),
+                                        lastDate: DateTime(2100),
+                                      );
+                                      if (picked != null) {
+                                        customerDetailsProvider
+                                            .updateMaintenanceDate(index + 1,
+                                                date: DateFormat('yyyy-MM-dd')
+                                                    .format(picked));
+                                      }
+                                    },
                                     child: Text(
-                                      dateString.date
-                                          .toString()
+                                      maintenanceDate.date
                                           .toDayMonthYearFormat(),
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
-                                        color: AppColors.primaryBlue,
+                                        color: Colors.orange,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
-                                  const SizedBox(width: 8.0),
+                                  const Spacer(),
+                                  // Staff selection
+                                  Container(
+                                    width: 200,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: AppColors.textGrey2),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: DropdownButtonHideUnderline(
+                                      child: DropdownButton<int>(
+                                        isExpanded: true,
+                                        hint: Text(
+                                          'Select Staff',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 13,
+                                            color: AppColors.textGrey3,
+                                          ),
+                                        ),
+                                        value: maintenanceDate.staffId,
+                                        items: dropDownProvider
+                                            .searchUserDetails
+                                            .map((staff) {
+                                          return DropdownMenuItem<int>(
+                                            value: staff.userDetailsId,
+                                            child: Text(
+                                              staff.userDetailsName,
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (value) {
+                                          final staff = dropDownProvider
+                                              .searchUserDetails
+                                              .firstWhere((element) =>
+                                                  element.userDetailsId ==
+                                                  value);
+                                          customerDetailsProvider
+                                              .updateMaintenanceDate(index + 1,
+                                                  staffId: value,
+                                                  staffName:
+                                                      staff.userDetailsName);
+                                        },
+                                      ),
+                                    ),
+                                  ),
+                                  const SizedBox(width: 20),
                                   Text(
                                     'Completed',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w500,
+                                      color: AppColors.textGrey1,
                                     ),
                                   ),
                                   Checkbox(
-                                    value: (dateString.completed == 1),
+                                    value: (maintenanceDate.completed == 1),
                                     onChanged: (bool? value) {
-                                      setState(() {
-                                        customerDetailsProvider
-                                                .maintenanceDates[index + 1] =
-                                            MaintenanceDate(
-                                          date: dateString.date,
-                                          completed: (value ?? false) ? 1 : 0,
-                                        );
-                                      });
+                                      customerDetailsProvider
+                                          .updateMaintenanceDate(index + 1,
+                                              completed:
+                                                  (value ?? false) ? 1 : 0);
                                     },
-                                    activeColor: AppColors.primaryBlue,
+                                    activeColor: Colors.orange,
                                   ),
                                   const SizedBox(width: 4.0),
                                 ],

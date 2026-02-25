@@ -151,6 +151,7 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
       dropDownProvider.setSelectedAmcTotalDurationId(0);
       dropDownProvider.getDuration(context);
       dropDownProvider.getIntervals(context);
+      dropDownProvider.getUserDetails(context);
       customerDetailsProvider.yearInterval = 0;
       customerDetailsProvider.monthInterval = 0;
       if (widget.isEdit) {
@@ -175,8 +176,8 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
         customerDetailsProvider.amcTotalDurationController.text =
             widget.amc!.totalDurationName;
         customerDetailsProvider.maintenanceDates = widget.amc!.maintenanceDate;
-        super.initState();
       }
+      super.initState();
     });
   }
 
@@ -643,71 +644,182 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    if (customerDetailsProvider.maintenanceDates.length > 2)
-                      Container(
-                        padding: const EdgeInsets.all(12.0),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100], // Light background
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: ListView.builder(
-                          shrinkWrap: true,
-                          physics: const NeverScrollableScrollPhysics(),
-                          itemCount:
-                              customerDetailsProvider.maintenanceDates.length -
-                                  2,
-                          itemBuilder: (context, index) {
-                            final dateString = customerDetailsProvider
-                                .maintenanceDates[index + 1];
+                    Container(
+                      padding: const EdgeInsets.all(12.0),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        borderRadius: BorderRadius.circular(8.0),
+                      ),
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount:
+                            customerDetailsProvider.maintenanceDates.length,
+                        itemBuilder: (context, index) {
+                          final maintenanceDate =
+                              customerDetailsProvider.maintenanceDates[index];
 
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 8.0),
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 12.0, horizontal: 12.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(8.0),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.grey.withOpacity(0.2),
-                                    blurRadius: 4,
-                                    spreadRadius: 1,
-                                  ),
-                                ],
-                              ),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.event,
-                                      color: AppColors.primaryBlue, size: 18),
-                                  const SizedBox(width: 8.0),
-                                  Expanded(
-                                    child: Text(
-                                      dateString.date
-                                          .toString()
-                                          .toDayMonthYearFormat(),
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12.0),
+                            padding: const EdgeInsets.all(12.0),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8.0),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.2),
+                                  blurRadius: 4,
+                                  spreadRadius: 1,
+                                ),
+                              ],
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Text(
+                                      'Service Period: ${index + 1}',
                                       style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w600,
                                         color: AppColors.primaryBlue,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        ),
-                      )
-                    else
-                      Text(
-                        'No Service Period available.',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.grey[600],
-                        ),
+                                    const Spacer(),
+                                    Checkbox(
+                                      value: maintenanceDate.completed == 1,
+                                      activeColor: AppColors.primaryBlue,
+                                      onChanged: (value) {
+                                        customerDetailsProvider
+                                            .updateMaintenanceDate(index,
+                                                completed: value! ? 1 : 0);
+                                      },
+                                    ),
+                                    Text(
+                                      'Completed',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 12,
+                                        color: AppColors.textGrey3,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      flex: 2,
+                                      child: InkWell(
+                                        onTap: () async {
+                                          final DateTime now = DateTime.now();
+                                          final DateTime? picked =
+                                              await showDatePicker(
+                                            context: context,
+                                            initialDate: DateTime.tryParse(
+                                                    maintenanceDate.date) ??
+                                                now,
+                                            firstDate: DateTime(2000),
+                                            lastDate: DateTime(2100),
+                                          );
+                                          if (picked != null) {
+                                            customerDetailsProvider
+                                                .updateMaintenanceDate(index,
+                                                    date:
+                                                        DateFormat('yyyy-MM-dd')
+                                                            .format(picked));
+                                          }
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 12),
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                                color: AppColors.textGrey2),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons.calendar_month,
+                                                  size: 18, color: Colors.grey),
+                                              const SizedBox(width: 8),
+                                              Text(
+                                                maintenanceDate.date
+                                                    .toDayMonthYearFormat(),
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 13,
+                                                  color: AppColors.textBlack,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Expanded(
+                                      flex: 3,
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 12),
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: AppColors.textGrey2),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: DropdownButtonHideUnderline(
+                                          child: DropdownButton<int>(
+                                            isExpanded: true,
+                                            hint: Text(
+                                              'Select Staff',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 13,
+                                                color: AppColors.textGrey3,
+                                              ),
+                                            ),
+                                            value: maintenanceDate.staffId,
+                                            items: dropDownProvider
+                                                .searchUserDetails
+                                                .map((staff) {
+                                              return DropdownMenuItem<int>(
+                                                value: staff.userDetailsId,
+                                                child: Text(
+                                                  staff.userDetailsName,
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 13,
+                                                  ),
+                                                ),
+                                              );
+                                            }).toList(),
+                                            onChanged: (value) {
+                                              final staff = dropDownProvider
+                                                  .searchUserDetails
+                                                  .firstWhere((element) =>
+                                                      element.userDetailsId ==
+                                                      value);
+                                              customerDetailsProvider
+                                                  .updateMaintenanceDate(index,
+                                                      staffId: value,
+                                                      staffName: staff
+                                                          .userDetailsName);
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          );
+                        },
                       ),
+                    ),
                   ],
                 ),
             ],
