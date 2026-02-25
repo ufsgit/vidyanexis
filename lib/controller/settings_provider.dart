@@ -1000,8 +1000,8 @@ class SettingsProvider extends ChangeNotifier {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveUnit,
           bodyData: {
-            "Enquiry_Source_Id": statusId,
-            "Enquiry_Source_Name": statusName
+            "Unit_Id": statusId,
+            "Unit_Name": statusName
           });
 
       if (response!.statusCode == 200) {
