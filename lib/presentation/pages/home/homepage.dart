@@ -238,7 +238,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: WorkSummaryScreen()),
         ),
-      if (settingsProvider.menuIsViewMap[25].toString() == '1')
+      if (settingsProvider.menuIsViewMap[80].toString() == '1')
         SidebarOption(
           title: 'Stock Reports',
           iconPath: 'assets/images/Reports.svg',
