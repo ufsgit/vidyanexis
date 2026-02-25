@@ -998,10 +998,10 @@ class SettingsProvider extends ChangeNotifier {
       Loader.showLoader(context);
 
       final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.addUnit,
+          endPoint: HttpUrls.saveUnit,
           bodyData: {
-            "Enquiry_Source_Id": statusId,
-            "Enquiry_Source_Name": statusName
+            "Unit_Id": statusId,
+            "Unit_Name": statusName
           });
 
       if (response!.statusCode == 200) {
@@ -1313,8 +1313,13 @@ class SettingsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
+      String endPoint = HttpUrls.searchUnit;
+      if (query.isNotEmpty) {
+        endPoint += '?Supplier_Name=$query';
+      }
+
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchUnit}?Supplier_Name=$query');
+          endPoint: endPoint);
 
       if (response.statusCode == 200) {
         final data = response.data;

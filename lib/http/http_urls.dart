@@ -13,11 +13,11 @@ class HttpUrls {
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
   // static String baseUrl = 'https://demo3api.trackbox.net.in/';
-  static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
+  // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 
 //dev
-  //tatic String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -85,6 +85,7 @@ class HttpUrls {
   static String searchWorkingStatus =
       "working_status/Search_working_status?working_status_Name";
   static String addUnit = "lead/Add_Category";
+  static String saveUnit = "item/Save_Unit";
   static String deleteUnit = "lead/Delete_Category";
   static String searchUnit = "item/Get_All_unit";
 
