@@ -85,6 +85,7 @@ class HttpUrls {
   static String searchWorkingStatus =
       "working_status/Search_working_status?working_status_Name";
   static String addUnit = "lead/Add_Category";
+  static String saveUnit = "item/Save_Unit";
   static String deleteUnit = "lead/Delete_Category";
   static String searchUnit = "item/Get_All_unit";
 
