@@ -64,7 +64,7 @@ class _InventoryPageState extends State<InventoryPage> {
                   _buildMenuItem(context, 'Item', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[44].toString() == '1')
                   _buildMenuItem(context, 'Purchase', Icons.document_scanner),
-                if (settingsProvider.menuIsViewMap[48].toString() == '1')
+                if (settingsProvider.menuIsViewMap[78].toString() == '1')
                   _buildMenuItem(context, 'Stock Use', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[46].toString() == '1')
                   _buildMenuItem(context, 'Category', Icons.document_scanner),
