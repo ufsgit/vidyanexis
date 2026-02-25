@@ -193,14 +193,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.1.2"
-  code_assets:
-    dependency: transitive
-    description:
-      name: code_assets
-      sha256: "83ccdaa064c980b5596c35dd64a8d3ecc68620174ab9b90b6343b753aa721687"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.0"
   collection:
     dependency: transitive
     description:
@@ -688,14 +680,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.5"
-  glob:
-    dependency: transitive
-    description:
-      name: glob
-      sha256: c3f1ee72c96f8f78935e18aa8cecced9ab132419e8625dc187e1c2408efc20de
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.1.3"
   go_router:
     dependency: "direct main"
     description:
@@ -728,14 +712,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.8"
-  hooks:
-    dependency: transitive
-    description:
-      name: hooks
-      sha256: "7a08a0d684cb3b8fb604b78455d5d352f502b68079f7b80b831c62220ab0a4f6"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.1"
   html:
     dependency: transitive
     description:
@@ -796,10 +772,10 @@ packages:
     dependency: transitive
     description:
       name: image_picker_ios
-      sha256: b9c4a438a9ff4f60808c9cf0039b93a42bb6c2211ef6ebb647394b2b3fa84588
+      sha256: "956c16a42c0c708f914021666ffcd8265dde36e673c9fa68c81f7d085d9774ad"
       url: "https://pub.dev"
     source: hosted
-    version: "0.8.13+6"
+    version: "0.8.13+3"
   image_picker_linux:
     dependency: transitive
     description:
@@ -964,10 +940,10 @@ packages:
     dependency: transitive
     description:
       name: meta
-      sha256: "23f08335362185a5ea2ad3a4e597f1375e78bce8a040df5c600c8d3552ef2394"
+      sha256: e3641ec5d63ebf0d9b41bd43201a66e3fc79a65db5f61fc181f04cd27aab950c
       url: "https://pub.dev"
     source: hosted
-    version: "1.17.0"
+    version: "1.16.0"
   mgrs_dart:
     dependency: transitive
     description:
@@ -984,14 +960,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
-  native_toolchain_c:
-    dependency: transitive
-    description:
-      name: native_toolchain_c
-      sha256: "89e83885ba09da5fdf2cdacc8002a712ca238c28b7f717910b34bcd27b0d03ac"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.17.4"
   nested:
     dependency: transitive
     description:
@@ -1000,14 +968,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-  objective_c:
-    dependency: transitive
-    description:
-      name: objective_c
-      sha256: "100a1c87616ab6ed41ec263b083c0ef3261ee6cd1dc3b0f35f8ddfa4f996fe52"
-      url: "https://pub.dev"
-    source: hosted
-    version: "9.3.0"
   octo_image:
     dependency: transitive
     description:
@@ -1068,10 +1028,10 @@ packages:
     dependency: transitive
     description:
       name: path_provider_foundation
-      sha256: "2a376b7d6392d80cd3705782d2caa734ca4727776db0b6ec36ef3f1855197699"
+      sha256: "6d13aece7b3f5c5a9731eaf553ff9dcbc2eff41087fd2df587fd0fed9a3eb0c4"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.0"
+    version: "2.5.1"
   path_provider_linux:
     dependency: transitive
     description:
@@ -1208,14 +1168,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.1.5+1"
-  pub_semver:
-    dependency: transitive
-    description:
-      name: pub_semver
-      sha256: "5bfcf68ca79ef689f8990d1160781b4bad40a3bd5e5218ad4076ddb7f4081585"
-      url: "https://pub.dev"
-    source: hosted
-    version: "2.2.0"
   qr:
     dependency: transitive
     description:
@@ -1261,7 +1213,7 @@ packages:
     description:
       path: record_linux
       ref: master
-      resolved-ref: "0f6284da8a6b91654c627602cd4f77aff86ffbd6"
+      resolved-ref: "4bb3bd99c229c2cb0d0552349f3de7c53d9376cf"
       url: "https://github.com/llfbandit/record.git"
     source: git
     version: "1.3.1"
@@ -1278,7 +1230,7 @@ packages:
     description:
       path: record_platform_interface
       ref: master
-      resolved-ref: "0f6284da8a6b91654c627602cd4f77aff86ffbd6"
+      resolved-ref: "4bb3bd99c229c2cb0d0552349f3de7c53d9376cf"
       url: "https://github.com/llfbandit/record.git"
     source: git
     version: "1.5.0"
@@ -1459,26 +1411,26 @@ packages:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_charts
-      sha256: "9deb6030db7ad5f1d907062d40b32bfa3ff36ff7e6daec84ce85282507cddd81"
+      sha256: "1da213617d8ae57d3a50f1472f5983471aa9468d57ab8da590aab618d18d9a10"
       url: "https://pub.dev"
     source: hosted
-    version: "32.2.7"
+    version: "32.2.5"
   syncfusion_flutter_core:
     dependency: transitive
     description:
       name: syncfusion_flutter_core
-      sha256: a7cc6eaed797806890de86b208b2094e66f61e278457867677a29b040ed56879
+      sha256: "9156e78f47576d576c99b52fb895e67518745e8e2cc35272aa1fa738fa0f0b1e"
       url: "https://pub.dev"
     source: hosted
-    version: "32.2.7"
+    version: "32.2.5"
   syncfusion_flutter_pdf:
     dependency: "direct main"
     description:
       name: syncfusion_flutter_pdf
-      sha256: "573db412f9337456b15532364542f40ea0d577856dacbc575763e83c5de8aa89"
+      sha256: d4fd837f51281107b1868deb4fa5d357dbb10117e08e2c828899efdd43024b86
       url: "https://pub.dev"
     source: hosted
-    version: "32.2.7"
+    version: "32.2.5"
   synchronized:
     dependency: transitive
     description:
@@ -1499,10 +1451,10 @@ packages:
     dependency: transitive
     description:
       name: test_api
-      sha256: ab2726c1a94d3176a45960b6234466ec367179b87dd74f1611adb1f3b5fb9d55
+      sha256: "522f00f556e73044315fa4585ec3270f1808a4b186c936e612cab0b565ff1e00"
       url: "https://pub.dev"
     source: hosted
-    version: "0.7.7"
+    version: "0.7.6"
   timezone:
     dependency: transitive
     description:
@@ -1563,10 +1515,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_ios
-      sha256: "580fe5dfb51671ae38191d316e027f6b76272b026370708c2d898799750a02b0"
+      sha256: cfde38aa257dae62ffe79c87fab20165dfdf6988c1d31b58ebf59b9106062aad
       url: "https://pub.dev"
     source: hosted
-    version: "6.4.1"
+    version: "6.3.6"
   url_launcher_linux:
     dependency: transitive
     description:
@@ -1595,10 +1547,10 @@ packages:
     dependency: transitive
     description:
       name: url_launcher_web
-      sha256: d0412fcf4c6b31ecfdb7762359b7206ffba3bbffd396c6d9f9c4616ece476c1f
+      sha256: "4bd2b7b4dc4d4d0b94e5babfffbca8eac1a126c7f3d6ecbc1a11013faa3abba2"
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.2"
+    version: "2.4.1"
   url_launcher_windows:
     dependency: transitive
     description:
@@ -1704,5 +1656,5 @@ packages:
     source: hosted
     version: "3.1.3"
 sdks:
-  dart: ">=3.10.3 <4.0.0"
-  flutter: ">=3.38.4"
+  dart: ">=3.9.0 <4.0.0"
+  flutter: ">=3.35.1"

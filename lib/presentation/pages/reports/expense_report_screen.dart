@@ -78,11 +78,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           onPressed: () async {
             List<String> headers = [
               "Sl No",
-              "Reference ID",
+              "User Name",
               "Entry Date",
               "Expense Head",
               "Category",
-              "Project Type",
+              "Project Name",
               "Amount"
             ];
 
@@ -92,11 +92,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               var item = provider.expenseModelList[i];
               data.add({
                 "Sl No": (i + 1).toString(),
-                "Reference ID": item.userName ?? "",
+                "User Name": item.userName ?? "",
                 "Entry Date": item.entryDate ?? "",
-                "Expense Head": item.expenseTypeName ?? "",
-                "Category": item.projectName ?? "",
-                "Project Type": item.projectTypeName ?? "",
+                "Expense Head": item.expenseHead ?? "",
+                "Category": item.expenseTypeName ?? "",
+                "Project Name": item.projectName ?? "",
                 "Amount": item.amount.toString()
               });
             }
@@ -423,7 +423,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.bold))),
                 DataColumn(
-                    label: Text('Reference ID',
+                    label: Text('User Name',
                         style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.bold))),
                 DataColumn(
@@ -439,7 +439,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.bold))),
                 DataColumn(
-                    label: Text('Project Type',
+                    label: Text('Project Name',
                         style: GoogleFonts.plusJakartaSans(
                             fontWeight: FontWeight.bold))),
                 DataColumn(
@@ -457,9 +457,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   DataCell(Text('${index + 1}')),
                   DataCell(Text(item.userName ?? '-')),
                   DataCell(Text(item.entryDate ?? '-')),
+                  DataCell(Text(item.expenseHead ?? '-')),
                   DataCell(Text(item.expenseTypeName ?? '-')),
                   DataCell(Text(item.projectName ?? '-')),
-                  DataCell(Text(item.projectTypeName ?? '-')),
                   DataCell(
                       Text('₹ ${item.amount?.toStringAsFixed(2) ?? "0.00"}')),
                   DataCell(IconButton(

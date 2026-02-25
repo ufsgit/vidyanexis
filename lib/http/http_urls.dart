@@ -4,20 +4,20 @@ class HttpUrls {
 
   // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-  // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+//  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
-  // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
+  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
   // static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 
 //dev
-  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -85,7 +85,6 @@ class HttpUrls {
   static String searchWorkingStatus =
       "working_status/Search_working_status?working_status_Name";
   static String addUnit = "lead/Add_Category";
-  static String saveUnit = "item/Save_Unit";
   static String deleteUnit = "lead/Delete_Category";
   static String searchUnit = "item/Get_All_unit";
 
@@ -143,8 +142,6 @@ class HttpUrls {
   static String getTaskDocumetsByCustomer =
       "task/Get_task_By_Customer_With_Documents";
   static String getStockUse = "item/Get_stock_use_master";
-  static String stockReport = "item/Search_Stock_Report";
-
   static String deleteCategory = "item/Delete_Category";
 
   static String saveVersion = "task/Save_Version";

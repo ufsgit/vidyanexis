@@ -136,13 +136,11 @@ class StockReportProvider extends ChangeNotifier {
 
   void setStatus(int newStatus) {
     _selectedStatus = newStatus;
-    _Status = newStatus.toString();
     notifyListeners();
   }
 
   void setUserFilterStatus(int newStatus) {
     _selectedUser = newStatus;
-    _AssignedTo = newStatus.toString();
     notifyListeners();
   }
 
@@ -168,71 +166,43 @@ class StockReportProvider extends ChangeNotifier {
   Future<void> getSearchWorkSummary(BuildContext context) async {
     try {
       Loader.showLoader(context);
+      if (_Status.isEmpty || _Status == 'null' || _Status == '0') {
+        _Status = '0';
+      }
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+      } else {
+        isDate = "1";
+      }
 
-      String itemId = (_selectedStatus ?? 0).toString();
-      String categoryId = (_selectedUser ?? 0).toString();
+      String toUserId = (_selectedUser ?? 0).toString();
 
+      // Using searchWorkReport endpoint as it seems most relevant for a generic report that might be stock related
+      // or we can use getStockList if we want actual stock data.
+      // However, the snippet suggests it expects a filtered search.
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.stockReport}?s_Item_Id=$itemId&s_Category_Id=$categoryId');
-
-      print('=== STOCK REPORT RAW RESPONSE ===');
-      print('Status: ${response.statusCode}');
-      print('Data type: ${response.data.runtimeType}');
-      print('Data: ${response.data}');
+              '${HttpUrls.searchWorkReport}?Item_Id=$_Status&Category_Id=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS');
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          List<dynamic> listData = [];
-
-          if (data is Map && data['data'] != null) {
-            final dataArray = data['data'];
-            print('data[data] type: ${dataArray.runtimeType}');
-            print('data[data]: $dataArray');
-
-            if (dataArray is List && dataArray.isNotEmpty) {
-              // Handle nested list structure: data['data'] = [[item1, item2], ...]
-              if (dataArray[0] is List) {
-                listData = dataArray[0] as List<dynamic>;
-                print('Parsed from nested list: ${listData.length} items');
-              } else {
-                listData = dataArray;
-                print('Parsed from flat list: ${listData.length} items');
-              }
-            }
-          } else if (data is List) {
-            listData = data;
-            print('Data is direct list: ${listData.length} items');
-          }
-
-          if (listData.isNotEmpty) {
-            print('First item keys: ${(listData[0] as Map).keys.toList()}');
-            print('First item data: ${listData[0]}');
-          } else {
-            print('=== STOCK REPORT: No data returned from API ===');
-          }
-
-          _taskReport =
-              listData.map((item) => StockReportModel.fromJson(item)).toList();
-          print('Parsed ${_taskReport.length} stock report items');
-          if (_taskReport.isNotEmpty) {
-            print(
-                'First item: name=${_taskReport[0].itemName}, cat=${_taskReport[0].categoryName}, qty=${_taskReport[0].quantity}');
-          }
+          _taskReport = (data as List<dynamic>)
+              .map((item) => StockReportModel.fromJson(item))
+              .toList();
         }
         Loader.stopLoader(context);
         notifyListeners();
       } else {
         Loader.stopLoader(context);
-        print('Stock report API error: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
       Loader.stopLoader(context);
-      print('Exception occurred in getSearchWorkSummary: $e');
+      print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );

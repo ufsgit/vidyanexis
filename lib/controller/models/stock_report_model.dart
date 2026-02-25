@@ -21,39 +21,14 @@ class StockReportModel {
 
   factory StockReportModel.fromJson(Map<String, dynamic> json) {
     return StockReportModel(
-      itemName: (json['Item_Name'] ??
-                  json['item_Name'] ??
-                  json['ItemName'] ??
-                  json['itemName'])
-              ?.toString() ??
-          '',
-      categoryName: (json['Category_Name'] ??
-                  json['category_Name'] ??
-                  json['CategoryName'] ??
-                  json['categoryName'])
-              ?.toString() ??
-          '',
-      unitName: (json['Unit_Name'] ??
-                  json['unit_Name'] ??
-                  json['UnitName'] ??
-                  json['unitName'])
-              ?.toString() ??
-          '',
-      unitPrice: (json['Unit_Price'] ??
-                  json['unit_Price'] ??
-                  json['UnitPrice'] ??
-                  json['unitPrice'])
-              ?.toString() ??
-          '',
-      purchaseRate: (json['PurchaseRate'] ??
-                  json['purchaseRate'] ??
-                  json['Purchase_Rate'] ??
-                  json['purchase_Rate'])
-              ?.toString() ??
-          '',
-      cgst: (json['CGST'] ?? json['cgst'] ?? json['Cgst'])?.toString() ?? '',
-      sgst: (json['SGST'] ?? json['sgst'] ?? json['Sgst'])?.toString() ?? '',
-      quantity: (json['Quantity'] ?? json['quantity'])?.toString() ?? '',
+      itemName: json['Item_Name']?.toString() ?? '',
+      categoryName: json['Category_Name']?.toString() ?? '',
+      unitName: json['Unit_Name']?.toString() ?? '',
+      unitPrice: json['Unit_Price']?.toString() ?? '',
+      purchaseRate: json['PurchaseRate']?.toString() ?? '',
+      cgst: json['CGST']?.toString() ?? '',
+      sgst: json['SGST']?.toString() ?? '',
+      quantity: json['Quantity']?.toString() ?? '',
     );
   }
 

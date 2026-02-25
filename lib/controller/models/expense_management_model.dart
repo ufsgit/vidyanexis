@@ -115,29 +115,30 @@ class ExpenseModel {
 
   factory ExpenseModel.fromJson(Map<String, dynamic> json) {
     return ExpenseModel(
-      expenseManagementId: json["Expense_Management_Id"] ?? json["Expense_Id"],
+      expenseManagementId: int.tryParse(
+          (json["Expense_Management_Id"] ?? json["Expense_Id"] ?? 0)
+              .toString()),
       projectTypeName: json["Project_Type_Name"],
-      projectTypeId: json["Project_Type_Id"],
-      projectName: json["project_Name"],
-      projectId: json["project_ID"],
-      customerId: json["Customer_Id"],
+      projectTypeId: int.tryParse((json["Project_Type_Id"] ?? 0).toString()),
+      projectName: json["Project_Name"] ?? json["project_Name"],
+      projectId: int.tryParse((json["project_ID"] ?? 0).toString()),
+      customerId: int.tryParse((json["Customer_Id"] ?? 0).toString()),
       customerName: json["Customer_Name"],
       amount: double.tryParse((json["Amount"] ?? 0).toString()),
-      entryDate:
-          json["Entry_Date"] ?? json["Date"], // Map 'Date' to 'entryDate'
+      entryDate: (json["Entry_Date"] ?? json["Date"])?.toString().trim(),
       filePath: json["File_Path"],
-      isGst: json["is_gst"] == 1,
+      isGst: json["is_gst"] == 1 || json["is_gst"] == "1",
       gstPercentage: double.tryParse((json["gst_percentage"] ?? 0).toString()),
       cgstAmount: double.tryParse((json["cgst_amount"] ?? 0).toString()),
       sgstAmount: double.tryParse((json["sgst_amount"] ?? 0).toString()),
       netAmount: double.tryParse((json["net_amount"] ?? 0).toString()),
-      entryBy: json["Entry_By"],
-      userDetailsId: json["User_Details_Id"],
-      expenseHead: json["Expense_Head"],
+      entryBy: int.tryParse((json["Entry_By"] ?? 0).toString()),
+      userDetailsId: int.tryParse((json["User_Details_Id"] ?? 0).toString()),
+      expenseHead: json["Expense_Head"] ?? json["Task"],
       comment: json["Comment"],
-      expenseTypeId: json["Expense_Type_Id"],
-      expenseTypeName: json["Expense_Type_Name"],
-      userName: json["User_Name"],
+      expenseTypeId: int.tryParse((json["Expense_Type_Id"] ?? 0).toString()),
+      expenseTypeName: json["Expense_Type_Name"] ?? json["Expense_Type"],
+      userName: json["User_Name"] ?? json["Customer_Name"],
       entryByName: json["Entry_By_Name"],
       description: json["Description"] ?? json["description"],
     );

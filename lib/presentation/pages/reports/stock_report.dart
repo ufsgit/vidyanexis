@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
-
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -147,16 +146,14 @@ class _StockReportState extends State<StockReport> {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
+                                : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
                                 ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
+                                : Colors.white,
                             side: BorderSide(
                                 color: reportsProvider.isFilter
                                     ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
+                                    : AppColors.primaryBlue),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
@@ -230,8 +227,7 @@ class _StockReportState extends State<StockReport> {
                                   hint: const Text('All'),
                                   items: [
                                         const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
+                                          value: 0,
                                           child: Text(
                                             'All',
                                             style: TextStyle(fontSize: 14),
@@ -251,8 +247,7 @@ class _StockReportState extends State<StockReport> {
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
-                                      reportsProvider.setStatus(
-                                          newValue); // Update the status in the provider
+                                      reportsProvider.setStatus(newValue);
                                     }
                                     String status = reportsProvider
                                         .selectedStatus
@@ -279,9 +274,7 @@ class _StockReportState extends State<StockReport> {
                               ],
                             ),
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
+                          const SizedBox(width: 10),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
@@ -301,8 +294,7 @@ class _StockReportState extends State<StockReport> {
                                   hint: const Text('All'),
                                   items: [
                                         const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
+                                          value: 0,
                                           child: Text(
                                             'All',
                                             style: TextStyle(fontSize: 14),
@@ -320,7 +312,7 @@ class _StockReportState extends State<StockReport> {
                                                       child: Text(
                                                         status.categoryName,
                                                         overflow: TextOverflow
-                                                            .ellipsis, // Adds ellipsis when the text is too long
+                                                            .ellipsis,
                                                         style: const TextStyle(
                                                             fontSize: 14),
                                                       ),
@@ -329,8 +321,8 @@ class _StockReportState extends State<StockReport> {
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
-                                      reportsProvider.setUserFilterStatus(
-                                          newValue); // Update the status in the provider
+                                      reportsProvider
+                                          .setUserFilterStatus(newValue);
                                     }
                                     String status = reportsProvider
                                         .selectedStatus
@@ -406,7 +398,6 @@ class _StockReportState extends State<StockReport> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              // Header Row (Table Column Titles)
                               Container(
                                 decoration: BoxDecoration(
                                   color: const Color(0xFFEFF2F5),
@@ -462,15 +453,12 @@ class _StockReportState extends State<StockReport> {
                                   ],
                                 ),
                               ),
-                              // Data Rows
                               Expanded(
                                 child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
+                                  shrinkWrap: true,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of tasks
+                                  itemCount: reportsProvider.taskReport.length,
                                   itemBuilder: (context, index) {
                                     var task =
                                         reportsProvider.taskReport[index];
@@ -481,9 +469,7 @@ class _StockReportState extends State<StockReport> {
                                             : const Color(0xFFF6F7F9),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
-                                      // Alternate row colors
                                       child: Row(
-                                        // mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
                                           SizedBox(
                                             width: 80,
@@ -499,7 +485,6 @@ class _StockReportState extends State<StockReport> {
                                                   )),
                                             ),
                                           ),
-                                          // TableWidget(title: task.orderNo),
                                           TableWidget(
                                             flex: 1,
                                             data: Container(
@@ -526,32 +511,20 @@ class _StockReportState extends State<StockReport> {
                                           ),
                                           TableWidget(
                                               flex: 1,
-                                              title: task.categoryName,
-                                              isBold: false),
+                                              title: task.categoryName),
+                                          TableWidget(
+                                              flex: 1, title: task.unitName),
+                                          TableWidget(
+                                              flex: 1, title: task.unitPrice),
                                           TableWidget(
                                               flex: 1,
-                                              title: task.unitName,
-                                              isBold: false),
+                                              title: task.purchaseRate),
                                           TableWidget(
-                                              flex: 1,
-                                              title: task.unitPrice,
-                                              isBold: false),
+                                              flex: 1, title: task.cgst),
                                           TableWidget(
-                                              flex: 1,
-                                              title: task.purchaseRate,
-                                              isBold: false),
+                                              flex: 1, title: task.sgst),
                                           TableWidget(
-                                              flex: 1,
-                                              title: task.cgst,
-                                              isBold: false),
-                                          TableWidget(
-                                              flex: 1,
-                                              title: task.sgst,
-                                              isBold: false),
-                                          TableWidget(
-                                              flex: 1,
-                                              title: task.quantity,
-                                              isBold: false),
+                                              flex: 1, title: task.quantity),
                                         ],
                                       ),
                                     );
@@ -849,7 +822,7 @@ class _StockReportState extends State<StockReport> {
                                         ),
                                         const SizedBox(height: 8),
                                         Text(
-                                          'Unit Price: ${task.unitPrice}',
+                                          'Unit Price: 	${task.unitPrice}',
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,
                                           style: const TextStyle(
@@ -905,197 +878,4 @@ class _StockReportState extends State<StockReport> {
       ),
     );
   }
-
-  void onClickTopButton(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (contextx) => Consumer<StockReportProvider>(
-        builder: (contextx, reportsProvider, child) {
-          return AlertDialog(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-            contentPadding: const EdgeInsets.all(10),
-            content: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Center(
-                      child: Text(
-                        'Choose Date',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.w700),
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    Wrap(
-                      spacing: 12,
-                      runSpacing: 12,
-                      children: List<Widget>.generate(dateButtonTitles.length,
-                          (index) {
-                        String title = dateButtonTitles[index];
-                        return ActionChip(
-                          onPressed: () {
-                            reportsProvider.setDateFilter(title);
-                            reportsProvider.selectDateFilterOption(index);
-                          },
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          label: Text(title),
-                          backgroundColor:
-                              reportsProvider.selectedDateFilterIndex == index
-                                  ? AppColors.primaryBlue
-                                  : Colors.white,
-                          labelStyle: TextStyle(
-                            color:
-                                reportsProvider.selectedDateFilterIndex == index
-                                    ? Colors.white
-                                    : Colors.black,
-                          ),
-                        );
-                      }),
-                    ),
-                    const SizedBox(height: 15),
-                    const Text(
-                      'Pick a date',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                    ),
-                    const SizedBox(height: 15),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () =>
-                                reportsProvider.selectDate(context, true),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: reportsProvider.fromDate != null
-                                  ? '${reportsProvider.fromDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'From',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: TextField(
-                            readOnly: true,
-                            onTap: () =>
-                                reportsProvider.selectDate(context, false),
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              hintText: reportsProvider.toDate != null
-                                  ? '${reportsProvider.toDate!.toLocal()}'
-                                      .split(' ')[0]
-                                  : 'To',
-                              suffixIcon: const Icon(Icons.calendar_month),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-
-                          reportsProvider.formatDate();
-
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = reportsProvider.formattedFromDate;
-                          String toDate = reportsProvider.formattedToDate;
-                          reportsProvider.setTaskSearchCriteria(
-                              reportsProvider.Search,
-                              fromDate,
-                              toDate,
-                              status,
-                              assignedTo);
-                          reportsProvider.getSearchWorkSummary(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Apply',
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                          reportsProvider.selectDateFilterOption(null);
-                          String status =
-                              reportsProvider.selectedStatus.toString();
-                          String assignedTo =
-                              reportsProvider.selectedUser.toString();
-                          String fromDate = '';
-                          String toDate = '';
-                          reportsProvider.setTaskSearchCriteria(
-                            reportsProvider.Search,
-                            fromDate,
-                            toDate,
-                            status,
-                            assignedTo,
-                          );
-                          reportsProvider.getSearchWorkSummary(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textRed.withOpacity(0.1),
-                          foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Clear',
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    );
-  }
-
-  List<String> dateButtonTitles = [
-    'Yesterday',
-    'Today',
-    'Tomorrow',
-    'This Week',
-    'This Month',
-  ];
 }

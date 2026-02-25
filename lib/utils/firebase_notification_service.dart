@@ -58,14 +58,14 @@ class FirebaseNotificationService {
       sound: true,
     );
 
-    FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       RemoteNotification? notification = message.notification;
       AndroidNotification? android = message.notification?.android;
 
       // If `onMessage` is triggered with a notification, construct our own
       // local notification to show it to users using the created channel.
       if (notification != null && android != null) {
-        await _flutterLocalNotificationsPlugin.show(
+        _flutterLocalNotificationsPlugin.show(
           id: notification.hashCode,
           title: notification.title,
           body: notification.body,
@@ -75,9 +75,9 @@ class FirebaseNotificationService {
               channel.name,
               channelDescription: channel.description,
               icon: android.smallIcon,
+              // other properties...
             ),
           ),
-          payload: message.data.toString(),
         );
       }
     });

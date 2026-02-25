@@ -53,7 +53,7 @@ class ItemListModel {
       sgst: json['sgst']?.toString() ?? '0.00',
       gst: json['gst']?.toString() ?? '0.00',
       igst: json['igst']?.toString() ?? '0.00',
-      serviceCheckbox: json['Is_Primary'] ?? 0,
+      serviceCheckbox: json['Service_CheckBox'] ?? 0,
       primaryCheckBox: json["Is_Primary"] ?? 0,
       hsnCode: json['HSNCode']?.toString() ?? '',
     );
@@ -75,8 +75,7 @@ class ItemListModel {
       'sgst': sgst,
       'gst': gst,
       'igst': igst,
-      'Is_Primary': serviceCheckbox,
-      'HSNCode': hsnCode,
+      'Service_CheckBox': serviceCheckbox,
     };
   }
 }

@@ -8,7 +8,6 @@ class TableWidget extends StatelessWidget {
   final double? width;
   final int flex;
   final EdgeInsetsGeometry? padding;
-  final bool isBold;
 
   const TableWidget({
     super.key,
@@ -19,7 +18,6 @@ class TableWidget extends StatelessWidget {
     this.width,
     this.flex = 0,
     this.padding,
-    this.isBold = true,
   });
 
   @override
@@ -53,11 +51,10 @@ class TableWidget extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                      overflow: TextOverflow.visible,
+                      maxLines: 4,
                       style: TextStyle(
-                          fontWeight:
-                              isBold ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: FontWeight.w600,
                           color: color,
                           fontSize: fontSize)),
                 ),
@@ -72,11 +69,10 @@ class TableWidget extends StatelessWidget {
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(title,
-                      overflow: TextOverflow.ellipsis,
-                      maxLines: 2,
+                      overflow: TextOverflow.visible,
+                      maxLines: 4,
                       style: TextStyle(
-                          fontWeight:
-                              isBold ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: FontWeight.w600,
                           color: color,
                           fontSize: fontSize)),
                 ),

@@ -47,6 +47,7 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController amountWithoutTaxController =
       TextEditingController();
   final TextEditingController projectTypeController = TextEditingController();
+  final TextEditingController taxPercentageController = TextEditingController();
 
   final List<Uint8List> _images = []; // List to store images
   final List<Uint8List> _pdfs = [];
@@ -226,7 +227,6 @@ class ExpenseProvider extends ChangeNotifier {
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
   int? _selectedClient;
   int? get selectedClient => _selectedClient;
-  get taxPercentageController => null;
 
   //client filter
   List<CustomerModel> _clientList = [];
@@ -346,9 +346,6 @@ class ExpenseProvider extends ChangeNotifier {
   Future<void> searchItemList(
       {required BuildContext context, required bool isFilter}) async {
     try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getItemList);
 
@@ -1289,6 +1286,37 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> getClientList(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getAllLeadDropDown);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data is List) {
+          _clientList = data
+              .map((item) =>
+                  CustomerModel.fromJson(item as Map<String, dynamic>))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
   void saveItem(int editId, BuildContext context) async {
     compareAndUpdateItems();
     log(_items.map((item) => item.toJson()).toList().toString());
@@ -1304,9 +1332,6 @@ class ExpenseProvider extends ChangeNotifier {
             "categoryName": itemCategoryController.text.toString(),
             "unitId": _selectedItemUnit,
             "unitName": itemUnitController.text.toString(),
-            "Unit_Price": itemUnitPriceController.text.toString(),
-            "HSNCode": itemHSNController.text.toString(),
-            "Is_Primary": _isChecked,
             "cgst": cgstController.text,
             "sgst": sgstController.text,
             "gst": gstController.text,
@@ -1623,15 +1648,25 @@ class ExpenseProvider extends ChangeNotifier {
       final projectTypeId = selectedProjectTypeId ?? 0;
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.getExpenseManagement}?Expense_Head=$query&reference_id=$assignedTo&expense_type_id=$expenseTypeId&project_type_id=$projectTypeId"');
+              '${HttpUrls.getExpenseManagement}?Expense_Head=$query&reference_id=$assignedTo&expense_type_id=$expenseTypeId&project_type_id=$projectTypeId&Customer_Id=$clientId');
 
       if (response.statusCode == 200) {
         final data = response.data["data"];
 
-        if (data != null) {
-          _expenseModelList = (data as List<dynamic>)
-              .map((item) => ExpenseModel.fromJson(item))
-              .toList();
+        if (data is List) {
+          if (data.isNotEmpty && data[0] is List) {
+            // Nested list case: [[{}]]
+            final List expenseList = data[0];
+            _expenseModelList =
+                expenseList.map((item) => ExpenseModel.fromJson(item)).toList();
+          } else {
+            // Direct list case: [{}]
+            _expenseModelList =
+                data.map((item) => ExpenseModel.fromJson(item)).toList();
+          }
+          notifyListeners();
+        } else {
+          _expenseModelList = [];
           notifyListeners();
         }
       } else {
@@ -1684,8 +1719,8 @@ class ExpenseProvider extends ChangeNotifier {
   Future deleteExpense(BuildContext context, int id) async {
     try {
       Loader.showLoader(context);
-      final response = await HttpRequest.httpPostRequest(
-        endPoint: HttpUrls.deleteExpenseManagement + "/" + id.toString(),
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: "${HttpUrls.deleteExpenseManagement}/$id",
       );
 
       if (response != null && response.statusCode == 200) {
