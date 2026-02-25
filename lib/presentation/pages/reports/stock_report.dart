@@ -526,20 +526,32 @@ class _StockReportState extends State<StockReport> {
                                           ),
                                           TableWidget(
                                               flex: 1,
-                                              title: task.categoryName),
-                                          TableWidget(
-                                              flex: 1, title: task.unitName),
-                                          TableWidget(
-                                              flex: 1, title: task.unitPrice),
+                                              title: task.categoryName,
+                                              isBold: false),
                                           TableWidget(
                                               flex: 1,
-                                              title: task.purchaseRate),
+                                              title: task.unitName,
+                                              isBold: false),
                                           TableWidget(
-                                              flex: 1, title: task.cgst),
+                                              flex: 1,
+                                              title: task.unitPrice,
+                                              isBold: false),
                                           TableWidget(
-                                              flex: 1, title: task.sgst),
+                                              flex: 1,
+                                              title: task.purchaseRate,
+                                              isBold: false),
                                           TableWidget(
-                                              flex: 1, title: task.quantity),
+                                              flex: 1,
+                                              title: task.cgst,
+                                              isBold: false),
+                                          TableWidget(
+                                              flex: 1,
+                                              title: task.sgst,
+                                              isBold: false),
+                                          TableWidget(
+                                              flex: 1,
+                                              title: task.quantity,
+                                              isBold: false),
                                         ],
                                       ),
                                     );

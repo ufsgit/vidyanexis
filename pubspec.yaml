@@ -43,11 +43,7 @@ dependencies:
   flutter_svg: ^2.0.13
   geolocator: ^14.0.2
   go_router: ^17.1.0
-<<<<<<< HEAD
   google_fonts: ^8.0.2
-=======
-  google_fonts: ^8.0.1
->>>>>>> 4b473a2e313d4be7378fa31723a6ce6bac933730
   google_polyline_algorithm: ^3.1.0
   image_picker: ^1.1.2
   intl: ^0.20.2
@@ -61,11 +57,7 @@ dependencies:
   printing: ^5.13.4
   provider: ^6.1.2
   shared_preferences: ^2.3.2
-<<<<<<< HEAD
   syncfusion_flutter_charts: ^32.2.7
-=======
-  syncfusion_flutter_charts: ^32.2.5
->>>>>>> 4b473a2e313d4be7378fa31723a6ce6bac933730
   url_launcher: ^6.3.1
   firebase_core: ^4.4.0
   firebase_messaging: ^16.1.1
@@ -73,11 +65,7 @@ dependencies:
   socket_io_client: ^3.1.2
   flutter_pdfview: ^1.3.1
   cached_network_image: ^3.4.1
-<<<<<<< HEAD
   syncfusion_flutter_pdf: ^32.2.7
-=======
-  syncfusion_flutter_pdf: ^32.2.5
->>>>>>> 4b473a2e313d4be7378fa31723a6ce6bac933730
   fluttertoast: ^9.0.0
   geocoding: ^4.0.0
   audioplayers: ^6.5.0

@@ -1236,7 +1236,7 @@ class SettingsProvider extends ChangeNotifier {
             73: 'Upcoming Payment Reports',
             74: 'Total Outstanding Reports',
             75: 'Outstanding Reports',
-            76: 'AMC Notification',
+            76: 'Stock Report',
             77: 'Payment Reminders',
           };
 
@@ -1254,7 +1254,7 @@ class SettingsProvider extends ChangeNotifier {
                 menuId: entry.key,
                 menuName: entry.value,
                 isView: 1, // Defaulting to 1 so they show up for now
-                isSave: 1,
+                isSave: entry.key == 76 ? 0 : 1,
                 isEdit: 1,
                 isDelete: 1,
               ));
@@ -2787,6 +2787,29 @@ class SettingsProvider extends ChangeNotifier {
             recordingMenu.isEdit = 1;
             recordingMenu.isSave = 1;
             recordingMenu.isDelete = 1;
+          }
+
+          var stockReportMenu = _showMenu.firstWhere((e) => e.menuId == 76,
+              orElse: () => MenuPermissionModel(
+                  menuId: 76,
+                  menuName: 'Stock Report',
+                  menuOrder: 0,
+                  menuOrderSub: 0,
+                  isEdit: 1,
+                  isSave: 0,
+                  isDelete: 1,
+                  isView: 1,
+                  menuStatus: 1,
+                  menuType: 1));
+
+          if (!_showMenu.contains(stockReportMenu)) {
+            _showMenu.add(stockReportMenu);
+          } else {
+            stockReportMenu.menuName = 'Stock Report';
+            stockReportMenu.isView = 1;
+            stockReportMenu.isEdit = 1;
+            stockReportMenu.isSave = 0;
+            stockReportMenu.isDelete = 1;
           }
 
           _showView.clear();
