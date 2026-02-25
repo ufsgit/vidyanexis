@@ -19,6 +19,7 @@ import 'package:vidyanexis/controller/models/project_type_model.dart'
 import 'package:vidyanexis/controller/models/tax_slab_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/customer/dotted_border_container.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
@@ -875,10 +876,15 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
 
     return InkWell(
       onTap: () {
-        imageUploadProvider.addFileMobile().then((onValue) {
-          // widget.expenseModel.fileBytes = onValue?.$1;
-          // widget.expenseModel.fileType = onValue?.$2;
-          setState(() {});
+        ImageUploadProvider.addFile().then((onValue) {
+          if (onValue != null) {
+            widget.expenseModel.fileBytes = onValue['data'] as Uint8List;
+            String fileType =
+                _determineFileType(widget.expenseModel.fileBytes!);
+            widget.expenseModel.fileType =
+                fileType.startsWith('image/') ? "image" : "pdf";
+            setState(() {});
+          }
         });
       },
       child: Container(
@@ -1154,17 +1160,16 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
     }
 
     if (widget.expenseModel.fileBytes != null) {
+      if (!context.mounted) return;
+      Loader.showLoader(context);
       // Check file type before saving
       String fileType = _determineFileType(widget.expenseModel.fileBytes!);
-      bool isImage = _isImageFile(widget.expenseModel.fileBytes!);
-      bool isPdf = _isPdfFile(widget.expenseModel.fileBytes!);
-
-      print('File type: $fileType');
-      print('Is Image: $isImage');
-      print('Is PDF: $isPdf');
 
       String? filepath = await expenseProvider.saveToAws(
           widget.expenseModel.fileBytes!, fileType, "expense", context);
+
+      if (!context.mounted) return;
+      Loader.stopLoader(context);
       if (!filepath.isNullOrEmpty()) {
         widget.expenseModel.filePath = filepath;
       }
@@ -1175,8 +1180,8 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
     }
 
 //need to recheck if error
-    expenseProvider.saveExpense(
-        widget.expenseModel, widget.isEdit as BuildContext, context as String);
+    expenseProvider.saveExpense(widget.expenseModel, context,
+        widget.expenseModel.customerId.toString());
   }
 
   void calculateGst(String taxPercentage) {
@@ -1200,7 +1205,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
         isInterState: false,
       );
       cgst = gstData['cgst'] ?? 0;
-      sgst = gstData['cgst'] ?? 0;
+      sgst = gstData['sgst'] ?? 0;
       netAmt = (amount - (cgst + sgst));
     } else {
       netAmt =

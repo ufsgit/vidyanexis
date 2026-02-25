@@ -13,7 +13,6 @@ import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/main.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_expense_management.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/purchase_widget.dart';
@@ -46,7 +45,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
         context,
       );
       // Load filter dropdown data
-      // expenseProvider.getClientList(context);
+      expenseProvider.getClientList(context);
       settingsProvider.searchProjectTypes('', context);
       expenseProvider.getExpenseType(context);
     });
@@ -710,7 +709,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                 // Key information in grid
                 _buildInfoGrid([
                   _InfoItem(
-                      'User',
+                      'Customer Name',
                       expenseModel.userName?.trim().isNotEmpty == true
                           ? expenseModel.userName!
                           : ""),
@@ -904,7 +903,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
           Expanded(
             flex: 1,
             child: Text(
-              'User name',
+              'Customer Name',
               style: GoogleFonts.inter(
                 fontWeight: FontWeight.w600,
                 fontSize: _getResponsiveFontSize(context, 14),
@@ -936,45 +935,53 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
           ),
           Expanded(
             flex: 1,
-            child: Text(
-              'Tax Perc',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                fontSize: _getResponsiveFontSize(context, 14),
-                color: Colors.grey[800],
+            child: Center(
+              child: Text(
+                'Tax Perc',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: _getResponsiveFontSize(context, 14),
+                  color: Colors.grey[800],
+                ),
               ),
             ),
           ),
           Expanded(
             flex: 1,
-            child: Text(
-              'Total Amount',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                fontSize: _getResponsiveFontSize(context, 14),
-                color: Colors.grey[800],
+            child: Center(
+              child: Text(
+                'Total Amount',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: _getResponsiveFontSize(context, 14),
+                  color: Colors.grey[800],
+                ),
               ),
             ),
           ),
           SizedBox(
             width: _isLargeScreen(context) ? 150 : 120,
-            child: Text(
-              '  Actions',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                fontSize: _getResponsiveFontSize(context, 14),
-                color: Colors.grey[800],
+            child: Center(
+              child: Text(
+                'Actions',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: _getResponsiveFontSize(context, 14),
+                  color: Colors.grey[800],
+                ),
               ),
             ),
           ),
           Expanded(
             flex: 1,
-            child: Text(
-              'View File',
-              style: GoogleFonts.inter(
-                fontWeight: FontWeight.w600,
-                fontSize: _getResponsiveFontSize(context, 14),
-                color: Colors.grey[800],
+            child: Center(
+              child: Text(
+                'View File',
+                style: GoogleFonts.inter(
+                  fontWeight: FontWeight.w600,
+                  fontSize: _getResponsiveFontSize(context, 14),
+                  color: Colors.grey[800],
+                ),
               ),
             ),
           ),
@@ -1039,37 +1046,37 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
           ),
           Expanded(
             flex: 1,
-            child: Text(
-              "${expenseModel.gstPercentage ?? 0} %",
-              style: GoogleFonts.inter(
-                fontSize: _getResponsiveFontSize(context, 14),
+            child: Center(
+              child: Text(
+                "${expenseModel.gstPercentage ?? 0} %",
+                style: GoogleFonts.inter(
+                  fontSize: _getResponsiveFontSize(context, 14),
+                ),
               ),
             ),
           ),
           Expanded(
             flex: 1,
-            child: Text(
-              // expenseModel.amount.toString(),
-              expenseModel.amount?.toString() ?? '0',
-              style: GoogleFonts.inter(
-                fontSize: _getResponsiveFontSize(context, 14),
-                fontWeight: FontWeight.w500,
+            child: Center(
+              child: Text(
+                expenseModel.amount?.toString() ?? '0',
+                style: GoogleFonts.inter(
+                  fontSize: _getResponsiveFontSize(context, 14),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
             ),
           ),
           SizedBox(
             width: _isLargeScreen(context) ? 150 : 120,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (settingsProvider.menuIsEditMap[48] == 1)
-                  Flexible(
-                    child: TextButton(
-                      onPressed: () => _showEditDialog(context, expenseModel),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: InkWell(
+                      onTap: () => _showEditDialog(context, expenseModel),
                       child: Text(
                         'Edit',
                         style: GoogleFonts.plusJakartaSans(
@@ -1081,21 +1088,14 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                     ),
                   ),
                 if (settingsProvider.menuIsDeleteMap[48] == 1)
-                  Flexible(
-                    child: TextButton(
-                      onPressed: () => _showDeleteDialog(context, expenseModel),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
-                      child: Text(
-                        'Delete',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: _getResponsiveFontSize(context, 14),
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.textRed,
-                        ),
+                  InkWell(
+                    onTap: () => _showDeleteDialog(context, expenseModel),
+                    child: Text(
+                      'Delete',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: _getResponsiveFontSize(context, 14),
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textRed,
                       ),
                     ),
                   ),
@@ -1105,21 +1105,36 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
           Expanded(
             flex: 1,
             child: (expenseModel.filePath ?? '') != ''
-                ? CustomElevatedButton(
-                    onPressed: () async {
-                      final Uri url = Uri.parse(
-                          HttpUrls.imgBaseUrl + (expenseModel.filePath ?? ''));
-                      try {
-                        await launchUrl(url,
-                            mode: LaunchMode.externalApplication);
-                      } catch (e) {
-                        print('Could not launch $url: $e');
-                      }
-                    },
-                    buttonText: 'View File',
-                    backgroundColor: AppColors.primaryBlue,
-                    borderColor: AppColors.primaryBlue,
-                    textColor: Colors.white,
+                ? Center(
+                    child: TextButton(
+                      onPressed: () async {
+                        final Uri url = Uri.parse(HttpUrls.imgBaseUrl +
+                            (expenseModel.filePath ?? ''));
+                        try {
+                          await launchUrl(url,
+                              mode: LaunchMode.externalApplication);
+                        } catch (e) {
+                          print('Could not launch $url: $e');
+                        }
+                      },
+                      style: TextButton.styleFrom(
+                        backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 10, vertical: 5),
+                        minimumSize: const Size(0, 0),
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(
+                        'View File',
+                        style: GoogleFonts.inter(
+                          color: AppColors.primaryBlue,
+                          fontWeight: FontWeight.w500,
+                          fontSize: _getResponsiveFontSize(context, 13),
+                        ),
+                      ),
+                    ),
                   )
                 : const SizedBox(),
           ),
