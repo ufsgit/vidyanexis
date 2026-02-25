@@ -22,11 +22,12 @@ class TaxSlabModel {
   });
 
   factory TaxSlabModel.fromJson(Map<String, dynamic> json) => TaxSlabModel(
-        taxId: json["tax_id"],
-        taxName: json["tax_name"],
-        taxPercentage: _parseDouble(json["tax_percentage"]),
-        deleteStatus: json["delete_status"],
-        isInclusive: json["is_inclusive"],
+        taxId: json["tax_id"] ?? json["Tax_Id"],
+        taxName: json["tax_name"] ?? json["Tax_Name"],
+        taxPercentage:
+            _parseDouble(json["tax_percentage"] ?? json["Tax_Percentage"]),
+        deleteStatus: json["delete_status"] ?? json["DeleteStatus"],
+        isInclusive: json["is_inclusive"] ?? json["Is_Inclusive"],
       );
 
   static double? _parseDouble(dynamic value) {

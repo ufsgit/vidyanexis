@@ -30,10 +30,10 @@ Future<void> invoiceSinglePDFPrint({
     customer = customerDetails;
     invoice = invoiceDetails;
     final logoImageBytes =
-        await rootBundle.load('assets/images/future_logo.jpeg');
+        await rootBundle.load('assets/images/solaris_logo.png');
     final logoImage = pw.MemoryImage(logoImageBytes.buffer.asUint8List());
 
-    final sealBytes = await rootBundle.load('assets/images/seal.jpeg');
+    final sealBytes = await rootBundle.load('assets/images/solaris_logo.png');
     final sealImage = pw.MemoryImage(sealBytes.buffer.asUint8List());
     // Only fetch additional data if needed (like HSN details)
     final invoiceProvider =

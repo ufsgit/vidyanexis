@@ -168,7 +168,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[71] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
-      const Tab(text: "Invoice"),
+      if (settingsprovider.menuIsViewMap[21] == 1) const Tab(text: "Invoice"),
     ];
 
     if (!_isControllerInitialized || newTabs.length != _tabs.length) {
@@ -3424,8 +3424,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 RefundFormPage(
                                                     widget.customerId),
 
-                                            InvoiceTabPage(
-                                                customerId: widget.customerId),
+                                            if (settingsprovider
+                                                    .menuIsViewMap[21] ==
+                                                1)
+                                              InvoiceTabPage(
+                                                  customerId:
+                                                      widget.customerId),
                                           ],
                                         ),
                                       ),

@@ -33,6 +33,7 @@ import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_pa
 import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class SidebarDrawer extends StatefulWidget {
@@ -94,8 +95,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[10].toString() == '1')
         {'title': 'Conversion Reports', 'page': const ConversionReportPage()},
-      // if (settingsProvider.menuIsViewMap[11].toString() == '1')
-      // {'title': 'Invoice Reports', 'page': const InvoiceReportsScreen()},
+      if (settingsProvider.menuIsViewMap[21].toString() == '1')
+        {'title': 'Invoice Reports', 'page': const InvoiceReportsScreen()},
       // {
       //   'title': 'Billing & Payments Report',
       //   'page': const BillingAndpaymentsReportScreen()
