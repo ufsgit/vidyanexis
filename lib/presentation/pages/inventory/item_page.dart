@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/expense_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/inventory/add_item.dart';
 
@@ -30,6 +31,7 @@ class _ItemPageState extends State<ItemPage> {
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final expenseProvider = Provider.of<ExpenseProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
