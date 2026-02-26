@@ -3,12 +3,14 @@ class StockUseModel {
   int stockUseId;
   String description;
   List<StockUseItems> items;
+  String stockStatus;
 
   StockUseModel({
     required this.date,
     required this.stockUseId,
     required this.description,
     required this.items,
+    required this.stockStatus,
   });
 
   // Optional: toJson & fromJson methods if you plan to send/receive data from API
@@ -23,6 +25,7 @@ class StockUseModel {
               .map((item) => StockUseItems.fromJson(item))
               .toList()
           : [],
+      stockStatus: json['Status'] ?? 'Pending',
     );
   }
 

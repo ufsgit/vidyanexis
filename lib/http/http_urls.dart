@@ -291,4 +291,14 @@ class HttpUrls {
       "quotation_master/Get_Quotation_Dropdown";
   static String getQuotationItems =
       "quotation_master/Get_Quotation_Dropdown_Details";
+  static String saveStockReturn = "item/Save_stock_return_master";
+  static String getStockReturn = "item/Get_stock_return_master";
+  static String deleteStockUse = "item/Delete_Stock_Use_Master";
+  static String deleteStockReturn = "item/Delete_Stock_Return_Master";
+  static String getStockUseDetails = "item/Get_stock_use_details";
+  static String getStockreturnDetails = "item/Get_stock_return_details";
+  static String saveSupplier = "item/save_supplier";
+  static String deleteSupplier = "item/delete_supplier";
+  static String getPurchaseDataMaster = "item/get_purchase_master";
+  static String deletePurchase = "item/Delete_Purchase_Master";
 }

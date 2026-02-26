@@ -16,6 +16,8 @@ import 'package:vidyanexis/controller/quotation_report_provider.dart';
 import 'package:vidyanexis/controller/balance_report_provider.dart';
 import 'package:vidyanexis/controller/payment_report_provider.dart';
 import 'package:vidyanexis/controller/payment_schedule_provider.dart';
+import 'package:vidyanexis/controller/stock_use_provider.dart';
+import 'package:vidyanexis/controller/stockreturn_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:provider/provider.dart';
@@ -115,6 +117,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => PaymentReportProvider()),
         ChangeNotifierProvider(create: (context) => StockReportProvider()),
         ChangeNotifierProvider(create: (context) => InvoiceTabProvider()),
+        ChangeNotifierProvider(create: (context) => StockUseProvider()),
+        ChangeNotifierProvider(create: (context) => StockreturnProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),

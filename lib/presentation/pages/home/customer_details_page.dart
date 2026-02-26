@@ -11,6 +11,8 @@ import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
+import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_expense.dart';
 import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
@@ -169,6 +171,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           sideprovider.name != 'Lead /')
         const Tab(text: "Refund Form"),
       if (settingsprovider.menuIsViewMap[21] == 1) const Tab(text: "Invoice"),
+      if (settingsprovider.menuIsViewMap[78] == 1 &&
+          sideprovider.name != 'Lead /') const Tab(text: "Stock Use "),
+      if (settingsprovider.menuIsViewMap[79] == 1 &&
+          sideprovider.name != 'Lead /') const Tab(text: "Stock Return"),
     ];
 
     if (!_isControllerInitialized || newTabs.length != _tabs.length) {
@@ -3430,6 +3436,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               InvoiceTabPage(
                                                   customerId:
                                                       widget.customerId),
+
+                                            if (settingsprovider
+                                                    .menuIsViewMap[78] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                StockUsePage(
+                                                    customerId: int.parse(
+                                                  widget.customerId,
+                                                )),
+                                            if (settingsprovider
+                                                    .menuIsViewMap[79] ==
+                                                1)
+                                              if (sideprovider.name != 'Lead /')
+                                                StockReturnPage(
+                                                    customerId: int.parse(
+                                                  widget.customerId,
+                                                )),
                                           ],
                                         ),
                                       ),

@@ -268,6 +268,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  String? _selectedStockStatus;
+  String? get selectedStockStatus => _selectedStockStatus;
+  String? _selectedStockStatusName;
+  String? get selectedStockStatusName => _selectedStockStatusName;
+
 //task
   final TextEditingController taskChoosedateController =
       TextEditingController();
@@ -672,6 +677,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   set selectedExpenseType(int? value) {
     _selectedExpenseType = value;
+    notifyListeners();
+  }
+
+  void updateStockStatus(String value) {
+    _selectedStockStatus = value;
+    print(_selectedStockStatus);
     notifyListeners();
   }
 
