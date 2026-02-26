@@ -15,6 +15,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
 import 'package:vidyanexis/presentation/pages/login/login_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
@@ -230,6 +231,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                 if (settingsProvider.menuIsViewMap[36].toString() == '1')
                   _buildMenuItem('Process Flow', 'assets/images/flow.svg',
                       const ProcessFlowPage(), context),
+                if ((settingsProvider.menuIsViewMap[48] ?? 0).toString() == '1')
+                  _buildMenuItem(
+                      'Expense Management',
+                      'assets/images/inventory.svg',
+                      const ExpenseManagement(),
+                      context),
                 // if (settingsProvider.menuIsViewMap[36].toString() == '1')
                 //   _buildMenuItem(
                 //       'Tasks', 'assets/images/task.svg', const TaskPage(), context),

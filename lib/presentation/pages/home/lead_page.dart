@@ -831,13 +831,13 @@ class _LeadsPageState extends State<LeadPage> {
                             ),
                             child: Row(
                               crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
+                              mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 SizedBox(
                                   width: 80,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 12.0),
+                                        vertical: 6.0, horizontal: 6.0),
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: Text(
@@ -851,10 +851,10 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 60,
+                                  width: 50,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 8.0),
+                                        vertical: 6.0, horizontal: 4.0),
                                     child: Align(
                                       alignment: Alignment.center,
                                       child: Text(
@@ -962,7 +962,7 @@ class _LeadsPageState extends State<LeadPage> {
                                             ),
                                             child: Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                                  MainAxisAlignment.start,
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.center,
                                               children: [
@@ -981,7 +981,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                     padding: const EdgeInsets
                                                         .symmetric(
                                                         vertical: 6.0,
-                                                        horizontal: 12.0),
+                                                        horizontal: 6.0),
                                                     child: Center(
                                                       child: Row(
                                                         mainAxisAlignment:
@@ -1018,13 +1018,13 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  width: 60,
+                                                  width: 55,
                                                   // Reduced from 80 to 60
                                                   child: Padding(
                                                     padding:
                                                         EdgeInsets.symmetric(
                                                             vertical: 6.0,
-                                                            horizontal: 8.0),
+                                                            horizontal: 4.0),
                                                     child: Center(
                                                       child: Column(
                                                         crossAxisAlignment:
