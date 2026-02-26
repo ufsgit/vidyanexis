@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_card.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_payment_widget.dart';
 
 class PaymentTabWidget extends StatefulWidget {
   final String customerId;
@@ -10,7 +14,7 @@ class PaymentTabWidget extends StatefulWidget {
 
   @override
   State<PaymentTabWidget> createState() => _PaymentTabWidgetState();
-} 
+}
 
 class _PaymentTabWidgetState extends State<PaymentTabWidget> {
   @override
@@ -64,6 +68,27 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
                 ),
               ],
             ),
+      floatingActionButton:
+          Provider.of<SettingsProvider>(context, listen: false)
+                      .menuIsSaveMap[72] ==
+                  1
+              ? CustomElevatedButton(
+                  prefixIcon: Icons.add,
+                  radius: 32,
+                  buttonText: 'Add Payment',
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AddPaymentWidget(
+                        customerId: widget.customerId,
+                      ),
+                    );
+                  },
+                  backgroundColor: AppColors.bluebutton,
+                  borderColor: AppColors.bluebutton,
+                  textColor: AppColors.whiteColor,
+                )
+              : null,
     );
   }
 }
