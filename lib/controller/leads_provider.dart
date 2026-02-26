@@ -1725,7 +1725,7 @@ class LeadsProvider extends ChangeNotifier {
       Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
         endPoint: HttpUrls.convertLead,
-        bodyData: {'customer_id': int.tryParse(customerId) ?? 0},
+        bodyData: {'Customer_Id': int.tryParse(customerId) ?? 0},
       );
       Loader.stopLoader(context);
 

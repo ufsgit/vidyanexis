@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/expense_tab_widget.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
@@ -69,6 +70,8 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
         const Tab(text: "Receipt"),
+      if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
+        const Tab(text: "Expense"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
       if (settingsprovider.menuIsViewMap[72] == 1) const Tab(text: "Payment"),
@@ -384,6 +387,8 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             ),
           if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
             RecieptPhone(widget.customerId.toString()),
+          if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
+            ExpenseTabWidget(customerId: widget.customerId.toString()),
           if (settingsprovider.menuIsViewMap[70] == 1)
             PaymentScheduleTabWidget(customerId: widget.customerId.toString()),
           if (settingsprovider.menuIsViewMap[72] == 1)

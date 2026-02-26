@@ -121,17 +121,28 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
               children: [
                 AppStyles.isWebScreen(context)
                     ? SizedBox()
-                    : Container(
-                        alignment: Alignment.centerLeft,
-                        child: IconButton(
-                          onPressed: () {
-                            context.pop();
-                          },
-                          icon: Icon(
-                            Icons.arrow_back,
-                            color: AppColors.textGrey4,
+                    : Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: InkWell(
+                          onTap: () => context.pop(),
+                          borderRadius: BorderRadius.circular(10),
+                          child: Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: Colors.grey[200]!),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.03),
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: const Icon(Icons.arrow_back,
+                                size: 20, color: Color(0xFF152D70)),
                           ),
-                          iconSize: 24,
                         ),
                       ),
                 // Header section - responsive layout
