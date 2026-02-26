@@ -709,21 +709,47 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchNextPage(BuildContext context) async {
-    if (_endLimit < _totalCount) {
-      loadMoreLeads(context);
+    print(
+        "Next Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
+
+    if (_endLimit >= _totalCount) return;
+
+    _startLimit = _endLimit + 1;
+
+    int limitPerPage = 20;
+
+    _endLimit = _startLimit + limitPerPage - 1;
+
+    if (_endLimit > _totalCount) {
+      _endLimit = _totalCount;
     }
+
+    print(
+        "After Next computation → new start: $_startLimit new end: $_endLimit");
+    await getSearchLeads(context);
+
     notifyListeners();
   }
 
   // Fetch previous page data
   Future<void> fetchPreviousPage(BuildContext context) async {
-    if (_startLimit > 0) {
-      _startLimit -= 20;
-      _endLimit -= 20;
-      getSearchLeads(context);
-    }
-    // print('Start' + _startLimit.toString());
-    // print('End' + _endLimit.toString());
+    print(
+        "Previous Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
+
+    if (_startLimit <= 1) return;
+
+    int limitPerPage = 20;
+
+    _startLimit = _startLimit - limitPerPage;
+
+    if (_startLimit < 1) _startLimit = 1;
+
+    _endLimit = _startLimit + limitPerPage - 1;
+
+    print(
+        "After Previous computation → new start: $_startLimit new end: $_endLimit");
+    await getSearchLeads(context);
+
     notifyListeners();
   }
 
