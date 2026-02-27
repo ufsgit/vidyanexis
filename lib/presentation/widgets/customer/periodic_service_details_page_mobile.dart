@@ -198,6 +198,13 @@ class _PeriodicServiceDetailsPageMobileState
                                   color: AppColors.textGrey4),
                             ),
                             Text(
+                              widget.item.categoryName,
+                              style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.textGrey4),
+                            ),
+                            Text(
                               widget.item.serviceName,
                               style: GoogleFonts.plusJakartaSans(
                                   fontSize: 14,

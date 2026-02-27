@@ -1848,6 +1848,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
             "Intervals_No": monthInterval,
             "Duration_Id": dropDownProvider.amcTotalDurationlId,
             "Duration_No": yearInterval,
+            "Category_Id": _selectedAMCCategory ?? 1,
+            "Category_Name": amcCategoryController.text.isNotEmpty
+                ? amcCategoryController.text
+                : "AMC",
             "interval_details":
                 _maintenanceDates.map((e) => e.toJson()).toList(),
           });

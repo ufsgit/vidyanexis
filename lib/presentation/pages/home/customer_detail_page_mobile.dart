@@ -75,7 +75,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
         const Tab(text: "Expense"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
-      if (settingsprovider.menuIsViewMap[72] == 1) const Tab(text: "Payment"),
+      if (settingsprovider.menuIsViewMap[81] == 1) const Tab(text: "Payment"),
       // const Tab(text: "Task Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[37] == 1)
         const Tab(text: "CheckList Management"),
@@ -412,7 +412,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             ExpenseTabWidget(customerId: widget.customerId.toString()),
           if (settingsprovider.menuIsViewMap[70] == 1)
             PaymentScheduleTabWidget(customerId: widget.customerId.toString()),
-          if (settingsprovider.menuIsViewMap[72] == 1)
+          if (settingsprovider.menuIsViewMap[81] == 1)
             PaymentTabWidget(customerId: widget.customerId.toString()),
 
           // TaskDocumentsPage(

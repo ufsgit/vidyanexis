@@ -161,6 +161,12 @@ class PeriodicServiceDetailsPage extends StatelessWidget {
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
+                            label: 'Category',
+                            value: amcReportModeld.categoryName,
+                          ),
+                          const SizedBox(height: 16),
+                          TaskLabelValue(
+                            colorUser: AppColors.grey,
                             label: 'Amount',
                             value: amcReportModeld.amount,
                           ),

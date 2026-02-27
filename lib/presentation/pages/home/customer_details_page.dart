@@ -164,7 +164,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "CheckList Management"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
-      if (settingsprovider.menuIsViewMap[72] == 1 &&
+      if (settingsprovider.menuIsViewMap[81] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Payment"),
       if (settingsprovider.menuIsViewMap[71] == 1 &&
@@ -766,7 +766,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     ),
                                   ),
                                 ),
-                              if (settingsprovider.menuIsSaveMap[72] == 1 &&
+                              if (settingsprovider.menuIsSaveMap[81] == 1 &&
                                   _isControllerInitialized &&
                                   _tabs[_tabController.index].text == "Payment")
                                 Padding(
@@ -3465,7 +3465,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       widget.customerId),
                                             // Payment Tab (New)
                                             if (settingsprovider
-                                                    .menuIsViewMap[72] ==
+                                                    .menuIsViewMap[81] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 PaymentTabWidget(
@@ -3691,8 +3691,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildHeaderCell('#', width: 50.0),
-                        _buildHeaderCell('Service Name', flex: 3),
-                        _buildHeaderCell('Product Name', flex: 3),
+                        _buildHeaderCell('Service Name', flex: 2),
+                        _buildHeaderCell('Product Name', flex: 2),
+                        _buildHeaderCell('Category', flex: 2),
                         _buildHeaderCell('Amount', flex: 2),
                         _buildHeaderCell('From Date', flex: 2),
                         _buildHeaderCell('To Date', flex: 2),
@@ -3733,8 +3734,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 _buildDataCell((index + 1).toString(),
                                     width: 50.0),
                                 _buildDataCell(amc.serviceName,
-                                    flex: 3, isBold: true),
-                                _buildDataCell(amc.productName, flex: 3),
+                                    flex: 2, isBold: true),
+                                _buildDataCell(amc.productName, flex: 2),
+                                _buildDataCell(
+                                    amc.categoryName.isNotEmpty
+                                        ? amc.categoryName
+                                        : 'AMC',
+                                    flex: 2),
                                 _buildDataCell("₹${double.parse(amc.amount)}",
                                     flex: 2),
                                 _buildDataCell(

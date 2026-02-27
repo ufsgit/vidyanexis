@@ -246,6 +246,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                 'From Date',
                                 'To Date',
                                 'Product Name',
+                                'Category',
                                 'Amount',
                                 'Status',
                                 'Service'
@@ -260,6 +261,9 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   'From Date': formatDate(task.fromDate),
                                   'To Date': formatDate(task.toDate),
                                   'Product Name': task.productName,
+                                  'Category': task.categoryName.isNotEmpty
+                                      ? task.categoryName
+                                      : 'AMC',
                                   'Amount': task.amount.toString(),
                                   'Status': task.displayStatus,
                                   'Service': task.serviceName,
@@ -412,6 +416,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     'From Date',
                                     'To Date',
                                     'Product Name',
+                                    'Category',
                                     'Amount',
                                     'Status',
                                     'Service'
@@ -436,6 +441,9 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                       task.toDate.toString()))
                                               : '',
                                       'Product Name': task.productName,
+                                      'Category': task.categoryName.isNotEmpty
+                                          ? task.categoryName
+                                          : 'AMC',
                                       'Amount': task.amount.toString(),
                                       'Status': task.displayStatus,
                                       'Service': task.serviceName,
@@ -1300,6 +1308,11 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                             color: Color(0xFF607185)),
                                         TableWidget(
                                             width: 150,
+                                            title: 'Category',
+                                            fontSize: 13,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            width: 150,
                                             title: 'Status',
                                             fontSize: 13,
                                             color: Color(0xFF607185)),
@@ -1475,6 +1488,17 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                         horizontal: 8),
                                                     title:
                                                         "₹${double.parse(task.amount).toStringAsFixed(1)}"),
+                                                TableWidget(
+                                                    width: 150,
+                                                    fontSize: 13,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16,
+                                                        horizontal: 8),
+                                                    title: task.categoryName
+                                                            .isNotEmpty
+                                                        ? task.categoryName
+                                                        : 'AMC'),
                                                 TableWidget(
                                                   width: 150,
                                                   padding: const EdgeInsets
