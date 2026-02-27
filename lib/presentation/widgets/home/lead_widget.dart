@@ -18,6 +18,7 @@ import 'package:vidyanexis/presentation/widgets/home/lead_details_page_phone.dar
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 
 class LeadCard extends StatelessWidget {
   final SearchLeadModel lead;
@@ -246,19 +247,12 @@ class LeadCard extends StatelessWidget {
                 CustomActionButton(
                   imageColor: AppColors.textGreen,
                   onTap: () async {
-                    String phone =
-                        lead.contactNumber.replaceAll(RegExp(r'[^\d+]'), '');
-
-                    // Add +91 if missing
-                    if (!phone.startsWith('+')) {
-                      phone = '+91$phone';
-                    }
+                    String phone = sanitizeForWhatsApp(lead.contactNumber);
 
                     Uri waBusiness =
                         Uri.parse("whatsapp-business://send?phone=$phone");
                     Uri waNormal = Uri.parse("whatsapp://send?phone=$phone");
-                    Uri waWeb =
-                        Uri.parse("https://api.whatsapp.com/send?phone=$phone");
+                    Uri waWeb = Uri.parse("https://wa.me/$phone");
 
                     try {
                       // 1️⃣ USER has WhatsApp Business → open Business first
@@ -412,7 +406,8 @@ class LeadCard extends StatelessWidget {
     );
   }
 
-  void _showWhatsAppOptionsDialog(BuildContext context, String phone) {
+  void _showWhatsAppOptionsDialog(BuildContext context, String rawPhone) {
+    String phone = sanitizeForWhatsApp(rawPhone);
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -424,8 +419,7 @@ class LeadCard extends StatelessWidget {
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 // Try to open Normal WhatsApp
-                final Uri normalWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
+                final Uri normalWhatsappUri = Uri.parse('https://wa.me/$phone');
                 try {
                   if (await canLaunchUrl(normalWhatsappUri)) {
                     await launchUrl(normalWhatsappUri,
@@ -456,12 +450,11 @@ class LeadCard extends StatelessWidget {
                 Navigator.of(dialogContext).pop();
                 // Try to open WhatsApp Business
                 final Uri businessWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
+                    Uri.parse('whatsapp-business://send?phone=$phone');
                 // For WhatsApp Business, the scheme might be different on some platforms
                 // On Android, it's typically: intent://send?phone=$phone#Intent;package=com.whatsapp.w4b;end
                 // But url_launcher handles this differently, so we'll use the web API as fallback
-                final Uri webWhatsapp =
-                    Uri.parse('https://api.whatsapp.com/send?phone=$phone');
+                final Uri webWhatsapp = Uri.parse('https://wa.me/$phone');
 
                 try {
                   // Try web WhatsApp which works for both

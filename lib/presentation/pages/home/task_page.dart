@@ -37,6 +37,7 @@ import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
@@ -3634,7 +3635,8 @@ class _tasksPageReportState extends State<TaskPage> {
     return mobile;
   }
 
-  void _showWhatsAppOptionsDialog(BuildContext context, String phone) {
+  void _showWhatsAppOptionsDialog(BuildContext context, String rawPhone) {
+    String phone = sanitizeForWhatsApp(rawPhone);
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -3646,8 +3648,7 @@ class _tasksPageReportState extends State<TaskPage> {
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 // Try to open Normal WhatsApp
-                final Uri normalWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
+                final Uri normalWhatsappUri = Uri.parse('https://wa.me/$phone');
                 try {
                   if (await canLaunchUrl(normalWhatsappUri)) {
                     await launchUrl(normalWhatsappUri,
@@ -3678,9 +3679,8 @@ class _tasksPageReportState extends State<TaskPage> {
                 Navigator.of(dialogContext).pop();
                 // Try to open WhatsApp Business
                 final Uri businessWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
-                final Uri webWhatsapp =
-                    Uri.parse('https://api.whatsapp.com/send?phone=$phone');
+                    Uri.parse('whatsapp-business://send?phone=$phone');
+                final Uri webWhatsapp = Uri.parse('https://wa.me/$phone');
 
                 try {
                   // Try web WhatsApp which works for both
