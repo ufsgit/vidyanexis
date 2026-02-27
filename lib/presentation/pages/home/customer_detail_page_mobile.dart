@@ -16,6 +16,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/expense_tab_widget.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -275,10 +276,30 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                                   final leadsProvider =
                                       Provider.of<LeadsProvider>(context,
                                           listen: false);
-                                  await leadsProvider.deleteLead(
-                                      context, widget.customerId.toString());
-                                  Navigator.pop(context);
-                                  Navigator.pop(context);
+                                  final customerId =
+                                      widget.customerId.toString();
+
+                                  // Optimistic removal
+                                  leadsProvider.removeLeadFromList(customerId);
+                                  Provider.of<CustomerProvider>(context,
+                                          listen: false)
+                                      .removeCustomerFromList(customerId);
+
+                                  Navigator.pop(context); // dialog
+                                  Navigator.pop(context); // details page
+
+                                  // Perform actions in background
+                                  if (widget.fromLead) {
+                                    leadsProvider.deleteLead(
+                                        context, customerId);
+                                  } else {
+                                    Provider.of<CustomerProvider>(context,
+                                            listen: false)
+                                        .deleteCustomer(context, customerId);
+                                  }
+                                  Provider.of<CustomerProvider>(context,
+                                          listen: false)
+                                      .getSearchCustomers(context);
                                 },
                                 confirmButtonText: 'Delete',
                               )

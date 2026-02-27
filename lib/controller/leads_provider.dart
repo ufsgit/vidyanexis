@@ -838,7 +838,7 @@ class LeadsProvider extends ChangeNotifier {
   getSearchLeads(BuildContext context) async {
     // try {
     // Loader.showLoader(context);
-    _isLoading = true;
+    // _isLoading = true;
     print('Start$_startLimit');
     print('End$_endLimit');
 
@@ -1730,8 +1730,7 @@ class LeadsProvider extends ChangeNotifier {
 
       if (response != null && response.statusCode == 200) {
         log('Lead deleted successfully');
-        // _leadData.removeWhere((lead) => lead.toUserId == leadId);
-        notifyListeners();
+        removeLeadFromList(custId);
         await getSearchLeads(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1744,6 +1743,11 @@ class LeadsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+  }
+
+  void removeLeadFromList(String id) {
+    _leadData.removeWhere((lead) => lead.customerId.toString() == id);
+    notifyListeners();
   }
 
   Future<void> convertLead(BuildContext context, String customerId) async {

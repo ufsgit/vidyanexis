@@ -384,6 +384,32 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       ],
                     ),
                   ),
+                  const SizedBox(width: 10.0),
+                  Expanded(
+                    child: Builder(builder: (context) {
+                      final List<DropdownItem<int>> categoryItems = [
+                        DropdownItem(id: 1, name: 'AMC'),
+                        DropdownItem(id: 2, name: 'Warranty'),
+                        DropdownItem(id: 3, name: 'Repair'),
+                      ];
+
+                      return CommonDropdown<int>(
+                        hintText: 'Category',
+                        items: categoryItems,
+                        controller:
+                            customerDetailsProvider.amcCategoryController,
+                        onItemSelected: (selectedId) {
+                          final selectedItem = categoryItems.firstWhere(
+                            (item) => item.id == selectedId,
+                          );
+                          customerDetailsProvider.updateAMCCategory(
+                              selectedId, selectedItem.name);
+                        },
+                        selectedValue:
+                            customerDetailsProvider.selectedAMCCategory,
+                      );
+                    }),
+                  ),
                 ],
               ),
               const SizedBox(height: 16.0),

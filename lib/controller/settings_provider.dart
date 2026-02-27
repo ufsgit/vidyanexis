@@ -178,6 +178,21 @@ class SettingsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController expenseTypeController = TextEditingController();
 
+  //Supplier
+  final TextEditingController searchSupplierController =
+      TextEditingController();
+  final TextEditingController supplierNameController = TextEditingController();
+  TextEditingController supplierAddressController = TextEditingController();
+  TextEditingController supplierAddress1Controller = TextEditingController();
+  TextEditingController supplierAddress2Controller = TextEditingController();
+  TextEditingController supplierAddress3Controller = TextEditingController();
+  TextEditingController supplierPhoneController = TextEditingController();
+  TextEditingController supplierMobileController = TextEditingController();
+  TextEditingController supplierEmailController = TextEditingController();
+  TextEditingController supplierGstNoController = TextEditingController();
+  TextEditingController supplierOpeningBalanceController =
+      TextEditingController();
+
   //lists
   List<BranchModel> _branchModel = [];
   List<BranchModel> get branchModel => _branchModel;
@@ -646,6 +661,103 @@ class SettingsProvider extends ChangeNotifier {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  addSupplier({
+    required BuildContext context,
+    required String statusId,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveSupplier,
+          bodyData: {
+            'Supplier_Id': statusId,
+            'Supplier_Name': supplierNameController.text.trim(),
+            'Address': supplierAddressController.text.trim(),
+            'Address1': supplierAddress1Controller.text.trim(),
+            'Address2': supplierAddress2Controller.text.trim(),
+            'Address3': supplierAddress3Controller.text.trim(),
+            'PhoneNo': supplierPhoneController.text.trim(),
+            'MobileNo': supplierMobileController.text.trim(),
+            'Email': supplierEmailController.text.trim(),
+            'GSTNO': supplierGstNoController.text.trim(),
+            'OpeningBalance': supplierOpeningBalanceController.text.isEmpty
+                ? '0'
+                : supplierOpeningBalanceController.text.trim(),
+          });
+
+      if (response!.statusCode == 200) {
+        supplierClear();
+
+        final data = response.data;
+        searchSupplierApi('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        searchSupplierController.clear();
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  void supplierClear() {
+    supplierNameController.clear();
+    supplierAddressController.clear();
+    supplierAddress1Controller.clear();
+    supplierAddress2Controller.clear();
+    supplierAddress3Controller.clear();
+    supplierPhoneController.clear();
+    supplierMobileController.clear();
+    supplierEmailController.clear();
+    supplierGstNoController.clear();
+    supplierOpeningBalanceController.clear();
+  }
+
+  void deleteSupplier(BuildContext context, int userId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteSupplier}/$userId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Enquiry_Source_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete an Supplier \n that is currently in use on the Lead page!");
+        } else {
+          searchSupplierApi('', context);
+          supplierClear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Supplier deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete Supplier')),
         );
       }
     } catch (e) {

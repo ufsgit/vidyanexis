@@ -17,7 +17,7 @@ class HttpUrls {
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 
 //dev
-  //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -34,6 +34,7 @@ class HttpUrls {
   static String timeTrack = "followup/Time_track_reports";
   static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
+  static String deleteCustomer = "lead/Delete_Customer";
   static String convertLead = "followup/Convert_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
   // static String getAllFollowUpStatus = "status/Search_status";
@@ -292,4 +293,14 @@ class HttpUrls {
       "quotation_master/Get_Quotation_Dropdown";
   static String getQuotationItems =
       "quotation_master/Get_Quotation_Dropdown_Details";
+  static String saveStockReturn = "item/Save_stock_return_master";
+  static String getStockReturn = "item/Get_stock_return_master";
+  static String deleteStockUse = "item/Delete_Stock_Use_Master";
+  static String deleteStockReturn = "item/Delete_Stock_Return_Master";
+  static String getStockUseDetails = "item/Get_stock_use_details";
+  static String getStockreturnDetails = "item/Get_stock_return_details";
+  static String saveSupplier = "item/save_supplier";
+  static String deleteSupplier = "item/delete_supplier";
+  static String getPurchaseDataMaster = "item/get_purchase_master";
+  static String deletePurchase = "item/Delete_Purchase_Master";
 }

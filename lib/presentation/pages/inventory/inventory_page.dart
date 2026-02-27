@@ -7,7 +7,7 @@ import 'package:vidyanexis/presentation/pages/inventory/category_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/inventory/item_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/purchase_screen.dart';
-import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
+import 'package:vidyanexis/presentation/pages/inventory/supplier_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/unit_page.dart';
 
 class InventoryPage extends StatefulWidget {
@@ -64,8 +64,8 @@ class _InventoryPageState extends State<InventoryPage> {
                   _buildMenuItem(context, 'Item', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[44].toString() == '1')
                   _buildMenuItem(context, 'Purchase', Icons.document_scanner),
-                if (settingsProvider.menuIsViewMap[78].toString() == '1')
-                  _buildMenuItem(context, 'Stock Use', Icons.document_scanner),
+                if (settingsProvider.menuIsViewMap[45].toString() == '1')
+                  _buildMenuItem(context, 'Supplier', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[46].toString() == '1')
                   _buildMenuItem(context, 'Category', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[47].toString() == '1')
@@ -155,8 +155,8 @@ class _InventoryPageState extends State<InventoryPage> {
           //   );
           case 'Purchase':
             return const PurchaseScreen();
-          case 'Stock Use':
-            return const StockUsePage();
+          case 'Supplier':
+            return const SupplierPage();
           case 'Expense Management':
             return const ExpenseManagement();
           case 'Category':

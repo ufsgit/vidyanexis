@@ -67,7 +67,7 @@ class _PeriodicServiceReportPageMobileState
   @override
   Widget build(BuildContext context) {
     final reportsProvider = Provider.of<AMCReportProvider>(context);
-    final provider = Provider.of<DropDownProvider>(context);
+    // final provider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
     final searchProvider = Provider.of<SidebarProvider>(context);
@@ -153,73 +153,73 @@ class _PeriodicServiceReportPageMobileState
                   crossAxisAlignment: WrapCrossAlignment.start,
                   alignment: WrapAlignment.start,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ] +
-                                provider.amcStatus
-                                    .map((status) => DropdownMenuItem<int>(
-                                          value: status.amcStatusId,
-                                          child: Text(
-                                            status.amcStatusName ?? '',
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  reportsProvider.selectedStatus.toString();
-                              String assignedTo =
-                                  reportsProvider.selectedUser.toString();
-                              String fromDate =
-                                  reportsProvider.formattedFromDate;
-                              String toDate = reportsProvider.formattedToDate;
-                              print(
-                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                              reportsProvider.setTaskSearchCriteria(
-                                  reportsProvider.Search,
-                                  fromDate,
-                                  toDate,
-                                  status,
-                                  assignedTo);
-                              reportsProvider.getSearchAmcReport(context);
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
+                    // Container(
+                    //   padding: const EdgeInsets.symmetric(horizontal: 20),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.circular(20),
+                    //     border: Border.all(
+                    //         color: reportsProvider.selectedStatus != null &&
+                    //                 reportsProvider.selectedStatus != 0
+                    //             ? AppColors.primaryBlue
+                    //             : Colors.grey[300]!),
+                    //   ),
+                    //   child: Row(
+                    //     mainAxisSize: MainAxisSize.min,
+                    //     children: [
+                    //       const Text('Status: '),
+                    //       DropdownButton<int>(
+                    //         value: reportsProvider.selectedStatus,
+                    //         hint: const Text('All'),
+                    //         items: [
+                    //               const DropdownMenuItem<int>(
+                    //                 value:
+                    //                     0, // Use 0 or null to represent "All"
+                    //                 child: Text(
+                    //                   'All',
+                    //                   style: TextStyle(fontSize: 14),
+                    //                 ),
+                    //               ),
+                    //             ] +
+                    //             provider.amcStatus
+                    //                 .map((status) => DropdownMenuItem<int>(
+                    //                       value: status.amcStatusId,
+                    //                       child: Text(
+                    //                         status.amcStatusName ?? '',
+                    //                         style:
+                    //                             const TextStyle(fontSize: 14),
+                    //                       ),
+                    //                     ))
+                    //                 .toList(),
+                    //         onChanged: (int? newValue) {
+                    //           if (newValue != null) {
+                    //             reportsProvider.setStatus(
+                    //                 newValue); // Update the status in the provider
+                    //           }
+                    //           String status =
+                    //               reportsProvider.selectedStatus.toString();
+                    //           String assignedTo =
+                    //               reportsProvider.selectedUser.toString();
+                    //           String fromDate =
+                    //               reportsProvider.formattedFromDate;
+                    //           String toDate = reportsProvider.formattedToDate;
+                    //           print(
+                    //               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
+                    //           reportsProvider.setTaskSearchCriteria(
+                    //               reportsProvider.Search,
+                    //               fromDate,
+                    //               toDate,
+                    //               status,
+                    //               assignedTo);
+                    //           reportsProvider.getSearchAmcReport(context);
+                    //         },
+                    //         underline: Container(),
+                    //         isDense: true,
+                    //         iconSize: 18,
+                    //       ),
+                    //     ],
+                    //   ),
+                    // ),
                     const SizedBox(width: 10),
                     // Fixed: Wrap the date container with Flexible or add mainAxisSize constraint
                     GestureDetector(
@@ -384,7 +384,7 @@ class _PeriodicServiceReportPageMobileState
                                               decorationColor:
                                                   AppColors.bluebutton,
                                               decorationThickness: 1.5,
-                                              fontSize: 12,
+                                              fontSize: 14,
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.bluebutton),
                                         ),
@@ -412,7 +412,7 @@ class _PeriodicServiceReportPageMobileState
                                       child: Text(
                                         service.amcStatusName,
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
+                                            fontSize: 13,
                                             fontWeight: FontWeight.w500,
                                             color: statusColor),
                                       ),
@@ -476,7 +476,7 @@ class _PeriodicServiceReportPageMobileState
                                           .toString()
                                           .toMonthDayYearFormat(),
                                       style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.textGrey4,
                                       ),
@@ -487,7 +487,7 @@ class _PeriodicServiceReportPageMobileState
                                           .toString()
                                           .toMonthDayYearFormat(),
                                       style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.textGrey4,
                                       ),

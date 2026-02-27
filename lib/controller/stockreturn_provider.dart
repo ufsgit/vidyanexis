@@ -7,48 +7,94 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/controller/models/customer_details_model.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
 import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/models/item_lists_model.dart';
 import 'package:vidyanexis/controller/models/item_settings_model.dart';
+import 'package:vidyanexis/controller/models/payment_model.dart';
+
 import 'package:vidyanexis/controller/models/purchase_item_model.dart';
 import 'package:vidyanexis/controller/models/purchase_model.dart';
 import 'package:vidyanexis/controller/models/stock_list_model.dart';
 import 'package:vidyanexis/controller/models/stock_model.dart';
+import 'package:vidyanexis/controller/models/stock_return_model.dart';
 import 'package:vidyanexis/controller/models/supplier_model.dart';
+
 import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/http/http_requests.dart';
+import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/utils/extensions.dart';
-import 'package:vidyanexis/utils/util_functions.dart';
 
-class ExpenseProvider extends ChangeNotifier {
+class StockreturnProvider extends ChangeNotifier {
   String _selectedMenu = 'Item';
   String get selectedMenu => _selectedMenu;
-
+  final TextEditingController customerController = TextEditingController();
+  final TextEditingController paymentAmountController = TextEditingController();
+  final TextEditingController paymentNetTotalController =
+      TextEditingController();
+  final TextEditingController paymentTaxPercentageController =
+      TextEditingController();
   //expense management
   final TextEditingController expenseTypeController = TextEditingController();
+  final TextEditingController paymentDateController = TextEditingController();
+  final TextEditingController userController = TextEditingController();
+  final TextEditingController projectController = TextEditingController();
+  final TextEditingController searchExpenseController = TextEditingController();
+  final TextEditingController projectTypeController = TextEditingController();
+  final TextEditingController commentController = TextEditingController();
+  final TextEditingController expenseHeadController = TextEditingController();
+  final TextEditingController taxSlabController = TextEditingController();
+  final TextEditingController amountWithTaxController = TextEditingController();
+  final TextEditingController amountWithoutTaxController =
+      TextEditingController();
+  final TextEditingController taxPercentageController = TextEditingController();
+
   final TextEditingController taskController = TextEditingController();
   final TextEditingController amountController = TextEditingController();
   final TextEditingController itemUnitPriceController = TextEditingController();
   final TextEditingController itemHSNController = TextEditingController();
   final TextEditingController dateController = TextEditingController();
-  final TextEditingController searchExpenseController = TextEditingController();
-  final TextEditingController userController = TextEditingController();
-  final TextEditingController projectController = TextEditingController();
-  final TextEditingController leadController = TextEditingController();
-  final TextEditingController commentController = TextEditingController();
-  final TextEditingController expenseHeadController = TextEditingController();
-  final TextEditingController amountWithoutTaxController =
-      TextEditingController();
-  final TextEditingController projectTypeController = TextEditingController();
-  final TextEditingController taxPercentageController = TextEditingController();
+//suspense entry
+  final TextEditingController suspenseTypeController = TextEditingController();
 
+  final TextEditingController suspenseAmountController =
+      TextEditingController();
+  final TextEditingController suspensePayedToController =
+      TextEditingController();
+  final TextEditingController suspensePaymentModeController =
+      TextEditingController();
+  final TextEditingController suspenseDateController = TextEditingController();
+  final TextEditingController suspenseUserMailController =
+      TextEditingController();
+  final TextEditingController suspensePercentageController =
+      TextEditingController();
+  final TextEditingController suspenseAmountWithoutTaxController =
+      TextEditingController();
+  final TextEditingController suspenseHeadController = TextEditingController();
+  final TextEditingController suspenseCommentController =
+      TextEditingController();
+
+  final TextEditingController paymentAmountGstController =
+      TextEditingController();
+  final TextEditingController paymentCommentController =
+      TextEditingController();
+  final TextEditingController paymenttaxSlabController =
+      TextEditingController();
+  final TextEditingController paymenttaxIncludedController =
+      TextEditingController();
+  final TextEditingController paymentModeController = TextEditingController();
+  final TextEditingController paymentProjectController =
+      TextEditingController();
+  final TextEditingController receiptDateController = TextEditingController();
+  final TextEditingController paymentEntryDateController =
+      TextEditingController();
   final List<Uint8List> _images = []; // List to store images
   final List<Uint8List> _pdfs = [];
   List<Uint8List> get images => _images;
@@ -62,16 +108,50 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController suUnitPriceController = TextEditingController();
   final TextEditingController suItemNameController = TextEditingController();
   final TextEditingController suAmountController = TextEditingController();
+
+  //stock return controllers
+  final TextEditingController returnStockIdController = TextEditingController();
+
+  final TextEditingController returnDateController = TextEditingController();
+  final TextEditingController returnItemController = TextEditingController();
+  final TextEditingController returnQuantityController =
+      TextEditingController();
+  final TextEditingController returnSaleRateController =
+      TextEditingController();
+
+  final TextEditingController returnCategoryController =
+      TextEditingController();
+  final TextEditingController returnDescriptionController =
+      TextEditingController();
+
+  final TextEditingController searchSuspenseController =
+      TextEditingController();
+  final TextEditingController searchPaymentController = TextEditingController();
   int? _selectedItemStockUseId;
   int? get selectedItemStockUseId => _selectedItemStockUseId;
+  final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(
+      navigatorKey.currentState!.context,
+      listen: false);
+  int? _selectedItemReturnId;
+  int? get selectedItemReturnId => _selectedItemReturnId;
   List<StockUseModel> _stockUseList = [];
   List<StockUseModel> get stockUseList => _stockUseList;
   List<StockUseItems> _stockUseItems = [];
   List<StockUseItems> get stockUseItems => _stockUseItems;
+  List<StockReturnModel> _stockReturnList = [];
+  List<StockReturnModel> get stockReturnList => _stockReturnList;
+  List<StockReturnItems> _stockReturnItems = [];
+  List<StockReturnItems> get stockReturnItems => _stockReturnItems;
+  ExpenseHeaderModel _expenseHeaderModel = ExpenseHeaderModel();
+  ExpenseHeaderModel get expenseHeaderModel => _expenseHeaderModel;
   List<ExpenseModel> _expenseModelList = [];
   List<ExpenseModel> get expenseModelList => _expenseModelList;
-  int? _selectedUser;
-  int? get selectedUser => _selectedUser;
+
+  // List<SuspenseModel> _suspenseModelList = [];
+  // List<SuspenseModel> get suspenseModelList => _suspenseModelList;
+
+  // List<ReceiptModel> _paymentModelList = [];
+  // List<ReceiptModel> get paymentModelList => _paymentModelList;
   //item add
   final TextEditingController searchitemNameController =
       TextEditingController();
@@ -88,11 +168,6 @@ class ExpenseProvider extends ChangeNotifier {
   final TextEditingController gstController = TextEditingController();
   final TextEditingController itemMaterialController = TextEditingController();
   final TextEditingController itemQuantityController = TextEditingController();
-  List<ItemSettings> _items = [];
-  List<ItemSettings> get items => _items;
-  List<ItemSettings> _RealItems = [];
-  List<ItemSettings> get RealItems => _RealItems;
-
   int? _editIndex;
   int? get editIndex => _editIndex;
   List<ItemListModel> _itemList = [];
@@ -103,11 +178,7 @@ class ExpenseProvider extends ChangeNotifier {
   List<StockEntry> get stockList => _stockList;
   int? _selectedCustomerId;
   int? get selectedCustomerId => _selectedCustomerId;
-  int? _selectedProjectTypeId;
-  int? get selectedProjectTypeId => _selectedProjectTypeId;
 
-  int? _expenseId;
-  int? get expenseId => _expenseId;
   int? _selectedExpenseTypeId;
   int? get selectedExpenseTypeId => _selectedExpenseTypeId;
 
@@ -119,7 +190,12 @@ class ExpenseProvider extends ChangeNotifier {
   int? selectedCategoryId;
   int _isChecked = 0;
   int get isChecked => _isChecked;
+
+  int _isPrimaryItem = 0;
+  int get isPrimaryItem => _isPrimaryItem;
   int? _editStockIndex;
+  int? _editReturnIndex;
+
   String _search = '';
   String _fromDateS = '';
   String _supplier = '';
@@ -203,9 +279,11 @@ class ExpenseProvider extends ChangeNotifier {
   int? get selectedSupplierId => _selectedSupplierId;
   int? _itemDrop;
   int? get itemDrop => _itemDrop;
+
   int? _editItemIndex;
   bool _isFilter = false;
   bool get isFilter => _isFilter;
+
   List<ItemListModel> _filteredItemList = [];
   //item type dropdown
   String get selectedType => _selectedType;
@@ -221,19 +299,27 @@ class ExpenseProvider extends ChangeNotifier {
   DateTime? _toDate;
   int? _selectedSupplier;
   int? get selectedSupplier => _selectedSupplier;
+  int? _subItemId;
+  int? get subItemId => _subItemId;
+
+  int? _itemMaterialId;
+  int? get itemMaterialId => _itemMaterialId;
   List<ExpenseTypeModel> _expenseTypeList = [];
   List<ExpenseTypeModel> get expenseTypeList => _expenseTypeList;
   int? _selectedDateFilterIndex;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
-  int? _selectedClient;
-  int? get selectedClient => _selectedClient;
-
-  //client filter
-  List<CustomerModel> _clientList = [];
-  List<CustomerModel> get clientList => _clientList;
-
   void setSelectedCustomerId(int id) {
     _selectedCustomerId = id;
+    notifyListeners();
+  }
+
+  void setSubId(int id) {
+    _subItemId = id;
+    notifyListeners();
+  }
+
+  void setMaterialId(int id) {
+    _itemMaterialId = id;
     notifyListeners();
   }
 
@@ -346,6 +432,9 @@ class ExpenseProvider extends ChangeNotifier {
   Future<void> searchItemList(
       {required BuildContext context, required bool isFilter}) async {
     try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getItemList);
 
@@ -430,21 +519,6 @@ class ExpenseProvider extends ChangeNotifier {
     _toDate = date;
     _selectedDateFilterIndex = -1;
     formatDate();
-    notifyListeners();
-  }
-
-  void setUserFilter(int newUser) {
-    _selectedUser = newUser;
-    notifyListeners();
-  }
-
-  void setClientFilter(int newClient) {
-    _selectedClient = newClient;
-    notifyListeners();
-  }
-
-  void setProjectTypeFilter(int id) {
-    _selectedProjectTypeId = id;
     notifyListeners();
   }
 
@@ -721,13 +795,62 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void addOrEditStockReturnItem(BuildContext context) {
+    if (returnItemController.text.trim().isEmpty ||
+        returnQuantityController.text.trim().isEmpty ||
+        returnSaleRateController.text.trim().isEmpty) {
+      _showAlertDialog(
+          context, 'Cannot Save', 'Please fill in all required fields.');
+      return;
+    }
+
+    final quantity =
+        double.tryParse(returnQuantityController.text.trim()) ?? 0.0;
+    final unitPrice =
+        double.tryParse(returnSaleRateController.text.trim()) ?? 0.0;
+    final amount = unitPrice * quantity;
+
+    final newItem = StockReturnItems(
+      stockReturnId: int.tryParse(returnStockIdController.text) ?? 0,
+      itemId: selectedItemReturnId ?? 0,
+      itemName: returnItemController.text.trim(),
+      categoryId: selectedCategoryId ?? 0,
+      categoryName: returnCategoryController.text.trim(),
+      quantity: quantity,
+      unitPrice: unitPrice,
+      amount: amount,
+    );
+
+    if (_editReturnIndex != null &&
+        _editReturnIndex! >= 0 &&
+        _editReturnIndex! < stockReturnItems.length) {
+      stockReturnItems[_editReturnIndex!] = newItem;
+    } else {
+      stockReturnItems.add(newItem);
+      print('list/////${stockReturnItems}');
+    }
+
+    resetStockReturnForm();
+    notifyListeners();
+  }
+
   set stockUseItems(List<StockUseItems> items) {
     _stockUseItems = items;
     notifyListeners();
   }
 
+  set stockReturnItems(List<StockReturnItems> items) {
+    _stockReturnItems = items;
+    notifyListeners();
+  }
+
   void setSelectedStockUseItemId(int id) {
     _selectedItemStockUseId = id;
+    notifyListeners();
+  }
+
+  void setSelectedStockReturnItemId(int id) {
+    _selectedItemReturnId = id;
     notifyListeners();
   }
 
@@ -739,6 +862,15 @@ class ExpenseProvider extends ChangeNotifier {
     categoryPurchaseController.clear();
     selectedCategoryId = null;
     _selectedItemStockUseId = null;
+  }
+
+  void resetStockReturnForm() {
+    _editReturnIndex = null;
+    returnItemController.clear();
+    returnQuantityController.clear();
+    returnCategoryController.clear();
+    returnSaleRateController.clear();
+    _selectedItemReturnId = null;
   }
 
   void populateStockUseFieldsForEditing(int index) {
@@ -756,6 +888,20 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void populateStockReturnForm(int index) {
+    if (index < 0 || index >= stockReturnItems.length) return;
+    final item = stockReturnItems[index];
+    returnItemController.text = item.itemName;
+    returnSaleRateController.text = item.unitPrice.toStringAsFixed(2);
+    returnCategoryController.text = item.categoryName;
+    returnStockIdController.text = item.stockReturnId.toString();
+    returnQuantityController.text = item.quantity.toStringAsFixed(2);
+    _selectedItemReturnId = item.itemId;
+    _editReturnIndex = index;
+    selectedCategoryId = item.categoryId;
+    notifyListeners();
+  }
+
   void deleteStockUseItem(int index) {
     if (index >= 0 && index < stockUseItems.length) {
       stockUseItems.removeAt(index);
@@ -763,8 +909,20 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
+  void deleteStockReturnItem(int index) {
+    if (index >= 0 && index < stockReturnItems.length) {
+      stockReturnItems.removeAt(index);
+      notifyListeners();
+    }
+  }
+
   void toggleCheckbox(bool value) {
     _isChecked = value ? 1 : 0;
+    notifyListeners();
+  }
+
+  void togglePrimaryCheckbox(bool value) {
+    _isPrimaryItem = value ? 1 : 0;
     notifyListeners();
   }
 
@@ -838,143 +996,8 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  //item list
-  void addOrEditItem(BuildContext context) {
-    // Validate input fields
-    if (itemMaterialController.text.isEmpty ||
-        itemQuantityController.text.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text(
-              'Cannot save',
-              style: TextStyle(
-                color: AppColors.appViolet,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            content: const Text(
-              'Missing Details',
-              style: TextStyle(
-                color: Colors.black87,
-                fontSize: 16,
-              ),
-            ),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text(
-                  'OK',
-                  style: TextStyle(
-                    color: AppColors.appViolet,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
-      );
-    }
-
-    // Create the new item
-    final newItem = ItemSettings(
-      itemMaterialName: itemMaterialController.text,
-      quantity: double.parse(itemQuantityController.text),
-      itemMaterialId: 0,
-      deleteStatus: 0,
-    );
-
-    if (_editIndex != null && _editIndex! >= 0 && _editIndex! < _items.length) {
-      // Edit existing item
-      _items[_editIndex!] = newItem;
-    } else {
-      // Add new item
-      _items.add(newItem);
-    }
-
-    // Clear the text fields
-    _editIndex = null;
-
-    clearItemFields();
-    notifyListeners(); // Trigger UI updates
-  }
-
-  void setEditItemIndex(int? index) {
-    _editIndex = index;
-    notifyListeners();
-  }
-
-  void clearItemFields() {
-    itemMaterialController.clear();
-    itemQuantityController.clear();
-    notifyListeners();
-  }
-
-  void populateItemFieldsForEditing(int index) {
-    // Populate text fields with existing item's data for editing
-    if (index >= 0 && index < _items.length) {
-      final itemToEdit = _items[index];
-
-      itemMaterialController.text = itemToEdit.itemMaterialName;
-      itemQuantityController.text = itemToEdit.quantity.toString();
-
-      setEditItemIndex(index);
-      notifyListeners();
-    }
-  }
-
-  void deleteItem(int index) {
-    if (index >= 0 && index < _items.length) {
-      _items.removeAt(index);
-      notifyListeners();
-    }
-  }
-
-  void clearItemAdd() {
-    searchitemNameController.clear();
-    itemNameController.clear();
-    itemCategoryController.clear();
-    itemUnitController.clear();
-    cgstController.clear();
-    sgstController.clear();
-    igstController.clear();
-    gstController.clear();
-    items.clear();
-    clearItemFields();
-  }
   //-----------------------------------------
   //Expense Management
-
-  void getStockUseDetails(
-      {required BuildContext context, required String masterId}) {}
-
-  void clearUserFilter() {
-    _selectedUser = null;
-    notifyListeners();
-  }
-
-  void clearClientFilter() {
-    _selectedClient = null;
-    notifyListeners();
-  }
-
-  void clearProjectTypeFilter() {
-    _selectedProjectTypeId = null;
-    notifyListeners();
-  }
-
-  void clearExpenseTypeFilter() {
-    _selectedExpenseTypeId = null;
-    notifyListeners();
-  }
 
   //File Upload
   Future<void> addFile() async {
@@ -1033,7 +1056,7 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  void saveStockUse(int editId, BuildContext context) async {
+  void saveStockUse(int editId, int customerId, BuildContext context) async {
     try {
       Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -1042,6 +1065,7 @@ class ExpenseProvider extends ChangeNotifier {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveStockUse,
           bodyData: {
+            'Customer_Id': customerId,
             'Stock_Use_Master_Id': editId,
             'EntryDate': suDateController.text.toyyyymmdd(),
             'User_Id': userId,
@@ -1052,7 +1076,7 @@ class ExpenseProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         print(data);
-        searchStockUseList(context: context);
+        searchStockUseList(context: context, customerId: customerId.toString());
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1069,7 +1093,47 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchStockUseList({required BuildContext context}) async {
+  void saveStockReturn(int editId, int customerId, BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveStockReturn,
+          bodyData: {
+            "Customer_Id": customerId,
+            'Stock_Return_Master_Id': editId,
+            'ReturnDate': returnDateController.text.toyyyymmdd(),
+            'User_Id': userId,
+            'Description': returnDescriptionController.text,
+            'stock_return_details':
+                stockReturnItems.map((e) => e.toJson()).toList(),
+          });
+
+      if (response!.statusCode == 200) {
+        final data = response.data;
+        print(data);
+        searchStockReturnList(
+            context: context, customerId: customerId.toString());
+        Navigator.pop(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    } finally {
+      Loader.stopLoader(context);
+    }
+  }
+
+  Future<void> searchStockUseList(
+      {required BuildContext context, required String customerId}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1085,7 +1149,7 @@ class ExpenseProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
         endPoint:
-            "${HttpUrls.getStockUse}?s_EntryDate_From=$_fromDateS&s_EntryDate_To=$_toDateS&Is_Date_Check=$isDate",
+            "${HttpUrls.getStockUse}?s_EntryDate_From=$_fromDateS&s_EntryDate_To=$_toDateS&Is_Date_Check=$isDate&Customer_Id=$customerId",
       );
 
       if (response.statusCode == 200) {
@@ -1110,6 +1174,63 @@ class ExpenseProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  Future<void> searchStockReturnList(
+      {required BuildContext context, required String customerId}) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+        _fromDateS = "";
+        _toDateS = "";
+      } else {
+        isDate = "1";
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+        endPoint:
+            "${HttpUrls.getStockReturn}?s_ReturnDate_From=$_fromDateS&s_RetrunDate_To=$_toDateS&Is_Date_Check=$isDate&Customer_Id=$customerId",
+      );
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null && data['data'] != null && data['data'] is List) {
+          final dataArray = data['data'] as List<dynamic>;
+
+          if (dataArray.isNotEmpty && dataArray[0] is List) {
+            final stockReturnData = dataArray[0] as List<dynamic>;
+
+            _stockReturnList = stockReturnData
+                .map((item) =>
+                    StockReturnModel.fromJson(item as Map<String, dynamic>))
+                .toList();
+          } else {
+            _stockReturnList = [];
+          }
+
+          notifyListeners();
+        } else {
+          _stockReturnList = [];
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      _stockReturnList = [];
+      notifyListeners();
     }
   }
 
@@ -1214,40 +1335,12 @@ class ExpenseProvider extends ChangeNotifier {
         const SnackBar(content: Text('Upload Failed')),
       );
       print('Error uploading to AWS: $e');
+
       return null;
     }
   }
 
-  getPurchaseData(BuildContext context) async {
-    try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
-      final response =
-          await HttpRequest.httpGetRequest(endPoint: HttpUrls.getPurchaseData);
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data != null) {
-          final dataitem = data['data'];
-          _purchaseList = (dataitem as List<dynamic>)
-              .map((item) => PurchaseModel.fromJson(item))
-              .toList();
-          notifyListeners();
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-      }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-    }
-  }
+  
 
   Future<void> getExpenseType(BuildContext context) async {
     try {
@@ -1286,40 +1379,20 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getClientList(BuildContext context) async {
-    try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getAllLeadDropDown);
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data != null && data is List) {
-          _clientList = data
-              .map((item) =>
-                  CustomerModel.fromJson(item as Map<String, dynamic>))
-              .toList();
-          notifyListeners();
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-      }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-    }
+  void clearItemAdd() {
+    searchitemNameController.clear();
+    itemNameController.clear();
+    itemCategoryController.clear();
+    itemUnitController.clear();
+    itemUnitPriceController.clear();
+    itemHSNController.clear();
+    cgstController.clear();
+    sgstController.clear();
+    igstController.clear();
+    gstController.clear();
   }
 
   void saveItem(int editId, BuildContext context) async {
-    compareAndUpdateItems();
-    log(_items.map((item) => item.toJson()).toList().toString());
     try {
       Loader.showLoader(context);
 
@@ -1332,16 +1405,48 @@ class ExpenseProvider extends ChangeNotifier {
             "categoryName": itemCategoryController.text.toString(),
             "unitId": _selectedItemUnit,
             "unitName": itemUnitController.text.toString(),
+            "Unit_Price": itemUnitPriceController.text.toString(),
             "cgst": cgstController.text,
             "sgst": sgstController.text,
             "gst": gstController.text,
             "igst": igstController.text,
-            "itemMaterials": _items.map((item) => item.toJson()).toList(),
+            "Service_CheckBox": _isChecked,
+            "Is_Primary": _isPrimaryItem,
+            "HSNCode": itemHSNController.text.toString(),
           });
 
       if (response!.statusCode == 200) {
         final data = response.data;
         searchItemList(context: context, isFilter: false);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  void saveExpense(ExpenseModel expenseModel, BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+
+      var data = expenseModel.toJson();
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveExpense, bodyData: data);
+
+      if (response!.statusCode == 200) {
+        final data = response.data;
+        searchExpense('', context);
         Navigator.pop(context);
         Loader.stopLoader(context);
         print(data);
@@ -1405,112 +1510,7 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  void savePurchase(
-      {required int editId,
-      required BuildContext context,
-      required var data}) async {
-    try {
-      Loader.showLoader(context);
-
-      final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.savePurchase, bodyData: data);
-
-      if (response!.statusCode == 200) {
-        final data = response.data;
-
-        Navigator.pop(context);
-        Loader.stopLoader(context);
-        print(data);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-        Loader.stopLoader(context);
-      }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-      Loader.stopLoader(context);
-    }
-  }
-
-  void compareAndUpdateItems() {
-    // Iterate through the RealItems list
-    for (var realItem in _RealItems) {
-      // Check if the item exists in _items based on itemMaterialId
-      bool itemExists =
-          _items.any((item) => item.itemMaterialId == realItem.itemMaterialId);
-
-      // If the item doesn't exist, add it to _items with deleteStatus set to 1
-      if (!itemExists) {
-        _items.add(ItemSettings(
-          itemMaterialId: realItem.itemMaterialId,
-          itemMaterialName: realItem.itemMaterialName,
-          quantity: realItem.quantity,
-          deleteStatus: 1, // Set deleteStatus to 1 as per the requirement
-        ));
-      }
-    }
-  }
-
-  getItemMaterialList(int itemId, BuildContext context) async {
-    try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
-      final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getItemMaterials}/$itemId');
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data != null) {
-          final dataItem = data['data']?['itemMaterials'] as List<dynamic>?;
-
-          _RealItems = dataItem?.map((item) {
-                try {
-                  return ItemSettings.fromJson(item);
-                } catch (e) {
-                  print("Error parsing item: $e");
-                  return ItemSettings(
-                      itemMaterialId: 0,
-                      itemMaterialName: '',
-                      quantity: 0,
-                      deleteStatus: 0);
-                }
-              }).toList() ??
-              [];
-
-          _items = dataItem?.map((item) {
-                try {
-                  return ItemSettings.fromJson(item);
-                } catch (e) {
-                  print("Error parsing item: $e");
-                  return ItemSettings(
-                      itemMaterialId: 0,
-                      itemMaterialName: '',
-                      quantity: 0,
-                      deleteStatus: 0);
-                }
-              }).toList() ??
-              [];
-          print(dataItem);
-          notifyListeners();
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-      }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-    }
-  }
+  
 
   void deleteItemApi(BuildContext context, int userId) async {
     try {
@@ -1538,6 +1538,80 @@ class ExpenseProvider extends ChangeNotifier {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to delete Item')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  
+
+  deleteStockUse(BuildContext context, int userId, int customerId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteStockUse}/$userId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Stock_Use_Master_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete an Stock use \n that is currently in use on the Stock use page!");
+        } else {
+          searchStockUseList(
+              context: context, customerId: customerId.toString());
+          notifyListeners();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Stock use deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete stock use')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  deleteStockReturn(BuildContext context, int userId, int customerId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteStockReturn}/$userId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Stock_Return_Master_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete an Stock return \n that is currently in use on the Stock return page!");
+        } else {
+          searchStockReturnList(
+              context: context, customerId: customerId.toString());
+          notifyListeners();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Stock return deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete stock use')),
         );
       }
     } catch (e) {
@@ -1630,43 +1704,37 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<List<ExpenseModel>> searchExpense(
-      String query, BuildContext context) async {
-    _expenseModelList = [];
-    // isLoading = true;
-    Loader.showLoader(context);
-    notifyListeners();
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userId = preferences.getString('userId') ?? "";
-    String assignedTo = selectedUser == null ? userId : selectedUser.toString();
-
-    //Client filter
-    String clientId = selectedClient == null ? "0" : selectedClient.toString();
-
+  Future<void> getStockUseDetails(
+      {required BuildContext context, required String masterId}) async {
     try {
-      final expenseTypeId = selectedExpenseTypeId ?? 0;
-      final projectTypeId = selectedProjectTypeId ?? 0;
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+        _fromDateS = "";
+        _toDateS = "";
+      } else {
+        isDate = "1";
+      }
+
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.getExpenseManagement}?Expense_Head=$query&reference_id=$assignedTo&expense_type_id=$expenseTypeId&project_type_id=$projectTypeId&Customer_Id=$clientId');
+        endPoint: "${HttpUrls.getStockUseDetails}/$masterId",
+      );
 
       if (response.statusCode == 200) {
-        final data = response.data["data"];
+        final data = response.data;
 
-        if (data is List) {
-          if (data.isNotEmpty && data[0] is List) {
-            // Nested list case: [[{}]]
-            final List expenseList = data[0];
-            _expenseModelList =
-                expenseList.map((item) => ExpenseModel.fromJson(item)).toList();
-          } else {
-            // Direct list case: [{}]
-            _expenseModelList =
-                data.map((item) => ExpenseModel.fromJson(item)).toList();
-          }
-          notifyListeners();
-        } else {
-          _expenseModelList = [];
+        if (data != null) {
+          final dataitem = data['data'][0][0]['stock_use_details'] ?? [];
+
+          print("--------- $dataitem");
+
+          _stockUseItems = (dataitem as List<dynamic>)
+              .map((item) => StockUseItems.fromJson(item))
+              .toList();
+
           notifyListeners();
         }
       } else {
@@ -1679,48 +1747,60 @@ class ExpenseProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
-    } finally {
-      Loader.stopLoader(context);
-      notifyListeners();
     }
-    return _expenseModelList;
   }
 
-  void saveExpense(ExpenseModel expenseModel, BuildContext context,
-      String customerId) async {
+  Future<void> getStockReturnDetails(
+      {required BuildContext context, required String masterId}) async {
     try {
-      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
 
-      var data = expenseModel.toJson();
-      final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.saveExpenseManagement, bodyData: data);
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+        _fromDateS = "";
+        _toDateS = "";
+      } else {
+        isDate = "1";
+      }
 
-      if (response!.statusCode == 200) {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: "${HttpUrls.getStockreturnDetails}/$masterId",
+      );
+
+      if (response.statusCode == 200) {
         final data = response.data;
-        // searchExpense('', context, customerId);
-        Navigator.pop(context);
-        Loader.stopLoader(context);
-        print(data);
+
+        if (data != null) {
+          final dataitem = data['data'][0][0]['stock_return_details'] ?? [];
+
+          print("--------- $dataitem");
+
+          _stockReturnItems = (dataitem as List<dynamic>)
+              .map((item) => StockReturnItems.fromJson(item))
+              .toList();
+
+          notifyListeners();
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
-      Loader.stopLoader(context);
     }
   }
 
   Future deleteExpense(BuildContext context, int id) async {
     try {
       Loader.showLoader(context);
-      final response = await HttpRequest.httpDeleteRequest(
-        endPoint: "${HttpUrls.deleteExpenseManagement}/$id",
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.deleteExpenseManagement + "/" + id.toString(),
       );
 
       if (response != null && response.statusCode == 200) {
@@ -1748,112 +1828,21 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  ExpenseHeaderModel correlationbox = ExpenseHeaderModel();
-
-  ExpenseHeaderModel? _limitHeader;
-  ExpenseHeaderModel? get limitHeader => _limitHeader;
-
-  Future<void> getExpenseReport(BuildContext context) async {
+  Future<List<ExpenseModel>> searchExpense(
+      String query, BuildContext context) async {
     _expenseModelList = [];
-    Loader.showLoader(context);
     notifyListeners();
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userId = preferences.getString('userId') ?? "";
-    String assignedTo = selectedUser == null || selectedUser == 0
-        ? userId
-        : selectedUser.toString();
-
-    String expenseTypeId = (selectedExpenseTypeId ?? 0) == 0
-        ? ""
-        : selectedExpenseTypeId.toString();
-    String projectTypeId = (selectedProjectTypeId ?? 0) == 0
-        ? ""
-        : selectedProjectTypeId.toString();
-
-    String from = formattedFromDate;
-    String to = formattedToDate;
-
     try {
-      String url = '${HttpUrls.getExpenseReport}?reference_id=$assignedTo';
-      if (expenseTypeId.isNotEmpty) url += '&expense_type_id=$expenseTypeId';
-      if (projectTypeId.isNotEmpty) url += '&project_type_id=$projectTypeId';
-      if (from.isNotEmpty) url += '&s_EntryDate_From=$from';
-      if (to.isNotEmpty) url += '&s_EntryDate_To=$to';
-
-      final response = await HttpRequest.httpGetRequest(endPoint: url);
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-
-        if (data != null) {
-          if (data["header_data"] != null &&
-              (data["header_data"] as List).isNotEmpty) {
-            _limitHeader = ExpenseHeaderModel.fromJson(data["header_data"][0]);
-          }
-
-          if (data["expense_data"] != null) {
-            _expenseModelList = (data["expense_data"] as List<dynamic>)
-                .map((item) => ExpenseModel.fromJson(item))
-                .toList();
-          }
-
-          // Fallback for correlationbox if needed, or update it from limitHeader
-          if (_limitHeader != null) {
-            correlationbox = _limitHeader!;
-          }
-
-          notifyListeners();
-        }
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-      }
-    } catch (e) {
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-    } finally {
-      Loader.stopLoader(context);
-      notifyListeners();
-    }
-  }
-
-  getPurchaseDataMaster(BuildContext context) async {
-    try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-
-      String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
-      }
-      if (_supplier.isEmpty || _supplier == 'null') {
-        _supplier = '0';
-      }
-
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              "${HttpUrls.getPurchaseDataMaster}?p_Supplier_Id=$_supplier&p_EntryDate_From=$_fromDateS&p_EntryDate_To=$_toDateS&p_Invoice_No=$_search&Is_Date_Check=$isDate");
+          endPoint: '${HttpUrls.getExpenseManagement}?Expense_Head=$query');
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        final data = response.data["data"];
 
         if (data != null) {
-          final dataitem = data['data'][0];
-          print(dataitem);
-          _purchaseList = (dataitem as List<dynamic>)
-              .map((item) => PurchaseModel.fromJson(item))
+          _expenseModelList = (data as List<dynamic>)
+              .map((item) => ExpenseModel.fromJson(item))
               .toList();
           notifyListeners();
         }
@@ -1868,34 +1857,38 @@ class ExpenseProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+    return _expenseModelList;
   }
 
-  deletePurchaseItem(BuildContext context, int userId) async {
+  Future<List<ExpenseModel>> getExpenseReport(BuildContext context) async {
+    _expenseModelList = [];
+    _expenseHeaderModel = ExpenseHeaderModel();
+    notifyListeners();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String userId = preferences.getString('userId') ?? "";
+
     try {
-      Loader.showLoader(context);
-      final response = await HttpRequest.httpDeleteRequest(
-        endPoint: '${HttpUrls.deletePurchase}/$userId',
-      );
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              "${HttpUrls.getExpenseReport}?reference_id=$userId&from_date=$_fromDateS&to_date=$_toDateS");
 
-      if (response != null && response.statusCode == 200) {
-        final data = response.data;
-        if (data['Purchase_Master_Id_'] == -1) {
-          Loader.stopLoader(context);
-          alert(context,
-              "You are attempting to delete an Purchase \n that is currently in use on the Purchase page!");
-        } else {
-          getPurchaseDataMaster(context);
+      if (response.statusCode == 200) {
+        final data = response.data["expense_data"];
+        final headerData = response.data["header_data"] as List<dynamic>?;
 
+        if (data != null) {
+          _expenseModelList = (data as List<dynamic>)
+              .map((item) => ExpenseModel.fromJson(item))
+              .toList();
           notifyListeners();
-
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Purchase deleted successfully')),
-          );
-          Loader.stopLoader(context);
+        }
+        if (headerData != null) {
+          _expenseHeaderModel = ExpenseHeaderModel.fromJson(headerData[0]);
+          notifyListeners();
         }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete Purchase')),
+          const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
@@ -1904,6 +1897,128 @@ class ExpenseProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+    return _expenseModelList;
   }
 
+  void savePayment(PaymentModel paymentModel, BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+
+      var data = paymentModel.toJson();
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.savePayment, bodyData: data);
+
+      if (response!.statusCode == 200) {
+        final data = response.data;
+        customerDetailsProvider.getPaymentListApi('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+// void savePayment(ReceiptModel paymentModel, BuildContext context) async {
+  //   try {
+  //     Loader.showLoader(context);
+  //
+  //     var data = paymentModel.toJson();
+  //     final response = await HttpRequest.httpPostRequest(
+  //         endPoint: HttpUrls.saveReceiptUrl, bodyData: data);
+  //
+  //     if (response!.statusCode == 200) {
+  //       final data = response.data;
+  //       searchPayment('', context);
+  //       Navigator.pop(context);
+  //       Loader.stopLoader(context);
+  //       print(data);
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Server Error')),
+  //       );
+  //       Loader.stopLoader(context);
+  //     }
+  //   } catch (e) {
+  //     print('Exception occurred: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('An error occurred')),
+  //     );
+  //     Loader.stopLoader(context);
+  //   }
+  // }
+
+  // Future<List<ReceiptModel>> searchPayment(
+  //     String query, BuildContext context) async {
+  //   _paymentModelList = [];
+  //   notifyListeners();
+  //
+  //   // try {
+  //     final response = await HttpRequest.httpGetRequest(
+  //         endPoint: '${HttpUrls.getReceiptList}?Customer_Name=$query');
+  //
+  //     if (response.statusCode == 200) {
+  //       final data = response.data["data"];
+  //
+  //       if (data != null) {
+  //         _paymentModelList = (data as List<dynamic>)
+  //             .map((item) => ReceiptModel.fromJson(item))
+  //             .toList();
+  //         notifyListeners();
+  //       }
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Server Error')),
+  //       );
+  //     }
+  //   // } catch (e) {
+  //   //   print('Exception occurred: $e');
+  //   //   ScaffoldMessenger.of(context).showSnackBar(
+  //   //     const SnackBar(content: Text('An error occurred')),
+  //   //   );
+  //   // }
+  //   return _paymentModelList;
+  // }
+
+  // Future deletePayment(BuildContext context, int id) async {
+  //   try {
+  //     Loader.showLoader(context);
+  //     final response = await HttpRequest.httpPostRequest(
+  //       endPoint: "${HttpUrls.deletePaymentManagement}/$id",
+  //     );
+  //
+  //     if (response != null && response.statusCode == 200) {
+  //       final data = response.data;
+  //
+  //       searchPayment('', context);
+  //       searchPaymentController.clear();
+  //
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Payment deleted successfully')),
+  //       );
+  //       Loader.stopLoader(context);
+  //
+  //       notifyListeners();
+  //     } else {
+  //       ScaffoldMessenger.of(context).showSnackBar(
+  //         const SnackBar(content: Text('Failed to delete Payment')),
+  //       );
+  //     }
+  //   } catch (e) {
+  //     print('Exception occurred: $e');
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text('An error occurred')),
+  //     );
+  //   }
+  // }
 }

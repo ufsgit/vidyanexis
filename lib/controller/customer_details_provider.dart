@@ -41,12 +41,13 @@ import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:vidyanexis/controller/models/task_details_model.dart';
 import 'package:vidyanexis/controller/models/task_document_model.dart';
 import 'package:vidyanexis/controller/models/task_user_list_model.dart';
-import 'package:vidyanexis/controller/side_bar_provider.dart';
+
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/loader.dart';
 
 import 'package:vidyanexis/utils/extensions.dart';
 
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
 import 'package:vidyanexis/controller/models/payment_model.dart';
@@ -268,6 +269,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  String? _selectedStockStatus;
+  String? get selectedStockStatus => _selectedStockStatus;
+  String? _selectedStockStatusName;
+  String? get selectedStockStatusName => _selectedStockStatusName;
+
 //task
   final TextEditingController taskChoosedateController =
       TextEditingController();
@@ -300,9 +306,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController amcPeriodIntervalController =
       TextEditingController();
+  final TextEditingController amcCategoryController = TextEditingController();
 
   int? _selectedAMCStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
+  int? _selectedAMCCategory;
+  int? get selectedAMCCategory => _selectedAMCCategory;
   String? _selectedAMCStatusName;
   String? get selectedAMCStatusName => _selectedAMCStatusName;
   List<MaintenanceDate> _maintenanceDates = [];
@@ -672,6 +681,18 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   set selectedExpenseType(int? value) {
     _selectedExpenseType = value;
+    notifyListeners();
+  }
+
+  void updateAMCCategory(int? value, String categoryName) {
+    _selectedAMCCategory = value;
+    amcCategoryController.text = categoryName;
+    notifyListeners();
+  }
+
+  void updateStockStatus(String value) {
+    _selectedStockStatus = value;
+    print(_selectedStockStatus);
     notifyListeners();
   }
 
@@ -2841,41 +2862,39 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   Future<void> removeRegister(String customerId, BuildContext context) async {
     try {
-      // Loader.showLoader(context);
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-      String userName = preferences.getString('userName') ?? "";
+      final customerProvider =
+          Provider.of<CustomerProvider>(context, listen: false);
+
+      // Optimistic removal and immediate navigation back
+      customerProvider.removeCustomerFromList(customerId);
+      // Close dialog
+      Navigator.of(context).pop();
+
+      // Go back from details
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        // Fallback for embedded views (Web logic)
+        final sidebarProvider =
+            Provider.of<SidebarProvider>(context, listen: false);
+        sidebarProvider.replaceWidget(true, '');
+        sidebarProvider.replaceWidgetCustomer(true, '');
+      }
 
       final response = await HttpRequest.httpPutParamRequest(
           endPoint: '${HttpUrls.unregisterCustomer}?Customer_Id=$customerId');
 
-      if (response!.statusCode == 200) {
-        final data = response.data;
+      if (response != null && response.statusCode == 200) {
         log('Success');
-
-        final sideprovider =
-            Provider.of<SidebarProvider>(context, listen: false);
-        final customerProvider =
-            Provider.of<CustomerProvider>(context, listen: false);
-        sideprovider.replaceWidgetCustomer(true, '');
-        customerProvider.customerData.clear();
-        await customerProvider.getSearchCustomers(context);
-        // Loader.stopLoader(context);
-        print(data);
+        // Background refresh without blocking UI
+        customerProvider.getSearchCustomers(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        // Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-      // Loader.stopLoader(context);
-    } finally {
-      Navigator.of(context).pop();
     }
   }
 

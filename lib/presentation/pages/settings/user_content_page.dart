@@ -69,7 +69,7 @@ class _UsersContentState extends State<UsersContent> {
                       const Spacer(),
                       Container(
                         width: AppStyles.isWebScreen(context)
-                            ? MediaQuery.of(context).size.width / 3.5
+                            ? MediaQuery.of(context).size.width / 5
                             : MediaQuery.of(context).size.width / 2,
                         height: 40,
                         decoration: BoxDecoration(
@@ -86,7 +86,7 @@ class _UsersContentState extends State<UsersContent> {
                                 decoration: const InputDecoration(
                                   hintText: 'Search here....',
                                   prefixIcon: Icon(Icons.search),
-                                  border: InputBorder.none,
+                                border: InputBorder.none,
                                   contentPadding: EdgeInsets.symmetric(
                                     horizontal: 16,
                                     vertical: 4,
