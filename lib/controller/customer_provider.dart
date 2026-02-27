@@ -288,7 +288,7 @@ class CustomerProvider extends ChangeNotifier {
   getSearchCustomers(BuildContext context) async {
     try {
       // Loader.showLoader(context);
-      _isLoading = true;
+      // _isLoading = true;
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
       }
@@ -460,5 +460,33 @@ class CustomerProvider extends ChangeNotifier {
   void setCutomerId(int customerId) {
     _customerId = customerId;
     print(_customerId);
+  }
+
+  void removeCustomerFromList(String id) {
+    _customerData
+        .removeWhere((customer) => customer.customerId.toString() == id);
+    notifyListeners();
+  }
+
+  Future<void> deleteCustomer(BuildContext context, String custId) async {
+    try {
+      final response = await HttpRequest.httpDeleteRequest(
+          endPoint: '${HttpUrls.deleteCustomer}/$custId');
+
+      if (response != null && response.statusCode == 200) {
+        log('Customer deleted successfully');
+        removeCustomerFromList(custId);
+        await getSearchCustomers(context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete customer')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
   }
 }

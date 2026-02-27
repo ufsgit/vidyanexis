@@ -515,19 +515,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       onCancel: () =>
                                           Navigator.of(context).pop(),
                                       onConfirm: () async {
-                                        await leadProvider.deleteLead(
-                                            context, widget.customerId);
-                                        if (context.mounted) {
-                                          Navigator.of(context)
-                                              .pop(); // Close dialog
-                                          Navigator.of(context)
-                                              .pop(); // Go back from details
+                                        // Optimistic removal from lists
+                                        leadProvider.removeLeadFromList(
+                                            widget.customerId);
+                                        customerProvider.removeCustomerFromList(
+                                            widget.customerId);
 
-                                          // Refresh lists
-                                          leadProvider.getSearchLeads(context);
-                                          customerProvider
-                                              .getSearchCustomers(context);
+                                        // Close dialog
+                                        Navigator.of(context).pop();
+
+                                        // Go back from details
+                                        if (Navigator.of(context).canPop()) {
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          // Fallback for embedded views (Web logic)
+                                          sideprovider.replaceWidget(true, '');
+                                          sideprovider.replaceWidgetCustomer(
+                                              true, '');
                                         }
+
+                                        // Perform actions in background
+                                        if (sideprovider.name == 'Lead /') {
+                                          leadProvider.deleteLead(
+                                              context, widget.customerId);
+                                        } else {
+                                          customerProvider.deleteCustomer(
+                                              context, widget.customerId);
+                                        }
+                                        customerProvider
+                                            .getSearchCustomers(context);
                                       },
                                     );
                                   },
