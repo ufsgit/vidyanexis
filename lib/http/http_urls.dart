@@ -5,13 +5,13 @@ class HttpUrls {
   // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
 //  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
-  // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
+  static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
-  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
+  // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
   //static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
@@ -23,7 +23,7 @@ class HttpUrls {
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
   //endpoints
   static String savePayment = "service/Save_payment";
-  
+
   static String getPaymentByCustomer = "service/Get_Payment_By_Customer";
   static String deletePayment = "service/Delete_payment";
   static String loginCheck = "Login/Login_Check";
