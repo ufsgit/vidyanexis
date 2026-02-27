@@ -3,6 +3,8 @@ import 'package:vidyanexis/controller/models/menu_model.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart';
 import 'package:provider/provider.dart';
+
+import 'package:vidyanexis/presentation/pages/settings/form_content.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -25,14 +27,23 @@ import 'package:vidyanexis/presentation/pages/settings/task_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/user_content_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/version_page.dart';
 
-class SettingsPage extends StatefulWidget {
+class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
   @override
-  State<SettingsPage> createState() => _SettingsPageState();
+  Widget build(BuildContext context) {
+    return const SettingsPageBody();
+  }
 }
 
-class _SettingsPageState extends State<SettingsPage> {
+class SettingsPageBody extends StatefulWidget {
+  const SettingsPageBody({super.key});
+
+  @override
+  State<SettingsPageBody> createState() => _SettingsPageBodyState();
+}
+
+class _SettingsPageBodyState extends State<SettingsPageBody> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -221,6 +232,8 @@ class _SettingsPageState extends State<SettingsPage> {
             return const CustomField();
           case 'ExpenseType':
             return const ExpenseType();
+          case 'Form Settings':
+            return const FormContent();
 
           default:
             return const SizedBox.shrink();
@@ -340,6 +353,11 @@ class _SettingsPageState extends State<SettingsPage> {
           'ExpenseType',
           Icons.category,
         ),
+      _buildMenuItem(
+        context,
+        'Form Settings',
+        Icons.format_list_bulleted,
+      ),
       // if (settingsProvider.menuIsViewMap[28].toString() == '1')
       //   _buildMenuItem(context, 'Branch', Icons.document_scanner),
     ];

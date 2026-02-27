@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/followup_reports_provider.dart';
 import 'package:vidyanexis/controller/form_builder_provider.dart';
 import 'package:vidyanexis/controller/invoice_tab_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
+import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/controller/quotation_report_provider.dart';
 import 'package:vidyanexis/controller/balance_report_provider.dart';
@@ -108,6 +109,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),
         ChangeNotifierProvider(create: (_) => CheckInOutProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ChangeNotifierProvider(create: (_) => FormProvider()),
         ChangeNotifierProvider(create: (_) => FormBuilderProvider()),
         ChangeNotifierProvider(create: (context) => AudioFileProvider()),
         ChangeNotifierProvider(create: (context) => TimeTrackReportProvider()),

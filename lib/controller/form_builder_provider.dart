@@ -11,7 +11,7 @@ class FormBuilderProvider extends ChangeNotifier {
   int? editingIndex;
 
   String formName = '';
-  List<FormFieldModel> fields = [];
+  List<FieldModel> fields = [];
   List<String> dropdownValues = [];
   List<FormModel> savedForms = [];
 
@@ -22,10 +22,11 @@ class FormBuilderProvider extends ChangeNotifier {
 
   void addOrEditField() {
     if (fieldNameController.text.isEmpty || selectedType == null) return;
-    final field = FormFieldModel(
-      name: fieldNameController.text,
+    final field = FieldModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      label: fieldNameController.text,
       type: selectedType!,
-      dropdownValues:
+      options:
           selectedType == FieldType.dropdown ? List.from(dropdownValues) : null,
     );
     if (editingIndex != null) {
@@ -42,11 +43,11 @@ class FormBuilderProvider extends ChangeNotifier {
 
   void startEditingField(int index) {
     final field = fields[index];
-    fieldNameController.text = field.name;
+    fieldNameController.text = field.label;
     selectedType = field.type;
     dropdownValues.clear();
-    if (field.dropdownValues != null) {
-      dropdownValues.addAll(field.dropdownValues!);
+    if (field.options != null) {
+      dropdownValues.addAll(field.options!);
     }
     editingIndex = index;
     notifyListeners();
@@ -61,8 +62,12 @@ class FormBuilderProvider extends ChangeNotifier {
 
   void saveForm() {
     if (formName.isNotEmpty && fields.isNotEmpty) {
-      savedForms.add(
-          FormModel(name: formName, fields: List<FormFieldModel>.from(fields)));
+      savedForms.add(FormModel(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          name: formName,
+          department: '',
+          taskType: '',
+          fields: List<FieldModel>.from(fields)));
       notifyListeners();
     }
   }
