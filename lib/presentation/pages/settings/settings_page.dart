@@ -20,6 +20,7 @@ import 'package:vidyanexis/presentation/pages/settings/document_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_for_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/enquiry_source_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/expense_type.dart';
+import 'package:vidyanexis/presentation/pages/settings/location_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/lead_users_content.dart';
 import 'package:vidyanexis/presentation/pages/settings/source_cateGory_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/stage_page.dart';
@@ -232,6 +233,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
             return const CustomField();
           case 'ExpenseType':
             return const ExpenseType();
+          case 'Location':
+            return const LocationPage();
           case 'Form Settings':
             return const FormContent();
 
@@ -353,6 +356,11 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
           'ExpenseType',
           Icons.category,
         ),
+      _buildMenuItem(
+        context,
+        'Location',
+        Icons.location_on,
+      ),
       _buildMenuItem(
         context,
         'Form Settings',

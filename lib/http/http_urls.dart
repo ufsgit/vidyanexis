@@ -17,7 +17,7 @@ class HttpUrls {
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 
 //dev
-  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -239,6 +239,9 @@ class HttpUrls {
       "attendance/Save_Multiple_Attendance_Details";
   static String getUserLocationDetails =
       "user_details/Get_All_User_Location_Details";
+  static String getLocation = "lead/get_location";
+  static String saveLocation = "lead/save_location";
+  static String deleteLocation = "lead/delete_location";
   static String getTaskInfoDashBoard = "task/Get_Task_Info_Dashboard";
   static String saveBranch = "branch/save_branch";
   static String deleteBranch = "branch/delete_branch";
