@@ -9,8 +9,8 @@ class AppStyles {
   }
 
   static name() {
-    // String name = 'solaris';
-    String name = 'vidyanexis';
+    String name = 'Solaris';
+    // String name = 'vidyanexis';
     // String name = 'First Day';
     // String name = 'Neopower';
     // String name = 'Horizon';
