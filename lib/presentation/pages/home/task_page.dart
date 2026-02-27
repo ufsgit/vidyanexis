@@ -17,7 +17,7 @@ import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -36,6 +36,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/utils/status_utils.dart';
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
@@ -309,13 +310,27 @@ class _tasksPageReportState extends State<TaskPage> {
                                   children: [
                                     // Left side: Tasks title only
                                     if (!isMobile)
-                                      const Text(
-                                        'Tasks',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          color: Color(0xFF152D70),
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                      Row(
+                                        children: [
+                                          if (Navigator.canPop(context)) ...[
+                                            IconButton(
+                                              icon: const Icon(Icons.arrow_back,
+                                                  color: Color(0xFF152D70)),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                          const Text(
+                                            'Tasks',
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              color: Color(0xFF152D70),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
 
                                     // Right side: Search, Filter, and Export
@@ -1273,11 +1288,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       BorderRadius
                                                                           .circular(
                                                                               30),
-                                                                  color: (task.colorCode ??
-                                                                          Colors
-                                                                              .black)
+                                                                  color: StatusUtils
+                                                                          .getTaskColor(task
+                                                                              .taskStatusId)
                                                                       .withAlpha(
-                                                                          20),
+                                                                          40),
                                                                 ),
                                                                 child: Center(
                                                                   child:
@@ -1296,8 +1311,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             12,
                                                                         fontWeight:
                                                                             FontWeight.w500,
-                                                                        color: task.colorCode ??
-                                                                            Colors.black,
+                                                                        color: StatusUtils.getTaskTextColor(
+                                                                            task.taskStatusId),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -1639,21 +1654,39 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       }
                                                     }
                                                   },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 4.0),
-                                                    child: Text(
-                                                      task.taskStatusName ?? '',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                        color: task.colorCode ??
-                                                            Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 12,
+                                                  child: Container(
+                                                    height: 22,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      color: StatusUtils
+                                                              .getTaskColor(task
+                                                                  .taskStatusId)
+                                                          .withAlpha(40),
+                                                    ),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 2),
+                                                        child: Text(
+                                                          task.taskStatusName ??
+                                                              '',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: StatusUtils
+                                                                .getTaskTextColor(
+                                                                    task.taskStatusId),
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
