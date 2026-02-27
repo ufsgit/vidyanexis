@@ -18,6 +18,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 
 class CustomerPage extends StatefulWidget {
   const CustomerPage({super.key});
@@ -169,7 +170,7 @@ class _CustomerPageState extends State<CustomerPage> {
         paginationHeight -
         tableHeaderHeight -
         40;
-    final rowHeight = 35.0;
+    final rowHeight = 48.0;
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -765,6 +766,7 @@ class _CustomerPageState extends State<CustomerPage> {
                           // Header Row (Table Column Titles)
                           if (AppStyles.isWebScreen(context))
                             Container(
+                              height: tableHeaderHeight,
                               decoration: BoxDecoration(
                                 color: const Color.fromARGB(255, 0, 90, 69),
                                 borderRadius: BorderRadius.circular(8),
@@ -797,7 +799,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                           vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
-                                      flex: 1,
+                                      flex: 2,
                                       title: 'Mobile no',
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
@@ -827,11 +829,17 @@ class _CustomerPageState extends State<CustomerPage> {
                                           vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
                                   TableWidget(
-                                      flex: 1,
+                                      flex: 2,
                                       title: 'Follow Up Date',
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
+                                  // TableWidget(
+                                  //     flex: 2,
+                                  //     title: 'Action',
+                                  //     padding: const EdgeInsets.symmetric(
+                                  //         vertical: 6.0, horizontal: 8.0),
+                                  //     color: const Color(0xFFFFFFFF)),
                                 ],
                               ),
                             ),
@@ -999,7 +1007,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 ),
                                               ),
                                               TableWidget(
-                                                  flex: 1,
+                                                  flex: 2,
                                                   fontSize: 12,
                                                   padding: const EdgeInsets
                                                       .symmetric(
@@ -1188,7 +1196,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 ),
                                               ),
                                               TableWidget(
-                                                  flex: 1,
+                                                  flex: 2,
                                                   fontSize: 12,
                                                   padding: const EdgeInsets
                                                       .symmetric(
@@ -1202,6 +1210,45 @@ class _CustomerPageState extends State<CustomerPage> {
                                                               .parse(lead
                                                                   .nextFollowUpDate))
                                                       : ''),
+                                              // TableWidget(
+                                              //   flex: 2,
+                                              //   padding:
+                                              //       const EdgeInsets.symmetric(
+                                              //           vertical: 6.0,
+                                              //           horizontal: 8.0),
+                                              //   data: InkWell(
+                                              //     onTap: () {
+                                              //       showConfirmationDialog(
+                                              //         context: context,
+                                              //         title: 'Delete Customer',
+                                              //         content:
+                                              //             'Are you sure you want to delete this customer?',
+                                              //         onCancel: () =>
+                                              //             Navigator.of(context)
+                                              //                 .pop(),
+                                              //         onConfirm: () async {
+                                              //           await leadsProvider
+                                              //               .deleteLead(
+                                              //                   context,
+                                              //                   lead.customerId
+                                              //                       .toString());
+                                              //           if (context.mounted) {
+                                              //             Navigator.of(context)
+                                              //                 .pop();
+                                              //             customerProvider
+                                              //                 .getSearchCustomers(
+                                              //                     context);
+                                              //           }
+                                              //         },
+                                              //       );
+                                              //     },
+                                              //     child: const Icon(
+                                              //       Icons.delete_outline,
+                                              //       color: Colors.red,
+                                              //       size: 20,
+                                              //     ),
+                                              //   ),
+                                              // ),
                                             ],
                                           )
                                         //Mobile Design
@@ -1461,6 +1508,43 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                     '0'
                                                                 ? Colors.green
                                                                 : Colors.red,
+                                                        size: 20,
+                                                      ),
+                                                    ),
+                                                    const SizedBox(width: 8),
+                                                    InkWell(
+                                                      onTap: () {
+                                                        showConfirmationDialog(
+                                                          context: context,
+                                                          title:
+                                                              'Delete Customer',
+                                                          content:
+                                                              'Are you sure you want to delete this customer?',
+                                                          onCancel: () =>
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop(),
+                                                          onConfirm: () async {
+                                                            await leadsProvider
+                                                                .deleteLead(
+                                                                    context,
+                                                                    lead.customerId
+                                                                        .toString());
+                                                            if (context
+                                                                .mounted) {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .pop();
+                                                              customerProvider
+                                                                  .getSearchCustomers(
+                                                                      context);
+                                                            }
+                                                          },
+                                                        );
+                                                      },
+                                                      child: const Icon(
+                                                        Icons.delete_outline,
+                                                        color: Colors.red,
                                                         size: 20,
                                                       ),
                                                     ),

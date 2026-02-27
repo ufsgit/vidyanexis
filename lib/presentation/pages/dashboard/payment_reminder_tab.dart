@@ -52,22 +52,7 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                     // Date Filter
                     InkWell(
                       onTap: () async {
-                        final DateTimeRange? picked = await showDateRangePicker(
-                          context: context,
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2100),
-                          initialDateRange: provider.fromDate != null &&
-                                  provider.toDate != null
-                              ? DateTimeRange(
-                                  start: provider.fromDate!,
-                                  end: provider.toDate!)
-                              : null,
-                        );
-                        if (picked != null) {
-                          provider.setFromDate(picked.start);
-                          provider.setToDate(picked.end);
-                          provider.getPaymentReminders(context);
-                        }
+                        onClickTopButton(context);
                       },
                       child: Container(
                         padding: const EdgeInsets.symmetric(
@@ -276,6 +261,171 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
       ),
     );
   }
+
+  void onClickTopButton(BuildContext context) {
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (contextx) => Consumer<WarrentyReportProvider>(
+        builder: (contextx, provider, child) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            contentPadding: const EdgeInsets.all(10),
+            content: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Center(
+                      child: Text(
+                        'Choose Date',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w700),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Wrap(
+                      spacing: 12,
+                      runSpacing: 12,
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
+                        String title = dateButtonTitles[index];
+                        return ActionChip(
+                          onPressed: () {
+                            provider.setDateFilter(title);
+                            provider.selectDateFilterOption(index);
+                          },
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          label: Text(title),
+                          backgroundColor:
+                              provider.selectedDateFilterIndex == index
+                                  ? AppColors.primaryBlue
+                                  : Colors.white,
+                          labelStyle: TextStyle(
+                            color: provider.selectedDateFilterIndex == index
+                                ? Colors.white
+                                : Colors.black,
+                          ),
+                        );
+                      }),
+                    ),
+                    const SizedBox(height: 15),
+                    const Text(
+                      'Pick a date',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => provider.selectDate(context, true),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              hintText: provider.fromDate != null
+                                  ? '${provider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'From',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: TextField(
+                            readOnly: true,
+                            onTap: () => provider.selectDate(context, false),
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              hintText: provider.toDate != null
+                                  ? '${provider.toDate!.toLocal()}'
+                                      .split(' ')[0]
+                                  : 'To',
+                              suffixIcon: const Icon(Icons.calendar_month),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+
+                          provider.formatDate();
+
+                          print(provider.formattedFromDate);
+                          print(provider.formattedToDate);
+                          provider.getPaymentReminders(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Apply',
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    SizedBox(
+                      width: double.infinity,
+                      height: 40,
+                      child: TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          provider.selectDateFilterOption(null);
+                          provider.getPaymentReminders(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.textRed.withOpacity(0.1),
+                          foregroundColor: AppColors.textRed,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text(
+                          'Clear',
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  List<String> dateButtonTitles = [
+    'Yesterday',
+    'Today',
+    'Tomorrow',
+    'This Week',
+    'This Month',
+  ];
 
   String _formatDate(String dateString) {
     if (dateString.isEmpty) return 'No Date';

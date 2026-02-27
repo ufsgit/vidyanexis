@@ -305,9 +305,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController amcPeriodIntervalController =
       TextEditingController();
+  final TextEditingController amcCategoryController = TextEditingController();
 
   int? _selectedAMCStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
+  int? _selectedAMCCategory;
+  int? get selectedAMCCategory => _selectedAMCCategory;
   String? _selectedAMCStatusName;
   String? get selectedAMCStatusName => _selectedAMCStatusName;
   List<MaintenanceDate> _maintenanceDates = [];
@@ -677,6 +680,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   set selectedExpenseType(int? value) {
     _selectedExpenseType = value;
+    notifyListeners();
+  }
+
+  void updateAMCCategory(int? value, String categoryName) {
+    _selectedAMCCategory = value;
+    amcCategoryController.text = categoryName;
     notifyListeners();
   }
 

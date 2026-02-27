@@ -172,9 +172,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "Refund Form"),
       if (settingsprovider.menuIsViewMap[21] == 1) const Tab(text: "Invoice"),
       if (settingsprovider.menuIsViewMap[78] == 1 &&
-          sideprovider.name != 'Lead /') const Tab(text: "Stock Use "),
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Stock Use "),
       if (settingsprovider.menuIsViewMap[79] == 1 &&
-          sideprovider.name != 'Lead /') const Tab(text: "Stock Return"),
+          sideprovider.name != 'Lead /')
+        const Tab(text: "Stock Return"),
     ];
 
     if (!_isControllerInitialized || newTabs.length != _tabs.length) {
@@ -500,6 +502,38 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       });
                                     },
                                     icon: const Icon(Icons.edit)),
+                              if (settingsprovider.menuIsDeleteMap[
+                                      sideprovider.name == 'Lead /' ? 3 : 4] ==
+                                  1)
+                                IconButton(
+                                  onPressed: () {
+                                    showConfirmationDialog(
+                                      context: context,
+                                      title: 'Delete Customer/Lead',
+                                      content:
+                                          'Are you sure you want to delete this ${sideprovider.name == 'Lead /' ? 'lead' : 'customer'}?',
+                                      onCancel: () =>
+                                          Navigator.of(context).pop(),
+                                      onConfirm: () async {
+                                        await leadProvider.deleteLead(
+                                            context, widget.customerId);
+                                        if (context.mounted) {
+                                          Navigator.of(context)
+                                              .pop(); // Close dialog
+                                          Navigator.of(context)
+                                              .pop(); // Go back from details
+
+                                          // Refresh lists
+                                          leadProvider.getSearchLeads(context);
+                                          customerProvider
+                                              .getSearchCustomers(context);
+                                        }
+                                      },
+                                    );
+                                  },
+                                  icon: const Icon(Icons.delete_outline,
+                                      color: Colors.red),
+                                ),
                               const SizedBox(width: 20),
                               Expanded(
                                 child: TabBar(
@@ -3100,15 +3134,15 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           runSpacing:
                                                                               4.0, // Space between rows
                                                                           children: [
-                                                                            _buildAMCChip('All Periodic Service',
-                                                                                null), // All tasks (no filter)
-                                                                            Wrap(
-                                                                              spacing: 8.0, // Space between chips
-                                                                              runSpacing: 4.0,
-                                                                              children: dropDownProvider.amcStatus.map((task) {
-                                                                                return _buildAMCChip(task.amcStatusName, task.amcStatusId);
-                                                                              }).toList(),
-                                                                            ),
+// _buildAMCChip('All Periodic Service',
+//     null), // All tasks (no filter)
+// Wrap(
+//   spacing: 8.0, // Space between chips
+//   runSpacing: 4.0,
+//   children: dropDownProvider.amcStatus.map((task) {
+//     return _buildAMCChip(task.amcStatusName, task.amcStatusId);
+//   }).toList(),
+// ),
                                                                           ],
                                                                         ),
                                                                       ),
@@ -3564,37 +3598,37 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   }
 
   //amc
-  Widget _buildAMCChip(String label, int? taskTypeId) {
-    return FilterChip(
-      label: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold, // Make text bold
-          fontSize: 14,
-          color: selectedAmcStatusId == taskTypeId
-              ? AppColors.primaryBlue
-              : const Color(0xFF607085),
-        ),
-      ),
-      selected: selectedAmcStatusId == taskTypeId,
-      onSelected: (bool selected) {
-        setState(() {
-          selectedAmcStatusId =
-              selected ? taskTypeId : null; // Update the selectedTaskTypeId
-        });
-      },
-      backgroundColor:
-          const Color(0xFFEFF2F5), // Color when the chip is selected
-      selectedColor: Colors.white, // Color when the chip is unselected
-      showCheckmark: false, // Removes the tick mark
-      shape: RoundedRectangleBorder(
-        // Removes the border by making it flat
-        borderRadius: BorderRadius.circular(8),
-      ),
-      side: BorderSide.none, // Ensures no border is displayed
-      elevation: 0, // Removes the elevation
-    );
-  }
+  // Widget _buildAMCChip(String label, int? taskTypeId) {
+  //   return FilterChip(
+  //     label: Text(
+  //       label,
+  //       style: TextStyle(
+  //         fontWeight: FontWeight.bold, // Make text bold
+  //         fontSize: 14,
+  //         color: selectedAmcStatusId == taskTypeId
+  //             ? AppColors.primaryBlue
+  //             : const Color(0xFF607085),
+  //       ),
+  //     ),
+  //     selected: selectedAmcStatusId == taskTypeId,
+  //     onSelected: (bool selected) {
+  //       setState(() {
+  //         selectedAmcStatusId =
+  //             selected ? taskTypeId : null; // Update the selectedTaskTypeId
+  //       });
+  //     },
+  //     backgroundColor:
+  //         const Color(0xFFEFF2F5), // Color when the chip is selected
+  //     selectedColor: Colors.white, // Color when the chip is unselected
+  //     showCheckmark: false, // Removes the tick mark
+  //     shape: RoundedRectangleBorder(
+  //       // Removes the border by making it flat
+  //       borderRadius: BorderRadius.circular(8),
+  //     ),
+  //     side: BorderSide.none, // Ensures no border is displayed
+  //     elevation: 0, // Removes the elevation
+  //   );
+  // }
 
   Widget _buildAmcTaskWidget(
       {int? amcId,
