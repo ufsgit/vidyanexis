@@ -1847,7 +1847,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       required String amount,
       required String cusId,
       required String amcId,
-      required BuildContext context}) async {
+      required BuildContext context,
+      VoidCallback? onSuccess}) async {
     print(description);
     print(customerId);
     // print(_selectedAMCStatus.toString());
@@ -1894,6 +1895,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('Success');
         getAmc(cusId, '0', context);
         clearAmcControllers();
+        if (onSuccess != null) {
+          onSuccess();
+        }
         Navigator.pop(context);
 
         Loader.stopLoader(context);

@@ -1698,7 +1698,8 @@ class ExpenseProvider extends ChangeNotifier {
 
       if (response!.statusCode == 200) {
         final data = response.data;
-        // searchExpense('', context, customerId);
+        getExpenseReport(context);
+        searchExpense('', context);
         Navigator.pop(context);
         Loader.stopLoader(context);
         print(data);
@@ -1906,5 +1907,4 @@ class ExpenseProvider extends ChangeNotifier {
       );
     }
   }
-
 }

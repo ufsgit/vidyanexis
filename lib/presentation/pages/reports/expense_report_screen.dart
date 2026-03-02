@@ -54,12 +54,19 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
             children: [
               _buildHeader(context, provider),
               const SizedBox(height: 16),
-              _buildFilters(context, provider, isSmallScreen),
-              const SizedBox(height: 16),
-              _buildSummaryCard(provider, isSmallScreen),
-              const SizedBox(height: 16),
               Expanded(
-                child: _buildExpenseTable(provider, isSmallScreen),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildFilters(context, provider, isSmallScreen),
+                      const SizedBox(height: 16),
+                      _buildSummaryCard(provider, isSmallScreen),
+                      const SizedBox(height: 16),
+                      _buildExpenseTable(provider, isSmallScreen),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -538,6 +545,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
     if (isSmallScreen) {
       return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: provider.expenseModelList.length,
         padding: const EdgeInsets.only(bottom: 24),
         itemBuilder: (context, index) {
@@ -556,6 +565,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
         borderRadius: BorderRadius.circular(16),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
+          physics: const NeverScrollableScrollPhysics(),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
