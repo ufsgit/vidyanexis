@@ -38,9 +38,9 @@ class _AddItemWidgetState extends State<AddItemWidget> {
     if (expenseProvider.itemUnitController.text.trim().isEmpty) {
       return 'Please select Unit';
     }
-    if (expenseProvider.itemUnitPriceController.text.trim().isEmpty) {
-      return 'Please enter Unit Price';
-    }
+    // if (expenseProvider.itemUnitPriceController.text.trim().isEmpty) {
+    //   return 'Please enter Unit Price';
+    // }
     if (expenseProvider.cgstController.text.trim().isEmpty) {
       return 'Please enter CGST %';
     }
@@ -107,6 +107,8 @@ class _AddItemWidgetState extends State<AddItemWidget> {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
       expenseProvider.clearItemAdd();
+      expenseProvider.togglePrimaryCheckbox(false);
+
       settingsProvider.searchCategoryApi('', context);
       settingsProvider.searchUnitApi('', context);
       expenseProvider.cgstController.text = "9";
@@ -127,6 +129,9 @@ class _AddItemWidgetState extends State<AddItemWidget> {
         expenseProvider.setItemUnit(widget.item!.unitId);
         expenseProvider
             .toggleCheckbox(widget.item!.serviceCheckbox == 1 ? true : false);
+
+        expenseProvider.togglePrimaryCheckbox(
+            widget.item!.primaryCheckBox == 1 ? true : false);
       }
     });
   }
@@ -231,6 +236,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                     ),
                   ),
                   const SizedBox(width: 10),
+
                   Expanded(
                     child: CustomTextField(
                       readOnly: false,
@@ -246,7 +252,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                   ),
                 ],
               ),
-              //
+
               const SizedBox(
                 height: 10,
               ),
@@ -265,29 +271,48 @@ class _AddItemWidgetState extends State<AddItemWidget> {
                   const Spacer(),
                 ],
               ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        Text("Is Service"),
-                        SizedBox(
-                          width: 5,
-                        ),
-                        Checkbox(
-                          value: expenseProvider.isChecked == 1,
-                          onChanged: (bool? value) {
-                            expenseProvider.toggleCheckbox(value ?? false);
-                          },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              // const SizedBox(
+              //   height: 10,
+              // ),
+              // Wrap(
+              //   children: [
+              //     Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: [
+              //         const Text("Is Service"),
+              //         const SizedBox(
+              //           width: 5,
+              //         ),
+              //         Checkbox(
+              //           value: expenseProvider.isChecked == 0,
+              //           onChanged: (bool? value) {
+              //             expenseProvider.toggleCheckbox(value ?? false);
+              //           },
+              //         ),
+              //         const SizedBox(
+              //           width: 16,
+              //         ),
+              //       ],
+              //     ),
+              //     Row(
+              //       mainAxisSize: MainAxisSize.min,
+              //       children: [
+              //         const Text("Primary item"),
+              //         const SizedBox(
+              //           width: 5,
+              //         ),
+              //         Checkbox(
+              //           value: expenseProvider.isPrimaryItem == 0,
+              //           onChanged: (bool? value) {
+              //             expenseProvider.togglePrimaryCheckbox(value ?? false);
+              //             expenseProvider.clearItemFields();
+              //             expenseProvider.items.clear();
+              //           },
+              //         ),
+              //       ],
+              //     ),
+              //   ],
+              // ),
               const SizedBox(height: 24.0),
               Row(
                 children: [
@@ -365,144 +390,180 @@ class _AddItemWidgetState extends State<AddItemWidget> {
               const SizedBox(
                 height: 20,
               ),
-              Container(
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF6F7F9),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Item Material',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textBlack,
+              expenseProvider.isPrimaryItem == 1
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF6F7F9),
+                        borderRadius: BorderRadius.circular(10),
                       ),
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: expenseProvider.itemMaterialController,
-                            hintText: 'Item Material Name',
-                            labelText: '',
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Item Material',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.textBlack,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: expenseProvider.itemQuantityController,
-                            hintText: 'Quantity',
-                            labelText: '',
-                            inputFormatters: [
-                              FilteringTextInputFormatter.allow(
-                                  RegExp(r'^\d*\.?\d{0,2}')),
-                            ],
+                          const SizedBox(
+                            height: 10,
                           ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    OutlinedButton.icon(
-                      onPressed: () {
-                        expenseProvider.addOrEditItem(context);
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Add item'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor:
-                            AppColors.primaryBlue, // Change foreground color
-                        backgroundColor:
-                            Colors.white, // Change background color
-                        side: BorderSide(
-                            color:
-                                AppColors.primaryBlue), // Change border color
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 10,
-                          vertical: 0,
-                        ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(8), // Add border radius
-                        ),
-                      ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: expenseProvider.items.length,
-                      itemBuilder: (context, index) {
-                        final item = expenseProvider.items[index];
-                        return Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          margin: const EdgeInsets.only(bottom: 10),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                          ),
-                          child: Row(
+                          Row(
                             children: [
                               Expanded(
-                                child: Text(
-                                  item.itemMaterialName,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
+                                child: CommonDropdown(
+                                  hintText: "Item Material",
+                                  items: expenseProvider.itemList
+                                      .where((status) {
+                                        if (widget.isEdit &&
+                                            widget.item != null) {
+                                          return status.primaryCheckBox == 0 &&
+                                              widget.item!.itemId !=
+                                                  status.itemId;
+                                        } else {
+                                          return status.primaryCheckBox == 0;
+                                        }
+                                      })
+                                      .map((status) => DropdownItem<int>(
+                                            id: status.itemId,
+                                            name: status.itemName,
+                                          ))
+                                      .toList(),
+                                  controller:
+                                      expenseProvider.itemMaterialController,
+                                  onItemSelected: (selectedItem) {
+                                    final selectedData = expenseProvider
+                                        .itemList
+                                        .firstWhere((item) =>
+                                            item.itemId == selectedItem);
+                                    expenseProvider
+                                        .setSubId(selectedData.itemId);
+                                  },
+                                  selectedValue: expenseProvider.subItemId,
                                 ),
+
+                                //     CustomTextField(
+                                //   readOnly: false,
+                                //   height: 54,
+                                //   controller:
+                                //       expenseProvider.itemMaterialController,
+                                //   hintText: 'Item Material Name',
+                                //   labelText: '',
+                                // ),
                               ),
-                              const SizedBox(width: 8),
-                              Text(
-                                'Quantity: ${item.quantity}',
-                                style: TextStyle(
-                                  color: Colors.grey[600],
-                                ),
-                              ),
-                              const SizedBox(width: 5),
-                              TextButton(
-                                onPressed: () => expenseProvider
-                                    .populateItemFieldsForEditing(index),
-                                child: Text(
-                                  'Edit',
-                                  style: TextStyle(
-                                    color: Colors.blue[400],
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () =>
-                                    expenseProvider.deleteItem(index),
-                                child: Text(
-                                  'Delete',
-                                  style: TextStyle(
-                                    color: Colors.red[400],
-                                  ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: CustomTextField(
+                                  readOnly: false,
+                                  height: 54,
+                                  controller:
+                                      expenseProvider.itemQuantityController,
+                                  hintText: 'Quantity',
+                                  labelText: '',
+                                  inputFormatters: [
+                                    FilteringTextInputFormatter.allow(
+                                        RegExp(r'^\d*\.?\d{0,2}')),
+                                  ],
                                 ),
                               ),
                             ],
                           ),
-                        );
-                      },
-                    ),
-                  ],
-                ),
-              ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          OutlinedButton.icon(
+                            onPressed: () {
+                              expenseProvider.addOrEditItem(context);
+                            },
+                            icon: const Icon(Icons.add),
+                            label: const Text('Add item'),
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors
+                                  .primaryBlue, // Change foreground color
+                              backgroundColor:
+                                  Colors.white, // Change background color
+                              side: BorderSide(
+                                  color: AppColors
+                                      .primaryBlue), // Change border color
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: 0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                    8), // Add border radius
+                              ),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: expenseProvider.items.length,
+                            itemBuilder: (context, index) {
+                              final item = expenseProvider.items[index];
+                              return Container(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 10),
+                                margin: const EdgeInsets.only(bottom: 10),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        item.itemMaterialName,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'Quantity: ${item.quantity}',
+                                      style: TextStyle(
+                                        color: Colors.grey[600],
+                                      ),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    TextButton(
+                                      onPressed: () => expenseProvider
+                                          .populateItemFieldsForEditing(index),
+                                      child: Text(
+                                        'Edit',
+                                        style: TextStyle(
+                                          color: Colors.blue[400],
+                                        ),
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () =>
+                                          expenseProvider.deleteItem(index),
+                                      child: Text(
+                                        'Delete',
+                                        style: TextStyle(
+                                          color: Colors.red[400],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    )
+                  : SizedBox(),
               const SizedBox(height: 24.0),
             ],
           ),
@@ -517,6 +578,7 @@ class _AddItemWidgetState extends State<AddItemWidget> {
             // expenseProvider.isRegisterController.clear();
             // expenseProvider.setSelectedColor(null);
             expenseProvider.clearItemAdd();
+            expenseProvider.togglePrimaryCheckbox(false);
             Navigator.pop(context);
           },
           backgroundColor: AppColors.whiteColor,
