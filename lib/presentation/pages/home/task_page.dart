@@ -1350,11 +1350,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               if (!context
                                                                   .mounted)
                                                                 return;
-                                                              mobile = mobile
-                                                                  .replaceAll(
-                                                                      RegExp(
-                                                                          r'[^\d+]'),
-                                                                      '');
+                                                              mobile =
+                                                                  formatIndianPhoneNumber(
+                                                                      mobile);
                                                               if (mobile
                                                                   .isNotEmpty) {
                                                                 _showWhatsAppOptionsDialog(
@@ -1366,7 +1364,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             context)
                                                                     ?.showSnackBar(const SnackBar(
                                                                         content:
-                                                                            Text('Phone number not found')));
+                                                                            Text('Invalid Indian mobile number')));
                                                               }
                                                             } catch (e) {
                                                               print(
@@ -3636,7 +3634,13 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   void _showWhatsAppOptionsDialog(BuildContext context, String rawPhone) {
-    String phone = sanitizeForWhatsApp(rawPhone);
+    String phone = formatIndianPhoneNumber(rawPhone);
+    if (phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid Indian mobile number')),
+      );
+      return;
+    }
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
