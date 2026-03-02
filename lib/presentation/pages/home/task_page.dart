@@ -596,8 +596,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       DropdownMenuItem<int>(
                                                         value: status.statusId,
                                                         child: Text(
-                                                          status.statusName ??
-                                                              '',
+                                                          StatusUtils
+                                                              .getDisplayStatus(
+                                                                  status.statusName ??
+                                                                      ''),
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14),
@@ -620,15 +622,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ),
                                       ] +
                                       provider.followUpData
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.statusId,
-                                                    child: Text(
-                                                      status.statusName ?? '',
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
+                                          .map((status) =>
+                                              DropdownMenuItem<int>(
+                                                value: status.statusId,
+                                                child: Text(
+                                                  StatusUtils.getDisplayStatus(
+                                                      status.statusName ?? ''),
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                              ))
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
@@ -1021,10 +1024,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                   controller:
                                       _scrollController, // Add this line
 
-                                  shrinkWrap: true,
-                                  physics: AppStyles.isWebScreen(context)
-                                      ? const NeverScrollableScrollPhysics()
-                                      : const AlwaysScrollableScrollPhysics(),
+                                  shrinkWrap: false,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
                                   itemCount: reportsProvider.taskReport.length +
                                       (_isLoadingMore &&
                                               !AppStyles.isWebScreen(context)
@@ -1305,7 +1307,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         vertical:
                                                                             2),
                                                                     child: Text(
-                                                                      task.taskStatusName,
+                                                                      StatusUtils
+                                                                          .getDisplayStatus(
+                                                                              task.taskStatusName),
                                                                       style: GoogleFonts
                                                                           .plusJakartaSans(
                                                                         fontSize:

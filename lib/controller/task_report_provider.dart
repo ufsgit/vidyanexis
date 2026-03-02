@@ -44,6 +44,15 @@ class TaskReportProvider extends ChangeNotifier {
   int? get selectedUser => _selectedUser;
   int? get selectedTaskType => _selectedTaskType;
 
+  int _pageIndex = 1;
+  int _pageSize = 20;
+
+  int get pageIndex => _pageIndex;
+
+  void nextPage() {
+    _pageIndex++;
+  }
+
   void toggleFilter() {
     _isFilter = !_isFilter;
     notifyListeners();
@@ -190,9 +199,15 @@ class TaskReportProvider extends ChangeNotifier {
   }
 
   //task report
-  getSearchTaskReport(BuildContext context) async {
+  Future<bool> getSearchTaskReport(BuildContext context,
+      {bool isLoadMore = false}) async {
     try {
-      Loader.showLoader(context);
+      if (!isLoadMore) {
+        Loader.showLoader(context);
+        _pageIndex = 1;
+        _taskReport = [];
+      }
+
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
@@ -221,33 +236,52 @@ class TaskReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskReport}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType');
+              '${HttpUrls.searchTaskReport}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Page_Index=$_pageIndex&PageSize=$_pageSize');
 
       if (response.statusCode == 200) {
         final data = response.data;
 
         if (data != null) {
-          // log(data.toString());
+          if (data is List && data.isEmpty) return true;
 
-          _taskReport = (data as List<dynamic>)
+          final dataMap = data is Map ? data['data'] ?? data : data;
+          if (dataMap is List && dataMap.isEmpty) return true;
+
+          final newTasks = (dataMap as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
               .toList();
+
+          if (isLoadMore) {
+            _taskReport.addAll(newTasks);
+          } else {
+            _taskReport = newTasks;
+          }
+
+          print("Task List Length: ${_taskReport.length}");
+          if (!isLoadMore) Loader.stopLoader(context);
+          notifyListeners();
+          return newTasks.isEmpty;
         }
-        Loader.stopLoader(context);
+        if (!isLoadMore) Loader.stopLoader(context);
         notifyListeners();
       } else {
-        Loader.stopLoader(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (!isLoadMore) {
+          Loader.stopLoader(context);
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
-      Loader.stopLoader(context);
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (!isLoadMore) {
+        Loader.stopLoader(context);
+        print('Exception occurred: $e');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     }
+    return false;
   }
 
   getFollowupReports(BuildContext context) async {

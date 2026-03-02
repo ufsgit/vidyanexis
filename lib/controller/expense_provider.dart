@@ -1419,6 +1419,7 @@ class ExpenseProvider extends ChangeNotifier {
         final data = response.data;
 
         Navigator.pop(context);
+        getPurchaseDataMaster(context);
         Loader.stopLoader(context);
         print(data);
       } else {
