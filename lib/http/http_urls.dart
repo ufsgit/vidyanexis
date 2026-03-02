@@ -180,7 +180,7 @@ class HttpUrls {
   static String deleteExpense = "service/Delete_Expense";
   static String getExpenseById = "service/Get_Expense_By_Id";
   static String getPurchaseData = "item/get_purchase_details";
-  static String savePurchase = "item/save_purchase_details";
+  static String savePurchase = "item/save_purchase_master";
   static String getInvoiceList = "service/Get_Customer_Invoice";
   static String saveInvoiceUrl = "service/Save_Customer_Invoice";
   static String invoiceRecieptTotal = "service/Invoice_Reciept_Total";
