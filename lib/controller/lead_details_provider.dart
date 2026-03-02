@@ -148,6 +148,8 @@ class LeadDetailsProvider with ChangeNotifier {
             dropDownProvider.setSelectedleadtypeUserId(leadData.leadTypeId);
 
             dropDownProvider.setSelectedpeUserId(leadData.peId);
+            dropDownProvider.selectedLocationId =
+                leadData.locationId; // Added this line
             leadProvider.creController.text = leadData.creName;
             leadProvider.peController.text = leadData.peName;
             leadProvider.leadtypeController.text = leadData.leadTypeName;

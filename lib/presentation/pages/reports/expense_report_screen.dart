@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
@@ -620,8 +621,18 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                     icon: const Icon(Icons.delete_outline,
                         color: Colors.red, size: 20),
                     onPressed: () {
-                      provider.deleteExpense(
-                          context, item.expenseManagementId ?? 0);
+                      showConfirmationDialog(
+                        context: context,
+                        title: 'Delete Expense',
+                        content:
+                            'Are you sure you want to delete this expense?',
+                        onCancel: () => Navigator.of(context).pop(),
+                        onConfirm: () async {
+                          Navigator.of(context).pop();
+                          provider.deleteExpense(
+                              context, item.expenseManagementId ?? 0);
+                        },
+                      );
                     },
                   )),
                 ]);
@@ -677,8 +688,17 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.delete_outline,
                       color: Colors.red, size: 20),
-                  onPressed: () => provider.deleteExpense(
-                      context, item.expenseManagementId ?? 0),
+                  onPressed: () => showConfirmationDialog(
+                    context: context,
+                    title: 'Delete Expense',
+                    content: 'Are you sure you want to delete this expense?',
+                    onCancel: () => Navigator.of(context).pop(),
+                    onConfirm: () async {
+                      Navigator.of(context).pop();
+                      provider.deleteExpense(
+                          context, item.expenseManagementId ?? 0);
+                    },
+                  ),
                 ),
               ],
             ),

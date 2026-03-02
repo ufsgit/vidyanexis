@@ -1129,10 +1129,39 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                    flex: 3,
-                                                    title: task.customerName,
-                                                    color: const Color(
-                                                        0xFF607185)),
+                                                  flex: 3,
+                                                  data: InkWell(
+                                                    onTap: () {
+                                                      context.push(
+                                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 6),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFE9EDF1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50),
+                                                      ),
+                                                      child: Text(
+                                                        task.customerName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Color(
+                                                                0xFF607185),
+                                                            fontSize: 13),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                                 TableWidget(
                                                     flex: 4,
                                                     title: task.address1,
