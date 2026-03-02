@@ -70,9 +70,9 @@ class _InventoryPageState extends State<InventoryPage> {
                   _buildMenuItem(context, 'Category', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[47].toString() == '1')
                   _buildMenuItem(context, 'Unit', Icons.document_scanner),
-                if (settingsProvider.menuIsViewMap[48].toString() == '1')
-                  _buildMenuItem(
-                      context, 'Expense Management', Icons.document_scanner),
+                // if (settingsProvider.menuIsViewMap[48].toString() == '1')
+                //   _buildMenuItem(
+                //       context, 'Expense Management', Icons.document_scanner),
               ],
             ),
           ),
@@ -157,8 +157,8 @@ class _InventoryPageState extends State<InventoryPage> {
             return const PurchaseScreen();
           case 'Supplier':
             return const SupplierPage();
-          case 'Expense Management':
-            return const ExpenseManagement();
+          // case 'Expense Management':
+          //   return const ExpenseManagement();
           case 'Category':
             return const CategoryPage();
           case 'Unit':
