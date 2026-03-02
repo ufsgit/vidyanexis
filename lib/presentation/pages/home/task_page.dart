@@ -596,8 +596,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       DropdownMenuItem<int>(
                                                         value: status.statusId,
                                                         child: Text(
-                                                          status.statusName ??
-                                                              '',
+                                                          StatusUtils
+                                                              .getDisplayStatus(
+                                                                  status.statusName ??
+                                                                      ''),
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14),
@@ -620,15 +622,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ),
                                       ] +
                                       provider.followUpData
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.statusId,
-                                                    child: Text(
-                                                      status.statusName ?? '',
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
+                                          .map((status) =>
+                                              DropdownMenuItem<int>(
+                                                value: status.statusId,
+                                                child: Text(
+                                                  StatusUtils.getDisplayStatus(
+                                                      status.statusName ?? ''),
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                              ))
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
@@ -1021,10 +1024,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                   controller:
                                       _scrollController, // Add this line
 
-                                  shrinkWrap: true,
-                                  physics: AppStyles.isWebScreen(context)
-                                      ? const NeverScrollableScrollPhysics()
-                                      : const AlwaysScrollableScrollPhysics(),
+                                  shrinkWrap: false,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
                                   itemCount: reportsProvider.taskReport.length +
                                       (_isLoadingMore &&
                                               !AppStyles.isWebScreen(context)
@@ -1305,7 +1307,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         vertical:
                                                                             2),
                                                                     child: Text(
-                                                                      task.taskStatusName,
+                                                                      StatusUtils
+                                                                          .getDisplayStatus(
+                                                                              task.taskStatusName),
                                                                       style: GoogleFonts
                                                                           .plusJakartaSans(
                                                                         fontSize:
@@ -1350,11 +1354,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               if (!context
                                                                   .mounted)
                                                                 return;
-                                                              mobile = mobile
-                                                                  .replaceAll(
-                                                                      RegExp(
-                                                                          r'[^\d+]'),
-                                                                      '');
+                                                              mobile =
+                                                                  formatIndianPhoneNumber(
+                                                                      mobile);
                                                               if (mobile
                                                                   .isNotEmpty) {
                                                                 _showWhatsAppOptionsDialog(
@@ -1366,7 +1368,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             context)
                                                                     ?.showSnackBar(const SnackBar(
                                                                         content:
-                                                                            Text('Phone number not found')));
+                                                                            Text('Invalid Indian mobile number')));
                                                               }
                                                             } catch (e) {
                                                               print(
@@ -3636,7 +3638,13 @@ class _tasksPageReportState extends State<TaskPage> {
   }
 
   void _showWhatsAppOptionsDialog(BuildContext context, String rawPhone) {
-    String phone = sanitizeForWhatsApp(rawPhone);
+    String phone = formatIndianPhoneNumber(rawPhone);
+    if (phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid Indian mobile number')),
+      );
+      return;
+    }
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {

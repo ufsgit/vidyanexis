@@ -105,6 +105,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<TaskCustomerModel> _taskList = [];
   List<TaskCustomerModel> get taskList => _taskList;
 
+  int taskListPageIndex = 1;
+  int taskListPageSize = 20;
+
   List<TaskDetails> _taskDetails = [];
   List<TaskDetails> get taskDetails => _taskDetails;
 
@@ -1420,16 +1423,22 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getTaskList(String customerId, BuildContext context) async {
-    _isLoading = true;
-    notifyListeners();
+  getTaskList(String customerId, BuildContext context,
+      {bool isLoadMore = false}) async {
+    if (!isLoadMore) {
+      _isLoading = true;
+      taskListPageIndex = 1;
+      _taskList = [];
+      notifyListeners();
+    }
 
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getTaskByCustomer}?Customer_Id=$customerId');
+          endPoint:
+              '${HttpUrls.getTaskByCustomer}?Customer_Id=$customerId&Page_Index=$taskListPageIndex&PageSize=$taskListPageSize');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1437,25 +1446,49 @@ class CustomerDetailsProvider extends ChangeNotifier {
         if (data != null) {
           print(data.toString());
 
-          _taskList = (data as List<dynamic>)
+          if (data is List && data.isEmpty) {
+            return true; // Indicates empty response
+          }
+
+          final dataMap = data is Map ? data['data'] ?? data : data;
+          if (dataMap is List && dataMap.isEmpty) {
+            return true;
+          }
+
+          final newTasks = (dataMap as List<dynamic>)
               .map((item) => TaskCustomerModel.fromJson(item))
               .toList();
+
+          if (isLoadMore) {
+            _taskList.addAll(newTasks);
+          } else {
+            _taskList = newTasks;
+          }
+          print("Task List Length: ${_taskList.length}");
           notifyListeners(); // Notify listeners to rebuild with fetched data
+          return newTasks.isEmpty;
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (!isLoadMore) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (!isLoadMore) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
-      _isLoading = false; // Set loading to false once the request completes
-      notifyListeners(); // Notify listeners to rebuild with the final state
+      if (!isLoadMore) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
+    return false;
   }
 
   getTaskDetails(String taskId, BuildContext context) async {
