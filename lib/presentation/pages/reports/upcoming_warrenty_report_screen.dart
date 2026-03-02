@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class UpcomingWarrentyReportScreen extends StatefulWidget {
   const UpcomingWarrentyReportScreen({super.key});
@@ -676,101 +677,26 @@ class _UpcomingWarrentyReportScreen
                     ),
                   )
                 : Expanded(
-                    child: ListView.builder(
+                    child: ListView.separated(
+                      separatorBuilder: (context, index) =>
+                          Divider(height: 2, color: AppColors.grey),
                       itemCount: reportsProvider.upcomingWarrantyReport.length,
                       itemBuilder: (context, index) {
                         var item =
                             reportsProvider.upcomingWarrantyReport[index];
-                        return Card(
-                          margin: const EdgeInsets.symmetric(
-                              horizontal: 16.0, vertical: 8.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                          elevation: 2,
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Expanded(
-                                      child: InkWell(
-                                        onTap: () {
-                                          context.push(
-                                              '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
-                                        },
-                                        child: Text(
-                                          item.customerName,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                            color: AppColors.primaryBlue,
-                                          ),
-                                          maxLines: 1,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 8, vertical: 4),
-                                      decoration: BoxDecoration(
-                                        color: AppColors.appViolet
-                                            .withOpacity(0.1),
-                                        borderRadius:
-                                            BorderRadius.circular(8.0),
-                                      ),
-                                      child: Text(
-                                        item.expiryDate.toDayMonthYearFormat(),
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: AppColors.appViolet,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const Divider(),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.work_outline,
-                                        size: 16, color: Colors.grey),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        item.projectName,
-                                        style: const TextStyle(fontSize: 14),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 8),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.medical_services_outlined,
-                                        size: 16, color: Colors.grey),
-                                    const SizedBox(width: 6),
-                                    Expanded(
-                                      child: Text(
-                                        item.serviceName,
-                                        style: const TextStyle(fontSize: 14),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
+                        return ReportListItem(
+                          title: item.projectName,
+                          subtitle: '${item.customerName} >',
+                          onSubtitleTap: () {
+                            context.push(
+                                '${CustomerDetailsScreen.route}${item.customerId.toString()}/${'true'}');
+                          },
+                          status:
+                              'Ends: ${item.expiryDate.toDayMonthYearFormat()}',
+                          statusColor: AppColors.appViolet,
+                          description: item.serviceName,
+                          bottomLeftIcon: Icons.medical_services_outlined,
+                          bottomLeftText: 'Warranty',
                         );
                       },
                     ),
