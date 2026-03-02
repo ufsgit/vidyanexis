@@ -237,6 +237,22 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int _isPrimaryItem = 0;
+  int get isPrimaryItem => _isPrimaryItem;
+
+  void togglePrimaryCheckbox(bool value) {
+    _isPrimaryItem = value ? 1 : 0;
+    notifyListeners();
+  }
+
+  int? _subItemId;
+  int? get subItemId => _subItemId;
+
+  void setSubId(int id) {
+    _subItemId = id;
+    notifyListeners();
+  }
+
   void setSupplier(int newSupplier) {
     _selectedSupplier = newSupplier;
     print(_selectedSupplier.toString());
@@ -886,6 +902,7 @@ class ExpenseProvider extends ChangeNotifier {
 
     // Create the new item
     final newItem = ItemSettings(
+      subItemId: subItemId ?? 0,
       itemMaterialName: itemMaterialController.text,
       quantity: double.parse(itemQuantityController.text),
       itemMaterialId: 0,
@@ -915,6 +932,8 @@ class ExpenseProvider extends ChangeNotifier {
   void clearItemFields() {
     itemMaterialController.clear();
     itemQuantityController.clear();
+    setSubId(-1);
+    _subItemId = null;
     notifyListeners();
   }
 
@@ -926,6 +945,7 @@ class ExpenseProvider extends ChangeNotifier {
       itemMaterialController.text = itemToEdit.itemMaterialName;
       itemQuantityController.text = itemToEdit.quantity.toString();
 
+      setSubId(itemToEdit.subItemId);
       setEditItemIndex(index);
       notifyListeners();
     }
@@ -1332,10 +1352,14 @@ class ExpenseProvider extends ChangeNotifier {
             "categoryName": itemCategoryController.text.toString(),
             "unitId": _selectedItemUnit,
             "unitName": itemUnitController.text.toString(),
+            "Unit_Price": itemUnitPriceController.text.toString(),
             "cgst": cgstController.text,
             "sgst": sgstController.text,
             "gst": gstController.text,
             "igst": igstController.text,
+            "serviceCheckbox": _isChecked,
+            "Is_Primary": _isPrimaryItem,
+            "HSNCode": itemHSNController.text.toString(),
             "itemMaterials": _items.map((item) => item.toJson()).toList(),
           });
 
@@ -1447,6 +1471,7 @@ class ExpenseProvider extends ChangeNotifier {
       // If the item doesn't exist, add it to _items with deleteStatus set to 1
       if (!itemExists) {
         _items.add(ItemSettings(
+          subItemId: realItem.subItemId,
           itemMaterialId: realItem.itemMaterialId,
           itemMaterialName: realItem.itemMaterialName,
           quantity: realItem.quantity,
@@ -1476,6 +1501,7 @@ class ExpenseProvider extends ChangeNotifier {
                 } catch (e) {
                   print("Error parsing item: $e");
                   return ItemSettings(
+                      subItemId: 0,
                       itemMaterialId: 0,
                       itemMaterialName: '',
                       quantity: 0,
@@ -1490,6 +1516,7 @@ class ExpenseProvider extends ChangeNotifier {
                 } catch (e) {
                   print("Error parsing item: $e");
                   return ItemSettings(
+                      subItemId: 0,
                       itemMaterialId: 0,
                       itemMaterialName: '',
                       quantity: 0,
