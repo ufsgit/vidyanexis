@@ -4,7 +4,7 @@ class HttpUrls {
 
   // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-//  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
@@ -17,7 +17,8 @@ class HttpUrls {
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 
 //dev
-  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -86,8 +87,8 @@ class HttpUrls {
   static String addUser = "user_details/Save_user_details";
   static String searchWorkingStatus =
       "working_status/Search_working_status?working_status_Name";
-  static String addUnit = "item/Save_Unit";
-  static String deleteUnit = "item/Delete_Unit";
+  static String addUnit = "lead/Add_Category";
+  static String deleteUnit = "lead/Delete_Category";
   static String searchUnit = "item/Get_All_unit";
 
   static String searchUserType = "user_type/Search_user_type?user_type_Name";
@@ -180,7 +181,7 @@ class HttpUrls {
   static String deleteExpense = "service/Delete_Expense";
   static String getExpenseById = "service/Get_Expense_By_Id";
   static String getPurchaseData = "item/get_purchase_details";
-  static String savePurchase = "item/save_purchase_details";
+  static String savePurchase = "item/save_purchase_master";
   static String getInvoiceList = "service/Get_Customer_Invoice";
   static String saveInvoiceUrl = "service/Save_Customer_Invoice";
   static String invoiceRecieptTotal = "service/Invoice_Reciept_Total";
