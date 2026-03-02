@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/utils/status_utils.dart';
 
 class TaskListPageMobile extends StatefulWidget {
   final String customerId;
@@ -26,14 +27,56 @@ class TaskListPageMobile extends StatefulWidget {
 }
 
 class _TaskListPageMobileState extends State<TaskListPageMobile> {
+  final ScrollController _scrollController = ScrollController();
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
+
   @override
   void initState() {
+    super.initState();
+    _scrollController.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.taskListPageIndex = 1;
+      hasMoreData = true;
       customerDetailsProvider.getTaskList(widget.customerId, context);
     });
-    super.initState();
+  }
+
+  void _scrollListener() {
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
+        !isLoadingMore &&
+        hasMoreData) {
+      loadMoreTasks();
+    }
+  }
+
+  Future<void> loadMoreTasks() async {
+    final provider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    setState(() {
+      isLoadingMore = true;
+    });
+
+    provider.taskListPageIndex++;
+
+    bool isEmpty = await provider.getTaskList(widget.customerId, context,
+        isLoadMore: true);
+    if (isEmpty) {
+      hasMoreData = false;
+    }
+
+    setState(() {
+      isLoadingMore = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
@@ -75,6 +118,7 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                     ),
                   )
                 : SingleChildScrollView(
+                    controller: _scrollController,
                     child: Column(
                       children: [
                         ListView.separated(
@@ -86,7 +130,7 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                           },
                           itemCount: customerDetailsProvider.taskList.length,
                           shrinkWrap: true,
-                          physics: const ClampingScrollPhysics(),
+                          physics: const NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             final task =
                                 customerDetailsProvider.taskList[index];
@@ -173,7 +217,9 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                                       horizontal: 10,
                                                       vertical: 2),
                                                   child: Text(
-                                                    task.taskStatusName,
+                                                    StatusUtils
+                                                        .getDisplayStatus(task
+                                                            .taskStatusName),
                                                     style: GoogleFonts
                                                         .plusJakartaSans(
                                                             fontSize: 12,
@@ -294,7 +340,14 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                               ),
                             );
                           },
-                        )
+                        ),
+                        if (isLoadingMore)
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 20),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          ),
                       ],
                     ),
                   ),

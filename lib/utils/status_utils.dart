@@ -30,4 +30,11 @@ class StatusUtils {
         return Colors.black;
     }
   }
+
+  static String getDisplayStatus(String status) {
+    if (status.toLowerCase() == "converted") {
+      return "Confirm";
+    }
+    return status;
+  }
 }
