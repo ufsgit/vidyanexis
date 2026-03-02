@@ -37,7 +37,20 @@ class _AmcReportScreen extends State<AmcReportScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<AMCReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+
+      // Set default filter to "Today"
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // Index 1 is 'Today'
+      reportsProvider.formatDate();
+
+      reportsProvider.setTaskSearchCriteria(
+        '',
+        reportsProvider.formattedFromDate,
+        reportsProvider.formattedToDate,
+        '',
+        '',
+      );
+
       reportsProvider.getSearchAmcReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
