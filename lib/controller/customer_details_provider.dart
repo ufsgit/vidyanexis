@@ -41,12 +41,13 @@ import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:vidyanexis/controller/models/task_details_model.dart';
 import 'package:vidyanexis/controller/models/task_document_model.dart';
 import 'package:vidyanexis/controller/models/task_user_list_model.dart';
-import 'package:vidyanexis/controller/side_bar_provider.dart';
+
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/loader.dart';
 
 import 'package:vidyanexis/utils/extensions.dart';
 
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
 import 'package:vidyanexis/controller/models/payment_model.dart';
@@ -103,6 +104,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   List<TaskCustomerModel> _taskList = [];
   List<TaskCustomerModel> get taskList => _taskList;
+
+  int taskListPageIndex = 1;
+  int taskListPageSize = 20;
 
   List<TaskDetails> _taskDetails = [];
   List<TaskDetails> get taskDetails => _taskDetails;
@@ -1419,16 +1423,22 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getTaskList(String customerId, BuildContext context) async {
-    _isLoading = true;
-    notifyListeners();
+  getTaskList(String customerId, BuildContext context,
+      {bool isLoadMore = false}) async {
+    if (!isLoadMore) {
+      _isLoading = true;
+      taskListPageIndex = 1;
+      _taskList = [];
+      notifyListeners();
+    }
 
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getTaskByCustomer}?Customer_Id=$customerId');
+          endPoint:
+              '${HttpUrls.getTaskByCustomer}?Customer_Id=$customerId&Page_Index=$taskListPageIndex&PageSize=$taskListPageSize');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1436,25 +1446,49 @@ class CustomerDetailsProvider extends ChangeNotifier {
         if (data != null) {
           print(data.toString());
 
-          _taskList = (data as List<dynamic>)
+          if (data is List && data.isEmpty) {
+            return true; // Indicates empty response
+          }
+
+          final dataMap = data is Map ? data['data'] ?? data : data;
+          if (dataMap is List && dataMap.isEmpty) {
+            return true;
+          }
+
+          final newTasks = (dataMap as List<dynamic>)
               .map((item) => TaskCustomerModel.fromJson(item))
               .toList();
+
+          if (isLoadMore) {
+            _taskList.addAll(newTasks);
+          } else {
+            _taskList = newTasks;
+          }
+          print("Task List Length: ${_taskList.length}");
           notifyListeners(); // Notify listeners to rebuild with fetched data
+          return newTasks.isEmpty;
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (!isLoadMore) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (!isLoadMore) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     } finally {
-      _isLoading = false; // Set loading to false once the request completes
-      notifyListeners(); // Notify listeners to rebuild with the final state
+      if (!isLoadMore) {
+        _isLoading = false;
+        notifyListeners();
+      }
     }
+    return false;
   }
 
   getTaskDetails(String taskId, BuildContext context) async {
@@ -1813,7 +1847,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       required String amount,
       required String cusId,
       required String amcId,
-      required BuildContext context}) async {
+      required BuildContext context,
+      VoidCallback? onSuccess}) async {
     print(description);
     print(customerId);
     // print(_selectedAMCStatus.toString());
@@ -1847,6 +1882,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
             "Intervals_No": monthInterval,
             "Duration_Id": dropDownProvider.amcTotalDurationlId,
             "Duration_No": yearInterval,
+            "Category_Id": _selectedAMCCategory ?? 1,
+            "Category_Name": amcCategoryController.text.isNotEmpty
+                ? amcCategoryController.text
+                : "AMC",
             "interval_details":
                 _maintenanceDates.map((e) => e.toJson()).toList(),
           });
@@ -1856,6 +1895,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('Success');
         getAmc(cusId, '0', context);
         clearAmcControllers();
+        if (onSuccess != null) {
+          onSuccess();
+        }
         Navigator.pop(context);
 
         Loader.stopLoader(context);
@@ -2861,41 +2903,39 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   Future<void> removeRegister(String customerId, BuildContext context) async {
     try {
-      // Loader.showLoader(context);
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
-      String userName = preferences.getString('userName') ?? "";
+      final customerProvider =
+          Provider.of<CustomerProvider>(context, listen: false);
+
+      // Optimistic removal and immediate navigation back
+      customerProvider.removeCustomerFromList(customerId);
+      // Close dialog
+      Navigator.of(context).pop();
+
+      // Go back from details
+      if (Navigator.of(context).canPop()) {
+        Navigator.of(context).pop();
+      } else {
+        // Fallback for embedded views (Web logic)
+        final sidebarProvider =
+            Provider.of<SidebarProvider>(context, listen: false);
+        sidebarProvider.replaceWidget(true, '');
+        sidebarProvider.replaceWidgetCustomer(true, '');
+      }
 
       final response = await HttpRequest.httpPutParamRequest(
           endPoint: '${HttpUrls.unregisterCustomer}?Customer_Id=$customerId');
 
-      if (response!.statusCode == 200) {
-        final data = response.data;
+      if (response != null && response.statusCode == 200) {
         log('Success');
-
-        final sideprovider =
-            Provider.of<SidebarProvider>(context, listen: false);
-        final customerProvider =
-            Provider.of<CustomerProvider>(context, listen: false);
-        sideprovider.replaceWidgetCustomer(true, '');
-        customerProvider.customerData.clear();
-        await customerProvider.getSearchCustomers(context);
-        // Loader.stopLoader(context);
-        print(data);
+        // Background refresh without blocking UI
+        customerProvider.getSearchCustomers(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        // Loader.stopLoader(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-      // Loader.stopLoader(context);
-    } finally {
-      Navigator.of(context).pop();
     }
   }
 

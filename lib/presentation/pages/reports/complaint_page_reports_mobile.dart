@@ -14,7 +14,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class ComplaintPageReportsMobile extends StatefulWidget {
@@ -314,7 +314,7 @@ class _ComplaintPageReportsMobileState
                     : service.serviceStatusName == "In Progress"
                         ? Colors.orange
                         : Colors.red;
-                return InkWell(
+                return ReportListItem(
                   onTap: () {
                     Navigator.push(context, MaterialPageRoute(
                       builder: (context) {
@@ -322,180 +322,28 @@ class _ComplaintPageReportsMobileState
                       },
                     ));
                   },
-                  child: Container(
-                    width: MediaQuery.sizeOf(context).width,
-                    decoration: BoxDecoration(color: AppColors.whiteColor),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                  height: 34,
-                                  width: 3,
-                                  decoration: BoxDecoration(
-                                      color: statusColor,
-                                      borderRadius: BorderRadius.circular(16))),
-                              const SizedBox(
-                                width: 8,
-                              ),
-                              const SizedBox(
-                                width: 4,
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    service.serviceName,
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.textBlack),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) =>
-                                              CustomerDetailPageMobile(
-                                            customerId: service.customerId,
-                                            fromLead: false,
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      mainAxisSize: MainAxisSize.min,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          service.customerName,
-                                          style: GoogleFonts.plusJakartaSans(
-                                              decoration:
-                                                  TextDecoration.underline,
-                                              decorationColor:
-                                                  AppColors.bluebutton,
-                                              decorationThickness: 1.5,
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.bluebutton),
-                                        ),
-                                        Icon(
-                                          Icons.keyboard_arrow_right_rounded,
-                                          color: AppColors.bluebutton,
-                                          size: 18,
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const Spacer(),
-                              Container(
-                                  height: 22,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(30),
-                                    color: statusColor.withOpacity(.1),
-                                  ),
-                                  child: Center(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 2),
-                                      child: Text(
-                                        service.serviceStatusName,
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            color: statusColor),
-                                      ),
-                                    ),
-                                  )),
-                            ],
+                  onSubtitleTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CustomerDetailPageMobile(
+                            customerId: service.customerId,
+                            fromLead: false,
                           ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          Align(
-                            alignment: Alignment.topLeft,
-                            child: Text(
-                              service.description,
-                              maxLines: 2,
-                              overflow: TextOverflow.ellipsis,
-                              style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textGrey3),
-                            ),
-                          ),
-                          const SizedBox(
-                            height: 12,
-                          ),
-                          Row(
-                            children: [
-                              service.amount != "0" &&
-                                      service.amount != "0.0" &&
-                                      service.amount != "0.000"
-                                  ? CustomText(
-                                      "₹${service.amount.split('.')[0]}",
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textGrey4,
-                                    )
-                                  : SizedBox(),
-                              service.amount != "0" &&
-                                      service.amount != "0.0" &&
-                                      service.amount != "0.000"
-                                  ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 6),
-                                      child: CustomText(
-                                        '•',
-                                        color:
-                                            AppColors.textGrey4.withOpacity(.5),
-                                      ),
-                                    )
-                                  : SizedBox(),
-                              RichText(
-                                text: TextSpan(
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w400,
-                                    color: AppColors.textBlack.withOpacity(.4),
-                                  ),
-                                  children: [
-                                    const TextSpan(text: 'By  '),
-                                    TextSpan(
-                                      text: service.createdByName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey4,
-                                      ),
-                                    ),
-                                    const TextSpan(text: '  on  '),
-                                    TextSpan(
-                                      text: service.createDate
-                                          .toMonthDayYearFormat(),
-                                      style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textGrey4,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
+                        ));
+                  },
+                  title: service.serviceName,
+                  subtitle: '${service.customerName} >',
+                  status: service.serviceStatusName,
+                  statusColor: statusColor,
+                  description: service.description,
+                  bottomLeftText: (service.amount != "0" &&
+                          service.amount != "0.0" &&
+                          service.amount != "0.000")
+                      ? '₹${service.amount.split('.')[0]}'
+                      : null,
+                  bottomRightText:
+                      'By ${service.createdByName} on ${service.createDate.toMonthDayYearFormat()}',
                 );
               },
             )

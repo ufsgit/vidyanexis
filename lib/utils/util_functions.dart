@@ -35,3 +35,19 @@ void showToastInDialog(String message, BuildContext context) {
     overlayEntry.remove();
   });
 }
+
+String formatIndianPhoneNumber(String input) {
+  String number = input.replaceAll(RegExp(r'[^\d+]'), '');
+
+  if (number.startsWith('+91')) {
+    number = number.substring(3);
+  } else if (number.startsWith('91') && number.length > 10) {
+    number = number.substring(2);
+  }
+
+  if (number.length == 10 && RegExp(r'^[6-9]\d{9}$').hasMatch(number)) {
+    return '91$number';
+  } else {
+    return '';
+  }
+}

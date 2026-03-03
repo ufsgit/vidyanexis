@@ -130,6 +130,7 @@ class LeadsProvider extends ChangeNotifier {
   int currentPage = 1;
   bool isLoadingMore = false;
   bool hasMoreData = true;
+  final int pageSize = 20;
 
 //cost
   final TextEditingController projectCostController = TextEditingController();
@@ -486,6 +487,7 @@ class LeadsProvider extends ChangeNotifier {
     dropDownProvider.selectedEnquirySourceId = null;
     dropDownProvider.selectedStatusId = null;
     dropDownProvider.selectedFollowUPId = null;
+    dropDownProvider.selectedLocationId = null;
     settingsProvider.selectedBranchId = null;
     settingsProvider.setSelectedDepartmentId(0);
 
@@ -531,81 +533,44 @@ class LeadsProvider extends ChangeNotifier {
 
 //.......................................................................
 
+  bool _isScrollInitialized = false;
+
+  void initializeScroll(BuildContext context) {
+    if (!_isScrollInitialized) {
+      scrollController.addListener(() {
+        scrollListener(context);
+      });
+      _isScrollInitialized = true;
+    }
+  }
+
   void scrollListener(BuildContext context) {
-    if (scrollController.hasClients &&
-        scrollController.position.pixels >=
-            scrollController.position.maxScrollExtent - 100) {
-      if (!isLoadingMore && hasMoreData && _endLimit < _totalCount) {
+    if (scrollController.hasClients) {
+      print("Scroll position: ${scrollController.position.pixels}");
+      print("Max scroll: ${scrollController.position.maxScrollExtent}");
+
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 200 &&
+          !isLoadingMore &&
+          hasMoreData) {
         loadMoreLeads(context);
       }
     }
   }
 
   Future<void> loadMoreLeads(BuildContext context) async {
-    if (isLoadingMore || !hasMoreData || _endLimit >= _totalCount) {
-      if (_endLimit >= _totalCount) {
-        hasMoreData = false;
-        notifyListeners();
-      }
-      return;
-    }
+    if (isLoadingMore) return;
 
     isLoadingMore = true;
+    currentPage++;
+    print("Loading page: $currentPage");
+
     notifyListeners();
 
-    try {
-      _startLimit += 20;
-      _endLimit += 20;
+    await getSearchLeads(context, isPagination: true);
 
-      if (_status.isEmpty || _status == 'null') {
-        _status = '0';
-      }
-      if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
-        _enquiryForS = '0';
-      }
-
-      String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-      } else {
-        isDate = "1";
-      }
-
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "0";
-      String toUserId = (_selectedUser ?? 0).toString();
-
-      final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
-
-      if (response.statusCode == 200) {
-        final data = response.data;
-        if (data != null) {
-          List<SearchLeadModel> nextData = (data as List<dynamic>)
-              .map((item) => SearchLeadModel.fromJson(item))
-              .toList();
-
-          _totalCount = nextData.last.customerId;
-          nextData.removeLast();
-
-          if (nextData.isEmpty) {
-            hasMoreData = false;
-          } else {
-            _leadData.addAll(nextData);
-            currentPage++;
-            hasMoreData = nextData.length >= 20;
-          }
-        }
-      } else {
-        hasMoreData = false;
-      }
-    } catch (e) {
-      log("Error loading more leads: $e");
-    } finally {
-      isLoadingMore = false;
-      notifyListeners();
-    }
+    isLoadingMore = false;
+    notifyListeners();
   }
 
 //........................................................................
@@ -835,10 +800,18 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getSearchLeads(BuildContext context) async {
-    // try {
-    // Loader.showLoader(context);
-    _isLoading = true;
+  Future<void> getSearchLeads(BuildContext context,
+      {bool isPagination = false}) async {
+    if (!isPagination) {
+      currentPage = 1;
+      hasMoreData = true;
+      _leadData.clear();
+      notifyListeners();
+    }
+
+    _startLimit = ((currentPage - 1) * pageSize) + 1;
+    _endLimit = currentPage * pageSize;
+
     print('Start$_startLimit');
     print('End$_endLimit');
 
@@ -876,65 +849,33 @@ class LeadsProvider extends ChangeNotifier {
 
     if (response.statusCode == 200) {
       final data = response.data;
-      print('dfooigwe9 ${data}');
       if (data != null) {
         _tempData = (data as List<dynamic>)
             .map((item) => SearchLeadModel.fromJson(item))
             .toList();
 
-        _totalCount = _tempData.last.customerId;
-        print("Last customer's ID: $_totalCount");
+        if (_tempData.isNotEmpty) {
+          _totalCount = _tempData.last.customerId;
+          _tempData.removeLast();
 
-        _tempData.removeLast();
-
-        if (AppStyles.isWebScreen(context)) {
-          _leadData = List.from(_tempData);
-        } else {
-          if (_search.isEmpty &&
-              _fromDateS.isEmpty &&
-              _toDateS.isEmpty &&
-              _status == "0" &&
-              _enquiryForS == '0') {
-            for (var newLead in _tempData) {
-              int index = _leadData
-                  .indexWhere((lead) => lead.customerId == newLead.customerId);
-
-              if (index != -1) {
-                _leadData[index] = SearchLeadModel.fromJson(newLead.toJson());
-              } else {
-                _leadData.add(SearchLeadModel.fromJson(newLead.toJson()));
-              }
-            }
-
-            _leadData = List.from(_leadData);
-            notifyListeners();
-            log("Updated Lead Data: ${_leadData.map((e) => e.toJson()).toList()}");
+          if (_tempData.isNotEmpty) {
+            _leadData.addAll(_tempData);
           } else {
-            _leadData.clear();
-            _leadData = List.from(_tempData);
+            hasMoreData = false;
           }
+        } else {
+          hasMoreData = false;
         }
 
-        // Loader.stopLoader(context);
         _isLoading = false;
-        hasMoreData = _tempData.length >= 25;
         notifyListeners();
       }
     } else {
-      // Loader.stopLoader(context);
       _isLoading = false;
-
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Server Error')),
       );
     }
-    // } catch (e) {
-    //   // Loader.stopLoader(context);
-    //   print('Exception occurred: $e');
-    //   ScaffoldMessenger.of(context).showSnackBar(
-    //     const SnackBar(content: Text('An error occurred')),
-    //   );
-    // }
   }
 
   // getSearchLeads(BuildContext context) async {
@@ -1141,6 +1082,7 @@ class LeadsProvider extends ChangeNotifier {
     required String creName,
     required int leadtypeId,
     required String leadtypeName,
+    int? locationId,
   }) async {
     try {
       Loader.showLoader(context);
@@ -1317,6 +1259,7 @@ class LeadsProvider extends ChangeNotifier {
               "CRE_Name": creName,
               "Lead_Type_Id": leadtypeId,
               "Lead_Type_Name": leadtypeName,
+              "Location_Id": locationId,
             },
             "followup": {
               "Next_FollowUp_date": nextFollowUpDate,
@@ -1730,8 +1673,7 @@ class LeadsProvider extends ChangeNotifier {
 
       if (response != null && response.statusCode == 200) {
         log('Lead deleted successfully');
-        // _leadData.removeWhere((lead) => lead.toUserId == leadId);
-        notifyListeners();
+        removeLeadFromList(custId);
         await getSearchLeads(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1744,6 +1686,11 @@ class LeadsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+  }
+
+  void removeLeadFromList(String id) {
+    _leadData.removeWhere((lead) => lead.customerId.toString() == id);
+    notifyListeners();
   }
 
   Future<void> convertLead(BuildContext context, String customerId) async {

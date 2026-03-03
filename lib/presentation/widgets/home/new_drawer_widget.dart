@@ -1,31 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/image_upload_provider.dart';
-import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
-import 'package:vidyanexis/controller/models/custom_field_enquiry_for_model.dart'
-    as enq;
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
+import 'package:vidyanexis/controller/models/location_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/http/http_urls.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/custom_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../constants/enums.dart';
 
@@ -151,7 +141,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         creId: dropDownProvider.selectedcreUserId ?? 0,
         creName: leadProvider.creController.text,
         leadtypeId: dropDownProvider.selectedleadtypeUserId ?? 0,
-        leadtypeName: leadProvider.leadtypeController.text);
+        leadtypeName: leadProvider.leadtypeController.text,
+        locationId: dropDownProvider.selectedLocationId);
   }
 
   bool _validateForm(
@@ -357,6 +348,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         }
       }
       dropDownProvider.getUserDetails(context);
+      dropDownProvider.getLocations(context);
       print(leadProvider.loginUserName);
       leadProvider.searchUserController.text = leadProvider.loginUserName;
       dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
@@ -1068,6 +1060,24 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                               ),
                               const SizedBox(width: 8),
                               Expanded(
+                                child: CommonDropdown<int>(
+                                  hintText: 'Location',
+                                  items: dropDownProvider.locationList
+                                      .map((loc) => DropdownItem<int>(
+                                            id: loc.locationId,
+                                            name: loc.locationName,
+                                          ))
+                                      .toList(),
+                                  onItemSelected: (selectedId) {
+                                    dropDownProvider.selectedLocationId =
+                                        selectedId;
+                                  },
+                                  selectedValue:
+                                      dropDownProvider.selectedLocationId,
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
                                 child: CustomTextField(
                                   height: 54,
                                   controller: leadProvider.cityController,
@@ -1078,7 +1088,12 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           leadProvider.cityController.text),
                                 ),
                               ),
-                              const SizedBox(width: 8),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
                               Expanded(
                                 child: CommonDropdown<int>(
                                   hintText: 'District',
@@ -1113,12 +1128,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           : null,
                                 ),
                               ),
-                            ],
-                          ),
-                          const SizedBox(height: 8),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: CustomTextField(
                                   height: 54,

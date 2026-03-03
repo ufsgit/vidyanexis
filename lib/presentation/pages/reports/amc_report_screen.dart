@@ -37,7 +37,20 @@ class _AmcReportScreen extends State<AmcReportScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<AMCReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+
+      // Set default filter to "Today"
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // Index 1 is 'Today'
+      reportsProvider.formatDate();
+
+      reportsProvider.setTaskSearchCriteria(
+        '',
+        reportsProvider.formattedFromDate,
+        reportsProvider.formattedToDate,
+        '',
+        '',
+      );
+
       reportsProvider.getSearchAmcReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
@@ -246,6 +259,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                 'From Date',
                                 'To Date',
                                 'Product Name',
+                                'Category',
                                 'Amount',
                                 'Status',
                                 'Service'
@@ -260,6 +274,9 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   'From Date': formatDate(task.fromDate),
                                   'To Date': formatDate(task.toDate),
                                   'Product Name': task.productName,
+                                  'Category': task.categoryName.isNotEmpty
+                                      ? task.categoryName
+                                      : 'AMC',
                                   'Amount': task.amount.toString(),
                                   'Status': task.displayStatus,
                                   'Service': task.serviceName,
@@ -412,6 +429,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     'From Date',
                                     'To Date',
                                     'Product Name',
+                                    'Category',
                                     'Amount',
                                     'Status',
                                     'Service'
@@ -436,6 +454,9 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                       task.toDate.toString()))
                                               : '',
                                       'Product Name': task.productName,
+                                      'Category': task.categoryName.isNotEmpty
+                                          ? task.categoryName
+                                          : 'AMC',
                                       'Amount': task.amount.toString(),
                                       'Status': task.displayStatus,
                                       'Service': task.serviceName,
@@ -1121,10 +1142,39 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                    flex: 3,
-                                                    title: task.customerName,
-                                                    color: const Color(
-                                                        0xFF607185)),
+                                                  flex: 3,
+                                                  data: InkWell(
+                                                    onTap: () {
+                                                      context.push(
+                                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 12,
+                                                          vertical: 6),
+                                                      decoration: BoxDecoration(
+                                                        color: const Color(
+                                                            0xFFE9EDF1),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(50),
+                                                      ),
+                                                      child: Text(
+                                                        task.customerName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                            color: Color(
+                                                                0xFF607185),
+                                                            fontSize: 13),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
                                                 TableWidget(
                                                     flex: 4,
                                                     title: task.address1,
@@ -1296,6 +1346,11 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                         TableWidget(
                                             width: 130,
                                             title: 'Amount',
+                                            fontSize: 13,
+                                            color: Color(0xFF607185)),
+                                        TableWidget(
+                                            width: 150,
+                                            title: 'Category',
                                             fontSize: 13,
                                             color: Color(0xFF607185)),
                                         TableWidget(
@@ -1475,6 +1530,17 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                         horizontal: 8),
                                                     title:
                                                         "₹${double.parse(task.amount).toStringAsFixed(1)}"),
+                                                TableWidget(
+                                                    width: 150,
+                                                    fontSize: 13,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        vertical: 16,
+                                                        horizontal: 8),
+                                                    title: task.categoryName
+                                                            .isNotEmpty
+                                                        ? task.categoryName
+                                                        : 'AMC'),
                                                 TableWidget(
                                                   width: 150,
                                                   padding: const EdgeInsets

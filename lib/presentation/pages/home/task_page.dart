@@ -17,7 +17,7 @@ import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -36,6 +36,8 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/utils/status_utils.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
@@ -309,13 +311,27 @@ class _tasksPageReportState extends State<TaskPage> {
                                   children: [
                                     // Left side: Tasks title only
                                     if (!isMobile)
-                                      const Text(
-                                        'Tasks',
-                                        style: TextStyle(
-                                          fontSize: 24,
-                                          color: Color(0xFF152D70),
-                                          fontWeight: FontWeight.w600,
-                                        ),
+                                      Row(
+                                        children: [
+                                          if (Navigator.canPop(context)) ...[
+                                            IconButton(
+                                              icon: const Icon(Icons.arrow_back,
+                                                  color: Color(0xFF152D70)),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                          const Text(
+                                            'Tasks',
+                                            style: TextStyle(
+                                              fontSize: 24,
+                                              color: Color(0xFF152D70),
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                        ],
                                       ),
 
                                     // Right side: Search, Filter, and Export
@@ -580,8 +596,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       DropdownMenuItem<int>(
                                                         value: status.statusId,
                                                         child: Text(
-                                                          status.statusName ??
-                                                              '',
+                                                          StatusUtils
+                                                              .getDisplayStatus(
+                                                                  status.statusName ??
+                                                                      ''),
                                                           style:
                                                               const TextStyle(
                                                                   fontSize: 14),
@@ -604,15 +622,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ),
                                       ] +
                                       provider.followUpData
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.statusId,
-                                                    child: Text(
-                                                      status.statusName ?? '',
-                                                      style: const TextStyle(
-                                                          fontSize: 14),
-                                                    ),
-                                                  ))
+                                          .map((status) =>
+                                              DropdownMenuItem<int>(
+                                                value: status.statusId,
+                                                child: Text(
+                                                  StatusUtils.getDisplayStatus(
+                                                      status.statusName ?? ''),
+                                                  style: const TextStyle(
+                                                      fontSize: 14),
+                                                ),
+                                              ))
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
@@ -1005,10 +1024,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                   controller:
                                       _scrollController, // Add this line
 
-                                  shrinkWrap: true,
-                                  physics: AppStyles.isWebScreen(context)
-                                      ? const NeverScrollableScrollPhysics()
-                                      : const AlwaysScrollableScrollPhysics(),
+                                  shrinkWrap: false,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
                                   itemCount: reportsProvider.taskReport.length +
                                       (_isLoadingMore &&
                                               !AppStyles.isWebScreen(context)
@@ -1273,11 +1291,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                       BorderRadius
                                                                           .circular(
                                                                               30),
-                                                                  color: (task.colorCode ??
-                                                                          Colors
-                                                                              .black)
+                                                                  color: StatusUtils
+                                                                          .getTaskColor(task
+                                                                              .taskStatusId)
                                                                       .withAlpha(
-                                                                          20),
+                                                                          40),
                                                                 ),
                                                                 child: Center(
                                                                   child:
@@ -1289,15 +1307,17 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         vertical:
                                                                             2),
                                                                     child: Text(
-                                                                      task.taskStatusName,
+                                                                      StatusUtils
+                                                                          .getDisplayStatus(
+                                                                              task.taskStatusName),
                                                                       style: GoogleFonts
                                                                           .plusJakartaSans(
                                                                         fontSize:
                                                                             12,
                                                                         fontWeight:
                                                                             FontWeight.w500,
-                                                                        color: task.colorCode ??
-                                                                            Colors.black,
+                                                                        color: StatusUtils.getTaskTextColor(
+                                                                            task.taskStatusId),
                                                                       ),
                                                                     ),
                                                                   ),
@@ -1334,11 +1354,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                               if (!context
                                                                   .mounted)
                                                                 return;
-                                                              mobile = mobile
-                                                                  .replaceAll(
-                                                                      RegExp(
-                                                                          r'[^\d+]'),
-                                                                      '');
+                                                              mobile =
+                                                                  formatIndianPhoneNumber(
+                                                                      mobile);
                                                               if (mobile
                                                                   .isNotEmpty) {
                                                                 _showWhatsAppOptionsDialog(
@@ -1350,7 +1368,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                             context)
                                                                     ?.showSnackBar(const SnackBar(
                                                                         content:
-                                                                            Text('Phone number not found')));
+                                                                            Text('Invalid Indian mobile number')));
                                                               }
                                                             } catch (e) {
                                                               print(
@@ -1639,21 +1657,39 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       }
                                                     }
                                                   },
-                                                  child: Padding(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 4.0),
-                                                    child: Text(
-                                                      task.taskStatusName ?? '',
-                                                      overflow:
-                                                          TextOverflow.ellipsis,
-                                                      maxLines: 1,
-                                                      style: TextStyle(
-                                                        color: task.colorCode ??
-                                                            Colors.black,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 12,
+                                                  child: Container(
+                                                    height: 22,
+                                                    decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              30),
+                                                      color: StatusUtils
+                                                              .getTaskColor(task
+                                                                  .taskStatusId)
+                                                          .withAlpha(40),
+                                                    ),
+                                                    child: Center(
+                                                      child: Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 10,
+                                                                vertical: 2),
+                                                        child: Text(
+                                                          task.taskStatusName ??
+                                                              '',
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: StatusUtils
+                                                                .getTaskTextColor(
+                                                                    task.taskStatusId),
+                                                          ),
+                                                        ),
                                                       ),
                                                     ),
                                                   ),
@@ -3601,7 +3637,14 @@ class _tasksPageReportState extends State<TaskPage> {
     return mobile;
   }
 
-  void _showWhatsAppOptionsDialog(BuildContext context, String phone) {
+  void _showWhatsAppOptionsDialog(BuildContext context, String rawPhone) {
+    String phone = formatIndianPhoneNumber(rawPhone);
+    if (phone.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Invalid Indian mobile number')),
+      );
+      return;
+    }
     showDialog(
       context: context,
       builder: (BuildContext dialogContext) {
@@ -3613,8 +3656,7 @@ class _tasksPageReportState extends State<TaskPage> {
               onPressed: () async {
                 Navigator.of(dialogContext).pop();
                 // Try to open Normal WhatsApp
-                final Uri normalWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
+                final Uri normalWhatsappUri = Uri.parse('https://wa.me/$phone');
                 try {
                   if (await canLaunchUrl(normalWhatsappUri)) {
                     await launchUrl(normalWhatsappUri,
@@ -3645,9 +3687,8 @@ class _tasksPageReportState extends State<TaskPage> {
                 Navigator.of(dialogContext).pop();
                 // Try to open WhatsApp Business
                 final Uri businessWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
-                final Uri webWhatsapp =
-                    Uri.parse('https://api.whatsapp.com/send?phone=$phone');
+                    Uri.parse('whatsapp-business://send?phone=$phone');
+                final Uri webWhatsapp = Uri.parse('https://wa.me/$phone');
 
                 try {
                   // Try web WhatsApp which works for both

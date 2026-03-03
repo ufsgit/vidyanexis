@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/controller/models/location_model.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
 import 'package:vidyanexis/controller/models/checklist_category_model.dart';
 import 'package:vidyanexis/controller/models/checklist_item_model.dart';
@@ -178,6 +179,11 @@ class SettingsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController expenseTypeController = TextEditingController();
 
+  //location
+  final TextEditingController searchLocationController =
+      TextEditingController();
+  final TextEditingController locationController = TextEditingController();
+
   //Supplier
   final TextEditingController searchSupplierController =
       TextEditingController();
@@ -244,6 +250,9 @@ class SettingsProvider extends ChangeNotifier {
   List<TaskTypeModel> get taskType => _taskType;
   List<DepartmentModel> _departmentModel = [];
   List<DepartmentModel> get departmentModel => _departmentModel;
+  List<LocationModel> _locationModelList = [];
+  List<LocationModel> get locationModelList => _locationModelList;
+
   bool get allowAppLogin => _allowAppLogin;
   int _selectedUserTypeId = -1;
   int _selectedWorkingStatusId = -1;
@@ -1112,8 +1121,8 @@ class SettingsProvider extends ChangeNotifier {
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.addUnit,
           bodyData: {
-            "Enquiry_Source_Id": statusId,
-            "Enquiry_Source_Name": statusName
+            "Unit_Id": statusId,
+            "Unit_Name": statusName
           });
 
       if (response!.statusCode == 200) {
@@ -3952,5 +3961,118 @@ class SettingsProvider extends ChangeNotifier {
       );
     }
     return _taxSlabModel;
+  }
+
+  Future<void> searchLocation(String search, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getLocation}?Location_Name=$search');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        List<dynamic> locationList = [];
+
+        if (data is List) {
+          locationList = data;
+        } else if (data is Map) {
+          if (data['data'] is List) {
+            locationList = data['data'];
+          } else if (data['data'] != null && data['data'] is Map) {
+            // Handle cases where data['data'] might be a map containing the list
+          }
+        }
+
+        if (locationList.isNotEmpty) {
+          _locationModelList =
+              locationList.map((item) => LocationModel.fromJson(item)).toList();
+        } else {
+          _locationModelList = [];
+        }
+        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> saveLocation({
+    required BuildContext context,
+    required String locationId,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveLocation,
+          bodyData: {
+            "Location_Id": locationId,
+            "Location_Name": locationController.text
+          });
+
+      if (response != null && response.statusCode == 200) {
+        locationController.clear();
+        searchLocation('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Location saved successfully')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  Future<void> deleteLocation(BuildContext context, int locationId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.deleteLocation,
+          bodyData: {"Location_Id": locationId});
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Location_Id'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete a Location \n that is currently in use");
+        } else {
+          searchLocation('', context);
+          locationController.clear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Location deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+        notifyListeners();
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete Location')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      Loader.stopLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
   }
 }

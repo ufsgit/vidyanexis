@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -24,6 +24,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/utils/status_utils.dart';
 
 class TaskPageReportMobile extends StatefulWidget {
   const TaskPageReportMobile({super.key});
@@ -36,9 +37,13 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
 
+  bool isLoadingMore = false;
+  bool hasMoreData = true;
+
   @override
   void initState() {
     super.initState();
+    scrollController.addListener(_scrollListener);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
@@ -46,6 +51,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
           Provider.of<SidebarProvider>(context, listen: false);
 
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
+      hasMoreData = true;
       reportsProvider.getSearchTaskReport(context);
       searchProvider.stopSearch();
       reportsProvider.setFilter(false);
@@ -54,16 +60,51 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
       provider.getUserDetails(context);
       provider.getTaskType(context);
       provider.getFollowUpStatus(context, "3");
-
-      //search
-      // searchController.addListener(() {
-      //   reportsProvider.selectDateFilterOption(null);
-      //   reportsProvider.removeStatus();
-      //   String query = searchController.text;
-      //   print(query);
-      //   reportsProvider.getSearchCustomers(query, '', '', '', context);
-      // });
     });
+  }
+
+  void _refreshData() {
+    setState(() {
+      hasMoreData = true;
+    });
+    Provider.of<TaskReportProvider>(context, listen: false)
+        .getSearchTaskReport(context);
+  }
+
+  void _scrollListener() {
+    if (scrollController.position.pixels >=
+            scrollController.position.maxScrollExtent - 200 &&
+        !isLoadingMore &&
+        hasMoreData) {
+      loadMoreTasks();
+    }
+  }
+
+  Future<void> loadMoreTasks() async {
+    final reportsProvider =
+        Provider.of<TaskReportProvider>(context, listen: false);
+
+    setState(() {
+      isLoadingMore = true;
+    });
+
+    reportsProvider.nextPage();
+
+    bool isEmpty =
+        await reportsProvider.getSearchTaskReport(context, isLoadMore: true);
+    if (isEmpty) {
+      hasMoreData = false;
+    }
+
+    setState(() {
+      isLoadingMore = false;
+    });
+  }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
   }
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -124,7 +165,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
             '',
             '',
           );
-          reportsProvider.getSearchTaskReport(context);
+          _refreshData();
         },
         onSearch: (query) {
           // reportsProvider.selectDateFilterOption(null);
@@ -137,7 +178,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
             reportsProvider.AssignedTo,
             reportsProvider.TaskType,
           );
-          reportsProvider.getSearchTaskReport(context);
+          _refreshData();
         },
         searchController: searchController,
       ),
@@ -223,8 +264,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                       assignedTo,
                                       taskType,
                                     );
-                                    reportsProvider
-                                        .getSearchTaskReport(context);
+                                    _refreshData();
                                   },
                                   underline: Container(),
                                   isDense: true,
@@ -500,7 +540,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                   '',
                                   '',
                                 );
-                                reportsProvider.getSearchTaskReport(context);
+                                _refreshData();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
@@ -874,7 +914,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                   '',
                                   '',
                                 );
-                                reportsProvider.getSearchTaskReport(context);
+                                _refreshData();
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
@@ -892,6 +932,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                     ),
             Expanded(
               child: SingleChildScrollView(
+                controller: scrollController,
                 child: Column(
                   children: [
                     ListView.separated(
@@ -903,7 +944,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                       },
                       itemCount: reportsProvider.taskReport.length,
                       shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
+                      physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
                         final task = reportsProvider.taskReport[index];
 
@@ -1024,7 +1065,8 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                                       horizontal: 10,
                                                       vertical: 2),
                                               child: Text(
-                                                task.taskStatusName,
+                                                StatusUtils.getDisplayStatus(
+                                                    task.taskStatusName),
                                                 style:
                                                     GoogleFonts.plusJakartaSans(
                                                         fontSize: 12,
@@ -1140,7 +1182,14 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           ),
                         );
                       },
-                    )
+                    ),
+                    if (isLoadingMore)
+                      const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20),
+                        child: Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      ),
                   ],
                 ),
               ),
@@ -1282,7 +1331,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                             assignedTo,
                             taskType,
                           );
-                          reportsProvider.getSearchTaskReport(context);
+                          _refreshData();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -1325,7 +1374,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                             assignedTo,
                             taskType,
                           );
-                          reportsProvider.getSearchTaskReport(context);
+                          _refreshData();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withAlpha(25),

@@ -107,9 +107,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
         '',
       );
       leadProvider.getSearchLeads(context);
-      leadProvider.scrollController.addListener(() {
-        leadProvider.scrollListener(context);
-      });
+      leadProvider.initializeScroll(context);
     });
   }
 
@@ -825,8 +823,17 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           .scrollController, // Keep the original controller for pagination
                       physics:
                           const AlwaysScrollableScrollPhysics(), // Enable pull to refresh
-                      itemCount: leadProvider.leadData.length,
+                      itemCount: leadProvider.leadData.length +
+                          (leadProvider.isLoadingMore ? 1 : 0),
                       itemBuilder: (context, index) {
+                        if (index == leadProvider.leadData.length) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16),
+                            child: Center(
+                              child: CircularProgressIndicator(),
+                            ),
+                          );
+                        }
                         var lead = leadProvider.leadData[index];
                         return Column(
                           children: [

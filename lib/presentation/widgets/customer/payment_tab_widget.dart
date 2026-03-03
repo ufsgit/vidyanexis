@@ -70,7 +70,7 @@ class _PaymentTabWidgetState extends State<PaymentTabWidget> {
             ),
       floatingActionButton:
           Provider.of<SettingsProvider>(context, listen: false)
-                      .menuIsSaveMap[72] ==
+                      .menuIsSaveMap[81] ==
                   1
               ? CustomElevatedButton(
                   prefixIcon: Icons.add,

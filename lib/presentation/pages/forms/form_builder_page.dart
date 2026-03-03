@@ -159,7 +159,7 @@ class _FormBuilderPageState extends State<FormBuilderPage> {
                       },
                     ),
                     cells: [
-                      DataCell(Text(provider.fields[i].name)),
+                      DataCell(Text(provider.fields[i].label)),
                       DataCell(Text(
                           provider.fields[i].type.name[0].toUpperCase() +
                               provider.fields[i].type.name.substring(1))),

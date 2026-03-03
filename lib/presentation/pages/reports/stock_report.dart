@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class StockReport extends StatefulWidget {
   static const String route = '/stock-report';
@@ -742,133 +743,15 @@ class _StockReportState extends State<StockReport> {
                             itemCount: reportsProvider.taskReport.length,
                             itemBuilder: (context, index) {
                               var task = reportsProvider.taskReport[index];
-                              return InkWell(
-                                onTap: () {},
-                                child: Container(
-                                  width: MediaQuery.sizeOf(context).width,
-                                  decoration: BoxDecoration(
-                                      color: AppColors.whiteColor),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 16, vertical: 12),
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
-                                          children: [
-                                            Container(
-                                              height: 42,
-                                              width: 3,
-                                              decoration: BoxDecoration(
-                                                color: AppColors.primaryBlue,
-                                                borderRadius:
-                                                    BorderRadius.circular(16),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    task.itemName,
-                                                    style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    task.categoryName,
-                                                    style: const TextStyle(
-                                                      fontSize: 14,
-                                                      color: Colors.grey,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                            Container(
-                                              height: 22,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                color: AppColors.primaryBlue
-                                                    .withAlpha(25),
-                                              ),
-                                              child: Center(
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 2),
-                                                  child: Text(
-                                                    task.unitName,
-                                                    style: TextStyle(
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color:
-                                                          AppColors.primaryBlue,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Text(
-                                          'Unit Price: 	${task.unitPrice}',
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Row(
-                                          children: [
-                                            Text(
-                                              'Purchase Rate: ${task.purchaseRate}',
-                                              style: const TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.grey),
-                                            ),
-                                            const Spacer(),
-                                            Text(
-                                              'CGST: ${task.cgst}',
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Text(
-                                              'SGST: ${task.sgst}',
-                                              style: const TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 8),
-                                        Align(
-                                          alignment: Alignment.topRight,
-                                          child: Text(
-                                            'Quantity: ${task.quantity}',
-                                            style: const TextStyle(
-                                                fontSize: 14,
-                                                color: Colors.black),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
+                              return ReportListItem(
+                                title: task.itemName,
+                                subtitle: task.categoryName,
+                                status: task.unitName,
+                                statusColor: AppColors.primaryBlue,
+                                description:
+                                    'Unit Price: ₹${task.unitPrice} | Purchase Rate: ₹${task.purchaseRate}\nCGST: ${task.cgst}% | SGST: ${task.sgst}%',
+                                bottomLeftIcon: Icons.inventory_2_outlined,
+                                bottomLeftText: 'Qty: ${task.quantity}',
                               );
                             },
                           ),

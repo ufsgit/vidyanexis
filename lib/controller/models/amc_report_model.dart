@@ -26,6 +26,8 @@ class AmcReportModeld {
   final String totalDurationName;
   final int totalDurationId;
   final int totalDurationNo;
+  final String categoryName;
+  final int categoryId;
   List<MaintenanceDate> maintenanceDate;
 
   AmcReportModeld({
@@ -54,6 +56,8 @@ class AmcReportModeld {
     required this.totalDurationId,
     required this.totalDurationNo,
     required this.totalDurationName,
+    required this.categoryId,
+    required this.categoryName,
     required this.maintenanceDate,
   });
 
@@ -86,6 +90,8 @@ class AmcReportModeld {
         totalDurationId: int.tryParse(json['Duration_Id'].toString()) ?? 0,
         totalDurationNo: int.tryParse(json['Duration_No'].toString()) ?? 0,
         totalDurationName: json['Duration_Name']?.toString() ?? '',
+        categoryId: int.tryParse(json['Category_Id'].toString()) ?? 0,
+        categoryName: json['Category_Name']?.toString() ?? '',
         maintenanceDate: (json['interval_details'] is List)
             ? (json['interval_details'] as List)
                 .map((item) => MaintenanceDate.fromJson(item))
@@ -113,6 +119,8 @@ class AmcReportModeld {
         'Contact_Number': mobile,
         'Address1': address1,
         "Interval_Date": intervalDate,
+        "Category_Id": categoryId,
+        "Category_Name": categoryName,
       };
   String get displayStatus {
     if (amcStatusName == '1') {

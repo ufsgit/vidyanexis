@@ -164,7 +164,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         const Tab(text: "CheckList Management"),
       if (settingsprovider.menuIsViewMap[70] == 1)
         const Tab(text: "Payment Schedule"),
-      if (settingsprovider.menuIsViewMap[72] == 1 &&
+      if (settingsprovider.menuIsViewMap[81] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Payment"),
       if (settingsprovider.menuIsViewMap[71] == 1 &&
@@ -515,19 +515,35 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       onCancel: () =>
                                           Navigator.of(context).pop(),
                                       onConfirm: () async {
-                                        await leadProvider.deleteLead(
-                                            context, widget.customerId);
-                                        if (context.mounted) {
-                                          Navigator.of(context)
-                                              .pop(); // Close dialog
-                                          Navigator.of(context)
-                                              .pop(); // Go back from details
+                                        // Optimistic removal from lists
+                                        leadProvider.removeLeadFromList(
+                                            widget.customerId);
+                                        customerProvider.removeCustomerFromList(
+                                            widget.customerId);
 
-                                          // Refresh lists
-                                          leadProvider.getSearchLeads(context);
-                                          customerProvider
-                                              .getSearchCustomers(context);
+                                        // Close dialog
+                                        Navigator.of(context).pop();
+
+                                        // Go back from details
+                                        if (Navigator.of(context).canPop()) {
+                                          Navigator.of(context).pop();
+                                        } else {
+                                          // Fallback for embedded views (Web logic)
+                                          sideprovider.replaceWidget(true, '');
+                                          sideprovider.replaceWidgetCustomer(
+                                              true, '');
                                         }
+
+                                        // Perform actions in background
+                                        if (sideprovider.name == 'Lead /') {
+                                          leadProvider.deleteLead(
+                                              context, widget.customerId);
+                                        } else {
+                                          customerProvider.deleteCustomer(
+                                              context, widget.customerId);
+                                        }
+                                        customerProvider
+                                            .getSearchCustomers(context);
                                       },
                                     );
                                   },
@@ -750,7 +766,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     ),
                                   ),
                                 ),
-                              if (settingsprovider.menuIsSaveMap[72] == 1 &&
+                              if (settingsprovider.menuIsSaveMap[81] == 1 &&
                                   _isControllerInitialized &&
                                   _tabs[_tabController.index].text == "Payment")
                                 Padding(
@@ -1251,7 +1267,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   label: "Firestation",
                                                   value: customerDetailsProvider
                                                       .leadDetails![0]
-                                                      .firestationName),
+                                                      .firestationName.toString()),
                                               const SizedBox(height: 2),
                                               const Text(
                                                 'Location',
@@ -1721,7 +1737,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             "Firestation",
                                                                         value: customerDetailsProvider
                                                                             .leadDetails![0]
-                                                                            .firestationName),
+                                                                            .firestationName
+                                                                            .toString()),
                                                                     const SizedBox(
                                                                         height:
                                                                             2),
@@ -2214,7 +2231,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   value: customerDetailsProvider
                                                                       .leadDetails![
                                                                           0]
-                                                                      .firestationName),
+                                                                      .firestationName
+                                                                      .toString()),
                                                               const SizedBox(
                                                                   height: 2),
                                                               const Text(
@@ -3449,7 +3467,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       widget.customerId),
                                             // Payment Tab (New)
                                             if (settingsprovider
-                                                    .menuIsViewMap[72] ==
+                                                    .menuIsViewMap[81] ==
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 PaymentTabWidget(
@@ -3675,12 +3693,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         _buildHeaderCell('#', width: 50.0),
-                        _buildHeaderCell('Service Name', flex: 3),
-                        _buildHeaderCell('Product Name', flex: 3),
+                        _buildHeaderCell('Service Name', flex: 2),
+                        _buildHeaderCell('Product Name', flex: 2),
+                        _buildHeaderCell('Category', flex: 2),
                         _buildHeaderCell('Amount', flex: 2),
                         _buildHeaderCell('From Date', flex: 2),
                         _buildHeaderCell('To Date', flex: 2),
-                        _buildHeaderCell('Options', flex: 1),
+                        _buildHeaderCell('Options', flex: 2),
                       ],
                     ),
                   ),
@@ -3717,8 +3736,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                 _buildDataCell((index + 1).toString(),
                                     width: 50.0),
                                 _buildDataCell(amc.serviceName,
-                                    flex: 3, isBold: true),
-                                _buildDataCell(amc.productName, flex: 3),
+                                    flex: 2, isBold: true),
+                                _buildDataCell(amc.productName, flex: 2),
+                                _buildDataCell(
+                                    amc.categoryName.isNotEmpty
+                                        ? amc.categoryName
+                                        : 'AMC',
+                                    flex: 2),
                                 _buildDataCell("₹${double.parse(amc.amount)}",
                                     flex: 2),
                                 _buildDataCell(
@@ -3730,90 +3754,81 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         .format(DateTime.parse(amc.toDate)),
                                     flex: 2),
                                 _buildWidgetCell(
-                                  flex: 1,
-                                  child: PopupMenuButton<String>(
-                                    icon: const Icon(Icons.more_vert,
-                                        size: 20, color: Colors.grey),
-                                    onSelected: (value) {
-                                      if (value == 'edit') {
-                                        customerDetailsProvider.customerId =
-                                            widget.customerId;
-                                        customerDetailsProvider.setAmcDropDown(
-                                            amc.amcStatusId, amc.amcStatusName);
+                                  flex: 2,
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      IconButton(
+                                        tooltip: 'Edit',
+                                        icon: const Icon(Icons.edit,
+                                            size: 20, color: Colors.blue),
+                                        onPressed: () {
+                                          customerDetailsProvider.customerId =
+                                              widget.customerId;
+                                          customerDetailsProvider
+                                              .setAmcDropDown(amc.amcStatusId,
+                                                  amc.amcStatusName);
 
-                                        showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AmcCreationWidget(
-                                                amcId: amc.amcId.toString(),
-                                                amcAmountController: amc.amount,
-                                                amcDescriptionController:
-                                                    amc.description,
-                                                amcProductNameController:
-                                                    amc.productName,
-                                                amcServiceController:
-                                                    amc.serviceName,
-                                                fromDateController:
-                                                    DateFormat('dd-MM-yyyy')
-                                                        .format(DateTime.parse(
-                                                            amc.fromDate
-                                                                .toString())),
-                                                toDateController: DateFormat(
-                                                        'dd-MM-yyyy')
-                                                    .format(DateTime.parse(
-                                                        amc.toDate.toString())),
-                                                customerId: widget.customerId,
-                                                amc: amc,
-                                                isEdit: true);
-                                          },
-                                        );
-                                      } else if (value == 'delete') {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return ConfirmationDialog(
-                                              title: 'Delete Periodic Service',
-                                              content:
-                                                  'Are you sure you want to delete this service?',
-                                              onCancel: () =>
-                                                  Navigator.of(context).pop(),
-                                              onConfirm: () {
-                                                Navigator.of(context).pop();
-                                                customerDetailsProvider
-                                                    .deleteAMC(
-                                                        amc.amcId.toString(),
-                                                        widget.customerId,
-                                                        context);
-                                              },
-                                            );
-                                          },
-                                        );
-                                      }
-                                    },
-                                    itemBuilder: (BuildContext context) =>
-                                        <PopupMenuEntry<String>>[
-                                      const PopupMenuItem<String>(
-                                        value: 'edit',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.edit,
-                                                size: 18, color: Colors.blue),
-                                            SizedBox(width: 8),
-                                            Text('Edit'),
-                                          ],
-                                        ),
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AmcCreationWidget(
+                                                  amcId: amc.amcId.toString(),
+                                                  amcAmountController:
+                                                      amc.amount,
+                                                  amcDescriptionController:
+                                                      amc.description,
+                                                  amcProductNameController:
+                                                      amc.productName,
+                                                  amcServiceController:
+                                                      amc.serviceName,
+                                                  fromDateController:
+                                                      DateFormat('dd-MM-yyyy')
+                                                          .format(
+                                                              DateTime.parse(amc
+                                                                  .fromDate
+                                                                  .toString())),
+                                                  toDateController:
+                                                      DateFormat('dd-MM-yyyy')
+                                                          .format(
+                                                              DateTime.parse(amc
+                                                                  .toDate
+                                                                  .toString())),
+                                                  customerId: widget.customerId,
+                                                  amc: amc,
+                                                  isEdit: true);
+                                            },
+                                          );
+                                        },
                                       ),
-                                      const PopupMenuItem<String>(
-                                        value: 'delete',
-                                        child: Row(
-                                          children: [
-                                            Icon(Icons.delete,
-                                                size: 18, color: Colors.red),
-                                            SizedBox(width: 8),
-                                            Text('Delete'),
-                                          ],
-                                        ),
+                                      IconButton(
+                                        tooltip: 'Delete',
+                                        icon: const Icon(Icons.delete,
+                                            size: 20, color: Colors.red),
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return ConfirmationDialog(
+                                                title:
+                                                    'Delete Periodic Service',
+                                                content:
+                                                    'Are you sure you want to delete this service?',
+                                                onCancel: () =>
+                                                    Navigator.of(context).pop(),
+                                                onConfirm: () {
+                                                  Navigator.of(context).pop();
+                                                  customerDetailsProvider
+                                                      .deleteAMC(
+                                                          amc.amcId.toString(),
+                                                          widget.customerId,
+                                                          context);
+                                                },
+                                              );
+                                            },
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),

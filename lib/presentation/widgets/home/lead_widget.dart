@@ -18,6 +18,7 @@ import 'package:vidyanexis/presentation/widgets/home/lead_details_page_phone.dar
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 
 class LeadCard extends StatelessWidget {
   final SearchLeadModel lead;
@@ -239,53 +240,23 @@ class LeadCard extends StatelessWidget {
               children: [
                 // ------------------------------------------------------------------
                 // NEW UPDATED WHATSAPP LOGIC — PRIORITY:
-                // 1. WhatsApp Business
-                // 2. Normal WhatsApp
-                // 3. WhatsApp Web
+                // formatIndianNumber Safe Implementation
                 // ------------------------------------------------------------------
                 CustomActionButton(
                   imageColor: AppColors.textGreen,
                   onTap: () async {
-                    String phone =
-                        lead.contactNumber.replaceAll(RegExp(r'[^\d+]'), '');
+                    String formatted =
+                        formatIndianPhoneNumber(lead.contactNumber.toString());
 
-                    // Add +91 if missing
-                    if (!phone.startsWith('+')) {
-                      phone = '+91$phone';
-                    }
-
-                    Uri waBusiness =
-                        Uri.parse("whatsapp-business://send?phone=$phone");
-                    Uri waNormal = Uri.parse("whatsapp://send?phone=$phone");
-                    Uri waWeb =
-                        Uri.parse("https://api.whatsapp.com/send?phone=$phone");
-
-                    try {
-                      // 1️⃣ USER has WhatsApp Business → open Business first
-                      if (await canLaunchUrl(waBusiness)) {
-                        await launchUrl(waBusiness,
-                            mode: LaunchMode.externalApplication);
-                        return;
-                      }
-
-                      // 2️⃣ USER has normal WhatsApp → open it
-                      if (await canLaunchUrl(waNormal)) {
-                        await launchUrl(waNormal,
-                            mode: LaunchMode.externalApplication);
-                        return;
-                      }
-
-                      // 3️⃣ Open WhatsApp Web if no app installed
-                      await launchUrl(waWeb,
+                    if (formatted.isNotEmpty) {
+                      final url = 'https://wa.me/$formatted';
+                      await launchUrl(Uri.parse(url),
                           mode: LaunchMode.externalApplication);
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Unable to open WhatsApp"),
-                          ),
-                        );
-                      }
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Invalid Indian mobile number')),
+                      );
                     }
                   },
                   icon: Icons.chat_bubble_outline,
@@ -409,98 +380,6 @@ class LeadCard extends StatelessWidget {
           ),
         if (isExpanded) const SizedBox(height: 12),
       ],
-    );
-  }
-
-  void _showWhatsAppOptionsDialog(BuildContext context, String phone) {
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Choose WhatsApp'),
-          content: const Text('Select which WhatsApp to open:'),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                // Try to open Normal WhatsApp
-                final Uri normalWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
-                try {
-                  if (await canLaunchUrl(normalWhatsappUri)) {
-                    await launchUrl(normalWhatsappUri,
-                        mode: LaunchMode.externalApplication);
-                  } else {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Normal WhatsApp is not installed'),
-                        ),
-                      );
-                    }
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Could not open Normal WhatsApp'),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: const Text('Normal WhatsApp'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                // Try to open WhatsApp Business
-                final Uri businessWhatsappUri =
-                    Uri.parse('whatsapp://send?phone=$phone');
-                // For WhatsApp Business, the scheme might be different on some platforms
-                // On Android, it's typically: intent://send?phone=$phone#Intent;package=com.whatsapp.w4b;end
-                // But url_launcher handles this differently, so we'll use the web API as fallback
-                final Uri webWhatsapp =
-                    Uri.parse('https://api.whatsapp.com/send?phone=$phone');
-
-                try {
-                  // Try web WhatsApp which works for both
-                  if (await canLaunchUrl(webWhatsapp)) {
-                    await launchUrl(webWhatsapp,
-                        mode: LaunchMode.externalApplication);
-                  } else if (await canLaunchUrl(businessWhatsappUri)) {
-                    await launchUrl(businessWhatsappUri,
-                        mode: LaunchMode.externalApplication);
-                  } else {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('WhatsApp Business is not installed'),
-                        ),
-                      );
-                    }
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Could not open WhatsApp Business'),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: const Text('WhatsApp Business'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

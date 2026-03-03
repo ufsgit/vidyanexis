@@ -11,19 +11,19 @@ class HttpUrls {
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
-  static String baseUrl = 'https://papscoapi.trackbox.net.in/';
+  // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
   //static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 
 //dev
-  //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
   //endpoints
   static String savePayment = "service/Save_payment";
-  
+
   static String getPaymentByCustomer = "service/Get_Payment_By_Customer";
   static String deletePayment = "service/Delete_payment";
   static String loginCheck = "Login/Login_Check";
@@ -34,6 +34,7 @@ class HttpUrls {
   static String timeTrack = "followup/Time_track_reports";
   static String followupByuser = "followup/Get_followup";
   static String deleteLead = "lead/Delete_lead";
+  static String deleteCustomer = "lead/Delete_Customer";
   static String convertLead = "followup/Convert_lead";
   static String enquirySource = "lead/Search_Enquiry_Source";
   // static String getAllFollowUpStatus = "status/Search_status";
@@ -85,8 +86,8 @@ class HttpUrls {
   static String addUser = "user_details/Save_user_details";
   static String searchWorkingStatus =
       "working_status/Search_working_status?working_status_Name";
-  static String addUnit = "lead/Add_Category";
-  static String deleteUnit = "lead/Delete_Category";
+  static String addUnit = "item/Save_Unit";
+  static String deleteUnit = "item/Delete_Unit";
   static String searchUnit = "item/Get_All_unit";
 
   static String searchUserType = "user_type/Search_user_type?user_type_Name";
@@ -238,6 +239,9 @@ class HttpUrls {
       "attendance/Save_Multiple_Attendance_Details";
   static String getUserLocationDetails =
       "user_details/Get_All_User_Location_Details";
+  static String getLocation = "lead/get_location";
+  static String saveLocation = "lead/save_location";
+  static String deleteLocation = "lead/delete_location";
   static String getTaskInfoDashBoard = "task/Get_Task_Info_Dashboard";
   static String saveBranch = "branch/save_branch";
   static String deleteBranch = "branch/delete_branch";
