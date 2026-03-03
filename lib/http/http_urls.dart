@@ -113,6 +113,8 @@ class HttpUrls {
   static String followUpSummary = "followup/Dashboard_FollowUp_Summary";
   static String taskAllocationSummary = "lead/Task_Allocation_Summary";
   static String dashboardCount = "lead/Get_Dashboard_Count";
+  static String getLeadDashboard = "lead/Get_Lead_Dashboard";
+  static String searchLeadDashboard = "lead/Search_lead_Dashboard";
   static String workSummary = "lead/Customer_Work_Summary";
   static String searchDocumentType = "settings/Search_document_type";
   static String saveImage = "lead/Save_Image";
