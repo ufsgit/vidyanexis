@@ -3567,8 +3567,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       DateTime nextDate = DateTime(newYear, newMonth, newDay);
 
-      // Stop if we've reached or passed the expiration date
-      if (!nextDate.isBefore(expDate)) break;
+      // Stop if we've passed the expiration date (include expiry date as a service period)
+      if (nextDate.isAfter(expDate)) break;
 
       _maintenanceDates.add(MaintenanceDate(
         // id: (maintenanceId++).toString(),
