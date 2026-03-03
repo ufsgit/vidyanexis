@@ -48,6 +48,7 @@ class TaskPage extends StatefulWidget {
 }
 
 class _tasksPageReportState extends State<TaskPage> {
+  static const double rowHeight = 60.0;
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
   DropDownProvider provider = DropDownProvider();
@@ -1454,6 +1455,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 10),
+                                          constraints: const BoxConstraints(
+                                            minHeight:
+                                                rowHeight < 45 ? 45 : rowHeight,
+                                          ),
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
                                                 ? Colors.white

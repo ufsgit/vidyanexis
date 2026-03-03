@@ -675,7 +675,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                       ),
                     ),
                     const SizedBox(height: 8.0),
-                    if (customerDetailsProvider.maintenanceDates.length > 2)
+                    if (customerDetailsProvider.maintenanceDates.length > 1)
                       Container(
                         padding: const EdgeInsets.all(12.0),
                         decoration: BoxDecoration(
@@ -687,7 +687,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
                           physics: const NeverScrollableScrollPhysics(),
                           itemCount:
                               customerDetailsProvider.maintenanceDates.length -
-                                  2,
+                                  1,
                           itemBuilder: (context, index) {
                             final dateString = customerDetailsProvider
                                 .maintenanceDates[index + 1];
