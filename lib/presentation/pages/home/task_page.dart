@@ -172,20 +172,6 @@ class _tasksPageReportState extends State<TaskPage> {
 
     final reportsProvider = Provider.of<TaskPageProvider>(context);
 
-    // Calculate dynamic heights for table
-    final screenHeight = MediaQuery.of(context).size.height;
-    const headerHeight = 60.0;
-    const searchBarHeight = 70.0;
-    const paginationHeight = 60.0;
-    const tableHeaderHeight = 50.0;
-
-    final availableHeight = screenHeight -
-        headerHeight -
-        searchBarHeight -
-        paginationHeight -
-        tableHeaderHeight -
-        40;
-    final rowHeight = availableHeight / 20;
     final provider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
@@ -1466,7 +1452,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                         onTap: () {},
                                         hoverColor: const Color(0xFFF8FAFC),
                                         child: Container(
-                                          height: rowHeight,
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10),
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
                                                 ? Colors.white
