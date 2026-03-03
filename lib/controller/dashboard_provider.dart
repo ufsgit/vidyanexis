@@ -23,6 +23,9 @@ class DashboardProvider extends ChangeNotifier {
   String? selectedeLeadProgressValue;
   String? selectedeTaskAllocationValue;
   String? selectedDashboardCountValue;
+
+  /// keyword for lead dashboard count (New_Leads, Missed_Leads, Pending_Followups, Transferred_Leads etc)
+  String? selectedLeadCountKeyword;
   String? selectedWorkSummaryValue;
   String? selectedLeadEnquiryReportValue;
   List<LeadCoversionChartModel> conversionData = [];
@@ -33,6 +36,10 @@ class DashboardProvider extends ChangeNotifier {
   List<TaskAllocationSummaryModel> taskAllocationSummaryData = [];
   List<TaskAllocationStatusModel> taskAllocationSummaryDataStatus = [];
   List<DashBoardCountModel> dashBoardCountModel = [];
+  List<DashBoardCountModel> leadDashboardCountData = [];
+
+  /// map from keyword string to count returned by Get_Lead_Dashboard
+  final Map<String, int> leadCountMap = {};
   List<SearchLeadModel> searchCustomer = [];
   List<dynamic> taskCount = [];
   List<dynamic> customersCount = [];
@@ -295,7 +302,11 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getDashBoardCount({bool isFilter = false, String? filterValue}) async {
+  /// Generic dashboard count (work summary) - also supports an optional
+  /// keyword parameter that will be forwarded to the server. The backend may
+  /// ignore the value if it only understands lead-related keywords.
+  getDashBoardCount(
+      {bool isFilter = false, String? filterValue, String? keyword}) async {
     try {
       notifyListeners();
       selectedDashboardCountValue = filterValue;
@@ -314,13 +325,19 @@ class DashboardProvider extends ChangeNotifier {
         default:
           fromDate = DateTime.now();
       }
+
+      final body = {
+        "Fromdate": fromDate,
+        "Todate": DateTime.now(),
+        "Is_Date": isFilter ? "1" : "0"
+      };
+      if (keyword != null && keyword.isNotEmpty) {
+        body["Keyword"] = keyword;
+      }
+
       await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.dashboardCount,
-          bodyData: {
-            "Fromdate": fromDate,
-            "Todate": DateTime.now(),
-            "Is_Date": isFilter ? "1" : "0"
-          }).then((response) {
+              endPoint: HttpUrls.dashboardCount, bodyData: body)
+          .then((response) {
         print(response);
         if (response.statusCode == 200) {
           List<dynamic> data = response.data;
@@ -454,6 +471,43 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
+  /// Fetch the lead-specific dashboard counts.
+  /// The backend returns an array with a single object containing all keyword counts
+  /// like: [{"New_Leads": 1, "Missed_Leads": 117, ...}]
+  Future<void> getLeadDashboardCount() async {
+    try {
+      notifyListeners();
+
+      final body = {
+        "Fromdate": _formattedFromDate,
+        "Todate": _formattedToDate,
+        "Is_Date": _formattedFromDate.isNotEmpty ? "1" : "0",
+        "User": _selectedUser
+      };
+
+      await HttpRequest.httpGetRequest(
+              endPoint: HttpUrls.getLeadDashboard, bodyData: body)
+          .then((response) {
+        if (response.statusCode == 200) {
+          List<dynamic> data = response.data;
+          if (data.isNotEmpty && data.first is Map) {
+            Map<String, dynamic> counts = data.first;
+            leadCountMap.clear();
+            counts.forEach((key, value) {
+              if (value is int) {
+                leadCountMap[key] = value;
+              }
+            });
+          }
+        }
+      });
+    } catch (e) {
+      print(e);
+    } finally {
+      notifyListeners();
+    }
+  }
+
   Future<void> getLeadData({String? filterValue}) async {
     try {
       if (filterValue != null) {
@@ -465,6 +519,8 @@ class DashboardProvider extends ChangeNotifier {
         getLeadConversionChartData(),
         getLeadProgressionReport(),
         getLeadEnquiryReport(),
+        // load full list for overview
+        getLeadDashboardCount(),
       ]);
     } finally {
       isDashBoardLoading = false;
@@ -490,6 +546,8 @@ class DashboardProvider extends ChangeNotifier {
     print(_selectedUser.toString());
     notifyListeners(); // Notify listeners about the change
   }
+
+  // updateAllLeadKeywords removed as getLeadDashboardCount fetch all counts in one go
 
   void selectDateFilterOption(int? index) {
     if (index == null) {

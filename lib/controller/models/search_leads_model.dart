@@ -239,23 +239,23 @@ class SearchLeadModel {
       departmentName: parseString(json['Department_Name']),
       referenceName: parseString(json['Reference_Name']),
       rowNo: parseInt(json['RowNo']),
-      appointmentDate: json["Appointment_Date"] ?? "",
+      appointmentDate: json["Appointment_Date"]?.toString() ?? "",
       appointment: int.tryParse(json["Appointment"]?.toString() ?? "0") ?? 0,
       siteVisit: int.tryParse(json["Site_Visit"]?.toString() ?? "0") ?? 0,
-      siteVisitDate: json["Site_Visit_Date"] ?? "",
-      quoteProvidedDate: json["Quote_Provided_Date"] ?? "",
+      siteVisitDate: json["Site_Visit_Date"]?.toString() ?? "",
+      quoteProvidedDate: json["Quote_Provided_Date"]?.toString() ?? "",
       quoteProvidedToCustomer:
           int.tryParse(json["Quote_Provided_To_Customer"]?.toString() ?? "0") ??
               0,
-      revisitDate: json["Revisit_Date"] ?? "",
+      revisitDate: json["Revisit_Date"]?.toString() ?? "",
       revisitDone: int.tryParse(json["Revisit_Done"]?.toString() ?? "0") ?? 0,
       leadTypeId: int.tryParse(json["Lead_Type_Id"]?.toString() ?? "0") ?? 0,
-      leadTypeName: json["Lead_Type_Name"],
-      age: json["Age"],
-      peName: json["PE_Name"],
-      peId: json["PE_Id"],
-      creId: json["CRE_Id"],
-      creName: json["CRE_Name"],
+      leadTypeName: json["Lead_Type_Name"]?.toString(),
+      age: json["Age"]?.toString(),
+      peName: json["PE_Name"]?.toString(),
+      peId: json["PE_Id"]?.toString(),
+      creId: json["CRE_Id"]?.toString(),
+      creName: json["CRE_Name"]?.toString(),
       audioFiles: (json['Audio_Files'] != null && json['Audio_Files'] is List)
           ? (json['Audio_Files'] as List<dynamic>)
               .map((item) => AudioFileLead.fromJson(item))
@@ -533,9 +533,9 @@ class AudioFileLead {
   // Factory constructor with null checks
   factory AudioFileLead.fromJson(Map<String, dynamic> json) {
     return AudioFileLead(
-      filePath: json['File_Path'] ?? 0,
-      fileName: json['File_Name'] ?? '',
-      fileType: json['File_Type'] ?? '',
+      filePath: json['File_Path']?.toString() ?? '',
+      fileName: json['File_Name']?.toString() ?? '',
+      fileType: json['File_Type']?.toString() ?? '',
     );
   }
   Map<String, dynamic> toJson() => {

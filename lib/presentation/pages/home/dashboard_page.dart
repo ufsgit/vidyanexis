@@ -24,6 +24,7 @@ import 'package:vidyanexis/presentation/widgets/home/dashboard_task_count_card.d
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/amc_notification_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/payment_reminder_tab.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/dashboard_count_tab.dart';
 
 class DashBoardPage extends StatefulWidget {
   const DashBoardPage({super.key});
@@ -210,6 +211,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
           Builder(builder: (context) {
             final allowedTabs = <int>[
               if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
+                6, // Dashboard count
+              if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
                 0, // Leads Overview
               if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0')
                 1, // Work Overview
@@ -233,10 +236,26 @@ class _DashBoardPageState extends State<DashBoardPage> {
             final activeTab = allowedTabs[safeIndex];
 
             switch (activeTab) {
+              case 6:
+                return AnimatedAlign(
+                  duration: const Duration(milliseconds: 600),
+                  alignment: safeIndex == allowedTabs.indexOf(6)
+                      ? const Alignment(0, 0)
+                      : const Alignment(-100, 0),
+                  child: Column(
+                    children: [
+                      filterWidget(dashBoardProvider: dashBoardProvider),
+                      const SizedBox(height: 20),
+                      DashboardCountTab(
+                        dashBoardProvider: dashBoardProvider,
+                      ),
+                    ],
+                  ),
+                );
               case 0:
                 return AnimatedAlign(
                   duration: const Duration(milliseconds: 600),
-                  alignment: safeIndex == 0
+                  alignment: safeIndex == allowedTabs.indexOf(0)
                       ? const Alignment(0, 0)
                       : const Alignment(-100, 0),
                   child: Column(
@@ -414,6 +433,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           print(dashBoardProvider.formattedFromDate);
                           print(dashBoardProvider.formattedToDate);
                           dashBoardProvider.getLeadData();
+                          dashBoardProvider.getWorkData();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -437,6 +457,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
                           Navigator.pop(context);
                           dashBoardProvider.selectDateFilterOption(null);
                           dashBoardProvider.getLeadData();
+                          dashBoardProvider.getWorkData();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
@@ -627,6 +648,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
             ElevatedButton(
               onPressed: () {
                 dashBoardProvider.selectDateFilterOption(null);
+                // clear keyword filter as well
+                dashBoardProvider.selectedLeadCountKeyword = null;
                 if (userType != "1") {
                   dashBoardProvider.setUserFilterStatus(userId);
                 } else {
@@ -649,6 +672,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
       ),
     );
   }
+
 
   Widget _buildTaskReports(
       BuildContext context, DashboardProvider dashBoardProvider) {

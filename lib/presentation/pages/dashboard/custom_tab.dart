@@ -206,6 +206,8 @@ class CustomTab extends StatelessWidget {
 
     final tabOptions = [
       if (settingsProvider.menuIsViewMap[49].toString() != '0')
+        'Dashboard count',
+      if (settingsProvider.menuIsViewMap[49].toString() != '0')
         'Leads Overview',
       if (settingsProvider.menuIsViewMap[50].toString() != '0') 'Work Overview',
       if (settingsProvider.menuIsViewMap[76].toString() != '0')
@@ -314,6 +316,8 @@ class CustomTab extends StatelessWidget {
 
   String _getShortTabName(String fullName) {
     switch (fullName) {
+      case 'Dashboard count':
+        return 'Dashboard';
       case 'Leads Overview':
         return 'Leads';
       case 'Work Overview':

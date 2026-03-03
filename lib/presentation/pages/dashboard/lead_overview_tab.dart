@@ -32,6 +32,28 @@ class LeadsOverViewTab extends StatefulWidget {
 }
 
 class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
+  Color _colorForTitle(String title) {
+    final t = title.toLowerCase();
+    switch (t) {
+      case 'new_leads':
+        return const Color(0xFFBAC5D0);
+      case 'followup_leads':
+      case 'pending_followups':
+      case 'pending_followup':
+        return const Color(0xFF90A1D6);
+      case 'closed_leads':
+        return const Color(0xFF9CC9BF);
+      case 'total_called':
+        return const Color(0xFF8699C9);
+      case 'transferred_leads':
+        return const Color(0xFF9ABDE2);
+      case 'missed_leads':
+        return const Color(0xFFDEB0B9);
+      default:
+        return Colors.grey.shade300;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -39,27 +61,131 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
 
   @override
   Widget build(BuildContext context) {
+    // show counts grid at top
+    final leadCounts = widget.dashBoardProvider.leadDashboardCountData;
+    Widget countsGrid = const SizedBox.shrink();
+    if (leadCounts.isNotEmpty) {
+      countsGrid = Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(18),
+        ),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            int crossAxisCount = 2;
+            if (constraints.maxWidth > 800) {
+              crossAxisCount = 4;
+            } else if (constraints.maxWidth > 600) {
+              crossAxisCount = 3;
+            }
+            return GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: leadCounts.length,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: crossAxisCount,
+                crossAxisSpacing: 16,
+                mainAxisSpacing: 16,
+                childAspectRatio: 2.0, // wider rectangles similar to dashboard
+              ),
+              itemBuilder: (context, index) {
+                final item = leadCounts[index];
+                final color = _colorForTitle(item.title);
+                return Container(
+                  decoration: BoxDecoration(
+                    color: color,
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: Text(
+                              item.title.replaceAll('_', ' ').split(' ').map((w) => w.isNotEmpty ?
+                                  w[0].toUpperCase() + w.substring(1) : w).join(' '),
+                              style: const TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 8),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.5),
+                              shape: BoxShape.circle,
+                            ),
+                            padding: const EdgeInsets.all(4),
+                            child: const Icon(Icons.question_mark,
+                                size: 12, color: Colors.black87),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        item.dataCount.toString(),
+                        style: const TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const Spacer(),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          const Text(
+                            "View Leads",
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(8),
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Colors.black12,
+                                  blurRadius: 4,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.all(6),
+                            child: Icon(Icons.analytics_outlined,
+                                size: 20, color: Colors.grey.shade700),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      );
+    }
     return Wrap(
       runSpacing: 10,
       spacing: 10,
       children: [
+        countsGrid,
         LeadGraphBarChart(
           leadData: widget.leadConversionData,
-        ),
-        ConversionGraphBarChart(
-          leadData: widget.leadConversionData,
-        ),
-        LeadDistributionPieChart(
-          leadData: widget.leadConversionData,
-        ),
-        LeadEnquiryForReportCard(
-          dashboardProvider: widget.dashBoardProvider,
-        ),
-
-        WeeklyReportCard(
-          isLeadOverView: true,
-          data: widget.pieData,
-          dashboardProvider: widget.dashBoardProvider,
         ),
         // Container(
         //   padding: const EdgeInsets.all(10),
