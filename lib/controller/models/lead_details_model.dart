@@ -117,7 +117,8 @@ class LeadDetails {
   final String engineerMobile;
   final String engineerCity;
   final String engineerDistrict;
-  final String firestationName;
+  final int firestationName;
+  final int? locationId; // Added locationId
   final List<AudioFileLead> audioFiles;
 
   LeadDetails({
@@ -237,6 +238,7 @@ class LeadDetails {
     required this.engineerCity,
     required this.engineerDistrict,
     required this.firestationName,
+    this.locationId, // Added locationId
   });
 
   factory LeadDetails.fromJson(Map<String, dynamic> json) {
@@ -370,7 +372,8 @@ class LeadDetails {
       engineerMobile: parseString(json['Engineer_Mobile']),
       engineerCity: parseString(json['Engineer_City']),
       engineerDistrict: parseString(json['Engineer_District']),
-      firestationName: parseString(json['Firestation']),
+      firestationName: parseInt(json['Firestation']),
+      locationId: parseInt(json['Location_Id']), // Added locationId
       audioFiles: (json['Audio_Files'] != null && json['Audio_Files'] is List)
           ? (json['Audio_Files'] as List<dynamic>)
               .map((item) => AudioFileLead.fromJson(item))
@@ -496,6 +499,7 @@ class LeadDetails {
       'Engineer_City': engineerCity,
       'Engineer_District': engineerDistrict,
       'Firestation': firestationName,
+      'Location_Id': locationId, // Added locationId
     };
   }
 
@@ -604,11 +608,13 @@ class LeadDetails {
     String? engineerMobile,
     String? engineerCity,
     String? engineerDistrict,
-    String? firestationName,
+    int? firestationName,
+    int? locationId, // Added locationId
     List<AudioFileLead>? audioFiles,
   }) {
     return LeadDetails(
       audioFiles: audioFiles ?? this.audioFiles,
+      locationId: locationId ?? this.locationId, // Added locationId
 
       customerId: customerId ?? this.customerId,
       customerName: customerName ?? this.customerName,

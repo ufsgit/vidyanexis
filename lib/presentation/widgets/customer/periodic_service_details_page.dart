@@ -6,9 +6,10 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
+import 'package:vidyanexis/controller/amc_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
 
-class PeriodicServiceDetailsPage extends StatelessWidget {
+class PeriodicServiceDetailsPage extends StatefulWidget {
   final String customerId;
   final AmcReportModeld amcReportModeld;
   bool showEdit;
@@ -18,6 +19,27 @@ class PeriodicServiceDetailsPage extends StatelessWidget {
     this.showEdit = true,
     required this.amcReportModeld,
   });
+
+  @override
+  State<PeriodicServiceDetailsPage> createState() =>
+      _PeriodicServiceDetailsPageState();
+}
+
+class _PeriodicServiceDetailsPageState
+    extends State<PeriodicServiceDetailsPage> {
+  final TextEditingController _noteController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _noteController.text = widget.amcReportModeld.description;
+  }
+
+  @override
+  void dispose() {
+    _noteController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,15 +119,17 @@ class PeriodicServiceDetailsPage extends StatelessWidget {
                                   )),
                               const SizedBox(width: 12),
                               Text(
-                                amcReportModeld.amcStatusName,
+                                widget.amcReportModeld.amcStatusName,
                                 style: TextStyle(
-                                    color: amcReportModeld.amcStatusName ==
-                                            "Completed"
-                                        ? Colors.green
-                                        : amcReportModeld.amcStatusName ==
-                                                "Pending"
-                                            ? Colors.orange
-                                            : Colors.red),
+                                    color:
+                                        widget.amcReportModeld.amcStatusName ==
+                                                "Completed"
+                                            ? Colors.green
+                                            : widget.amcReportModeld
+                                                        .amcStatusName ==
+                                                    "Pending"
+                                                ? Colors.orange
+                                                : Colors.red),
                               ),
                             ],
                           ),
@@ -114,8 +138,8 @@ class PeriodicServiceDetailsPage extends StatelessWidget {
                             colorUser: AppColors.grey,
                             label: 'From Date',
                             value: DateFormat('MMM dd, yyyy').format(
-                                DateTime.parse(
-                                    amcReportModeld.fromDate.toString())),
+                                DateTime.parse(widget.amcReportModeld.fromDate
+                                    .toString())),
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
@@ -123,7 +147,7 @@ class PeriodicServiceDetailsPage extends StatelessWidget {
                             label: 'To Date',
                             value: DateFormat('MMM dd, yyyy').format(
                                 DateTime.parse(
-                                    amcReportModeld.toDate.toString())),
+                                    widget.amcReportModeld.toDate.toString())),
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
@@ -132,43 +156,86 @@ class PeriodicServiceDetailsPage extends StatelessWidget {
                             // value: customerDetailsProvider
                             //     .serviceDetails[0].createDate
                             //     .toString(),
-                            value: amcReportModeld.customerName,
+                            value: widget.amcReportModeld.customerName,
                           ),
                           const SizedBox(height: 16),
-                          TaskLabelValue(
-                            colorUser: AppColors.grey,
-                            label: 'Description',
-                            value: amcReportModeld.description,
-                          ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
                             label: 'Created by',
-                            value: amcReportModeld.createdByName,
+                            value: widget.amcReportModeld.createdByName,
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
                             label: 'Product Name',
-                            value: amcReportModeld.productName,
+                            value: widget.amcReportModeld.productName,
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
                             label: 'Service Name',
-                            value: amcReportModeld.serviceName,
+                            value: widget.amcReportModeld.serviceName,
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
                             label: 'Category',
-                            value: amcReportModeld.categoryName,
+                            value: widget.amcReportModeld.categoryName,
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
                             label: 'Amount',
-                            value: amcReportModeld.amount,
+                            value: widget.amcReportModeld.amount,
+                          ),
+                          const SizedBox(height: 16),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Description',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.textGrey4,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              TextField(
+                                controller: _noteController,
+                                maxLines: 3,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  color: AppColors.textBlack,
+                                ),
+                                decoration: InputDecoration(
+                                  hintText: 'Add a description here...',
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    fontSize: 14,
+                                    color: AppColors.textGrey3,
+                                  ),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: AppColors.textGrey2,
+                                    ),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: AppColors.textGrey2,
+                                    ),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide(
+                                      color: AppColors.appViolet,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ],
                       ),
@@ -180,6 +247,52 @@ class PeriodicServiceDetailsPage extends StatelessWidget {
           )
         ],
       ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            Navigator.pop(context);
+          },
+          child: Text(
+            'Cancel',
+            style: GoogleFonts.plusJakartaSans(
+              color: AppColors.textGrey3,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            customerDetailsProvider.saveAmc(
+              description: _noteController.text,
+              fromDate: widget.amcReportModeld.fromDate,
+              toDate: widget.amcReportModeld.toDate,
+              serviceName: widget.amcReportModeld.serviceName,
+              productName: widget.amcReportModeld.productName,
+              amount: widget.amcReportModeld.amount,
+              cusId: widget.amcReportModeld.customerId.toString(),
+              amcId: widget.amcReportModeld.amcId.toString(),
+              context: context,
+              onSuccess: () {
+                Provider.of<AMCReportProvider>(context, listen: false)
+                    .getSearchAmcReport(context);
+              },
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppColors.appViolet,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+          ),
+          child: Text(
+            'Save Description',
+            style: GoogleFonts.plusJakartaSans(
+              color: Colors.white,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+      ],
     );
   }
 

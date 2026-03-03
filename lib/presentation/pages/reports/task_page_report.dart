@@ -76,8 +76,6 @@ class _tasksPageReportState extends State<TaskPageReport> {
         paginationHeight -
         tableHeaderHeight -
         paddingSafety;
-    final rowHeight = availableHeight / 20;
-
     return Scaffold(
       key: _scaffoldKey,
       appBar: !AppStyles.isWebScreen(context)
@@ -1188,196 +1186,208 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                       color: const Color(0xFFEFF2F5),
                                       borderRadius: BorderRadius.circular(8),
                                     ),
-                                    child: const Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                    child: Row(
                                       children: [
                                         SizedBox(
-                                          width: 80,
-                                          child: Padding(
-                                            padding: EdgeInsets.symmetric(
-                                                vertical: 12.0,
-                                                horizontal: 25.0),
-                                            child: Text('No.',
-                                                style: TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 14,
-                                                    color: Color(0xFF607185))),
-                                          ),
-                                        ),
-                                        TableWidget(
-                                            flex: 2,
-                                            title: 'Customer Name',
-                                            fontSize: 14,
-                                            color: Color(0xFF607185)),
-                                        // TableWidget(
-                                        //     flex: 1,
-                                        //     title: 'Mobile',
-                                        //     color: Color(0xFF607185)),
-                                        // TableWidget(
-                                        //     flex: 2,
-                                        //     title: 'Address',
-                                        //     color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Task',
-                                            fontSize: 14,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Staff',
-                                            fontSize: 14,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 3,
-                                            title: 'Description',
-                                            fontSize: 14,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Date',
-                                            fontSize: 14,
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
-                                            flex: 1,
-                                            title: 'Status',
-                                            fontSize: 14,
-                                            color: Color(0xFF607185)),
+                                            width: 60,
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 12.0),
+                                                child: Text('No.',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
                                         SizedBox(
-                                            width: 110,
-                                            child: TableWidget(
-                                                title: 'Details',
-                                                fontSize: 14,
-                                                color: Color(0xFF607185))),
+                                            width: 180,
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Customer Name',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        SizedBox(
+                                            width: 160,
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Task',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        SizedBox(
+                                            width: 140,
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Staff',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        Expanded(
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Description',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        SizedBox(
+                                            width: 130,
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Date',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        SizedBox(
+                                            width: 100,
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Status',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        SizedBox(
+                                            width: 100,
+                                            child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Details',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
                                       ],
                                     ),
                                   ),
                                   // Data Rows
-                                  // Expanded(
-                                  //   child:
-                                  ListView.builder(
-                                    shrinkWrap:
-                                        true, // To avoid scrolling issues when inside a parent widget
-                                    physics:
-                                        const AlwaysScrollableScrollPhysics(),
-                                    itemCount:
+                                  Expanded(
+                                      child: SingleChildScrollView(
+                                          child: Column(
+                                    children: List.generate(
                                         reportsProvider.taskReport.length > 20
                                             ? 20
                                             : reportsProvider.taskReport
                                                 .length, // Max 20 rows per page
-                                    itemBuilder: (context, index) {
+                                        (index) {
                                       var task =
                                           reportsProvider.taskReport[index];
-                                      return SizedBox(
-                                          height: rowHeight,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              // context.go(
-                                              //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color: index % 2 == 0
-                                                    ? Colors.white
-                                                    : const Color(0xFFF6F7F9),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
+                                      return GestureDetector(
+                                        onTap: () {
+                                          // context.go(
+                                          //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 10, horizontal: 12),
+                                          decoration: BoxDecoration(
+                                            color: index % 2 == 0
+                                                ? Colors.white
+                                                : const Color(0xFFF6F7F9),
+                                            border: Border(
+                                              bottom: BorderSide(
+                                                  color: Colors.grey.shade300),
+                                            ),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                  width: 60,
+                                                  child: Text(
+                                                      (index + 1).toString())),
+                                              SizedBox(
+                                                width: 180,
+                                                child: InkWell(
+                                                  onTap: () {
+                                                    context.push(
+                                                        '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                  },
+                                                  child: Text(
+                                                    task.customerName,
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: Colors.blue),
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                ),
                                               ),
-                                              // Alternate row colors
-                                              child: Row(
-                                                // mainAxisAlignment: MainAxisAlignment.start,
-                                                children: [
-                                                  // Padding(
-                                                  //   padding: const EdgeInsets.symmetric(
-                                                  //       vertical: 12.0, horizontal: 25.0),
-                                                  //   child: Text(task.customerId.toString(),
-                                                  //       style: const TextStyle(
-                                                  //         fontWeight: FontWeight.bold,
-                                                  //       )),
-                                                  // ),
-                                                  SizedBox(
-                                                    width: 80,
-                                                    child: Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          vertical: 12.0,
-                                                          horizontal: 25.0),
-                                                      child: Text(
-                                                          (index + 1)
-                                                              .toString(),
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 12,
-                                                          )),
-                                                    ),
-                                                  ),
-                                                  // TableWidget(title: task.orderNo),
-                                                  TableWidget(
-                                                    flex: 2,
-                                                    data: Align(
-                                                      alignment:
-                                                          Alignment.centerLeft,
-                                                      child: InkWell(
-                                                        onTap: () {
-                                                          context.push(
-                                                              '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                        },
-                                                        child: Text(
-                                                          task.customerName,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: Colors.blue,
-                                                          ),
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  // TableWidget(
-                                                  //     flex: 1, title: task.mobile),
-                                                  // TableWidget(
-                                                  //     flex: 2, title: task.address1),
-                                                  TableWidget(
-                                                      flex: 1,
-                                                      fontSize: 12,
-                                                      title: task.taskTypeName),
-                                                  TableWidget(
-                                                      flex: 1,
-                                                      fontSize: 12,
-                                                      title: task.toUserName),
-                                                  TableWidget(
-                                                      flex: 3,
-                                                      fontSize: 12,
-                                                      title: task.description),
-                                                  TableWidget(
-                                                      flex: 1,
-                                                      fontSize: 12,
-                                                      title: (task.entryDate
-                                                              .isNotEmpty)
-                                                          ? DateFormat(
-                                                                  'dd MMM yyyy')
-                                                              .format(DateTime
-                                                                  .parse(task
-                                                                      .entryDate))
-                                                          : ''),
-                                                  TableWidget(
-                                                    flex: 1,
-                                                    data: Container(
+                                              SizedBox(
+                                                  width: 160,
+                                                  child: Text(task.taskTypeName,
+                                                      overflow: TextOverflow
+                                                          .ellipsis)),
+                                              SizedBox(
+                                                  width: 140,
+                                                  child: Text(task.toUserName,
+                                                      overflow: TextOverflow
+                                                          .ellipsis)),
+                                              Expanded(
+                                                child: Text(
+                                                  task.description,
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 130,
+                                                child: Text((task
+                                                        .entryDate.isNotEmpty)
+                                                    ? DateFormat('dd MMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            task.entryDate))
+                                                    : ''),
+                                              ),
+                                              SizedBox(
+                                                width: 100,
+                                                child: Center(
+                                                  child: SizedBox(
+                                                    height: 28,
+                                                    child: Container(
                                                       padding: task
                                                               .taskStatusName
                                                               .isNotEmpty
                                                           ? const EdgeInsets
                                                               .symmetric(
                                                               horizontal: 8,
-                                                              vertical: 2)
+                                                              vertical: 4)
                                                           : const EdgeInsets
                                                               .all(0),
                                                       decoration: BoxDecoration(
@@ -1392,93 +1402,86 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                                 Colors.black45,
                                                             width: 0.1),
                                                       ),
-                                                      child: Text(
-                                                        task.taskStatusName,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: TextStyle(
-                                                          color: StatusUtils
-                                                              .getTaskTextColor(
-                                                                  task.taskStatusId),
-                                                          fontSize: 12,
+                                                      child: Center(
+                                                        child: Text(
+                                                          task.taskStatusName,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          maxLines: 1,
+                                                          style: TextStyle(
+                                                              color: StatusUtils
+                                                                  .getTaskTextColor(
+                                                                      task.taskStatusId),
+                                                              fontSize: 12),
                                                         ),
                                                       ),
                                                     ),
                                                   ),
-                                                  // Expanded(
-                                                  // child:
-                                                  SizedBox(
-                                                    width: 110,
-                                                    child: Center(
-                                                      child: SizedBox(
-                                                        height: 32,
-                                                        child: ElevatedButton(
-                                                          style: ElevatedButton
-                                                              .styleFrom(
-                                                            backgroundColor:
-                                                                AppColors
-                                                                    .primaryBlue,
-                                                            foregroundColor:
-                                                                Colors.white,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        16,
-                                                                    vertical:
-                                                                        6),
-                                                            minimumSize:
-                                                                const Size(
-                                                                    80, 32),
-                                                            shape:
-                                                                RoundedRectangleBorder(
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 100,
+                                                child: Center(
+                                                  child: SizedBox(
+                                                    height: 32,
+                                                    child: ElevatedButton(
+                                                      style: ElevatedButton.styleFrom(
+                                                          backgroundColor:
+                                                              AppColors
+                                                                  .primaryBlue,
+                                                          foregroundColor: Colors
+                                                              .white,
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      16,
+                                                                  vertical: 6),
+                                                          minimumSize:
+                                                              const Size(
+                                                                  80, 32),
+                                                          shape: RoundedRectangleBorder(
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
-                                                                          4),
-                                                            ),
-                                                          ),
-                                                          onPressed: () async {
-                                                            String taskId = task
-                                                                .taskMasterId
-                                                                .toString();
-                                                            String customerId =
-                                                                task.customerId
-                                                                    .toString();
-                                                            customerDetailsProvider
-                                                                .getTaskDetails(
-                                                                    taskId,
-                                                                    context);
-
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return TaskDetailsWidget(
+                                                                          4))),
+                                                      onPressed: () async {
+                                                        String taskId = task
+                                                            .taskMasterId
+                                                            .toString();
+                                                        String customerId = task
+                                                            .customerId
+                                                            .toString();
+                                                        customerDetailsProvider
+                                                            .getTaskDetails(
+                                                                taskId,
+                                                                context);
+                                                        showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return TaskDetailsWidget(
                                                                   taskId:
                                                                       taskId,
                                                                   customerId:
                                                                       customerId,
                                                                   showEdit:
-                                                                      false,
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          child: const Text(
-                                                              'Details'),
-                                                        ),
-                                                      ),
+                                                                      false);
+                                                            });
+                                                      },
+                                                      child:
+                                                          const Text('Details'),
                                                     ),
                                                   ),
-                                                ],
+                                                ),
                                               ),
-                                            ),
-                                          ));
-                                    },
-                                  ),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                  ))),
                                 ],
                               ),
                             ),
@@ -1497,22 +1500,22 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           padding: const EdgeInsets.all(8.0),
                           child: Column(
                             children: [
-                              // Expanded(
-                              //   child:
-                              ListView.builder(
-                                shrinkWrap:
-                                    true, // To avoid scrolling issues when inside a parent widget
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount:
+                              // Data Rows
+                              Expanded(
+                                  child: SingleChildScrollView(
+                                      child: Column(
+                                children: List.generate(
                                     reportsProvider.taskReport.length > 20
                                         ? 20
                                         : reportsProvider.taskReport
                                             .length, // Max 20 rows per page
-                                itemBuilder: (context, index) {
+                                    (index) {
                                   var task = reportsProvider.taskReport[index];
                                   return GestureDetector(
                                     onTap: () {},
                                     child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10),
                                       decoration: BoxDecoration(
                                         color: index % 2 == 0
                                             ? Colors.white
@@ -1559,10 +1562,27 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                               title: task.toUserName),
                                           Row(
                                             children: [
-                                              TableWidget(
-                                                  flex: 1,
-                                                  // width: 150,
-                                                  title: task.description),
+                                              Expanded(
+                                                flex: 1,
+                                                child: Padding(
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 12.0,
+                                                      horizontal: 16.0),
+                                                  child: Text(
+                                                    task.description,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    softWrap: false,
+                                                    style: const TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Color(0xFF172230),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
                                             ],
                                           ),
                                           TableWidget(
@@ -1575,11 +1595,14 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                           TableWidget(
                                             width: 150,
                                             data: Container(
+                                              height:
+                                                  28, // Enforce fixed height
                                               padding: task
                                                       .taskStatusName.isNotEmpty
                                                   ? const EdgeInsets.symmetric(
                                                       horizontal: 8,
-                                                      vertical: 2)
+                                                      vertical:
+                                                          4) // Corrected padding
                                                   : const EdgeInsets.all(0),
                                               decoration: BoxDecoration(
                                                 color: StatusUtils.getTaskColor(
@@ -1590,15 +1613,18 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                     color: Colors.black45,
                                                     width: 0.1),
                                               ),
-                                              child: Text(
-                                                task.taskStatusName,
-                                                overflow: TextOverflow.ellipsis,
-                                                maxLines: 1,
-                                                style: TextStyle(
-                                                  color: StatusUtils
-                                                      .getTaskTextColor(
-                                                          task.taskStatusId),
-                                                  fontSize: 12,
+                                              child: Center(
+                                                child: Text(
+                                                  task.taskStatusName,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                  style: TextStyle(
+                                                    color: StatusUtils
+                                                        .getTaskTextColor(
+                                                            task.taskStatusId),
+                                                    fontSize: 12,
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -1607,8 +1633,8 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                       ),
                                     ),
                                   );
-                                },
-                              ),
+                                }),
+                              ))),
                               // ),
                             ],
                           ),

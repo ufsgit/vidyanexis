@@ -487,6 +487,7 @@ class LeadsProvider extends ChangeNotifier {
     dropDownProvider.selectedEnquirySourceId = null;
     dropDownProvider.selectedStatusId = null;
     dropDownProvider.selectedFollowUPId = null;
+    dropDownProvider.selectedLocationId = null;
     settingsProvider.selectedBranchId = null;
     settingsProvider.setSelectedDepartmentId(0);
 
@@ -1081,6 +1082,7 @@ class LeadsProvider extends ChangeNotifier {
     required String creName,
     required int leadtypeId,
     required String leadtypeName,
+    int? locationId,
   }) async {
     try {
       Loader.showLoader(context);
@@ -1257,6 +1259,7 @@ class LeadsProvider extends ChangeNotifier {
               "CRE_Name": creName,
               "Lead_Type_Id": leadtypeId,
               "Lead_Type_Name": leadtypeName,
+              "Location_Id": locationId,
             },
             "followup": {
               "Next_FollowUp_date": nextFollowUpDate,

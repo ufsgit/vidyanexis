@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
@@ -53,12 +54,19 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
             children: [
               _buildHeader(context, provider),
               const SizedBox(height: 16),
-              _buildFilters(context, provider, isSmallScreen),
-              const SizedBox(height: 16),
-              _buildSummaryCard(provider, isSmallScreen),
-              const SizedBox(height: 16),
               Expanded(
-                child: _buildExpenseTable(provider, isSmallScreen),
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildFilters(context, provider, isSmallScreen),
+                      const SizedBox(height: 16),
+                      _buildSummaryCard(provider, isSmallScreen),
+                      const SizedBox(height: 16),
+                      _buildExpenseTable(provider, isSmallScreen),
+                    ],
+                  ),
+                ),
               ),
             ],
           ),
@@ -537,6 +545,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
     if (isSmallScreen) {
       return ListView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
         itemCount: provider.expenseModelList.length,
         padding: const EdgeInsets.only(bottom: 24),
         itemBuilder: (context, index) {
@@ -555,6 +565,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
         borderRadius: BorderRadius.circular(16),
         child: SingleChildScrollView(
           scrollDirection: Axis.vertical,
+          physics: const NeverScrollableScrollPhysics(),
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
@@ -620,8 +631,18 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                     icon: const Icon(Icons.delete_outline,
                         color: Colors.red, size: 20),
                     onPressed: () {
-                      provider.deleteExpense(
-                          context, item.expenseManagementId ?? 0);
+                      showConfirmationDialog(
+                        context: context,
+                        title: 'Delete Expense',
+                        content:
+                            'Are you sure you want to delete this expense?',
+                        onCancel: () => Navigator.of(context).pop(),
+                        onConfirm: () async {
+                          Navigator.of(context).pop();
+                          provider.deleteExpense(
+                              context, item.expenseManagementId ?? 0);
+                        },
+                      );
                     },
                   )),
                 ]);
@@ -677,8 +698,17 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   visualDensity: VisualDensity.compact,
                   icon: const Icon(Icons.delete_outline,
                       color: Colors.red, size: 20),
-                  onPressed: () => provider.deleteExpense(
-                      context, item.expenseManagementId ?? 0),
+                  onPressed: () => showConfirmationDialog(
+                    context: context,
+                    title: 'Delete Expense',
+                    content: 'Are you sure you want to delete this expense?',
+                    onCancel: () => Navigator.of(context).pop(),
+                    onConfirm: () async {
+                      Navigator.of(context).pop();
+                      provider.deleteExpense(
+                          context, item.expenseManagementId ?? 0);
+                    },
+                  ),
                 ),
               ],
             ),

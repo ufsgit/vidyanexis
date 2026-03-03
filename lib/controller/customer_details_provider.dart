@@ -1847,7 +1847,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       required String amount,
       required String cusId,
       required String amcId,
-      required BuildContext context}) async {
+      required BuildContext context,
+      VoidCallback? onSuccess}) async {
     print(description);
     print(customerId);
     // print(_selectedAMCStatus.toString());
@@ -1894,6 +1895,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
         log('Success');
         getAmc(cusId, '0', context);
         clearAmcControllers();
+        if (onSuccess != null) {
+          onSuccess();
+        }
         Navigator.pop(context);
 
         Loader.stopLoader(context);
@@ -3563,8 +3567,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       DateTime nextDate = DateTime(newYear, newMonth, newDay);
 
-      // Stop if we've reached or passed the expiration date
-      if (!nextDate.isBefore(expDate)) break;
+      // Stop if we've passed the expiration date (include expiry date as a service period)
+      if (nextDate.isAfter(expDate)) break;
 
       _maintenanceDates.add(MaintenanceDate(
         // id: (maintenanceId++).toString(),

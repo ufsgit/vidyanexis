@@ -1187,7 +1187,7 @@ class StockUseProvider extends ChangeNotifier {
             'User_Id': userId,
             'Description': suDescriptionController.text,
             "Tax_amount": suTaxAmountController.text,
-            // 'stock_use_details': stockUseItems.map((e) => e.toJson()).toList(),
+            'stock_use_details': stockUseItems.map((e) => e.toJson()).toList(),
           });
 
       if (response!.statusCode == 200) {

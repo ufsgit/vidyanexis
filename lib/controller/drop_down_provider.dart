@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_status_model.dart';
 import 'package:vidyanexis/controller/models/interval_model.dart';
+import 'package:vidyanexis/controller/models/location_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/models/task_type_model.dart';
@@ -27,6 +28,7 @@ class DropDownProvider extends ChangeNotifier {
   List<TaskTypeModel> _taskType = [];
   List<AMCStatusModel> _amcStatus = [];
   List<DocumentTypeModel> _documentType = [];
+  List<LocationModel> _locationList = [];
 
   List<Enquirysourcemodel> get enquiryData => _enquiryData;
   List<EnquiryForModel> get enquiryForList => _enquiryForList;
@@ -37,6 +39,7 @@ class DropDownProvider extends ChangeNotifier {
   List<TaskTypeModel> get taskType => _taskType;
   List<DocumentTypeModel> get documentType => _documentType;
   List<AMCStatusModel> get amcStatus => _amcStatus;
+  List<LocationModel> get locationList => _locationList;
   // List<Enquirysourcemodel> filteredEnquiryData = []; // New filtered list
   List<EnquiryForModel> filteredEnquiryForData = []; // New filtered list
 
@@ -58,6 +61,13 @@ class DropDownProvider extends ChangeNotifier {
   List<DurationModel> get amcDuration => _amcDuration;
   List<IntervalModel> _amcInterval = [];
   List<IntervalModel> get amcInterval => _amcInterval;
+
+  int? _selectedLocationId;
+  int? get selectedLocationId => _selectedLocationId;
+  set selectedLocationId(int? value) {
+    _selectedLocationId = value;
+    notifyListeners();
+  }
 
   // Method to set source category ID and filter enquiry sources
   void setSourceCategoryId(int? categoryId) {
@@ -846,6 +856,33 @@ class DropDownProvider extends ChangeNotifier {
         if (data != null) {
           _documentType = (data as List<dynamic>)
               .map((item) => DocumentTypeModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  void getLocations(BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getLocation}?Location_Name=');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          _locationList = (data as List<dynamic>)
+              .map((item) => LocationModel.fromJson(item))
               .toList();
           notifyListeners();
         }

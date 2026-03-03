@@ -285,4 +285,37 @@ class AMCReportProvider extends ChangeNotifier {
       print('Exception occurred: $e');
     }
   }
+
+  updateAmcStatusApi(int amcId, int statusId, BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveAmcDetails,
+        bodyData: {
+          "AMC_Id": amcId,
+          "AMC_Status_Id": statusId,
+          "Update_By": userId,
+        },
+      );
+
+      if (response != null && response.statusCode == 200) {
+        Loader.stopLoader(context);
+        getSearchAmcReport(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Status Updated Successfully')),
+        );
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update status')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred: $e');
+    }
+  }
 }
