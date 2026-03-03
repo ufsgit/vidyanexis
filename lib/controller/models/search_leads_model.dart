@@ -84,6 +84,11 @@ class SearchLeadModel {
   String? peId;
   String? creId;
   String? creName;
+  String? location;
+  String? locations;
+  int? locationId;
+  String? locationName;
+
   SearchLeadModel({
     required this.customerId,
     required this.customerName,
@@ -163,6 +168,10 @@ class SearchLeadModel {
     this.peId,
     this.creId,
     this.creName,
+    this.location,
+    this.locations,
+    this.locationId,
+    this.locationName,
     required this.totalProjectCost,
   });
 
@@ -256,6 +265,10 @@ class SearchLeadModel {
       peId: json["PE_Id"],
       creId: json["CRE_Id"],
       creName: json["CRE_Name"],
+      location: parseString(json["location"]),
+      locations: parseString(json["locations"]),
+      locationId: parseInt(json["Location_Id"]),
+      locationName: parseString(json["Location_Name"]),
       audioFiles: (json['Audio_Files'] != null && json['Audio_Files'] is List)
           ? (json['Audio_Files'] as List<dynamic>)
               .map((item) => AudioFileLead.fromJson(item))
@@ -344,6 +357,10 @@ class SearchLeadModel {
       "PE_Id": peId,
       "CRE_Id": creId,
       "CRE_Name": creName,
+      "location": location,
+      "locations": locations,
+      "Location_Id": locationId,
+      "Location_Name": locationName,
       "Total_Project_Cost": totalProjectCost,
     };
   }
@@ -426,6 +443,10 @@ class SearchLeadModel {
     String? peId,
     String? creId,
     String? creName,
+    String? location,
+    String? locations,
+    int? locationId,
+    String? locationName,
     String? totalProjectCost,
     List<AudioFileLead>? audioFiles,
   }) {
@@ -509,6 +530,10 @@ class SearchLeadModel {
       peId: peId ?? this.peId,
       creId: creId ?? this.creId,
       creName: creName ?? this.creName,
+      location: location ?? this.location,
+      locations: locations ?? this.locations,
+      locationId: locationId ?? this.locationId,
+      locationName: locationName ?? this.locationName,
       totalProjectCost: totalProjectCost ?? this.totalProjectCost,
     );
   }

@@ -1466,7 +1466,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                         onTap: () {},
                                         hoverColor: const Color(0xFFF8FAFC),
                                         child: Container(
-                                          height: rowHeight,
+                                          constraints: BoxConstraints(
+                                            minHeight:
+                                                rowHeight < 45 ? 45 : rowHeight,
+                                          ),
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
                                                 ? Colors.white
