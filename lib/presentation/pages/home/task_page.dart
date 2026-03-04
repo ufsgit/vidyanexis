@@ -184,9 +184,7 @@ class _tasksPageReportState extends State<TaskPage> {
       key: _scaffoldKey,
       appBar: !AppStyles.isWebScreen(context)
           ? CustomAppBar(
-              leadingWidget: Navigator.canPop(context)
-                  ? const BackButton(color: Colors.black)
-                  : null,
+              leadingWidget: null,
               onExcelTap: () {
                 exportToExcel(
                   headers: [
@@ -300,16 +298,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                     if (!isMobile)
                                       Row(
                                         children: [
-                                          if (Navigator.canPop(context)) ...[
-                                            IconButton(
-                                              icon: const Icon(Icons.arrow_back,
-                                                  color: Color(0xFF152D70)),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                            const SizedBox(width: 8),
-                                          ],
+                                          // if (Navigator.canPop(context)) ...[
+                                          //   IconButton(
+                                          //     icon: const Icon(Icons.arrow_back,
+                                          //         color: Color(0xFF152D70)),
+                                          //     onPressed: () {
+                                          //       Navigator.pop(context);
+                                          //     },
+                                          //   ),
+                                          //   const SizedBox(width: 8),
+                                          // ],
                                           const Text(
                                             'Tasks',
                                             style: TextStyle(
