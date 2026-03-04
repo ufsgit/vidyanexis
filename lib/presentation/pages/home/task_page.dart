@@ -3055,14 +3055,34 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                       /// UPLOAD
                                       OutlinedButton(
-                                        onPressed: () {
-                                          showDialog(
+                                        onPressed: () async {
+                                          int statusId =
+                                              selectedStatus.value.statusId ??
+                                                  0;
+                                          int tasktypeId =
+                                              selectedStatus.value.taskTypeId ??
+                                                  0;
+                                          int customerId = task.customerId ?? 0;
+                                          int enquiryForId =
+                                              task.enquiryForId ?? 0;
+                                          await showDialog(
                                             barrierDismissible: false,
                                             context: context,
                                             builder: (context) =>
                                                 ImageUploadAlert(
                                                     customerId:
                                                         customerId.toString()),
+                                          );
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback(
+                                            (_) {
+                                              reportsProvider.fetchTaskTypes(
+                                                  tasktypeId,
+                                                  statusId,
+                                                  customerId,
+                                                  enquiryForId,
+                                                  context);
+                                            },
                                           );
                                         },
                                         child: const Text("Upload Documents"),

@@ -3,6 +3,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 import 'package:vidyanexis/main.dart';
@@ -4123,6 +4124,17 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         .taskChoosetimeController
                                                         .text =
                                                     task.taskTime.toString();
+                                                customerDetailsProvider
+                                                        .addTaskModel.taskUser =
+                                                    task.taskUser
+                                                        .map((e) =>
+                                                            UserInTaskModel(
+                                                              userDetailsId:
+                                                                  e.toUserId,
+                                                              userDetailsName:
+                                                                  e.toUsername,
+                                                            ))
+                                                        .toList();
 
                                                 // Open TaskCreationWidget in edit mode
                                                 showDialog(

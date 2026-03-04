@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
@@ -105,6 +106,13 @@ class _TaskDetailsWidgetState extends State<TaskDetailsWidget> {
                       customerDetailsProvider.taskChoosetimeController.text =
                           customerDetailsProvider.taskDetails[0].taskTime
                               .toString();
+                      customerDetailsProvider.addTaskModel.taskUser =
+                          customerDetailsProvider.taskDetails[0].taskUser
+                              .map((e) => UserInTaskModel(
+                                    userDetailsId: e.toUserId,
+                                    userDetailsName: e.toUsername,
+                                  ))
+                              .toList();
 
                       if (!mounted) return;
                       showDialog(
