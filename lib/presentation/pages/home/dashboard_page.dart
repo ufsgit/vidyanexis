@@ -210,7 +210,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
           // Render tab body only if permitted
           Builder(builder: (context) {
             final allowedTabs = <int>[
-              if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
+              if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0')
                 6, // Dashboard count
               if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0')
                 0, // Leads Overview
@@ -672,7 +672,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
       ),
     );
   }
-
 
   Widget _buildTaskReports(
       BuildContext context, DashboardProvider dashBoardProvider) {

@@ -67,15 +67,23 @@ class DashboardCountTab extends StatelessWidget {
             crossAxisCount = 3;
           }
 
+          final double spacing = 16.0;
+          final double availableWidth =
+              constraints.maxWidth - (spacing * (crossAxisCount - 1));
+          final double itemWidth = availableWidth / crossAxisCount;
+          // Target height to prevent overflow while keeping the design clean
+          final double itemHeight = 140.0;
+          final double aspectRatio = itemWidth / itemHeight;
+
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: items.length,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
-              crossAxisSpacing: 16,
-              mainAxisSpacing: 16,
-              childAspectRatio: 2.0, // wider rectangles to match design
+              crossAxisSpacing: spacing,
+              mainAxisSpacing: spacing,
+              childAspectRatio: aspectRatio,
             ),
             itemBuilder: (context, index) {
               final item = items[index];
@@ -128,8 +136,8 @@ class DashboardCountTab extends StatelessWidget {
                             child: Text(
                               displayTitle,
                               style: const TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
                                 color: Colors.black87,
                               ),
                               maxLines: 2,
@@ -152,7 +160,7 @@ class DashboardCountTab extends StatelessWidget {
                       Text(
                         count.toString(),
                         style: const TextStyle(
-                          fontSize: 26,
+                          fontSize: 24,
                           fontWeight: FontWeight.bold,
                           color: Colors.black87,
                         ),
@@ -160,14 +168,14 @@ class DashboardCountTab extends StatelessWidget {
                       const Spacer(),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           const Text(
                             "View Leads",
                             style: TextStyle(
-                              fontSize: 13,
+                              fontSize: 12,
                               color: Colors.black87,
-                              fontWeight: FontWeight.w500,
+                              fontWeight: FontWeight.w600,
                             ),
                           ),
                           Container(
@@ -182,9 +190,9 @@ class DashboardCountTab extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            padding: const EdgeInsets.all(6),
+                            padding: const EdgeInsets.all(4),
                             child: Icon(Icons.analytics_outlined,
-                                size: 20, color: Colors.grey.shade700),
+                                size: 18, color: Colors.grey.shade700),
                           ),
                         ],
                       ),

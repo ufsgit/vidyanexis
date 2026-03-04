@@ -205,7 +205,7 @@ class CustomTab extends StatelessWidget {
             : 900.0;
 
     final tabOptions = [
-      if (settingsProvider.menuIsViewMap[49].toString() != '0')
+      if (settingsProvider.menuIsViewMap[84].toString() != '0')
         'Dashboard count',
       if (settingsProvider.menuIsViewMap[49].toString() != '0')
         'Leads Overview',

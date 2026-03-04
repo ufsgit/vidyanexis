@@ -1120,10 +1120,7 @@ class SettingsProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.addUnit,
-          bodyData: {
-            "Unit_Id": statusId,
-            "Unit_Name": statusName
-          });
+          bodyData: {"Unit_Id": statusId, "Unit_Name": statusName});
 
       if (response!.statusCode == 200) {
         unitNameController.clear();
@@ -1309,6 +1306,8 @@ class SettingsProvider extends ChangeNotifier {
           _getMenuPermission = (data as List<dynamic>)
               .map((item) => GetMenuPermissionModel.fromJson(item))
               .toList();
+          _getMenuPermission
+              .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
 
           // Rename permission 32 to Print Quotation 1
           for (var i = 0; i < _getMenuPermission.length; i++) {
@@ -1359,6 +1358,7 @@ class SettingsProvider extends ChangeNotifier {
             75: 'Outstanding Reports',
             76: 'AMC Notification',
             77: 'Payment Reminders',
+            84: 'Dashboard count',
           };
 
           for (var entry in customPermissions.entries) {
@@ -2854,6 +2854,8 @@ class SettingsProvider extends ChangeNotifier {
           _showMenu = (data as List<dynamic>)
               .map((item) => MenuPermissionModel.fromJson(item))
               .toList();
+          _showMenu
+              .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
 
           // Rename permission 32 to Print Quotation 1
           for (var i = 0; i < _showMenu.length; i++) {
@@ -2883,6 +2885,46 @@ class SettingsProvider extends ChangeNotifier {
                 isView: 1,
                 menuStatus: 1,
                 menuType: 1));
+          }
+
+          // Register Dashboard Tabs and new Report IDs for showMenu fallback
+          final Map<int, String> customPermissionsShow = {
+            49: 'Leads Overview',
+            50: 'Work Overview',
+            51: 'Task Overview',
+            52: 'Task Summary',
+            65: 'Balance Reports',
+            72: 'Payment Reports',
+            73: 'Upcoming Payment Reports',
+            74: 'Total Outstanding Reports',
+            75: 'Outstanding Reports',
+            76: 'AMC Notification',
+            77: 'Payment Reminders',
+            84: 'Dashboard count',
+          };
+
+          for (var entry in customPermissionsShow.entries) {
+            bool alreadyExists = false;
+            for (var i = 0; i < _showMenu.length; i++) {
+              if (_showMenu[i].menuId == entry.key) {
+                _showMenu[i].menuName = entry.value;
+                alreadyExists = true;
+                break;
+              }
+            }
+            if (!alreadyExists) {
+              _showMenu.add(MenuPermissionModel(
+                  menuId: entry.key,
+                  menuName: entry.value,
+                  menuOrder: 0,
+                  menuOrderSub: 0,
+                  isEdit: 1,
+                  isSave: 1,
+                  isDelete: 1,
+                  isView: 1,
+                  menuStatus: 1,
+                  menuType: 1));
+            }
           }
 
           var recordingMenu = _showMenu.firstWhere((e) => e.menuId == 67,
