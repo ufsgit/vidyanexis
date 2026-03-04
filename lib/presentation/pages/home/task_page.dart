@@ -1452,10 +1452,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                         hoverColor: const Color(0xFFF8FAFC),
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                              vertical: 2),
                                           constraints: const BoxConstraints(
-                                            minHeight:
-                                                rowHeight < 45 ? 45 : rowHeight,
+                                            minHeight: 15,
                                           ),
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
