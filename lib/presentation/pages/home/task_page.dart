@@ -184,9 +184,7 @@ class _tasksPageReportState extends State<TaskPage> {
       key: _scaffoldKey,
       appBar: !AppStyles.isWebScreen(context)
           ? CustomAppBar(
-              leadingWidget: Navigator.canPop(context)
-                  ? const BackButton(color: Colors.black)
-                  : null,
+              leadingWidget: null,
               onExcelTap: () {
                 exportToExcel(
                   headers: [
@@ -300,16 +298,16 @@ class _tasksPageReportState extends State<TaskPage> {
                                     if (!isMobile)
                                       Row(
                                         children: [
-                                          if (Navigator.canPop(context)) ...[
-                                            IconButton(
-                                              icon: const Icon(Icons.arrow_back,
-                                                  color: Color(0xFF152D70)),
-                                              onPressed: () {
-                                                Navigator.pop(context);
-                                              },
-                                            ),
-                                            const SizedBox(width: 8),
-                                          ],
+                                          // if (Navigator.canPop(context)) ...[
+                                          //   IconButton(
+                                          //     icon: const Icon(Icons.arrow_back,
+                                          //         color: Color(0xFF152D70)),
+                                          //     onPressed: () {
+                                          //       Navigator.pop(context);
+                                          //     },
+                                          //   ),
+                                          //   const SizedBox(width: 8),
+                                          // ],
                                           const Text(
                                             'Tasks',
                                             style: TextStyle(
@@ -1454,10 +1452,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                         hoverColor: const Color(0xFFF8FAFC),
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(
-                                              vertical: 10),
+                                              vertical: 2),
                                           constraints: const BoxConstraints(
-                                            minHeight:
-                                                rowHeight < 45 ? 45 : rowHeight,
+                                            minHeight: 15,
                                           ),
                                           decoration: BoxDecoration(
                                             color: index % 2 == 0
@@ -3055,14 +3052,34 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                       /// UPLOAD
                                       OutlinedButton(
-                                        onPressed: () {
-                                          showDialog(
+                                        onPressed: () async {
+                                          int statusId =
+                                              selectedStatus.value.statusId ??
+                                                  0;
+                                          int tasktypeId =
+                                              selectedStatus.value.taskTypeId ??
+                                                  0;
+                                          int customerId = task.customerId ?? 0;
+                                          int enquiryForId =
+                                              task.enquiryForId ?? 0;
+                                          await showDialog(
                                             barrierDismissible: false,
                                             context: context,
                                             builder: (context) =>
                                                 ImageUploadAlert(
                                                     customerId:
                                                         customerId.toString()),
+                                          );
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback(
+                                            (_) {
+                                              reportsProvider.fetchTaskTypes(
+                                                  tasktypeId,
+                                                  statusId,
+                                                  customerId,
+                                                  enquiryForId,
+                                                  context);
+                                            },
                                           );
                                         },
                                         child: const Text("Upload Documents"),

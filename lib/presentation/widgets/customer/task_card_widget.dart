@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
@@ -213,7 +214,14 @@ class TaskCard extends StatelessWidget {
                             : '';
                         customerDetailsProvider.taskChoosetimeController.text =
                             task.taskTime?.toString() ?? '';
-
+                            
+                        customerDetailsProvider.addTaskModel.taskUser =
+                            task.taskUser
+                                .map((e) => UserInTaskModel(
+                                      userDetailsId: e.toUserId,
+                                      userDetailsName: e.toUsername,
+                                    ))
+                                .toList();
                         showDialog(
                           barrierDismissible: false,
                           context: context,
@@ -470,6 +478,13 @@ class TaskCard extends StatelessWidget {
                                     customerDetailsProvider
                                         .taskChoosetimeController
                                         .text = task.taskTime?.toString() ?? '';
+                                    customerDetailsProvider.addTaskModel.taskUser =
+                                        task.taskUser
+                                            .map((e) => UserInTaskModel(
+                                                  userDetailsId: e.toUserId,
+                                                  userDetailsName: e.toUsername,
+                                                ))
+                                            .toList();
 
                                     showDialog(
                                       barrierDismissible: false,

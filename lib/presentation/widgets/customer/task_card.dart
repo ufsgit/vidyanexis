@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
@@ -84,6 +85,13 @@ class TaskCard extends StatelessWidget {
         customerDetailsProvider.taskChoosedateController.text =
             DateFormat('dd MMM yyyy').format(task.taskDate);
         customerDetailsProvider.taskChoosetimeController.text = task.taskTime;
+
+        customerDetailsProvider.addTaskModel.taskUser = task.taskUser
+            .map((e) => UserInTaskModel(
+                  userDetailsId: e.toUserId,
+                  userDetailsName: e.toUsername,
+                ))
+            .toList();
 
         showDialog(
           barrierDismissible: false,

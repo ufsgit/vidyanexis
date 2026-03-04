@@ -74,16 +74,27 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             OutlinedButton.icon(
-              onPressed: () {
-                showDialog(
+              onPressed: () async {
+                await showDialog(
                   barrierDismissible: false,
                   context: context,
                   builder: (context) => ImageUploadAlert(
                       customerId: widget.task.customerId.toString()),
                 );
+                int statusId = selectedStatus.statusId ?? 0;
+                int tasktypeId = selectedStatus.taskTypeId ?? 0;
+                int customerId = widget.task.customerId;
+                int enquiryForId = widget.task.enquiryForId;
+                WidgetsBinding.instance.addPostFrameCallback(
+                  (_) {
+                    reportsProvider.fetchTaskTypes(tasktypeId, statusId,
+                        customerId, enquiryForId, context);
+                  },
+                );
               },
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.primaryBlue,
+                backgroundColor: AppColors.whiteColor,
                 side: BorderSide(color: AppColors.primaryBlue),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
