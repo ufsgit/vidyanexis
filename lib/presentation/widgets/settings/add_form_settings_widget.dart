@@ -28,11 +28,19 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
 
   List<FieldModel> _selectedFields = [];
 
+  bool _isSaving = false;
+
   bool get isEdit => widget.existingForm != null;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<FormProvider>(context, listen: false);
+      provider.fetchAvailableFields(context);
+      provider.fetchDepartments(context);
+      provider.fetchTaskTypes(context);
+    });
     if (isEdit) {
       _formNameController.text = widget.existingForm!.name;
       _departmentController.text = widget.existingForm!.department;
@@ -119,35 +127,52 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
               title: const Text('Select Custom Fields'),
               content: SizedBox(
                 width: 400,
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: formProvider.availableFields.length,
-                  itemBuilder: (context, index) {
-                    final field = formProvider.availableFields[index];
-                    final isSelected =
-                        tempSelected.any((f) => f.label == field.label);
+                child: Consumer<FormProvider>(
+                  builder: (context, provider, child) {
+                    if (provider.isLoadingFields) {
+                      return const Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    }
+                    if (provider.availableFields.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(32.0),
+                        child:
+                            Center(child: Text("No custom fields available")),
+                      );
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: provider.availableFields.length,
+                      itemBuilder: (context, index) {
+                        final field = provider.availableFields[index];
+                        final isSelected =
+                            tempSelected.any((f) => f.label == field.label);
 
-                    return CheckboxListTile(
-                      title: Text(field.label),
-                      subtitle: Text(field.type.name),
-                      value: isSelected,
-                      onChanged: (bool? value) {
-                        setDialogState(() {
-                          if (value == true) {
-                            tempSelected.add(FieldModel(
-                                id: DateTime.now()
-                                        .millisecondsSinceEpoch
-                                        .toString() +
-                                    index.toString(),
-                                label: field.label,
-                                type: field.type,
-                                options: field.options,
-                                isMandatory: false));
-                          } else {
-                            tempSelected
-                                .removeWhere((f) => f.label == field.label);
-                          }
-                        });
+                        return CheckboxListTile(
+                          title: Text(field.label),
+                          subtitle: Text(field.type.name),
+                          value: isSelected,
+                          onChanged: (bool? value) {
+                            setDialogState(() {
+                              if (value == true) {
+                                tempSelected.add(FieldModel(
+                                    id: DateTime.now()
+                                            .millisecondsSinceEpoch
+                                            .toString() +
+                                        index.toString(),
+                                    label: field.label,
+                                    type: field.type,
+                                    options: field.options,
+                                    isMandatory: false));
+                              } else {
+                                tempSelected
+                                    .removeWhere((f) => f.label == field.label);
+                              }
+                            });
+                          },
+                        );
                       },
                     );
                   },
@@ -179,12 +204,16 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
     );
   }
 
-  void _saveForm(FormProvider formProvider) {
+  Future<void> _saveForm(FormProvider formProvider) async {
     final validationError = _validateInputs();
     if (validationError != null) {
       _showErrorDialog(validationError);
       return;
     }
+
+    setState(() {
+      _isSaving = true;
+    });
 
     final newForm = FormModel(
       id: isEdit
@@ -199,10 +228,15 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
     if (isEdit) {
       formProvider.updateForm(widget.existingForm!.id, newForm);
     } else {
-      formProvider.addForm(newForm);
+      await formProvider.addForm(context, newForm);
     }
 
-    Navigator.pop(context);
+    if (mounted) {
+      setState(() {
+        _isSaving = false;
+      });
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -259,41 +293,55 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
               const SizedBox(height: 16),
 
               // Department Dropdown
-              CommonDropdown<String>(
-                hintText: 'Department*',
-                selectedValue:
-                    _selectedDepartment.isNotEmpty ? _selectedDepartment : null,
-                items: formProvider.departments
-                    .map((dept) => DropdownItem<String>(
-                          id: dept,
-                          name: dept,
-                        ))
-                    .toList(),
-                controller: _departmentController,
-                onItemSelected: (selectedDept) {
-                  setState(() {
-                    _selectedDepartment = selectedDept;
-                  });
+              Consumer<FormProvider>(
+                builder: (context, provider, child) {
+                  return provider.isLoadingDepartments
+                      ? const Center(child: CircularProgressIndicator())
+                      : CommonDropdown<String>(
+                          hintText: 'Department*',
+                          selectedValue: _selectedDepartment.isNotEmpty
+                              ? _selectedDepartment
+                              : null,
+                          items: provider.departments
+                              .map((dept) => DropdownItem<String>(
+                                    id: dept,
+                                    name: dept,
+                                  ))
+                              .toList(),
+                          controller: _departmentController,
+                          onItemSelected: (selectedDept) {
+                            setState(() {
+                              _selectedDepartment = selectedDept;
+                            });
+                          },
+                        );
                 },
               ),
               const SizedBox(height: 16),
 
               // Task Type Dropdown
-              CommonDropdown<String>(
-                hintText: 'Task Type*',
-                selectedValue:
-                    _selectedTaskType.isNotEmpty ? _selectedTaskType : null,
-                items: formProvider.taskTypes
-                    .map((type) => DropdownItem<String>(
-                          id: type,
-                          name: type,
-                        ))
-                    .toList(),
-                controller: _taskTypeController,
-                onItemSelected: (selectedType) {
-                  setState(() {
-                    _selectedTaskType = selectedType;
-                  });
+              Consumer<FormProvider>(
+                builder: (context, provider, child) {
+                  return provider.isLoadingTaskTypes
+                      ? const Center(child: CircularProgressIndicator())
+                      : CommonDropdown<String>(
+                          hintText: 'Task Type*',
+                          selectedValue: _selectedTaskType.isNotEmpty
+                              ? _selectedTaskType
+                              : null,
+                          items: provider.taskTypes
+                              .map((type) => DropdownItem<String>(
+                                    id: type,
+                                    name: type,
+                                  ))
+                              .toList(),
+                          controller: _taskTypeController,
+                          onItemSelected: (selectedType) {
+                            setState(() {
+                              _selectedTaskType = selectedType;
+                            });
+                          },
+                        );
                 },
               ),
               const SizedBox(height: 24),
@@ -431,7 +479,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                       backgroundColor: AppColors.primaryBlue,
                       textColor: Colors.white,
                       borderColor: AppColors.primaryBlue,
-                      isLoading: false,
+                      isLoading: _isSaving,
                     ),
                   ),
                 ],

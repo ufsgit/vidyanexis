@@ -235,7 +235,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
             return const ExpenseType();
           case 'Location':
             return const LocationPage();
-          case 'Form Settings':
+          case 'Forms':
             return const FormContent();
 
           default:
@@ -363,7 +363,7 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
       ),
       _buildMenuItem(
         context,
-        'Form Settings',
+        'Forms',
         Icons.format_list_bulleted,
       ),
       // if (settingsProvider.menuIsViewMap[28].toString() == '1')

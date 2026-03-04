@@ -9,8 +9,21 @@ import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import '../../../controller/models/form_model.dart';
 import '../../widgets/settings/add_form_settings_widget.dart';
 
-class FormContent extends StatelessWidget {
+class FormContent extends StatefulWidget {
   const FormContent({super.key});
+
+  @override
+  State<FormContent> createState() => _FormContentState();
+}
+
+class _FormContentState extends State<FormContent> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<FormProvider>(context, listen: false).fetchForms(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +50,7 @@ class FormContent extends StatelessWidget {
                   child: Row(
                     children: [
                       Text(
-                        'Form Settings',
+                        'Forms',
                         style: GoogleFonts.plusJakartaSans(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -115,7 +128,12 @@ class FormContent extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      if (filteredForms.isEmpty)
+                      if (formProvider.isLoadingForms)
+                        const Padding(
+                          padding: EdgeInsets.all(24.0),
+                          child: Center(child: CircularProgressIndicator()),
+                        )
+                      else if (filteredForms.isEmpty)
                         Padding(
                           padding: const EdgeInsets.all(24.0),
                           child: Center(

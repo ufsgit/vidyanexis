@@ -12,7 +12,7 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-  //static String baseUrl = 'https://demo3api.trackbox.net.in/';
+//   static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 //   static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
@@ -311,4 +311,6 @@ class HttpUrls {
   static String deleteSupplier = "item/delete_supplier";
   static String getPurchaseDataMaster = "item/get_purchase_master";
   static String deletePurchase = "item/Delete_Purchase_Master";
+  static String saveFormData = "settings/Save_Form_Data";
+  static String searchFormData = "settings/Search_Form_Data";
 }
