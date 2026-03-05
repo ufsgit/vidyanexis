@@ -1,13 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
+import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -16,8 +13,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/loading_circle.dart';
-import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 class CustomerPagePhone extends StatefulWidget {
   const CustomerPagePhone({super.key});
@@ -383,8 +380,16 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                               lead: customerData,
                               isExpanded:
                                   customerProvider.expandedIndex == index,
-                              onTap: () =>
-                                  customerProvider.toggleExpansion(index),
+                              onTap: () {
+                                customerProvider.toggleExpansion(index);
+                                if (customerProvider.expandedIndex == index) {
+                                  // Fetch check-in history when expanding to show correct status
+                                  Provider.of<LeadCheckInProvider>(context,
+                                          listen: false)
+                                      .fetchLeadCheckInReports(context,
+                                          customerData.customerId.toString());
+                                }
+                              },
                             ),
                           ],
                         );

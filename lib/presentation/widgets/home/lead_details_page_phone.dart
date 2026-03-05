@@ -11,7 +11,9 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/follow_up_history_widget.dart';
+import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/visit_history_widget.dart';
 
 class LeadDetailsPagePhone extends StatefulWidget {
   final String customerId;
@@ -37,6 +39,8 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
           Provider.of<LeadDetailsProvider>(context, listen: false);
       leadDetailsProvider.fetchLeadDetails(widget.customerId, context);
       leadDetailsProvider.fetchFollowUpHistory(widget.customerId);
+      Provider.of<LeadCheckInProvider>(context, listen: false)
+          .fetchLeadCheckInReports(context, widget.customerId);
     });
   }
 
@@ -82,15 +86,65 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                   fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                             SizedBox(height: 2),
-                            // Text(
-                            //   'Order no : ${leadDetails.orderNo}',
-                            //   style: const TextStyle(
-                            //       fontSize: 14,
-                            //       fontWeight: FontWeight.w500,
-                            //       color: Color(0xFF7D8B9B)),
-                            // ),
                           ],
                         ),
+                        const SizedBox(width: 8),
+                        Consumer<LeadCheckInProvider>(
+                          builder: (context, checkInProvider, child) {
+                            final isCheckedIn = checkInProvider
+                                .isCheckedIn(int.parse(widget.customerId));
+
+                            return Row(
+                              children: [
+                                if (!isCheckedIn)
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      checkInProvider.saveLeadCheckIn(
+                                        context: context,
+                                        customerId:
+                                            int.parse(widget.customerId),
+                                        isCheckIn: true,
+                                        leadName: leadDetails.customerName,
+                                      );
+                                    },
+                                    icon:
+                                        const Icon(Icons.location_on, size: 16),
+                                    label: const Text('Check In'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.green,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      minimumSize: const Size(0, 36),
+                                    ),
+                                  ),
+                                if (isCheckedIn)
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      checkInProvider.saveLeadCheckIn(
+                                        context: context,
+                                        customerId:
+                                            int.parse(widget.customerId),
+                                        isCheckIn: false,
+                                        leadName: leadDetails.customerName,
+                                      );
+                                    },
+                                    icon: const Icon(Icons.location_off,
+                                        size: 16),
+                                    label: const Text('Check Out'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.red,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8),
+                                      minimumSize: const Size(0, 36),
+                                    ),
+                                  ),
+                              ],
+                            );
+                          },
+                        ),
+                        const Spacer(),
                         PopupMenuButton<String>(
                           icon: const Icon(Icons.more_vert_outlined),
                           elevation: 2,
@@ -388,7 +442,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                     ),
                     const SizedBox(height: 16),
                     DefaultTabController(
-                      length: 3,
+                      length: 4,
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -408,6 +462,7 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                             tabs: const [
                               Tab(text: 'Personal details'),
                               Tab(text: 'Follow-Up history'),
+                              Tab(text: 'Visits history'),
                               Tab(text: 'Expense'),
                             ],
                           ),
@@ -465,6 +520,18 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
                                             style: TextStyle(
                                                 fontWeight: FontWeight.w600),
                                           ))),
+                                Container(
+                                  margin: const EdgeInsets.only(top: 15),
+                                  child: Consumer<LeadCheckInProvider>(
+                                    builder: (context, provider, child) {
+                                      final history =
+                                          provider.getHistoryForCustomer(
+                                              int.parse(widget.customerId));
+                                      return VisitHistoryWidget(
+                                          history: history);
+                                    },
+                                  ),
+                                ),
                                 ExpenseScreen(widget.customerId),
                               ],
                             ),

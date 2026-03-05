@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
@@ -845,7 +846,16 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               isLead: true,
                               lead: lead,
                               isExpanded: leadProvider.expandedIndex == index,
-                              onTap: () => leadProvider.toggleExpansion(index),
+                              onTap: () {
+                                leadProvider.toggleExpansion(index);
+                                if (leadProvider.expandedIndex == index) {
+                                  // Fetch check-in history when expanding to show correct status
+                                  Provider.of<LeadCheckInProvider>(context,
+                                          listen: false)
+                                      .fetchLeadCheckInReports(
+                                          context, lead.customerId.toString());
+                                }
+                              },
                             ),
                           ],
                         );

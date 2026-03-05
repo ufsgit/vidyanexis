@@ -326,13 +326,25 @@ class AttendanceReportProvider extends ChangeNotifier {
 
     if (!locationStatus.isDenied) {
       try {
+        // High precision settings
+        LocationSettings locationSettings = AndroidSettings(
+          accuracy: LocationAccuracy.best,
+          forceLocationManager: true,
+        );
+
         Position position = await Geolocator.getCurrentPosition(
-            desiredAccuracy: LocationAccuracy.high);
-        print('current');
-        latitude = position.latitude.toString();
-        longitude = position.longitude.toString();
-        location = await getAddressFromCoordinates(
-            position.latitude, position.longitude);
+          locationSettings: locationSettings,
+        );
+
+        double latVal = position.latitude;
+        double lonVal = position.longitude;
+
+        if (latVal != 0.0 && lonVal != 0.0) {
+          print('current');
+          latitude = latVal.toString();
+          longitude = lonVal.toString();
+          location = await getAddressFromCoordinates(latVal, lonVal);
+        }
         print(location);
         print(latitude);
         print(longitude);
@@ -358,8 +370,13 @@ class AttendanceReportProvider extends ChangeNotifier {
         // If the list is not empty, return the first result
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks[0];
-          String address =
-              '${place.street}, ${place.locality}, ${place.country}';
+          String address = [
+            place.name,
+            place.subThoroughfare,
+            place.street,
+            place.locality,
+            place.country,
+          ].where((e) => e != null && e.isNotEmpty).join(', ');
           return address; // Return the formatted address
         } else {
           return ''; // In case no address is found
@@ -380,6 +397,7 @@ class AttendanceReportProvider extends ChangeNotifier {
       bool closeOnSuccess = true}) async {
     print(selectedUserId);
     print(assignToFollowUpController.text.toString());
+    bool isLoaderStopped = false;
     try {
       Loader.showLoader(context);
 
@@ -472,10 +490,14 @@ class AttendanceReportProvider extends ChangeNotifier {
         if (closeOnSuccess) {
           Navigator.pop(context);
         }
+
+        // Stop loader BEFORE showing success dialog
         Loader.stopLoader(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Attendance Saved')),
-        );
+        isLoaderStopped = true;
+
+        if (context.mounted) {
+          _showSuccessDialog(context, checkInTime != null);
+        }
         print(data);
         return true;
       } else {
@@ -483,6 +505,7 @@ class AttendanceReportProvider extends ChangeNotifier {
           const SnackBar(content: Text('Server Error')),
         );
         Loader.stopLoader(context);
+        isLoaderStopped = true;
         return false;
       }
     } catch (e) {
@@ -491,8 +514,93 @@ class AttendanceReportProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
       Loader.stopLoader(context);
+      isLoaderStopped = true;
       return false;
+    } finally {
+      if (!isLoaderStopped) {
+        Loader.stopLoader(context);
+      }
     }
+  }
+
+  void _showSuccessDialog(BuildContext context, bool isCheckIn) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          elevation: 10,
+          backgroundColor: Colors.white,
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: Colors.green.withValues(alpha: 0.1),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.check_circle,
+                    color: Colors.green,
+                    size: 60,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                Text(
+                  isCheckIn ? "Check-in Successful" : "Check-out Successful",
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Text(
+                  isCheckIn
+                      ? "Your attendance check-in was successful."
+                      : "Your attendance check-out was successful.",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const SizedBox(height: 24),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.pop(context),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      "OK",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   String _currentCheckInTime = '';

@@ -18,6 +18,7 @@ import 'package:vidyanexis/presentation/widgets/home/lead_details_page_phone.dar
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 
 class LeadCard extends StatelessWidget {
@@ -235,147 +236,189 @@ class LeadCard extends StatelessWidget {
         if (isExpanded)
           Padding(
             padding: const EdgeInsets.only(right: 16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // ------------------------------------------------------------------
-                // NEW UPDATED WHATSAPP LOGIC — PRIORITY:
-                // formatIndianNumber Safe Implementation
-                // ------------------------------------------------------------------
-                CustomActionButton(
-                  imageColor: AppColors.textGreen,
-                  onTap: () async {
-                    String formatted =
-                        formatIndianPhoneNumber(lead.contactNumber.toString());
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  // ------------------------------------------------------------------
+                  // NEW UPDATED WHATSAPP LOGIC — PRIORITY:
+                  // formatIndianNumber Safe Implementation
+                  // ------------------------------------------------------------------
+                  CustomActionButton(
+                    imageColor: AppColors.textGreen,
+                    onTap: () async {
+                      String formatted = formatIndianPhoneNumber(
+                          lead.contactNumber.toString());
 
-                    if (formatted.isNotEmpty) {
-                      final url = 'https://wa.me/$formatted';
-                      await launchUrl(Uri.parse(url),
-                          mode: LaunchMode.externalApplication);
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                            content: Text('Invalid Indian mobile number')),
-                      );
-                    }
-                  },
-                  icon: Icons.chat_bubble_outline,
-                  text: 'Chat',
-                ),
-                // ------------------------------------------------------------------
+                      if (formatted.isNotEmpty) {
+                        final url = 'https://wa.me/$formatted';
+                        await launchUrl(Uri.parse(url),
+                            mode: LaunchMode.externalApplication);
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                              content: Text('Invalid Indian mobile number')),
+                        );
+                      }
+                    },
+                    icon: Icons.chat_bubble_outline,
+                    text: 'Chat',
+                  ),
+                  // ------------------------------------------------------------------
 
-                const SizedBox(width: 15),
-                CustomActionButton(
-                  imageColor: AppColors.appViolet,
-                  onTap: isLead
-                      ? () async {
-                          Navigator.push(
+                  const SizedBox(width: 10),
+                  CustomActionButton(
+                    imageColor: AppColors.appViolet,
+                    onTap: isLead
+                        ? () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      CustomerDetailPageMobile(
+                                        fromLead: true,
+                                        customerId: lead.customerId,
+                                        lead: lead,
+                                      )),
+                            );
+                          }
+                        : () async {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      CustomerDetailPageMobile(
+                                        fromLead: false,
+                                        customerId: lead.customerId,
+                                        lead: lead,
+                                      )),
+                            );
+                          },
+                    icon: Icons.visibility_outlined,
+                    text: 'View',
+                    // imageColor: AppColors.violet,
+                  ),
+                  const SizedBox(width: 10),
+                  CustomActionButton(
+                    onTap: () {
+                      leadsProvider.statusController.clear();
+                      leadsProvider.searchUserController.clear();
+                      leadsProvider.messageController.clear();
+                      leadsProvider.nextFollowUpDateController.clear();
+                      try {
+                        final dropDownProvider = Provider.of<DropDownProvider>(
                             context,
-                            MaterialPageRoute(
-                                builder: (context) => CustomerDetailPageMobile(
-                                      fromLead: true,
-                                      customerId: lead.customerId,
-                                      lead: lead,
-                                    )),
-                          );
-                        }
-                      : () async {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => CustomerDetailPageMobile(
-                                      fromLead: false,
-                                      customerId: lead.customerId,
-                                      lead: lead,
-                                    )),
+                            listen: false);
+                        dropDownProvider.selectedStatusId =
+                            int.parse(lead.statusId.toString());
+                        leadsProvider.statusController.text = lead.statusName;
+                        print('status id ${lead.statusId}');
+                        print('status name ${lead.statusName}');
+                        dropDownProvider.selectedUserId =
+                            int.parse(lead.toUserId.toString());
+                        leadsProvider.searchUserController.text =
+                            lead.toUserName;
+                        print('assign to ${lead.toUserName}');
+                        print('assign to id ${lead.toUserId}');
+                        leadsProvider.setCutomerId(lead.customerId);
+                        leadsProvider.branchController.text = lead.branchName;
+                        settingsProvider.selectedBranchId = lead.branchId;
+                        print('branch ${lead.branchId}');
+                        print('branch name ${lead.branchName}');
+                        leadsProvider.departmentController.text =
+                            lead.departmentName;
+                        settingsProvider.selectedDepartmentId =
+                            int.tryParse(lead.departmentId.toString()) ?? 0;
+                        print('department id ${lead.departmentId}');
+                        print('department name ${lead.departmentName}');
+
+                        leadsProvider.nextFollowUpDateController.text =
+                            lead.nextFollowUpDate.isNotEmpty
+                                ? _formatDateSafely(lead.nextFollowUpDate)
+                                : '';
+                        leadsProvider.messageController.clear();
+                        dropDownProvider.filterStaffByBranchAndDepartment(
+                          branchId: lead.branchId,
+                          departmentId:
+                              int.tryParse(lead.departmentId.toString()) ?? 0,
+                        );
+                      } catch (e) {}
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return AddFollowupDialog(
+                            customerName: lead.customerName,
                           );
                         },
-                  icon: Icons.visibility_outlined,
-                  text: 'View',
-                  // imageColor: AppColors.violet,
-                ),
-                const SizedBox(width: 15),
-                CustomActionButton(
-                  onTap: () {
-                    leadsProvider.statusController.clear();
-                    leadsProvider.searchUserController.clear();
-                    leadsProvider.messageController.clear();
-                    leadsProvider.nextFollowUpDateController.clear();
-                    try {
-                      final dropDownProvider =
-                          Provider.of<DropDownProvider>(context, listen: false);
-                      dropDownProvider.selectedStatusId =
-                          int.parse(lead.statusId.toString());
-                      leadsProvider.statusController.text = lead.statusName;
-                      print('status id ${lead.statusId}');
-                      print('status name ${lead.statusName}');
-                      dropDownProvider.selectedUserId =
-                          int.parse(lead.toUserId.toString());
-                      leadsProvider.searchUserController.text = lead.toUserName;
-                      print('assign to ${lead.toUserName}');
-                      print('assign to id ${lead.toUserId}');
-                      leadsProvider.setCutomerId(lead.customerId);
-                      leadsProvider.branchController.text = lead.branchName;
-                      settingsProvider.selectedBranchId = lead.branchId;
-                      print('branch ${lead.branchId}');
-                      print('branch name ${lead.branchName}');
-                      leadsProvider.departmentController.text =
-                          lead.departmentName;
-                      settingsProvider.selectedDepartmentId =
-                          int.tryParse(lead.departmentId.toString()) ?? 0;
-                      print('department id ${lead.departmentId}');
-                      print('department name ${lead.departmentName}');
-
-                      leadsProvider.nextFollowUpDateController.text =
-                          lead.nextFollowUpDate.isNotEmpty
-                              ? _formatDateSafely(lead.nextFollowUpDate)
-                              : '';
-                      leadsProvider.messageController.clear();
-                      dropDownProvider.filterStaffByBranchAndDepartment(
-                        branchId: lead.branchId,
-                        departmentId:
-                            int.tryParse(lead.departmentId.toString()) ?? 0,
+                      ));
+                      // showDialog(
+                      //   barrierDismissible: true,
+                      //   context: context,
+                      //   builder: (BuildContext context) => AddFollowupDialog(
+                      //     customerName: '- ${lead.customerName}',
+                      //   ),
+                      // );
+                    },
+                    imageColor: lead.lateFollowUp == 0
+                        ? AppColors.darkGreen
+                        : AppColors.textRed,
+                    icon: Icons.note_add_outlined,
+                    text: 'Note',
+                  ),
+                  const SizedBox(width: 10),
+                  CustomActionButton(
+                    imageColor: AppColors.bluebutton,
+                    onTap: () async {
+                      final Uri phoneUri = Uri(
+                        scheme: 'tel',
+                        path: lead.contactNumber,
                       );
-                    } catch (e) {}
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return AddFollowupDialog(
-                          customerName: lead.customerName,
-                        );
-                      },
-                    ));
-                    // showDialog(
-                    //   barrierDismissible: true,
-                    //   context: context,
-                    //   builder: (BuildContext context) => AddFollowupDialog(
-                    //     customerName: '- ${lead.customerName}',
-                    //   ),
-                    // );
-                  },
-                  imageColor: lead.lateFollowUp == 0
-                      ? AppColors.darkGreen
-                      : AppColors.textRed,
-                  icon: Icons.note_add_outlined,
-                  text: 'Note',
-                ),
-                const SizedBox(width: 15),
-                CustomActionButton(
-                  imageColor: AppColors.bluebutton,
-                  onTap: () async {
-                    final Uri phoneUri = Uri(
-                      scheme: 'tel',
-                      path: lead.contactNumber,
-                    );
-                    if (await canLaunchUrl(phoneUri)) {
-                      await launchUrl(phoneUri);
-                    } else {
-                      print('Could not launch phone app');
-                    }
-                  },
-                  icon: Icons.call,
-                  text: 'Call',
-                ),
-              ],
+                      if (await canLaunchUrl(phoneUri)) {
+                        await launchUrl(phoneUri);
+                      } else {
+                        print('Could not launch phone app');
+                      }
+                    },
+                    icon: Icons.call,
+                    text: 'Call',
+                  ),
+                  const SizedBox(width: 10),
+                  Consumer<LeadCheckInProvider>(
+                    builder: (context, checkInProvider, child) {
+                      final isCheckedIn =
+                          checkInProvider.isCheckedIn(lead.customerId);
+
+                      return isCheckedIn
+                          ? CustomActionButton(
+                              onTap: () {
+                                checkInProvider.saveLeadCheckIn(
+                                  context: context,
+                                  customerId: lead.customerId,
+                                  isCheckIn: false,
+                                  leadName: lead.customerName,
+                                );
+                              },
+                              icon: Icons.location_off_outlined,
+                              text: 'Check Out',
+                              imageColor: Colors.red,
+                            )
+                          : CustomActionButton(
+                              onTap: () {
+                                checkInProvider.saveLeadCheckIn(
+                                  context: context,
+                                  customerId: lead.customerId,
+                                  isCheckIn: true,
+                                  leadName: lead.customerName,
+                                );
+                              },
+                              icon: Icons.location_on_outlined,
+                              text: 'Check In',
+                              imageColor: Colors.green,
+                            );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         if (isExpanded) const SizedBox(height: 12),

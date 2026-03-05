@@ -2120,10 +2120,6 @@ class LeadsProvider extends ChangeNotifier {
 
   Future<void> useCurrentLocation() async {
     try {
-      // Add the geolocator package to pubspec.yaml:
-      // geolocator: ^9.0.2
-
-      // Check location permission
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
@@ -2132,20 +2128,30 @@ class LeadsProvider extends ChangeNotifier {
         }
       }
 
-      // Get current position
+      // High precision settings
+      LocationSettings locationSettings = AndroidSettings(
+        accuracy: LocationAccuracy.best,
+        forceLocationManager: true,
+      );
+
       Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high);
+        locationSettings: locationSettings,
+      );
 
-      // Set latitude and longitude
-      latitudeController.text = position.latitude.toString();
-      longitudeController.text = position.longitude.toString();
+      double lat = position.latitude;
+      double lon = position.longitude;
 
-      // Fetch location details using the coordinates
-      await fetchLocationDetails(position.latitude, position.longitude);
+      if (lat != 0.0 && lon != 0.0) {
+        // Set latitude and longitude
+        latitudeController.text = lat.toString();
+        longitudeController.text = lon.toString();
 
-      // Generate a Google Maps link
-      mapLinkController.text =
-          'https://www.google.com/maps?q=${position.latitude},${position.longitude}';
+        // Fetch location details using the coordinates
+        await fetchLocationDetails(lat, lon);
+
+        // Generate a Google Maps link
+        mapLinkController.text = 'https://www.google.com/maps?q=$lat,$lon';
+      }
     } catch (e) {
       print('Error getting current location: $e');
     }
@@ -2174,6 +2180,8 @@ class LeadsProvider extends ChangeNotifier {
         // Update address field if it's empty
         if (addressController.text.isEmpty) {
           addressController.text = [
+            place.name,
+            place.subThoroughfare,
             place.street,
             place.subLocality,
             place.locality,
