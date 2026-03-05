@@ -154,7 +154,7 @@ class QuatationListModel {
 
 class BillOfMaterial {
   String make;
-  int quantity;
+  String quantity;
   String invoiceNo;
   String distributor;
   int billOfMaterialsId;
@@ -171,7 +171,7 @@ class BillOfMaterial {
 
   factory BillOfMaterial.fromMap(Map<String, dynamic> json) => BillOfMaterial(
         make: json["make"] ?? '',
-        quantity: json["Quantity"] ?? 0,
+        quantity: json["Quantity"]?.toString() ?? "",
         invoiceNo: json["Invoice_No"] ?? '',
         distributor: json["Distributor"] ?? '',
         billOfMaterialsId: json["Bill_Of_Materials_Id"] ?? 0,
