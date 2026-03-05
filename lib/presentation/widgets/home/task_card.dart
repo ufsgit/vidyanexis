@@ -76,14 +76,6 @@ class TaskCard extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               color: AppColors.textBlack),
                         ),
-                        Text(
-                          'ID ${task.taskId}',
-                          style: TextStyle(
-                            color: AppColors.textGrey3,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
                         const SizedBox(height: 4),
                         Text(
                           task.taskStatusName,
