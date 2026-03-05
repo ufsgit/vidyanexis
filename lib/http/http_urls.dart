@@ -4,7 +4,7 @@ class HttpUrls {
 
   // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
   // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
-  static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
+  // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
@@ -20,7 +20,7 @@ class HttpUrls {
   // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
 
 //dev
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -242,8 +242,9 @@ class HttpUrls {
   static String getAttendanceByDate = "attendance/Get_Attendance_By_DateRange";
   static String saveAttendanceMultiple =
       "attendance/Save_Multiple_Attendance_Details";
-  static String getUserLocationDetails =
-      "user_details/Get_All_User_Location_Details";
+  static String getUserLocationDetails = "lead/get_user_loaction_details";
+  static String checkin = "lead/Save_Lead_Checkin";
+  static String getCheckin = "lead/get_lead_checkin";
   static String getLocation = "lead/get_location";
   static String saveLocation = "lead/save_location";
   static String deleteLocation = "lead/delete_location";
