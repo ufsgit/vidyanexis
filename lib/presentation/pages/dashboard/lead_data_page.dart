@@ -17,6 +17,8 @@ import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.da
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class LeadDataPage extends StatefulWidget {
@@ -39,6 +41,12 @@ class LeadDataPage extends StatefulWidget {
 
 class _LeadDataPageState extends State<LeadDataPage> {
   bool _isLoading = true;
+  bool _isLoadingMore = false;
+  int _currentPage = 1;
+  final int _pageSize = 20;
+  bool _hasMoreData = true;
+  int _totalCount = 0;
+
   List<SearchLeadModel> _leads = [];
   List<SearchLeadModel> _filteredLeads = [];
   String? _errorMessage;
@@ -47,24 +55,80 @@ class _LeadDataPageState extends State<LeadDataPage> {
   final _horizontalScrollController = ScrollController();
   late final ScrollController _fixedVerticalController;
   late final ScrollController _scrollableVerticalController;
+  late final ScrollController _mobileScrollController;
   bool _isSyncing = false;
   int? _hoveredRowIndex;
   int? _expandedIndex;
 
+  String userName = "Admin";
+  String logo = "";
+  PackageInfo? packageInfo;
+
   @override
   void initState() {
     super.initState();
+    _initData();
     _fixedVerticalController = ScrollController();
     _scrollableVerticalController = ScrollController();
+    _mobileScrollController = ScrollController();
 
     _fixedVerticalController.addListener(_syncScrollFromFixed);
     _scrollableVerticalController.addListener(_syncScrollFromScrollable);
+    _mobileScrollController.addListener(_mobileScrollListener);
 
     _searchController.addListener(() {
       _onSearchChanged(_searchController.text);
     });
 
+    // ensure permissions are available before the drawer is opened; the home
+    // page normally requests these, but LeadDataPage can be pushed from other
+    // places so we double‑check here as well.
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      final prefs = await SharedPreferences.getInstance();
+      final userId = prefs.getString('userId') ?? '';
+      if (userId.isNotEmpty) {
+        settingsProvider.getMenuPermissionData(userId, context);
+      }
+    });
+
     _fetchLeads();
+  }
+
+  Future<void> _initData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      userName = prefs.getString('userName') ?? "Admin";
+    });
+
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
+    await settingsProvider.getCompanyDetails();
+    if (mounted) {
+      setState(() {
+        logo = HttpUrls.imgBaseUrl + settingsProvider.logo;
+      });
+    }
+
+    PackageInfo.fromPlatform().then((value) {
+      if (mounted) {
+        setState(() {
+          packageInfo = value;
+        });
+      }
+    });
+  }
+
+  void _mobileScrollListener() {
+    if (_mobileScrollController.hasClients) {
+      if (_mobileScrollController.position.pixels >=
+              _mobileScrollController.position.maxScrollExtent - 200 &&
+          !_isLoadingMore &&
+          _hasMoreData) {
+        _fetchLeads(isPagination: true);
+      }
+    }
   }
 
   void _onSearchChanged(String query) {
@@ -96,6 +160,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
     _horizontalScrollController.dispose();
     _fixedVerticalController.dispose();
     _scrollableVerticalController.dispose();
+    _mobileScrollController.dispose();
     super.dispose();
   }
 
@@ -170,10 +235,26 @@ class _LeadDataPageState extends State<LeadDataPage> {
     );
   }
 
-  Future<void> _fetchLeads() async {
-    setState(() {
-      _isLoading = true;
-    });
+  Future<void> _fetchLeads({bool isPagination = false}) async {
+    if (!isPagination) {
+      setState(() {
+        _isLoading = true;
+        _currentPage = 1;
+        _hasMoreData = true;
+        _leads.clear();
+        _filteredLeads.clear();
+      });
+    } else {
+      if (_isLoadingMore) return;
+      setState(() {
+        _isLoadingMore = true;
+      });
+      _currentPage++;
+    }
+
+    int startLimit = ((_currentPage - 1) * _pageSize) + 1;
+    int endLimit = _currentPage * _pageSize;
+
     try {
       final response = await HttpRequest.httpGetRequest(
         endPoint: HttpUrls.searchLeadDashboard,
@@ -184,8 +265,8 @@ class _LeadDataPageState extends State<LeadDataPage> {
           "Todate": widget.toDate,
           "To_User_Id": widget.user.toString(),
           "Status_Id": "0",
-          "Page_Index1": "0",
-          "Page_Index2": "200",
+          "Page_Index1": startLimit.toString(),
+          "Page_Index2": endLimit.toString(),
           "Enquiry_For_Id": "0",
           "Enquiry_Source_Id": "0",
           "Source": widget.source,
@@ -195,29 +276,115 @@ class _LeadDataPageState extends State<LeadDataPage> {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data is List) {
+          List<SearchLeadModel> newLeads =
+              data.map((e) => SearchLeadModel.fromJson(e)).toList();
+
+          if (newLeads.isNotEmpty) {
+            _totalCount = newLeads.last.customerId;
+            if (newLeads.last.customerName.isEmpty) {
+              newLeads.removeLast();
+            }
+
+            if (newLeads.isEmpty) {
+              _hasMoreData = false;
+            } else {
+              if (!isPagination) {
+                _leads = newLeads;
+              } else {
+                if (!AppStyles.isWebScreen(context)) {
+                  _leads.addAll(newLeads);
+                } else {
+                  _leads = newLeads;
+                }
+              }
+            }
+          } else {
+            _hasMoreData = false;
+          }
+
           setState(() {
-            _leads = data.map((e) => SearchLeadModel.fromJson(e)).toList();
             _filteredLeads = List.from(_leads);
+            if (_searchController.text.isNotEmpty) {
+              _onSearchChanged(_searchController.text);
+            }
             _isLoading = false;
+            _isLoadingMore = false;
           });
         } else {
           setState(() {
             _errorMessage = 'Invalid data format from server';
             _isLoading = false;
+            _isLoadingMore = false;
           });
         }
       } else {
         setState(() {
           _errorMessage = 'Failed to load leads: ${response.statusCode}';
           _isLoading = false;
+          _isLoadingMore = false;
         });
       }
     } catch (e) {
       setState(() {
         _errorMessage = e.toString();
         _isLoading = false;
+        _isLoadingMore = false;
       });
     }
+  }
+
+  Future<void> _fetchNextPage() async {
+    if (_currentPage * _pageSize >= _totalCount && _totalCount > 0) return;
+    await _fetchLeads(isPagination: true);
+  }
+
+  Future<void> _fetchPreviousPage() async {
+    if (_currentPage <= 1) return;
+    setState(() {
+      _currentPage = _currentPage - 2;
+    });
+    await _fetchLeads(isPagination: true);
+  }
+
+  Widget _buildPaginationControls() {
+    int startItem = ((_currentPage - 1) * _pageSize) + 1;
+    int endItem = _currentPage * _pageSize;
+    if (endItem > _totalCount) {
+      endItem = _totalCount;
+    }
+    if (_totalCount == 0) {
+      startItem = 0;
+      endItem = 0;
+    }
+
+    return SizedBox(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: startItem > 1 && !_isLoadingMore
+                ? () {
+                    _fetchPreviousPage();
+                  }
+                : null,
+          ),
+          Text(
+            'Showing $startItem / $endItem of $_totalCount',
+            style: const TextStyle(fontSize: 16),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed: endItem < _totalCount && !_isLoadingMore
+                ? () {
+                    _fetchNextPage();
+                  }
+                : null,
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -231,7 +398,6 @@ class _LeadDataPageState extends State<LeadDataPage> {
     final sideProvider = Provider.of<SidebarProvider>(context);
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
     final isMobile = !AppStyles.isWebScreen(context);
-
     final double tableHeaderHeight = 50.0;
     final double rowHeight = 35.0;
 
@@ -240,11 +406,6 @@ class _LeadDataPageState extends State<LeadDataPage> {
         appBar: isMobile
             ? CustomAppBar(
                 title: title,
-                leadingWidget: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Icon(Icons.arrow_back)),
                 onSearchTap: () {
                   sideProvider.startSearch();
                 },
@@ -254,6 +415,13 @@ class _LeadDataPageState extends State<LeadDataPage> {
                 },
                 onSearch: (_) {}, // Local listener handles search
                 searchController: _searchController,
+                leadingWidget: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  color: const Color(0xFF152D70),
+                  onPressed: () {
+                    context.pop();
+                  },
+                ),
               )
             : null,
         body: Column(
@@ -264,16 +432,14 @@ class _LeadDataPageState extends State<LeadDataPage> {
                     const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
                 child: Row(
                   children: [
-                    InkWell(
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                      child: const Icon(
-                        Icons.arrow_back,
-                        size: 24,
-                        color: Color(0xFF152D70),
-                      ),
-                    ),
+                    IconButton(
+                        onPressed: () {
+                          context.pop();
+                        },
+                        icon: const Icon(
+                          Icons.arrow_back,
+                          color: Color(0xFF152D70),
+                        )),
                     const SizedBox(
                       width: 8,
                     ),
@@ -330,16 +496,28 @@ class _LeadDataPageState extends State<LeadDataPage> {
                           ? const Center(child: Text("No leads found"))
                           : isMobile
                               ? RefreshIndicator(
-                                  onRefresh: _fetchLeads,
+                                  onRefresh: () => _fetchLeads(),
                                   child: ListView.builder(
-                                    itemCount: _filteredLeads.length,
+                                    controller: _mobileScrollController,
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    itemCount: _filteredLeads.length +
+                                        (_isLoadingMore ? 1 : 0),
                                     itemBuilder: (context, index) {
+                                      if (index == _filteredLeads.length) {
+                                        return const Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        );
+                                      }
                                       final lead = _filteredLeads[index];
                                       return Column(
                                         children: [
-                                          const Divider(
+                                          Divider(
                                             height: 2,
-                                            color: Colors.grey,
+                                            color: AppColors.grey,
                                           ),
                                           LeadCard(
                                             isLead: true,
@@ -1214,7 +1392,12 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                     ],
                                   ),
                                 ),
-            )
+            ),
+            if (!isMobile) ...[
+              const SizedBox(height: 10),
+              _buildPaginationControls(),
+              const SizedBox(height: 10),
+            ],
           ],
         ));
   }
