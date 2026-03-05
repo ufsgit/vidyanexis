@@ -1170,7 +1170,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     final newBOMItem = BillOfMaterialItem(
       itemsAndDescription: billdescriptionController.text,
       make: billmakeController.text,
-      quantity: int.tryParse(billquantityController.text) ?? 0,
+      quantity: billquantityController.text,
       distributor: billdistributorController.text,
       invoiceNo: billinvoiceController.text,
     );
@@ -2408,7 +2408,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       (index) => BillOfMaterialItem(
           itemsAndDescription: '',
           make: '',
-          quantity: 0,
+          quantity: "",
           distributor: '',
           invoiceNo: ''),
     );
