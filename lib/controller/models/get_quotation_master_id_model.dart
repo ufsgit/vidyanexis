@@ -353,7 +353,7 @@ class QuotationDetail {
 
 class BillOfMaterial {
   String make;
-  int quantity;
+  String quantity;
   String invoiceNo;
   String distributor;
   int billOfMaterialsId;
@@ -371,7 +371,7 @@ class BillOfMaterial {
   factory BillOfMaterial.fromJson(Map<String, dynamic> json) {
     return BillOfMaterial(
       make: toStr(json['make']),
-      quantity: toInt(json['Quantity']),
+      quantity: toStr(json['Quantity']),
       invoiceNo: toStr(json['Invoice_No']),
       distributor: toStr(json['Distributor']),
       billOfMaterialsId: toInt(json['Bill_Of_Materials_Id']),
