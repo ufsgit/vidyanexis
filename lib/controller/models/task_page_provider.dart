@@ -66,6 +66,23 @@ class TaskPageProvider extends ChangeNotifier {
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
   int? get selectedTaskType => _selectedTaskType;
+  int? _expandedIndex;
+  int? get expandedIndex => _expandedIndex;
+
+  void toggleExpansion(int index) {
+    if (_expandedIndex == index) {
+      _expandedIndex = null;
+    } else {
+      _expandedIndex = index;
+    }
+    notifyListeners();
+  }
+
+  void resetExpansion() {
+    _expandedIndex = null;
+    notifyListeners();
+  }
+
   bool get hasMorePages => _pageIndex < _totalPages;
 
   List<String> _selectedTaskTypeIds = [];

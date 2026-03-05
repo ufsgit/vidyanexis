@@ -2687,7 +2687,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           customerDetailsProvider.billquantityController,
                       hintText: 'Quantity',
                       labelText: '',
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
                   ),
                   if (customerDetailsProvider.selectedQuotationType == 1) ...[

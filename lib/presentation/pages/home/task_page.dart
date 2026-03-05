@@ -6,7 +6,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,7 +18,6 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
@@ -34,7 +32,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/task_card.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
@@ -174,8 +172,6 @@ class _tasksPageReportState extends State<TaskPage> {
     final reportsProvider = Provider.of<TaskPageProvider>(context);
 
     final provider = Provider.of<DropDownProvider>(context);
-    final customerDetailsProvider =
-        Provider.of<CustomerDetailsProvider>(context);
     final searchProvider = Provider.of<SidebarProvider>(context);
 
     return Scaffold(
@@ -921,15 +917,21 @@ class _tasksPageReportState extends State<TaskPage> {
             ),
             Expanded(
               child: Padding(
-                padding:
-                    const EdgeInsets.only(left: 16.0, right: 16.0, bottom: 4.0),
+                padding: AppStyles.isWebScreen(context)
+                    ? const EdgeInsets.only(
+                        left: 16.0, right: 16.0, bottom: 4.0)
+                    : EdgeInsets.zero,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
-                    borderRadius: BorderRadius.circular(14),
+                    borderRadius: AppStyles.isWebScreen(context)
+                        ? BorderRadius.circular(14)
+                        : BorderRadius.zero,
                   ),
                   child: Padding(
-                    padding: const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0),
+                    padding: AppStyles.isWebScreen(context)
+                        ? const EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 8.0)
+                        : EdgeInsets.zero,
                     child: Column(
                       children: [
                         if (!AppStyles.isWebScreen(context))
@@ -1050,399 +1052,34 @@ class _tasksPageReportState extends State<TaskPage> {
                                             1;
 
                                     if (!AppStyles.isWebScreen(context)) {
-                                      Color statusColor = task.taskStatusName ==
-                                              "Completed"
-                                          ? Colors.green
-                                          : task.taskStatusName == "In Progress"
-                                              ? Colors.orange
-                                              : Colors.red;
                                       return Column(
                                         children: [
                                           Divider(
                                             height: 2,
                                             color: AppColors.grey,
                                           ),
-                                          InkWell(
-                                            onTap: () async {
+                                          TaskCard(
+                                            task: task,
+                                            isExpanded:
+                                                reportsProvider.expandedIndex ==
+                                                    index,
+                                            onTap: () => reportsProvider
+                                                .toggleExpansion(index),
+                                            showStatusUpdate: (ctx, t) {
                                               reportsProvider
                                                   .selectedTaskTypeIds
                                                   .clear();
                                               reportsProvider.taskTypeModel
                                                   .clear();
-                                              if (task.customerName ==
-                                                      null || // check here
-                                                  task.customerName!.isEmpty) {
-                                                updateStatusDialogWithoutTask(
-                                                        task)
-                                                    .then((value) {
-                                                  if (value == true) {
-                                                    reportsProvider
-                                                        .searchTaskByCustomer(
-                                                            context);
-                                                  }
-                                                });
-                                              } else {
-                                                if (AppStyles.isWebScreen(
-                                                    context)) {
-                                                  statusDialog(task)
-                                                      .then((value) {
-                                                    if (value == true) {
-                                                      reportsProvider
-                                                          .searchTaskByCustomer(
-                                                              context);
-                                                    }
-                                                  });
-                                                } else {
-                                                  statusDialogMobile(task)
-                                                      .then((value) {
-                                                    if (value == true) {
-                                                      reportsProvider
-                                                          .searchTaskByCustomer(
-                                                              context);
-                                                    }
-                                                  });
+                                              statusDialogMobile(t)
+                                                  .then((value) {
+                                                if (value == true) {
+                                                  reportsProvider
+                                                      .searchTaskByCustomer(
+                                                          context);
                                                 }
-                                              }
+                                              });
                                             },
-                                            child: Container(
-                                              color: AppColors.whiteColor,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(12.0),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: InkWell(
-                                                            onTap: () {
-                                                              // context.push(
-                                                              //     '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                              reportsProvider
-                                                                  .selectedTaskTypeIds
-                                                                  .clear();
-                                                              reportsProvider
-                                                                  .taskTypeModel
-                                                                  .clear();
-                                                              if (task.customerName ==
-                                                                      null ||
-                                                                  task.customerName!
-                                                                      .isEmpty) {
-                                                                updateStatusDialogWithoutTask(
-                                                                        task)
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value ==
-                                                                      true) {
-                                                                    reportsProvider
-                                                                        .searchTaskByCustomer(
-                                                                            context);
-                                                                  }
-                                                                });
-                                                              } else {
-                                                                if (AppStyles
-                                                                    .isWebScreen(
-                                                                        context)) {
-                                                                  statusDialog(
-                                                                          task)
-                                                                      .then(
-                                                                          (value) {
-                                                                    if (value ==
-                                                                        true) {
-                                                                      reportsProvider
-                                                                          .searchTaskByCustomer(
-                                                                              context);
-                                                                    }
-                                                                  });
-                                                                } else {
-                                                                  statusDialogMobile(
-                                                                          task)
-                                                                      .then(
-                                                                          (value) async {
-                                                                    if (value ==
-                                                                        true) {
-                                                                      reportsProvider
-                                                                          .searchTaskByCustomer(
-                                                                              context);
-                                                                    }
-                                                                  });
-                                                                }
-                                                              }
-                                                            },
-                                                            child: Row(
-                                                              children: [
-                                                                Container(
-                                                                    height: 22,
-                                                                    width: 3,
-                                                                    decoration: BoxDecoration(
-                                                                        color:
-                                                                            statusColor,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(16))),
-                                                                // const SizedBox(
-                                                                //     width: 8),
-                                                                // Image.asset(
-                                                                //   'assets/images/lead_profile.png',
-                                                                //   width: 15,
-                                                                //   height: 15,
-                                                                //   errorBuilder: (context,
-                                                                //           error,
-                                                                //           stackTrace) =>
-                                                                //       const Icon(
-                                                                //           Icons
-                                                                //               .person,
-                                                                //           size: 10),
-                                                                // ),
-                                                                const SizedBox(
-                                                                    width: 8),
-                                                                Flexible(
-                                                                    child:
-                                                                        CustomText(
-                                                                  task.customerName,
-                                                                  fontSize: 14,
-                                                                  color: AppColors
-                                                                      .textBlack,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                )),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        // Status container
-                                                        if (task.taskStatusName
-                                                            .isNotEmpty)
-                                                          InkWell(
-                                                            onTap: () {
-                                                              reportsProvider
-                                                                  .selectedTaskTypeIds
-                                                                  .clear();
-                                                              reportsProvider
-                                                                  .taskTypeModel
-                                                                  .clear();
-                                                              if (task.customerName ==
-                                                                      null ||
-                                                                  task.customerName!
-                                                                      .isEmpty) {
-                                                                updateStatusDialogWithoutTask(
-                                                                        task)
-                                                                    .then(
-                                                                        (value) {
-                                                                  if (value ==
-                                                                      true) {
-                                                                    reportsProvider
-                                                                        .searchTaskByCustomer(
-                                                                            context);
-                                                                  }
-                                                                });
-                                                              } else {
-                                                                if (AppStyles
-                                                                    .isWebScreen(
-                                                                        context)) {
-                                                                  statusDialog(
-                                                                          task)
-                                                                      .then(
-                                                                          (value) {
-                                                                    if (value ==
-                                                                        true) {
-                                                                      reportsProvider
-                                                                          .searchTaskByCustomer(
-                                                                              context);
-                                                                    }
-                                                                  });
-                                                                } else {
-                                                                  statusDialogMobile(
-                                                                          task)
-                                                                      .then(
-                                                                          (value) {
-                                                                    if (value ==
-                                                                        true) {
-                                                                      reportsProvider
-                                                                          .searchTaskByCustomer(
-                                                                              context);
-                                                                    }
-                                                                  });
-                                                                }
-                                                              }
-                                                            },
-                                                            child: Container(
-                                                                height: 22,
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              30),
-                                                                  color: StatusUtils
-                                                                          .getTaskColor(task
-                                                                              .taskStatusId)
-                                                                      .withAlpha(
-                                                                          40),
-                                                                ),
-                                                                child: Center(
-                                                                  child:
-                                                                      Padding(
-                                                                    padding: const EdgeInsets
-                                                                        .symmetric(
-                                                                        horizontal:
-                                                                            10,
-                                                                        vertical:
-                                                                            2),
-                                                                    child: Text(
-                                                                      StatusUtils
-                                                                          .getDisplayStatus(
-                                                                              task.taskStatusName),
-                                                                      style: GoogleFonts
-                                                                          .plusJakartaSans(
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontWeight:
-                                                                            FontWeight.w500,
-                                                                        color: StatusUtils.getTaskTextColor(
-                                                                            task.taskStatusId),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                )),
-                                                          ),
-                                                      ],
-                                                    ),
-                                                    const SizedBox(
-                                                      height: 4,
-                                                    ),
-                                                    Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        Expanded(
-                                                          child: _buildMobileInfoRow(
-                                                              context,
-                                                              task.taskTypeName,
-                                                              ''),
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 8),
-                                                        CustomActionButton(
-                                                          imageColor: AppColors
-                                                              .textGreen,
-                                                          onTap: () async {
-                                                            try {
-                                                              String mobile =
-                                                                  await _fetchAndGetMobile(
-                                                                      context,
-                                                                      task,
-                                                                      customerDetailsProvider);
-                                                              if (!context
-                                                                  .mounted)
-                                                                return;
-                                                              mobile =
-                                                                  formatIndianPhoneNumber(
-                                                                      mobile);
-                                                              if (mobile
-                                                                  .isNotEmpty) {
-                                                                _showWhatsAppOptionsDialog(
-                                                                    context,
-                                                                    mobile);
-                                                              } else {
-                                                                ScaffoldMessenger
-                                                                        .maybeOf(
-                                                                            context)
-                                                                    ?.showSnackBar(const SnackBar(
-                                                                        content:
-                                                                            Text('Invalid Indian mobile number')));
-                                                              }
-                                                            } catch (e) {
-                                                              print(
-                                                                  'Error in Chat button: $e');
-                                                            }
-                                                          },
-                                                          icon: Icons
-                                                              .chat_bubble_outline,
-                                                          text: 'Chat',
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 15),
-                                                        CustomActionButton(
-                                                          imageColor: AppColors
-                                                              .bluebutton,
-                                                          onTap: () async {
-                                                            try {
-                                                              String mobile =
-                                                                  await _fetchAndGetMobile(
-                                                                      context,
-                                                                      task,
-                                                                      customerDetailsProvider);
-                                                              if (!context
-                                                                  .mounted)
-                                                                return;
-                                                              if (mobile
-                                                                  .isNotEmpty) {
-                                                                final Uri
-                                                                    phoneUri =
-                                                                    Uri(
-                                                                  scheme: 'tel',
-                                                                  path: mobile,
-                                                                );
-                                                                if (await canLaunchUrl(
-                                                                    phoneUri)) {
-                                                                  await launchUrl(
-                                                                      phoneUri);
-                                                                }
-                                                              } else {
-                                                                ScaffoldMessenger
-                                                                        .maybeOf(
-                                                                            context)
-                                                                    ?.showSnackBar(const SnackBar(
-                                                                        content:
-                                                                            Text('Phone number not found')));
-                                                              }
-                                                            } catch (e) {
-                                                              print(
-                                                                  'Error in Call button: $e');
-                                                            }
-                                                          },
-                                                          icon: Icons.call,
-                                                          text: 'Call',
-                                                        ),
-                                                        const SizedBox(
-                                                            width: 15),
-
-                                                        // Date (right/end)
-                                                        Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Icon(
-                                                              Icons
-                                                                  .calendar_today_outlined,
-                                                              size: 14,
-                                                              color: AppColors
-                                                                  .textGrey2,
-                                                            ),
-                                                            const SizedBox(
-                                                                width: 8),
-                                                            CustomText(
-                                                              task.taskDate
-                                                                  .toDayMonthYearFormat(),
-                                                              fontSize: 12,
-                                                              color: AppColors
-                                                                  .textGrey2,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
                                           ),
                                         ],
                                       );
@@ -1822,35 +1459,6 @@ class _tasksPageReportState extends State<TaskPage> {
     }
 
     return _buildPaginationControls(context, reportsProvider);
-  }
-
-// Helper function for mobile info rows with more robust implementation
-  Widget _buildMobileInfoRow(BuildContext context, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          SizedBox(
-            width: 85,
-            child: CustomText(
-              label,
-              fontSize: 12,
-              color: AppColors.textBlack,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          Expanded(
-            child: CustomText(
-              value,
-              fontSize: 12,
-              color: AppColors.textGrey4,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        ],
-      ),
-    );
   }
 
   Widget _buildPaginationControls(
@@ -3682,120 +3290,6 @@ class _tasksPageReportState extends State<TaskPage> {
           ),
         ),
       ],
-    );
-  }
-
-  Future<String> _fetchAndGetMobile(BuildContext context, TaskReportModel task,
-      CustomerDetailsProvider customerProvider) async {
-    String mobile = task.mobile;
-    if (mobile.isEmpty || mobile == 'null' || mobile == '0') {
-      try {
-        // Removed Snackbar to avoid context issues
-        await customerProvider.fetchLeadDetails(
-            task.customerId.toString(), context);
-
-        final details = customerProvider.leadDetails;
-        if (details != null && details.isNotEmpty) {
-          mobile = details[0].contactNumber ?? '';
-        }
-      } catch (e) {
-        print("Error fetching details: $e");
-      }
-    }
-    return mobile;
-  }
-
-  void _showWhatsAppOptionsDialog(BuildContext context, String rawPhone) {
-    String phone = formatIndianPhoneNumber(rawPhone);
-    if (phone.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Invalid Indian mobile number')),
-      );
-      return;
-    }
-    showDialog(
-      context: context,
-      builder: (BuildContext dialogContext) {
-        return AlertDialog(
-          title: const Text('Choose WhatsApp'),
-          content: const Text('Select which WhatsApp to open:'),
-          actions: [
-            TextButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                // Try to open Normal WhatsApp
-                final Uri normalWhatsappUri = Uri.parse('https://wa.me/$phone');
-                try {
-                  if (await canLaunchUrl(normalWhatsappUri)) {
-                    await launchUrl(normalWhatsappUri,
-                        mode: LaunchMode.externalApplication);
-                  } else {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Normal WhatsApp is not installed'),
-                        ),
-                      );
-                    }
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Could not open Normal WhatsApp'),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: const Text('Normal WhatsApp'),
-            ),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(dialogContext).pop();
-                // Try to open WhatsApp Business
-                final Uri businessWhatsappUri =
-                    Uri.parse('whatsapp-business://send?phone=$phone');
-                final Uri webWhatsapp = Uri.parse('https://wa.me/$phone');
-
-                try {
-                  // Try web WhatsApp which works for both
-                  if (await canLaunchUrl(webWhatsapp)) {
-                    await launchUrl(webWhatsapp,
-                        mode: LaunchMode.externalApplication);
-                  } else if (await canLaunchUrl(businessWhatsappUri)) {
-                    await launchUrl(businessWhatsappUri,
-                        mode: LaunchMode.externalApplication);
-                  } else {
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('WhatsApp Business is not installed'),
-                        ),
-                      );
-                    }
-                  }
-                } catch (e) {
-                  if (context.mounted) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Could not open WhatsApp Business'),
-                      ),
-                    );
-                  }
-                }
-              },
-              child: const Text('WhatsApp Business'),
-            ),
-            TextButton(
-              onPressed: () {
-                Navigator.of(dialogContext).pop();
-              },
-              child: const Text('Cancel'),
-            ),
-          ],
-        );
-      },
     );
   }
 }

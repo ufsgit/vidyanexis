@@ -1,7 +1,7 @@
 class BillOfMaterialItem {
   String itemsAndDescription;
   String make;
-  int quantity;
+  String quantity;
   String distributor;
   String invoiceNo;
 

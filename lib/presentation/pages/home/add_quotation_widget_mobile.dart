@@ -1443,9 +1443,9 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                 customerDetailsProvider.billquantityController,
                             labelText: 'Quantity',
                             keyBoardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
+                            // inputFormatters: [
+                            //   FilteringTextInputFormatter.digitsOnly
+                            // ],
                           ),
                         ),
                         const SizedBox(width: 16.0),
