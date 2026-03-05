@@ -313,4 +313,12 @@ class HttpUrls {
   static String deletePurchase = "item/Delete_Purchase_Master";
   static String saveFormData = "settings/Save_Form_Data";
   static String searchFormData = "settings/Search_Form_Data";
+  static String saveSales = "item/Save_sales_master";
+  static String getSalesCustomers = "item/get_all_customers";
+  static String getSalesDataMaster = "item/get_sales_master";
+  static String getSalesDataDetails = "item/Get_Sales_Details";
+  static String deleteSales = "item/Delete_Sales_Master";
+  static String saveInventoryCustomer = "item/save_customer";
+  static String getInventoryCustomer = "item/get_all_customers";
+  static String deleteInventoryCustomer = "item/Delete_Customer";
 }

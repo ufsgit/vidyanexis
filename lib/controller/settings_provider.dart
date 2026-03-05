@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/controller/models/inventory_customer_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
 import 'package:vidyanexis/controller/models/checklist_category_model.dart';
@@ -365,6 +366,41 @@ class SettingsProvider extends ChangeNotifier {
     _selectedBranchId = id;
     notifyListeners();
   }
+
+  // Inventory Customer search controller
+  final TextEditingController searchInventoryCustomerController =
+      TextEditingController();
+  // Inventory Customer controllers (separate from existing customer code)
+  final TextEditingController inventoryCustomerNameController =
+      TextEditingController();
+  TextEditingController inventoryCustomerAddressController =
+      TextEditingController();
+  TextEditingController inventoryCustomerAddress1Controller =
+      TextEditingController();
+  TextEditingController inventoryCustomerAddress2Controller =
+      TextEditingController();
+  TextEditingController inventoryCustomerAddress3Controller =
+      TextEditingController();
+  TextEditingController inventoryCustomerPhoneController =
+      TextEditingController();
+  TextEditingController inventoryCustomerMobileController =
+      TextEditingController();
+  TextEditingController inventoryCustomerEmailController =
+      TextEditingController();
+  TextEditingController inventoryCustomerGstNoController =
+      TextEditingController();
+  TextEditingController inventoryCustomerOpeningBalanceController =
+      TextEditingController();
+  //inventory sales controller
+  final TextEditingController salesCustomerNameController =
+      TextEditingController();
+  TextEditingController salesInvoicenoController = TextEditingController();
+  TextEditingController salesAddressController = TextEditingController();
+  TextEditingController salesInvoicedateController = TextEditingController();
+  // Inventory Customer list
+  List<InventoryCustomerModel> _searchInventoryCustomer = [];
+  List<InventoryCustomerModel> get searchInventoryCustomer =>
+      _searchInventoryCustomer;
 
   saveBranch({
     required BuildContext context,
@@ -4107,6 +4143,144 @@ class SettingsProvider extends ChangeNotifier {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to delete Location')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      Loader.stopLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  // Inventory Customer methods (separate from existing customer code)
+  addInventoryCustomer({
+    required BuildContext context,
+    required String statusId,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveInventoryCustomer,
+          bodyData: {
+            'Customer_Id': statusId,
+            'Customer_Name': inventoryCustomerNameController.text.trim(),
+            'Address': inventoryCustomerAddressController.text.trim(),
+            'Address1': inventoryCustomerAddress1Controller.text.trim(),
+            'Address2': inventoryCustomerAddress2Controller.text.trim(),
+            'Address3': inventoryCustomerAddress3Controller.text.trim(),
+            'PhoneNo': inventoryCustomerPhoneController.text.trim(),
+            'MobileNo': inventoryCustomerMobileController.text.trim(),
+            'Email': inventoryCustomerEmailController.text.trim(),
+            'GSTNO': inventoryCustomerGstNoController.text.trim(),
+            'OpeningBalance':
+                inventoryCustomerOpeningBalanceController.text.isEmpty
+                    ? '0'
+                    : inventoryCustomerOpeningBalanceController.text.trim(),
+          });
+
+      if (response!.statusCode == 200) {
+        inventoryCustomerClear();
+
+        final data = response.data;
+        await searchInventoryCustomerApi('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+        searchInventoryCustomerController.clear();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Customer saved successfully')),
+        );
+        print(data);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+        Loader.stopLoader(context);
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+      Loader.stopLoader(context);
+    }
+  }
+
+  void inventoryCustomerClear() {
+    inventoryCustomerNameController.clear();
+    inventoryCustomerAddressController.clear();
+    inventoryCustomerAddress1Controller.clear();
+    inventoryCustomerAddress2Controller.clear();
+    inventoryCustomerAddress3Controller.clear();
+    inventoryCustomerPhoneController.clear();
+    inventoryCustomerMobileController.clear();
+    inventoryCustomerEmailController.clear();
+    inventoryCustomerGstNoController.clear();
+    inventoryCustomerOpeningBalanceController.clear();
+  }
+
+  // Inventory Customer search API
+  searchInventoryCustomerApi(String query, BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: '${HttpUrls.getInventoryCustomer}?Customer_Name=$query');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final newData = data['data'];
+          print(newData);
+          _searchInventoryCustomer = (newData as List<dynamic>)
+              .map((item) => InventoryCustomerModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  // Delete Inventory Customer
+  void deleteInventoryCustomer(BuildContext context, int customerId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteInventoryCustomer}/$customerId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data['Customer_Id'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete a Customer \n that is currently in use!");
+        } else {
+          searchInventoryCustomerApi('', context);
+          inventoryCustomerClear();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Customer deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+        notifyListeners();
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete Customer')),
         );
       }
     } catch (e) {

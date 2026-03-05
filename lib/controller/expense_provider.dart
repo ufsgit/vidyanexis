@@ -9,6 +9,7 @@ import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/controller/models/Sales_model.dart';
 import 'package:vidyanexis/controller/models/customer_details_model.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
@@ -17,6 +18,7 @@ import 'package:vidyanexis/controller/models/item_lists_model.dart';
 import 'package:vidyanexis/controller/models/item_settings_model.dart';
 import 'package:vidyanexis/controller/models/purchase_item_model.dart';
 import 'package:vidyanexis/controller/models/purchase_model.dart';
+import 'package:vidyanexis/controller/models/sales_item_model.dart';
 import 'package:vidyanexis/controller/models/stock_list_model.dart';
 import 'package:vidyanexis/controller/models/stock_model.dart';
 import 'package:vidyanexis/controller/models/supplier_model.dart';
@@ -231,6 +233,329 @@ class ExpenseProvider extends ChangeNotifier {
   //client filter
   List<CustomerModel> _clientList = [];
   List<CustomerModel> get clientList => _clientList;
+
+//sales-----------------
+  final TextEditingController addressSalesController = TextEditingController();
+  final TextEditingController invoiceNOSalesControler = TextEditingController();
+  final TextEditingController invoiceDateSalesController =
+      TextEditingController();
+  final TextEditingController categorySalesController = TextEditingController();
+  final TextEditingController itemNameSalesController = TextEditingController();
+  final TextEditingController unitSalesController = TextEditingController();
+  final TextEditingController hsnSalesController = TextEditingController();
+  final TextEditingController quantitySalesController = TextEditingController();
+  final TextEditingController priceSalesController = TextEditingController();
+  final TextEditingController amountSalesController = TextEditingController();
+  final TextEditingController discountSalesController = TextEditingController();
+  final TextEditingController discountAmountSalesController =
+      TextEditingController();
+  final TextEditingController netValueSalesController = TextEditingController();
+  final TextEditingController descriptionSalesController =
+      TextEditingController();
+
+  final TextEditingController cgstSalesController = TextEditingController();
+  final TextEditingController sgstSalesController = TextEditingController();
+  final TextEditingController gstSalesController = TextEditingController();
+  final TextEditingController igstSalesController = TextEditingController();
+  final TextEditingController cgstPerSalesController = TextEditingController();
+  final TextEditingController sgstPerSalesController = TextEditingController();
+  final TextEditingController gstPerSalesController = TextEditingController();
+  final TextEditingController igstPerSalesController = TextEditingController();
+  final TextEditingController totalAmountSalesController =
+      TextEditingController();
+
+  String _searchSales = '';
+  String _fromDateSSales = '';
+  String _toDateSSales = '';
+  String _customerSales = '';
+
+// Getters
+  String get searchSales => _searchSales;
+  String get fromDateSSales => _fromDateSSales;
+  String get toDateSSales => _toDateSSales;
+  String get customerSales => _customerSales;
+
+  List<SalesModel> _salesList = [];
+  List<SalesModel> get salesList => _salesList;
+  List<SalesItemModel> _salesDetails = [];
+  List<SalesItemModel> get salesDetails => _salesDetails;
+
+  List<SalesItemModel> salesItems = [];
+  int? _editSalesItemIndex;
+  int? _selectedSalesCustomerId;
+  int? get selectedSalesCustomerId => _selectedSalesCustomerId;
+  String _customer = '';
+  String get customer => _customer;
+
+  bool _isFilterSales = false;
+  bool get isFilterSales => _isFilterSales;
+
+  void toggleFilterSales() {
+    _isFilterSales = !_isFilterSales;
+    notifyListeners();
+  }
+
+  DateTime? _fromDateSales;
+  DateTime? _toDateSales;
+  int? _selectedDateFilterIndexSales;
+
+  DateTime? get fromDateSales => _fromDateSales;
+  DateTime? get toDateSales => _toDateSales;
+  int? get selectedDateFilterIndexSales => _selectedDateFilterIndexSales;
+
+// Formatted dates for API
+  String get formattedFromDateSales {
+    if (_fromDateSales == null) return '';
+    return DateFormat('yyyy-MM-dd').format(_fromDateSales!);
+  }
+
+  String get formattedToDateSales {
+    if (_toDateSales == null) return '';
+    return DateFormat('yyyy-MM-dd').format(_toDateSales!);
+  }
+
+// Select date for sales
+  Future<void> selectDateSales(BuildContext context, bool isFromDate) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: isFromDate
+          ? (_fromDateSales ?? DateTime.now())
+          : (_toDateSales ?? DateTime.now()),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (picked != null) {
+      if (isFromDate) {
+        _fromDateSales = picked;
+        _selectedDateFilterIndexSales = -1;
+      } else {
+        _toDateSales = picked;
+        _selectedDateFilterIndexSales = -1;
+      }
+      notifyListeners();
+    }
+  }
+
+// Select date filter option for sales
+  void selectDateFilterOptionSales(int? index) {
+    if (index == null) {
+      // If the index is null, we are clearing the filter
+      _selectedDateFilterIndexSales = null;
+      _fromDateSales = null;
+      _toDateSales = null;
+    } else {
+      _selectedDateFilterIndexSales = index;
+    }
+    notifyListeners();
+  }
+
+// Set date filter for sales (similar to purchase)
+  void setDateFilterSales(String filterType) {
+    DateTime now = DateTime.now();
+
+    switch (filterType) {
+      case 'Yesterday':
+        _fromDateSales = now.subtract(const Duration(days: 1));
+        _toDateSales = now.subtract(const Duration(days: 1));
+        break;
+      case 'Today':
+        _fromDateSales = now;
+        _toDateSales = now;
+        break;
+      case 'Tomorrow':
+        _fromDateSales = now.add(const Duration(days: 1));
+        _toDateSales = now.add(const Duration(days: 1));
+        break;
+      case 'This Week':
+        int currentWeekday = now.weekday;
+        _fromDateSales = now.subtract(Duration(days: currentWeekday - 1));
+        _toDateSales = now.add(Duration(days: 7 - currentWeekday));
+        break;
+      case 'This Month':
+        _fromDateSales = DateTime(now.year, now.month, 1);
+        _toDateSales = DateTime(now.year, now.month + 1, 0);
+        break;
+      default:
+        _fromDateSales = null;
+        _toDateSales = null;
+    }
+    notifyListeners();
+  }
+
+  void formatDateSales() {
+    // The formatted dates are already available through getters
+    notifyListeners();
+  }
+
+//-----------------
+
+  void resetSalesValues() {
+    addressSalesController.clear();
+    invoiceNOSalesControler.clear();
+    invoiceDateSalesController.clear();
+    descriptionSalesController.clear();
+    resetSalesEditState();
+    notifyListeners();
+  }
+
+  void resetSalesEditState() {
+    _editSalesItemIndex = null;
+    clearSalesItemFields();
+    notifyListeners();
+  }
+
+  void clearSalesItemFields() {
+    itemNameSalesController.clear();
+    categorySalesController.clear();
+    unitSalesController.clear();
+    cgstSalesController.clear();
+    sgstSalesController.clear();
+    gstSalesController.clear();
+    priceSalesController.clear();
+    quantitySalesController.clear();
+    amountSalesController.clear();
+    discountSalesController.clear();
+    discountAmountSalesController.clear();
+    netValueSalesController.clear();
+    totalAmountSalesController.clear();
+    hsnSalesController.clear();
+    cgstPerSalesController.clear();
+    sgstPerSalesController.clear();
+    gstPerSalesController.clear();
+    igstPerSalesController.clear();
+    _itemDrop = null;
+    selectedCategoryId = null;
+    selectedUnitId = null;
+  }
+
+  void resetSalesItems() {
+    salesItems.clear();
+    grandTotal = 0.0;
+    totalCGST = 0.0;
+    totalSGST = 0.0;
+    totalGST = 0.0;
+    totalDiscount = 0.0;
+    totalTaxableAmount = 0.0;
+    finalGrandTotal = 0.0;
+    _selectedSalesCustomerId = null;
+    notifyListeners();
+  }
+
+  void setSelectedSalesCustomerId(int id) {
+    _selectedSalesCustomerId = id; // This is for SALES!
+    notifyListeners();
+  }
+
+  void updateSalesCalculations() {
+    double quantity = double.tryParse(quantitySalesController.text) ?? 0;
+    double price = double.tryParse(priceSalesController.text) ?? 0;
+    double discountPer = double.tryParse(discountSalesController.text) ?? 0;
+
+    double amount = quantity * price;
+    amountSalesController.text = amount.toStringAsFixed(2);
+
+    double discount = (discountPer * amount) / 100;
+    discountAmountSalesController.text = discount.toStringAsFixed(2);
+
+    double netValue = amount - discount;
+    netValueSalesController.text = netValue.toStringAsFixed(2);
+    double cgstPer = double.tryParse(cgstPerSalesController.text) ?? 0.0;
+    double sgstPer = double.tryParse(sgstPerSalesController.text) ?? 0.0;
+    double cgst = (netValue * cgstPer) / 100;
+    double sgst = (netValue * sgstPer) / 100;
+    cgstSalesController.text = cgst.toStringAsFixed(2);
+    sgstSalesController.text = sgst.toStringAsFixed(2);
+
+    double totalGst = cgst + sgst;
+    gstSalesController.text = totalGst.toStringAsFixed(2);
+
+    totalAmountSalesController.text = (netValue + totalGst).toStringAsFixed(2);
+  }
+
+  void addOrUpdateSalesItem(SalesItemModel item) {
+    if (_editSalesItemIndex != null &&
+        _editSalesItemIndex! >= 0 &&
+        _editSalesItemIndex! < salesItems.length) {
+      // Edit existing item
+      salesItems[_editSalesItemIndex!] = item;
+    } else {
+      // Add new item
+      salesItems.add(item);
+    }
+
+    _editSalesItemIndex = null;
+
+    // Recalculate totals
+    calculateSalesGrandTotal();
+    notifyListeners();
+  }
+
+  void calculateSalesGrandTotal() {
+    grandTotal = 0.0;
+    totalCGST = 0.0;
+    totalSGST = 0.0;
+    totalGST = 0.0;
+    totalDiscount = 0.0;
+    totalTaxableAmount = 0.0;
+    finalGrandTotal = 0.0;
+
+    for (var item in salesItems) {
+      grandTotal += item.amount;
+      totalCGST += item.cgstAmount;
+      totalSGST += item.sgstAmount;
+      totalGST += item.gstAmount;
+      totalTaxableAmount += item.netValue;
+      totalDiscount += item.discount;
+      finalGrandTotal += item.totalAmount;
+    }
+
+    notifyListeners();
+  }
+
+  void editSalesItem(int index) {
+    if (index >= 0 && index < salesItems.length) {
+      SalesItemModel item = salesItems[index];
+      _editSalesItemIndex = index;
+
+      // Populate fields with existing data
+      itemNameSalesController.text = item.itemName;
+      categorySalesController.text = item.categoryName;
+      unitSalesController.text = item.unitName;
+      cgstSalesController.text = item.cgstAmount.toString();
+      sgstSalesController.text = item.sgstAmount.toString();
+      gstSalesController.text = item.gstAmount.toString();
+      priceSalesController.text = item.price.toString();
+      quantitySalesController.text = item.quantity.toString();
+      amountSalesController.text = item.amount.toString();
+      discountSalesController.text = item.discountPercentage.toString();
+      discountAmountSalesController.text = item.discount.toString();
+      netValueSalesController.text = item.netValue.toString();
+      totalAmountSalesController.text = item.totalAmount.toString();
+      selectedCategoryId = int.tryParse(item.categoryId) ?? 0;
+      selectedUnitId = int.tryParse(item.unitId) ?? 0;
+      hsnSalesController.text = item.hsnCode;
+
+      cgstPerSalesController.text = item.cgst.toString();
+      sgstPerSalesController.text = item.sgst.toString();
+      gstPerSalesController.text = item.gst.toString();
+      igstPerSalesController.text = item.igst.toString();
+
+      // Ensure the selected item ID is updated
+      setSelectedPurchaseItemId(int.tryParse(item.itemId) ?? 0);
+      notifyListeners();
+    }
+  }
+
+  void removeSalesItem(int index) {
+    if (index >= 0 && index < salesItems.length) {
+      salesItems.removeAt(index);
+      calculateSalesGrandTotal();
+      notifyListeners();
+    }
+  }
+
+  //------------------
 
   void setSelectedCustomerId(int id) {
     _selectedCustomerId = id;
@@ -1931,6 +2256,272 @@ class ExpenseProvider extends ChangeNotifier {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  //sales
+  void setSearchCriteriaSales(String search, String fromDate, String toDate,
+      String customer, String enquiryFor) {
+    _searchSales = search;
+    _fromDateSSales = fromDate;
+    _toDateSSales = toDate;
+    _customerSales = customer;
+    notifyListeners(); // Notify listeners so that UI can rebuild
+  }
+
+  getSalesMaster(BuildContext context) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "";
+
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+        if (_fromDateS.isEmpty) {
+          _fromDateS = "";
+        }
+        if (_toDateS.isEmpty) {
+          _toDateS = "";
+        }
+      } else {
+        isDate = "1";
+      }
+
+      String customer = _customer;
+      if (customer.isEmpty || customer == 'null') {
+        customer = '0';
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              "${HttpUrls.getSalesDataMaster}?p_Customer_Id=$customer&p_EntryDate_From=$_fromDateS&p_EntryDate_To=$_toDateS&p_Invoice_No=$_search&Is_Date_Check=$isDate");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final dataitem = data['data'][0];
+          print(dataitem);
+          _salesList = (dataitem as List<dynamic>)
+              .map((item) => SalesModel.fromJson(item))
+              .toList();
+          notifyListeners();
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  searchSalesDetails(String salesMasterId, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getSalesDataDetails + "/$salesMasterId");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+
+        if (data != null) {
+          final rawDataList = data['data'];
+
+          // Handle nested list safely
+          final salesMasterList = rawDataList[0];
+          if (salesMasterList != null && salesMasterList.isNotEmpty) {
+            final salesMaster = salesMasterList[0];
+            final dataitem = salesMaster['sales_details'] ?? [];
+
+            print('-------- $dataitem');
+
+            _salesDetails = (dataitem as List<dynamic>)
+                .map((item) => SalesItemModel(
+                      itemId: item['Item_Id']?.toString() ?? '',
+                      itemName: item['Item_Name']?.toString() ?? '',
+                      categoryId: item['Category_Id']?.toString() ?? '',
+                      categoryName: item['Category_Name']?.toString() ?? '',
+                      unitId: item['Unit_Id']?.toString() ?? '',
+                      unitName: item['Unit_Name']?.toString() ?? '',
+                      quantity: (item['Quantity'] is int)
+                          ? (item['Quantity'] as int).toDouble()
+                          : double.tryParse(
+                                  item['Quantity']?.toString() ?? '0') ??
+                              0.0,
+                      price: (item['Price'] is int)
+                          ? (item['Price'] as int).toDouble()
+                          : double.tryParse(item['Price']?.toString() ?? '0') ??
+                              0.0,
+                      amount: (item['Amount'] is int)
+                          ? (item['Amount'] as int).toDouble()
+                          : double.tryParse(
+                                  item['Amount']?.toString() ?? '0') ??
+                              0.0,
+                      discount: (item['Discount'] is int)
+                          ? (item['Discount'] as int).toDouble()
+                          : double.tryParse(
+                                  item['Discount']?.toString() ?? '0') ??
+                              0.0,
+                      discountPercentage: (item['Discount_Percentage'] is int)
+                          ? (item['Discount_Percentage'] as int).toDouble()
+                          : double.tryParse(
+                                  item['Discount_Percentage']?.toString() ??
+                                      '0') ??
+                              0.0,
+                      netValue: (item['Netvalue'] is int)
+                          ? (item['Netvalue'] as int).toDouble()
+                          : double.tryParse(
+                                  item['Netvalue']?.toString() ?? '0') ??
+                              0.0,
+                      cgst: (item['CGST'] is int)
+                          ? (item['CGST'] as int).toDouble()
+                          : double.tryParse(item['CGST']?.toString() ?? '0') ??
+                              0.0,
+                      sgst: (item['SGST'] is int)
+                          ? (item['SGST'] as int).toDouble()
+                          : double.tryParse(item['SGST']?.toString() ?? '0') ??
+                              0.0,
+                      gst: (item['GST'] is int)
+                          ? (item['GST'] as int).toDouble()
+                          : double.tryParse(item['GST']?.toString() ?? '0') ??
+                              0.0,
+                      igst: (item['IGST'] is int)
+                          ? (item['IGST'] as int).toDouble()
+                          : double.tryParse(item['IGST']?.toString() ?? '0') ??
+                              0.0,
+                      gstAmount: (item['GST_Amount'] is int)
+                          ? (item['GST_Amount'] as int).toDouble()
+                          : double.tryParse(
+                                  item['GST_Amount']?.toString() ?? '0') ??
+                              0.0,
+                      cgstAmount: (item['CGST_Amount'] is int)
+                          ? (item['CGST_Amount'] as int).toDouble()
+                          : double.tryParse(
+                                  item['CGST_Amount']?.toString() ?? '0') ??
+                              0.0,
+                      sgstAmount: (item['SGST_Amount'] is int)
+                          ? (item['SGST_Amount'] as int).toDouble()
+                          : double.tryParse(
+                                  item['SGST_Amount']?.toString() ?? '0') ??
+                              0.0,
+                      igstAmount: (item['IGST_Amount'] is int)
+                          ? (item['IGST_Amount'] as int).toDouble()
+                          : double.tryParse(
+                                  item['IGST_Amount']?.toString() ?? '0') ??
+                              0.0,
+                      totalAmount: (item['Total_Amount'] is int)
+                          ? (item['Total_Amount'] as int).toDouble()
+                          : double.tryParse(
+                                  item['Total_Amount']?.toString() ?? '0') ??
+                              0.0,
+                      hsnCode: item['HSNCode']?.toString() ?? '',
+                    ))
+                .toList();
+
+            print('Parsed ${_salesDetails.length} items successfully');
+            notifyListeners();
+          } else {
+            print('No sales master data found');
+          }
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> deleteSalesItem(BuildContext context, int salesMasterId) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpDeleteRequest(
+        endPoint: '${HttpUrls.deleteSales}/$salesMasterId',
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data['Sales_Master_Id_'] == -1) {
+          Loader.stopLoader(context);
+          alert(context,
+              "You are attempting to delete a Sales entry \n that is currently in use!");
+        } else {
+          getSalesMaster(context);
+          notifyListeners();
+
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Sales deleted successfully')),
+          );
+          Loader.stopLoader(context);
+        }
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to delete Sales')),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      Loader.stopLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  void saveSales({
+    required int editId,
+    required BuildContext context,
+    required var data,
+  }) async {
+    try {
+      Loader.showLoader(context);
+
+      print('Saving sales data: $data');
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveSales,
+        bodyData: data,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final responseData = response.data;
+        print('Save sales response: $responseData');
+
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Sales saved successfully'),
+          ),
+        );
+      } else {
+        Loader.stopLoader(context);
+        print('Save sales failed with status: ${response?.statusCode}');
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Server Error: ${response?.statusCode ?? 'Unknown'}'),
+          ),
+        );
+      }
+    } catch (e) {
+      print('Exception occurred while saving sales: $e');
+      Loader.stopLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('An error occurred: ${e.toString()}'),
+        ),
       );
     }
   }
