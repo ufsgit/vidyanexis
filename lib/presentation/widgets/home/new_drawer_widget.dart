@@ -173,6 +173,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       errorMessage = 'Enter Valid Email';
     } else if (dropDownProvider.selectedEnquiryForId == null) {
       errorMessage = 'Please select Enquiry For';
+    } else if (dropDownProvider.selectedEnquiryForName.isEmpty) {
+      errorMessage = 'Please select Enquiry For';
     }
     // else if (leadProvider.mapLinkController.text.isEmpty) {
     //   errorMessage = 'Location is required';

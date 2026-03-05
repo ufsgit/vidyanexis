@@ -5,8 +5,10 @@ import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/inventory/category_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
+import 'package:vidyanexis/presentation/pages/inventory/inventory_Customer_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/item_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/purchase_screen.dart';
+import 'package:vidyanexis/presentation/pages/inventory/sales_screen.dart';
 import 'package:vidyanexis/presentation/pages/inventory/supplier_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/unit_page.dart';
 
@@ -71,8 +73,9 @@ class _InventoryPageState extends State<InventoryPage> {
                 if (settingsProvider.menuIsViewMap[47].toString() == '1')
                   _buildMenuItem(context, 'Unit', Icons.document_scanner),
                 // if (settingsProvider.menuIsViewMap[48].toString() == '1')
-                //   _buildMenuItem(
-                //       context, 'Expense Management', Icons.document_scanner),
+                _buildMenuItem(context, 'Sales', Icons.document_scanner),
+                // if (settingsProvider.menuIsViewMap[48].toString() == '1')
+                _buildMenuItem(context, 'Customer', Icons.document_scanner),
               ],
             ),
           ),
@@ -157,12 +160,14 @@ class _InventoryPageState extends State<InventoryPage> {
             return const PurchaseScreen();
           case 'Supplier':
             return const SupplierPage();
-          // case 'Expense Management':
-          //   return const ExpenseManagement();
+          case 'Sales':
+            return const SalesScreen();
           case 'Category':
             return const CategoryPage();
           case 'Unit':
             return const UnitPage();
+          case 'Customer':
+            return const CustomerPage();
           default:
             return const SizedBox.shrink();
         }
