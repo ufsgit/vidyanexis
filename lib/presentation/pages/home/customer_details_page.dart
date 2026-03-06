@@ -141,6 +141,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     final newTabs = [
       const Tab(text: "Info"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
+      if (settingsprovider.menuIsViewMap[16] == 1)
+        const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[13] == 1)
         const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
@@ -150,8 +152,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[15] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Periodic Service"),
-      if (settingsprovider.menuIsViewMap[16] == 1)
-        const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "History"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
@@ -2740,6 +2740,178 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ],
                                                     ),
 
+                                            // Quotations Tab (can be customized as needed)
+                                            if (settingsprovider
+                                                    .menuIsViewMap[16] ==
+                                                1)
+                                              customerDetailsProvider.isLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Display 4 Chips based on Task_Type_Id filter
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            //chips
+                                                            AppStyles
+                                                                    .isWebScreen(
+                                                                        context)
+                                                                ? Container(
+                                                                    margin:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: const Color(
+                                                                          0xFFEFF2F5),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          4.0),
+                                                                      child:
+                                                                          Wrap(
+                                                                        spacing:
+                                                                            8.0, // Space between chips
+                                                                        runSpacing:
+                                                                            4.0, // Space between rows
+                                                                        children: [
+                                                                          _buildQuatationChip(
+                                                                              'All Quotations',
+                                                                              null), // All tasks (no filter)
+                                                                          _buildQuatationChip(
+                                                                              'Approved',
+                                                                              2), // Task Type Id 1
+                                                                          _buildQuatationChip(
+                                                                              'Rejected',
+                                                                              3), // Task Type Id 2
+                                                                          _buildQuatationChip(
+                                                                              'Pending',
+                                                                              1), // Task Type Id 2
+                                                                          // _buildServiceChip(
+                                                                          //     'In Progress',
+                                                                          //     2), // Task Type Id 3
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Container(
+                                                                    margin:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            30),
+                                                                  ),
+                                                            if (settingsprovider
+                                                                        .menuIsSaveMap[
+                                                                    16] ==
+                                                                1)
+                                                              ElevatedButton
+                                                                  .icon(
+                                                                onPressed: () {
+                                                                  customerDetailsProvider
+                                                                          .customerId =
+                                                                      widget
+                                                                          .customerId;
+                                                                  customerDetailsProvider
+                                                                      .qsubsidyAmountController
+                                                                      .text = '0';
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    barrierDismissible:
+                                                                        false,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                            context) {
+                                                                      return QuotationCreationWidget(
+                                                                          quotationId:
+                                                                              '0',
+                                                                          isEdit:
+                                                                              false,
+                                                                          customerId:
+                                                                              widget.customerId);
+                                                                    },
+                                                                  );
+                                                                },
+                                                                icon: const Icon(
+                                                                    Icons.add),
+                                                                label: const Text(
+                                                                    'New Quotation '),
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .primaryBlue,
+                                                                  foregroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  padding: AppStyles
+                                                                          .isWebScreen(
+                                                                              context)
+                                                                      ? const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              16,
+                                                                          vertical:
+                                                                              12)
+                                                                      : const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              16,
+                                                                          vertical:
+                                                                              0),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                        // Display filtered task list
+                                                        _buildFilteredQuatationList(
+                                                          onTap: (quatationId) {
+                                                            leadProvider.setCutomerId(
+                                                                int.parse(widget
+                                                                    .customerId));
+                                                            print(
+                                                                'Quotation ID: $quatationId');
+                                                            customerDetailsProvider
+                                                                .getQuatationListByMasterId(
+                                                                    quatationId
+                                                                        .toString(),
+                                                                    context);
+                                                            // _scaffoldKey.currentState
+                                                            //     ?.openEndDrawer();
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return QuotationDetailsWidget(
+                                                                  customerId: widget
+                                                                      .customerId,
+                                                                  serviceId:
+                                                                      quatationId
+                                                                          .toString(),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          quatationId:
+                                                              selectedQuotationStatusId,
+                                                        )
+                                                      ],
+                                                    ),
+
                                             // Task Overview Tab
                                             if (settingsprovider
                                                     .menuIsViewMap[13] ==
@@ -3258,178 +3430,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           )
                                                         ],
                                                       ),
-
-                                            // Quotations Tab (can be customized as needed)
-                                            if (settingsprovider
-                                                    .menuIsViewMap[16] ==
-                                                1)
-                                              customerDetailsProvider.isLoading
-                                                  ? const Center(
-                                                      child:
-                                                          CircularProgressIndicator())
-                                                  : Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Display 4 Chips based on Task_Type_Id filter
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            //chips
-                                                            AppStyles
-                                                                    .isWebScreen(
-                                                                        context)
-                                                                ? Container(
-                                                                    margin:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: const Color(
-                                                                          0xFFEFF2F5),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                    ),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          4.0),
-                                                                      child:
-                                                                          Wrap(
-                                                                        spacing:
-                                                                            8.0, // Space between chips
-                                                                        runSpacing:
-                                                                            4.0, // Space between rows
-                                                                        children: [
-                                                                          _buildQuatationChip(
-                                                                              'All Quotations',
-                                                                              null), // All tasks (no filter)
-                                                                          _buildQuatationChip(
-                                                                              'Approved',
-                                                                              2), // Task Type Id 1
-                                                                          _buildQuatationChip(
-                                                                              'Rejected',
-                                                                              3), // Task Type Id 2
-                                                                          _buildQuatationChip(
-                                                                              'Pending',
-                                                                              1), // Task Type Id 2
-                                                                          // _buildServiceChip(
-                                                                          //     'In Progress',
-                                                                          //     2), // Task Type Id 3
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  )
-                                                                : Container(
-                                                                    margin:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            30),
-                                                                  ),
-                                                            if (settingsprovider
-                                                                        .menuIsSaveMap[
-                                                                    16] ==
-                                                                1)
-                                                              ElevatedButton
-                                                                  .icon(
-                                                                onPressed: () {
-                                                                  customerDetailsProvider
-                                                                          .customerId =
-                                                                      widget
-                                                                          .customerId;
-                                                                  customerDetailsProvider
-                                                                      .qsubsidyAmountController
-                                                                      .text = '0';
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    barrierDismissible:
-                                                                        false,
-                                                                    builder:
-                                                                        (BuildContext
-                                                                            context) {
-                                                                      return QuotationCreationWidget(
-                                                                          quotationId:
-                                                                              '0',
-                                                                          isEdit:
-                                                                              false,
-                                                                          customerId:
-                                                                              widget.customerId);
-                                                                    },
-                                                                  );
-                                                                },
-                                                                icon: const Icon(
-                                                                    Icons.add),
-                                                                label: const Text(
-                                                                    'New Quotation '),
-                                                                style: ElevatedButton
-                                                                    .styleFrom(
-                                                                  backgroundColor:
-                                                                      AppColors
-                                                                          .primaryBlue,
-                                                                  foregroundColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  padding: AppStyles
-                                                                          .isWebScreen(
-                                                                              context)
-                                                                      ? const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              16,
-                                                                          vertical:
-                                                                              12)
-                                                                      : const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              16,
-                                                                          vertical:
-                                                                              0),
-                                                                ),
-                                                              ),
-                                                          ],
-                                                        ),
-                                                        // Display filtered task list
-                                                        _buildFilteredQuatationList(
-                                                          onTap: (quatationId) {
-                                                            leadProvider.setCutomerId(
-                                                                int.parse(widget
-                                                                    .customerId));
-                                                            print(
-                                                                'Quotation ID: $quatationId');
-                                                            customerDetailsProvider
-                                                                .getQuatationListByMasterId(
-                                                                    quatationId
-                                                                        .toString(),
-                                                                    context);
-                                                            // _scaffoldKey.currentState
-                                                            //     ?.openEndDrawer();
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return QuotationDetailsWidget(
-                                                                  customerId: widget
-                                                                      .customerId,
-                                                                  serviceId:
-                                                                      quatationId
-                                                                          .toString(),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          quatationId:
-                                                              selectedQuotationStatusId,
-                                                        )
-                                                      ],
-                                                    ),
 
                                             // Follow-Up Details Tab
                                             if (settingsprovider
