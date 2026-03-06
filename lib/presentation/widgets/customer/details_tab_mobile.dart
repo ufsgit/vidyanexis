@@ -138,59 +138,59 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                     ),
 
                     // Invertor and panel details
-                    TileWidget(
-                      title: 'Inverter and panel details',
-                      iconAssetPath: 'assets/images/icon_settings_details.png',
-                      children: [
-                        LabelValueWidget(
-                          label: 'Inverter Brand',
-                          value: leadDetailsProvider
-                              .leadDetails![0].inverterTypeName,
-                        ),
-                        SizedBox(height: 8),
-                        LabelValueWidget(
-                          label: 'Inverter Capacity',
-                          value: leadDetailsProvider
-                              .leadDetails![0].inverterCapacity
-                              .toString(),
-                        ),
-                        SizedBox(height: 8),
-                        LabelValueWidget(
-                          label: 'Panel Brand',
-                          value: leadDetailsProvider
-                              .leadDetails![0].panelTypeName
-                              .toString(),
-                        ),
-                        SizedBox(height: 8),
+                    // TileWidget(
+                    //   title: 'Inverter and panel details',
+                    //   iconAssetPath: 'assets/images/icon_settings_details.png',
+                    //   children: [
+                    //     LabelValueWidget(
+                    //       label: 'Inverter Brand',
+                    //       value: leadDetailsProvider
+                    //           .leadDetails![0].inverterTypeName,
+                    //     ),
+                    //     SizedBox(height: 8),
+                    //     LabelValueWidget(
+                    //       label: 'Inverter Capacity',
+                    //       value: leadDetailsProvider
+                    //           .leadDetails![0].inverterCapacity
+                    //           .toString(),
+                    //     ),
+                    //     SizedBox(height: 8),
+                    //     LabelValueWidget(
+                    //       label: 'Panel Brand',
+                    //       value: leadDetailsProvider
+                    //           .leadDetails![0].panelTypeName
+                    //           .toString(),
+                    //     ),
+                    //     SizedBox(height: 8),
 
-                        LabelValueWidget(
-                          label: 'Panel Capacity',
-                          value: leadDetailsProvider
-                              .leadDetails![0].panelCapacity
-                              .toString(),
-                        ),
-                        SizedBox(height: 8),
-                        LabelValueWidget(
-                          label: 'Panel Phase',
-                          value: leadDetailsProvider.leadDetails![0].phaseName,
-                        ),
-                        // SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'Panel Brand',
-                        //   value: leadDetailsProvider.leadDetails![0].panelBrand,
-                        // ),
-                        // SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'Panel Watts',
-                        //   value: leadDetailsProvider.leadDetails![0].panelWatts,
-                        // ),
-                        // SizedBox(height: 8),
-                        // LabelValueWidget(
-                        //   label: 'Panel SN',
-                        //   value: leadDetailsProvider.leadDetails![0].panelSn,
-                        // ),
-                      ],
-                    ),
+                    //     LabelValueWidget(
+                    //       label: 'Panel Capacity',
+                    //       value: leadDetailsProvider
+                    //           .leadDetails![0].panelCapacity
+                    //           .toString(),
+                    //     ),
+                    //     SizedBox(height: 8),
+                    //     LabelValueWidget(
+                    //       label: 'Panel Phase',
+                    //       value: leadDetailsProvider.leadDetails![0].phaseName,
+                    //     ),
+                    //     // SizedBox(height: 8),
+                    //     // LabelValueWidget(
+                    //     //   label: 'Panel Brand',
+                    //     //   value: leadDetailsProvider.leadDetails![0].panelBrand,
+                    //     // ),
+                    //     // SizedBox(height: 8),
+                    //     // LabelValueWidget(
+                    //     //   label: 'Panel Watts',
+                    //     //   value: leadDetailsProvider.leadDetails![0].panelWatts,
+                    //     // ),
+                    //     // SizedBox(height: 8),
+                    //     // LabelValueWidget(
+                    //     //   label: 'Panel SN',
+                    //     //   value: leadDetailsProvider.leadDetails![0].panelSn,
+                    //     // ),
+                    //   ],
+                    // ),
 
                     // Consumer details
                     // TileWidget(
