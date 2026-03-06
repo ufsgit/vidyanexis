@@ -185,6 +185,15 @@ class LeadCard extends StatelessWidget {
                                       fontWeight: FontWeight.w400,
                                       color: AppColors.textGrey4),
                                 ),
+                                Text(
+                                  'Created By ${lead.createdByName}',
+                                  overflow: TextOverflow.clip,
+                                  maxLines: 1,
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textBlack),
+                                ),
                               ],
                             ),
                           ),
