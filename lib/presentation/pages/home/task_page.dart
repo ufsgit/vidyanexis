@@ -1085,7 +1085,42 @@ class _tasksPageReportState extends State<TaskPage> {
                                       );
                                     } else {
                                       return InkWell(
-                                        onTap: () {},
+                                        onTap: () {
+                                          reportsProvider.selectedTaskTypeIds
+                                              .clear();
+                                          reportsProvider.taskTypeModel.clear();
+                                          if (task.customerName == null ||
+                                              task.customerName!.isEmpty) {
+                                            updateStatusDialogWithoutTask(task)
+                                                .then((value) {
+                                              if (value == true) {
+                                                reportsProvider
+                                                    .searchTaskByCustomer(
+                                                        context);
+                                              }
+                                            });
+                                          } else {
+                                            if (AppStyles.isWebScreen(
+                                                context)) {
+                                              statusDialog(task).then((value) {
+                                                if (value == true) {
+                                                  reportsProvider
+                                                      .searchTaskByCustomer(
+                                                          context);
+                                                }
+                                              });
+                                            } else {
+                                              statusDialogMobile(task)
+                                                  .then((value) {
+                                                if (value == true) {
+                                                  reportsProvider
+                                                      .searchTaskByCustomer(
+                                                          context);
+                                                }
+                                              });
+                                            }
+                                          }
+                                        },
                                         hoverColor: const Color(0xFFF8FAFC),
                                         child: Container(
                                           padding: const EdgeInsets.symmetric(

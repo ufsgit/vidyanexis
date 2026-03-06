@@ -598,14 +598,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _isTaskOverviewLoading = true;
       notifyListeners();
 
-      final response = await HttpRequest.httpPostRequest(
-        endPoint: HttpUrls.getTaskByCustomer,
-        bodyData: {
-          "Customer_Id": customerId,
-        },
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getTaskByCustomer}?Customer_Id=$customerId',
       );
 
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data is List) {
           final List<TaskCustomerModel> tasks =
