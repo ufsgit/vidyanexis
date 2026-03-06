@@ -1166,7 +1166,7 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width: 1620,
+                            width: 1520,
                             child: Column(
                               children: [
                                 // Header row
@@ -1284,15 +1284,6 @@ class _LeadsPageState extends State<LeadPage> {
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Text('Follow-Up Date',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13)),
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          width: 100,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 6.0, horizontal: 8.0),
-                                          data: Text('Total',
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 13)),
@@ -1559,22 +1550,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                   data: Text(
                                                     lead.nextFollowUpDate
                                                         .toDayMonthYearFormat(),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 13),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  width: 100,
-                                                  data: Text(
-                                                    lead.totalProjectCost
-                                                        .toString(),
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,

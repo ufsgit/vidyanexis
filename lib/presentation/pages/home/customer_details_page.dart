@@ -130,6 +130,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   late TabController _tabController;
   List<Tab> _tabs = [];
   bool _isControllerInitialized = false;
+  Key _checklistKey = UniqueKey();
 
   @override
   void didChangeDependencies() {
@@ -623,7 +624,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         },
                                       ).then((value) {
                                         if (value == true) {
-                                          setState(() {});
+                                          setState(() {
+                                            _checklistKey = UniqueKey();
+                                          });
                                         }
                                       });
                                     },
@@ -3456,6 +3459,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 CheckListManagementWidget(
+                                                    key: _checklistKey,
                                                     customerId:
                                                         widget.customerId),
 

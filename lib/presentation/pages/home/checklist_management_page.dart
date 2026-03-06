@@ -215,10 +215,12 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
                                                   },
                                                 ).then((value) {
                                                   if (null != value && value) {
-                                                    checkListListFuture =
-                                                        settingsProvider
-                                                            .getDocumentCheckList(
-                                                                context);
+                                                    setState(() {
+                                                      checkListListFuture =
+                                                          settingsProvider
+                                                              .getDocumentCheckList(
+                                                                  context);
+                                                    });
                                                   }
                                                 });
                                               },
@@ -307,8 +309,10 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
                                   },
                                 ).then((value) {
                                   if (null != value && value) {
-                                    checkListListFuture = settingsProvider
-                                        .getDocumentCheckList(context);
+                                    setState(() {
+                                      checkListListFuture = settingsProvider
+                                          .getDocumentCheckList(context);
+                                    });
                                   }
                                 });
                               },
