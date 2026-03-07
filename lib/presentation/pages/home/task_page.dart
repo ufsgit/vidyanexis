@@ -2090,230 +2090,139 @@ class _tasksPageReportState extends State<TaskPage> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        'Current Status',
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w500,
-                                          color:
-                                              theme.textTheme.bodyLarge?.color,
+                                      // status tabs instead of dropdown
+                                      DefaultTabController(
+                                        length: statusOptions.length,
+                                        initialIndex: statusOptions.indexWhere(
+                                            (s) =>
+                                                s.statusId ==
+                                                selectedStatus.value.statusId),
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            TabBar(
+                                              isScrollable: true,
+                                              indicatorColor:
+                                                  AppColors.primaryBlue,
+                                              labelColor: AppColors.primaryBlue,
+                                              unselectedLabelColor:
+                                                  Colors.black54,
+                                              onTap: (index) async {
+                                                TaskTypeStatusModel newStatus =
+                                                    statusOptions[index];
+                                                selectedStatus.value =
+                                                    newStatus;
+                                                int statusId =
+                                                    newStatus.statusId ?? 0;
+                                                int tasktypeId =
+                                                    newStatus.taskTypeId ?? 0;
+                                                int customerId =
+                                                    task.customerId ?? 0;
+                                                int enquiryForId =
+                                                    task.enquiryForId ?? 0;
+                                                await reportsProvider
+                                                    .fetchTaskTypes(
+                                                        tasktypeId,
+                                                        statusId,
+                                                        customerId,
+                                                        enquiryForId,
+                                                        context);
+                                              },
+                                              tabs: statusOptions.map((status) {
+                                                return Tab(
+                                                  child: Row(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: [
+                                                      Container(
+                                                        width: 8,
+                                                        height: 8,
+                                                        margin: const EdgeInsets
+                                                            .only(right: 6),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: status
+                                                                  .colorCode ??
+                                                              Colors.black,
+                                                          shape:
+                                                              BoxShape.circle,
+                                                        ),
+                                                      ),
+                                                      Text(status.statusName ??
+                                                          ''),
+                                                    ],
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(height: 12),
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                          border: Border.all(
-                                              color: theme.dividerColor),
-                                          color: theme.cardColor,
-                                        ),
-                                        child: ValueListenableBuilder<
-                                            TaskTypeStatusModel>(
-                                          valueListenable: selectedStatus,
-                                          builder: (ctx, value, child) {
-                                            return DropdownButtonFormField<
-                                                TaskTypeStatusModel>(
-                                              value: value,
-                                              isExpanded: true,
-                                              icon: Icon(Icons.arrow_drop_down,
-                                                  color: theme.primaryColor),
-                                              dropdownColor: theme.cardColor,
-                                              decoration: const InputDecoration(
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 16,
-                                                        vertical: 2),
-                                                border: InputBorder.none,
-                                                enabledBorder: InputBorder.none,
-                                                focusedBorder: InputBorder.none,
-                                              ),
-                                              onChanged: (TaskTypeStatusModel?
-                                                  newValue) async {
-                                                if (newValue != null) {
-                                                  selectedStatus.value =
-                                                      newValue;
-                                                  int statusId = selectedStatus
-                                                          .value.statusId ??
-                                                      0;
-                                                  int tasktypeId =
-                                                      selectedStatus.value
-                                                              .taskTypeId ??
-                                                          0;
-                                                  int customerId =
-                                                      task.customerId ?? 0;
-                                                  int enquiryForId =
-                                                      task.enquiryForId ?? 0;
-
-                                                  await reportsProvider
-                                                      .fetchTaskTypes(
-                                                          tasktypeId,
-                                                          statusId,
-                                                          customerId,
-                                                          enquiryForId,
-                                                          context);
-                                                }
-                                              },
-                                              items: statusOptions.map<
-                                                  DropdownMenuItem<
-                                                      TaskTypeStatusModel>>(
-                                                (TaskTypeStatusModel status) {
-                                                  Color statusColor =
-                                                      status.colorCode ??
-                                                          Colors.black;
-
-                                                  return DropdownMenuItem<
-                                                      TaskTypeStatusModel>(
-                                                    value: status,
-                                                    child: Row(
-                                                      children: [
-                                                        Container(
-                                                          width: 12,
-                                                          height: 12,
-                                                          margin:
-                                                              const EdgeInsets
-                                                                  .only(
-                                                                  right: 12),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: statusColor,
-                                                            shape:
-                                                                BoxShape.circle,
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                            status.statusName ??
-                                                                ''),
-                                                      ],
-                                                    ),
-                                                  );
-                                                },
-                                              ).toList(),
-                                            );
-                                          },
-                                        ),
-                                      ),
                                       Consumer<TaskPageProvider>(
                                         builder:
                                             (context, reportsProvider, child) {
                                           if (reportsProvider
                                               .taskTypeModel.isNotEmpty) {
-                                            return Card(
-                                              margin: const EdgeInsets.only(
-                                                  top: 12),
-                                              // padding: EdgeInsets.symmetric(horizontal: 8,vertical: 4),
-                                              // decoration: BoxDecoration(
-                                              //     color: Colors.grey[200],
-                                              //     borderRadius: BorderRadius.circular(12)
-                                              // ),
-
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                        color: Colors.grey[200],
-                                                        borderRadius:
-                                                            const BorderRadius
-                                                                .only(
-                                                                topLeft: Radius
-                                                                    .circular(
-                                                                        12),
-                                                                topRight: Radius
-                                                                    .circular(
-                                                                        12))),
-                                                    child: Row(
-                                                      children: [
-                                                        Expanded(
-                                                          child: Text(
-                                                            'New Task',
-                                                            style: TextStyle(
-                                                              fontSize: 15,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w500,
-                                                              color: theme
-                                                                  .textTheme
-                                                                  .bodyLarge
-                                                                  ?.color,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        Text(
-                                                          'Department',
-                                                          style: TextStyle(
-                                                            fontSize: 15,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: theme
-                                                                .textTheme
-                                                                .bodyLarge
-                                                                ?.color,
-                                                          ),
-                                                        ),
-                                                      ],
+                                            return Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: reportsProvider
+                                                  .taskTypeModel
+                                                  .map((task) {
+                                                bool selected = reportsProvider
+                                                    .selectedTaskTypeIds
+                                                    .contains(task.taskTypeId
+                                                        .toString());
+                                                return Card(
+                                                  margin: const EdgeInsets
+                                                      .symmetric(vertical: 6),
+                                                  child: ListTile(
+                                                    contentPadding:
+                                                        const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 16,
+                                                            vertical: 8),
+                                                    title: Text(task.departmentName !=
+                                                                null &&
+                                                            task.departmentName!
+                                                                .isNotEmpty
+                                                        ? '${task.taskTypeName} (${task.departmentName})'
+                                                        : task.taskTypeName),
+                                                    trailing: Container(
+                                                      width: 24,
+                                                      height: 24,
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: selected
+                                                            ? AppColors
+                                                                .primaryBlue
+                                                            : Colors
+                                                                .transparent,
+                                                        border: Border.all(
+                                                            color: selected
+                                                                ? AppColors
+                                                                    .primaryBlue
+                                                                : Colors.grey),
+                                                      ),
+                                                      child: Icon(
+                                                        Icons.check,
+                                                        size: 16,
+                                                        color: selected
+                                                            ? Colors.white
+                                                            : Colors.grey,
+                                                      ),
                                                     ),
+                                                    onTap: () {
+                                                      reportsProvider
+                                                          .toggleTaskTypeSelection(
+                                                              task.taskTypeId
+                                                                  .toString());
+                                                    },
                                                   ),
-                                                  Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    constraints:
-                                                        const BoxConstraints(
-                                                            maxHeight: 300),
-                                                    child: ListView(
-                                                      shrinkWrap: true,
-                                                      children: reportsProvider
-                                                          .taskTypeModel
-                                                          .map((task) {
-                                                        return CheckboxListTile(
-                                                          contentPadding:
-                                                              const EdgeInsets
-                                                                  .all(0),
-                                                          title: Row(
-                                                            children: [
-                                                              Expanded(
-                                                                  child: Text(task
-                                                                      .taskTypeName)),
-                                                              Padding(
-                                                                padding:
-                                                                    const EdgeInsets
-                                                                        .only(
-                                                                        left:
-                                                                            8.0),
-                                                                child: Text(
-                                                                    task.departmentName ??
-                                                                        ""),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                          value: reportsProvider
-                                                              .selectedTaskTypeIds
-                                                              .contains(task
-                                                                  .taskTypeId
-                                                                  .toString()),
-                                                          onChanged:
-                                                              (bool? value) {
-                                                            reportsProvider
-                                                                .toggleTaskTypeSelection(task
-                                                                    .taskTypeId
-                                                                    .toString());
-                                                          },
-                                                          controlAffinity:
-                                                              ListTileControlAffinity
-                                                                  .leading,
-                                                        );
-                                                      }).toList(),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
+                                                );
+                                              }).toList(),
                                             );
                                           } else {
                                             return const Text("");

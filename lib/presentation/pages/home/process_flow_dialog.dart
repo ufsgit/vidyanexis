@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
+import 'package:vidyanexis/controller/image_upload_provider.dart';
+
+import 'package:intl/intl.dart';
 
 class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
@@ -29,6 +29,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   late TaskTypeStatusModel selectedStatus;
   bool isSaving = false;
   bool isInitialized = false;
+  bool showDescription = false;
+  bool showFollowUpDate = false;
+
+  final TextEditingController _docSearchController = TextEditingController();
+  String _docSearchQuery = "";
 
   @override
   void initState() {
@@ -38,12 +43,23 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<TaskPageProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+
       reportsProvider.clearDescription();
+      dropDownProvider.getDocumentType(context);
+    });
+
+    _docSearchController.addListener(() {
+      setState(() {
+        _docSearchQuery = _docSearchController.text;
+      });
     });
   }
 
   @override
   void dispose() {
+    _docSearchController.dispose();
     // Clear description on close
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -60,308 +76,73 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     return provider.getStatusByTaskTypeId(context, taskTypeId, '3');
   }
 
+  void _refreshData() {
+    final reportsProvider =
+        Provider.of<TaskPageProvider>(context, listen: false);
+    int statusId = selectedStatus.statusId ?? 0;
+    int tasktypeId = selectedStatus.taskTypeId ?? 0;
+    int customerId = widget.task.customerId;
+    int enquiryForId = widget.task.enquiryForId;
+    reportsProvider.fetchTaskTypes(
+        tasktypeId, statusId, customerId, enquiryForId, context);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final reportsProvider =
         Provider.of<TaskPageProvider>(context, listen: false);
     return Scaffold(
-      backgroundColor: AppColors.whiteColor,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      backgroundColor: const Color(0xFFF8FAFC), // Subtle grey background
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Navigator.pop(context, false),
+        ),
+        titleSpacing: 0,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            OutlinedButton.icon(
-              onPressed: () async {
-                await showDialog(
-                  barrierDismissible: false,
-                  context: context,
-                  builder: (context) => ImageUploadAlert(
-                      customerId: widget.task.customerId.toString()),
-                );
-                int statusId = selectedStatus.statusId ?? 0;
-                int tasktypeId = selectedStatus.taskTypeId ?? 0;
-                int customerId = widget.task.customerId;
-                int enquiryForId = widget.task.enquiryForId;
-                WidgetsBinding.instance.addPostFrameCallback(
-                  (_) {
-                    reportsProvider.fetchTaskTypes(tasktypeId, statusId,
-                        customerId, enquiryForId, context);
-                  },
-                );
-              },
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.primaryBlue,
-                backgroundColor: AppColors.whiteColor,
-                side: BorderSide(color: AppColors.primaryBlue),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            Text(
+              widget.task.taskTypeName,
+              style: GoogleFonts.plusJakartaSans(
+                color: const Color(0xFF64748B),
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
               ),
-              icon: const Icon(Icons.upload_file, size: 20),
-              label: const Text('+ Documents'),
+            ),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(
+                  builder: (context) {
+                    return CustomerDetailPageMobile(
+                        fromLead: false, customerId: widget.task.customerId);
+                  },
+                ));
+              },
+              child: Text(
+                widget.task.customerName,
+                style: GoogleFonts.plusJakartaSans(
+                  color: const Color(0xFF1A7AE8),
+                  fontSize: 16,
+                  fontWeight: FontWeight.w800,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
             ),
           ],
         ),
-      ),
-      appBar: CustomAppBarWidget(
-        title: 'Update Status',
-        titleFontSize: 14,
-        richText: '\n${widget.task.customerName}',
-        richText2: '\n${widget.task.taskTypeName}',
-        onLeadingPressed: () {
-          Navigator.of(context).pop(false);
-        },
-        isRichTextClickable: true,
-        onRichTextPressed: () {
-          Navigator.push(context, MaterialPageRoute(
-            builder: (context) {
-              return CustomerDetailPageMobile(
-                  fromLead: false, customerId: widget.task.customerId);
-            },
-          ));
-        },
-        onSavePressed: () async {
-          if (isSaving) return;
-
-          // Check if there are required statuses that need to be completed
-          if (reportsProvider.statusData.isNotEmpty) {
-            // Get list of required statuses that aren't completed
-            List<String> incompleteStatuses = reportsProvider.statusData
-                .map((status) =>
-                    "${status.taskTypeName}-${status.requiredStatuses}")
-                .toList();
-
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-                  contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-                  actionsPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  title: Row(
-                    children: [
-                      Icon(
-                        Icons.warning_amber_rounded,
-                        color: AppColors.primaryBlue,
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        "Required Status Incomplete",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                  content: Container(
-                    width: 450,
-                    constraints:
-                        const BoxConstraints(maxWidth: 400, maxHeight: 700),
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        const Text(
-                          "Any one of the following required statuses must be completed for the corresponding task before saving:",
-                          style: TextStyle(
-                            fontSize: 16,
-                            color: Colors.black54,
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-                        ...incompleteStatuses
-                            .map((status) => Padding(
-                                  padding: const EdgeInsets.only(bottom: 8.0),
-                                  child: Row(
-                                    children: [
-                                      const Icon(Icons.error_outline,
-                                          color: Colors.red, size: 18),
-                                      const SizedBox(width: 8),
-                                      Expanded(child: Text(status)),
-                                    ],
-                                  ),
-                                ))
-                            .toList(),
-                      ],
-                    ),
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                      ),
-                      child: const Text("OK"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-            return;
-          }
-
-          if (reportsProvider.documentTypeModel.isEmpty) {
-            setState(() {
-              isSaving = true;
-            });
-
-            try {
-              bool isSuccess = await reportsProvider.changeTaskStatus(
-                  context,
-                  selectedStatus,
-                  widget.task.taskId,
-                  widget.task.locationTracking == 1
-                      ? await reportsProvider.getCurrentLocation()
-                      : null);
-
-              if (isSuccess) {
-                Navigator.of(context).pop(true);
-              } else {
-                setState(() {
-                  isSaving = false;
-                });
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Failed to update status')),
-                );
-              }
-            } catch (e) {
-              setState(() {
-                isSaving = false;
-              });
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                    content: Text('Failed to update status: ${e.toString()}')),
-              );
-            }
-          } else {
-            showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AlertDialog(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                  titlePadding: const EdgeInsets.fromLTRB(24, 24, 24, 8),
-                  contentPadding: const EdgeInsets.fromLTRB(24, 0, 24, 16),
-                  actionsPadding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                  title: Row(
-                    children: [
-                      Icon(
-                        Icons.warning_amber_rounded,
-                        color: AppColors.primaryBlue,
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        "Unable to Save",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                  content: const Text(
-                    "Documents Not Uploaded",
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54,
-                    ),
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      style: TextButton.styleFrom(
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 10),
-                      ),
-                      child: const Text("OK"),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          }
-        },
       ),
       body: FutureBuilder<List<TaskTypeStatusModel>>(
         future: statusOptionsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(),
-                  SizedBox(height: 16),
-                  Text('Loading status options...'),
-                ],
-              ),
-            );
-          } else if (snapshot.hasError) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                  const SizedBox(height: 16),
-                  Text('Error loading status options',
-                      style: TextStyle(color: theme.colorScheme.error)),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Close'),
-                  ),
-                ],
-              ),
-            );
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.error_outline, color: Colors.red, size: 48),
-                  const SizedBox(height: 16),
-                  Text('Error loading status options',
-                      style: TextStyle(color: theme.colorScheme.error)),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.of(context).pop();
-                    },
-                    child: const Text('Close'),
-                  ),
-                ],
-              ),
-            );
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError ||
+              !snapshot.hasData ||
+              snapshot.data!.isEmpty) {
+            return const Center(child: Text('Error loading status options'));
           } else {
             final statusOptions = snapshot.data!;
 
@@ -382,369 +163,741 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               });
             }
 
-            return Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: ListView(
-                children: [
-                  // Current Status Section
-                  Container(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          'Current Status',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textBlack,
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: AppColors.grey),
-                            color: AppColors.whiteColor,
-                          ),
-                          child: DropdownButtonFormField<TaskTypeStatusModel>(
-                            value: selectedStatus,
-                            isExpanded: true,
-                            icon: Icon(Icons.arrow_drop_down,
-                                color: theme.primaryColor),
-                            dropdownColor: theme.cardColor,
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 2),
-                              border: InputBorder.none,
-                              enabledBorder: InputBorder.none,
-                              focusedBorder: InputBorder.none,
+            return Stack(
+              children: [
+                Column(
+                  children: [
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
+                        children: [
+                          // Status Segmented Control
+                          Container(
+                            height: 42,
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF1F5F9),
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            onChanged: (TaskTypeStatusModel? newValue) async {
-                              if (newValue != null) {
-                                setState(() {
-                                  selectedStatus = newValue;
-                                });
-
-                                int statusId = selectedStatus.statusId ?? 0;
-                                int tasktypeId = selectedStatus.taskTypeId ?? 0;
-                                int customerId = widget.task.customerId;
-                                int enquiryForId = widget.task.enquiryForId;
-
-                                await reportsProvider.fetchTaskTypes(
-                                    tasktypeId,
-                                    statusId,
-                                    customerId,
-                                    enquiryForId,
-                                    context);
-                              }
-                            },
-                            items: statusOptions
-                                .map<DropdownMenuItem<TaskTypeStatusModel>>(
-                              (TaskTypeStatusModel status) {
-                                Color statusColor =
-                                    status.colorCode ?? Colors.black;
-
-                                return DropdownMenuItem<TaskTypeStatusModel>(
-                                  value: status,
+                            padding: const EdgeInsets.all(5),
+                            child: LayoutBuilder(
+                              builder: (context, constraints) {
+                                return SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  physics: const BouncingScrollPhysics(),
                                   child: Row(
-                                    children: [
-                                      Container(
-                                        width: 12,
-                                        height: 12,
-                                        margin:
-                                            const EdgeInsets.only(right: 12),
-                                        decoration: BoxDecoration(
-                                          color: statusColor,
-                                          shape: BoxShape.circle,
+                                    children: statusOptions.map((status) {
+                                      bool isSelected =
+                                          selectedStatus.statusId ==
+                                              status.statusId;
+                                      return GestureDetector(
+                                        onTap: () async {
+                                          setState(() {
+                                            selectedStatus = status;
+                                          });
+
+                                          int statusId =
+                                              selectedStatus.statusId ?? 0;
+                                          int tasktypeId =
+                                              selectedStatus.taskTypeId ?? 0;
+                                          int customerId =
+                                              widget.task.customerId;
+                                          int enquiryForId =
+                                              widget.task.enquiryForId;
+
+                                          await reportsProvider.fetchTaskTypes(
+                                              tasktypeId,
+                                              statusId,
+                                              customerId,
+                                              enquiryForId,
+                                              context);
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 200),
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 20),
+                                          margin: const EdgeInsets.symmetric(
+                                              horizontal: 2),
+                                          decoration: BoxDecoration(
+                                            color: isSelected
+                                                ? Colors.white
+                                                : Colors.transparent,
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            boxShadow: isSelected
+                                                ? [
+                                                    BoxShadow(
+                                                        color: Colors.black
+                                                            .withOpacity(0.06),
+                                                        blurRadius: 8,
+                                                        offset:
+                                                            const Offset(0, 2))
+                                                  ]
+                                                : [],
+                                          ),
+                                          alignment: Alignment.center,
+                                          child: Text(
+                                            status.statusName ?? '',
+                                            style: GoogleFonts.plusJakartaSans(
+                                              color: isSelected
+                                                  ? const Color(0xFF1A7AE8)
+                                                  : const Color(0xFF64748B),
+                                              fontWeight: isSelected
+                                                  ? FontWeight.w700
+                                                  : FontWeight.w600,
+                                              fontSize: 12,
+                                            ),
+                                          ),
                                         ),
-                                      ),
-                                      CustomText(status.statusName ?? ''),
-                                    ],
+                                      );
+                                    }).toList(),
                                   ),
                                 );
                               },
-                            ).toList(),
+                            ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
 
-                  const SizedBox(height: 16),
+                          const SizedBox(height: 12),
 
-                  // New Task Section
-                  Consumer<TaskPageProvider>(
-                    builder: (context, reportsProvider, child) {
-                      if (reportsProvider.taskTypeModel.isNotEmpty) {
-                        return Card(
-                          margin: const EdgeInsets.only(top: 0),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
-                                decoration: BoxDecoration(
-                                    color: AppColors.whiteColor,
-                                    border: Border.all(color: AppColors.grey),
-                                    borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(12),
-                                        topRight: Radius.circular(12))),
-                                child: Row(
+                          // --- Section: Tasks ---
+                          Consumer<TaskPageProvider>(
+                            builder: (context, reportsProvider, child) {
+                              if (reportsProvider.taskTypeModel.isNotEmpty) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Expanded(
-                                      child: CustomText(
-                                        'New Task',
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColors.textBlack,
-                                      ),
-                                    ),
-                                    CustomText(
-                                      'Department',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textBlack,
-                                    ),
+                                    _buildSectionHeader('SELECT TASKS'),
+                                    const SizedBox(height: 12),
+                                    ...reportsProvider.taskTypeModel
+                                        .map((task) {
+                                      bool isSelected = reportsProvider
+                                          .selectedTaskTypeIds
+                                          .contains(task.taskTypeId.toString());
+                                      return _buildInteractiveCard(
+                                        onTap: () => reportsProvider
+                                            .toggleTaskTypeSelection(
+                                                task.taskTypeId.toString()),
+                                        isSelected: isSelected,
+                                        title: task.departmentName != null &&
+                                                task.departmentName!.isNotEmpty
+                                            ? '${task.taskTypeName} (${task.departmentName})'
+                                            : task.taskTypeName,
+                                      );
+                                    }).toList(),
+                                    const SizedBox(height: 16),
                                   ],
-                                ),
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+
+                          // --- Section: Schedule & Notes ---
+                          _buildSectionHeader('SCHEDULE & NOTES'),
+                          const SizedBox(height: 12),
+
+                          // Follow Up Date Toggle
+                          _buildInteractiveCard(
+                            onTap: () {
+                              setState(() {
+                                showFollowUpDate = !showFollowUpDate;
+                                if (!showFollowUpDate) {
+                                  reportsProvider.followUpDateController
+                                      .clear();
+                                }
+                              });
+                            },
+                            isSelected: showFollowUpDate,
+                            title: 'FollowUp Date',
+                          ),
+
+                          // Follow Up Date Input (Conditional)
+                          if (showFollowUpDate)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 12),
+                              child: _buildInputField(
+                                controller:
+                                    reportsProvider.followUpDateController,
+                                hint: 'Choose FollowUp Date',
+                                icon: Icons.calendar_today,
+                                readOnly: true,
+                                onTap: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime.now(),
+                                    lastDate: DateTime(2101),
+                                    builder: (context, child) {
+                                      return Theme(
+                                        data: Theme.of(context).copyWith(
+                                          colorScheme: const ColorScheme.light(
+                                            primary: Color(0xFF1A7AE8),
+                                          ),
+                                        ),
+                                        child: child!,
+                                      );
+                                    },
+                                  );
+                                  if (pickedDate != null) {
+                                    reportsProvider
+                                            .followUpDateController.text =
+                                        DateFormat('dd MMM yyyy')
+                                            .format(pickedDate);
+                                  }
+                                },
                               ),
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                constraints:
-                                    const BoxConstraints(maxHeight: 200),
-                                child: ListView(
-                                  shrinkWrap: true,
-                                  children:
-                                      reportsProvider.taskTypeModel.map((task) {
-                                    return CheckboxListTile(
-                                      contentPadding: const EdgeInsets.all(0),
-                                      title: Row(
-                                        children: [
-                                          Expanded(
-                                              child: CustomText(
-                                                  task.taskTypeName)),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: CustomText(
-                                                task.departmentName ?? ""),
+                            ),
+
+                          // Add Notes Toggle
+                          _buildInteractiveCard(
+                            onTap: () {
+                              setState(() {
+                                showDescription = !showDescription;
+                                if (!showDescription) {
+                                  reportsProvider.descriptionController.clear();
+                                }
+                              });
+                            },
+                            isSelected: showDescription,
+                            title: 'Add Notes',
+                          ),
+
+                          // Description Box (Conditional)
+                          if (showDescription)
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(top: 8.0, bottom: 12),
+                              child: _buildInputField(
+                                controller:
+                                    reportsProvider.descriptionController,
+                                hint: 'Enter detailed description...',
+                                maxLines: 4,
+                              ),
+                            ),
+
+                          const SizedBox(height: 16),
+
+                          // --- Section: Pending Documents ---
+                          Consumer<TaskPageProvider>(
+                            builder: (context, reportsProvider, child) {
+                              if (reportsProvider
+                                  .documentTypeModel.isNotEmpty) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildSectionHeader('PENDING DOCUMENTS'),
+                                    const SizedBox(height: 8),
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(
+                                            color: const Color(0xFFE2E8F0)),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.02),
+                                            blurRadius: 10,
+                                            offset: const Offset(0, 4),
                                           ),
                                         ],
                                       ),
-                                      value: reportsProvider.selectedTaskTypeIds
-                                          .contains(task.taskTypeId.toString()),
-                                      onChanged: (bool? value) {
-                                        reportsProvider.toggleTaskTypeSelection(
-                                            task.taskTypeId.toString());
-                                      },
-                                      controlAffinity:
-                                          ListTileControlAffinity.leading,
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-                  // FollowUp Section
-                  if (selectedStatus.followup == 1)
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        CustomText(
-                          'FollowUp Date',
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.textBlack,
-                        ),
-                        const SizedBox(height: 12),
-                        Container(
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: AppColors.grey),
-                            color: AppColors.whiteColor,
-                          ),
-                          child: TextField(
-                            controller: reportsProvider.followUpDateController,
-                            onTap: () async {
-                              final DateTime? picked = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime.now()
-                                    .add(const Duration(days: 365)),
-                              );
-                              if (picked != null) {
-                                reportsProvider.followUpDateController.text =
-                                    DateFormat('dd MMM yyyy').format(picked);
+                                      child: ListView.separated(
+                                        shrinkWrap: true,
+                                        padding: EdgeInsets.zero,
+                                        physics:
+                                            const NeverScrollableScrollPhysics(),
+                                        itemCount: reportsProvider
+                                            .documentTypeModel.length,
+                                        separatorBuilder: (context, index) =>
+                                            const Divider(
+                                                height: 1,
+                                                indent: 16,
+                                                endIndent: 16,
+                                                color: Color(0xFFF1F5F9)),
+                                        itemBuilder: (context, index) {
+                                          var doc = reportsProvider
+                                              .documentTypeModel[index];
+                                          return _buildDocumentTile(
+                                            title: doc.documentTypeName,
+                                            onTap: () async {
+                                              await showDialog(
+                                                barrierDismissible: false,
+                                                context: context,
+                                                builder: (context) =>
+                                                    ImageUploadAlert(
+                                                  customerId: widget
+                                                      .task.customerId
+                                                      .toString(),
+                                                  initialDocumentTypeId:
+                                                      doc.documentTypeId,
+                                                  initialDocumentTypeName:
+                                                      doc.documentTypeName,
+                                                ),
+                                              );
+                                              _refreshData();
+                                            },
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    const SizedBox(height: 20),
+                                  ],
+                                );
                               }
+                              return const SizedBox();
                             },
-                            decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              border: InputBorder.none,
-                              hintText: 'Enter FollowUp Date',
-                              hintStyle:
-                                  TextStyle(color: Colors.grey, fontSize: 14),
+                          ),
+
+                          // --- Section: Add More Documents ---
+                          _buildSectionHeader('ADD MORE DOCUMENTS'),
+                          const SizedBox(height: 8),
+                          Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
-                            style: const TextStyle(fontSize: 14),
+                            child: Consumer<DropDownProvider>(
+                              builder: (context, dropDownProvider, child) {
+                                if (dropDownProvider.documentType.isEmpty &&
+                                    _docSearchQuery.isEmpty) {
+                                  return const Padding(
+                                    padding: EdgeInsets.all(24.0),
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                            strokeWidth: 2)),
+                                  );
+                                }
+
+                                var docs = dropDownProvider.documentType;
+
+                                return ListView.separated(
+                                  shrinkWrap: true,
+                                  padding: EdgeInsets.zero,
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  itemCount: docs.length,
+                                  separatorBuilder: (context, index) =>
+                                      const Divider(
+                                          height: 1,
+                                          indent: 16,
+                                          endIndent: 16,
+                                          color: Color(0xFFF1F5F9)),
+                                  itemBuilder: (context, index) {
+                                    var doc = docs[index];
+                                    return _buildDocumentTile(
+                                      title: doc.documentTypeName,
+                                      onTap: () async {
+                                        final imageProvider =
+                                            Provider.of<ImageUploadProvider>(
+                                                context,
+                                                listen: false);
+                                        imageProvider.clearFiles();
+                                        imageProvider.updateDocumentType(
+                                            doc.documentTypeId,
+                                            doc.documentTypeName);
+
+                                        await imageProvider.addMultipleFile();
+
+                                        if (imageProvider.images.isNotEmpty ||
+                                            imageProvider.pdfs.isNotEmpty) {
+                                          await showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (context) =>
+                                                ImageUploadAlert(
+                                              customerId: widget.task.customerId
+                                                  .toString(),
+                                              initialDocumentTypeId:
+                                                  doc.documentTypeId,
+                                              initialDocumentTypeName:
+                                                  doc.documentTypeName,
+                                            ),
+                                          );
+                                          _refreshData();
+                                        }
+                                      },
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ),
+
+                          // --- Section: Mandatory Tasks ---
+                          const SizedBox(height: 16),
+                          Consumer<TaskPageProvider>(
+                            builder: (context, reportsProvider, child) {
+                              if (reportsProvider.statusData.isNotEmpty) {
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    _buildSectionHeader('MANDATORY TASKS'),
+                                    const SizedBox(height: 8),
+                                    ...reportsProvider.statusData.map((task) {
+                                      return Container(
+                                        margin:
+                                            const EdgeInsets.only(bottom: 8),
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 8),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFFEF2F2),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: Border.all(
+                                              color: const Color(0xFFFECACA)),
+                                        ),
+                                        child: Row(
+                                          children: [
+                                            const Icon(Icons.error_outline,
+                                                color: Color(0xFFDC2626),
+                                                size: 18),
+                                            const SizedBox(width: 12),
+                                            Expanded(
+                                              child: Text(
+                                                "${task.taskTypeName} - ${task.requiredStatuses}",
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                  fontSize: 13,
+                                                  fontWeight: FontWeight.w600,
+                                                  color:
+                                                      const Color(0xFF991B1B),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }).toList(),
+                                    const SizedBox(height: 16),
+                                  ],
+                                );
+                              }
+                              return const SizedBox();
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+
+                // Floating Bottom Buttons
+                Positioned(
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  child: Container(
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          const Color(0xFFF8FAFC).withOpacity(0),
+                          const Color(0xFFF8FAFC).withOpacity(0.9),
+                          const Color(0xFFF8FAFC),
+                        ],
+                        stops: const [0.0, 0.4, 1.0],
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            style: OutlinedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              side: const BorderSide(color: Color(0xFFE2E8F0)),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 0,
+                            ),
+                            child: Text(
+                              'Close',
+                              style: GoogleFonts.plusJakartaSans(
+                                color: const Color(0xFF1E293B),
+                                fontWeight: FontWeight.w700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: isSaving
+                                ? null
+                                : () async {
+                                    // Validation logic
+                                    if (reportsProvider.statusData.isNotEmpty) {
+                                      // Show warning (reusing existing alert logic but styled)
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text(
+                                              "Required Status Incomplete"),
+                                          content: const Text(
+                                              "Please complete the required tasks first."),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("OK"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    if (reportsProvider
+                                        .documentTypeModel.isNotEmpty) {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text("Unable to Save"),
+                                          content: const Text(
+                                              "Documents not uploaded."),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("OK"),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      return;
+                                    }
+
+                                    setState(() {
+                                      isSaving = true;
+                                    });
+
+                                    try {
+                                      bool isSuccess = await reportsProvider
+                                          .changeTaskStatus(
+                                              context,
+                                              selectedStatus,
+                                              widget.task.taskId,
+                                              widget.task.locationTracking == 1
+                                                  ? await reportsProvider
+                                                      .getCurrentLocation()
+                                                  : null);
+
+                                      if (isSuccess) {
+                                        Navigator.of(context).pop(true);
+                                      } else {
+                                        setState(() {
+                                          isSaving = false;
+                                        });
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          const SnackBar(
+                                              content: Text(
+                                                  'Failed to update status')),
+                                        );
+                                      }
+                                    } catch (e) {
+                                      setState(() {
+                                        isSaving = false;
+                                      });
+                                    }
+                                  },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1A7AE8),
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 10),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                              elevation: 4,
+                              shadowColor:
+                                  const Color(0xFF1A7AE8).withAlpha(80),
+                            ),
+                            child: isSaving
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                        color: Colors.white, strokeWidth: 2),
+                                  )
+                                : Text(
+                                    'Save & Continue',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w700,
+                                      fontSize: 14,
+                                    ),
+                                  ),
                           ),
                         ),
                       ],
                     ),
-                  const SizedBox(height: 16),
-
-                  // Description Section
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CustomText(
-                        'Description',
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textBlack,
-                      ),
-                      const SizedBox(height: 12),
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.grey),
-                          color: AppColors.whiteColor,
-                        ),
-                        child: TextField(
-                          controller: reportsProvider.descriptionController,
-                          maxLines: 4,
-                          minLines: 3,
-                          decoration: const InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
-                            border: InputBorder.none,
-                            hintText: 'Enter description',
-                            hintStyle:
-                                TextStyle(color: Colors.grey, fontSize: 14),
-                          ),
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ),
-                    ],
                   ),
-
-                  const SizedBox(height: 16),
-
-                  // Pending Documents Section
-                  Consumer<TaskPageProvider>(
-                    builder: (context, reportsProvider, child) {
-                      if (reportsProvider.documentTypeModel.isNotEmpty) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              'Pending Documents',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textBlack,
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: theme.cardColor,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: theme.dividerColor),
-                              ),
-                              constraints: const BoxConstraints(maxHeight: 200),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount:
-                                    reportsProvider.documentTypeModel.length,
-                                itemBuilder: (context, index) {
-                                  var document =
-                                      reportsProvider.documentTypeModel[index];
-                                  return ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    leading: Container(
-                                      width: 35,
-                                      child: Text((index + 1).toString() + "."),
-                                    ),
-                                    title:
-                                        CustomText(document.documentTypeName),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 16),
-
-                  // Mandatory Tasks Section
-                  Consumer<TaskPageProvider>(
-                    builder: (context, reportsProvider, child) {
-                      if (reportsProvider.statusData.isNotEmpty) {
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              'Mandatory Tasks',
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.textBlack,
-                            ),
-                            const SizedBox(height: 8),
-                            Container(
-                              decoration: BoxDecoration(
-                                color: AppColors.whiteColor,
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: theme.dividerColor),
-                              ),
-                              constraints: const BoxConstraints(maxHeight: 200),
-                              child: ListView.builder(
-                                shrinkWrap: true,
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount: reportsProvider.statusData.length,
-                                itemBuilder: (context, index) {
-                                  var task = reportsProvider.statusData[index];
-                                  return ListTile(
-                                    contentPadding: const EdgeInsets.symmetric(
-                                        horizontal: 16),
-                                    leading: Container(
-                                      width: 35,
-                                      child: CustomText(
-                                          (index + 1).toString() + "."),
-                                    ),
-                                    title: CustomText(
-                                        "${task.taskTypeName}-${task.requiredStatuses}"),
-                                  );
-                                },
-                              ),
-                            ),
-                          ],
-                        );
-                      } else {
-                        return Container();
-                      }
-                    },
-                  ),
-
-                  const SizedBox(height: 24),
-                ],
-              ),
+                ),
+              ],
             );
           }
         },
+      ),
+    );
+  }
+
+  // --- UI Helper Widgets ---
+
+  Widget _buildSectionHeader(String title) {
+    return Padding(
+      padding: const EdgeInsets.only(left: 4.0, bottom: 2),
+      child: Text(
+        title,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 11,
+          fontWeight: FontWeight.w800,
+          color: const Color(0xFF94A3B8),
+          letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInteractiveCard({
+    required VoidCallback onTap,
+    required bool isSelected,
+    required String title,
+    String? subtitle,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        margin: const EdgeInsets.only(bottom: 8),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(14),
+          border: Border.all(
+            color:
+                isSelected ? const Color(0xFF1A7AE8) : const Color(0xFFF1F5F9),
+            width: isSelected ? 1.6 : 1.2,
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: isSelected
+                  ? const Color(0xFF1A7AE8).withOpacity(0.08)
+                  : Colors.black.withOpacity(0.02),
+              blurRadius: isSelected ? 12 : 6,
+              offset: const Offset(0, 4),
+            )
+          ],
+        ),
+        child: ListTile(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+          title: Text(
+            title,
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 13,
+              fontWeight: FontWeight.w700,
+              color: const Color(0xFF1E293B),
+            ),
+          ),
+          subtitle: subtitle != null
+              ? Text(
+                  subtitle,
+                  style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12, color: const Color(0xFF64748B)),
+                )
+              : null,
+          trailing: AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
+            width: 22,
+            height: 22,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isSelected ? const Color(0xFF1A7AE8) : Colors.transparent,
+              border: Border.all(
+                color: isSelected
+                    ? const Color(0xFF1A7AE8)
+                    : const Color(0xFFCBD5E1),
+                width: 1.5,
+              ),
+            ),
+            child: isSelected
+                ? const Icon(Icons.check, size: 14, color: Colors.white)
+                : null,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildInputField({
+    required TextEditingController controller,
+    required String hint,
+    IconData? icon,
+    bool readOnly = false,
+    VoidCallback? onTap,
+    int maxLines = 1,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC), // Faint grey background for inputs
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: const Color(0xFFE2E8F0)),
+      ),
+      child: TextField(
+        controller: controller,
+        readOnly: readOnly,
+        onTap: onTap,
+        maxLines: maxLines,
+        enableInteractiveSelection: false,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 15,
+          color: const Color(0xFF1E293B),
+          fontWeight: FontWeight.w500,
+        ),
+        decoration: InputDecoration(
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+          border: InputBorder.none,
+          hintText: hint,
+          hintStyle: GoogleFonts.plusJakartaSans(
+            color: const Color(0xFF94A3B8),
+            fontSize: 13,
+          ),
+          suffixIcon: icon != null
+              ? Icon(icon, size: 18, color: const Color(0xFF94A3B8))
+              : null,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDocumentTile({
+    required String title,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      onTap: onTap,
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      title: Text(
+        title,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF334155),
+        ),
+      ),
+      trailing: Container(
+        padding: const EdgeInsets.all(6),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF1F5F9),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: const Icon(Icons.upload_rounded,
+            size: 16, color: Color(0xFF1A7AE8)),
       ),
     );
   }
