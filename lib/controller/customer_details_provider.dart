@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
+import 'package:printing/printing.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -3721,9 +3722,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
             }
           } else {
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text(
-                      'PDF data received (Download supported on Web only currently)')));
+              await Printing.layoutPdf(
+                  onLayout: (format) async => Uint8List.fromList(data));
             }
           }
         } else {

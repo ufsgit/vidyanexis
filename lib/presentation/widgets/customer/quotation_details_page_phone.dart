@@ -163,6 +163,21 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                 borderSide: BorderSide(color: AppColors.primaryBlue),
               ),
           ],
+          if (settingsprovider.menuIsViewMap[32] == 1)
+            CustomOutlinedSvgButton(
+              onPressed: () async {
+                await Loader.showLoader(context);
+                await customerDetailsProvider.getQuotationMasterPdf(
+                    widget.quotationId, context);
+                Loader.stopLoader(context);
+              },
+              svgPath: 'assets/images/Print.svg',
+              label: 'Print Quotation 1',
+              breakpoint: 860,
+              foregroundColor: AppColors.primaryBlue,
+              backgroundColor: Colors.white,
+              borderSide: BorderSide(color: AppColors.primaryBlue),
+            ),
           CustomPopMenuButtonWidget(
             onOptionSelected: (PopupMenuOptions option) async {
               // Add async keyword here

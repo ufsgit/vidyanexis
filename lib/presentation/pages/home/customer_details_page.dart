@@ -4338,212 +4338,257 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     return filteredQuotations.isEmpty
         ? const Center(child: Text("No Quotations available."))
-        : Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(top: 10),
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: borderColor),
-                  left: BorderSide(color: borderColor),
+        : !AppStyles.isWebScreen(context)
+            ? Expanded(
+                child: ListView.builder(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  itemCount: filteredQuotations.length,
+                  itemBuilder: (context, index) {
+                    var task = filteredQuotations[index];
+                    return QuotationCard(
+                      category: task.quotationTypeId.toString(),
+                      taskId: task.quotationMasterId.toString(),
+                      title: task.productName,
+                      statusId: task.quotationStatusId.toString(),
+                      status: task.quotationStatusName,
+                      createdBy: task.createdByName,
+                      posted: task.entryDate?.toString() ?? '',
+                      customerId: widget.customerId,
+                      servicename: '',
+                      warranty: task.warranty,
+                      terms: task.termsAndConditions,
+                      subsidy: task.subsidyAmount,
+                      quotation_details: task.quotationDetails ?? [],
+                      bill_of_materials: task.billOfMaterials ?? [],
+                      productionChartModel: task.productionChartModel ?? [],
+                      advancePercentage: task.advancePercentage,
+                      deliveryPercentage: task.onDeliveryPercentage,
+                      completionPercentage: task.workCompletionPercentage,
+                      quotation: task,
+                    );
+                  },
                 ),
-              ),
-              child: Column(
-                children: [
-                  // Header
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildHeaderCell('#', width: 50.0),
-                        _buildHeaderCell('Product Name', flex: 3),
-                        _buildHeaderCell('Total Amount', flex: 2),
-                        _buildHeaderCell('Options', flex: 2),
-                      ],
+              )
+            : Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: borderColor),
+                      left: BorderSide(color: borderColor),
                     ),
                   ),
-                  // List
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: filteredQuotations.length,
-                      itemBuilder: (context, index) {
-                        var task = filteredQuotations[index];
+                  child: Column(
+                    children: [
+                      // Header
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildHeaderCell('#', width: 50.0),
+                            _buildHeaderCell('Product Name', flex: 3),
+                            _buildHeaderCell('Total Amount', flex: 2),
+                            _buildHeaderCell('Options', flex: 2),
+                          ],
+                        ),
+                      ),
+                      // List
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: filteredQuotations.length,
+                          itemBuilder: (context, index) {
+                            var task = filteredQuotations[index];
 
-                        // Status Color Logic
-                        Color statusColor = task.quotationStatusId == 1
-                            ? Colors.orange
-                            : task.quotationStatusId == 2
-                                ? Colors.green
-                                : Colors.red;
+                            // Status Color Logic
+                            Color statusColor = task.quotationStatusId == 1
+                                ? Colors.orange
+                                : task.quotationStatusId == 2
+                                    ? Colors.green
+                                    : Colors.red;
 
-                        return GestureDetector(
-                          onTap: () {
-                            if (onTap != null) {
-                              onTap(task.quotationMasterId);
-                            }
-                          },
-                          child: IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                _buildDataCell((index + 1).toString(),
-                                    width: 50.0),
-                                _buildDataCell(task.productName,
-                                    flex: 3, isBold: true),
-                                _buildDataCell('₹ ${task.netTotal}', flex: 2),
-                                _buildWidgetCell(
-                                  flex: 2,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // Generic Print Button
-                                      if (settingsprovider.menuIsViewMap[32] ==
-                                          1)
-                                        IconButton(
-                                          tooltip: 'Print Quotation 1',
-                                          icon: const Icon(Icons.print,
-                                              size: 20, color: Colors.blue),
-                                          onPressed: () async {
-                                            await Loader.showLoader(context);
-                                            await customerDetailsProvider
-                                                .getQuotationMasterPdf(
-                                                    task.quotationMasterId
-                                                        .toString(),
+                            return GestureDetector(
+                              onTap: () {
+                                if (onTap != null) {
+                                  onTap(task.quotationMasterId);
+                                }
+                              },
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    _buildDataCell((index + 1).toString(),
+                                        width: 50.0),
+                                    _buildDataCell(task.productName,
+                                        flex: 3, isBold: true),
+                                    _buildDataCell('₹ ${task.netTotal}',
+                                        flex: 2),
+                                    _buildWidgetCell(
+                                      flex: 2,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // Generic Print Button
+                                          if (settingsprovider
+                                                  .menuIsViewMap[32] ==
+                                              1)
+                                            IconButton(
+                                              tooltip: 'Print Quotation 1',
+                                              icon: const Icon(Icons.print,
+                                                  size: 20, color: Colors.blue),
+                                              onPressed: () async {
+                                                await Loader.showLoader(
                                                     context);
-                                            Loader.stopLoader(context);
-                                          },
-                                        ),
-                                      // Specific Print Button
-                                      if (settingsprovider.menuIsViewMap[55] ==
-                                          1)
-                                        if (task.quotationTypeId == 2)
-                                          IconButton(
-                                            tooltip: 'Print Commercial',
-                                            icon: const Icon(
-                                                Icons.print_outlined,
-                                                size: 20,
-                                                color: Colors.blue),
-                                            onPressed: () async {
-                                              await Loader.showLoader(context);
-                                              await customerDetailsProvider
-                                                  .getQuatationListByMasterId(
-                                                      task.quotationMasterId
-                                                          .toString(),
-                                                      context);
-                                              await customerDetailsProvider
-                                                  .fetchLeadDetails(
-                                                      widget.customerId,
-                                                      context);
-                                              await settingsprovider
-                                                  .getCompanyDetails();
-                                              printCommercialPDFs(
-                                                  context: context,
-                                                  companyDetails:
-                                                      settingsprovider
-                                                          .companyDetails[0],
-                                                  customerDetails:
-                                                      customerDetailsProvider
-                                                          .leadDetails![0],
-                                                  quotationData:
-                                                      customerDetailsProvider
-                                                          .quotationListByMaster[0]);
-                                              Loader.stopLoader(context);
-                                            },
-                                          ),
-                                      if (settingsprovider.menuIsViewMap[55] ==
-                                          1)
-                                        if (task.quotationTypeId == 1)
-                                          IconButton(
-                                            tooltip: 'Print Residential',
-                                            icon: const Icon(
-                                                Icons.print_outlined,
-                                                size: 20,
-                                                color: Colors.blue),
-                                            onPressed: () async {
-                                              await Loader.showLoader(context);
-                                              await customerDetailsProvider
-                                                  .getQuatationListByMasterId(
-                                                      task.quotationMasterId
-                                                          .toString(),
-                                                      context);
-                                              await customerDetailsProvider
-                                                  .fetchLeadDetails(
-                                                      widget.customerId,
-                                                      context);
-                                              await settingsprovider
-                                                  .getCompanyDetails();
-                                              printResidentialPDFs(
-                                                  context: context,
-                                                  companyDetails:
-                                                      settingsprovider
-                                                          .companyDetails[0],
-                                                  customerDetails:
-                                                      customerDetailsProvider
-                                                          .leadDetails![0],
-                                                  quotationData:
-                                                      customerDetailsProvider
-                                                          .quotationListByMaster[0]);
-                                              Loader.stopLoader(context);
-                                            },
-                                          ),
-                                      if (settingsprovider.menuIsEditMap[16] ==
-                                          1)
-                                        IconButton(
-                                          tooltip: 'Edit',
-                                          icon: const Icon(Icons.edit,
-                                              size: 20, color: Colors.blue),
-                                          onPressed: () async {
-                                            await _handleEditQuotation(
-                                                task.quotationMasterId
-                                                    .toString(),
-                                                customerDetailsProvider);
-                                          },
-                                        ),
-                                      if (settingsprovider
-                                              .menuIsDeleteMap[16] ==
-                                          1)
-                                        IconButton(
-                                          tooltip: 'Delete',
-                                          icon: const Icon(Icons.delete,
-                                              size: 20, color: Colors.red),
-                                          onPressed: () {
-                                            showConfirmationDialog(
-                                              isLoading: customerDetailsProvider
-                                                  .isDeleteLoading,
-                                              context: context,
-                                              title: 'Confirm Deletion',
-                                              content:
-                                                  'Are you sure you want to delete this Quotation?',
-                                              onCancel: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              onConfirm: () {
-                                                customerDetailsProvider
-                                                    .deleteQuotation(
+                                                await customerDetailsProvider
+                                                    .getQuotationMasterPdf(
                                                         task.quotationMasterId
                                                             .toString(),
-                                                        widget.customerId,
                                                         context);
-                                                Navigator.of(context).pop();
+                                                Loader.stopLoader(context);
                                               },
-                                              confirmButtonText: 'Delete',
-                                              confirmButtonColor: Colors.red,
-                                            );
-                                          },
-                                        ),
-                                    ],
-                                  ),
+                                            ),
+                                          // Specific Print Button
+                                          if (settingsprovider
+                                                  .menuIsViewMap[55] ==
+                                              1)
+                                            if (task.quotationTypeId == 2)
+                                              IconButton(
+                                                tooltip: 'Print Commercial',
+                                                icon: const Icon(
+                                                    Icons.print_outlined,
+                                                    size: 20,
+                                                    color: Colors.blue),
+                                                onPressed: () async {
+                                                  await Loader.showLoader(
+                                                      context);
+                                                  await customerDetailsProvider
+                                                      .getQuatationListByMasterId(
+                                                          task.quotationMasterId
+                                                              .toString(),
+                                                          context);
+                                                  await customerDetailsProvider
+                                                      .fetchLeadDetails(
+                                                          widget.customerId,
+                                                          context);
+                                                  await settingsprovider
+                                                      .getCompanyDetails();
+                                                  printCommercialPDFs(
+                                                      context: context,
+                                                      companyDetails:
+                                                          settingsprovider
+                                                                  .companyDetails[
+                                                              0],
+                                                      customerDetails:
+                                                          customerDetailsProvider
+                                                              .leadDetails![0],
+                                                      quotationData:
+                                                          customerDetailsProvider
+                                                              .quotationListByMaster[0]);
+                                                  Loader.stopLoader(context);
+                                                },
+                                              ),
+                                          if (settingsprovider
+                                                  .menuIsViewMap[55] ==
+                                              1)
+                                            if (task.quotationTypeId == 1)
+                                              IconButton(
+                                                tooltip: 'Print Residential',
+                                                icon: const Icon(
+                                                    Icons.print_outlined,
+                                                    size: 20,
+                                                    color: Colors.blue),
+                                                onPressed: () async {
+                                                  await Loader.showLoader(
+                                                      context);
+                                                  await customerDetailsProvider
+                                                      .getQuatationListByMasterId(
+                                                          task.quotationMasterId
+                                                              .toString(),
+                                                          context);
+                                                  await customerDetailsProvider
+                                                      .fetchLeadDetails(
+                                                          widget.customerId,
+                                                          context);
+                                                  await settingsprovider
+                                                      .getCompanyDetails();
+                                                  printResidentialPDFs(
+                                                      context: context,
+                                                      companyDetails:
+                                                          settingsprovider
+                                                                  .companyDetails[
+                                                              0],
+                                                      customerDetails:
+                                                          customerDetailsProvider
+                                                              .leadDetails![0],
+                                                      quotationData:
+                                                          customerDetailsProvider
+                                                              .quotationListByMaster[0]);
+                                                  Loader.stopLoader(context);
+                                                },
+                                              ),
+                                          if (settingsprovider
+                                                  .menuIsEditMap[16] ==
+                                              1)
+                                            IconButton(
+                                              tooltip: 'Edit',
+                                              icon: const Icon(Icons.edit,
+                                                  size: 20, color: Colors.blue),
+                                              onPressed: () async {
+                                                await _handleEditQuotation(
+                                                    task.quotationMasterId
+                                                        .toString(),
+                                                    customerDetailsProvider);
+                                              },
+                                            ),
+                                          if (settingsprovider
+                                                  .menuIsDeleteMap[16] ==
+                                              1)
+                                            IconButton(
+                                              tooltip: 'Delete',
+                                              icon: const Icon(Icons.delete,
+                                                  size: 20, color: Colors.red),
+                                              onPressed: () {
+                                                showConfirmationDialog(
+                                                  isLoading:
+                                                      customerDetailsProvider
+                                                          .isDeleteLoading,
+                                                  context: context,
+                                                  title: 'Confirm Deletion',
+                                                  content:
+                                                      'Are you sure you want to delete this Quotation?',
+                                                  onCancel: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  onConfirm: () {
+                                                    customerDetailsProvider
+                                                        .deleteQuotation(
+                                                            task.quotationMasterId
+                                                                .toString(),
+                                                            widget.customerId,
+                                                            context);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  confirmButtonText: 'Delete',
+                                                  confirmButtonColor:
+                                                      Colors.red,
+                                                );
+                                              },
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
+                ),
+              );
   }
 
   Future<void> _handleEditQuotation(
