@@ -441,7 +441,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                                 const SizedBox(width: 16),
 
-                                                // Ã¢Å“â€¦ NEW TASK BUTTON (ADDED IN BETWEEN FILTER & EXPORT)
+                                                // ÃƒÂ¢Ã…â€œÃ¢â‚¬Â¦ NEW TASK BUTTON (ADDED IN BETWEEN FILTER & EXPORT)
                                                 // ElevatedButton.icon(
                                                 //   onPressed: () {
                                                 //     showDialog(
@@ -1925,7 +1925,7 @@ class _tasksPageReportState extends State<TaskPage> {
                 Container(
                   width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.primaryBlue,
+                    color: AppColors.darkGreen,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(12.0),
                       topRight: Radius.circular(12.0),
@@ -2212,7 +2212,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                   BoxDecoration(
                                                                 color: selected
                                                                     ? AppColors
-                                                                        .primaryBlue
+                                                                        .darkGreen
                                                                     : Colors
                                                                         .white,
                                                                 borderRadius:
@@ -2222,7 +2222,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 border: Border.all(
                                                                     color: selected
                                                                         ? AppColors
-                                                                            .primaryBlue
+                                                                            .darkGreen
                                                                         : Colors
                                                                             .grey
                                                                             .shade400),
@@ -2725,7 +2725,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     Icons
                                                                         .warning_amber_rounded,
                                                                     color: AppColors
-                                                                        .primaryBlue),
+                                                                        .darkGreen),
                                                                 const SizedBox(
                                                                     width: 10),
                                                                 const Text(
@@ -2784,7 +2784,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           .white,
                                                                   backgroundColor:
                                                                       AppColors
-                                                                          .primaryBlue,
+                                                                          .darkGreen,
                                                                   shape: RoundedRectangleBorder(
                                                                       borderRadius:
                                                                           BorderRadius.circular(
@@ -2892,7 +2892,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     Icons
                                                                         .warning_amber_rounded,
                                                                     color: AppColors
-                                                                        .primaryBlue),
+                                                                        .darkGreen),
                                                                 const SizedBox(
                                                                     width: 10),
                                                                 const Text(
@@ -2919,7 +2919,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           .white,
                                                                   backgroundColor:
                                                                       AppColors
-                                                                          .primaryBlue,
+                                                                          .darkGreen,
                                                                   shape: RoundedRectangleBorder(
                                                                       borderRadius:
                                                                           BorderRadius.circular(
@@ -2955,7 +2955,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       horizontal: 24,
                                                       vertical: 10),
                                               backgroundColor:
-                                                  AppColors.primaryBlue,
+                                                  AppColors.darkGreen,
                                               foregroundColor: Colors.white,
                                             ),
                                             child: saving
