@@ -17,6 +17,16 @@ class LeadCheckInProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  // Local persistence for check-in status (fallback when history is empty)
+  final Map<int, bool> _localCheckedInStatus = {};
+
+  Future<void> initLocalStatus(int customerId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final status = prefs.getBool('lead_checked_in_$customerId') ?? false;
+    _localCheckedInStatus[customerId] = status;
+    notifyListeners();
+  }
+
   List<LeadCheckIn> getHistoryForCustomer(int customerId) {
     final history = _customerCheckInHistory[customerId] ?? [];
     // Ensure history is sorted by date descending (newest first)
@@ -46,13 +56,19 @@ class LeadCheckInProvider extends ChangeNotifier {
 
   bool isCheckedIn(int customerId) {
     final history = getHistoryForCustomer(customerId);
-    if (history.isEmpty) return false;
+    if (history.isEmpty) {
+      // Fallback to local persistence if history is empty (e.g. after app restart)
+      return _localCheckedInStatus[customerId] ?? false;
+    }
     final lastRecord = history.first;
     // Check both status string and checkoutData flag
     final status = lastRecord.checkinStatus?.toLowerCase() ?? "";
     final isStatusIn = status.contains("checked in") || status == "check in";
     final isDataIn =
         lastRecord.checkoutData == 1 || lastRecord.checkoutData == "1";
+
+    // Keep local status in sync with history
+    _localCheckedInStatus[customerId] = isStatusIn || isDataIn;
 
     return isStatusIn || isDataIn;
   }
@@ -197,6 +213,16 @@ class LeadCheckInProvider extends ChangeNotifier {
         if (context.mounted) {
           _showSuccessDialog(context, isCheckIn);
         }
+
+        // Persist status locally
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('lead_checked_in_$customerId', isCheckIn);
+          _localCheckedInStatus[customerId] = isCheckIn;
+        } catch (e) {
+          log('Error saving local lead status: $e');
+        }
+
         fetchLeadCheckInReports(context, customerId.toString());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

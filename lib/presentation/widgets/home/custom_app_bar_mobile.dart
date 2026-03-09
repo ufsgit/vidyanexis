@@ -247,17 +247,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 );
               },
             ),
-
-            // if (widget.showFilterIcon)
-            //   InkWell(
-            //     onTap: onFilterTap,
-            //     child: SvgPicture.asset(
-            //       "assets/images/filter_icon_svg.svg",
-            //       width: widget.filterIconSize,
-            //       height: widget.filterIconSize,
-            //       color: widget.iconColor,
-            //     ),
-            //   ),
+            if (widget.showFilterIcon) ...[
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: widget.onFilterTap,
+                child: SvgPicture.asset(
+                  "assets/images/filter_icon_svg.svg",
+                  width: widget.filterIconSize,
+                  height: widget.filterIconSize,
+                  colorFilter: widget.iconColor != null
+                      ? ColorFilter.mode(widget.iconColor!, BlendMode.srcIn)
+                      : null,
+                ),
+              ),
+            ],
           ],
         ),
       ),

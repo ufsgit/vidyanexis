@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/followup_reports_provider.dart';
 import 'package:vidyanexis/controller/form_builder_provider.dart';
 import 'package:vidyanexis/controller/invoice_tab_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
+import 'package:vidyanexis/controller/lead_check_in_report_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
@@ -123,6 +124,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => StockUseProvider()),
         ChangeNotifierProvider(create: (context) => StockreturnProvider()),
         ChangeNotifierProvider(create: (context) => LeadCheckInProvider()),
+        ChangeNotifierProvider(
+            create: (context) => LeadCheckInReportProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),

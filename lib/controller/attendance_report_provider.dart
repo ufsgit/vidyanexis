@@ -613,46 +613,53 @@ class AttendanceReportProvider extends ChangeNotifier {
   bool get isCompletedToday => _isCompletedToday;
 
   Future<bool> checkIsCheckedIn(int userId, {bool forceApi = false}) async {
+    // Initial cleanup of in-memory state, but we'll try to restore it from Prefs
     _isCompletedToday = false;
     _currentCheckInTime = '';
     _currentCheckOutTime = '';
+    _currentAttendanceDetailId = 0;
+
     try {
       final now = DateTime.now();
       final dateStr = DateFormat('yyyy-MM-dd').format(now);
       final prefs = await SharedPreferences.getInstance();
 
-      // Check local storage first (if not forced)
-      if (!forceApi) {
-        final savedDate = prefs.getString('check_in_date_$userId');
-        if (savedDate == dateStr) {
-          if (prefs.containsKey('is_checked_in_$userId')) {
-            _currentAttendanceDetailId =
-                prefs.getInt('attendance_id_$userId') ?? 0;
-            _currentCheckInTime =
-                prefs.getString('check_in_time_$userId') ?? '';
-            _currentCheckOutTime =
-                prefs.getString('check_out_time_$userId') ?? '';
-            bool status = prefs.getBool('is_checked_in_$userId') ?? false;
+      // Load local state for today as a baseline
+      final savedStatus = prefs.getBool('is_checked_in_$userId') ?? false;
+      final savedDate = prefs.getString('check_in_date_$userId');
+      final savedCheckIn = prefs.getString('check_in_time_$userId') ?? '';
+      final savedCheckOut = prefs.getString('check_out_time_$userId') ?? '';
+      final savedId = prefs.getInt('attendance_id_$userId') ?? 0;
+      final savedCompleted =
+          prefs.getBool('is_completed_today_$userId') ?? false;
 
-            // Check implicit completion (new pref)
-            _isCompletedToday =
-                prefs.getBool('is_completed_today_$userId') ?? false;
-
-            return status;
-          }
-        }
+      // If we have local state for today, use it as baseline
+      bool localStateIsValidToday = (savedDate == dateStr);
+      if (localStateIsValidToday) {
+        _currentAttendanceDetailId = savedId;
+        _currentCheckInTime = savedCheckIn;
+        _currentCheckOutTime = savedCheckOut;
+        _isCompletedToday = savedCompleted;
       }
 
-      // If no local state for today, fetch from API
+      // If NO forceApi and local state is valid for today, return it immediately
+      if (!forceApi && localStateIsValidToday) {
+        return savedStatus;
+      }
+
+      // Fetch from API to sync/verify
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.getAttendanceByDate}?fromDate=$dateStr&toDate=$dateStr&userId=$userId');
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data != null) {
+        if (data != null && data['data'] != null) {
           final dataItem = data['data'] ?? [];
           if (dataItem is List && dataItem.isNotEmpty) {
+            bool foundActiveCheckIn = false;
+            _isCompletedToday = false; // Reset to check from API items
+
             for (var item in dataItem) {
               String checkIn = item['Check_In_Time']?.toString() ?? '';
               String checkOut = item['Check_Out_Time']?.toString() ?? '';
@@ -663,56 +670,79 @@ class AttendanceReportProvider extends ChangeNotifier {
               // If checked in but not checked out, then IsCheckedIn is true
               if (checkIn.isNotEmpty &&
                   (checkOut.isEmpty || checkOut == 'null')) {
+                foundActiveCheckIn = true;
+                _currentAttendanceDetailId = attendanceId;
+                _currentCheckInTime = checkIn;
+                _isCompletedToday = false;
+
                 // Sync local storage
                 await prefs.setBool('is_checked_in_$userId', true);
                 await prefs.setString('check_in_date_$userId', dateStr);
                 await prefs.setInt('attendance_id_$userId', attendanceId);
                 await prefs.setString('check_in_time_$userId', checkIn);
                 await prefs.setBool('is_completed_today_$userId', false);
-                _currentAttendanceDetailId = attendanceId;
-                _currentCheckInTime = checkIn;
-                return true;
               }
 
               if (checkIn.isNotEmpty &&
-                  (checkOut.isNotEmpty && checkOut != 'null')) {
-                _isCompletedToday = true;
-                _currentCheckOutTime = checkOut;
-                await prefs.setString('check_out_time_$userId', checkOut);
+                  checkOut.isNotEmpty &&
+                  checkOut != 'null') {
+                // If we haven't found an active check-in yet, this might be a completed session
+                if (!foundActiveCheckIn) {
+                  _isCompletedToday = true;
+                  _currentCheckOutTime = checkOut;
+                  await prefs.setString('check_out_time_$userId', checkOut);
+                }
               }
             }
-            // If we found records but none were active check-ins (all checked out)
-            await prefs.setBool('is_checked_in_$userId', false);
-            await prefs.setString('check_in_date_$userId', dateStr);
-            await prefs.remove('attendance_id_$userId');
-            await prefs.remove('check_in_time_$userId');
 
-            // If _isCompletedToday was set to true in the loop, save it to prefs
-            await prefs.setBool(
-                'is_completed_today_$userId', _isCompletedToday);
+            if (foundActiveCheckIn) {
+              notifyListeners();
+              return true;
+            } else {
+              // All items are completed
+              await prefs.setBool('is_checked_in_$userId', false);
+              await prefs.setString('check_in_date_$userId', dateStr);
+              await prefs.remove('attendance_id_$userId');
+              await prefs.remove('check_in_time_$userId');
+              await prefs.setBool(
+                  'is_completed_today_$userId', _isCompletedToday);
 
-            _currentAttendanceDetailId = 0;
-            _currentCheckInTime = '';
-            // _isCompletedToday is already set to true in the loop
-            return false;
+              _currentAttendanceDetailId = 0;
+              _currentCheckInTime = '';
+              notifyListeners();
+              return false;
+            }
           } else {
-            // No records implies not checked in
+            // No records on server for today
             await prefs.setBool('is_checked_in_$userId', false);
             await prefs.setString('check_in_date_$userId', dateStr);
             await prefs.remove('attendance_id_$userId');
             await prefs.remove('check_in_time_$userId');
-            await prefs.setBool(
-                'is_completed_today_$userId', false); // Explicitly false
+            await prefs.setBool('is_completed_today_$userId', false);
             await prefs.remove('check_out_time_$userId');
             _currentAttendanceDetailId = 0;
             _currentCheckInTime = '';
             _currentCheckOutTime = '';
+            _isCompletedToday = false;
+            notifyListeners();
+            return false;
           }
+        }
+      } else {
+        // API Failed (e.g. 500, 404, or network error with status 0)
+        // If we have a valid baseline for today, keep it instead of defaulting to false
+        if (localStateIsValidToday) {
+          print('API Failed, falling back to local state for today');
+          notifyListeners();
+          return savedStatus;
         }
       }
     } catch (e) {
       print('Error checking status: $e');
     }
+
+    // Default return if everything else fails but we have no local state
+    notifyListeners();
     return false;
   }
 }

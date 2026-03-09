@@ -8,6 +8,7 @@ import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/staff_location_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/checkin_checkout_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -263,6 +264,13 @@ class _HomePageState extends State<HomePage> {
           title: 'Attendance Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: CheckInOutScreen()),
+        ),
+      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
+          settingsProvider.menuIsViewMap[56].toString() == '1')
+        SidebarOption(
+          title: 'Check-in Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const LeadCheckInReportScreen(),
         ),
       if (settingsProvider.menuIsViewMap[54].toString() == '1')
         SidebarOption(

@@ -21,7 +21,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 
-class LeadCard extends StatelessWidget {
+class LeadCard extends StatefulWidget {
   final SearchLeadModel lead;
   final bool isExpanded;
   final bool isLead;
@@ -35,6 +35,20 @@ class LeadCard extends StatelessWidget {
     required this.isExpanded,
     required this.onTap,
   });
+
+  @override
+  State<LeadCard> createState() => _LeadCardState();
+}
+
+class _LeadCardState extends State<LeadCard> {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<LeadCheckInProvider>(context, listen: false)
+          .initLocalStatus(widget.lead.customerId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +75,7 @@ class LeadCard extends StatelessWidget {
     return Column(
       children: [
         GestureDetector(
-          onTap: onTap,
+          onTap: widget.onTap,
           child: Container(
             width: MediaQuery.sizeOf(context).width,
             decoration: BoxDecoration(color: AppColors.whiteColor),
@@ -78,58 +92,12 @@ class LeadCard extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          // Stack(
-                          //   children: [
-                          //     SizedBox(
-                          //       width: 35,
-                          //       height: 35,
-                          //       child: Container(
-                          //         width: 30,
-                          //         height: 30,
-                          //         decoration: BoxDecoration(
-                          //           color: getAvatarColor(lead.customerName),
-                          //           borderRadius: BorderRadius.circular(100),
-                          //         ),
-                          //         child: Center(
-                          //           child: Text(
-                          //             lead.customerName
-                          //                 .substring(0, 1)
-                          //                 .toUpperCase(),
-                          //             style: const TextStyle(
-                          //               fontSize: 12,
-                          //               color: Colors.white,
-                          //               fontWeight: FontWeight.w600,
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ),
-                          //     ),
-                          //     Positioned(
-                          //       right: 0,
-                          //       top: 0,
-                          //       child: Container(
-                          //         width: 12,
-                          //         height: 12,
-                          //         decoration: BoxDecoration(
-                          //           color: lead.lateFollowUp == '0'
-                          //               ? AppColors.darkGreen
-                          //               : AppColors.textRed,
-                          //           border: Border.all(
-                          //             color: AppColors.whiteColor,
-                          //             width: 1.5,
-                          //           ),
-                          //           borderRadius: BorderRadius.circular(100),
-                          //         ),
-                          //       ),
-                          //     )
-                          //   ],
-                          // ),
                           Container(
                             height: 62,
                             width: 3,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(30),
-                              color: getAvatarColor(lead.customerName)
+                              color: getAvatarColor(widget.lead.customerName)
                                   .withOpacity(.4),
                             ),
                           ),
@@ -139,7 +107,7 @@ class LeadCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  lead.customerName,
+                                  widget.lead.customerName,
                                   overflow: TextOverflow.ellipsis,
                                   maxLines: 1,
                                   style: GoogleFonts.plusJakartaSans(
@@ -152,7 +120,7 @@ class LeadCard extends StatelessWidget {
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 2),
                                   child: Text(
-                                    'ID ${lead.customerId}',
+                                    'ID ${widget.lead.customerId}',
                                     style: TextStyle(
                                       color: AppColors.textGrey3,
                                       fontSize: 11,
@@ -164,20 +132,20 @@ class LeadCard extends StatelessWidget {
                                   height: 4,
                                 ),
                                 Text(
-                                  lead.statusName,
+                                  widget.lead.statusName,
                                   overflow: TextOverflow.clip,
                                   maxLines: 2,
                                   style: GoogleFonts.plusJakartaSans(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
-                                      color:
-                                          AppColors.parseColor(lead.colorCode)),
+                                      color: AppColors.parseColor(
+                                          widget.lead.colorCode)),
                                 ),
                                 const SizedBox(
                                   height: 2,
                                 ),
                                 Text(
-                                  lead.remark,
+                                  widget.lead.remark,
                                   overflow: TextOverflow.clip,
                                   maxLines: 1,
                                   style: GoogleFonts.plusJakartaSans(
@@ -194,20 +162,15 @@ class LeadCard extends StatelessWidget {
                             children: [
                               Row(
                                 children: [
-                                  // Icon(
-                                  //   Icons.calendar_month_outlined,
-                                  //   size: 12,
-                                  //   color: AppColors.textGrey3,
-                                  // ),
-                                  // const SizedBox(width: 4),
                                   Text(
-                                    lead.nextFollowUpDate.toFormattedDate(),
+                                    widget.lead.nextFollowUpDate
+                                        .toFormattedDate(),
                                     overflow: TextOverflow.ellipsis,
                                     maxLines: 1,
                                     style: TextStyle(
                                       fontWeight: FontWeight.w500,
                                       fontSize: 12,
-                                      color: lead.lateFollowUp == 0
+                                      color: widget.lead.lateFollowUp == 0
                                           ? AppColors.statusGreen
                                           : AppColors.btnRed,
                                     ),
@@ -216,7 +179,7 @@ class LeadCard extends StatelessWidget {
                               ),
                               const SizedBox(height: 16),
                               Icon(
-                                isExpanded
+                                widget.isExpanded
                                     ? Icons.keyboard_arrow_up_outlined
                                     : Icons.keyboard_arrow_down_outlined,
                                 color: AppColors.textGrey3,
@@ -232,8 +195,8 @@ class LeadCard extends StatelessWidget {
             ),
           ),
         ),
-        // if (isExpanded) const SizedBox(height: 12),
-        if (isExpanded)
+        // if (widget.isExpanded) const SizedBox(height: 12),
+        if (widget.isExpanded)
           Padding(
             padding: const EdgeInsets.only(right: 16),
             child: SingleChildScrollView(
@@ -249,7 +212,7 @@ class LeadCard extends StatelessWidget {
                     imageColor: AppColors.textGreen,
                     onTap: () async {
                       String formatted = formatIndianPhoneNumber(
-                          lead.contactNumber.toString());
+                          widget.lead.contactNumber.toString());
 
                       if (formatted.isNotEmpty) {
                         final url = 'https://wa.me/$formatted';
@@ -270,7 +233,7 @@ class LeadCard extends StatelessWidget {
                   const SizedBox(width: 10),
                   CustomActionButton(
                     imageColor: AppColors.appViolet,
-                    onTap: isLead
+                    onTap: widget.isLead
                         ? () async {
                             Navigator.push(
                               context,
@@ -278,8 +241,8 @@ class LeadCard extends StatelessWidget {
                                   builder: (context) =>
                                       CustomerDetailPageMobile(
                                         fromLead: true,
-                                        customerId: lead.customerId,
-                                        lead: lead,
+                                        customerId: widget.lead.customerId,
+                                        lead: widget.lead,
                                       )),
                             );
                           }
@@ -290,8 +253,8 @@ class LeadCard extends StatelessWidget {
                                   builder: (context) =>
                                       CustomerDetailPageMobile(
                                         fromLead: false,
-                                        customerId: lead.customerId,
-                                        lead: lead,
+                                        customerId: widget.lead.customerId,
+                                        lead: widget.lead,
                                       )),
                             );
                           },
@@ -311,55 +274,54 @@ class LeadCard extends StatelessWidget {
                             context,
                             listen: false);
                         dropDownProvider.selectedStatusId =
-                            int.parse(lead.statusId.toString());
-                        leadsProvider.statusController.text = lead.statusName;
-                        print('status id ${lead.statusId}');
-                        print('status name ${lead.statusName}');
+                            int.parse(widget.lead.statusId.toString());
+                        leadsProvider.statusController.text =
+                            widget.lead.statusName;
+                        print('status id ${widget.lead.statusId}');
+                        print('status name ${widget.lead.statusName}');
                         dropDownProvider.selectedUserId =
-                            int.parse(lead.toUserId.toString());
+                            int.parse(widget.lead.toUserId.toString());
                         leadsProvider.searchUserController.text =
-                            lead.toUserName;
-                        print('assign to ${lead.toUserName}');
-                        print('assign to id ${lead.toUserId}');
-                        leadsProvider.setCutomerId(lead.customerId);
-                        leadsProvider.branchController.text = lead.branchName;
-                        settingsProvider.selectedBranchId = lead.branchId;
-                        print('branch ${lead.branchId}');
-                        print('branch name ${lead.branchName}');
+                            widget.lead.toUserName;
+                        print('assign to ${widget.lead.toUserName}');
+                        print('assign to id ${widget.lead.toUserId}');
+                        leadsProvider.setCutomerId(widget.lead.customerId);
+                        leadsProvider.branchController.text =
+                            widget.lead.branchName;
+                        settingsProvider.selectedBranchId =
+                            widget.lead.branchId;
+                        print('branch ${widget.lead.branchId}');
+                        print('branch name ${widget.lead.branchName}');
                         leadsProvider.departmentController.text =
-                            lead.departmentName;
-                        settingsProvider.selectedDepartmentId =
-                            int.tryParse(lead.departmentId.toString()) ?? 0;
-                        print('department id ${lead.departmentId}');
-                        print('department name ${lead.departmentName}');
+                            widget.lead.departmentName;
+                        settingsProvider.selectedDepartmentId = int.tryParse(
+                                widget.lead.departmentId.toString()) ??
+                            0;
+                        print('department id ${widget.lead.departmentId}');
+                        print('department name ${widget.lead.departmentName}');
 
                         leadsProvider.nextFollowUpDateController.text =
-                            lead.nextFollowUpDate.isNotEmpty
-                                ? _formatDateSafely(lead.nextFollowUpDate)
+                            widget.lead.nextFollowUpDate.isNotEmpty
+                                ? _formatDateSafely(
+                                    widget.lead.nextFollowUpDate)
                                 : '';
                         leadsProvider.messageController.clear();
                         dropDownProvider.filterStaffByBranchAndDepartment(
-                          branchId: lead.branchId,
-                          departmentId:
-                              int.tryParse(lead.departmentId.toString()) ?? 0,
+                          branchId: widget.lead.branchId,
+                          departmentId: int.tryParse(
+                                  widget.lead.departmentId.toString()) ??
+                              0,
                         );
                       } catch (e) {}
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
                           return AddFollowupDialog(
-                            customerName: lead.customerName,
+                            customerName: widget.lead.customerName,
                           );
                         },
                       ));
-                      // showDialog(
-                      //   barrierDismissible: true,
-                      //   context: context,
-                      //   builder: (BuildContext context) => AddFollowupDialog(
-                      //     customerName: '- ${lead.customerName}',
-                      //   ),
-                      // );
                     },
-                    imageColor: lead.lateFollowUp == 0
+                    imageColor: widget.lead.lateFollowUp == 0
                         ? AppColors.darkGreen
                         : AppColors.textRed,
                     icon: Icons.note_add_outlined,
@@ -371,7 +333,7 @@ class LeadCard extends StatelessWidget {
                     onTap: () async {
                       final Uri phoneUri = Uri(
                         scheme: 'tel',
-                        path: lead.contactNumber,
+                        path: widget.lead.contactNumber,
                       );
                       if (await canLaunchUrl(phoneUri)) {
                         await launchUrl(phoneUri);
@@ -386,16 +348,16 @@ class LeadCard extends StatelessWidget {
                   Consumer<LeadCheckInProvider>(
                     builder: (context, checkInProvider, child) {
                       final isCheckedIn =
-                          checkInProvider.isCheckedIn(lead.customerId);
+                          checkInProvider.isCheckedIn(widget.lead.customerId);
 
                       return isCheckedIn
                           ? CustomActionButton(
                               onTap: () {
                                 checkInProvider.saveLeadCheckIn(
                                   context: context,
-                                  customerId: lead.customerId,
+                                  customerId: widget.lead.customerId,
                                   isCheckIn: false,
-                                  leadName: lead.customerName,
+                                  leadName: widget.lead.customerName,
                                 );
                               },
                               icon: Icons.location_off_outlined,
@@ -406,9 +368,9 @@ class LeadCard extends StatelessWidget {
                               onTap: () {
                                 checkInProvider.saveLeadCheckIn(
                                   context: context,
-                                  customerId: lead.customerId,
+                                  customerId: widget.lead.customerId,
                                   isCheckIn: true,
-                                  leadName: lead.customerName,
+                                  leadName: widget.lead.customerName,
                                 );
                               },
                               icon: Icons.location_on_outlined,
@@ -421,7 +383,7 @@ class LeadCard extends StatelessWidget {
               ),
             ),
           ),
-        if (isExpanded) const SizedBox(height: 12),
+        if (widget.isExpanded) const SizedBox(height: 12),
       ],
     );
   }
