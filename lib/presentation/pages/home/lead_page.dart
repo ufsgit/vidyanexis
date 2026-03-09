@@ -21,6 +21,10 @@ import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 class LeadPage extends StatefulWidget {
   final bool fromDashBoard;
@@ -1241,7 +1245,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   fontSize: 13)),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 100,
+                                          width: 140,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Align(
@@ -1447,48 +1451,128 @@ class _LeadsPageState extends State<LeadPage> {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
-                                                  width: 100,
+                                                  width: 140,
                                                   data: Align(
                                                     alignment:
                                                         Alignment.centerLeft,
-                                                    child: TextButton(
-                                                      onPressed: () {
-                                                        leadProvider.convertLead(
-                                                            context,
-                                                            lead.customerId
-                                                                .toString());
-                                                      },
-                                                      style:
-                                                          TextButton.styleFrom(
-                                                        backgroundColor: Colors
-                                                            .orange
-                                                            .withOpacity(0.1),
-                                                        shape:
-                                                            RoundedRectangleBorder(
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      children: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            leadProvider.convertLead(
+                                                                context,
+                                                                lead.customerId
+                                                                    .toString());
+                                                          },
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                Colors.orange
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                            shape: RoundedRectangleBorder(
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
                                                                             5)),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 5),
-                                                        minimumSize:
-                                                            const Size(0, 0),
-                                                        tapTargetSize:
-                                                            MaterialTapTargetSize
-                                                                .shrinkWrap,
-                                                      ),
-                                                      child: const Text(
-                                                        'Convert',
-                                                        style: TextStyle(
-                                                          color: Colors.orange,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        5),
+                                                            minimumSize:
+                                                                const Size(
+                                                                    0, 0),
+                                                            tapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap,
+                                                          ),
+                                                          child: const Text(
+                                                            'Convert',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.orange,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            final customerDetailsProvider =
+                                                                Provider.of<
+                                                                        CustomerDetailsProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false);
+                                                            customerDetailsProvider
+                                                                    .customerId =
+                                                                lead.customerId
+                                                                    .toString();
+                                                            customerDetailsProvider
+                                                                .clearTaskDetails();
+                                                            if (AppStyles
+                                                                .isWebScreen(
+                                                                    context)) {
+                                                              showDialog(
+                                                                barrierDismissible:
+                                                                    false,
+                                                                context:
+                                                                    context,
+                                                                builder: (_) =>
+                                                                    TaskCreationWidget(
+                                                                        isEdit:
+                                                                            false,
+                                                                        taskId:
+                                                                            '0'),
+                                                              );
+                                                            } else {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            AddTaskMobile(
+                                                                      isEdit:
+                                                                          false,
+                                                                      taskId:
+                                                                          '0',
+                                                                    ),
+                                                                  ));
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(10),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: AppColors
+                                                                  .primaryBlue
+                                                                  .withOpacity(
+                                                                      0.1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            child: Icon(
+                                                              Icons.add_task,
+                                                              size: 20,
+                                                              color: AppColors
+                                                                  .primaryBlue,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
