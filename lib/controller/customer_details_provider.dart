@@ -1564,13 +1564,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 ))
             .toList();
       }
-      addTaskModel.taskMasterId = int.parse(taskId);
+      addTaskModel.taskMasterId = int.tryParse(taskId) ?? 0;
       addTaskModel.taskStatusId = _selectedAMCStatus ?? 1;
       addTaskModel.taskStatusName = _selectedAMCStatusName ?? 'Not Started';
-      addTaskModel.customerId = int.parse(customerId);
-      addTaskModel.createdBy = int.parse(userId);
+      addTaskModel.customerId = int.tryParse(customerId) ?? 0;
+      addTaskModel.createdBy = int.tryParse(userId) ?? 0;
       addTaskModel.taskDate = DateTime.parse(date);
-      addTaskModel.taskTypeId = int.parse(taskType);
+      addTaskModel.taskTypeId = int.tryParse(taskType) ?? 0;
       addTaskModel.taskTypeName = _selectedTaskTypeName.toString();
       addTaskModel.description = description.toString();
       addTaskModel.taskTime = DateFormat('HH:mm').format(DateTime.now());
@@ -3749,5 +3749,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
         );
       }
     }
+  }
+
+  void setCustomerId(int customerIdValue) {
+    customerId = customerIdValue.toString();
+    notifyListeners();
   }
 }

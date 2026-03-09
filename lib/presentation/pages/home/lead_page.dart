@@ -10,6 +10,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 
 import 'package:vidyanexis/controller/leads_provider.dart';
@@ -1080,6 +1081,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                           lead.customerName,
                                                       child: TextButton(
                                                         onPressed: () {
+                                                          CustomerDetailsProvider customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+                                                          customerDetailsProvider.setCustomerId(lead.customerId);
                                                           sideProvider.name =
                                                               'Lead /';
 
