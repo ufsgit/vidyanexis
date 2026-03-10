@@ -61,19 +61,16 @@ class _tasksPageReportState extends State<TaskPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final customerProvider =
           Provider.of<CustomerProvider>(context, listen: false);
-      final taskPageProvider =
-          Provider.of<TaskPageProvider>(context, listen: false);
+      reportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
       final searchProvider =
           Provider.of<SidebarProvider>(context, listen: false);
 
       _updateScreenType();
       _setupScrollListener();
-      taskPageProvider.setFilterState(false);
+      reportsProvider.removeStatus();
       searchProvider.stopSearch();
 
       customerProvider.resetExpansion();
-
-      reportsProvider = Provider.of<TaskPageProvider>(context, listen: false);
 
       if (widget.initialStatusFilter != null) {
         reportsProvider.setStatus(widget.initialStatusFilter!);
