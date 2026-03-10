@@ -280,9 +280,9 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                             ),
                           ),
                           tilePadding: const EdgeInsets.all(0),
-                          subtitle: (taskUser.documents.isNotEmpty)
-                              ? '${taskUser.documents[0].startDateTime.isNotEmpty ? taskUser.documents[0].startDateTime.toMonthDayYearFormat() : '--,-- '} to ${taskUser.documents[0].completionDateTime.isNotEmpty ? taskUser.documents[0].completionDateTime.toMonthDayYearFormat() : '--,--'}'
-                              : '--,-- to --,--',
+                          // subtitle: (taskUser.documents.isNotEmpty)
+                          //     ? '${taskUser.documents[0].startDateTime.isNotEmpty ? taskUser.documents[0].startDateTime.toMonthDayYearFormat() : '--,-- '} to ${taskUser.documents[0].completionDateTime.isNotEmpty ? taskUser.documents[0].completionDateTime.toMonthDayYearFormat() : '--,--'}'
+                          //     : '--,-- to --,--',
                           leading: Container(
                             width: 30,
                             height: 30,
@@ -309,7 +309,20 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (taskUser.documents.isNotEmpty)
+                                if (customerDetailsProvider
+                                    .taskDetails[0].taskDocuments.isEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 20),
+                                    child: Center(
+                                      child: Text(
+                                        'No task logs found.',
+                                        style:
+                                            TextStyle(color: Colors.grey[500]),
+                                      ),
+                                    ),
+                                  )
+                                else
                                   Padding(
                                     padding: const EdgeInsets.only(left: 26),
                                     child: SizedBox(
@@ -326,66 +339,93 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                                           return Center(
                                             child: Column(
                                               children: [
-                                                InkWell(
-                                                  onTap: () {
-                                                    // Add image view logic if needed
-                                                  },
-                                                  child: ClipRRect(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    child: Image.network(
-                                                      HttpUrls.imgBaseUrl +
-                                                          doc.filePath,
-                                                      width: 70,
-                                                      height: 70,
-                                                      fit: BoxFit.cover,
-                                                      loadingBuilder: (context,
-                                                          child, progress) {
-                                                        if (progress == null) {
-                                                          return child;
-                                                        }
-                                                        return Container(
-                                                          width: 70,
-                                                          height: 70,
-                                                          color:
-                                                              Colors.grey[200],
-                                                          child: const Center(
-                                                            child: SizedBox(
-                                                              width: 20,
-                                                              height: 20,
-                                                              child:
-                                                                  CircularProgressIndicator(
-                                                                strokeWidth: 2,
-                                                              ),
+                                                doc.filePath.isNotEmpty
+                                                    ? InkWell(
+                                                        onTap: () {
+                                                          // Add image view logic if needed
+                                                        },
+                                                        child: ClipRRect(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          child: Image.network(
+                                                            HttpUrls.imgBaseUrl +
+                                                                doc.filePath,
+                                                            width: 70,
+                                                            height: 70,
+                                                            fit: BoxFit.cover,
+                                                            loadingBuilder:
+                                                                (context, child,
+                                                                    progress) {
+                                                              if (progress ==
+                                                                  null) {
+                                                                return child;
+                                                              }
+                                                              return Container(
+                                                                width: 70,
+                                                                height: 70,
+                                                                color: Colors
+                                                                    .grey[200],
+                                                                child:
+                                                                    const Center(
+                                                                  child:
+                                                                      SizedBox(
+                                                                    width: 20,
+                                                                    height: 20,
+                                                                    child:
+                                                                        CircularProgressIndicator(
+                                                                      strokeWidth:
+                                                                          2,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              );
+                                                            },
+                                                            errorBuilder:
+                                                                (context, error,
+                                                                    stack) {
+                                                              return Container(
+                                                                width: 70,
+                                                                height: 70,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color: Colors
+                                                                          .grey[
+                                                                      200],
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              8),
+                                                                ),
+                                                                child:
+                                                                    const Icon(
+                                                                  Icons
+                                                                      .hide_image_outlined,
+                                                                  color: Colors
+                                                                      .grey,
+                                                                ),
+                                                              );
+                                                            },
+                                                          ),
+                                                        ),
+                                                      )
+                                                    : const SizedBox(
+                                                        height: 100,
+                                                        child: Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .center,
+                                                          children: [
+                                                            Text(
+                                                              'No Documents',
+                                                              style: TextStyle(
+                                                                  fontSize: 10,
+                                                                  color: Colors
+                                                                      .grey),
                                                             ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      errorBuilder: (context,
-                                                          error, stack) {
-                                                        return Container(
-                                                          width: 70,
-                                                          height: 70,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .grey[200],
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        8),
-                                                          ),
-                                                          child: const Icon(
-                                                            Icons
-                                                                .hide_image_outlined,
-                                                            color: Colors.grey,
-                                                          ),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                                ),
+                                                          ],
+                                                        ),
+                                                      ),
                                               ],
                                             ),
                                           );

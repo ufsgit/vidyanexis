@@ -52,6 +52,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
           Provider.of<AudioFileProvider>(context, listen: false);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
+      provider.getTaskType(context);
 
       // Clear audio files if not in edit mode
       if (!widget.isEdit) {
@@ -344,7 +345,16 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                           }
                           customerDetailsProvider.updateTaskType(
                               newValue, selectedTaskType.taskTypeName);
-                          customerDetailsProvider.updateAMCStatus(0, '');
+
+                          final defaultStatusId =
+                              selectedTaskType.defaultStatusId;
+                          if (defaultStatusId != 0) {
+                            customerDetailsProvider.updateAMCStatus(
+                                defaultStatusId, '');
+                          } else {
+                            customerDetailsProvider.updateAMCStatus(0, '');
+                          }
+
                           _updateStatusDropdown(newValue.toString());
                           dropDownProvider.getStatusByTaskTypeId(
                               context, newValue.toString(), '3');
@@ -1262,8 +1272,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                   .entries
                                   .map((taskUser) {
                                 return Container(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 150),
+                                  // constraints:
+                                  //     const BoxConstraints(maxWidth: 150),
                                   padding: const EdgeInsets.all(4),
                                   margin: const EdgeInsets.all(4),
                                   decoration: BoxDecoration(
@@ -1273,6 +1283,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                     padding: const EdgeInsets.symmetric(
                                         horizontal: 10),
                                     child: Row(
+                                      mainAxisSize: MainAxisSize.min,
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
@@ -1283,6 +1294,9 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                             color: Colors.white,
                                             fontWeight: FontWeight.w500,
                                           ),
+                                        ),
+                                        SizedBox(
+                                          width: 20,
                                         ),
                                         InkWell(
                                             onTap: () => customerDetailsProvider

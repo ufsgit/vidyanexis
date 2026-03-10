@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/main.dart';
 
 class ImageUploadProvider extends ChangeNotifier {
   ScrollController scrollController = ScrollController();
@@ -196,6 +198,68 @@ class ImageUploadProvider extends ChangeNotifier {
     } else {
       print('No file selected.');
     }
+  }
+
+  Future<void> addPhotoMobile({bool allowCamera = false}) async {
+    if (kIsWeb) return;
+
+    if (!await _requestPhotoPermission()) {
+      print('Photo permission denied');
+      return;
+    }
+
+    final ImagePicker picker = ImagePicker();
+    final ImageSource source =
+        allowCamera ? ImageSource.camera : ImageSource.gallery;
+
+    if (source == ImageSource.camera) {
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+        preferredCameraDevice: CameraDevice.rear,
+      );
+
+      if (photo != null) {
+        final bytes = await photo.readAsBytes();
+        _images.add(bytes);
+        _fileInfoList.add({
+          'name': photo.name,
+          'type': 'image',
+          'data': bytes,
+        });
+        notifyListeners();
+      }
+    } else {
+      // Gallery - multi select
+      final List<XFile> images = await picker.pickMultiImage(imageQuality: 85);
+      for (final xfile in images) {
+        final bytes = await xfile.readAsBytes();
+        _images.add(bytes);
+        _fileInfoList.add({
+          'name': xfile.name,
+          'type': 'image',
+          'data': bytes,
+        });
+      }
+      if (images.isNotEmpty) notifyListeners();
+    }
+  }
+
+// Helper method for permission handling (cleaner than inline)
+  Future<bool> _requestPhotoPermission() async {
+    // Modern Android 13+ uses more granular permissions
+    final status = await Permission.photos.request();
+
+    if (status.isGranted) {
+      return true;
+    }
+
+    // For older Android or iOS fallback
+    if (await Permission.storage.isDenied) {
+      await Permission.storage.request();
+    }
+
+    return await Permission.photos.isGranted;
   }
 
   // Helper function to determine file type

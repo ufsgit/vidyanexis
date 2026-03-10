@@ -5,9 +5,14 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
 class DottedBorderContainer extends StatelessWidget {
-  DottedBorderContainer({super.key, this.width = 110, this.height = 110});
+  DottedBorderContainer(
+      {super.key,
+      this.width = 110,
+      this.height = 110,
+      this.image = 'assets/icons/icon_camera.svg'});
   double width;
   double height;
+  String image;
 
   @override
   Widget build(BuildContext context) {
@@ -22,7 +27,7 @@ class DottedBorderContainer extends StatelessWidget {
         height: height,
         child: Center(
           child: SvgPicture.asset(
-            'assets/icons/icon_camera.svg',
+            image,
             height: 30,
             width: 30,
           ),
