@@ -31,9 +31,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   bool showDescription = false;
   bool showFollowUpDate = false;
 
-  final TextEditingController _docSearchController = TextEditingController();
-  String _docSearchQuery = "";
-
   @override
   void initState() {
     super.initState();
@@ -48,17 +45,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       reportsProvider.clearDescription();
       dropDownProvider.getDocumentType(context);
     });
-
-    _docSearchController.addListener(() {
-      setState(() {
-        _docSearchQuery = _docSearchController.text;
-      });
-    });
   }
 
   @override
   void dispose() {
-    _docSearchController.dispose();
     // Clear description on close
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -463,74 +453,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               }
                               return const SizedBox();
                             },
-                          ),
-
-                          // --- Section: Add More Documents ---
-                          _buildSectionHeader('ADD MORE DOCUMENTS'),
-                          const SizedBox(height: 8),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: Consumer<DropDownProvider>(
-                              builder: (context, dropDownProvider, child) {
-                                if (dropDownProvider.documentType.isEmpty &&
-                                    _docSearchQuery.isEmpty) {
-                                  return const Padding(
-                                    padding: EdgeInsets.all(24.0),
-                                    child: Center(
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 2)),
-                                  );
-                                }
-
-                                var docs = dropDownProvider.documentType;
-
-                                return ListView.separated(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: docs.length,
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(
-                                          height: 1,
-                                          indent: 16,
-                                          endIndent: 16,
-                                          color: Color(0xFFF1F5F9)),
-                                  itemBuilder: (context, index) {
-                                    var doc = docs[index];
-                                    return _buildDocumentTile(
-                                      title: doc.documentTypeName,
-                                      onTap: () async {
-                                        final imageProvider =
-                                            Provider.of<ImageUploadProvider>(
-                                                context,
-                                                listen: false);
-                                        imageProvider.clearFiles();
-                                        imageProvider.setCutomerId(
-                                            widget.task.customerId.toString());
-                                        imageProvider.updateDocumentType(
-                                            doc.documentTypeId,
-                                            doc.documentTypeName);
-
-                                        await imageProvider.addMultipleFile();
-
-                                        if (imageProvider.images.isNotEmpty ||
-                                            imageProvider.pdfs.isNotEmpty) {
-                                          await imageProvider.uploadAllFiles(
-                                              context,
-                                              shouldPop: false);
-                                          _refreshData();
-                                        }
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
                           ),
 
                           // --- Section: Mandatory Tasks ---
