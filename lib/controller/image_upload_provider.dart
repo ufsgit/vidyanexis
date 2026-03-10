@@ -250,9 +250,59 @@ class ImageUploadProvider extends ChangeNotifier {
     await _uploadFilesToAws(_pdfs, 'application/pdf', taskId, context);
   }
 
+  // Upload all files (images and PDFs)
+  Future<void> uploadAllFiles(BuildContext context,
+      {bool shouldPop = true}) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "0";
+
+      Loader.showLoader(context);
+
+      // Upload Images
+      for (var fileData in _images) {
+        String? uploadedFilePath =
+            await saveToAws(fileData, 'image/jpeg', userId, context);
+        if (uploadedFilePath != null) {
+          uploadedFilePaths
+              .add({'File_Path': HttpUrls.imgBaseUrl + uploadedFilePath});
+        } else {
+          Loader.stopLoader(context);
+          return;
+        }
+      }
+
+      // Upload PDFs
+      for (var fileData in _pdfs) {
+        String? uploadedFilePath =
+            await saveToAws(fileData, 'application/pdf', userId, context);
+        if (uploadedFilePath != null) {
+          uploadedFilePaths
+              .add({'File_Path': HttpUrls.imgBaseUrl + uploadedFilePath});
+        } else {
+          Loader.stopLoader(context);
+          return;
+        }
+      }
+
+      await saveImagesApi(context, shouldPop: shouldPop);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All Documents uploaded successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error uploading documents')),
+      );
+      print('Error uploading documents: $e');
+    } finally {
+      Loader.stopLoader(context);
+    }
+  }
+
   // Common method to upload files to AWS
   Future<void> _uploadFilesToAws(List<Uint8List> files, String fileType,
-      String taskId, BuildContext context) async {
+      String taskId, BuildContext context,
+      {bool shouldPop = true}) async {
     try {
       Loader.showLoader(context);
       for (var fileData in files) {
@@ -264,10 +314,11 @@ class ImageUploadProvider extends ChangeNotifier {
               .add({'File_Path': HttpUrls.imgBaseUrl + uploadedFilePath});
         } else {
           print('Upload failed for $fileType');
+          Loader.stopLoader(context);
           return;
         }
       }
-      saveImagesApi(context);
+      await saveImagesApi(context, shouldPop: shouldPop);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All Documents uploaded successfully')),
       );
@@ -298,7 +349,8 @@ class ImageUploadProvider extends ChangeNotifier {
     }
   }
 
-  void saveImagesApi(BuildContext context) async {
+  Future<void> saveImagesApi(BuildContext context,
+      {bool shouldPop = true}) async {
     print(uploadedFilePaths);
     print(_selectedDocumentType);
     print(customerId);
@@ -321,7 +373,9 @@ class ImageUploadProvider extends ChangeNotifier {
         final data = response.data;
         log('Success');
 
-        Navigator.pop(context);
+        if (shouldPop) {
+          Navigator.pop(context);
+        }
         clearFiles();
         print(data);
         final customerDetailsProvider =
