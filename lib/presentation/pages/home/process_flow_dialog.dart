@@ -7,7 +7,6 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 
 import 'package:intl/intl.dart';
@@ -32,9 +31,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   bool showDescription = false;
   bool showFollowUpDate = false;
 
-  final TextEditingController _docSearchController = TextEditingController();
-  String _docSearchQuery = "";
-
   @override
   void initState() {
     super.initState();
@@ -49,17 +45,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       reportsProvider.clearDescription();
       dropDownProvider.getDocumentType(context);
     });
-
-    _docSearchController.addListener(() {
-      setState(() {
-        _docSearchQuery = _docSearchController.text;
-      });
-    });
   }
 
   @override
   void dispose() {
-    _docSearchController.dispose();
     // Clear description on close
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) {
@@ -124,10 +113,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               child: Text(
                 widget.task.customerName,
                 style: GoogleFonts.plusJakartaSans(
-                  color: const Color(0xFF1A7AE8),
+                  color: const Color(0xFF1A7AE8).withOpacity(0.8),
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
                   decoration: TextDecoration.underline,
+                  decorationColor: const Color(0xFF1A7AE8).withOpacity(0.4),
                 ),
               ),
             ),
@@ -147,10 +137,29 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             final statusOptions = snapshot.data!;
 
             if (!isInitialized) {
-              selectedStatus = statusOptions.firstWhere(
+              // Priority 1: Match by exact ID
+              int? matchingIndex = statusOptions.indexWhere(
                 (status) => status.statusId == widget.task.taskStatusId,
-                orElse: () => statusOptions.first,
               );
+
+              // Priority 2: Match by common names if ID fails (case-insensitive)
+              if (matchingIndex == -1) {
+                String currentStatusName =
+                    widget.task.taskStatusName.toLowerCase();
+                matchingIndex = statusOptions.indexWhere((status) {
+                  String optionName = (status.statusName ?? "").toLowerCase();
+                  return optionName == currentStatusName ||
+                      (currentStatusName.contains("progress") &&
+                          optionName.contains("progress")) ||
+                      (currentStatusName.contains("complete") &&
+                          optionName.contains("complete"));
+                });
+              }
+
+              selectedStatus = matchingIndex != -1
+                  ? statusOptions[matchingIndex]
+                  : statusOptions.first;
+
               isInitialized = true;
 
               int statusId = selectedStatus.statusId ?? 0;
@@ -241,6 +250,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             style: GoogleFonts.plusJakartaSans(
                                               color: isSelected
                                                   ? const Color(0xFF1A7AE8)
+                                                      .withOpacity(0.8)
                                                   : const Color(0xFF64748B),
                                               fontWeight: isSelected
                                                   ? FontWeight.w700
@@ -297,7 +307,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                           const SizedBox(height: 12),
 
                           // Follow Up Date Toggle
-                          _buildInteractiveCard(
+                          _buildExpansionCard(
                             onTap: () {
                               setState(() {
                                 showFollowUpDate = !showFollowUpDate;
@@ -307,50 +317,43 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 }
                               });
                             },
-                            isSelected: showFollowUpDate,
+                            isExpanded: showFollowUpDate,
                             title: 'FollowUp Date',
+                            icon: Icons.calendar_today_outlined,
+                            children: _buildInputField(
+                              controller:
+                                  reportsProvider.followUpDateController,
+                              hint: 'Choose FollowUp Date',
+                              icon: Icons.calendar_today,
+                              readOnly: true,
+                              onTap: () async {
+                                DateTime? pickedDate = await showDatePicker(
+                                  context: context,
+                                  initialDate: DateTime.now(),
+                                  firstDate: DateTime.now(),
+                                  lastDate: DateTime(2101),
+                                  builder: (context, child) {
+                                    return Theme(
+                                      data: Theme.of(context).copyWith(
+                                        colorScheme: const ColorScheme.light(
+                                          primary: Color(0xCC1A7AE8),
+                                        ),
+                                      ),
+                                      child: child!,
+                                    );
+                                  },
+                                );
+                                if (pickedDate != null) {
+                                  reportsProvider.followUpDateController.text =
+                                      DateFormat('dd MMM yyyy')
+                                          .format(pickedDate);
+                                }
+                              },
+                            ),
                           ),
 
-                          // Follow Up Date Input (Conditional)
-                          if (showFollowUpDate)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8.0, bottom: 12),
-                              child: _buildInputField(
-                                controller:
-                                    reportsProvider.followUpDateController,
-                                hint: 'Choose FollowUp Date',
-                                icon: Icons.calendar_today,
-                                readOnly: true,
-                                onTap: () async {
-                                  DateTime? pickedDate = await showDatePicker(
-                                    context: context,
-                                    initialDate: DateTime.now(),
-                                    firstDate: DateTime.now(),
-                                    lastDate: DateTime(2101),
-                                    builder: (context, child) {
-                                      return Theme(
-                                        data: Theme.of(context).copyWith(
-                                          colorScheme: const ColorScheme.light(
-                                            primary: Color(0xFF1A7AE8),
-                                          ),
-                                        ),
-                                        child: child!,
-                                      );
-                                    },
-                                  );
-                                  if (pickedDate != null) {
-                                    reportsProvider
-                                            .followUpDateController.text =
-                                        DateFormat('dd MMM yyyy')
-                                            .format(pickedDate);
-                                  }
-                                },
-                              ),
-                            ),
-
                           // Add Notes Toggle
-                          _buildInteractiveCard(
+                          _buildExpansionCard(
                             onTap: () {
                               setState(() {
                                 showDescription = !showDescription;
@@ -359,22 +362,15 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 }
                               });
                             },
-                            isSelected: showDescription,
+                            isExpanded: showDescription,
                             title: 'Add Notes',
-                          ),
-
-                          // Description Box (Conditional)
-                          if (showDescription)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.only(top: 8.0, bottom: 12),
-                              child: _buildInputField(
-                                controller:
-                                    reportsProvider.descriptionController,
-                                hint: 'Enter detailed description...',
-                                maxLines: 4,
-                              ),
+                            icon: Icons.notes_outlined,
+                            children: _buildInputField(
+                              controller: reportsProvider.descriptionController,
+                              hint: 'Enter detailed description...',
+                              maxLines: 4,
                             ),
+                          ),
 
                           const SizedBox(height: 16),
 
@@ -422,21 +418,30 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           return _buildDocumentTile(
                                             title: doc.documentTypeName,
                                             onTap: () async {
-                                              await showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) =>
-                                                    ImageUploadAlert(
-                                                  customerId: widget
-                                                      .task.customerId
-                                                      .toString(),
-                                                  initialDocumentTypeId:
-                                                      doc.documentTypeId,
-                                                  initialDocumentTypeName:
-                                                      doc.documentTypeName,
-                                                ),
-                                              );
-                                              _refreshData();
+                                              final imageProvider = Provider.of<
+                                                      ImageUploadProvider>(
+                                                  context,
+                                                  listen: false);
+                                              imageProvider.clearFiles();
+                                              imageProvider.setCutomerId(widget
+                                                  .task.customerId
+                                                  .toString());
+                                              imageProvider.updateDocumentType(
+                                                  doc.documentTypeId,
+                                                  doc.documentTypeName);
+
+                                              await imageProvider
+                                                  .addMultipleFile();
+
+                                              if (imageProvider
+                                                      .images.isNotEmpty ||
+                                                  imageProvider
+                                                      .pdfs.isNotEmpty) {
+                                                await imageProvider
+                                                    .uploadAllFiles(context,
+                                                        shouldPop: false);
+                                                _refreshData();
+                                              }
                                             },
                                           );
                                         },
@@ -448,82 +453,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               }
                               return const SizedBox();
                             },
-                          ),
-
-                          // --- Section: Add More Documents ---
-                          _buildSectionHeader('ADD MORE DOCUMENTS'),
-                          const SizedBox(height: 8),
-                          Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: Consumer<DropDownProvider>(
-                              builder: (context, dropDownProvider, child) {
-                                if (dropDownProvider.documentType.isEmpty &&
-                                    _docSearchQuery.isEmpty) {
-                                  return const Padding(
-                                    padding: EdgeInsets.all(24.0),
-                                    child: Center(
-                                        child: CircularProgressIndicator(
-                                            strokeWidth: 2)),
-                                  );
-                                }
-
-                                var docs = dropDownProvider.documentType;
-
-                                return ListView.separated(
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.zero,
-                                  physics: const NeverScrollableScrollPhysics(),
-                                  itemCount: docs.length,
-                                  separatorBuilder: (context, index) =>
-                                      const Divider(
-                                          height: 1,
-                                          indent: 16,
-                                          endIndent: 16,
-                                          color: Color(0xFFF1F5F9)),
-                                  itemBuilder: (context, index) {
-                                    var doc = docs[index];
-                                    return _buildDocumentTile(
-                                      title: doc.documentTypeName,
-                                      onTap: () async {
-                                        final imageProvider =
-                                            Provider.of<ImageUploadProvider>(
-                                                context,
-                                                listen: false);
-                                        imageProvider.clearFiles();
-                                        imageProvider.updateDocumentType(
-                                            doc.documentTypeId,
-                                            doc.documentTypeName);
-
-                                        await imageProvider.addMultipleFile();
-
-                                        if (imageProvider.images.isNotEmpty ||
-                                            imageProvider.pdfs.isNotEmpty) {
-                                          await showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (context) =>
-                                                ImageUploadAlert(
-                                              customerId: widget.task.customerId
-                                                  .toString(),
-                                              initialDocumentTypeId:
-                                                  doc.documentTypeId,
-                                              initialDocumentTypeName:
-                                                  doc.documentTypeName,
-                                            ),
-                                          );
-                                          _refreshData();
-                                        }
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            ),
                           ),
 
                           // --- Section: Mandatory Tasks ---
@@ -709,14 +638,15 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     }
                                   },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF1A7AE8),
+                              backgroundColor:
+                                  const Color(0xFF1A7AE8).withOpacity(0.8),
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12)),
-                              elevation: 4,
+                              elevation: 2,
                               shadowColor:
-                                  const Color(0xFF1A7AE8).withAlpha(80),
+                                  const Color(0xFF1A7AE8).withOpacity(0.2),
                             ),
                             child: isSaving
                                 ? const SizedBox(
@@ -778,9 +708,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           color: Colors.white,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color:
-                isSelected ? const Color(0xFF1A7AE8) : const Color(0xFFF1F5F9),
-            width: isSelected ? 1.6 : 1.2,
+            color: isSelected
+                ? const Color(0xFF1A7AE8).withOpacity(0.4)
+                : const Color(0xFFF1F5F9),
+            width: 1.2,
           ),
           boxShadow: [
             BoxShadow(
@@ -800,7 +731,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             style: GoogleFonts.plusJakartaSans(
               fontSize: 13,
               fontWeight: FontWeight.w700,
-              color: const Color(0xFF1E293B),
+              color: isSelected
+                  ? const Color(0xFF1A7AE8).withOpacity(0.8)
+                  : const Color(0xFF1E293B),
             ),
           ),
           subtitle: subtitle != null
@@ -816,12 +749,14 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
             height: 22,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: isSelected ? const Color(0xFF1A7AE8) : Colors.transparent,
+              color: isSelected
+                  ? const Color(0xFF1A7AE8).withOpacity(0.6)
+                  : Colors.transparent,
               border: Border.all(
                 color: isSelected
-                    ? const Color(0xFF1A7AE8)
+                    ? const Color(0xFF1A7AE8).withOpacity(0.4)
                     : const Color(0xFFCBD5E1),
-                width: 1.5,
+                width: 1.2,
               ),
             ),
             child: isSelected
@@ -829,6 +764,99 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                 : null,
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildExpansionCard({
+    required VoidCallback onTap,
+    required bool isExpanded,
+    required String title,
+    IconData? icon,
+    Widget? children,
+  }) {
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.fastOutSlowIn,
+      margin: const EdgeInsets.only(bottom: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(
+          color: isExpanded
+              ? const Color(0xFF1A7AE8).withOpacity(0.4)
+              : const Color(0xFFF1F5F9),
+          width: 1.2,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: isExpanded
+                ? const Color(0xFF1A7AE8).withOpacity(0.06)
+                : Colors.black.withOpacity(0.01),
+            blurRadius: isExpanded ? 10 : 4,
+            offset: const Offset(0, 4),
+          )
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon,
+                        size: 20,
+                        color: isExpanded
+                            ? const Color(0xFF1A7AE8).withOpacity(0.8)
+                            : const Color(0xFF64748B)),
+                    const SizedBox(width: 12),
+                  ],
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        color: isExpanded
+                            ? const Color(0xFF1A7AE8).withOpacity(0.8)
+                            : const Color(0xFF1E293B),
+                      ),
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: isExpanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 150),
+                    curve: Curves.easeOutCubic,
+                    child: Icon(
+                      Icons.keyboard_arrow_down,
+                      color: isExpanded
+                          ? const Color(0xFF1A7AE8).withOpacity(0.8)
+                          : const Color(0xFF64748B),
+                      size: 22,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          AnimatedSize(
+            duration: const Duration(milliseconds: 150),
+            curve: Curves.fastOutSlowIn,
+            alignment: Alignment.topCenter,
+            child: isExpanded
+                ? Padding(
+                    padding:
+                        const EdgeInsets.only(left: 12, right: 12, bottom: 12),
+                    child: children,
+                  )
+                : const SizedBox(width: double.infinity),
+          ),
+        ],
       ),
     );
   }
@@ -896,8 +924,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           color: const Color(0xFFF1F5F9),
           borderRadius: BorderRadius.circular(8),
         ),
-        child: const Icon(Icons.upload_rounded,
-            size: 16, color: Color(0xFF1A7AE8)),
+        child: Icon(Icons.upload_rounded,
+            size: 16, color: const Color(0xFF1A7AE8).withOpacity(0.8)),
       ),
     );
   }
