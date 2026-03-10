@@ -2827,32 +2827,39 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                     ? await provider
                                                                         .getCurrentLocation()
                                                                     : null);
+
+                                                        if (!context.mounted)
+                                                          return;
+
                                                         if (isSuccess) {
-                                                          Future.microtask(() {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(true);
-                                                          });
+                                                          Navigator.pop(
+                                                              context, true);
+                                                          ScaffoldMessenger.of(
+                                                                  context)
+                                                              .showSnackBar(
+                                                                  const SnackBar(
+                                                                      content: Text(
+                                                                          "Task status updated successfully")));
                                                         } else {
                                                           isSaving.value =
                                                               false;
                                                           ScaffoldMessenger.of(
                                                                   context)
                                                               .showSnackBar(
-                                                            const SnackBar(
-                                                                content: Text(
-                                                                    'Failed to update status')),
-                                                          );
+                                                                  const SnackBar(
+                                                                      content: Text(
+                                                                          "Failed to update status")));
                                                         }
                                                       } catch (e) {
+                                                        if (!context.mounted)
+                                                          return;
                                                         isSaving.value = false;
                                                         ScaffoldMessenger.of(
                                                                 context)
                                                             .showSnackBar(
-                                                          SnackBar(
-                                                              content: Text(
-                                                                  'Failed to update status: ${e.toString()}')),
-                                                        );
+                                                                const SnackBar(
+                                                                    content: Text(
+                                                                        "Server timeout. Try again")));
                                                       }
                                                     } else {
                                                       showDialog(

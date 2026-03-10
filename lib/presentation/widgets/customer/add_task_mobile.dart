@@ -344,7 +344,16 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                           }
                           customerDetailsProvider.updateTaskType(
                               newValue, selectedTaskType.taskTypeName);
-                          customerDetailsProvider.updateAMCStatus(0, '');
+
+                          final defaultStatusId =
+                              selectedTaskType.defaultStatusId;
+                          if (defaultStatusId != 0) {
+                            customerDetailsProvider.updateAMCStatus(
+                                defaultStatusId, '');
+                          } else {
+                            customerDetailsProvider.updateAMCStatus(0, '');
+                          }
+
                           _updateStatusDropdown(newValue.toString());
                           dropDownProvider.getStatusByTaskTypeId(
                               context, newValue.toString(), '3');
