@@ -1345,20 +1345,28 @@ class SettingsProvider extends ChangeNotifier {
           _getMenuPermission
               .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
 
-          // Rename permission 32 to Print Quotation 1
-          for (var i = 0; i < _getMenuPermission.length; i++) {
-            if (_getMenuPermission[i].menuId == 32) {
-              _getMenuPermission[i].menuName = 'Print Quotation 1';
-            }
-          }
-
           // Rename or add permission 55 as Print Quotation 2
           bool has55 = false;
+          bool has32 = false;
           for (var i = 0; i < _getMenuPermission.length; i++) {
             if (_getMenuPermission[i].menuId == 55) {
               _getMenuPermission[i].menuName = 'Print Quotation 2';
               has55 = true;
             }
+            if (_getMenuPermission[i].menuId == 32) {
+              _getMenuPermission[i].menuName = 'Print Quotation 1';
+              has32 = true;
+            }
+          }
+
+          if (!has32) {
+            _getMenuPermission.add(GetMenuPermissionModel(
+                menuId: 32,
+                menuName: 'Print Quotation 1',
+                isView: 0,
+                isSave: 0,
+                isEdit: 0,
+                isDelete: 0));
           }
 
           if (!has55) {
@@ -2893,20 +2901,32 @@ class SettingsProvider extends ChangeNotifier {
           _showMenu
               .removeWhere((item) => item.menuId == 82 || item.menuId == 83);
 
-          // Rename permission 32 to Print Quotation 1
-          for (var i = 0; i < _showMenu.length; i++) {
-            if (_showMenu[i].menuId == 32) {
-              _showMenu[i].menuName = 'Print Quotation 1';
-            }
-          }
-
           // Rename or add permission 55 as Print Quotation 2
           bool has55 = false;
+          bool has32 = false;
           for (var i = 0; i < _showMenu.length; i++) {
             if (_showMenu[i].menuId == 55) {
               _showMenu[i].menuName = 'Print Quotation 2';
               has55 = true;
             }
+            if (_showMenu[i].menuId == 32) {
+              _showMenu[i].menuName = 'Print Quotation 1';
+              has32 = true;
+            }
+          }
+
+          if (!has32) {
+            _showMenu.add(MenuPermissionModel(
+                menuId: 32,
+                menuName: 'Print Quotation 1',
+                menuOrder: 0,
+                menuOrderSub: 0,
+                isEdit: 1,
+                isSave: 1,
+                isDelete: 1,
+                isView: 1,
+                menuStatus: 1,
+                menuType: 1));
           }
 
           if (!has55) {

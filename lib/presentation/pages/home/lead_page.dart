@@ -10,6 +10,7 @@ import 'package:vidyanexis/constants/app_colors.dart';
 
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 
 import 'package:vidyanexis/controller/leads_provider.dart';
@@ -20,6 +21,10 @@ import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 class LeadPage extends StatefulWidget {
   final bool fromDashBoard;
@@ -992,8 +997,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ((index + 1) +
                                                                       leadProvider
                                                                           .startLimit -
-                                                                      1)
-                                                                  .toString(),
+                                                                  1)
+                                                              .toString(),
                                                               style:
                                                                   const TextStyle(
                                                                 fontSize: 13,
@@ -1076,6 +1081,16 @@ class _LeadsPageState extends State<LeadPage> {
                                                           lead.customerName,
                                                       child: TextButton(
                                                         onPressed: () {
+                                                          CustomerDetailsProvider
+                                                              customerDetailsProvider =
+                                                              Provider.of<
+                                                                      CustomerDetailsProvider>(
+                                                                  context,
+                                                                  listen:
+                                                                      false);
+                                                          customerDetailsProvider
+                                                              .setCustomerId(lead
+                                                                  .customerId);
                                                           sideProvider.name =
                                                               'Lead /';
 
@@ -1166,7 +1181,9 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width: 1620,
+
+                            width: 1560,
+
                             child: Column(
                               children: [
                                 // Header row
@@ -1238,22 +1255,39 @@ class _LeadsPageState extends State<LeadPage> {
                                                   fontSize: 13)),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 100,
+                                          width: 230,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              'Convert',
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: Color(0xFFFFFFFF),
-                                              ),
+                                            alignment: Alignment.center,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: const [
+                                                Text(
+                                                  'Convert',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Color(0xFFFFFFFF),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 20),
+                                                Text(
+                                                  'Create Task',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Color(0xFFFFFFFF),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 375,
+                                          width: 350,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Text('Remark',
@@ -1280,19 +1314,10 @@ class _LeadsPageState extends State<LeadPage> {
                                                   fontSize: 13)),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 150,
+                                          width: 120,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Text('Follow-Up Date',
-                                              style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13)),
-                                          color: Color(0xFF607185)),
-                                      TableWidget(
-                                          width: 100,
-                                          padding: EdgeInsets.symmetric(
-                                              vertical: 6.0, horizontal: 8.0),
-                                          data: Text('Total',
                                               style: TextStyle(
                                                   color: Colors.white,
                                                   fontSize: 13)),
@@ -1453,48 +1478,137 @@ class _LeadsPageState extends State<LeadPage> {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
-                                                  width: 100,
+                                                  width: 200,
                                                   data: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
-                                                    child: TextButton(
-                                                      onPressed: () {
-                                                        leadProvider.convertLead(
-                                                            context,
-                                                            lead.customerId
-                                                                .toString());
-                                                      },
-                                                      style:
-                                                          TextButton.styleFrom(
-                                                        backgroundColor: Colors
-                                                            .orange
-                                                            .withOpacity(0.1),
-                                                        shape:
-                                                            RoundedRectangleBorder(
+                                                    alignment: Alignment.center,
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                          MainAxisSize.min,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
+                                                      children: [
+                                                        TextButton(
+                                                          onPressed: () {
+                                                            leadProvider.convertLead(
+                                                                context,
+                                                                lead.customerId
+                                                                    .toString());
+                                                          },
+                                                          style: TextButton
+                                                              .styleFrom(
+                                                            backgroundColor:
+                                                                Colors.orange
+                                                                    .withOpacity(
+                                                                        0.1),
+                                                            shape: RoundedRectangleBorder(
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
                                                                             5)),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 10,
-                                                                vertical: 5),
-                                                        minimumSize:
-                                                            const Size(0, 0),
-                                                        tapTargetSize:
-                                                            MaterialTapTargetSize
-                                                                .shrinkWrap,
-                                                      ),
-                                                      child: const Text(
-                                                        'Convert',
-                                                        style: TextStyle(
-                                                          color: Colors.orange,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontSize: 13,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        5),
+                                                            minimumSize:
+                                                                const Size(
+                                                                    0, 0),
+                                                            tapTargetSize:
+                                                                MaterialTapTargetSize
+                                                                    .shrinkWrap,
+                                                          ),
+                                                          child: const Text(
+                                                            'Convert',
+                                                            style: TextStyle(
+                                                              color:
+                                                                  Colors.orange,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              fontSize: 13,
+                                                            ),
+                                                          ),
                                                         ),
-                                                      ),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        InkWell(
+                                                          onTap: () {
+                                                            final customerDetailsProvider =
+                                                                Provider.of<
+                                                                        CustomerDetailsProvider>(
+                                                                    context,
+                                                                    listen:
+                                                                        false);
+                                                            customerDetailsProvider
+                                                                    .customerId =
+                                                                lead.customerId
+                                                                    .toString();
+                                                            customerDetailsProvider
+                                                                .clearTaskDetails();
+                                                            if (AppStyles
+                                                                .isWebScreen(
+                                                                    context)) {
+                                                              showDialog(
+                                                                barrierDismissible:
+                                                                    false,
+                                                                context:
+                                                                    context,
+                                                                builder: (_) =>
+                                                                    TaskCreationWidget(
+                                                                        isEdit:
+                                                                            false,
+                                                                        taskId:
+                                                                            '0'),
+                                                              );
+                                                            } else {
+                                                              Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            AddTaskMobile(
+                                                                      isEdit:
+                                                                          false,
+                                                                      taskId:
+                                                                          '0',
+                                                                    ),
+                                                                  ));
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        5),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: AppColors
+                                                                  .primaryBlue
+                                                                  .withOpacity(
+                                                                      0.1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            child: Icon(
+                                                              Icons.add_task,
+                                                              size: 20,
+                                                              color: AppColors
+                                                                  .primaryBlue,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),
@@ -1559,22 +1673,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                   data: Text(
                                                     lead.nextFollowUpDate
                                                         .toDayMonthYearFormat(),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 13),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  width: 100,
-                                                  data: Text(
-                                                    lead.totalProjectCost
-                                                        .toString(),
                                                     maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,

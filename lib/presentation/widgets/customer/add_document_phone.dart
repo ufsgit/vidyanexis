@@ -223,35 +223,75 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
               onChanged: (value) {},
             ),
             SizedBox(height: 12),
-            InkWell(
-              onTap: () => provider.addFileMobile(),
-              child: Container(
-                color: Colors.white,
-                height: 130,
-                width: MediaQuery.sizeOf(context).width,
-                child: Center(
-                  child: Stack(
-                    children: [
-                      DottedBorderContainer(
-                        height: 130,
-                        width: MediaQuery.sizeOf(context).width,
-                      ),
-                      Align(
-                        alignment: Alignment.bottomCenter,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CustomText(
-                            'Upload Document',
-                            fontWeight: FontWeight.w400,
-                            fontSize: 14,
-                            color: AppColors.textGrey4,
-                          ),
+            Row(
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () => provider.addFileMobile(),
+                    child: Container(
+                      color: Colors.white,
+                      height: 130,
+                      width: MediaQuery.sizeOf(context).width,
+                      child: Center(
+                        child: Stack(
+                          children: [
+                            DottedBorderContainer(
+                              height: 130,
+                              width: MediaQuery.sizeOf(context).width,
+                              image: 'assets/icons/document_icon.svg',
+                            ),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CustomText(
+                                  'Upload Document',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                  color: AppColors.textGrey4,
+                                ),
+                              ),
+                            )
+                          ],
                         ),
-                      )
-                    ],
+                      ),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 12),
+                Expanded(
+                  child: InkWell(
+                    onTap: () => provider.addPhotoMobile(),
+                    child: Container(
+                      color: Colors.white,
+                      height: 130,
+                      width: MediaQuery.sizeOf(context).width,
+                      child: Center(
+                        child: Stack(
+                          children: [
+                            DottedBorderContainer(
+                              height: 130,
+                              width: MediaQuery.sizeOf(context).width,
+                            ),
+                            Align(
+                              alignment: Alignment.bottomCenter,
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: CustomText(
+                                  'Upload Photo',
+                                  fontWeight: FontWeight.w400,
+                                  fontSize: 14,
+                                  color: AppColors.textGrey4,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(
               height: 12,

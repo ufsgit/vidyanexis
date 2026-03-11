@@ -130,6 +130,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   late TabController _tabController;
   List<Tab> _tabs = [];
   bool _isControllerInitialized = false;
+  Key _checklistKey = UniqueKey();
 
   @override
   void didChangeDependencies() {
@@ -140,6 +141,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     final newTabs = [
       const Tab(text: "Info"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
+      if (settingsprovider.menuIsViewMap[16] == 1)
+        const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[13] == 1)
         const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
@@ -149,8 +152,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[15] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Periodic Service"),
-      if (settingsprovider.menuIsViewMap[16] == 1)
-        const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "History"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
@@ -561,12 +562,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   tabAlignment: TabAlignment.start,
                                   isScrollable: true,
                                   dividerColor: Colors.transparent,
+                                  labelPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   labelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                      fontSize: 13),
                                   unselectedLabelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                      fontSize: 13),
                                   tabs: _tabs,
                                 ),
                               ),
@@ -623,7 +626,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         },
                                       ).then((value) {
                                         if (value == true) {
-                                          setState(() {});
+                                          setState(() {
+                                            _checklistKey = UniqueKey();
+                                          });
                                         }
                                       });
                                     },
@@ -2737,6 +2742,178 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ],
                                                     ),
 
+                                            // Quotations Tab (can be customized as needed)
+                                            if (settingsprovider
+                                                    .menuIsViewMap[16] ==
+                                                1)
+                                              customerDetailsProvider.isLoading
+                                                  ? const Center(
+                                                      child:
+                                                          CircularProgressIndicator())
+                                                  : Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        // Display 4 Chips based on Task_Type_Id filter
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            //chips
+                                                            AppStyles
+                                                                    .isWebScreen(
+                                                                        context)
+                                                                ? Container(
+                                                                    margin:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            8.0),
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      color: const Color(
+                                                                          0xFFEFF2F5),
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              8),
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          4.0),
+                                                                      child:
+                                                                          Wrap(
+                                                                        spacing:
+                                                                            8.0, // Space between chips
+                                                                        runSpacing:
+                                                                            4.0, // Space between rows
+                                                                        children: [
+                                                                          _buildQuatationChip(
+                                                                              'All Quotations',
+                                                                              null), // All tasks (no filter)
+                                                                          _buildQuatationChip(
+                                                                              'Approved',
+                                                                              2), // Task Type Id 1
+                                                                          _buildQuatationChip(
+                                                                              'Rejected',
+                                                                              3), // Task Type Id 2
+                                                                          _buildQuatationChip(
+                                                                              'Pending',
+                                                                              1), // Task Type Id 2
+                                                                          // _buildServiceChip(
+                                                                          //     'In Progress',
+                                                                          //     2), // Task Type Id 3
+                                                                        ],
+                                                                      ),
+                                                                    ),
+                                                                  )
+                                                                : Container(
+                                                                    margin:
+                                                                        const EdgeInsets
+                                                                            .all(
+                                                                            30),
+                                                                  ),
+                                                            if (settingsprovider
+                                                                        .menuIsSaveMap[
+                                                                    16] ==
+                                                                1)
+                                                              ElevatedButton
+                                                                  .icon(
+                                                                onPressed: () {
+                                                                  customerDetailsProvider
+                                                                          .customerId =
+                                                                      widget
+                                                                          .customerId;
+                                                                  customerDetailsProvider
+                                                                      .qsubsidyAmountController
+                                                                      .text = '0';
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    barrierDismissible:
+                                                                        false,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                            context) {
+                                                                      return QuotationCreationWidget(
+                                                                          quotationId:
+                                                                              '0',
+                                                                          isEdit:
+                                                                              false,
+                                                                          customerId:
+                                                                              widget.customerId);
+                                                                    },
+                                                                  );
+                                                                },
+                                                                icon: const Icon(
+                                                                    Icons.add),
+                                                                label: const Text(
+                                                                    'New Quotation '),
+                                                                style: ElevatedButton
+                                                                    .styleFrom(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .primaryBlue,
+                                                                  foregroundColor:
+                                                                      Colors
+                                                                          .white,
+                                                                  padding: AppStyles
+                                                                          .isWebScreen(
+                                                                              context)
+                                                                      ? const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              16,
+                                                                          vertical:
+                                                                              12)
+                                                                      : const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              16,
+                                                                          vertical:
+                                                                              0),
+                                                                ),
+                                                              ),
+                                                          ],
+                                                        ),
+                                                        // Display filtered task list
+                                                        _buildFilteredQuatationList(
+                                                          onTap: (quatationId) {
+                                                            leadProvider.setCutomerId(
+                                                                int.parse(widget
+                                                                    .customerId));
+                                                            print(
+                                                                'Quotation ID: $quatationId');
+                                                            customerDetailsProvider
+                                                                .getQuatationListByMasterId(
+                                                                    quatationId
+                                                                        .toString(),
+                                                                    context);
+                                                            // _scaffoldKey.currentState
+                                                            //     ?.openEndDrawer();
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return QuotationDetailsWidget(
+                                                                  customerId: widget
+                                                                      .customerId,
+                                                                  serviceId:
+                                                                      quatationId
+                                                                          .toString(),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          quatationId:
+                                                              selectedQuotationStatusId,
+                                                        )
+                                                      ],
+                                                    ),
+
                                             // Task Overview Tab
                                             if (settingsprovider
                                                     .menuIsViewMap[13] ==
@@ -3256,178 +3433,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         ],
                                                       ),
 
-                                            // Quotations Tab (can be customized as needed)
-                                            if (settingsprovider
-                                                    .menuIsViewMap[16] ==
-                                                1)
-                                              customerDetailsProvider.isLoading
-                                                  ? const Center(
-                                                      child:
-                                                          CircularProgressIndicator())
-                                                  : Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        // Display 4 Chips based on Task_Type_Id filter
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            //chips
-                                                            AppStyles
-                                                                    .isWebScreen(
-                                                                        context)
-                                                                ? Container(
-                                                                    margin:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: const Color(
-                                                                          0xFFEFF2F5),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                    ),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          4.0),
-                                                                      child:
-                                                                          Wrap(
-                                                                        spacing:
-                                                                            8.0, // Space between chips
-                                                                        runSpacing:
-                                                                            4.0, // Space between rows
-                                                                        children: [
-                                                                          _buildQuatationChip(
-                                                                              'All Quotations',
-                                                                              null), // All tasks (no filter)
-                                                                          _buildQuatationChip(
-                                                                              'Approved',
-                                                                              2), // Task Type Id 1
-                                                                          _buildQuatationChip(
-                                                                              'Rejected',
-                                                                              3), // Task Type Id 2
-                                                                          _buildQuatationChip(
-                                                                              'Pending',
-                                                                              1), // Task Type Id 2
-                                                                          // _buildServiceChip(
-                                                                          //     'In Progress',
-                                                                          //     2), // Task Type Id 3
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  )
-                                                                : Container(
-                                                                    margin:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            30),
-                                                                  ),
-                                                            if (settingsprovider
-                                                                        .menuIsSaveMap[
-                                                                    16] ==
-                                                                1)
-                                                              ElevatedButton
-                                                                  .icon(
-                                                                onPressed: () {
-                                                                  customerDetailsProvider
-                                                                          .customerId =
-                                                                      widget
-                                                                          .customerId;
-                                                                  customerDetailsProvider
-                                                                      .qsubsidyAmountController
-                                                                      .text = '0';
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    barrierDismissible:
-                                                                        false,
-                                                                    builder:
-                                                                        (BuildContext
-                                                                            context) {
-                                                                      return QuotationCreationWidget(
-                                                                          quotationId:
-                                                                              '0',
-                                                                          isEdit:
-                                                                              false,
-                                                                          customerId:
-                                                                              widget.customerId);
-                                                                    },
-                                                                  );
-                                                                },
-                                                                icon: const Icon(
-                                                                    Icons.add),
-                                                                label: const Text(
-                                                                    'New Quotation '),
-                                                                style: ElevatedButton
-                                                                    .styleFrom(
-                                                                  backgroundColor:
-                                                                      AppColors
-                                                                          .primaryBlue,
-                                                                  foregroundColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  padding: AppStyles
-                                                                          .isWebScreen(
-                                                                              context)
-                                                                      ? const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              16,
-                                                                          vertical:
-                                                                              12)
-                                                                      : const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              16,
-                                                                          vertical:
-                                                                              0),
-                                                                ),
-                                                              ),
-                                                          ],
-                                                        ),
-                                                        // Display filtered task list
-                                                        _buildFilteredQuatationList(
-                                                          onTap: (quatationId) {
-                                                            leadProvider.setCutomerId(
-                                                                int.parse(widget
-                                                                    .customerId));
-                                                            print(
-                                                                'Quotation ID: $quatationId');
-                                                            customerDetailsProvider
-                                                                .getQuatationListByMasterId(
-                                                                    quatationId
-                                                                        .toString(),
-                                                                    context);
-                                                            // _scaffoldKey.currentState
-                                                            //     ?.openEndDrawer();
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return QuotationDetailsWidget(
-                                                                  customerId: widget
-                                                                      .customerId,
-                                                                  serviceId:
-                                                                      quatationId
-                                                                          .toString(),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          quatationId:
-                                                              selectedQuotationStatusId,
-                                                        )
-                                                      ],
-                                                    ),
-
                                             // Follow-Up Details Tab
                                             if (settingsprovider
                                                     .menuIsViewMap[73] ==
@@ -3456,6 +3461,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 1)
                                               if (sideprovider.name != 'Lead /')
                                                 CheckListManagementWidget(
+                                                    key: _checklistKey,
                                                     customerId:
                                                         widget.customerId),
 
@@ -4334,212 +4340,257 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     return filteredQuotations.isEmpty
         ? const Center(child: Text("No Quotations available."))
-        : Expanded(
-            child: Container(
-              margin: const EdgeInsets.only(top: 10),
-              decoration: const BoxDecoration(
-                border: Border(
-                  top: BorderSide(color: borderColor),
-                  left: BorderSide(color: borderColor),
+        : !AppStyles.isWebScreen(context)
+            ? Expanded(
+                child: ListView.builder(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                  itemCount: filteredQuotations.length,
+                  itemBuilder: (context, index) {
+                    var task = filteredQuotations[index];
+                    return QuotationCard(
+                      category: task.quotationTypeId.toString(),
+                      taskId: task.quotationMasterId.toString(),
+                      title: task.productName,
+                      statusId: task.quotationStatusId.toString(),
+                      status: task.quotationStatusName,
+                      createdBy: task.createdByName,
+                      posted: task.entryDate?.toString() ?? '',
+                      customerId: widget.customerId,
+                      servicename: '',
+                      warranty: task.warranty,
+                      terms: task.termsAndConditions,
+                      subsidy: task.subsidyAmount,
+                      quotation_details: task.quotationDetails ?? [],
+                      bill_of_materials: task.billOfMaterials ?? [],
+                      productionChartModel: task.productionChartModel ?? [],
+                      advancePercentage: task.advancePercentage,
+                      deliveryPercentage: task.onDeliveryPercentage,
+                      completionPercentage: task.workCompletionPercentage,
+                      quotation: task,
+                    );
+                  },
                 ),
-              ),
-              child: Column(
-                children: [
-                  // Header
-                  IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildHeaderCell('#', width: 50.0),
-                        _buildHeaderCell('Product Name', flex: 3),
-                        _buildHeaderCell('Total Amount', flex: 2),
-                        _buildHeaderCell('Options', flex: 2),
-                      ],
+              )
+            : Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(top: 10),
+                  decoration: const BoxDecoration(
+                    border: Border(
+                      top: BorderSide(color: borderColor),
+                      left: BorderSide(color: borderColor),
                     ),
                   ),
-                  // List
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: filteredQuotations.length,
-                      itemBuilder: (context, index) {
-                        var task = filteredQuotations[index];
+                  child: Column(
+                    children: [
+                      // Header
+                      IntrinsicHeight(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            _buildHeaderCell('#', width: 50.0),
+                            _buildHeaderCell('Product Name', flex: 3),
+                            _buildHeaderCell('Total Amount', flex: 2),
+                            _buildHeaderCell('Options', flex: 2),
+                          ],
+                        ),
+                      ),
+                      // List
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: filteredQuotations.length,
+                          itemBuilder: (context, index) {
+                            var task = filteredQuotations[index];
 
-                        // Status Color Logic
-                        Color statusColor = task.quotationStatusId == 1
-                            ? Colors.orange
-                            : task.quotationStatusId == 2
-                                ? Colors.green
-                                : Colors.red;
+                            // Status Color Logic
+                            Color statusColor = task.quotationStatusId == 1
+                                ? Colors.orange
+                                : task.quotationStatusId == 2
+                                    ? Colors.green
+                                    : Colors.red;
 
-                        return GestureDetector(
-                          onTap: () {
-                            if (onTap != null) {
-                              onTap(task.quotationMasterId);
-                            }
-                          },
-                          child: IntrinsicHeight(
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                _buildDataCell((index + 1).toString(),
-                                    width: 50.0),
-                                _buildDataCell(task.productName,
-                                    flex: 3, isBold: true),
-                                _buildDataCell('₹ ${task.netTotal}', flex: 2),
-                                _buildWidgetCell(
-                                  flex: 2,
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      // Generic Print Button
-                                      if (settingsprovider.menuIsViewMap[32] ==
-                                          1)
-                                        IconButton(
-                                          tooltip: 'Print Quotation 1',
-                                          icon: const Icon(Icons.print,
-                                              size: 20, color: Colors.blue),
-                                          onPressed: () async {
-                                            await Loader.showLoader(context);
-                                            await customerDetailsProvider
-                                                .getQuotationMasterPdf(
-                                                    task.quotationMasterId
-                                                        .toString(),
+                            return GestureDetector(
+                              onTap: () {
+                                if (onTap != null) {
+                                  onTap(task.quotationMasterId);
+                                }
+                              },
+                              child: IntrinsicHeight(
+                                child: Row(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    _buildDataCell((index + 1).toString(),
+                                        width: 50.0),
+                                    _buildDataCell(task.productName,
+                                        flex: 3, isBold: true),
+                                    _buildDataCell('₹ ${task.netTotal}',
+                                        flex: 2),
+                                    _buildWidgetCell(
+                                      flex: 2,
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          // Generic Print Button
+                                          if (settingsprovider
+                                                  .menuIsViewMap[32] ==
+                                              1)
+                                            IconButton(
+                                              tooltip: 'Print Quotation 1',
+                                              icon: const Icon(Icons.print,
+                                                  size: 20, color: Colors.blue),
+                                              onPressed: () async {
+                                                await Loader.showLoader(
                                                     context);
-                                            Loader.stopLoader(context);
-                                          },
-                                        ),
-                                      // Specific Print Button
-                                      if (settingsprovider.menuIsViewMap[55] ==
-                                          1)
-                                        if (task.quotationTypeId == 2)
-                                          IconButton(
-                                            tooltip: 'Print Commercial',
-                                            icon: const Icon(
-                                                Icons.print_outlined,
-                                                size: 20,
-                                                color: Colors.blue),
-                                            onPressed: () async {
-                                              await Loader.showLoader(context);
-                                              await customerDetailsProvider
-                                                  .getQuatationListByMasterId(
-                                                      task.quotationMasterId
-                                                          .toString(),
-                                                      context);
-                                              await customerDetailsProvider
-                                                  .fetchLeadDetails(
-                                                      widget.customerId,
-                                                      context);
-                                              await settingsprovider
-                                                  .getCompanyDetails();
-                                              printCommercialPDFs(
-                                                  context: context,
-                                                  companyDetails:
-                                                      settingsprovider
-                                                          .companyDetails[0],
-                                                  customerDetails:
-                                                      customerDetailsProvider
-                                                          .leadDetails![0],
-                                                  quotationData:
-                                                      customerDetailsProvider
-                                                          .quotationListByMaster[0]);
-                                              Loader.stopLoader(context);
-                                            },
-                                          ),
-                                      if (settingsprovider.menuIsViewMap[55] ==
-                                          1)
-                                        if (task.quotationTypeId == 1)
-                                          IconButton(
-                                            tooltip: 'Print Residential',
-                                            icon: const Icon(
-                                                Icons.print_outlined,
-                                                size: 20,
-                                                color: Colors.blue),
-                                            onPressed: () async {
-                                              await Loader.showLoader(context);
-                                              await customerDetailsProvider
-                                                  .getQuatationListByMasterId(
-                                                      task.quotationMasterId
-                                                          .toString(),
-                                                      context);
-                                              await customerDetailsProvider
-                                                  .fetchLeadDetails(
-                                                      widget.customerId,
-                                                      context);
-                                              await settingsprovider
-                                                  .getCompanyDetails();
-                                              printResidentialPDFs(
-                                                  context: context,
-                                                  companyDetails:
-                                                      settingsprovider
-                                                          .companyDetails[0],
-                                                  customerDetails:
-                                                      customerDetailsProvider
-                                                          .leadDetails![0],
-                                                  quotationData:
-                                                      customerDetailsProvider
-                                                          .quotationListByMaster[0]);
-                                              Loader.stopLoader(context);
-                                            },
-                                          ),
-                                      if (settingsprovider.menuIsEditMap[16] ==
-                                          1)
-                                        IconButton(
-                                          tooltip: 'Edit',
-                                          icon: const Icon(Icons.edit,
-                                              size: 20, color: Colors.blue),
-                                          onPressed: () async {
-                                            await _handleEditQuotation(
-                                                task.quotationMasterId
-                                                    .toString(),
-                                                customerDetailsProvider);
-                                          },
-                                        ),
-                                      if (settingsprovider
-                                              .menuIsDeleteMap[16] ==
-                                          1)
-                                        IconButton(
-                                          tooltip: 'Delete',
-                                          icon: const Icon(Icons.delete,
-                                              size: 20, color: Colors.red),
-                                          onPressed: () {
-                                            showConfirmationDialog(
-                                              isLoading: customerDetailsProvider
-                                                  .isDeleteLoading,
-                                              context: context,
-                                              title: 'Confirm Deletion',
-                                              content:
-                                                  'Are you sure you want to delete this Quotation?',
-                                              onCancel: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              onConfirm: () {
-                                                customerDetailsProvider
-                                                    .deleteQuotation(
+                                                await customerDetailsProvider
+                                                    .getQuotationMasterPdf(
                                                         task.quotationMasterId
                                                             .toString(),
-                                                        widget.customerId,
                                                         context);
-                                                Navigator.of(context).pop();
+                                                Loader.stopLoader(context);
                                               },
-                                              confirmButtonText: 'Delete',
-                                              confirmButtonColor: Colors.red,
-                                            );
-                                          },
-                                        ),
-                                    ],
-                                  ),
+                                            ),
+                                          // Specific Print Button
+                                          if (settingsprovider
+                                                  .menuIsViewMap[55] ==
+                                              1)
+                                            if (task.quotationTypeId == 2)
+                                              IconButton(
+                                                tooltip: 'Print Commercial',
+                                                icon: const Icon(
+                                                    Icons.print_outlined,
+                                                    size: 20,
+                                                    color: Colors.blue),
+                                                onPressed: () async {
+                                                  await Loader.showLoader(
+                                                      context);
+                                                  await customerDetailsProvider
+                                                      .getQuatationListByMasterId(
+                                                          task.quotationMasterId
+                                                              .toString(),
+                                                          context);
+                                                  await customerDetailsProvider
+                                                      .fetchLeadDetails(
+                                                          widget.customerId,
+                                                          context);
+                                                  await settingsprovider
+                                                      .getCompanyDetails();
+                                                  printCommercialPDFs(
+                                                      context: context,
+                                                      companyDetails:
+                                                          settingsprovider
+                                                                  .companyDetails[
+                                                              0],
+                                                      customerDetails:
+                                                          customerDetailsProvider
+                                                              .leadDetails![0],
+                                                      quotationData:
+                                                          customerDetailsProvider
+                                                              .quotationListByMaster[0]);
+                                                  Loader.stopLoader(context);
+                                                },
+                                              ),
+                                          if (settingsprovider
+                                                  .menuIsViewMap[55] ==
+                                              1)
+                                            if (task.quotationTypeId == 1)
+                                              IconButton(
+                                                tooltip: 'Print Residential',
+                                                icon: const Icon(
+                                                    Icons.print_outlined,
+                                                    size: 20,
+                                                    color: Colors.blue),
+                                                onPressed: () async {
+                                                  await Loader.showLoader(
+                                                      context);
+                                                  await customerDetailsProvider
+                                                      .getQuatationListByMasterId(
+                                                          task.quotationMasterId
+                                                              .toString(),
+                                                          context);
+                                                  await customerDetailsProvider
+                                                      .fetchLeadDetails(
+                                                          widget.customerId,
+                                                          context);
+                                                  await settingsprovider
+                                                      .getCompanyDetails();
+                                                  printResidentialPDFs(
+                                                      context: context,
+                                                      companyDetails:
+                                                          settingsprovider
+                                                                  .companyDetails[
+                                                              0],
+                                                      customerDetails:
+                                                          customerDetailsProvider
+                                                              .leadDetails![0],
+                                                      quotationData:
+                                                          customerDetailsProvider
+                                                              .quotationListByMaster[0]);
+                                                  Loader.stopLoader(context);
+                                                },
+                                              ),
+                                          if (settingsprovider
+                                                  .menuIsEditMap[16] ==
+                                              1)
+                                            IconButton(
+                                              tooltip: 'Edit',
+                                              icon: const Icon(Icons.edit,
+                                                  size: 20, color: Colors.blue),
+                                              onPressed: () async {
+                                                await _handleEditQuotation(
+                                                    task.quotationMasterId
+                                                        .toString(),
+                                                    customerDetailsProvider);
+                                              },
+                                            ),
+                                          if (settingsprovider
+                                                  .menuIsDeleteMap[16] ==
+                                              1)
+                                            IconButton(
+                                              tooltip: 'Delete',
+                                              icon: const Icon(Icons.delete,
+                                                  size: 20, color: Colors.red),
+                                              onPressed: () {
+                                                showConfirmationDialog(
+                                                  isLoading:
+                                                      customerDetailsProvider
+                                                          .isDeleteLoading,
+                                                  context: context,
+                                                  title: 'Confirm Deletion',
+                                                  content:
+                                                      'Are you sure you want to delete this Quotation?',
+                                                  onCancel: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  onConfirm: () {
+                                                    customerDetailsProvider
+                                                        .deleteQuotation(
+                                                            task.quotationMasterId
+                                                                .toString(),
+                                                            widget.customerId,
+                                                            context);
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  confirmButtonText: 'Delete',
+                                                  confirmButtonColor:
+                                                      Colors.red,
+                                                );
+                                              },
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
-                        );
-                      },
-                    ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-          );
+                ),
+              );
   }
 
   Future<void> _handleEditQuotation(

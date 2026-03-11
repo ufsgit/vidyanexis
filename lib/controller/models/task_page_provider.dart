@@ -333,8 +333,18 @@ class TaskPageProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     _selectedTaskType = null;
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
     _fromDateS = '';
     _toDateS = '';
+    _Search = '';
+    _Status = '';
+    _AssignedTo = '';
+    _TaskType = '';
+    _isFilter = false;
+    _pageIndex = 1;
     notifyListeners();
   }
 
@@ -474,16 +484,23 @@ class TaskPageProvider extends ChangeNotifier {
           return false;
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
       }
       return false;
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (e.toString().contains("Server timeout")) {
+        rethrow;
+      }
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
       return false;
     }
   }

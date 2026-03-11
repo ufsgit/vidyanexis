@@ -14,7 +14,12 @@ class HttpRequest {
           listen: false);
 
   static Dio _getDio() {
-    final Dio dio = Dio();
+    final Dio dio = Dio(
+      BaseOptions(
+        connectTimeout: const Duration(seconds: 30),
+        receiveTimeout: const Duration(seconds: 30),
+      ),
+    );
     if (!kIsWeb) {
       try {
         (dio.httpClientAdapter as IOHttpClientAdapter).createHttpClient = () {
@@ -100,14 +105,17 @@ class HttpRequest {
 
       return response;
     } catch (e) {
+      if (e is DioException) {
+        if (e.response?.statusCode == 504 ||
+            e.type == DioExceptionType.connectionTimeout ||
+            e.type == DioExceptionType.receiveTimeout) {
+          throw Exception("Server timeout");
+        }
+      }
       if (kDebugMode) {
         print('Request failed: $e');
       }
-      return Response(
-        requestOptions: RequestOptions(path: endPoint),
-        statusCode: 0,
-        statusMessage: e.toString(),
-      );
+      rethrow;
     }
   }
 

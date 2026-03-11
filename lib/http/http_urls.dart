@@ -3,13 +3,13 @@ class HttpUrls {
 //live
 
   // static String baseUrl = 'https://bay_mentapi.trackbox.net.in/';
-  // static String baseUrl = 'https://surya_prabhaapi.trackbox.net.in/';
+//   static String baseUrl = 'https://suryaprabhaapi.trackbox.net.in/';
   // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
-  // static String baseUrl = 'https://ecoamicatradersapi.trackbox.net.in/';
+  // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
 //   static String baseUrl = 'https://demo3api.trackbox.net.in/';
@@ -18,9 +18,11 @@ class HttpUrls {
 //   static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
   // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
+  // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
+//   static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
 
 //dev
-  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -55,6 +57,7 @@ class HttpUrls {
   static String searchCustomer = "lead/Search_Customer";
   static String getTaskByCustomer = "task/Get_task_By_Customer";
   static String getTaskDetails = "task/Get_task";
+  static String getTaskOverview = "task/Task_Overview";
   static String searchLeadReports = "lead/Search_lead_Report";
   static String saveTask = "task/Save_task";
   static String saveService = "service/Save_service";

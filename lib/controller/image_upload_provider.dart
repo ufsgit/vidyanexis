@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:mime/mime.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/main.dart';
 
 class ImageUploadProvider extends ChangeNotifier {
   ScrollController scrollController = ScrollController();
@@ -198,6 +200,68 @@ class ImageUploadProvider extends ChangeNotifier {
     }
   }
 
+  Future<void> addPhotoMobile({bool allowCamera = false}) async {
+    if (kIsWeb) return;
+
+    if (!await _requestPhotoPermission()) {
+      print('Photo permission denied');
+      return;
+    }
+
+    final ImagePicker picker = ImagePicker();
+    final ImageSource source =
+        allowCamera ? ImageSource.camera : ImageSource.gallery;
+
+    if (source == ImageSource.camera) {
+      final XFile? photo = await picker.pickImage(
+        source: ImageSource.camera,
+        imageQuality: 85,
+        preferredCameraDevice: CameraDevice.rear,
+      );
+
+      if (photo != null) {
+        final bytes = await photo.readAsBytes();
+        _images.add(bytes);
+        _fileInfoList.add({
+          'name': photo.name,
+          'type': 'image',
+          'data': bytes,
+        });
+        notifyListeners();
+      }
+    } else {
+      // Gallery - multi select
+      final List<XFile> images = await picker.pickMultiImage(imageQuality: 85);
+      for (final xfile in images) {
+        final bytes = await xfile.readAsBytes();
+        _images.add(bytes);
+        _fileInfoList.add({
+          'name': xfile.name,
+          'type': 'image',
+          'data': bytes,
+        });
+      }
+      if (images.isNotEmpty) notifyListeners();
+    }
+  }
+
+// Helper method for permission handling (cleaner than inline)
+  Future<bool> _requestPhotoPermission() async {
+    // Modern Android 13+ uses more granular permissions
+    final status = await Permission.photos.request();
+
+    if (status.isGranted) {
+      return true;
+    }
+
+    // For older Android or iOS fallback
+    if (await Permission.storage.isDenied) {
+      await Permission.storage.request();
+    }
+
+    return await Permission.photos.isGranted;
+  }
+
   // Helper function to determine file type
   String determineFileType(Uint8List data) {
     if (data.length >= 4) {
@@ -250,9 +314,59 @@ class ImageUploadProvider extends ChangeNotifier {
     await _uploadFilesToAws(_pdfs, 'application/pdf', taskId, context);
   }
 
+  // Upload all files (images and PDFs)
+  Future<void> uploadAllFiles(BuildContext context,
+      {bool shouldPop = true}) async {
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "0";
+
+      Loader.showLoader(context);
+
+      // Upload Images
+      for (var fileData in _images) {
+        String? uploadedFilePath =
+            await saveToAws(fileData, 'image/jpeg', userId, context);
+        if (uploadedFilePath != null) {
+          uploadedFilePaths
+              .add({'File_Path': HttpUrls.imgBaseUrl + uploadedFilePath});
+        } else {
+          Loader.stopLoader(context);
+          return;
+        }
+      }
+
+      // Upload PDFs
+      for (var fileData in _pdfs) {
+        String? uploadedFilePath =
+            await saveToAws(fileData, 'application/pdf', userId, context);
+        if (uploadedFilePath != null) {
+          uploadedFilePaths
+              .add({'File_Path': HttpUrls.imgBaseUrl + uploadedFilePath});
+        } else {
+          Loader.stopLoader(context);
+          return;
+        }
+      }
+
+      await saveImagesApi(context, shouldPop: shouldPop);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('All Documents uploaded successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Error uploading documents')),
+      );
+      print('Error uploading documents: $e');
+    } finally {
+      Loader.stopLoader(context);
+    }
+  }
+
   // Common method to upload files to AWS
   Future<void> _uploadFilesToAws(List<Uint8List> files, String fileType,
-      String taskId, BuildContext context) async {
+      String taskId, BuildContext context,
+      {bool shouldPop = true}) async {
     try {
       Loader.showLoader(context);
       for (var fileData in files) {
@@ -264,10 +378,11 @@ class ImageUploadProvider extends ChangeNotifier {
               .add({'File_Path': HttpUrls.imgBaseUrl + uploadedFilePath});
         } else {
           print('Upload failed for $fileType');
+          Loader.stopLoader(context);
           return;
         }
       }
-      saveImagesApi(context);
+      await saveImagesApi(context, shouldPop: shouldPop);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('All Documents uploaded successfully')),
       );
@@ -298,7 +413,8 @@ class ImageUploadProvider extends ChangeNotifier {
     }
   }
 
-  void saveImagesApi(BuildContext context) async {
+  Future<void> saveImagesApi(BuildContext context,
+      {bool shouldPop = true}) async {
     print(uploadedFilePaths);
     print(_selectedDocumentType);
     print(customerId);
@@ -321,7 +437,9 @@ class ImageUploadProvider extends ChangeNotifier {
         final data = response.data;
         log('Success');
 
-        Navigator.pop(context);
+        if (shouldPop) {
+          Navigator.pop(context);
+        }
         clearFiles();
         print(data);
         final customerDetailsProvider =

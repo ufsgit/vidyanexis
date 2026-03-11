@@ -274,7 +274,15 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                   }
                   customerDetailsProvider.updateTaskType(
                       newValue, selectedTaskType.taskTypeName);
-                  customerDetailsProvider.updateAMCStatus(0, '');
+
+                  final defaultStatusId = selectedTaskType.defaultStatusId;
+                  if (defaultStatusId != 0) {
+                    customerDetailsProvider.updateAMCStatus(
+                        defaultStatusId, '');
+                  } else {
+                    customerDetailsProvider.updateAMCStatus(0, '');
+                  }
+
                   _updateStatusDropdown(newValue.toString());
                   dropDownProvider.getStatusByTaskTypeId(
                       context, newValue.toString(), '3');
@@ -1361,7 +1369,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                           .entries
                           .map((taskUser) {
                         return Container(
-                          constraints: const BoxConstraints(maxWidth: 150),
+                          // constraints: const BoxConstraints(maxWidth: 150),
                           padding: const EdgeInsets.all(4),
                           margin: const EdgeInsets.only(
                               left: 10, right: 10, bottom: 15),
@@ -1369,6 +1377,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                               borderRadius: BorderRadius.circular(8),
                               color: AppColors.primaryBlue),
                           child: Row(
+                            mainAxisSize: MainAxisSize.min,
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
@@ -1379,6 +1388,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
+                              const SizedBox(width: 20),
                               InkWell(
                                   onTap: () => customerDetailsProvider
                                       .removeAssignedWorker(taskUser.value),

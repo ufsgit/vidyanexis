@@ -4,6 +4,7 @@ import 'dart:math' as math;
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart';
 import 'dart:typed_data';
+import 'package:printing/printing.dart';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -590,6 +591,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   // Task Overview Tab Data
   List<Department> _customerTaskDepartments = [];
   List<Department> get customerTaskDepartments => _customerTaskDepartments;
+  List<TaskCustomerModel> _customerTaskOverviewTasks = [];
+  List<TaskCustomerModel> get customerTaskOverviewTasks =>
+      _customerTaskOverviewTasks.isNotEmpty
+          ? _customerTaskOverviewTasks
+          : _taskList;
   bool _isTaskOverviewLoading = false;
   bool get isTaskOverviewLoading => _isTaskOverviewLoading;
 
@@ -598,52 +604,89 @@ class CustomerDetailsProvider extends ChangeNotifier {
       _isTaskOverviewLoading = true;
       notifyListeners();
 
-      final response = await HttpRequest.httpPostRequest(
-        endPoint: HttpUrls.getTaskByCustomer,
-        bodyData: {
-          "Customer_Id": customerId,
-        },
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: '${HttpUrls.getTaskOverview}?Customer_Id=$customerId',
       );
 
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = response.data;
-        if (data != null && data is List) {
-          final List<TaskCustomerModel> tasks =
-              data.map((e) => TaskCustomerModel.fromJson(e)).toList();
+        if (data != null && (data is List && data.isNotEmpty)) {
+          // Use DashBoardTaskModel for parsing the department-based structure
+          final dashBoardModel =
+              DashBoardTaskModel.fromJson({'data': data, 'success': true});
+          final departments = dashBoardModel.getDepartments();
 
-          // Aggregate tasks by Type
-          Map<String, int> taskTypeCounts = {};
-          for (var task in tasks) {
-            final typeName = task.taskTypeName;
-            taskTypeCounts[typeName] = (taskTypeCounts[typeName] ?? 0) + 1;
+          _customerTaskDepartments = departments;
+
+          // Flatten tasks for the Gantt chart/Timeline view
+          List<TaskCustomerModel> flatTasks = [];
+          for (var dept in departments) {
+            if (dept.tasks != null) {
+              for (var t in dept.tasks!) {
+                flatTasks.add(TaskCustomerModel(
+                  taskId: t.taskTypeId ?? 0,
+                  taskMasterId: 0,
+                  description: '',
+                  entryDate: DateTime.now(),
+                  taskStatusId: 0,
+                  taskStatusName: '',
+                  toUsername: '',
+                  toUserId: 0,
+                  customerId: int.tryParse(customerId) ?? 0,
+                  createdBy: 0,
+                  createdByName: '',
+                  taskTypeId: t.taskTypeId ?? 0,
+                  taskTypeName: t.taskTypeName ?? 'Unknown',
+                  taskTime: '',
+                  taskDate: DateTime
+                      .now(), // Fallback if no specific date in this summary API
+                  deleteStatus: 0,
+                  taskUser: [],
+                  taskFiles: [],
+                ));
+              }
+            }
           }
-
-          List<Task> overviewTasks = [];
-          taskTypeCounts.forEach((key, value) {
-            overviewTasks.add(Task(
-              taskTypeName: key,
-              subTaskCount: value,
-              taskTypeId: 0, // Not strictly needed for display
-            ));
-          });
-
-          // Create a single "Overview" department for this customer
-          _customerTaskDepartments = [
-            Department(
-              departmentName: 'Task Summary',
-              taskCount: tasks.length,
-              tasks: overviewTasks,
-            )
-          ];
+          _customerTaskOverviewTasks = flatTasks;
         } else {
-          _customerTaskDepartments = [];
+          // Fallback logic: If Task_Overview is empty, use the regular taskList
+          print(
+              "Task_Overview is empty, falling back to _taskList which has ${_taskList.length} items");
+          if (_taskList.isNotEmpty) {
+            _customerTaskOverviewTasks = _taskList;
+
+            // Group tasks by type to create virtual "Overview" departments
+            Map<String, List<TaskCustomerModel>> groups = {};
+            for (var t in _taskList) {
+              groups.putIfAbsent(t.taskTypeName, () => []).add(t);
+            }
+
+            _customerTaskDepartments = groups.entries.map((entry) {
+              return Department(
+                departmentName: 'Overview',
+                taskCount: entry.value.length,
+                tasks: [
+                  Task(
+                    taskTypeName: entry.key,
+                    subTaskCount: entry.value.length,
+                    taskTypeId: entry.value.first.taskTypeId,
+                  )
+                ],
+              );
+            }).toList();
+          } else {
+            _customerTaskDepartments = [];
+            _customerTaskOverviewTasks = [];
+          }
         }
       } else {
         _customerTaskDepartments = [];
+        _customerTaskOverviewTasks = [];
       }
     } catch (e) {
       print('Exception occurred in getCustomerTaskOverview: $e');
       _customerTaskDepartments = [];
+      _customerTaskOverviewTasks = [];
     } finally {
       _isTaskOverviewLoading = false;
       notifyListeners();
@@ -1567,13 +1610,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 ))
             .toList();
       }
-      addTaskModel.taskMasterId = int.parse(taskId);
+      addTaskModel.taskMasterId = int.tryParse(taskId) ?? 0;
       addTaskModel.taskStatusId = _selectedAMCStatus ?? 1;
       addTaskModel.taskStatusName = _selectedAMCStatusName ?? 'Not Started';
-      addTaskModel.customerId = int.parse(customerId);
-      addTaskModel.createdBy = int.parse(userId);
+      addTaskModel.customerId = int.tryParse(customerId) ?? 0;
+      addTaskModel.createdBy = int.tryParse(userId) ?? 0;
       addTaskModel.taskDate = DateTime.parse(date);
-      addTaskModel.taskTypeId = int.parse(taskType);
+      addTaskModel.taskTypeId = int.tryParse(taskType) ?? 0;
       addTaskModel.taskTypeName = _selectedTaskTypeName.toString();
       addTaskModel.description = description.toString();
       addTaskModel.taskTime = DateFormat('HH:mm').format(DateTime.now());
@@ -3724,9 +3767,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
             }
           } else {
             if (context.mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-                  content: Text(
-                      'PDF data received (Download supported on Web only currently)')));
+              await Printing.layoutPdf(
+                  onLayout: (format) async => Uint8List.fromList(data));
             }
           }
         } else {
@@ -3752,5 +3794,138 @@ class CustomerDetailsProvider extends ChangeNotifier {
         );
       }
     }
+  }
+
+  void setCustomerId(int customerIdValue) {
+    customerId = customerIdValue.toString();
+    notifyListeners();
+  }
+
+  void populateAllQuotationFields(
+      ql.GetQuotationbyMasterIdmodel quotation, String customerIdValue) {
+    log('Populating all quotation fields for quotationMasterId: ${quotation.quotationMasterId}');
+
+    customerId = customerIdValue;
+
+    // ---- BASIC DETAILS ----
+    qproductnameController.text = quotation.productName;
+    advanceController.text = quotation.advancePercentage;
+    deliveryController.text = quotation.onDeliveryPercentage;
+    workCompletionController.text = quotation.workCompletionPercentage;
+    qsubsidyAmountController.text = quotation.subsidyAmount;
+    qwarrentyController.text = quotation.warranty;
+    qtermsConditionsController.text = quotation.termsAndConditions;
+    quotationDescriptionController.text = quotation.description;
+    quotationDescription2Controller.text = quotation.description2;
+    quotationDescription3Controller.text = quotation.description3;
+
+    // ---- STATUS ----
+    selectedQuotationStatus = quotation.quotationStatusId;
+    selectedQuotationStatusName = quotation.quotationStatusName;
+
+    // ---- FEES ----
+    registrationFeeController.text = quotation.ksebRegistrationFee.toString();
+    feasibilityFeeController.text = quotation.ksebFeasibilityFee.toString();
+    systemPriceController.text = quotation.ksebSystemPrice.toString();
+    additionalStructureController.text =
+        quotation.additionalStructure.toString();
+
+    // ---- TOTALS ----
+    subtotalController.text = quotation.totalAmount.toString();
+    totalController.text = quotation.netTotal.toString();
+
+    // ---- ITEMS ----
+    updateItemsFromQuotationDetailsNew(
+      quotation.quotationDetails,
+      quotation.billOfMaterials,
+      quotation.productionChart,
+    );
+
+    // ---- GST ----
+    final taxable = double.tryParse(quotation.taxableAmount) ?? 0;
+    final gst = double.tryParse(quotation.gstAmount) ?? 0;
+    final gstPer = double.tryParse(quotation.gstPer) ?? 0;
+
+    gstTaxableAmountController.text = taxable.toStringAsFixed(2);
+    cgstTaxableAmountController.text = (taxable / 2).toStringAsFixed(2);
+    sgstTaxableAmountController.text = (taxable / 2).toStringAsFixed(2);
+
+    totalGstAmountController.text = gst.toStringAsFixed(2);
+    totalCgstAmountController.text = (gst / 2).toStringAsFixed(2);
+    totalSgstAmountController.text = (gst / 2).toStringAsFixed(2);
+
+    totalGstPerController.text = gstPer.toStringAsFixed(2);
+    totalCgstPerController.text = (gstPer / 2).toStringAsFixed(2);
+    totalSgstPerController.text = (gstPer / 2).toStringAsFixed(2);
+
+    // ---- QUOTATION TYPE ----
+    quotationTypeController.text = quotation.quotationTypeName;
+    selectedQuotationType = quotation.quotationTypeId;
+
+    // ---- CABLE DETAILS ----
+    cableStructureController.text = quotation.cableStructure;
+    cableTypeController.text = quotation.cableType;
+    cableShortCircuitTempController.text = quotation.cableShortCircuitTemp;
+    cableStandardController.text = quotation.cableStandard;
+    cableConductorClassController.text = quotation.cableConductorClass;
+    cableMaterialController.text = quotation.cableMaterial;
+    cableProtectionController.text = quotation.cableProtection;
+    cableWarrantyController.text = quotation.cableWarranty;
+    cableTensileStrengthController.text = quotation.cableTensileStrength;
+
+    // ---- OTHER DETAILS ----
+    plantCapacityController.text = quotation.plantCapacity;
+    moduleTechnologiesController.text = quotation.moduleTechnologies;
+    mountingStructureTechnologiesController.text =
+        quotation.mountingStructureTechnologies;
+    projectSchemeController.text = quotation.projectScheme;
+    powerEvacuationController.text = quotation.powerEvacuation;
+    areaApproximateController.text = quotation.areaApproximate;
+    solarPlantOutputConnectionController.text =
+        quotation.solarPlantOutputConnection;
+    schemeController.text = quotation.scheme;
+    qvalidityController.text = quotation.validity;
+    qtendorNumberController.text = quotation.tendorNumber;
+    paymentTermsController.text = quotation.paymentTermsName;
+    incoTermsController.text = quotation.incoTerms;
+    shippingChargesController.text = quotation.shippingCharges;
+    totalAdCESSController.text = quotation.otherTax;
+    totalCgstAmountController.text = quotation.totalCgstAmount;
+    totalSgstAmountController.text = quotation.totalSgstAmount;
+
+    commercialItems = quotation.commercialItems;
+    scopeOfWorkItems = quotation.scopeOfWorkItems;
+
+    // ---- CUSTOM FIELDS ----
+    if (quotation.quotationCustomFields.isNotEmpty) {
+      populateCustomFieldsFromMaster(quotation.quotationCustomFields);
+    }
+
+    notifyListeners();
+  }
+
+  void populateCustomFieldsFromMaster(
+      List<Map<String, dynamic>> masterCustomFields) {
+    log('Populating custom fields from master: ${masterCustomFields.length} items');
+
+    for (var masterField in masterCustomFields) {
+      final fieldId =
+          int.tryParse(masterField['custom_field_id']?.toString() ?? '');
+      final value = masterField['value']?.toString();
+
+      if (fieldId != null) {
+        // Update the model list so it's consistent
+        for (var i = 0; i < _customFieldQuotation.length; i++) {
+          if (_customFieldQuotation[i].customFieldId == fieldId) {
+            _customFieldQuotation[i].datavalue = value;
+            break;
+          }
+        }
+
+        // Update the widget state via its global key if it exists
+        customFieldQuotationKey.currentState?.updateFieldValue(fieldId, value);
+      }
+    }
+    notifyListeners();
   }
 }

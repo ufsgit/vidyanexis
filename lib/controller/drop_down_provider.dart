@@ -842,13 +842,14 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getDocumentType(BuildContext context) async {
+  void getDocumentType(BuildContext context, {String searchQuery = ""}) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchDocumentType}?Document_Type_Name=');
+          endPoint:
+              '${HttpUrls.searchDocumentType}?Document_Type_Name=$searchQuery');
 
       if (response.statusCode == 200) {
         final data = response.data;

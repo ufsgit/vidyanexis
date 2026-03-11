@@ -10,7 +10,16 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
 class ImageUploadAlert extends StatefulWidget {
   final String customerId;
-  const ImageUploadAlert({super.key, required this.customerId});
+  final int? initialDocumentTypeId;
+  final String? initialDocumentTypeName;
+
+  const ImageUploadAlert({
+    super.key,
+    required this.customerId,
+    this.initialDocumentTypeId,
+    this.initialDocumentTypeName,
+  });
+
   @override
   _ImageUploadAlertState createState() => _ImageUploadAlertState();
 }
@@ -18,10 +27,18 @@ class ImageUploadAlert extends StatefulWidget {
 class _ImageUploadAlertState extends State<ImageUploadAlert> {
   @override
   void initState() {
+    super.initState();
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
+    final imageProvider =
+        Provider.of<ImageUploadProvider>(context, listen: false);
+
     dropDownProvider.getDocumentType(context);
-    super.initState();
+
+    if (widget.initialDocumentTypeId != null) {
+      imageProvider.updateDocumentType(
+          widget.initialDocumentTypeId!, widget.initialDocumentTypeName ?? "");
+    }
   }
 
   @override
@@ -38,87 +55,128 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            DropdownButtonFormField<int>(
-              value: provider.selectedDocumentType,
-              items: dropDownProvider.documentType
-                  .map((status) => DropdownMenuItem<int>(
-                        value: status.documentTypeId,
-                        child: Text(
-                          status.documentTypeName,
-                          style: const TextStyle(fontSize: 14),
-                        ),
-                      ))
-                  .toList(),
-              onChanged: (int? newValue) {
-                if (newValue != null) {
-                  final selectedTaskType = dropDownProvider.documentType
-                      .firstWhere((task) => task.documentTypeId == newValue);
-                  provider.updateDocumentType(
-                      newValue, selectedTaskType.documentTypeName);
-                }
-              },
-              style: GoogleFonts.plusJakartaSans(
-                fontSize: 14, // Custom font size
-                fontWeight: FontWeight.w600, // Custom font weight
-                color: AppColors.textBlack, // Custom color for selected item
-              ),
-              decoration: InputDecoration(
-                label: RichText(
-                  text: TextSpan(
-                    text: 'Choose Document Type',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey3,
-                    ),
-                    children: const <TextSpan>[
-                      TextSpan(
-                        text: ' *', // The asterisk part
-                        style: TextStyle(
-                            color: Colors.red), // Red color for asterisk
-                      ),
-                    ],
-                  ),
-                ),
-                floatingLabelBehavior:
-                    FloatingLabelBehavior.auto, // Always show the label
-                floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                  fontSize: 16, // Slightly smaller size for floating label
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textGrey1, // Color for floating label
-                ),
-                labelStyle: GoogleFonts.plusJakartaSans(
+            if (widget.initialDocumentTypeId == null)
+              DropdownButtonFormField<int>(
+                value: provider.selectedDocumentType,
+                items: dropDownProvider.documentType
+                    .map((status) => DropdownMenuItem<int>(
+                          value: status.documentTypeId,
+                          child: Text(
+                            status.documentTypeName,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ))
+                    .toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    final selectedTaskType = dropDownProvider.documentType
+                        .firstWhere((task) => task.documentTypeId == newValue);
+                    provider.updateDocumentType(
+                        newValue, selectedTaskType.documentTypeName);
+                  }
+                },
+                style: GoogleFonts.plusJakartaSans(
                   fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.textGrey3,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textBlack,
                 ),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                  borderSide: BorderSide(
-                    color: AppColors.textGrey2, // Border color
-                    width: 1, // Border width
+                decoration: InputDecoration(
+                  label: RichText(
+                    text: TextSpan(
+                      text: 'Choose Document Type',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey3,
+                      ),
+                      children: const <TextSpan>[
+                        TextSpan(
+                          text: ' *',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                  borderSide: BorderSide(
-                    color: AppColors.textGrey2, // Border color
-                    width: 1, // Border width
+                  floatingLabelBehavior: FloatingLabelBehavior.auto,
+                  floatingLabelStyle: GoogleFonts.plusJakartaSans(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey1,
                   ),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10), // Rounded corners
-                  borderSide: BorderSide(
-                    color: AppColors.textGrey2, // Border color
-                    width: 1, // Border width
+                  labelStyle: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey3,
                   ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: AppColors.textGrey2,
+                      width: 1,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: AppColors.textGrey2,
+                      width: 1,
+                    ),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide(
+                      color: AppColors.textGrey2,
+                      width: 1,
+                    ),
+                  ),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
                 ),
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+                isDense: true,
+                iconSize: 18,
+              )
+            else
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF1F5F9),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color(0xFFE2E8F0)),
+                ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.description_outlined,
+                        color: Color(0xFF64748B), size: 20),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Uploading For',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF94A3B8),
+                              letterSpacing: 0.5,
+                            ),
+                          ),
+                          Text(
+                            widget.initialDocumentTypeName ?? "Document",
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w700,
+                              color: const Color(0xFF1E293B),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              isDense: true,
-              iconSize: 18,
-            ),
             // Button to trigger file upload
             const SizedBox(
               height: 10,

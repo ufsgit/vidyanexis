@@ -225,11 +225,11 @@ class ProductionChartModel {
 }
 
 class QuotationDetail {
-  double amount;
+  String amount;
   int itemId;
   String itemName;
   int quantity;
-  double unitPrice;
+  String unitPrice;
   int quotationDetailsId;
   String MRP;
 
@@ -244,11 +244,11 @@ class QuotationDetail {
   });
 
   factory QuotationDetail.fromMap(Map<String, dynamic> json) => QuotationDetail(
-        amount: json["Amount"] ?? 0,
+        amount: json["Amount"]?.toString() ?? "0.0",
         itemId: json["ItemId"] ?? 0,
         itemName: json["ItemName"] ?? '',
         quantity: json["Quantity"] ?? 0,
-        unitPrice: json["UnitPrice"] ?? 0,
+        unitPrice: json["UnitPrice"]?.toString() ?? "0.0",
         MRP: json["MRP"]?.toString() ?? '',
         quotationDetailsId: json["Quotation_Details_Id"] ?? 0,
       );

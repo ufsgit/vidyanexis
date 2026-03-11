@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -275,31 +276,94 @@ class _LeadDataPageState extends State<LeadDataPage> {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        if (data is List) {
-          List<SearchLeadModel> newLeads =
+        List<SearchLeadModel> newLeads = [];
+        
+        if (data is Map) {
+          final List<dynamic> leadsData = data['Data'] ?? [];
+          newLeads = leadsData.map((e) => SearchLeadModel.fromJson(e)).toList();
+          _totalCount = int.tryParse(data['Total_Count']?.toString() ?? '0') ?? 0;
+        } else if (data is List) {
+          final List<SearchLeadModel> allItems =
               data.map((e) => SearchLeadModel.fromJson(e)).toList();
 
-          if (newLeads.isNotEmpty) {
-            _totalCount = newLeads.last.customerId;
-            if (newLeads.last.customerName.isEmpty) {
-              newLeads.removeLast();
-            }
+          // Separate real leads (tp == 1) from metadata (tp == 2)
+          newLeads = allItems.where((item) => item.tp == 1).toList();
 
-            if (newLeads.isEmpty) {
-              _hasMoreData = false;
+          // Find total count from metadata record (tp == 2) or fallback to list size
+          int tpCount = 0;
+          for (var item in allItems) {
+            if (item.tp == 2) {
+              tpCount = item.customerId;
+              break;
+            }
+          }
+
+          if (tpCount > 0) {
+            _totalCount = tpCount;
+          } else {
+            // Fallback to DashboardProvider count matching this source
+            final dashBoardProvider =
+                Provider.of<DashboardProvider>(context, listen: false);
+            String normalizedSource = widget.source
+                .toLowerCase()
+                .replaceAll('_', '')
+                .replaceAll('s', '');
+
+            int providerCount = 0;
+            dashBoardProvider.leadCountMap.forEach((key, value) {
+              String normalizedKey =
+                  key.toLowerCase().replaceAll('_', '').replaceAll('s', '');
+              // Handle special case for transferred/transffered
+              if (normalizedKey.contains('transf') &&
+                  normalizedSource.contains('transf')) {
+                providerCount = value;
+              } else if (normalizedKey == normalizedSource) {
+                providerCount = value;
+              }
+            });
+
+            if (providerCount > 0) {
+              _totalCount = providerCount;
+            } else if (newLeads.isNotEmpty) {
+              // Use the largest RowNo seen or customerId as a last resort
+              int maxRow = 0;
+              for (var l in newLeads) {
+                if (l.rowNo > maxRow) maxRow = l.rowNo;
+              }
+              _totalCount = maxRow > 0 ? maxRow : newLeads.last.customerId;
+            }
+          }
+          
+          // Consistency check: totalCount shouldn't be less than what we just received
+          if (newLeads.length > _totalCount) {
+             _totalCount = newLeads.length;
+          }
+        }
+
+        if (newLeads.isNotEmpty || _totalCount >= 0) {
+          // Extra safety check for empty lead rows that might still be in newLeads
+          newLeads.removeWhere((lead) => lead.customerName.isEmpty && lead.tp != 1);
+
+          if (newLeads.isEmpty && _totalCount > 0) {
+             // If we have total count but No leads in this page, maybe it's the end
+             if (isPagination) _hasMoreData = false;
+          } else if (newLeads.isEmpty && _totalCount == 0) {
+             _hasMoreData = false;
+          } else {
+            if (!isPagination) {
+              _leads = newLeads;
             } else {
-              if (!isPagination) {
-                _leads = newLeads;
+              if (!AppStyles.isWebScreen(context)) {
+                _leads.addAll(newLeads);
               } else {
-                if (!AppStyles.isWebScreen(context)) {
-                  _leads.addAll(newLeads);
-                } else {
-                  _leads = newLeads;
-                }
+                _leads = newLeads;
               }
             }
-          } else {
-            _hasMoreData = false;
+            
+            // Update hasMoreData for mobile/lazy loading
+            if (_leads.length >= _totalCount) {
+              _hasMoreData = false;
+            }
           }
 
           setState(() {
@@ -309,6 +373,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
             }
             _isLoading = false;
             _isLoadingMore = false;
+            _errorMessage = null;
           });
         } else {
           setState(() {
@@ -345,16 +410,20 @@ class _LeadDataPageState extends State<LeadDataPage> {
     });
     await _fetchLeads(isPagination: true);
   }
-
+    
   Widget _buildPaginationControls() {
-    int startItem = ((_currentPage - 1) * _pageSize) + 1;
-    int endItem = _currentPage * _pageSize;
-    if (endItem > _totalCount) {
-      endItem = _totalCount;
-    }
-    if (_totalCount == 0) {
-      startItem = 0;
-      endItem = 0;
+    // Calculate the actual range based on server-provided row numbers if available
+    int startItem = 0;
+    int endItem = 0;
+    
+    if (_filteredLeads.isNotEmpty) {
+      if (_filteredLeads.first.rowNo > 0) {
+        startItem = _filteredLeads.first.rowNo;
+        endItem = _filteredLeads.last.rowNo;
+      } else {
+        startItem = ((_currentPage - 1) * _pageSize) + 1;
+        endItem = startItem + _filteredLeads.length - 1;
+      }
     }
 
     return SizedBox(
@@ -364,19 +433,19 @@ class _LeadDataPageState extends State<LeadDataPage> {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: startItem > 1 && !_isLoadingMore
+            onPressed: (_currentPage > 1) && !_isLoadingMore
                 ? () {
                     _fetchPreviousPage();
                   }
                 : null,
           ),
           Text(
-            'Showing $startItem / $endItem of $_totalCount',
+            'Showing $startItem - $endItem of $_totalCount',
             style: const TextStyle(fontSize: 16),
           ),
           IconButton(
             icon: const Icon(Icons.arrow_forward),
-            onPressed: endItem < _totalCount && !_isLoadingMore
+            onPressed: (endItem < _totalCount) && !_isLoadingMore
                 ? () {
                     _fetchNextPage();
                   }
@@ -385,6 +454,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
         ],
       ),
     );
+
   }
 
   @override
@@ -454,7 +524,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                     const SizedBox(width: 8),
                     if (_leads.isNotEmpty)
                       Text(
-                        '(${_filteredLeads.length})',
+                        '($_totalCount)',
                         style: const TextStyle(
                           fontSize: 20,
                           color: Color(0xFF152D70),
@@ -758,9 +828,13 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         MainAxisAlignment
                                                                             .center,
                                                                     children: [
-                                                                      Text(
-                                                                          (index + 1)
-                                                                              .toString(),
+                                                                       Text(
+                                                                           (lead.rowNo > 0)
+                                                                               ? lead.rowNo.toString()
+                                                                               : ((index + 1) +
+                                                                                       (_currentPage - 1) *
+                                                                                           _pageSize)
+                                                                                   .toString(),
                                                                           style:
                                                                               const TextStyle(fontSize: 13)),
                                                                       if (lead.leadTypeId ==
@@ -940,7 +1014,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                 _horizontalScrollController,
                                             scrollDirection: Axis.horizontal,
                                             child: SizedBox(
-                                              width: 1620,
+                                              width: 1520,
                                               child: Column(
                                                 children: [
                                                   // Header row
@@ -1125,22 +1199,6 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                         8.0),
                                                             data: Text(
                                                                 'Follow-Up Date',
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        13)),
-                                                            color: Color(
-                                                                0xFF607185)),
-                                                        TableWidget(
-                                                            width: 100,
-                                                            padding: EdgeInsets
-                                                                .symmetric(
-                                                                    vertical:
-                                                                        6.0,
-                                                                    horizontal:
-                                                                        8.0),
-                                                            data: Text('Total',
                                                                 style: TextStyle(
                                                                     color: Colors
                                                                         .white,
@@ -1351,24 +1409,6 @@ class _LeadDataPageState extends State<LeadDataPage> {
                                                                               ? lead.nextFollowUpDate
                                                                                   .toDayMonthYearFormat()
                                                                               : '',
-                                                                          maxLines:
-                                                                              1,
-                                                                          overflow: TextOverflow
-                                                                              .ellipsis,
-                                                                          style:
-                                                                              const TextStyle(fontSize: 13))),
-                                                                  TableWidget(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          vertical:
-                                                                              6.0,
-                                                                          horizontal:
-                                                                              8.0),
-                                                                      width:
-                                                                          100,
-                                                                      data: Text(
-                                                                          lead.totalProjectCost
-                                                                              .toString(),
                                                                           maxLines:
                                                                               1,
                                                                           overflow: TextOverflow
