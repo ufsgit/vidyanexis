@@ -107,7 +107,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
     await settingsProvider.getCompanyDetails();
     if (mounted) {
       setState(() {
-        logo = HttpUrls.imgBaseUrl + settingsProvider.logo;
+        logo = AppStyles.logo();
       });
     }
 

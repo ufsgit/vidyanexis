@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/get_quotation_master_id_model.dart';
 import 'package:vidyanexis/controller/models/item_list_model.dart';
 import 'package:vidyanexis/controller/models/lead_details_model.dart';
@@ -30,10 +31,10 @@ Future<void> invoiceSinglePDFPrint({
     customer = customerDetails;
     invoice = invoiceDetails;
     final logoImageBytes =
-        await rootBundle.load('assets/images/solaris_logo.png');
+        await rootBundle.load(AppStyles.logo());
     final logoImage = pw.MemoryImage(logoImageBytes.buffer.asUint8List());
 
-    final sealBytes = await rootBundle.load('assets/images/solaris_logo.png');
+    final sealBytes = await rootBundle.load(AppStyles.logo());
     final sealImage = pw.MemoryImage(sealBytes.buffer.asUint8List());
     // Only fetch additional data if needed (like HSN details)
     final invoiceProvider =

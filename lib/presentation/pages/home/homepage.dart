@@ -18,7 +18,6 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/side_bar_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/pages/feedback/feeback.dart';
 import 'package:vidyanexis/presentation/pages/home/employee_tracking.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
@@ -85,7 +84,7 @@ class _HomePageState extends State<HomePage> {
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
-      logo = HttpUrls.imgBaseUrl + settingsProvider.logo;
+      logo = AppStyles.logo();
     });
   }
 
@@ -344,15 +343,44 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.white,
               surfaceTintColor: Colors.white,
               elevation: 0,
-              title: Image.network(
-                logo,
-                height: 30,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container();
-                },
-              ),
+              title: logo.startsWith('assets/')
+                  ? Image.asset(
+                      logo,
+                      height: 30,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container();
+                      },
+                    )
+                  : Image.network(
+                      logo,
+                      height: 30,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container();
+                      },
+                    ),
               centerTitle: false,
               actions: [
+                FutureBuilder<String>(
+                  future: getUserName(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 12.0),
+                          child: Text(
+                            snapshot.data!,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black87,
+                            ),
+                          ),
+                        ),
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                ),
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {
                     final count = notificationProvider.totalCount;

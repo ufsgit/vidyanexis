@@ -24,7 +24,7 @@ class CustomSidebar extends StatefulWidget {
   const CustomSidebar({
     super.key,
     required this.options,
-    this.title = 'vidyanexis',
+    this.title = 'KRE',
     this.width,
     this.isDrawer = false,
     required this.userName,
@@ -74,13 +74,33 @@ class _CustomSidebarState extends State<CustomSidebar> {
                     height: 30,
                     child: Row(
                       children: [
-                        Image(
-                          image: NetworkImage(widget.logo),
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container();
-                          },
-                        ),
+                        widget.logo.startsWith('assets/')
+                            ? Image.asset(
+                                widget.logo,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 30,
+                                    width: 30,
+                                    color: Colors.grey[200],
+                                    child: const Icon(Icons.broken_image,
+                                        size: 20, color: Colors.grey),
+                                  );
+                                },
+                              )
+                            : Image.network(
+                                widget.logo,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container(
+                                    height: 30,
+                                    width: 30,
+                                    color: Colors.grey[200],
+                                    child: const Icon(Icons.broken_image,
+                                        size: 20, color: Colors.grey),
+                                  );
+                                },
+                              ),
                       ],
                     ),
                   ),

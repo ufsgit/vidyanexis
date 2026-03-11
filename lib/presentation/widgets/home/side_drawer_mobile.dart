@@ -162,7 +162,18 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
               children: [
                 // Inventory option
                 const SizedBox(
-                  height: 58,
+                  height: 48,
+                ),
+                Center(
+                  child: Image.asset(
+                    AppStyles.logo(),
+                    height: 100,
+                    width: 100,
+                    fit: BoxFit.contain,
+                  ),
+                ),
+                const SizedBox(
+                  height: 24,
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),

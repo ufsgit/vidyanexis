@@ -1,7 +1,6 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
 import 'package:vidyanexis/controller/models/department_model.dart';
 import 'package:vidyanexis/controller/models/document_list_model.dart';
@@ -15,6 +14,7 @@ import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/utils/util_functions.dart';
 
 class ProcessFlowProvider extends ChangeNotifier {
   ProcessFlowModel processFlowModel = ProcessFlowModel();
@@ -198,15 +198,7 @@ class ProcessFlowProvider extends ChangeNotifier {
         if (data['department_id'] == -1) {
           Loader.stopLoader(context);
         } else {
-          Fluttertoast.showToast(
-            msg: 'Process flow deleted successfully',
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.CENTER,
-            webPosition: "bottom",
-            webBgColor: "black",
-            backgroundColor: Colors.black,
-            textColor: Colors.white,
-          );
+          showFriendlySnackBar(context, 'Process flow deleted successfully');
           Loader.stopLoader(context);
         }
         notifyListeners();
