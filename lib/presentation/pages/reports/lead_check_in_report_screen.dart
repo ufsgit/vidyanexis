@@ -32,7 +32,11 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
       reportProvider.setDates(fromDate, toDate);
 
       dropdownProvider.getUserDetails(context);
-      reportProvider.fetchReports(context);
+      
+      // Initialize with login user before fetching
+      reportProvider.initializeWithLoginUser().then((_) {
+        reportProvider.fetchReports(context);
+      });
     });
   }
 
@@ -122,33 +126,33 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             crossAxisAlignment: WrapCrossAlignment.end,
             children: [
               // Lead Name Search
-              SizedBox(
-                width: 200,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('Lead Name',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(12),
-                      ),
-                      child: TextField(
-                        onChanged: (val) => reportProvider.setLeadSearch(val),
-                        decoration: const InputDecoration(
-                          hintText: 'Search...',
-                          border: InputBorder.none,
-                          icon: Icon(Icons.search, size: 18),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // SizedBox(
+              //   width: 200,
+              //   child: Column(
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       const Text('Lead Name',
+              //           style: TextStyle(
+              //               fontSize: 12, fontWeight: FontWeight.bold)),
+              //       const SizedBox(height: 8),
+              //       Container(
+              //         padding: const EdgeInsets.symmetric(horizontal: 12),
+              //         decoration: BoxDecoration(
+              //           border: Border.all(color: Colors.grey[300]!),
+              //           borderRadius: BorderRadius.circular(12),
+              //         ),
+              //         child: TextField(
+              //           onChanged: (val) => reportProvider.setLeadSearch(val),
+              //           decoration: const InputDecoration(
+              //             hintText: 'Search...',
+              //             border: InputBorder.none,
+              //             icon: Icon(Icons.search, size: 18),
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               // Staff Selector
               SizedBox(
                 width: 200,
@@ -197,41 +201,41 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           ),
           const SizedBox(height: 16),
           // Date Shortcuts
-          Row(
-            children: [
-              const Text('Quick Select:',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Wrap(
-                  spacing: 8,
-                  children: List<Widget>.generate(
-                      reportProvider.dateButtonTitles.length, (index) {
-                    String title = reportProvider.dateButtonTitles[index];
-                    return ActionChip(
-                      onPressed: () {
-                        reportProvider.setDateFilter(title);
-                        reportProvider.selectDateFilterOption(index);
-                      },
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15),
-                      ),
-                      label: Text(title, style: const TextStyle(fontSize: 11)),
-                      backgroundColor:
-                          reportProvider.selectedDateFilterIndex == index
-                              ? AppColors.primaryBlue
-                              : Colors.white,
-                      labelStyle: TextStyle(
-                        color: reportProvider.selectedDateFilterIndex == index
-                            ? Colors.white
-                            : Colors.black,
-                      ),
-                    );
-                  }),
-                ),
-              ),
-            ],
-          ),
+          // Row(
+          //   children: [
+          //     const Text('Quick Select:',
+          //         style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+          //     const SizedBox(width: 12),
+          //     Expanded(
+          //       child: Wrap(
+          //         spacing: 8,
+          //         children: List<Widget>.generate(
+          //             reportProvider.dateButtonTitles.length, (index) {
+          //           String title = reportProvider.dateButtonTitles[index];
+          //           return ActionChip(
+          //             onPressed: () {
+          //               reportProvider.setDateFilter(title);
+          //               reportProvider.selectDateFilterOption(index);
+          //             },
+          //             shape: RoundedRectangleBorder(
+          //               borderRadius: BorderRadius.circular(15),
+          //             ),
+          //             label: Text(title, style: const TextStyle(fontSize: 11)),
+          //             backgroundColor:
+          //                 reportProvider.selectedDateFilterIndex == index
+          //                     ? AppColors.primaryBlue
+          //                     : Colors.white,
+          //             labelStyle: TextStyle(
+          //               color: reportProvider.selectedDateFilterIndex == index
+          //                   ? Colors.white
+          //                   : Colors.black,
+          //             ),
+          //           );
+          //         }),
+          //       ),
+          //     ),
+          //   ],
+          // ),
         ],
       ),
     );
@@ -277,11 +281,16 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           value: reportProvider.selectedUserId,
           hint: const Text('All Staff'),
           items: [
-            const DropdownMenuItem<int>(
-              value: null,
-              child: Text('All Staff'),
-            ),
-            ...dropdownProvider.searchUserDetails.map((staff) {
+            if (reportProvider.userType != "1")
+              const DropdownMenuItem<int>(
+                value: null,
+                child: Text('All Staff'),
+              ),
+            ...dropdownProvider.searchUserDetails
+                .where((staff) =>
+                    reportProvider.userType != "1" ||
+                    staff.userDetailsId == reportProvider.selectedUserId)
+                .map((staff) {
               return DropdownMenuItem<int>(
                 value: staff.userDetailsId,
                 child: Text(staff.userDetailsName),
@@ -289,7 +298,13 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
             }),
           ],
           onChanged: (val) {
-            reportProvider.setUserId(val);
+            String? name;
+            if (val != null) {
+              name = dropdownProvider.searchUserDetails
+                  .firstWhere((s) => s.userDetailsId == val)
+                  .userDetailsName;
+            }
+            reportProvider.setUserId(val, userName: name);
           },
         ),
       ),
@@ -375,7 +390,9 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
               ],
               rows: reportProvider.reports.map((record) {
                 return DataRow(cells: [
-                  DataCell(Text(record.userDetailsName ?? 'N/A')),
+                  DataCell(Text(record.userDetailsName ??
+                      reportProvider.selectedUserName ??
+                      'N/A')),
                   DataCell(Text(record.leadName ?? 'N/A')),
                   DataCell(Text(_formatDateTime(record.checkinDate))),
                   DataCell(

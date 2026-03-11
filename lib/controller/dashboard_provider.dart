@@ -60,6 +60,14 @@ class DashboardProvider extends ChangeNotifier {
   int _selectedUser = 0;
   int get selectedUser => _selectedUser;
 
+  // Pagination for Task Summary
+  int _taskStartLimit = 1;
+  int _taskEndLimit = 20;
+  int _taskTotalCount = 0;
+  int get taskStartLimit => _taskStartLimit;
+  int get taskEndLimit => _taskEndLimit;
+  int get taskTotalCount => _taskTotalCount;
+
   // Date filter properties
   int? _selectedDateFilterIndex;
   DateTime? _fromDate;
@@ -111,27 +119,71 @@ class DashboardProvider extends ChangeNotifier {
   getTaskInfoDashBoard(BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: "${HttpUrls.getTaskInfoDashBoard}");
+          endPoint: "${HttpUrls.getTaskInfoDashBoard}",
+          bodyData: {
+            "Page_Index1": _taskStartLimit,
+            "Page_Index2": _taskEndLimit,
+          });
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
           final dataitem = data['data'];
-          _taskInfoModel = (dataitem as List<dynamic>)
+          List<TaskInfoDashboardModel> tempData = (dataitem as List<dynamic>)
               .map((item) => TaskInfoDashboardModel.fromJson(item))
               .toList();
+
+          if (tempData.isNotEmpty) {
+            _taskTotalCount = tempData.last.customerId ?? 0;
+            tempData.removeLast();
+            _taskInfoModel = tempData;
+          } else {
+            _taskInfoModel = [];
+            _taskTotalCount = 0;
+          }
           notifyListeners();
         }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        });
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      });
     }
+  }
+
+  Future<void> fetchNextPageTasks(BuildContext context) async {
+    if (_taskEndLimit >= _taskTotalCount) return;
+
+    _taskStartLimit = _taskEndLimit + 1;
+    int limitPerPage = 20;
+    _taskEndLimit = _taskStartLimit + limitPerPage - 1;
+
+    if (_taskEndLimit > _taskTotalCount) {
+      _taskEndLimit = _taskTotalCount;
+    }
+
+    await getTaskInfoDashBoard(context);
+    // Removed redundant notifyListeners() as getTaskInfoDashBoard calls it
+  }
+
+  Future<void> fetchPreviousPageTasks(BuildContext context) async {
+    if (_taskStartLimit <= 1) return;
+
+    int limitPerPage = 20;
+    _taskStartLimit = _taskStartLimit - limitPerPage;
+    if (_taskStartLimit < 1) _taskStartLimit = 1;
+    _taskEndLimit = _taskStartLimit + limitPerPage - 1;
+
+    await getTaskInfoDashBoard(context);
+    // Removed redundant notifyListeners()
   }
 
   void setCommonDateFilter(String? filterValue) {

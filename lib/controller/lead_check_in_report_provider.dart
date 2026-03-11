@@ -17,10 +17,15 @@ class LeadCheckInReportProvider extends ChangeNotifier {
   DateTime? _fromDate;
   DateTime? _toDate;
   int? _selectedUserId;
+  String? _selectedUserName;
+  String? _userType;
+  String? _loginUserId;
 
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
   int? get selectedUserId => _selectedUserId;
+  String? get selectedUserName => _selectedUserName;
+  String? get userType => _userType;
 
   String get formattedFromDate =>
       _fromDate != null ? DateFormat('yyyy-MM-dd').format(_fromDate!) : '';
@@ -38,6 +43,20 @@ class LeadCheckInReportProvider extends ChangeNotifier {
   void toggleFilter() {
     _isFilter = !_isFilter;
     notifyListeners();
+  }
+
+  Future<void> initializeWithLoginUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userIdStr = prefs.getString('userId');
+    final userNameStr = prefs.getString('userName');
+    _userType = prefs.getString('userType');
+    _loginUserId = userIdStr;
+    
+    if (userIdStr != null) {
+      _selectedUserId = int.tryParse(userIdStr);
+      _selectedUserName = userNameStr;
+      notifyListeners();
+    }
   }
 
   void setLeadSearch(String value) {
@@ -108,8 +127,9 @@ class LeadCheckInReportProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setUserId(int? userId) {
+  void setUserId(int? userId, {String? userName}) {
     _selectedUserId = userId;
+    _selectedUserName = userName;
     notifyListeners();
   }
 
@@ -149,23 +169,29 @@ class LeadCheckInReportProvider extends ChangeNotifier {
       notifyListeners();
       Loader.showLoader(context);
 
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String loginUserId = preferences.getString('userId') ?? "0";
+      // preferences not used for this based implementation
 
       // Using parameters as requested: User_Id, From_Date, To_Date
       // Mapping them to the expected API format based on LeadCheckInProvider logic
       final String userIdParam = (_selectedUserId ?? 0).toString();
+      final String loginUserIdParam = _loginUserId ?? userIdParam;
 
       final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.getCheckin}?From_Date=$formattedFromDate&To_Date=$formattedToDate&User_Id=$userIdParam&Lead_Name=$_leadSearch&login_user_id=$loginUserId',
+            '${HttpUrls.getCheckinReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Lead_Name=$_leadSearch&User_Id=$userIdParam&login_user_id=$loginUserIdParam',
       );
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          final leadResponse = LeadCheckInResponse.fromJson(data);
-          _reports = leadResponse.data ?? [];
+          if (data is List) {
+            _reports = data
+                .map((item) => LeadCheckIn.fromJson(item))
+                .toList();
+          } else {
+            final leadResponse = LeadCheckInResponse.fromJson(data);
+            _reports = leadResponse.data ?? [];
+          }
         } else {
           _reports = [];
         }
@@ -228,6 +254,7 @@ class LeadCheckInReportProvider extends ChangeNotifier {
     _fromDate = null;
     _toDate = null;
     _selectedUserId = null;
+    _selectedUserName = null;
     _leadSearch = '';
     _selectedDateFilterIndex = null;
     _reports = [];

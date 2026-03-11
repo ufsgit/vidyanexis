@@ -73,6 +73,7 @@ class LeadCheckInProvider extends ChangeNotifier {
     return isStatusIn || isDataIn;
   }
 
+
   Future<void> fetchLeadCheckInReports(BuildContext context, String customerId,
       {String? fromDate, String? toDate}) async {
     try {
@@ -82,17 +83,24 @@ class LeadCheckInProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
 
+      // Using the new report endpoint for history as well
       final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.getCheckin}?user_id=$userId&from_date=${fromDate ?? ""}&to_date=${toDate ?? ""}&login_user_id=$userId',
+            '${HttpUrls.getCheckinReport}?From_Date=${fromDate ?? ""}&To_Date=${toDate ?? ""}&User_Id=$userId',
       );
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          final leadResponse = LeadCheckInResponse.fromJson(data);
-          _customerCheckInHistory[int.parse(customerId)] =
-              leadResponse.data ?? [];
+          if (data is List) {
+            _customerCheckInHistory[int.parse(customerId)] = data
+                .map((item) => LeadCheckIn.fromJson(item))
+                .toList();
+          } else {
+            final leadResponse = LeadCheckInResponse.fromJson(data);
+            _customerCheckInHistory[int.parse(customerId)] =
+                leadResponse.data ?? [];
+          }
         }
       }
     } catch (e) {
@@ -102,7 +110,6 @@ class LeadCheckInProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
   Future<void> saveLeadCheckIn({
     required BuildContext context,
     required int customerId,

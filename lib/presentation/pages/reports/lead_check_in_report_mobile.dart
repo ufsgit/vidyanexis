@@ -32,9 +32,11 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
         dropdownProvider.getUserDetails(context);
       }
 
-      // Fetch initial reports if filters are set or just to show recent
+      // Fetch initial reports for login user
       if (reportProvider.reports.isEmpty && !reportProvider.isLoading) {
-        reportProvider.fetchReports(context);
+        reportProvider.initializeWithLoginUser().then((_) {
+          reportProvider.fetchReports(context);
+        });
       }
     });
   }
@@ -147,7 +149,9 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
               children: [
                 Expanded(
                   child: Text(
-                    record.userDetailsName ?? 'Unknown Staff',
+                    record.userDetailsName ??
+                        provider.selectedUserName ??
+                        'Unknown Staff',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -301,57 +305,57 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _buildFilterLabel('Lead Name'),
-          const SizedBox(height: 8),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey[300]!),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: TextField(
-              onChanged: (val) => provider.setLeadSearch(val),
-              decoration: const InputDecoration(
-                hintText: 'Search leads...',
-                border: InputBorder.none,
-                icon: Icon(Icons.search, size: 20),
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
-          _buildFilterLabel('Quick Select Date'),
-          const SizedBox(height: 8),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: List<Widget>.generate(provider.dateButtonTitles.length,
-                  (index) {
-                String title = provider.dateButtonTitles[index];
-                bool isSelected = provider.selectedDateFilterIndex == index;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 8.0),
-                  child: ActionChip(
-                    onPressed: () {
-                      provider.setDateFilter(title);
-                      provider.selectDateFilterOption(index);
-                    },
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    label: Text(title, style: const TextStyle(fontSize: 11)),
-                    backgroundColor:
-                        isSelected ? AppColors.primaryBlue : Colors.white,
-                    labelStyle: TextStyle(
-                      color: isSelected ? Colors.white : Colors.black,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                );
-              }),
-            ),
-          ),
-          const SizedBox(height: 16),
+          // _buildFilterLabel('Lead Name'),
+          // const SizedBox(height: 8),
+          // Container(
+          //   padding: const EdgeInsets.symmetric(horizontal: 12),
+          //   decoration: BoxDecoration(
+          //     border: Border.all(color: Colors.grey[300]!),
+          //     borderRadius: BorderRadius.circular(12),
+          //   ),
+          //   child: TextField(
+          //     onChanged: (val) => provider.setLeadSearch(val),
+          //     decoration: const InputDecoration(
+          //       hintText: 'Search leads...',
+          //       border: InputBorder.none,
+          //       icon: Icon(Icons.search, size: 20),
+          //     ),
+          //   ),
+          // ),
+          // const SizedBox(height: 16),
+          // _buildFilterLabel('Quick Select Date'),
+          // const SizedBox(height: 8),
+          // SingleChildScrollView(
+          //   scrollDirection: Axis.horizontal,
+          //   child: Row(
+          //     children: List<Widget>.generate(provider.dateButtonTitles.length,
+          //         (index) {
+          //       String title = provider.dateButtonTitles[index];
+          //       bool isSelected = provider.selectedDateFilterIndex == index;
+          //       return Padding(
+          //         padding: const EdgeInsets.only(right: 8.0),
+          //         child: ActionChip(
+          //           onPressed: () {
+          //             provider.setDateFilter(title);
+          //             provider.selectDateFilterOption(index);
+          //           },
+          //           shape: RoundedRectangleBorder(
+          //             borderRadius: BorderRadius.circular(15),
+          //           ),
+          //           label: Text(title, style: const TextStyle(fontSize: 11)),
+          //           backgroundColor:
+          //               isSelected ? AppColors.primaryBlue : Colors.white,
+          //           labelStyle: TextStyle(
+          //             color: isSelected ? Colors.white : Colors.black,
+          //             fontWeight:
+          //                 isSelected ? FontWeight.bold : FontWeight.normal,
+          //           ),
+          //         ),
+          //       );
+          //     }),
+          //   ),
+          // ),
+          // const SizedBox(height: 16),
           _buildFilterLabel('Custom Date Range'),
           const SizedBox(height: 8),
           Row(
@@ -396,11 +400,16 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
               value: provider.selectedUserId,
               hint: const Text('All Staff'),
               items: [
-                const DropdownMenuItem<int>(
-                  value: null,
-                  child: Text('All Staff'),
-                ),
-                ...dropdownProvider.searchUserDetails.map((staff) {
+                if (provider.userType != "1")
+                  const DropdownMenuItem<int>(
+                    value: null,
+                    child: Text('All Staff'),
+                  ),
+                ...dropdownProvider.searchUserDetails
+                    .where((staff) =>
+                        provider.userType != "1" ||
+                        staff.userDetailsId == provider.selectedUserId)
+                    .map((staff) {
                   return DropdownMenuItem<int>(
                     value: staff.userDetailsId,
                     child: Text(staff.userDetailsName),
@@ -408,7 +417,13 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                 }),
               ],
               onChanged: (val) {
-                provider.setUserId(val);
+                String? name;
+                if (val != null) {
+                  name = dropdownProvider.searchUserDetails
+                      .firstWhere((s) => s.userDetailsId == val)
+                      .userDetailsName;
+                }
+                provider.setUserId(val, userName: name);
               },
             ),
           ),

@@ -35,7 +35,12 @@ class LeadCheckIn {
 
   factory LeadCheckIn.fromJson(Map<String, dynamic> json) {
     return LeadCheckIn(
-      userDetailsName: json['User_Details_Name'],
+      userDetailsName: json['User_Details_Name'] ??
+          json['user_details_name'] ??
+          json['user_name'] ??
+          json['User_Name'] ??
+          json['staff_name'] ??
+          json['Staff_Name'],
       checkinLocation: json['checkin_location'],
       checkoutLocation: json['checkout_location'],
       checkinDate: json['checkindate'],
