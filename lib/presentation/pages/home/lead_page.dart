@@ -1081,8 +1081,16 @@ class _LeadsPageState extends State<LeadPage> {
                                                           lead.customerName,
                                                       child: TextButton(
                                                         onPressed: () {
-                                                          CustomerDetailsProvider customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
-                                                          customerDetailsProvider.setCustomerId(lead.customerId);
+                                                          CustomerDetailsProvider
+                                                              customerDetailsProvider =
+                                                              Provider.of<
+                                                                      CustomerDetailsProvider>(
+                                                                  context,
+                                                                  listen:
+                                                                      false);
+                                                          customerDetailsProvider
+                                                              .setCustomerId(lead
+                                                                  .customerId);
                                                           sideProvider.name =
                                                               'Lead /';
 
@@ -1173,7 +1181,7 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width: 1520,
+                            width: 1560,
                             child: Column(
                               children: [
                                 // Header row
