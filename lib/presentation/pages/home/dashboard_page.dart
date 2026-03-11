@@ -97,12 +97,24 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   );
                 },
               ),
-              title: const Text(
-                'Dashboard',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              title: Row(
+                children: [
+                  Image.asset(
+                    AppStyles.logo(),
+                    height: 40,
+                    width: 40,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
+                  ),
+                  const SizedBox(width: 8),
+                  const Text(
+                    'Dashboard',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
               ),
               actions: [
                 Consumer<NotificationProvider>(

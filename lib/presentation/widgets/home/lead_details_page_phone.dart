@@ -39,8 +39,10 @@ class LeadDetailsPagePhoneState extends State<LeadDetailsPagePhone> {
           Provider.of<LeadDetailsProvider>(context, listen: false);
       leadDetailsProvider.fetchLeadDetails(widget.customerId, context);
       leadDetailsProvider.fetchFollowUpHistory(widget.customerId);
-      Provider.of<LeadCheckInProvider>(context, listen: false)
-          .fetchLeadCheckInReports(context, widget.customerId);
+      final checkInProvider =
+          Provider.of<LeadCheckInProvider>(context, listen: false);
+      checkInProvider.initLocalStatus(int.parse(widget.customerId));
+      checkInProvider.fetchLeadCheckInReports(context, widget.customerId);
     });
   }
 

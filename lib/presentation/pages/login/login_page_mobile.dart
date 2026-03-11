@@ -5,7 +5,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/widgets/login/login_page_widgets.dart';
 
 class LoginPageMobile extends StatefulWidget {
@@ -53,8 +52,8 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
                   children: [
                     // Logo at the top
                     Center(
-                      child: Image.network(
-                        HttpUrls.imgBaseUrl + settingsProvider.logo,
+                      child: Image.asset(
+                        AppStyles.logo(),
                         height: 25,
                         width: 38,
                         errorBuilder: (context, error, stackTrace) {

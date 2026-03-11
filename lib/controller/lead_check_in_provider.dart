@@ -17,6 +17,16 @@ class LeadCheckInProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
+  // Local persistence for check-in status (fallback when history is empty)
+  final Map<int, bool> _localCheckedInStatus = {};
+
+  Future<void> initLocalStatus(int customerId) async {
+    final prefs = await SharedPreferences.getInstance();
+    final status = prefs.getBool('lead_checked_in_$customerId') ?? false;
+    _localCheckedInStatus[customerId] = status;
+    notifyListeners();
+  }
+
   List<LeadCheckIn> getHistoryForCustomer(int customerId) {
     final history = _customerCheckInHistory[customerId] ?? [];
     // Ensure history is sorted by date descending (newest first)
@@ -46,7 +56,10 @@ class LeadCheckInProvider extends ChangeNotifier {
 
   bool isCheckedIn(int customerId) {
     final history = getHistoryForCustomer(customerId);
-    if (history.isEmpty) return false;
+    if (history.isEmpty) {
+      // Fallback to local persistence if history is empty (e.g. after app restart)
+      return _localCheckedInStatus[customerId] ?? false;
+    }
     final lastRecord = history.first;
     // Check both status string and checkoutData flag
     final status = lastRecord.checkinStatus?.toLowerCase() ?? "";
@@ -54,8 +67,12 @@ class LeadCheckInProvider extends ChangeNotifier {
     final isDataIn =
         lastRecord.checkoutData == 1 || lastRecord.checkoutData == "1";
 
+    // Keep local status in sync with history
+    _localCheckedInStatus[customerId] = isStatusIn || isDataIn;
+
     return isStatusIn || isDataIn;
   }
+
 
   Future<void> fetchLeadCheckInReports(BuildContext context, String customerId,
       {String? fromDate, String? toDate}) async {
@@ -66,17 +83,24 @@ class LeadCheckInProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "0";
 
+      // Using the new report endpoint for history as well
       final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.getCheckin}?user_id=$userId&from_date=${fromDate ?? ""}&to_date=${toDate ?? ""}&login_user_id=$userId',
+            '${HttpUrls.getCheckinReport}?From_Date=${fromDate ?? ""}&To_Date=${toDate ?? ""}&User_Id=$userId',
       );
 
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          final leadResponse = LeadCheckInResponse.fromJson(data);
-          _customerCheckInHistory[int.parse(customerId)] =
-              leadResponse.data ?? [];
+          if (data is List) {
+            _customerCheckInHistory[int.parse(customerId)] = data
+                .map((item) => LeadCheckIn.fromJson(item))
+                .toList();
+          } else {
+            final leadResponse = LeadCheckInResponse.fromJson(data);
+            _customerCheckInHistory[int.parse(customerId)] =
+                leadResponse.data ?? [];
+          }
         }
       }
     } catch (e) {
@@ -86,7 +110,6 @@ class LeadCheckInProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-
   Future<void> saveLeadCheckIn({
     required BuildContext context,
     required int customerId,
@@ -197,6 +220,16 @@ class LeadCheckInProvider extends ChangeNotifier {
         if (context.mounted) {
           _showSuccessDialog(context, isCheckIn);
         }
+
+        // Persist status locally
+        try {
+          final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('lead_checked_in_$customerId', isCheckIn);
+          _localCheckedInStatus[customerId] = isCheckIn;
+        } catch (e) {
+          log('Error saving local lead status: $e');
+        }
+
         fetchLeadCheckInReports(context, customerId.toString());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

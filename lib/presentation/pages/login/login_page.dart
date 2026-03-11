@@ -5,7 +5,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/login_controller.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/widgets/login/login_page_widgets.dart';
 
 class LoginPage extends StatefulWidget {
@@ -100,12 +99,13 @@ class SignUpForm extends StatelessWidget {
           children: [
             // Logo with perfect centering
             Center(
-              child: ClipOval(
-                child: Image.network(
-                  HttpUrls.imgBaseUrl + settingsProvider.logo,
-                  height: 60,
-                  width: 60,
-                  fit: BoxFit.cover,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.asset(
+                  AppStyles.logo(),
+                  height: 100,
+                  width: 100,
+                  fit: BoxFit.contain,
                   errorBuilder: (context, error, stackTrace) {
                     return Container(
                       height: 60,

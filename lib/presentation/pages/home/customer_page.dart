@@ -897,8 +897,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       ((index + 1) +
                                                               customerProvider
                                                                   .startLimit -
-                                                              1)
-                                                          .toString(),
+                                                          1)
+                                                      .toString(),
                                                       style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,

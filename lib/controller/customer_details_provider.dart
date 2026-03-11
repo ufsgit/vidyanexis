@@ -3800,4 +3800,132 @@ class CustomerDetailsProvider extends ChangeNotifier {
     customerId = customerIdValue.toString();
     notifyListeners();
   }
+
+  void populateAllQuotationFields(
+      ql.GetQuotationbyMasterIdmodel quotation, String customerIdValue) {
+    log('Populating all quotation fields for quotationMasterId: ${quotation.quotationMasterId}');
+
+    customerId = customerIdValue;
+
+    // ---- BASIC DETAILS ----
+    qproductnameController.text = quotation.productName;
+    advanceController.text = quotation.advancePercentage;
+    deliveryController.text = quotation.onDeliveryPercentage;
+    workCompletionController.text = quotation.workCompletionPercentage;
+    qsubsidyAmountController.text = quotation.subsidyAmount;
+    qwarrentyController.text = quotation.warranty;
+    qtermsConditionsController.text = quotation.termsAndConditions;
+    quotationDescriptionController.text = quotation.description;
+    quotationDescription2Controller.text = quotation.description2;
+    quotationDescription3Controller.text = quotation.description3;
+
+    // ---- STATUS ----
+    selectedQuotationStatus = quotation.quotationStatusId;
+    selectedQuotationStatusName = quotation.quotationStatusName;
+
+    // ---- FEES ----
+    registrationFeeController.text = quotation.ksebRegistrationFee.toString();
+    feasibilityFeeController.text = quotation.ksebFeasibilityFee.toString();
+    systemPriceController.text = quotation.ksebSystemPrice.toString();
+    additionalStructureController.text =
+        quotation.additionalStructure.toString();
+
+    // ---- TOTALS ----
+    subtotalController.text = quotation.totalAmount.toString();
+    totalController.text = quotation.netTotal.toString();
+
+    // ---- ITEMS ----
+    updateItemsFromQuotationDetailsNew(
+      quotation.quotationDetails,
+      quotation.billOfMaterials,
+      quotation.productionChart,
+    );
+
+    // ---- GST ----
+    final taxable = double.tryParse(quotation.taxableAmount) ?? 0;
+    final gst = double.tryParse(quotation.gstAmount) ?? 0;
+    final gstPer = double.tryParse(quotation.gstPer) ?? 0;
+
+    gstTaxableAmountController.text = taxable.toStringAsFixed(2);
+    cgstTaxableAmountController.text = (taxable / 2).toStringAsFixed(2);
+    sgstTaxableAmountController.text = (taxable / 2).toStringAsFixed(2);
+
+    totalGstAmountController.text = gst.toStringAsFixed(2);
+    totalCgstAmountController.text = (gst / 2).toStringAsFixed(2);
+    totalSgstAmountController.text = (gst / 2).toStringAsFixed(2);
+
+    totalGstPerController.text = gstPer.toStringAsFixed(2);
+    totalCgstPerController.text = (gstPer / 2).toStringAsFixed(2);
+    totalSgstPerController.text = (gstPer / 2).toStringAsFixed(2);
+
+    // ---- QUOTATION TYPE ----
+    quotationTypeController.text = quotation.quotationTypeName;
+    selectedQuotationType = quotation.quotationTypeId;
+
+    // ---- CABLE DETAILS ----
+    cableStructureController.text = quotation.cableStructure;
+    cableTypeController.text = quotation.cableType;
+    cableShortCircuitTempController.text = quotation.cableShortCircuitTemp;
+    cableStandardController.text = quotation.cableStandard;
+    cableConductorClassController.text = quotation.cableConductorClass;
+    cableMaterialController.text = quotation.cableMaterial;
+    cableProtectionController.text = quotation.cableProtection;
+    cableWarrantyController.text = quotation.cableWarranty;
+    cableTensileStrengthController.text = quotation.cableTensileStrength;
+
+    // ---- OTHER DETAILS ----
+    plantCapacityController.text = quotation.plantCapacity;
+    moduleTechnologiesController.text = quotation.moduleTechnologies;
+    mountingStructureTechnologiesController.text =
+        quotation.mountingStructureTechnologies;
+    projectSchemeController.text = quotation.projectScheme;
+    powerEvacuationController.text = quotation.powerEvacuation;
+    areaApproximateController.text = quotation.areaApproximate;
+    solarPlantOutputConnectionController.text =
+        quotation.solarPlantOutputConnection;
+    schemeController.text = quotation.scheme;
+    qvalidityController.text = quotation.validity;
+    qtendorNumberController.text = quotation.tendorNumber;
+    paymentTermsController.text = quotation.paymentTermsName;
+    incoTermsController.text = quotation.incoTerms;
+    shippingChargesController.text = quotation.shippingCharges;
+    totalAdCESSController.text = quotation.otherTax;
+    totalCgstAmountController.text = quotation.totalCgstAmount;
+    totalSgstAmountController.text = quotation.totalSgstAmount;
+
+    commercialItems = quotation.commercialItems;
+    scopeOfWorkItems = quotation.scopeOfWorkItems;
+
+    // ---- CUSTOM FIELDS ----
+    if (quotation.quotationCustomFields.isNotEmpty) {
+      populateCustomFieldsFromMaster(quotation.quotationCustomFields);
+    }
+
+    notifyListeners();
+  }
+
+  void populateCustomFieldsFromMaster(
+      List<Map<String, dynamic>> masterCustomFields) {
+    log('Populating custom fields from master: ${masterCustomFields.length} items');
+
+    for (var masterField in masterCustomFields) {
+      final fieldId =
+          int.tryParse(masterField['custom_field_id']?.toString() ?? '');
+      final value = masterField['value']?.toString();
+
+      if (fieldId != null) {
+        // Update the model list so it's consistent
+        for (var i = 0; i < _customFieldQuotation.length; i++) {
+          if (_customFieldQuotation[i].customFieldId == fieldId) {
+            _customFieldQuotation[i].datavalue = value;
+            break;
+          }
+        }
+
+        // Update the widget state via its global key if it exists
+        customFieldQuotationKey.currentState?.updateFieldValue(fieldId, value);
+      }
+    }
+    notifyListeners();
+  }
 }
