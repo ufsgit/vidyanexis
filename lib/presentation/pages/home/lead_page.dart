@@ -997,8 +997,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ((index + 1) +
                                                                       leadProvider
                                                                           .startLimit -
-                                                                      1)
-                                                                  .toString(),
+                                                                  1)
+                                                              .toString(),
                                                               style:
                                                                   const TextStyle(
                                                                 fontSize: 13,
