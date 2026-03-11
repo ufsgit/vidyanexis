@@ -182,8 +182,18 @@ class TaskReportProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     _selectedTaskType = null;
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
     _fromDateS = '';
     _toDateS = '';
+    _Search = '';
+    _Status = '';
+    _AssignedTo = '';
+    _TaskType = '';
+    _isFilter = false;
+    _pageIndex = 1;
     notifyListeners();
   }
 

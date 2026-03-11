@@ -562,12 +562,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   tabAlignment: TabAlignment.start,
                                   isScrollable: true,
                                   dividerColor: Colors.transparent,
+                                  labelPadding: const EdgeInsets.symmetric(
+                                      horizontal: 10),
                                   labelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                      fontSize: 13),
                                   unselectedLabelStyle: const TextStyle(
                                       fontWeight: FontWeight.bold,
-                                      fontSize: 16),
+                                      fontSize: 13),
                                   tabs: _tabs,
                                 ),
                               ),

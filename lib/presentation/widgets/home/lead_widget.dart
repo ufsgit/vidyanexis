@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
@@ -251,9 +252,35 @@ class LeadCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   // ------------------------------------------------------------------
+                  const SizedBox(width: 10),
+                  CustomActionButton(
+                    imageColor: AppColors.btnRed,
+                    onTap: () async {
+                      final customerDetailsProvider =
+                          Provider.of<CustomerDetailsProvider>(context,
+                              listen: false);
+                      customerDetailsProvider.customerId =
+                          lead.customerId.toString();
+                      customerDetailsProvider.clearTaskDetails();
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return AddTaskMobile(
+                            isEdit: false,
+                            taskId: '0',
+                          );
+                        },
+                      ));
+                    },
+                    icon: Icons.task,
+                    text: 'Add Task',
+                  ),
+
+                  // ------------------------------------------------------------------
+                  // ------------------------------------------------------------------
                   // NEW UPDATED WHATSAPP LOGIC — PRIORITY:
                   // formatIndianNumber Safe Implementation
                   // ------------------------------------------------------------------
+                  const SizedBox(width: 10),
                   CustomActionButton(
                     imageColor: AppColors.textGreen,
                     onTap: () async {

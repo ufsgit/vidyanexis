@@ -19,10 +19,10 @@ class HttpUrls {
   // static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
   // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
   // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
-static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
+//   static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
 
 //dev
-  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
   // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
@@ -58,6 +58,7 @@ static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
   static String searchCustomer = "lead/Search_Customer";
   static String getTaskByCustomer = "task/Get_task_By_Customer";
   static String getTaskDetails = "task/Get_task";
+  static String getTaskOverview = "task/Task_Overview";
   static String searchLeadReports = "lead/Search_lead_Report";
   static String saveTask = "task/Save_task";
   static String saveService = "service/Save_service";

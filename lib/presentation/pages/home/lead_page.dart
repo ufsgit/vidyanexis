@@ -1181,7 +1181,11 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
+<<<<<<< HEAD
                             width: 1560,
+=======
+                            width: 1620,
+>>>>>>> d003673be58791c1b10b0f632008b4e36d7f0420
                             child: Column(
                               children: [
                                 // Header row
@@ -1253,22 +1257,39 @@ class _LeadsPageState extends State<LeadPage> {
                                                   fontSize: 13)),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 140,
+                                          width: 230,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Align(
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              'Convert',
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                color: Color(0xFFFFFFFF),
-                                              ),
+                                            alignment: Alignment.center,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.center,
+                                              children: const [
+                                                Text(
+                                                  'Convert',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Color(0xFFFFFFFF),
+                                                  ),
+                                                ),
+                                                SizedBox(width: 20),
+                                                Text(
+                                                  'Create Task',
+                                                  style: TextStyle(
+                                                    fontSize: 13,
+                                                    color: Color(0xFFFFFFFF),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 375,
+                                          width: 350,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Text('Remark',
@@ -1295,7 +1316,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   fontSize: 13)),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 150,
+                                          width: 120,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Text('Follow-Up Date',
@@ -1459,13 +1480,18 @@ class _LeadsPageState extends State<LeadPage> {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
-                                                  width: 140,
+                                                  width: 200,
                                                   data: Align(
-                                                    alignment:
-                                                        Alignment.centerLeft,
+                                                    alignment: Alignment.center,
                                                     child: Row(
                                                       mainAxisSize:
                                                           MainAxisSize.min,
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .center,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .center,
                                                       children: [
                                                         TextButton(
                                                           onPressed: () {
@@ -1560,7 +1586,11 @@ class _LeadsPageState extends State<LeadPage> {
                                                           child: Container(
                                                             padding:
                                                                 const EdgeInsets
-                                                                    .all(10),
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10,
+                                                                    vertical:
+                                                                        5),
                                                             decoration:
                                                                 BoxDecoration(
                                                               color: AppColors
