@@ -248,6 +248,7 @@ class HttpUrls {
   static String getUserLocationDetails = "lead/get_user_loaction_details";
   static String checkin = "lead/Save_Lead_Checkin";
   static String getCheckin = "lead/get_lead_checkin";
+  static String getCheckinReport = "lead/get_checkin_report";
   static String getLocation = "lead/get_location";
   static String saveLocation = "lead/save_location";
   static String deleteLocation = "lead/delete_location";

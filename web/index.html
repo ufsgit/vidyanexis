@@ -194,13 +194,10 @@
   </div>
   <script>
     window.addEventListener('load', function () {
-      const version = new Date().getTime();
-
-      _flutter.loader.loadEntrypoint({
+      _flutter.loader.load({
         serviceWorker: {
           serviceWorkerVersion: serviceWorkerVersion,
         },
-        entrypointUrl: 'main.dart.js?v=' + APP_VERSION + '&t=' + version,
         onEntrypointLoaded: function (engineInitializer) {
           engineInitializer.initializeEngine().then(function (appRunner) {
             appRunner.runApp();

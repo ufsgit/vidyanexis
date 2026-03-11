@@ -5,18 +5,13 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/lead_detail_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/lead_details_page_phone.dart';
-import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
@@ -155,7 +150,7 @@ class _LeadCardState extends State<LeadCard> {
                                       color: AppColors.textGrey4),
                                 ),
                                 Text(
-                                  'Created By ${lead.createdByName}',
+                                  'Created By ${widget.lead.createdByName}',
                                   overflow: TextOverflow.clip,
                                   maxLines: 1,
                                   style: GoogleFonts.plusJakartaSans(
@@ -223,7 +218,7 @@ class _LeadCardState extends State<LeadCard> {
                           Provider.of<CustomerDetailsProvider>(context,
                               listen: false);
                       customerDetailsProvider.customerId =
-                          lead.customerId.toString();
+                          widget.lead.customerId.toString();
                       customerDetailsProvider.clearTaskDetails();
                       Navigator.push(context, MaterialPageRoute(
                         builder: (context) {
