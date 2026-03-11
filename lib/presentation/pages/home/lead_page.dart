@@ -1181,11 +1181,9 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-<<<<<<< HEAD
+
                             width: 1560,
-=======
-                            width: 1620,
->>>>>>> d003673be58791c1b10b0f632008b4e36d7f0420
+
                             child: Column(
                               children: [
                                 // Header row
