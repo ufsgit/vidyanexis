@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import '../../../controller/models/bill_of_material_model.dart';
+import '../../../controller/customer_details_provider.dart';
+import 'package:provider/provider.dart';
 
 class BomItemCard extends StatelessWidget {
   final BillOfMaterialItem item;
@@ -107,18 +109,17 @@ class BomItemCard extends StatelessWidget {
 
               const SizedBox(height: 10),
 
-              Text("Quantity : ${item.quantity} ${item.uom}"),
-
               Text(
-                "Make : ${item.brand.isNotEmpty ? item.brand : '-'}",
+                  "${context.read<CustomerDetailsProvider>().getQuotationFieldName(12, 'Quantity')} : ${item.quantity} ${item.uom}"),
+              Text(
+                "${context.read<CustomerDetailsProvider>().getQuotationFieldName(11, 'Specification')} : ${item.brand.isNotEmpty ? item.brand : '-'}",
+              ),
+              Text(
+                "${context.read<CustomerDetailsProvider>().getQuotationFieldName(13, 'Manufacturer')} : ${(item.distributor?.isNotEmpty ?? false) ? item.distributor : '-'}",
               ),
 
               Text(
-                "Distributor : ${(item.distributor?.isNotEmpty ?? false) ? item.distributor : '-'}",
-              ),
-
-              Text(
-                "Comments : ${(item.comments?.isNotEmpty ?? false) ? item.comments : '-'}",
+                "${context.read<CustomerDetailsProvider>().getQuotationFieldName(14, 'Comments')} : ${(item.comments?.isNotEmpty ?? false) ? item.comments : '-'}",
               ),
             ],
           ),

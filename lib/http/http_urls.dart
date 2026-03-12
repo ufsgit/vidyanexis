@@ -283,6 +283,7 @@ class HttpUrls {
   static String loadQuotationFromCustomFields =
       "quotation_master/load_quotation_from_custom_fields";
 
+  static String getQuotationFields = "quotation_master/Get_Quotation_Fields";
   static String getPaymentReport = "service/Get_Payment_Report";
   static String getPaymentSchedule = "service/Get_Payment_Schedule_By_Customer";
   static String savePaymentSchedule = "service/save_schedule";
