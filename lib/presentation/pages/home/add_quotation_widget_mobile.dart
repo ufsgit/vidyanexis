@@ -11,6 +11,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mob
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
 import '../../widgets/home/custom_field_section_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
 
 class AddQuotationWidgetMobile extends StatefulWidget {
   const AddQuotationWidgetMobile(
@@ -161,7 +163,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                 //   ),
                 // ),
                 Text(
-                  'Technical Specification',
+                  'Bill of Materials',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -1308,7 +1310,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                 //                           physics:
                 //                               const NeverScrollableScrollPhysics(),
                 //                           itemCount: customerDetailsProvider
-                //                               .bomItems.length,
+                //                               .billOfMaterialsItems.length,
                 //                           itemBuilder: (context, index) {
                 //                             final item = customerDetailsProvider
                 //                                 .productionItems[index];
@@ -1409,501 +1411,98 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                 //   ],
                 // ),
                 Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    CustomTextfieldWidgetMobile(
-                      focusNode: FocusNode(),
-                      readOnly: false,
-                      controller:
-                          customerDetailsProvider.billdescriptionController,
-                      labelText: 'Item name',
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextfieldWidgetMobile(
-                      focusNode: FocusNode(),
-                      readOnly: false,
-                      controller: customerDetailsProvider.billmakeController,
-                      labelText: 'Make',
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextfieldWidgetMobile(
-                      focusNode: FocusNode(),
-                      readOnly: false,
-                      controller:
-                          customerDetailsProvider.billdistributorController,
-                      labelText: 'Distributor',
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextfieldWidgetMobile(
-                            focusNode: FocusNode(),
-                            readOnly: false,
-                            controller:
-                                customerDetailsProvider.billquantityController,
-                            labelText: 'Quantity',
-                            keyBoardType: TextInputType.number,
-                            // inputFormatters: [
-                            //   FilteringTextInputFormatter.digitsOnly
-                            // ],
-                          ),
-                        ),
-                        const SizedBox(width: 16.0),
-                        Expanded(
-                          child: CustomTextfieldWidgetMobile(
-                            focusNode: FocusNode(),
-                            readOnly: false,
-                            controller:
-                                customerDetailsProvider.billinvoiceController,
-                            labelText: 'Invoice No',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
                     Align(
-                      alignment: Alignment.centerRight,
+                      alignment: Alignment.centerLeft,
                       child: SizedBox(
                         height: 32,
                         child: CustomElevatedButton(
                             buttonText: 'Add Material',
                             radius: 8,
                             onPressed: () {
-                              customerDetailsProvider.addOrEditBOMItem();
+                              customerDetailsProvider.clearBOMFields();
+                              showDialog(
+                                context: context,
+                                builder: (context) => const EditBomItemDialog(
+                                  index: -1,
+                                  isEdit: false,
+                                ),
+                              );
                             },
                             backgroundColor: AppColors.whiteColor,
                             borderColor: AppColors.bluebutton,
                             textColor: AppColors.bluebutton),
                       ),
-                      // OutlinedButton.icon(
-                      //   onPressed: customerDetailsProvider.addOrEditBOMItem,
-                      //   icon: const Icon(Icons.add),
-                      //   label: const Text('Add Material'),
-                      //   style: OutlinedButton.styleFrom(
-                      //     foregroundColor:
-                      //         AppColors.primaryBlue, // Change foreground color
-                      //     backgroundColor:
-                      //         Colors.white, // Change background color
-                      //     side: BorderSide(
-                      //         color:
-                      //             AppColors.primaryBlue), // Change border color
-                      //     padding: const EdgeInsets.symmetric(
-                      //       horizontal: 10,
-                      //       vertical: 0,
-                      //     ),
-                      //     shape: RoundedRectangleBorder(
-                      //       borderRadius:
-                      //           BorderRadius.circular(8), // Add border radius
-                      //     ),
-                      //   ),
-                      // ),
                     ),
                     const SizedBox(height: 16),
-                    if (customerDetailsProvider.bomItems.isNotEmpty)
-                      AppStyles.isWebScreen(context)
-                          ? Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 40,
-                                        child: Text(
-                                          'Sl No',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
+                    if (customerDetailsProvider.billOfMaterialsItems.isNotEmpty)
+                      Container(
+                        decoration: BoxDecoration(
+                            color: const Color(0xffF8FAFC),
+                            borderRadius: BorderRadius.circular(8)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(10),
+                          child: ListView.separated(
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: customerDetailsProvider
+                                .billOfMaterialsItems.length,
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 10),
+                            itemBuilder: (context, index) {
+                              final item = customerDetailsProvider
+                                  .billOfMaterialsItems[index];
+
+                              return BomItemCard(
+                                item: item,
+                                onDelete: () {
+                                  showDialog(
+                                    context: context,
+                                    builder: (_) => AlertDialog(
+                                      title: const Text("Delete Material"),
+                                      content: const Text(
+                                          "Are you sure you want to delete this item?"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () =>
+                                              Navigator.pop(context),
+                                          child: const Text("Cancel"),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          'Items',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          'Make',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Text(
-                                          'Quantity',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          'Invoice No',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          'Distributor',
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        flex: 2,
-                                        child: Text(
-                                          'Actions',
-                                          textAlign: TextAlign.center,
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w600,
-                                            fontSize: 14,
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount:
-                                        customerDetailsProvider.bomItems.length,
-                                    itemBuilder: (context, index) {
-                                      final item = customerDetailsProvider
-                                          .bomItems[index];
-                                      return Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 40,
-                                            child: Center(
-                                              child: Text(
-                                                (index + 1).toString(),
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14),
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(
-                                            width: 8,
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              item.itemsAndDescription,
+                                        TextButton(
+                                          onPressed: () {
+                                            customerDetailsProvider
+                                                .deleteBillOfMaterialsItem(
+                                                    index);
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text("Delete",
                                               style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              item.make,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                              item.quantity.toString(),
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              item.invoiceNo,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 2,
-                                            child: Text(
-                                              item.distributor,
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: TextButton(
-                                              onPressed: () =>
-                                                  customerDetailsProvider
-                                                      .populateBOMFieldsForEditing(
-                                                          index),
-                                              child: Text(
-                                                'Edit',
-                                                style: TextStyle(
-                                                  color: Colors.blue[400],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Expanded(
-                                            flex: 1,
-                                            child: TextButton(
-                                              onPressed: () =>
-                                                  customerDetailsProvider
-                                                      .deleteBOMItem(index),
-                                              child: Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                  color: Colors.red[400],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            )
-                          : Container(
-                              padding: const EdgeInsets.all(6),
-                              decoration: BoxDecoration(
-                                color: AppColors.scaffoldColor,
-                                borderRadius: BorderRadius.circular(20),
-                              ),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  const SizedBox(height: 12),
-                                  ListView.builder(
-                                    shrinkWrap: true,
-                                    physics:
-                                        const NeverScrollableScrollPhysics(),
-                                    itemCount:
-                                        customerDetailsProvider.bomItems.length,
-                                    itemBuilder: (context, index) {
-                                      final item = customerDetailsProvider
-                                          .bomItems[index];
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          color: Colors.white,
+                                                  TextStyle(color: Colors.red)),
                                         ),
-                                        margin:
-                                            const EdgeInsets.only(bottom: 12),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(16),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                      child: _buildInfoRow(
-                                                          item.invoiceNo,
-                                                          item.itemsAndDescription)),
-                                                  PopupMenuButton(
-                                                    icon: Icon(
-                                                        Icons
-                                                            .more_horiz_rounded,
-                                                        size: 15),
-                                                    itemBuilder: (c) => [
-                                                      PopupMenuItem(
-                                                        onTap: () =>
-                                                            customerDetailsProvider
-                                                                .populateBOMFieldsForEditing(
-                                                                    index),
-                                                        child: Text('Edit'),
-                                                      ),
-                                                      PopupMenuItem(
-                                                        onTap: () =>
-                                                            customerDetailsProvider
-                                                                .deleteBOMItem(
-                                                                    index),
-                                                        child: Text('Delete'),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Quantity',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 12,
-                                                      color: Colors.grey[600],
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 2),
-                                                  Text(
-                                                    item.quantity.toString(),
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Make',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 12,
-                                                      color: Colors.grey[600],
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 2),
-                                                  Text(
-                                                    item.make,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Distributor',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 12,
-                                                      color: Colors.grey[600],
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(height: 2),
-                                                  Text(
-                                                    item.distributor,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              // Row(
-                                              //   children: [
-                                              //     Expanded(
-                                              //       child: TextButton(
-                                              //         onPressed: () => customerDetailsProvider.populateBOMFieldsForEditing(index),
-                                              //         child: Text(
-                                              //           'Edit',
-                                              //           style: TextStyle(
-                                              //             color: Colors.blue[400],
-                                              //           ),
-                                              //         ),
-                                              //       ),
-                                              //     ),
-                                              //     Expanded(
-                                              //       child: TextButton(
-                                              //         onPressed: () => customerDetailsProvider.deleteBOMItem(index),
-                                              //         child: Text(
-                                              //           'Delete',
-                                              //           style: TextStyle(
-                                              //             color: Colors.red[400],
-                                              //           ),
-                                              //         ),
-                                              //       ),
-                                              //     ),
-                                              //   ],
-                                              // ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                                onEdit: () {
+                                  customerDetailsProvider
+                                      .populateBOMFieldsForEditing(index);
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        EditBomItemDialog(index: index),
+                                  );
+                                },
+                              );
+                            },
+                          ),
+                        ),
+                      ),
                   ],
                 )
               ],
             )),
       ),
-    );
-  }
-
-  Widget _buildInfoRow(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 12,
-            color: Colors.grey[600],
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 2),
-        Text(
-          value,
-          style: GoogleFonts.plusJakartaSans(
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-      ],
     );
   }
 }

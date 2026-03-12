@@ -198,8 +198,6 @@ class AMCReportProvider extends ChangeNotifier {
       } else {
         isDate = "1";
       }
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
 
       String toUserId = (_selectedUser ?? 0).toString();
 
@@ -259,8 +257,6 @@ class AMCReportProvider extends ChangeNotifier {
       } else {
         isDate = "1";
       }
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
 
       String toUserId = (_selectedUser ?? 0).toString();
 

@@ -370,6 +370,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController billdistributorController =
       TextEditingController();
   final TextEditingController billinvoiceController = TextEditingController();
+  final TextEditingController billuomController = TextEditingController();
   TextEditingController quotationStatusController = TextEditingController();
   TextEditingController systemPriceController = TextEditingController();
   TextEditingController additionalStructureController = TextEditingController();
@@ -511,8 +512,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController maplinkController = TextEditingController();
   final TextEditingController stateController = TextEditingController();
 
-  List<BillOfMaterialItem> _bomItems = [];
-  List<BillOfMaterialItem> get bomItems => _bomItems;
+  List<BillOfMaterialItem> _billOfMaterialsItems = [];
+  List<BillOfMaterialItem> get billOfMaterialsItems => _billOfMaterialsItems;
 
   List<ProductionChartItem> _productionItems = [];
   List<ProductionChartItem> get productionItems => _productionItems;
@@ -520,12 +521,12 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<Item> get items => _items;
   int? _editIndex;
   int? get editIndex => _editIndex;
-  int? _editBomIndex;
+  int? _editBillOfMaterialsIndex;
   int? _editProductionIndex;
 
   int? _totalAmount;
   int get totalAmount => _totalAmount ?? 0;
-  int? get editBomIndex => _editBomIndex;
+  int? get editBillOfMaterialsIndex => _editBillOfMaterialsIndex;
   int? get editProductionIndex => _editProductionIndex;
 
   ScrollController imageScrollController = ScrollController();
@@ -982,8 +983,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setEditBomIndex(int? index) {
-    _editBomIndex = index;
+  void seteditBillOfMaterialsIndex(int? index) {
+    _editBillOfMaterialsIndex = index;
     notifyListeners();
   }
 
@@ -1199,7 +1200,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     return total;
   }
 
-  void addOrEditBOMItem() {
+  void addOrEditBillOfMaterialsItem() {
     // Validate input fields
     // if (billdescriptionController.text.isEmpty ||
     //     billmakeController.text.isEmpty ||
@@ -1210,27 +1211,28 @@ class CustomerDetailsProvider extends ChangeNotifier {
     // }
 
     // Create the BOM item
-    final newBOMItem = BillOfMaterialItem(
-      itemsAndDescription: billdescriptionController.text,
-      make: billmakeController.text,
-      quantity: billquantityController.text,
+    final newBillOfMaterialsItem = BillOfMaterialItem(
+      description: billdescriptionController.text,
+      brand: billmakeController.text,
+      quantity: double.tryParse(billquantityController.text) ?? 0,
       distributor: billdistributorController.text,
-      invoiceNo: billinvoiceController.text,
+      comments: billinvoiceController.text,
+      uom: billuomController.text,
     );
 
     // Check if we're editing an existing item or adding a new one
-    if (editBomIndex != null &&
-        editBomIndex! >= 0 &&
-        editBomIndex! < _bomItems.length) {
+    if (editBillOfMaterialsIndex != null &&
+        editBillOfMaterialsIndex! >= 0 &&
+        editBillOfMaterialsIndex! < _billOfMaterialsItems.length) {
       // Edit existing item
-      _bomItems[editBomIndex!] = newBOMItem;
+      _billOfMaterialsItems[editBillOfMaterialsIndex!] = newBillOfMaterialsItem;
     } else {
       // Add new item
-      _bomItems.add(newBOMItem);
+      _billOfMaterialsItems.add(newBillOfMaterialsItem);
     }
 
     // Clear the text fields
-    _editBomIndex = null;
+    _editBillOfMaterialsIndex = null;
     clearBOMFields();
     notifyListeners();
   }
@@ -1283,6 +1285,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     billquantityController.clear();
     billdistributorController.clear();
     billinvoiceController.clear();
+    billuomController.clear();
+    _editBillOfMaterialsIndex = null;
     notifyListeners();
   }
 
@@ -1303,15 +1307,16 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void populateBOMFieldsForEditing(int index) {
     // Populate text fields with existing item's data for editing
-    if (index >= 0 && index < _bomItems.length) {
-      final itemToEdit = _bomItems[index];
+    if (index >= 0 && index < _billOfMaterialsItems.length) {
+      final itemToEdit = _billOfMaterialsItems[index];
 
-      billdescriptionController.text = itemToEdit.itemsAndDescription;
-      billmakeController.text = itemToEdit.make;
+      billdescriptionController.text = itemToEdit.description;
+      billmakeController.text = itemToEdit.brand;
       billquantityController.text = itemToEdit.quantity.toString();
-      billdistributorController.text = itemToEdit.distributor;
-      billinvoiceController.text = itemToEdit.invoiceNo;
-      setEditBomIndex(index);
+      billdistributorController.text = itemToEdit.distributor ?? '';
+      billinvoiceController.text = itemToEdit.comments ?? '';
+      billuomController.text = itemToEdit.uom;
+      seteditBillOfMaterialsIndex(index);
       notifyListeners();
     }
   }
@@ -1323,9 +1328,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  void deleteBOMItem(int index) {
-    if (index >= 0 && index < _bomItems.length) {
-      _bomItems.removeAt(index);
+  void deleteBillOfMaterialsItem(int index) {
+    if (index >= 0 && index < _billOfMaterialsItems.length) {
+      _billOfMaterialsItems.removeAt(index);
       notifyListeners();
     }
   }
@@ -2110,7 +2115,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "Created_By": userId,
         "Description": quotationDescriptionController.text.toString(),
         'items': _items.map((item) => item.toJson()).toList(),
-        'bill_of_materials': _bomItems.map((item) => item.toJson()).toList(),
+        'bill_of_materials':
+            _billOfMaterialsItems.map((item) => item.toJson()).toList(),
         'production_chart':
             _productionItems.map((item) => item.toJson()).toList(),
         "advance_percentage": advanceController.text,
@@ -2274,7 +2280,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     subtotalController.clear();
     totalController.clear();
     _items = [];
-    _bomItems = [];
+    _billOfMaterialsItems = [];
     _productionItems = [];
     _selectedQuotationStatus = null;
     _selectedQuotationStatusName = null;
@@ -2366,7 +2372,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   //   print("Final Items List: ${items.map((e) => e.toJson()).toList()}");
 
   //   //bill of materails
-  //   _bomItems = List.generate(
+  //   _billOfMaterialsItems = List.generate(
   //     billOfMaterials.length,
   //     (index) => BillOfMaterialItem(
   //         itemsAndDescription: '',
@@ -2377,11 +2383,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   //   );
   //   for (int i = 0; i < billOfMaterials.length; i++) {
   //     // Update the item fields
-  //     bomItems[i].itemsAndDescription = billOfMaterials[i].itemsAndDescription;
-  //     bomItems[i].quantity = billOfMaterials[i].quantity;
-  //     bomItems[i].make = billOfMaterials[i].make;
-  //     bomItems[i].distributor = billOfMaterials[i].distributor;
-  //     bomItems[i].invoiceNo = billOfMaterials[i].invoiceNo;
+  //     billOfMaterialsItems[i].itemsAndDescription = billOfMaterials[i].itemsAndDescription;
+  //     billOfMaterialsItems[i].quantity = billOfMaterials[i].quantity;
+  //     billOfMaterialsItems[i].make = billOfMaterials[i].make;
+  //     billOfMaterialsItems[i].distributor = billOfMaterials[i].distributor;
+  //     billOfMaterialsItems[i].invoiceNo = billOfMaterials[i].invoiceNo;
   //   }
   //   _productionItems = List.generate(
   //     productionChart.length,
@@ -2402,7 +2408,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   //   notifyListeners();
 
   //   // Final debug print to confirm the updates
-  //   print("Final Bill List: ${bomItems.map((e) => e.toJson()).toList()}");
+  //   print("Final Bill List: ${billOfMaterialsItems.map((e) => e.toJson()).toList()}");
   // }
 
   void updateItemsFromQuotationDetailsNew(
@@ -2446,32 +2452,37 @@ class CustomerDetailsProvider extends ChangeNotifier {
     print("Final Items List: ${items.map((e) => e.toJson()).toList()}");
 
     //bill of materails
-    _bomItems = List.generate(
+    _billOfMaterialsItems = List.generate(
       billOfMaterials.length,
       (index) => BillOfMaterialItem(
-          itemsAndDescription: '',
-          make: '',
-          quantity: "",
+          description: '',
+          brand: '',
+          quantity: 0,
+          uom: '',
           distributor: '',
-          invoiceNo: ''),
+          comments: ''),
     );
 
     print("Bill Details Length: ${billOfMaterials.length}");
 
     for (int i = 0; i < billOfMaterials.length; i++) {
       // Update the item fields
-      bomItems[i].itemsAndDescription = billOfMaterials[i].itemsAndDescription;
-      bomItems[i].quantity = billOfMaterials[i].quantity;
-      bomItems[i].make = billOfMaterials[i].make;
-      bomItems[i].distributor = billOfMaterials[i].distributor;
-      bomItems[i].invoiceNo = billOfMaterials[i].invoiceNo;
+      billOfMaterialsItems[i].description =
+          billOfMaterials[i].itemsAndDescription;
+      billOfMaterialsItems[i].quantity =
+          double.tryParse(billOfMaterials[i].quantity.toString()) ?? 0;
+      billOfMaterialsItems[i].brand = billOfMaterials[i].make;
+      billOfMaterialsItems[i].distributor = billOfMaterials[i].distributor;
+      billOfMaterialsItems[i].comments = billOfMaterials[i].invoiceNo;
+      billOfMaterialsItems[i].uom = billOfMaterials[i].uom;
     }
 
     // Notify listeners about the change
     notifyListeners();
 
     // Final debug print to confirm the updates
-    print("Final Bill List: ${bomItems.map((e) => e.toJson()).toList()}");
+    print(
+        "Final Bill List: ${billOfMaterialsItems.map((e) => e.toJson()).toList()}");
   }
 
   void updateProfile(String customerId, BuildContext context) async {

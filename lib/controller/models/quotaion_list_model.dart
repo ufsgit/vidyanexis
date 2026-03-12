@@ -159,6 +159,7 @@ class BillOfMaterial {
   String distributor;
   int billOfMaterialsId;
   String itemsAndDescription;
+  String uom;
 
   BillOfMaterial({
     required this.make,
@@ -167,6 +168,7 @@ class BillOfMaterial {
     required this.distributor,
     required this.billOfMaterialsId,
     required this.itemsAndDescription,
+    this.uom = '',
   });
 
   factory BillOfMaterial.fromMap(Map<String, dynamic> json) => BillOfMaterial(
@@ -176,6 +178,7 @@ class BillOfMaterial {
         distributor: json["Distributor"] ?? '',
         billOfMaterialsId: json["Bill_Of_Materials_Id"] ?? 0,
         itemsAndDescription: json["Items_And_Description"] ?? '',
+        uom: json["UOM"] ?? '',
       );
 
   Map<String, dynamic> toMap() => {
@@ -185,6 +188,7 @@ class BillOfMaterial {
         "Distributor": distributor,
         "Bill_Of_Materials_Id": billOfMaterialsId,
         "Items_And_Description": itemsAndDescription,
+        "UOM": uom,
       };
 }
 

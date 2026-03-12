@@ -11,6 +11,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -1029,7 +1031,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 //                               physics:
                 //                                   const NeverScrollableScrollPhysics(),
                 //                               itemCount: customerDetailsProvider
-                //                                   .bomItems.length,
+                //                                   .billOfMaterialsItems.length,
                 //                               itemBuilder: (context, index) {
                 //                                 final item =
                 //                                     customerDetailsProvider
@@ -1143,7 +1145,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     borderRadius: BorderRadius.zero,
                   ),
                   title: Text(
-                    'Technical Proposal',
+                    'Bill of Materials',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
@@ -1185,7 +1187,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
             if (customerDetailsProvider.items.isEmpty &&
                 customerDetailsProvider.commercialItems.isEmpty &&
-                customerDetailsProvider.bomItems.isEmpty) {
+                customerDetailsProvider.billOfMaterialsItems.isEmpty) {
               _showValidationDialog(context, 'Cannot Save', 'No items added');
               return;
             }
@@ -2613,236 +2615,71 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF6F7F9),
-            borderRadius: BorderRadius.circular(10),
-          ),
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller:
-                          customerDetailsProvider.billdescriptionController,
-                      hintText: 'Description',
-                      labelText: '',
-                    ),
-                  ),
-                  const SizedBox(width: 16.0),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.billmakeController,
-                      hintText:
-                          customerDetailsProvider.selectedQuotationType == 1
-                              ? 'Brand'
-                              : 'Make',
-                      labelText: '',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller:
-                          customerDetailsProvider.billquantityController,
-                      hintText: 'Quantity',
-                      labelText: '',
-                      // inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                  if (customerDetailsProvider.selectedQuotationType == 1) ...[
-                    const SizedBox(width: 16.0),
-                    Expanded(
-                      child: CustomTextField(
-                        readOnly: false,
-                        height: 54,
-                        controller:
-                            customerDetailsProvider.billdistributorController,
-                        hintText: 'Uom',
-                        labelText: '',
-                      ),
-                    ),
-                  ]
-                ],
-              ),
-              const SizedBox(height: 16),
-              if (customerDetailsProvider.selectedQuotationType == 1)
-                CustomTextField(
-                  readOnly: false,
-                  height: 54,
-                  controller: customerDetailsProvider.billinvoiceController,
-                  hintText: 'Comments',
-                  labelText: '',
+        Align(
+          alignment: Alignment.centerLeft,
+          child: OutlinedButton.icon(
+            onPressed: () {
+              customerDetailsProvider.clearBOMFields();
+              showDialog(
+                context: context,
+                builder: (context) => const EditBomItemDialog(
+                  index: -1,
+                  isEdit: false,
                 ),
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: customerDetailsProvider.addOrEditBOMItem,
-                icon: const Icon(Icons.add),
-                label: const Text('Add Material'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor:
-                      AppColors.primaryBlue, // Change foreground color
-                  backgroundColor: Colors.white, // Change background color
-                  side: BorderSide(
-                      color: AppColors.primaryBlue), // Change border color
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Add border radius
-                  ),
-                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Add Material'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppColors.primaryBlue,
+              backgroundColor: Colors.white,
+              side: BorderSide(color: AppColors.primaryBlue),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
               ),
-              const SizedBox(height: 16),
-              if (customerDetailsProvider.bomItems.isNotEmpty)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                          minWidth: MediaQuery.of(context).size.width),
-                      child: DataTable(
-                        columnSpacing: 20,
-                        headingTextStyle: GoogleFonts.plusJakartaSans(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
-                        dataTextStyle: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          color: Colors.black,
-                        ),
-                        columns: const [
-                          DataColumn(
-                              label: Text('Sl No',
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                          DataColumn(
-                              label: Text('Items',
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                          DataColumn(
-                              label: Text('Make',
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                          DataColumn(
-                              label: Text('Quantity',
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                          DataColumn(
-                              label: Text('Comments',
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                          DataColumn(
-                              label: Text('Uom',
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                          DataColumn(
-                              label: Text('Actions',
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                        ],
-                        rows: customerDetailsProvider.bomItems
-                            .asMap()
-                            .entries
-                            .map((entry) {
-                          final index = entry.key;
-                          final item = entry.value;
-                          return DataRow(
-                            cells: [
-                              DataCell(Text((index + 1).toString(),
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                              DataCell(
-                                Container(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 200),
-                                  child: Text(item.itemsAndDescription,
-                                      softWrap: false,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ),
-                              DataCell(
-                                Container(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 150),
-                                  child: Text(item.make,
-                                      softWrap: false,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ),
-                              DataCell(Text(item.quantity.toString(),
-                                  softWrap: false,
-                                  overflow: TextOverflow.ellipsis)),
-                              DataCell(
-                                Container(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 150),
-                                  child: Text(item.invoiceNo,
-                                      softWrap: false,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ),
-                              DataCell(
-                                Container(
-                                  constraints:
-                                      const BoxConstraints(maxWidth: 150),
-                                  child: Text(item.distributor,
-                                      softWrap: false,
-                                      overflow: TextOverflow.ellipsis),
-                                ),
-                              ),
-                              DataCell(
-                                Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    TextButton(
-                                      onPressed: () => customerDetailsProvider
-                                          .populateBOMFieldsForEditing(index),
-                                      child: Text('Edit',
-                                          style: TextStyle(
-                                              color: Colors.blue[400])),
-                                    ),
-                                    TextButton(
-                                      onPressed: () => customerDetailsProvider
-                                          .deleteBOMItem(index),
-                                      child: Text('Delete',
-                                          style: TextStyle(
-                                              color: Colors.red[400])),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
+            ),
           ),
         ),
+        const SizedBox(height: 16),
+        if (customerDetailsProvider.billOfMaterialsItems.isNotEmpty)
+          Container(
+            decoration: BoxDecoration(
+                color: const Color(0xffF8FAFC),
+                borderRadius: BorderRadius.circular(8)),
+            child: Padding(
+              padding: const EdgeInsets.all(10),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: customerDetailsProvider.billOfMaterialsItems.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 10),
+                itemBuilder: (context, index) {
+                  final item =
+                      customerDetailsProvider.billOfMaterialsItems[index];
+
+                  return BomItemCard(
+                    item: item,
+                    onDelete: () {
+                      customerDetailsProvider.deleteBillOfMaterialsItem(index);
+                    },
+                    onEdit: () {
+                      customerDetailsProvider
+                          .populateBOMFieldsForEditing(index);
+                      showDialog(
+                        context: context,
+                        builder: (context) => EditBomItemDialog(
+                          index: index,
+                          isEdit: true,
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+          ),
       ],
     );
   }

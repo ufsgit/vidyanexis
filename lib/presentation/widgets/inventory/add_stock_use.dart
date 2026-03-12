@@ -4,6 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/stock_use_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
@@ -86,29 +88,28 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final expenseProvider =
-      Provider.of<StockUseProvider>(context, listen: false);
+          Provider.of<StockUseProvider>(context, listen: false);
       final customerDetailsProvider =
-      Provider.of<CustomerDetailsProvider>(context, listen: false);
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
 
       expenseProvider.searchItemListStock(context);
 
       if (widget.isEdit) {
         // Load stock use details including technical specification
         await expenseProvider.getStockUseDetails(
-            context: context,
-            masterId: widget.editId.toString()
-        );
+            context: context, masterId: widget.editId.toString());
 
         // Set the date and description
         expenseProvider.suDateController.text = widget.stockUse!.date;
-        expenseProvider.suDescriptionController.text = widget.stockUse!.description;
+        expenseProvider.suDescriptionController.text =
+            widget.stockUse!.description;
 
         // Set the stock status from the existing data
-        customerDetailsProvider.updateStockStatus(
-            widget.stockUse!.stockStatus ?? 'Pending'
-        );
+        customerDetailsProvider
+            .updateStockStatus(widget.stockUse!.stockStatus ?? 'Pending');
 
-        print("Loaded ${customerDetailsProvider.bomItems.length} BOM items for editing");
+        print(
+            "Loaded ${customerDetailsProvider.billOfMaterialsItems.length} BOM items for editing");
         print("Stock Status: ${widget.stockUse!.stockStatus}");
       } else {
         // Clear everything for new entry
@@ -118,7 +119,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
         expenseProvider.resetStockUseForm();
 
         // Clear BOM items
-        customerDetailsProvider.bomItems.clear();
+        customerDetailsProvider.billOfMaterialsItems.clear();
         customerDetailsProvider.clearBOMFields();
 
         // Reset stock status to default for new entry
@@ -149,8 +150,8 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
   //       expenseProvider.suDateController.text = widget.stockUse!.date;
   //       expenseProvider.suDescriptionController.text = widget.stockUse!.description;
   //
-  //       // Note: stockUseItems and bomItems are already loaded in getStockUseDetails
-  //       print("Loaded ${customerDetailsProvider.bomItems.length} BOM items for editing");
+  //       // Note: stockUseItems and billOfMaterialsItems are already loaded in getStockUseDetails
+  //       print("Loaded ${customerDetailsProvider.billOfMaterialsItems.length} BOM items for editing");
   //     } else {
   //       // Clear everything for new entry
   //       expenseProvider.suDateController.clear();
@@ -159,7 +160,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
   //       expenseProvider.resetStockUseForm();
   //
   //       // Clear BOM items
-  //       customerDetailsProvider.bomItems.clear();
+  //       customerDetailsProvider.billOfMaterialsItems.clear();
   //       customerDetailsProvider.clearBOMFields();
   //     }
   //   });
@@ -170,7 +171,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
     final expenseProvider = Provider.of<StockUseProvider>(context);
     // final provider = Provider.of<SettingsProvider>(context);
     final customerDetailsProvider =
-    Provider.of<CustomerDetailsProvider>(context);
+        Provider.of<CustomerDetailsProvider>(context);
 
     return AlertDialog(
       backgroundColor: Colors.white,
@@ -248,8 +249,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value:
-                customerDetailsProvider.selectedStockStatus ?? 'Pending',
+                value: customerDetailsProvider.selectedStockStatus ?? 'Pending',
                 items: const [
                   DropdownMenuItem<String>(
                     value: 'Pending',
@@ -268,8 +268,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                 style: GoogleFonts.plusJakartaSans(
                   fontSize: 14, // Custom font size
                   fontWeight: FontWeight.w600, // Custom font weight
-                  color: AppColors
-                      .textBlack, // Custom color for selected item
+                  color: AppColors.textBlack, // Custom color for selected item
                 ),
                 decoration: InputDecoration(
                   label: RichText(
@@ -284,20 +283,17 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         TextSpan(
                           text: ' *', // The asterisk part
                           style: TextStyle(
-                              color: Colors
-                                  .red), // Red color for asterisk
+                              color: Colors.red), // Red color for asterisk
                         ),
                       ],
                     ),
                   ),
-                  floatingLabelBehavior: FloatingLabelBehavior
-                      .auto, // Always show the label
+                  floatingLabelBehavior:
+                      FloatingLabelBehavior.auto, // Always show the label
                   floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                    fontSize:
-                    16, // Slightly smaller size for floating label
+                    fontSize: 16, // Slightly smaller size for floating label
                     fontWeight: FontWeight.w500,
-                    color: AppColors
-                        .textGrey1, // Color for floating label
+                    color: AppColors.textGrey1, // Color for floating label
                   ),
                   labelStyle: GoogleFonts.plusJakartaSans(
                     fontSize: 14,
@@ -305,36 +301,32 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                     color: AppColors.textGrey3,
                   ),
                   border: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
                     borderSide: BorderSide(
                       color: AppColors.textGrey2, // Border color
                       width: 1, // Border width
                     ),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
                     borderSide: BorderSide(
                       color: AppColors.textGrey2, // Border color
                       width: 1, // Border width
                     ),
                   ),
                   enabledBorder: OutlineInputBorder(
-                    borderRadius:
-                    BorderRadius.circular(10), // Rounded corners
+                    borderRadius: BorderRadius.circular(10), // Rounded corners
                     borderSide: BorderSide(
                       color: AppColors.textGrey2, // Border color
                       width: 1, // Border width
                     ),
                   ),
-                  contentPadding: const EdgeInsets.symmetric(
-                      vertical: 18, horizontal: 12),
+                  contentPadding:
+                      const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
                 ),
                 isDense: true,
                 iconSize: 18,
               ),
-
               const SizedBox(height: 10),
               Container(
                 padding: const EdgeInsets.all(15),
@@ -421,9 +413,11 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                             controller: expenseProvider.suUnitPriceController,
                             hintText: 'Sale Rate',
                             labelText: '',
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            keyboardType: const TextInputType.numberWithOptions(
+                                decimal: true),
                             inputFormatters: [
-                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                              FilteringTextInputFormatter.allow(
+                                  RegExp(r'^\d*\.?\d{0,2}')),
                             ],
                           ),
                         ),
@@ -562,7 +556,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                   borderRadius: BorderRadius.zero,
                 ),
                 title: Text(
-                  'Technical Specification',
+                  'Bill of Materials',
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 16,
                     fontWeight: FontWeight.w500,
@@ -571,7 +565,8 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                 ),
                 tilePadding: EdgeInsets.zero,
                 // Expand automatically if there are BOM items (edit mode)
-                initiallyExpanded: customerDetailsProvider.bomItems.isNotEmpty,
+                initiallyExpanded:
+                    customerDetailsProvider.billOfMaterialsItems.isNotEmpty,
                 children: [
                   const SizedBox(height: 5),
                   Column(
@@ -584,214 +579,94 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                         ),
                         padding: const EdgeInsets.all(16.0),
                         child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .billdescriptionController,
-                                    hintText: 'Item name',
-                                    labelText: '',
+                            Align(
+                              alignment: Alignment.centerLeft,
+                              child: OutlinedButton.icon(
+                                onPressed: () {
+                                  customerDetailsProvider.clearBOMFields();
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) =>
+                                        const EditBomItemDialog(
+                                      index: -1,
+                                      isEdit: false,
+                                    ),
+                                  );
+                                },
+                                icon: const Icon(Icons.add),
+                                label: const Text('Add Material'),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppColors.primaryBlue,
+                                  backgroundColor: Colors.white,
+                                  side:
+                                      BorderSide(color: AppColors.primaryBlue),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(8),
                                   ),
-                                ),
-                                const SizedBox(width: 16.0),
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    keyboardType: TextInputType.number,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .billquantityController,
-                                    hintText: 'POS',
-                                    labelText: '',
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(
-                                          RegExp(r'^\d*\.?\d{0,2}')),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: CustomTextField(
-                                    readOnly: false,
-                                    height: 54,
-                                    controller: customerDetailsProvider
-                                        .billmakeController,
-                                    hintText: 'Spec',
-                                    labelText: '',
-                                    keyboardType: TextInputType.multiline,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            OutlinedButton.icon(
-                              onPressed: customerDetailsProvider.addOrEditBOMItem,
-                              icon: const Icon(Icons.add),
-                              label: const Text('Add Material'),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: AppColors.primaryBlue,
-                                backgroundColor: Colors.white,
-                                side: BorderSide(color: AppColors.primaryBlue),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 0,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8),
                                 ),
                               ),
                             ),
                             const SizedBox(height: 16),
-                            if (customerDetailsProvider.bomItems.isNotEmpty)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                ),
-                                child: Column(
-                                  children: [
-                                    Row(
-                                      children: [
-                                        SizedBox(
-                                          width: 40,
-                                          child: Text(
-                                            'Sl No',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            'Items',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            'Spec',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          child: Text(
-                                            'POS',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                        Expanded(
-                                          flex: 2,
-                                          child: Text(
-                                            'Actions',
-                                            textAlign: TextAlign.center,
-                                            style: GoogleFonts.plusJakartaSans(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 14,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
+                            if (customerDetailsProvider
+                                .billOfMaterialsItems.isNotEmpty)
+                              ListView.separated(
+                                shrinkWrap: true,
+                                physics: const NeverScrollableScrollPhysics(),
+                                itemCount: customerDetailsProvider
+                                    .billOfMaterialsItems.length,
+                                separatorBuilder: (context, index) =>
                                     const SizedBox(height: 10),
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics: const NeverScrollableScrollPhysics(),
-                                      itemCount: customerDetailsProvider.bomItems.length,
-                                      itemBuilder: (context, index) {
-                                        final item = customerDetailsProvider.bomItems[index];
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                width: 40,
-                                                child: Center(
-                                                  child: Text(
-                                                    (index + 1).toString(),
-                                                    style: GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14),
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 8),
-                                              Expanded(
-                                                flex: 2,
-                                                child: Text(
-                                                  item.itemsAndDescription,
-                                                  style: GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  item.make,
-                                                  style: GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: Text(
-                                                  item.quantity.toString(),
-                                                  style: GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: TextButton(
-                                                  onPressed: () => customerDetailsProvider
-                                                      .populateBOMFieldsForEditing(index),
-                                                  child: Text(
-                                                    'Edit',
-                                                    style: TextStyle(
-                                                      color: Colors.blue[400],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                flex: 1,
-                                                child: TextButton(
-                                                  onPressed: () => customerDetailsProvider
-                                                      .deleteBOMItem(index),
-                                                  child: Text(
-                                                    'Delete',
-                                                    style: TextStyle(
-                                                      color: Colors.red[400],
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
+                                itemBuilder: (context, index) {
+                                  final item = customerDetailsProvider
+                                      .billOfMaterialsItems[index];
+
+                                  return BomItemCard(
+                                    item: item,
+                                    onDelete: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (_) => AlertDialog(
+                                          title: const Text("Delete Material"),
+                                          content: const Text(
+                                              "Are you sure you want to delete this item?"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text("Cancel"),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                customerDetailsProvider
+                                                    .deleteBillOfMaterialsItem(
+                                                        index);
+                                                Navigator.pop(context);
+                                              },
+                                              child: const Text("Delete",
+                                                  style: TextStyle(
+                                                      color: Colors.red)),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    },
+                                    onEdit: () {
+                                      customerDetailsProvider
+                                          .populateBOMFieldsForEditing(index);
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => EditBomItemDialog(
+                                          index: index,
+                                          isEdit: true,
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
                               ),
                           ],
                         ),

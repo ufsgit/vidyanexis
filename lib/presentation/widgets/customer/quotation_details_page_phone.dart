@@ -17,6 +17,7 @@ import 'package:vidyanexis/presentation/pages/home/add_quotation_widget_mobile.d
 import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/bom_item_card_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class QuotationDetailsPagePhone extends StatefulWidget {
@@ -729,132 +730,16 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                                     shrinkWrap: true,
                                     physics: const ClampingScrollPhysics(),
                                     itemBuilder: (context, index) {
-                                      return Container(
-                                        decoration: BoxDecoration(
-                                            color: AppColors.whiteColor,
-                                            borderRadius:
-                                                BorderRadius.circular(12)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(8.0),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Align(
-                                                alignment: Alignment.topLeft,
-                                                child: CustomText(
-                                                  customerDetailsProvider
-                                                      .quotationListByMaster[0]
-                                                      .billOfMaterials[index]
-                                                      .invoiceNo,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColors.textGrey3,
-                                                ),
-                                              ),
-                                              CustomText(
-                                                customerDetailsProvider
-                                                    .quotationListByMaster[0]
-                                                    .billOfMaterials[index]
-                                                    .itemsAndDescription,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.textBlack,
-                                              ),
-                                              const SizedBox(
-                                                height: 8,
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: CustomText(
-                                                      'Quantity',
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color:
-                                                          AppColors.textGrey4,
-                                                    ),
-                                                  ),
-                                                  CustomText(
-                                                    customerDetailsProvider
-                                                        .quotationListByMaster[
-                                                            0]
-                                                        .billOfMaterials[index]
-                                                        .quantity
-                                                        .toString(),
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppColors.textBlack,
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: CustomText(
-                                                      'Make',
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color:
-                                                          AppColors.textGrey4,
-                                                    ),
-                                                  ),
-                                                  CustomText(
-                                                    customerDetailsProvider
-                                                        .quotationListByMaster[
-                                                            0]
-                                                        .billOfMaterials[index]
-                                                        .make,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppColors.textBlack,
-                                                  ),
-                                                ],
-                                              ),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Expanded(
-                                                    child: CustomText(
-                                                      'Distributor',
-                                                      fontSize: 12,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color:
-                                                          AppColors.textGrey4,
-                                                    ),
-                                                  ),
-                                                  CustomText(
-                                                    customerDetailsProvider
-                                                        .quotationListByMaster[
-                                                            0]
-                                                        .billOfMaterials[index]
-                                                        .distributor,
-                                                    fontSize: 12,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppColors.textBlack,
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                        ),
+                                      final item = customerDetailsProvider
+                                          .quotationListByMaster[0]
+                                          .billOfMaterials[index];
+                                      return BomItemCardWidget(
+                                        itemName: item.itemsAndDescription,
+                                        quantity: item.quantity.toString(),
+                                        make: item.make,
+                                        distributor: item.distributor,
+                                        comments: item.invoiceNo,
+                                        uom: item.uom,
                                       );
                                     },
                                   )

@@ -12,6 +12,7 @@ import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart'
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/quotation_details_printer_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/bom_item_card_widget.dart';
 
 class QuotationDetailsWidget extends StatelessWidget {
   final String customerId;
@@ -525,22 +526,6 @@ class QuotationDetailsWidget extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         mainAxisSize: MainAxisSize.min,
                                         children: [
-                                          // Header Row
-                                          if (AppStyles.isWebScreen(context))
-                                            Row(
-                                              children: [
-                                                _buildHeaderCell('Sl No', 60),
-                                                _buildHeaderCell('Items', 120),
-                                                _buildHeaderCell('Make', 250),
-                                                _buildHeaderCell(
-                                                    'Quantity', 100),
-                                                _buildHeaderCell(
-                                                    'Invoice No', 150),
-                                                _buildFlexibleHeaderCell(
-                                                    'Distributor'), // Using flexible header for last column
-                                              ],
-                                            ),
-                                          const SizedBox(height: 16),
                                           if (customerDetailsProvider
                                               .quotationListByMaster[0]
                                               .billOfMaterials
@@ -562,86 +547,16 @@ class QuotationDetailsWidget extends StatelessWidget {
                                                         .quotationListByMaster[
                                                             0]
                                                         .billOfMaterials[index];
-                                                return AppStyles.isWebScreen(
-                                                        context)
-                                                    ? Row(
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          _buildContentCell(
-                                                              '${index + 1}',
-                                                              60),
-                                                          _buildContentCell(
-                                                              item.itemsAndDescription,
-                                                              120),
-                                                          _buildContentCell(
-                                                              item.make, 250),
-                                                          _buildContentCell(
-                                                              item.quantity
-                                                                  .toString(),
-                                                              100),
-                                                          _buildContentCell(
-                                                              item.invoiceNo,
-                                                              150),
-                                                          _buildFlexibleContentCell(
-                                                              item.distributor), // Using flexible content for last column
-                                                        ],
-                                                      )
-                                                    //mobile design
-                                                    : Container(
-                                                        margin: const EdgeInsets
-                                                            .only(bottom: 10),
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .all(10),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(10),
-                                                        ),
-                                                        child: Column(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            buildMobileRow(
-                                                                "Item Name",
-                                                                item.itemsAndDescription),
-                                                            Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child: buildMobileRow(
-                                                                      "Make",
-                                                                      item.make),
-                                                                ),
-                                                                Expanded(
-                                                                  child: buildMobileRow(
-                                                                      "Quantity",
-                                                                      item.quantity
-                                                                          .toString()),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                            Row(
-                                                              children: [
-                                                                Expanded(
-                                                                  child: buildMobileRow(
-                                                                      "Invoice No",
-                                                                      item.invoiceNo),
-                                                                ),
-                                                                Expanded(
-                                                                  child: buildMobileRow(
-                                                                      "Distributor",
-                                                                      item.distributor),
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ],
-                                                        ),
-                                                      );
+                                                return BomItemCardWidget(
+                                                  itemName:
+                                                      item.itemsAndDescription,
+                                                  quantity:
+                                                      item.quantity.toString(),
+                                                  make: item.make,
+                                                  distributor: item.distributor,
+                                                  comments: item.invoiceNo,
+                                                  uom: item.uom,
+                                                );
                                               },
                                             ),
                                         ],
@@ -670,68 +585,6 @@ class QuotationDetailsWidget extends StatelessWidget {
   }
 }
 
-Widget _buildHeaderCell(String text, double width) {
-  return Padding(
-    padding: const EdgeInsets.only(right: 16),
-    child: SizedBox(
-      width: width,
-      child: Text(
-        text,
-        style: GoogleFonts.plusJakartaSans(
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          color: AppColors.textGrey3,
-        ),
-      ),
-    ),
-  );
-}
-
-Widget _buildFlexibleHeaderCell(String text) {
-  return Expanded(
-    child: Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Text(
-        text,
-        style: GoogleFonts.plusJakartaSans(
-          fontWeight: FontWeight.w600,
-          fontSize: 14,
-          color: AppColors.textGrey3,
-        ),
-      ),
-    ),
-  );
-}
-
-Widget _buildContentCell(String text, double width) {
-  return Padding(
-    padding: const EdgeInsets.only(right: 16),
-    child: SizedBox(
-      width: width,
-      child: Text(
-        text,
-        style: GoogleFonts.plusJakartaSans(fontSize: 12),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 2,
-      ),
-    ),
-  );
-}
-
-Widget _buildFlexibleContentCell(String text) {
-  return Expanded(
-    child: Padding(
-      padding: const EdgeInsets.only(right: 16),
-      child: Text(
-        text,
-        style: GoogleFonts.plusJakartaSans(fontSize: 12),
-        overflow: TextOverflow.ellipsis,
-        maxLines: 2,
-      ),
-    ),
-  );
-}
-
 Widget buildItemRow(String item, String amount, {TextStyle? textStyle}) {
   return Row(
     mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -747,23 +600,5 @@ Widget buildItemRow(String item, String amount, {TextStyle? textStyle}) {
         style: textStyle ?? GoogleFonts.plusJakartaSans(),
       ),
     ],
-  );
-}
-
-Widget buildMobileRow(String title, String value) {
-  return Padding(
-    padding: const EdgeInsets.symmetric(vertical: 4),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text("$title: ",
-            style: TextStyle(
-                fontWeight: FontWeight.w500, color: AppColors.textGrey4)),
-        Text(value,
-            softWrap: true,
-            style: TextStyle(
-                fontWeight: FontWeight.bold, color: AppColors.textBlack)),
-      ],
-    ),
   );
 }

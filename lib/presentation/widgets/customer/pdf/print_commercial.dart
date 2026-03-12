@@ -295,7 +295,7 @@ Future<void> _addFourthPage(pw.Document pdf) async {
           // Title - Now Dynamic
           pw.Center(
             child: pw.Text(
-              'Technical Proposal',
+              'Bill of Materials',
               style: pw.TextStyle(font: boldFont, fontSize: 11),
             ),
           ),
