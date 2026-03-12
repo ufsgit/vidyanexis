@@ -8,6 +8,9 @@ class FormProvider extends ChangeNotifier {
   List<FormModel> _forms = [];
   List<FormModel> get forms => _forms;
 
+  List<FormModel> _customerForms = [];
+  List<FormModel> get customerForms => _customerForms;
+
   String searchQuery = "";
 
   List<String> departments = [];
@@ -242,5 +245,128 @@ class FormProvider extends ChangeNotifier {
     return _forms
         .where((f) => f.name.toLowerCase().contains(searchQuery.toLowerCase()))
         .toList();
+  }
+
+  Future<void> getFormDataByCustomer(String customerId,
+      {String? taskTypeId}) async {
+    isLoadingForms = true;
+    _customerForms.clear();
+    notifyListeners();
+    try {
+      if (availableFields.isEmpty) {
+        // We need fields to parse the form correctly
+        // Since fetchAvailableFields doesn't actually use context for the request, we can pass a dummy or change it
+        // For now, let's just hope it's already there or handle it
+      }
+
+      // Removed Task_Type_Id filter to ensure all customer forms are visible
+      String url = '${HttpUrls.getFormDataDetails}?Customer_Id=$customerId';
+      
+      debugPrint("DEBUG: Fetching forms from URL: $url");
+      final response = await HttpRequest.httpGetRequest(endPoint: url);
+
+      if (response != null && response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<dynamic> formsList = [];
+          if (data is Map) {
+            // Try all possible keys: forms, form_data, or data itself
+            var fForms = data['forms'];
+            var fData = data['form_data'] ?? data['data'];
+
+            if (fForms is List && fForms.isNotEmpty) {
+              formsList = fForms;
+            } else if (fData is List && fData.isNotEmpty) {
+              formsList = fData;
+            }
+          } else if (data is List) {
+            formsList = data;
+          }
+
+          _customerForms = formsList.map((item) {
+            List<FieldModel> parsedFields = [];
+            if (item['Custom_Fields'] != null &&
+                item['Custom_Fields'] is List) {
+              parsedFields = (item['Custom_Fields'] as List).map((f) {
+                // Try both PascalCase and snake_case keys as seen in user's JSON
+                final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ?? '0';
+                final cfName = (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
+                final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
+
+                final availableField = availableFields.firstWhere(
+                  (a) => a.id == cfId,
+                  orElse: () => FieldModel(
+                    id: cfId,
+                    label: cfName ?? 'Field $cfId',
+                    type: FieldType.text,
+                  ),
+                );
+                return FieldModel(
+                  id: availableField.id,
+                  label: availableField.label,
+                  type: availableField.type,
+                  options: availableField.options,
+                  isMandatory: (isMandatoryValue == 1 ||
+                      isMandatoryValue == true ||
+                      isMandatoryValue == "1"),
+                );
+              }).toList();
+            }
+
+            return FormModel(
+              id: item['Form_Id']?.toString() ?? '',
+              name: item['Form_Name']?.toString() ?? '',
+              department: item['Department_Name']?.toString() ?? '',
+              taskType: item['Task_Type_Name']?.toString() ?? '',
+              fields: parsedFields,
+            );
+          }).toList();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      debugPrint('Exception occurred in getFormDataByCustomer: $e');
+    } finally {
+      isLoadingForms = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> saveTaskFormData({
+    required BuildContext context,
+    required int taskId,
+    required int formId,
+    required List<dynamic> customFields, // Keeping dynamic or Map for flexibility
+    int formDataDetailsId = 0,
+    int customerId = 0,
+    String? taskTypeId,
+  }) async {
+    try {
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveTaskFormData,
+          bodyData: {
+            "Form_Data_Details_Id": formDataDetailsId,
+            "Form_Id": formId,
+            "Customer_Id": customerId,
+            "Custom_Fields": customFields,
+          });
+
+      if (response != null && response.statusCode == 200) {
+        Navigator.pop(context); // Close the form fields dialog
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Form data saved successfully')),
+        );
+        getFormDataByCustomer(customerId.toString(), taskTypeId: taskTypeId);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to save form data')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Exception occurred in saveTaskFormData: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
+    }
   }
 }
