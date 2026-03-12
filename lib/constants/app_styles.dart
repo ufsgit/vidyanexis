@@ -10,18 +10,7 @@ class AppStyles {
   }
 
   static name() {
-    String name = 'KRE';
-    // String name = 'Solaris';
-    // String name = 'First Day';
-    // String name = 'Neopower';
-    // String name = 'Horizon';
-    // String name = 'Cygnusenergy';
-    // String name = 'Kiaenergies';
-    // String name = 'Matrix';
-    // String name = 'Crystal';
-    // String name = 'Dyuthi';
-    // String name = 'Securagreen';
-    // String name = 'Oxy solar';
+    String name = 'solaris'; // dont change this
 
     return name;
   }
