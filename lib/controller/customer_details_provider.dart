@@ -51,6 +51,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import '../http/http_urls.dart';
 import 'models/production_chart_item.dart';
+import 'models/quotation_field_model.dart';
 import 'package:vidyanexis/controller/models/payment_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_history_model.dart';
 import 'package:vidyanexis/controller/models/expense_management_model.dart';
@@ -136,6 +137,9 @@ class CustomerDetailsProvider extends ChangeNotifier {
   List<ql.GetQuotationbyMasterIdmodel> _quotationListByMaster = [];
   List<ql.GetQuotationbyMasterIdmodel> get quotationListByMaster =>
       _quotationListByMaster;
+
+  List<QuotationField> _quotationFields = [];
+  List<QuotationField> get quotationFields => _quotationFields;
 
   List<FollowUpHistoryModel> _followUpHistory = [];
   List<FollowUpHistoryModel> get followUpHistory => _followUpHistory;
@@ -723,6 +727,42 @@ class CustomerDetailsProvider extends ChangeNotifier {
     } finally {
       _isLoadingQuotationCustomFields = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> getQuotationFieldsApi() async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.getQuotationFields);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          _quotationFields =
+              data.map((e) => QuotationField.fromJson(e)).toList();
+        } else {
+          _quotationFields = [];
+        }
+      } else {
+        _quotationFields = [];
+      }
+      notifyListeners();
+    } catch (e) {
+      print('Exception occurred in getQuotationFieldsApi: $e');
+      _quotationFields = [];
+      notifyListeners();
+    }
+  }
+
+  String getQuotationFieldName(int fieldId, String defaultName) {
+    if (_quotationFields.isEmpty) return defaultName;
+    try {
+      final field = _quotationFields.firstWhere(
+        (element) => element.quotationFieldsId == fieldId,
+      );
+      return field.quotationFieldsName ?? defaultName;
+    } catch (e) {
+      return defaultName;
     }
   }
 

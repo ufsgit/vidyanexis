@@ -50,6 +50,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
       // Fetch custom field definitions for quotations
       await customerDetailsProvider.getCustomFieldsByQuotationId(context);
+      await customerDetailsProvider.getQuotationFieldsApi();
 
       if (widget.isEdit) {
         // Fetch existing quotation details if editing
@@ -1345,7 +1346,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: false,
                       height: 54,
                       controller: customerDetailsProvider.itemNameController,
-                      hintText: 'Item Name',
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          1, 'Item Name'),
                       labelText: '',
                     ),
                   ),
@@ -1363,7 +1365,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         // Calculate total amount and GST when price changes
                         customerDetailsProvider.calculateTotalAmount();
                       },
-                      hintText: 'Price',
+                      hintText:
+                          customerDetailsProvider.getQuotationFieldName(4, 'Price'),
                       labelText: '',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
@@ -1397,7 +1400,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         // Calculate total amount when quantity changes
                         customerDetailsProvider.calculateTotalAmount();
                       },
-                      hintText: 'Quantity',
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          5, 'Quantity'),
                       labelText: '',
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     ),
@@ -1408,7 +1412,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: false,
                       height: 54,
                       controller: customerDetailsProvider.itemUnitController,
-                      hintText: 'Unit',
+                      hintText:
+                          customerDetailsProvider.getQuotationFieldName(3, 'As Per Standards'),
                       labelText: '',
                     ),
                   ),
@@ -1427,7 +1432,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         // Calculate GST when GST% changes
                         customerDetailsProvider.calculateTotalAmount();
                       },
-                      hintText: 'GST %',
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          6, 'GST %'),
                       labelText: '',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
@@ -1442,7 +1448,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: true,
                       height: 54,
                       controller: customerDetailsProvider.itemGstController,
-                      hintText: 'GST',
+                      hintText:
+                          customerDetailsProvider.getQuotationFieldName(2, 'As Per Standerd Warranty'),
                       labelText: '',
                     ),
                   ),
@@ -1456,7 +1463,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: false,
                       height: 54,
                       controller: customerDetailsProvider.itemAdCessController,
-                      hintText: 'Other Tax',
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          8, 'Other Tax'),
                       labelText: '',
                       onChanged: (value) {
                         // Calculate GST when GST% changes
@@ -1475,7 +1483,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: true,
                       height: 54,
                       controller: customerDetailsProvider.itemTotalController,
-                      hintText: 'Amount',
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          9, 'Amount'),
                       labelText: '',
                     ),
                   ),

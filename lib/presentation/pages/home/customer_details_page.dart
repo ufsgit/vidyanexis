@@ -1346,11 +1346,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                           // Additional
                                           CustomerCard(
                                             title: "Additional Details",
-                                            content: leadProvider
-                                                    .customFieldEnquiryFor
+                                            content: (leadProvider
+                                                            .customFieldEnquiryFor ??
+                                                        [])
                                                     .isNotEmpty
-                                                ? leadProvider
-                                                    .customFieldEnquiryFor
+                                                ? (leadProvider.customFieldEnquiryFor ?? [])
                                                     .where((field) =>
                                                         (field.customFieldName !=
                                                                 null &&
@@ -1941,11 +1941,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 CustomerCard(
                                                                   title:
                                                                       "Additional Details",
-                                                                  content: leadProvider
-                                                                          .customFieldEnquiryFor
+                                                                  content: (leadProvider.customFieldEnquiryFor ?? [])
                                                                           .isNotEmpty
-                                                                      ? leadProvider
-                                                                          .customFieldEnquiryFor
+                                                                      ? (leadProvider.customFieldEnquiryFor ?? [])
                                                                           .where((field) =>
                                                                               (field.customFieldName != null && field.customFieldName.toString().isNotEmpty) &&
                                                                               (field.datavalue != null && field.datavalue.toString().isNotEmpty))
@@ -1955,8 +1953,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               ))
                                                                           .toList()
                                                                       : [
-                                                                          if (leadProvider
-                                                                              .customFieldEnquiryFor
+                                                                          if ((leadProvider
+                                                                                  .customFieldEnquiryFor ??
+                                                                              [])
                                                                               .isEmpty)
                                                                             const Text('No additional details available')
                                                                         ],
@@ -2483,11 +2482,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           CustomerCard(
                                                             title:
                                                                 "Additional Details",
-                                                            content: leadProvider
-                                                                    .customFieldEnquiryFor
+                                                            content: (leadProvider
+                                                                    .customFieldEnquiryFor ?? [])
                                                                     .isNotEmpty
-                                                                ? leadProvider
-                                                                    .customFieldEnquiryFor
+                                                                ? (leadProvider.customFieldEnquiryFor ?? [])
                                                                     .where((field) =>
                                                                         (field.customFieldName !=
                                                                                 null &&
@@ -2507,9 +2505,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             ))
                                                                     .toList()
                                                                 : [
-                                                                    if (leadProvider
-                                                                        .customFieldEnquiryFor
-                                                                        .isEmpty)
+                                                                    if ((leadProvider
+                                                                        .customFieldEnquiryFor ?? []).isEmpty)
                                                                       const Text(
                                                                           'No additional details available')
                                                                   ],

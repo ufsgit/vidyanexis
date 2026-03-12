@@ -53,15 +53,15 @@ class EditBomItemDialog extends StatelessWidget {
               const Divider(height: 24),
               CustomTextField(
                 controller: provider.billdescriptionController,
-                labelText: 'Description',
+                labelText: provider.getQuotationFieldName(10, 'Equipment'),
                 hintText: 'Enter item description',
                 height: 54,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: provider.billmakeController,
-                labelText: 'Brand',
-                hintText: 'Enter brand or spec',
+                labelText: provider.getQuotationFieldName(11, 'Specification'),
+                hintText: 'Enter specification',
                 height: 54,
               ),
               const SizedBox(height: 16),
@@ -70,7 +70,7 @@ class EditBomItemDialog extends StatelessWidget {
                   Expanded(
                     child: CustomTextField(
                       controller: provider.billquantityController,
-                      labelText: 'Quantity',
+                      labelText: provider.getQuotationFieldName(12, 'Quantity'),
                       hintText: 'Scale/Qty',
                       height: 54,
                       keyboardType: TextInputType.number,
@@ -94,14 +94,14 @@ class EditBomItemDialog extends StatelessWidget {
               const SizedBox(height: 16),
               CustomTextField(
                 controller: provider.billdistributorController,
-                labelText: 'Distributor',
-                hintText: 'Enter distributor info',
+                labelText: provider.getQuotationFieldName(13, 'Manufacturer'),
+                hintText: 'Enter manufacturer info',
                 height: 54,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: provider.billinvoiceController,
-                labelText: 'Comments',
+                labelText: provider.getQuotationFieldName(14, 'Comments'),
                 hintText: 'Add comments or invoice info',
                 height: 54,
               ),
