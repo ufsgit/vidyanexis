@@ -14,7 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_page_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
 import 'package:vidyanexis/presentation/pages/home/lead_page_phone.dart';
@@ -59,7 +58,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
-      logo = HttpUrls.imgBaseUrl + settingsProvider.logo;
+      logo = AppStyles.logo();
     });
   }
 

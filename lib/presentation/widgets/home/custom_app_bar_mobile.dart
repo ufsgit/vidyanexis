@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -84,6 +84,21 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  String _userName = "";
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserName();
+  }
+
+  Future<void> _loadUserName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _userName = prefs.getString('userName') ?? "";
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final searchProvider = Provider.of<SidebarProvider>(context);
@@ -119,13 +134,29 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   Widget _defaultTitle() {
-    return Text(
-      widget.title!,
-      style: widget.titleStyle ??
-          const TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
+    return Row(
+      children: [
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: Image.asset(
+            AppStyles.logo(),
+            height: 32,
+            width: 32,
+            fit: BoxFit.contain,
+            errorBuilder: (context, error, stackTrace) =>
+                const SizedBox.shrink(),
           ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          widget.title!,
+          style: widget.titleStyle ??
+              const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+        ),
+      ],
     );
   }
 
@@ -181,6 +212,25 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
+            if (_userName.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(right: 8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                      _userName,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
             if (widget.showSearch)
               IconButton(
                 icon: Icon(
@@ -247,17 +297,20 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 );
               },
             ),
-
-            // if (widget.showFilterIcon)
-            //   InkWell(
-            //     onTap: onFilterTap,
-            //     child: SvgPicture.asset(
-            //       "assets/images/filter_icon_svg.svg",
-            //       width: widget.filterIconSize,
-            //       height: widget.filterIconSize,
-            //       color: widget.iconColor,
-            //     ),
-            //   ),
+            if (widget.showFilterIcon) ...[
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: widget.onFilterTap,
+                child: SvgPicture.asset(
+                  "assets/images/filter_icon_svg.svg",
+                  width: widget.filterIconSize,
+                  height: widget.filterIconSize,
+                  colorFilter: widget.iconColor != null
+                      ? ColorFilter.mode(widget.iconColor!, BlendMode.srcIn)
+                      : null,
+                ),
+              ),
+            ],
           ],
         ),
       ),

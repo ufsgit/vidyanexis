@@ -22,8 +22,7 @@ class HttpUrls {
 //   static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
 
 //dev
-  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
-  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -249,6 +248,7 @@ class HttpUrls {
   static String getUserLocationDetails = "lead/get_user_loaction_details";
   static String checkin = "lead/Save_Lead_Checkin";
   static String getCheckin = "lead/get_lead_checkin";
+  static String getCheckinReport = "lead/get_checkin_report";
   static String getLocation = "lead/get_location";
   static String saveLocation = "lead/save_location";
   static String deleteLocation = "lead/delete_location";

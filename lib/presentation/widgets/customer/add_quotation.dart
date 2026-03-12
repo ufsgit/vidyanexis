@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
@@ -34,17 +35,34 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
   @override
   void initState() {
-    // TODO: implement initState
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+
+      // Always clear first to ensure a clean state
+      customerDetailsProvider.clearQuotationDetails();
+
       settingsProvider.searchBranch(context);
       customerDetailsProvider.getQuotationTypes(context);
-      customerDetailsProvider.getCustomFieldsByQuotationId(context);
+
+      // Fetch custom field definitions for quotations
+      await customerDetailsProvider.getCustomFieldsByQuotationId(context);
+
+      if (widget.isEdit) {
+        // Fetch existing quotation details if editing
+        await customerDetailsProvider.getQuatationListByMasterId(
+            widget.quotationId, context);
+
+        if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
+          final quotation = customerDetailsProvider.quotationListByMaster.first;
+          customerDetailsProvider.populateAllQuotationFields(
+              quotation, widget.customerId);
+        }
+      }
     });
-    super.initState();
   }
 
   @override
@@ -354,6 +372,13 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         key: customFieldQuotationKey,
                         customFields:
                             customerDetailsProvider.customFieldQuotation,
+                        initialFieldValues:
+                            customerDetailsProvider.customFieldQuotation
+                                .map((e) => FieldValueModel(
+                                      customFieldId: e.customFieldId,
+                                      value: e.datavalue,
+                                    ))
+                                .toList(),
                         controllerKey: 'quotation',
                       ),
                       const SizedBox(height: 16),
@@ -2693,143 +2718,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       onPressed: () async {
         await customerDetailsProvider.loadQuotationFromCustomFields(
             context, "view_in_quotation");
-        final quotation = customerDetailsProvider.quotationListByMaster.first;
-
-        // ---- BASIC DETAILS ----
-        customerDetailsProvider.customerId = widget.customerId;
-        customerDetailsProvider.qproductnameController.text =
-            quotation.productName;
-        customerDetailsProvider.advanceController.text =
-            quotation.advancePercentage;
-        customerDetailsProvider.deliveryController.text =
-            quotation.onDeliveryPercentage;
-        customerDetailsProvider.workCompletionController.text =
-            quotation.workCompletionPercentage;
-        customerDetailsProvider.qsubsidyAmountController.text =
-            quotation.subsidyAmount;
-        customerDetailsProvider.qwarrentyController.text = quotation.warranty;
-        customerDetailsProvider.qtermsConditionsController.text =
-            quotation.termsAndConditions;
-        customerDetailsProvider.quotationDescriptionController.text =
-            quotation.description;
-        customerDetailsProvider.quotationDescription2Controller.text =
-            quotation.description2;
-        customerDetailsProvider.quotationDescription3Controller.text =
-            quotation.description3;
-
-        // ---- STATUS ----
-        customerDetailsProvider.selectedQuotationStatus =
-            quotation.quotationStatusId;
-        customerDetailsProvider.selectedQuotationStatusName =
-            quotation.quotationStatusName;
-
-        // ---- FEES ----
-        customerDetailsProvider.registrationFeeController.text =
-            quotation.ksebRegistrationFee.toString();
-        customerDetailsProvider.feasibilityFeeController.text =
-            quotation.ksebFeasibilityFee.toString();
-        customerDetailsProvider.systemPriceController.text =
-            quotation.ksebSystemPrice.toString();
-        customerDetailsProvider.additionalStructureController.text =
-            quotation.additionalStructure.toString();
-
-        // ---- TOTALS ----
-        customerDetailsProvider.subtotalController.text =
-            quotation.totalAmount.toString();
-        customerDetailsProvider.totalController.text =
-            quotation.netTotal.toString();
-
-        // ---- ITEMS ----
-        customerDetailsProvider.updateItemsFromQuotationDetailsNew(
-          quotation.quotationDetails,
-          quotation.billOfMaterials,
-          quotation.productionChart,
-        );
-
-        // ---- GST ----
-        final taxable = double.tryParse(quotation.taxableAmount) ?? 0;
-        final gst = double.tryParse(quotation.gstAmount) ?? 0;
-        final gstPer = double.tryParse(quotation.gstPer) ?? 0;
-
-        customerDetailsProvider.gstTaxableAmountController.text =
-            taxable.toStringAsFixed(2);
-        customerDetailsProvider.cgstTaxableAmountController.text =
-            (taxable / 2).toStringAsFixed(2);
-        customerDetailsProvider.sgstTaxableAmountController.text =
-            (taxable / 2).toStringAsFixed(2);
-
-        customerDetailsProvider.totalGstAmountController.text =
-            gst.toStringAsFixed(2);
-        customerDetailsProvider.totalCgstAmountController.text =
-            (gst / 2).toStringAsFixed(2);
-        customerDetailsProvider.totalSgstAmountController.text =
-            (gst / 2).toStringAsFixed(2);
-
-        customerDetailsProvider.totalGstPerController.text =
-            gstPer.toStringAsFixed(2);
-        customerDetailsProvider.totalCgstPerController.text =
-            (gstPer / 2).toStringAsFixed(2);
-        customerDetailsProvider.totalSgstPerController.text =
-            (gstPer / 2).toStringAsFixed(2);
-
-        // ---- QUOTATION TYPE ----
-        customerDetailsProvider.quotationTypeController.text =
-            quotation.quotationTypeName;
-        customerDetailsProvider.selectedQuotationType =
-            quotation.quotationTypeId;
-
-        // ---- CABLE DETAILS ----
-        customerDetailsProvider.cableStructureController.text =
-            quotation.cableStructure;
-        customerDetailsProvider.cableTypeController.text = quotation.cableType;
-        customerDetailsProvider.cableShortCircuitTempController.text =
-            quotation.cableShortCircuitTemp;
-        customerDetailsProvider.cableStandardController.text =
-            quotation.cableStandard;
-        customerDetailsProvider.cableConductorClassController.text =
-            quotation.cableConductorClass;
-        customerDetailsProvider.cableMaterialController.text =
-            quotation.cableMaterial;
-        customerDetailsProvider.cableProtectionController.text =
-            quotation.cableProtection;
-        customerDetailsProvider.cableWarrantyController.text =
-            quotation.cableWarranty;
-        customerDetailsProvider.cableTensileStrengthController.text =
-            quotation.cableTensileStrength;
-
-        // ---- OTHER DETAILS ----
-        customerDetailsProvider.plantCapacityController.text =
-            quotation.plantCapacity;
-        customerDetailsProvider.moduleTechnologiesController.text =
-            quotation.moduleTechnologies;
-        customerDetailsProvider.mountingStructureTechnologiesController.text =
-            quotation.mountingStructureTechnologies;
-        customerDetailsProvider.projectSchemeController.text =
-            quotation.projectScheme;
-        customerDetailsProvider.powerEvacuationController.text =
-            quotation.powerEvacuation;
-        customerDetailsProvider.areaApproximateController.text =
-            quotation.areaApproximate;
-        customerDetailsProvider.solarPlantOutputConnectionController.text =
-            quotation.solarPlantOutputConnection;
-        customerDetailsProvider.schemeController.text = quotation.scheme;
-        customerDetailsProvider.qvalidityController.text = quotation.validity;
-        customerDetailsProvider.qtendorNumberController.text =
-            quotation.tendorNumber;
-        customerDetailsProvider.paymentTermsController.text =
-            quotation.paymentTermsName;
-        customerDetailsProvider.incoTermsController.text = quotation.incoTerms;
-        customerDetailsProvider.shippingChargesController.text =
-            quotation.shippingCharges;
-        customerDetailsProvider.totalAdCESSController.text = quotation.otherTax;
-        customerDetailsProvider.totalCgstAmountController.text =
-            quotation.totalCgstAmount;
-        customerDetailsProvider.totalSgstAmountController.text =
-            quotation.totalSgstAmount;
-
-        customerDetailsProvider.commercialItems = quotation.commercialItems;
-
-        customerDetailsProvider.scopeOfWorkItems = quotation.scopeOfWorkItems;
+        if (customerDetailsProvider.quotationListByMaster.isNotEmpty) {
+          final quotation = customerDetailsProvider.quotationListByMaster.first;
+          customerDetailsProvider.populateAllQuotationFields(
+              quotation, widget.customerId);
+        }
       },
       buttonText: 'Load Quotation',
       backgroundColor: Colors.blue,

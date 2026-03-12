@@ -974,8 +974,20 @@ class LeadReportProvider extends ChangeNotifier {
             .map((item) => SearchLeadModel.fromJson(item))
             .toList();
 
-        _totalCount = _tempData.last.customerId;
-        print("Last customer's ID: $_totalCount");
+        // Try to find the total count (tp) from the dummy record or any record
+        int tpCount = 0;
+        for (var lead in _tempData) {
+          if (lead.tp > 0) {
+            tpCount = lead.tp;
+            break;
+          }
+        }
+
+        if (tpCount > 0) {
+          _totalCount = tpCount;
+        } else {
+          _totalCount = _tempData.last.tp > 0 ? _tempData.last.tp : _tempData.last.customerId;
+        }
 
         _tempData.removeLast();
 

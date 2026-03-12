@@ -84,6 +84,7 @@ class GetQuotationbyMasterIdmodel {
   final String otherTax;
   final String description2;
   final String description3;
+  final List<Map<String, dynamic>> quotationCustomFields;
   final int branchId;
   final String leadBranchName;
   final BranchDetails? branchDetails;
@@ -158,6 +159,7 @@ class GetQuotationbyMasterIdmodel {
     required this.scopeOfWorkItems,
     required this.description2,
     required this.description3,
+    required this.quotationCustomFields,
     required this.branchId,
     required this.leadBranchName,
     this.branchDetails,
@@ -245,6 +247,9 @@ class GetQuotationbyMasterIdmodel {
           .toList(),
       description2: toStr(json['Description_2']),
       description3: toStr(json['Description_3']),
+      quotationCustomFields: (json['quotation_custom_fields'] as List? ?? [])
+          .map((e) => e as Map<String, dynamic>)
+          .toList(),
       branchId: toInt(json['Branch_Id']),
       leadBranchName: toStr(json['LeadBranchName']),
       branchDetails: json['branch_details'] != null

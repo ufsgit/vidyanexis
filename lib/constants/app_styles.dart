@@ -3,14 +3,15 @@ import 'package:google_fonts/google_fonts.dart';
 
 class AppStyles {
   static logo() {
-    String logo = 'assets/images/logo.png';
-    // String logo = 'assets/images/logo_dyuthi.jpg';
+    String logo = 'assets/images/logo_2.png';
+    // String logo = 'assets/images/app_logo.png';
+    // String logo = 'assets/images/solaris_logo.png';
     return logo;
   }
 
   static name() {
-    String name = 'Solaris';
-    // String name = 'vidyanexis';
+    String name = 'KRE';
+    // String name = 'Solaris';
     // String name = 'First Day';
     // String name = 'Neopower';
     // String name = 'Horizon';

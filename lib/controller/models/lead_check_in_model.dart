@@ -13,6 +13,7 @@ class LeadCheckIn {
   final dynamic checkoutData;
   final double? latitude;
   final double? longitude;
+  final String? timeDifference;
 
   LeadCheckIn({
     this.userDetailsName,
@@ -29,16 +30,22 @@ class LeadCheckIn {
     this.checkoutData,
     this.latitude,
     this.longitude,
+    this.timeDifference,
   });
 
   factory LeadCheckIn.fromJson(Map<String, dynamic> json) {
     return LeadCheckIn(
-      userDetailsName: json['User_Details_Name'],
+      userDetailsName: json['User_Details_Name'] ??
+          json['user_details_name'] ??
+          json['user_name'] ??
+          json['User_Name'] ??
+          json['staff_name'] ??
+          json['Staff_Name'],
       checkinLocation: json['checkin_location'],
       checkoutLocation: json['checkout_location'],
       checkinDate: json['checkindate'],
       checkoutDate: json['checkoutdate'],
-      leadName: json['leadname'],
+      leadName: json['lead_name'] ?? json['leadname'],
       customerId: json['Customer_Id'],
       checkinStatus: json['checkin_status'],
       location: json['Location'],
@@ -51,6 +58,7 @@ class LeadCheckIn {
       longitude: (json['longitude'] is num)
           ? (json['longitude'] as num).toDouble()
           : null,
+      timeDifference: json['time_difference'],
     );
   }
 
@@ -61,7 +69,7 @@ class LeadCheckIn {
       'checkout_location': checkoutLocation,
       'checkindate': checkinDate,
       'checkoutdate': checkoutDate,
-      'leadname': leadName,
+      'lead_name': leadName,
       'Customer_Id': customerId,
       'checkin_status': checkinStatus,
       'Location': location,
@@ -70,6 +78,7 @@ class LeadCheckIn {
       'CheckoutData': checkoutData,
       'latitude': latitude,
       'longitude': longitude,
+      'time_difference': timeDifference,
     };
   }
 

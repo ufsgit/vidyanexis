@@ -79,24 +79,30 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
           );
         }
 
-        return Container(
-          width: double.infinity,
-          constraints: const BoxConstraints(
-            minHeight: 300,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(0.0),
-            child: Column(
-              children: taskInfoList.asMap().entries.map((entry) {
-                final index = entry.key;
-                final taskInfo = entry.value;
-                return Container(
-                  margin: const EdgeInsets.only(bottom: 12),
-                  child: _buildCustomerRow(taskInfo, index),
-                );
-              }).toList(),
+        return Column(
+          children: [
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(
+                minHeight: 300,
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(0.0),
+                child: Column(
+                  children: taskInfoList.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final taskInfo = entry.value;
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      child: _buildCustomerRow(taskInfo, index),
+                    );
+                  }).toList(),
+                ),
+              ),
             ),
-          ),
+            const SizedBox(height: 10),
+            _buildPaginationControls(context),
+          ],
         );
       },
     );
@@ -234,6 +240,46 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
               //     color: AppColors.textGrey4,
               //   ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPaginationControls(BuildContext context) {
+    final dashBoardProvider = Provider.of<DashboardProvider>(context);
+
+    int startItem = dashBoardProvider.taskStartLimit;
+    int endItem =
+        (dashBoardProvider.taskEndLimit < dashBoardProvider.taskTotalCount)
+            ? dashBoardProvider.taskEndLimit
+            : dashBoardProvider.taskTotalCount;
+
+    return SizedBox(
+      height: 50,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: dashBoardProvider.taskStartLimit > 1
+                ? () {
+                    dashBoardProvider.fetchPreviousPageTasks(context);
+                  }
+                : null,
+          ),
+          Text(
+            'Showing $startItem / $endItem of ${dashBoardProvider.taskTotalCount}',
+            style: const TextStyle(fontSize: 16),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward),
+            onPressed:
+                dashBoardProvider.taskEndLimit < dashBoardProvider.taskTotalCount
+                    ? () {
+                        dashBoardProvider.fetchNextPageTasks(context);
+                      }
+                    : null,
           ),
         ],
       ),

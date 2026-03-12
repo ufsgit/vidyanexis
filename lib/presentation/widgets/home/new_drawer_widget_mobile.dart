@@ -141,7 +141,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   //     leadProvider.assignToController.text,
   //   )) {
   //     _saveLead();
-  //     print('Triggered/////////////////////');
   //   }
   // }
 
@@ -442,7 +441,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         }
       }
       dropDownProvider.getUserDetails(context);
-      print(leadProvider.loginUserName);
       leadProvider.searchUserController.text = leadProvider.loginUserName;
       dropDownProvider.setSelectedUserId(leadProvider.loginUserId);
 
@@ -627,7 +625,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final imageUploadProvider = Provider.of<ImageUploadProvider>(context);
 
-    print(leadProvider.enquirySourceController.text);
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
         return Scaffold(
@@ -650,17 +647,33 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             leadingWidth: 36,
             backgroundColor: Colors.white,
             surfaceTintColor: Colors.white,
-            title: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
+            title: Row(
               children: [
-                Text(
-                  widget.isEdit ? 'Edit Lead details' : 'Add New Lead',
-                  style: GoogleFonts.plusJakartaSans(
-                    color: AppColors.textBlack,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.asset(
+                    AppStyles.logo(),
+                    height: 32,
+                    width: 32,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
                   ),
+                ),
+                const SizedBox(width: 8),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      widget.isEdit ? 'Edit Lead details' : 'Add New Lead',
+                      style: GoogleFonts.plusJakartaSans(
+                        color: AppColors.textBlack,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ],
                 ),
                 if (!widget.isEdit)
                   Text(
