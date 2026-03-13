@@ -2826,23 +2826,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   customerDetailsProvider
                                                                       .qsubsidyAmountController
                                                                       .text = '0';
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    barrierDismissible:
-                                                                        false,
-                                                                    builder:
-                                                                        (BuildContext
+                                                                    Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder: (BuildContext
                                                                             context) {
-                                                                      return QuotationCreationWidget(
-                                                                          quotationId:
-                                                                              '0',
-                                                                          isEdit:
-                                                                              false,
-                                                                          customerId:
-                                                                              widget.customerId);
-                                                                    },
-                                                                  );
+                                                                          return QuotationCreationWidget(
+                                                                              quotationId:
+                                                                                  '0',
+                                                                              isEdit:
+                                                                                  false,
+                                                                              customerId:
+                                                                                  widget.customerId);
+                                                                        },
+                                                                      ),
+                                                                    );
+
                                                                 },
                                                                 icon: const Icon(
                                                                     Icons.add),
@@ -2890,20 +2889,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     context);
                                                             // _scaffoldKey.currentState
                                                             //     ?.openEndDrawer();
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return QuotationDetailsWidget(
-                                                                  customerId: widget
-                                                                      .customerId,
-                                                                  serviceId:
-                                                                      quatationId
-                                                                          .toString(),
-                                                                );
-                                                              },
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (BuildContext
+                                                                    context) {
+                                                                  return QuotationDetailsWidget(
+                                                                    customerId: widget
+                                                                        .customerId,
+                                                                    serviceId:
+                                                                        quatationId
+                                                                            .toString(),
+                                                                  );
+                                                                },
+                                                              ),
                                                             );
+
                                                           },
                                                           quatationId:
                                                               selectedQuotationStatusId,
@@ -4729,14 +4730,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     customerDetailsProvider.scopeOfWorkItems = quotation.scopeOfWorkItems;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return QuotationCreationWidget(
-            quotationId: taskId, isEdit: true, customerId: widget.customerId);
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return QuotationCreationWidget(
+              quotationId: taskId, isEdit: true, customerId: widget.customerId);
+        },
+      ),
     );
+
   }
 
   Future<void> _openMaps(String location) async {

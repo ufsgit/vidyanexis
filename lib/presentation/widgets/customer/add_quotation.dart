@@ -14,6 +14,8 @@ import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
+
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -91,28 +93,41 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     //   return null; // Valid total
     // }
 
-    return AlertDialog(
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-              onPressed: () {
-                customerDetailsProvider.clearQuotationDetails();
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.close))
-        ],
+      appBar: CustomAppBarWidget(
+        title: widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
+        onLeadingPressed: () {
+          customerDetailsProvider.clearQuotationDetails();
+          Navigator.pop(context);
+        },
+        onSavePressed: () async {
+          if (!_formKey.currentState!.validate()) return;
+
+          if (customerDetailsProvider.qproductnameController.text.isEmpty) {
+            _showValidationDialog(
+                context, 'Cannot Save', 'Product name is required');
+            return;
+          }
+
+          if (customerDetailsProvider.items.isEmpty &&
+              customerDetailsProvider.commercialItems.isEmpty &&
+              customerDetailsProvider.billOfMaterialsItems.isEmpty) {
+            _showValidationDialog(context, 'Cannot Save', 'No items added');
+            return;
+          }
+
+          try {
+            customerDetailsProvider.saveQuotation(
+                widget.quotationId, widget.customerId, context, widget.isEdit);
+          } catch (e) {
+            _showValidationDialog(context, 'Save Failed', e.toString());
+            print(e);
+          }
+        },
       ),
-      content: Form(
+      body: Form(
+
         key: _formKey,
         child: SingleChildScrollView(
           child: Container(
@@ -1189,48 +1204,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
-      actions: [
-        CustomElevatedButton(
-          buttonText: 'Cancel',
-          onPressed: () {
-            customerDetailsProvider.clearQuotationDetails();
-            Navigator.of(context).pop();
-          },
-          backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
-        ),
-        CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            if (!_formKey.currentState!.validate()) return;
-
-            if (customerDetailsProvider.qproductnameController.text.isEmpty) {
-              _showValidationDialog(
-                  context, 'Cannot Save', 'Product name is required');
-              return;
-            }
-
-            if (customerDetailsProvider.items.isEmpty &&
-                customerDetailsProvider.commercialItems.isEmpty &&
-                customerDetailsProvider.billOfMaterialsItems.isEmpty) {
-              _showValidationDialog(context, 'Cannot Save', 'No items added');
-              return;
-            }
-
-            try {
-              customerDetailsProvider.saveQuotation(widget.quotationId,
-                  widget.customerId, context, widget.isEdit);
-            } catch (e) {
-              _showValidationDialog(context, 'Save Failed', e.toString());
-              print(e);
-            }
-          },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
-        ),
-      ],
     );
   }
 

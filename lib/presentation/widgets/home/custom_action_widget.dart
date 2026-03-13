@@ -21,8 +21,9 @@ class CustomActionButton extends StatelessWidget {
     this.backgroundColor,
     this.imageColor,
     this.textColor,
-    this.height = 30,
-    this.iconSize = 15,
+    this.height = 34,
+    this.iconSize = 16,
+
   }) : super(key: key);
 
   @override
@@ -37,7 +38,8 @@ class CustomActionButton extends StatelessWidget {
         ),
         child: Center(
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -47,13 +49,18 @@ class CustomActionButton extends StatelessWidget {
                   color: imageColor ?? AppColors.textGrey3,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  text,
-                  style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textBlack),
+                Flexible(
+                  child: Text(
+                    text,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textBlack),
+                  ),
                 ),
+
               ],
             ),
           ),
