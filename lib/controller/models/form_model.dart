@@ -20,14 +20,18 @@ class FormModel {
   final String id;
   final String name;
   final String department;
+  final int? departmentId;
   final String taskType;
+  final int? taskTypeId;
   final List<FieldModel> fields;
 
   FormModel({
     required this.id,
     required this.name,
     required this.department,
+    this.departmentId,
     required this.taskType,
+    this.taskTypeId,
     required this.fields,
   });
 }

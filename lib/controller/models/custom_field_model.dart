@@ -60,18 +60,25 @@ class CustomFieldModel {
 
   factory CustomFieldModel.fromJson(Map<String, dynamic> json) =>
       CustomFieldModel(
-        customFieldId: json["custom_field_id"],
-        customFieldTypeId: json["custom_field_type_id"],
-        customFieldName: json["custom_field_name"],
-        deletedStatus: json["Deleted_Status"],
-        isQuotationCustom: json["quotation_custom"],
-        isViewInQuotation: json["view_in_quotation"],
-        dropDownValues: json["Dropdown_Values"] == null
-            ? []
-            : List<String>.from(json["Dropdown_Values"]!),
-        checkBoxValues: json["Checkbox_Values"] == null
-            ? []
-            : List<String>.from(json["Checkbox_Values"]!),
+        customFieldId: json["custom_field_id"] ?? json["Custom_Field_Id"],
+        customFieldTypeId:
+            json["custom_field_type_id"] ?? json["Custom_Field_Type_Id"],
+        customFieldName: json["custom_field_name"] ?? json["Custom_Field_Name"],
+        deletedStatus: json["Deleted_Status"] ?? json["deleted_status"],
+        isQuotationCustom:
+            json["quotation_custom"] ?? json["isQuotationCustom"],
+        isViewInQuotation:
+            json["view_in_quotation"] ?? json["isViewInQuotation"],
+        dropDownValues:
+            (json["Dropdown_Values"] ?? json["dropdown_values"]) == null
+                ? []
+                : List<String>.from(
+                    (json["Dropdown_Values"] ?? json["dropdown_values"])!),
+        checkBoxValues:
+            (json["Checkbox_Values"] ?? json["checkbox_values"]) == null
+                ? []
+                : List<String>.from(
+                    (json["Checkbox_Values"] ?? json["checkbox_values"])!),
         createdAt: json["created_at"] == null
             ? null
             : DateTime.parse(json["created_at"]),

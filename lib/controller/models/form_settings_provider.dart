@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'form_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
 
 class FormProvider extends ChangeNotifier {
@@ -13,9 +14,8 @@ class FormProvider extends ChangeNotifier {
 
   String searchQuery = "";
 
-  List<String> departments = [];
-
-  List<String> taskTypes = [];
+  List<Map<String, dynamic>> departments = [];
+  List<Map<String, dynamic>> taskTypes = [];
 
   List<FieldModel> availableFields = [];
 
@@ -34,7 +34,10 @@ class FormProvider extends ChangeNotifier {
         if (data != null && data['success'] == true) {
           final List<dynamic> departmentList = data['data'][0];
           departments = departmentList
-              .map((item) => item['Department_Name'].toString())
+              .map((item) => {
+                    'id': item['Department_Id'],
+                    'name': item['Department_Name'].toString()
+                  })
               .toList();
         }
       }
@@ -53,11 +56,13 @@ class FormProvider extends ChangeNotifier {
           endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name=');
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-        if (data != null) {
           final List<dynamic> tList = data as List<dynamic>;
-          taskTypes =
-              tList.map((item) => item['Task_Type_Name'].toString()).toList();
-        }
+          taskTypes = tList
+              .map((item) => {
+                    'id': item['Task_Type_Id'],
+                    'name': item['Task_Type_Name'].toString()
+                  })
+              .toList();
       }
     } catch (e) {
       debugPrint('Exception in fetchTaskTypes: $e');
@@ -95,9 +100,10 @@ class FormProvider extends ChangeNotifier {
               default:
                 type = FieldType.text;
             }
+            final label = (cf.customFieldName ?? "Field ${cf.customFieldId}");
             return FieldModel(
               id: cf.customFieldId.toString(),
-              label: cf.customFieldName ?? "Unknown",
+              label: label.isEmpty || label == "null" ? "Field ${cf.customFieldId}" : label,
               type: type,
               options: cf.dropDownValues,
             );
@@ -145,22 +151,35 @@ class FormProvider extends ChangeNotifier {
             if (item['Custom_Fields'] != null &&
                 item['Custom_Fields'] is List) {
               parsedFields = (item['Custom_Fields'] as List).map((f) {
-                final cfId = f['Custom_Field_Id'].toString();
+                final cfId =
+                    (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ??
+                        '0';
+                final cfName =
+                    (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
+                final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
+
+                // Match by ID first, then by Label as a fallback to "repair" corrupted IDs
                 final availableField = availableFields.firstWhere(
                   (a) => a.id == cfId,
-                  orElse: () => FieldModel(
-                    id: cfId,
-                    label: f['Custom_Field_Name']?.toString() ?? 'Field $cfId',
-                    type: FieldType.text,
+                  orElse: () => availableFields.firstWhere(
+                    (a) => cfName != null && a.label.toLowerCase() == cfName.toLowerCase(),
+                    orElse: () => FieldModel(
+                      id: cfId,
+                      label: cfName ?? 'Field $cfId',
+                      type: FieldType.text,
+                    ),
                   ),
                 );
                 return FieldModel(
                   id: availableField.id,
-                  label: availableField.label,
+                  label: availableField.label.isEmpty || availableField.label == "null" 
+                      ? (cfName ?? "Field $cfId") 
+                      : availableField.label,
                   type: availableField.type,
                   options: availableField.options,
-                  isMandatory:
-                      (f['Is_Mandatory'] == 1 || f['Is_Mandatory'] == true),
+                  isMandatory: (isMandatoryValue == 1 ||
+                      isMandatoryValue == true ||
+                      isMandatoryValue == "1"),
                 );
               }).toList();
             }
@@ -169,7 +188,9 @@ class FormProvider extends ChangeNotifier {
               id: item['Form_Id']?.toString() ?? '',
               name: item['Form_Name']?.toString() ?? '',
               department: item['Department_Name']?.toString() ?? '',
+              departmentId: item['Department_Id'],
               taskType: item['Task_Type_Name']?.toString() ?? '',
+              taskTypeId: item['Task_Type_Id'],
               fields: parsedFields,
             );
           }).toList();
@@ -186,8 +207,11 @@ class FormProvider extends ChangeNotifier {
   Future<void> addForm(BuildContext context, FormModel form) async {
     try {
       final payload = {
+        "Form_Id": 0, // Use 0 for new forms
         "Form_Name": form.name,
+        "Department_Id": form.departmentId,
         "Department_Name": form.department,
+        "Task_Type_Id": form.taskTypeId,
         "Task_Type_Name": form.taskType,
         "Custom_Fields": form.fields
             .map((f) => {
@@ -221,12 +245,48 @@ class FormProvider extends ChangeNotifier {
     }
   }
 
-  void updateForm(String id, FormModel updatedForm) {
-    // Currently relying on local state update for edits
-    final index = _forms.indexWhere((e) => e.id == id);
-    if (index != -1) {
-      _forms[index] = updatedForm;
-      notifyListeners();
+  Future<void> updateForm(BuildContext context, String id, FormModel form) async {
+    try {
+      final payload = {
+        "Form_Id": int.tryParse(id) ?? 0,
+        "Form_Name": form.name,
+        "Department_Id": form.departmentId,
+        "Department_Name": form.department,
+        "Task_Type_Id": form.taskTypeId,
+        "Task_Type_Name": form.taskType,
+        "Custom_Fields": form.fields
+            .map((f) => {
+                  "Custom_Field_Id": int.tryParse(f.id) ?? 0,
+                  "Is_Mandatory": f.isMandatory ? 1 : 0
+                })
+            .toList(),
+      };
+
+      final response = await HttpRequest.httpPostRequest(
+        endPoint: HttpUrls.saveFormData,
+        bodyData: payload,
+      );
+
+      if (response != null && response.statusCode == 200) {
+        final index = _forms.indexWhere((e) => e.id == id);
+        if (index != -1) {
+          _forms[index] = form;
+        }
+        notifyListeners();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Form updated successfully')),
+        );
+        fetchForms(context); // Refresh from server
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to update form')),
+        );
+      }
+    } catch (e) {
+      debugPrint('Exception in updateForm: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred while updating')),
+      );
     }
   }
 
@@ -248,80 +308,46 @@ class FormProvider extends ChangeNotifier {
   }
 
   Future<void> getFormDataByCustomer(String customerId,
-      {String? taskTypeId}) async {
+      {String? taskTypeId, String? enquiryForId}) async {
     isLoadingForms = true;
-    _customerForms.clear();
     notifyListeners();
     try {
-      if (availableFields.isEmpty) {
-        // We need fields to parse the form correctly
-        // Since fetchAvailableFields doesn't actually use context for the request, we can pass a dummy or change it
-        // For now, let's just hope it's already there or handle it
+      final prefs = await SharedPreferences.getInstance();
+      final String userId = prefs.getString('userId') ?? "0";
+
+      final Map<String, dynamic> queryParams = {
+        "Customer_Id": customerId,
+        "Login_User_Id": userId,
+      };
+
+      if (enquiryForId != null && enquiryForId != "0" && enquiryForId.isNotEmpty) {
+        queryParams["Enquiry_For_Id"] = enquiryForId;
       }
 
-      // Removed Task_Type_Id filter to ensure all customer forms are visible
-      String url = '${HttpUrls.getFormDataDetails}?Customer_Id=$customerId';
-      
-      debugPrint("DEBUG: Fetching forms from URL: $url");
-      final response = await HttpRequest.httpGetRequest(endPoint: url);
+      if (taskTypeId != null && taskTypeId.isNotEmpty && taskTypeId != "0") {
+        queryParams["Task_Type_Id"] = taskTypeId;
+      }
 
-      if (response != null && response.statusCode == 200) {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getFormDataDetails,
+        bodyData: queryParams,
+      );
+
+      if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
-          List<dynamic> formsList = [];
+          bool hasData = false;
           if (data is Map) {
-            // Try all possible keys: forms, form_data, or data itself
-            var fForms = data['forms'];
-            var fData = data['form_data'] ?? data['data'];
-
-            if (fForms is List && fForms.isNotEmpty) {
-              formsList = fForms;
-            } else if (fData is List && fData.isNotEmpty) {
-              formsList = fData;
-            }
+            hasData = (data['forms'] is List && data['forms'].isNotEmpty) ||
+                      (data['form_data'] is List && data['form_data'].isNotEmpty) ||
+                      (data['data'] is List && data['data'].isNotEmpty);
           } else if (data is List) {
-            formsList = data;
+            hasData = data.isNotEmpty;
           }
 
-          _customerForms = formsList.map((item) {
-            List<FieldModel> parsedFields = [];
-            if (item['Custom_Fields'] != null &&
-                item['Custom_Fields'] is List) {
-              parsedFields = (item['Custom_Fields'] as List).map((f) {
-                // Try both PascalCase and snake_case keys as seen in user's JSON
-                final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ?? '0';
-                final cfName = (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
-                final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
-
-                final availableField = availableFields.firstWhere(
-                  (a) => a.id == cfId,
-                  orElse: () => FieldModel(
-                    id: cfId,
-                    label: cfName ?? 'Field $cfId',
-                    type: FieldType.text,
-                  ),
-                );
-                return FieldModel(
-                  id: availableField.id,
-                  label: availableField.label,
-                  type: availableField.type,
-                  options: availableField.options,
-                  isMandatory: (isMandatoryValue == 1 ||
-                      isMandatoryValue == true ||
-                      isMandatoryValue == "1"),
-                );
-              }).toList();
-            }
-
-            return FormModel(
-              id: item['Form_Id']?.toString() ?? '',
-              name: item['Form_Name']?.toString() ?? '',
-              department: item['Department_Name']?.toString() ?? '',
-              taskType: item['Task_Type_Name']?.toString() ?? '',
-              fields: parsedFields,
-            );
-          }).toList();
-          notifyListeners();
+          if (hasData) {
+            setCustomerForms(data);
+          }
         }
       }
     } catch (e) {
@@ -329,6 +355,82 @@ class FormProvider extends ChangeNotifier {
     } finally {
       isLoadingForms = false;
       notifyListeners();
+    }
+  }
+
+  void setCustomerForms(dynamic data) {
+    if (data == null) return;
+    try {
+      debugPrint("DEBUG: setCustomerForms received data: $data");
+      List<dynamic> formsList = [];
+      if (data is Map) {
+        var fForms = data['forms'];
+        var fData = data['form_data'] ?? data['data'];
+
+        if (fForms is List && fForms.isNotEmpty) {
+          formsList = fForms;
+        } else if (fData is List && fData.isNotEmpty) {
+          formsList = fData;
+        }
+      } else if (data is List) {
+        formsList = data;
+      }
+
+      debugPrint("DEBUG: parsed formsList size: ${formsList.length}");
+
+      _customerForms = formsList.map((item) {
+        List<FieldModel> parsedFields = [];
+        // ...
+        if (item['Custom_Fields'] != null && item['Custom_Fields'] is List) {
+          parsedFields = (item['Custom_Fields'] as List).map((f) {
+            // Try both PascalCase and snake_case keys as seen in user's JSON
+            final cfId =
+                (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ??
+                    '0';
+            final cfName =
+                (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
+            final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
+
+            // Match by ID first, then by Label as a fallback to "repair" corrupted IDs
+            final availableField = availableFields.firstWhere(
+              (a) => a.id == cfId,
+              orElse: () => availableFields.firstWhere(
+                (a) => cfName != null && a.label.toLowerCase() == cfName.toLowerCase(),
+                orElse: () => FieldModel(
+                  id: cfId,
+                  label: cfName ?? 'Field $cfId',
+                  type: FieldType.text,
+                ),
+              ),
+            );
+            return FieldModel(
+              id: availableField.id,
+              label: availableField.label.isEmpty || availableField.label == "null"
+                  ? (cfName ?? 'Field $cfId')
+                  : availableField.label,
+              type: availableField.type,
+              options: availableField.options,
+              isMandatory: (isMandatoryValue == 1 ||
+                  isMandatoryValue == true ||
+                  isMandatoryValue == "1"),
+            );
+          }).toList();
+        }
+
+        return FormModel(
+          id: item['Form_Id']?.toString() ?? '',
+          name: item['Form_Name']?.toString() ?? '',
+          department: item['Department_Name']?.toString() ?? '',
+          taskType: item['Task_Type_Name']?.toString() ?? '',
+          fields: parsedFields,
+        );
+      }).toList();
+      
+      isLoadingForms = false; // Reset loading state when forms are set
+      notifyListeners();
+      debugPrint("DEBUG: customerForms updated, size: ${_customerForms.length}");
+    } catch (e) {
+      debugPrint('Error in setCustomerForms: $e');
     }
   }
 

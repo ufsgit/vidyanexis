@@ -863,7 +863,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                                 SizedBox(
-                                  width: 50,
+                                  width: 60,
                                   child: Padding(
                                     padding: EdgeInsets.symmetric(
                                         vertical: 6.0, horizontal: 4.0),
@@ -1030,7 +1030,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  width: 55,
+                                                  width: 60,
                                                   // Reduced from 80 to 60
                                                   child: Padding(
                                                     padding:
@@ -1188,7 +1188,7 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width: 1560,
+                            width: 1650,
                             child: Column(
                               children: [
                                 // Header row
@@ -1292,7 +1292,7 @@ class _LeadsPageState extends State<LeadPage> {
                                           ),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 350,
+                                          width: 375,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Text('Remark',
@@ -1319,7 +1319,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   fontSize: 13)),
                                           color: Color(0xFF607185)),
                                       TableWidget(
-                                          width: 120,
+                                          width: 150,
                                           padding: EdgeInsets.symmetric(
                                               vertical: 6.0, horizontal: 8.0),
                                           data: Text('Follow-Up Date',
@@ -1483,7 +1483,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
-                                                  width: 200,
+                                                  width: 230,
                                                   data: Align(
                                                     alignment: Alignment.center,
                                                     child: Row(
