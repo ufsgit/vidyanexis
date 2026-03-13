@@ -61,16 +61,26 @@ class LeadCheckInProvider extends ChangeNotifier {
       return _localCheckedInStatus[customerId] ?? false;
     }
     final lastRecord = history.first;
+    
     // Check both status string and checkoutData flag
     final status = lastRecord.checkinStatus?.toLowerCase() ?? "";
     final isStatusIn = status.contains("checked in") || status == "check in";
     final isDataIn =
         lastRecord.checkoutData == 1 || lastRecord.checkoutData == "1";
 
-    // Keep local status in sync with history
-    _localCheckedInStatus[customerId] = isStatusIn || isDataIn;
+    // IMPORTANT: Check date-based status as seen in real API responses
+    final hasCheckInDate = lastRecord.checkinDate != null && lastRecord.checkinDate!.isNotEmpty;
+    final hasCheckOutDate = lastRecord.checkoutDate != null && lastRecord.checkoutDate!.isNotEmpty;
+    
+    // If we have a check-in date but no check-out date, the user is checked in
+    final isDateCheckedIn = hasCheckInDate && !hasCheckOutDate;
 
-    return isStatusIn || isDataIn;
+    bool result = isStatusIn || isDataIn || isDateCheckedIn;
+
+    // Keep local status in sync with history
+    _localCheckedInStatus[customerId] = result;
+
+    return result;
   }
 
 
@@ -92,15 +102,23 @@ class LeadCheckInProvider extends ChangeNotifier {
       if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
+          List<LeadCheckIn> allReports = [];
           if (data is List) {
-            _customerCheckInHistory[int.parse(customerId)] = data
+            allReports = data
                 .map((item) => LeadCheckIn.fromJson(item))
                 .toList();
           } else {
             final leadResponse = LeadCheckInResponse.fromJson(data);
-            _customerCheckInHistory[int.parse(customerId)] =
-                leadResponse.data ?? [];
+            allReports = leadResponse.data ?? [];
           }
+
+          // FILTER for the specific customerId
+          // The API returns Lead_Id in the LeadCheckIn model
+          _customerCheckInHistory[int.parse(customerId)] = allReports.where((record) {
+            // Check both customerId and leadId as consistency varies in API
+            return record.customerId?.toString() == customerId || 
+                   record.leadId?.toString() == customerId;
+          }).toList();
         }
       }
     } catch (e) {
@@ -182,6 +200,8 @@ class LeadCheckInProvider extends ChangeNotifier {
         leadName: leadName,
         checkinDate: isCheckIn ? DateTime.now().toString() : null,
         checkoutDate: !isCheckIn ? DateTime.now().toString() : null,
+        latitude: lat,
+        longitude: lon,
       );
       if (_customerCheckInHistory.containsKey(customerId)) {
         _customerCheckInHistory[customerId]!.insert(0, optimisticRecord);
@@ -195,9 +215,23 @@ class LeadCheckInProvider extends ChangeNotifier {
         "Lead_Id": customerId,
         "UserDetail_Id": int.tryParse(userId) ?? 0,
         "CheckoutData": isCheckIn ? 1 : 0,
-        "latitude": lat,
-        "longitude": lon,
+        // Send as strings and with multiple possible keys for server compatibility
+        "latitude": lat.toString(),
+        "longitude": lon.toString(),
+        "Latitude": lat.toString(),
+        "Longitude": lon.toString(),
       };
+
+      // If it's a checkout, add specific checkout keys just in case
+      if (!isCheckIn) {
+        body["checkout_latitude"] = lat.toString();
+        body["checkout_longitude"] = lon.toString();
+        body["Checkout_Latitude"] = lat.toString();
+        body["Checkout_Longitude"] = lon.toString();
+        body["checkout_location"] = address;
+      } else {
+        body["checkin_location"] = address;
+      }
 
       final response = await HttpRequest.httpPostRequest(
         endPoint: HttpUrls.checkin,

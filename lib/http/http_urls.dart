@@ -319,6 +319,8 @@ class HttpUrls {
   static String deletePurchase = "item/Delete_Purchase_Master";
   static String saveFormData = "settings/Save_Form_Data";
   static String searchFormData = "settings/Search_Form_Data";
+  static String getFormDataDetails = "settings/Get_Form_Data_Details";
+  static String saveTaskFormData = "settings/Save_Task_Form_Data";
   static String saveSales = "item/Save_sales_master";
   static String getSalesCustomers = "item/get_all_customers";
   static String getSalesDataMaster = "item/get_sales_master";
