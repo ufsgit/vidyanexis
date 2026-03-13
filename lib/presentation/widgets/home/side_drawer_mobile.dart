@@ -365,10 +365,9 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                           try {
                             if (!kIsWeb && userId.isNotEmpty) {
                               print(
-                                  "Unsubscribing from topic: ${AppStyles.name()}-$userId");
+                                  "Unsubscribing from topic: Trackbox-$userId");
                               await FirebaseMessaging.instance
-                                  .unsubscribeFromTopic(
-                                      '${AppStyles.name()}-$userId');
+                                  .unsubscribeFromTopic('Trackbox-$userId');
                             }
                           } catch (e) {
                             print(e);

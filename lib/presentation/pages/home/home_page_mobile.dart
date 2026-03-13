@@ -47,9 +47,9 @@ class _HomePageMobileState extends State<HomePageMobile> {
       String userId = preferences.getString('userId') ?? "0";
       if (!kIsWeb && userId.isNotEmpty) {
         try {
-          print("Subscribing to topic: ${AppStyles.name()}-$userId");
+          print("Subscribing to topic: Trackbox-$userId");
           await FirebaseMessaging.instance
-              .subscribeToTopic('${AppStyles.name()}-$userId');
+              .subscribeToTopic('Trackbox-$userId');
         } catch (e) {
           print(e);
         }
