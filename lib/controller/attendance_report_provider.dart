@@ -451,6 +451,8 @@ class AttendanceReportProvider extends ChangeNotifier {
             await prefs.remove('check_out_time_$selectedUserId');
             _currentCheckInTime = checkInTime;
             _currentCheckOutTime = '';
+            _isCompletedToday = false;
+            notifyListeners();
 
             // We don't have the ID yet, so we must fetch it.
             // Add delay to allow server validation/indexing.
@@ -482,18 +484,20 @@ class AttendanceReportProvider extends ChangeNotifier {
             _currentCheckInTime = '';
             _currentCheckOutTime = checkOutTime;
             _currentAttendanceDetailId = 0;
+            _isCompletedToday = true;
+            notifyListeners();
           }
         } catch (e) {
           print('Error saving local state: $e');
         }
 
+        // Stop loader first
+        Loader.stopLoader(context);
+        isLoaderStopped = true;
+
         if (closeOnSuccess) {
           Navigator.pop(context);
         }
-
-        // Stop loader BEFORE showing success dialog
-        Loader.stopLoader(context);
-        isLoaderStopped = true;
 
         if (context.mounted) {
           _showSuccessDialog(context, checkInTime != null);

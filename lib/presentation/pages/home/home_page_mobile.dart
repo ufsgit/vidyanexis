@@ -121,7 +121,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
       //         },
       //       )
       //     : null,
-      bottomNavigationBar: bottomNavItems.isNotEmpty
+      bottomNavigationBar: bottomNavItems.length >= 2
           ? BottomNavigationBar(
               currentIndex: sideProvider.selectedIndexMobile,
               iconSize: 20,
