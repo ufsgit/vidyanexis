@@ -336,6 +336,8 @@ class _NotificationTileState extends State<_NotificationTile> {
                 0;
         final taskId =
             int.tryParse(widget.notification.masterId?.toString() ?? '0') ?? 0;
+        final followupId =
+            int.tryParse(widget.notification.followupId?.toString() ?? '0') ?? 0;
         final redirectId =
             int.tryParse(widget.notification.redirectId?.toString() ?? '0') ??
                 0;
@@ -345,6 +347,7 @@ class _NotificationTileState extends State<_NotificationTile> {
         // final redirectId = 1;
         print("customerId: $customerId");
         print("taskId: $taskId");
+        print("followupId: $followupId");
         print("redirectId: $redirectId");
 
         leadProvider.setCutomerId(customerId);
