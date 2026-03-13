@@ -1360,13 +1360,39 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
+                      controller: customerDetailsProvider.itemMrpController,
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          2, 'As Per Standerd Warranty'),
+                      labelText: '',
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemUnitController,
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          3, 'As Per Standerds'),
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
                       controller: customerDetailsProvider.itemPriceController,
                       onChanged: (p0) {
                         // Calculate total amount and GST when price changes
                         customerDetailsProvider.calculateTotalAmount();
                       },
-                      hintText:
-                          customerDetailsProvider.getQuotationFieldName(4, 'Price'),
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          4, 'Price'),
                       labelText: '',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
@@ -1376,20 +1402,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemMrpController,
-                      hintText: 'HSN CODE (Optional)',
-                      labelText: '',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
                   Expanded(
                     child: CustomTextField(
                       readOnly: false,
@@ -1404,17 +1416,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           5, 'Quantity'),
                       labelText: '',
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemUnitController,
-                      hintText:
-                          customerDetailsProvider.getQuotationFieldName(3, 'As Per Standards'),
-                      labelText: '',
                     ),
                   ),
                 ],
@@ -1433,7 +1434,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         customerDetailsProvider.calculateTotalAmount();
                       },
                       hintText: customerDetailsProvider.getQuotationFieldName(
-                          6, 'GST %'),
+                          6, 'gst %'),
                       labelText: '',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
@@ -1448,8 +1449,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: true,
                       height: 54,
                       controller: customerDetailsProvider.itemGstController,
-                      hintText:
-                          customerDetailsProvider.getQuotationFieldName(2, 'As Per Standerd Warranty'),
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          7, 'GST'),
                       labelText: '',
                     ),
                   ),

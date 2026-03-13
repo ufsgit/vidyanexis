@@ -54,14 +54,14 @@ class EditBomItemDialog extends StatelessWidget {
               CustomTextField(
                 controller: provider.billdescriptionController,
                 labelText: provider.getQuotationFieldName(10, 'Equipment'),
-                hintText: 'Enter item description',
+                hintText: provider.getQuotationFieldName(10, 'Equipment'),
                 height: 54,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: provider.billmakeController,
                 labelText: provider.getQuotationFieldName(11, 'Specification'),
-                hintText: 'Enter specification',
+                hintText: provider.getQuotationFieldName(11, 'Specification'),
                 height: 54,
               ),
               const SizedBox(height: 16),
@@ -71,7 +71,7 @@ class EditBomItemDialog extends StatelessWidget {
                     child: CustomTextField(
                       controller: provider.billquantityController,
                       labelText: provider.getQuotationFieldName(12, 'Quantity'),
-                      hintText: 'Scale/Qty',
+                      hintText: provider.getQuotationFieldName(12, 'Quantity'),
                       height: 54,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
@@ -95,14 +95,14 @@ class EditBomItemDialog extends StatelessWidget {
               CustomTextField(
                 controller: provider.billdistributorController,
                 labelText: provider.getQuotationFieldName(13, 'Manufacturer'),
-                hintText: 'Enter manufacturer info',
+                hintText: provider.getQuotationFieldName(13, 'Manufacturer'),
                 height: 54,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: provider.billinvoiceController,
                 labelText: provider.getQuotationFieldName(14, 'Comments'),
-                hintText: 'Add comments or invoice info',
+                hintText: provider.getQuotationFieldName(14, 'Comments'),
                 height: 54,
               ),
               const SizedBox(height: 24),
