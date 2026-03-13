@@ -148,14 +148,18 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
         ),
         const SizedBox(width: 8),
-        Text(
-          widget.title!,
-          style: widget.titleStyle ??
-              const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
+        Expanded(
+          child: Text(
+            widget.title!,
+            overflow: TextOverflow.ellipsis,
+            style: widget.titleStyle ??
+                const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+          ),
         ),
+
       ],
     );
   }
@@ -215,22 +219,26 @@ class _CustomAppBarState extends State<CustomAppBar> {
             if (_userName.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(
-                      _userName,
-                      style: const TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 80),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        _userName,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black87,
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
+
             if (widget.showSearch)
               IconButton(
                 icon: Icon(

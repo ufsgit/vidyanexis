@@ -16,6 +16,9 @@ import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 
 class LeadCard extends StatefulWidget {
   final SearchLeadModel lead;
@@ -46,7 +49,39 @@ class _LeadCardState extends State<LeadCard> {
     });
   }
 
+  void _showConvertDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Confirm Convert'),
+          content: const Text('Are you sure you want to convert this lead?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close dialog
+                final leadsProvider =
+                    Provider.of<LeadsProvider>(context, listen: false);
+                await leadsProvider.convertLead(
+                    context, widget.lead.customerId.toString());
+              },
+              child: const Text(
+                'Convert',
+                style: TextStyle(color: Colors.green),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
+
   Widget build(BuildContext context) {
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
     final settingsProvider =
@@ -201,217 +236,302 @@ class _LeadCardState extends State<LeadCard> {
           ),
         ),
         // if (widget.isExpanded) const SizedBox(height: 12),
+        if (widget.isExpanded) const SizedBox(height: 12),
         if (widget.isExpanded)
           Padding(
-            padding: const EdgeInsets.only(right: 16),
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  // ------------------------------------------------------------------
-                  const SizedBox(width: 10),
-                  CustomActionButton(
-                    imageColor: AppColors.btnRed,
-                    onTap: () async {
-                      final customerDetailsProvider =
-                          Provider.of<CustomerDetailsProvider>(context,
-                              listen: false);
-                      customerDetailsProvider.customerId =
-                          widget.lead.customerId.toString();
-                      customerDetailsProvider.clearTaskDetails();
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return AddTaskMobile(
-                            isEdit: false,
-                            taskId: '0',
-                          );
-                        },
-                      ));
-                    },
-                    icon: Icons.task,
-                    text: 'Add Task',
-                  ),
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: AppColors.textGreen,
+                        onTap: () async {
+                          String formatted = formatIndianPhoneNumber(
+                              widget.lead.contactNumber.toString());
 
-                  // ------------------------------------------------------------------
-                  // ------------------------------------------------------------------
-                  // NEW UPDATED WHATSAPP LOGIC — PRIORITY:
-                  // formatIndianNumber Safe Implementation
-                  // ------------------------------------------------------------------
-                  const SizedBox(width: 10),
-                  CustomActionButton(
-                    imageColor: AppColors.textGreen,
-                    onTap: () async {
-                      String formatted = formatIndianPhoneNumber(
-                          widget.lead.contactNumber.toString());
-
-                      if (formatted.isNotEmpty) {
-                        final url = 'https://wa.me/$formatted';
-                        await launchUrl(Uri.parse(url),
-                            mode: LaunchMode.externalApplication);
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                              content: Text('Invalid Indian mobile number')),
-                        );
-                      }
-                    },
-                    icon: Icons.chat_bubble_outline,
-                    text: 'Chat',
-                  ),
-                  // ------------------------------------------------------------------
-
-                  const SizedBox(width: 10),
-                  CustomActionButton(
-                    imageColor: AppColors.appViolet,
-                    onTap: widget.isLead
-                        ? () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      CustomerDetailPageMobile(
-                                        fromLead: true,
-                                        customerId: widget.lead.customerId,
-                                        lead: widget.lead,
-                                      )),
+                          if (formatted.isNotEmpty) {
+                            final url = 'https://wa.me/$formatted';
+                            await launchUrl(Uri.parse(url),
+                                mode: LaunchMode.externalApplication);
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text('Invalid Indian mobile number')),
                             );
                           }
-                        : () async {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                      CustomerDetailPageMobile(
-                                        fromLead: false,
-                                        customerId: widget.lead.customerId,
-                                        lead: widget.lead,
-                                      )),
-                            );
-                          },
-                    icon: Icons.visibility_outlined,
-                    text: 'View',
-                    // imageColor: AppColors.violet,
-                  ),
-                  const SizedBox(width: 10),
-                  CustomActionButton(
-                    onTap: () {
-                      leadsProvider.statusController.clear();
-                      leadsProvider.searchUserController.clear();
-                      leadsProvider.messageController.clear();
-                      leadsProvider.nextFollowUpDateController.clear();
-                      try {
-                        final dropDownProvider = Provider.of<DropDownProvider>(
-                            context,
-                            listen: false);
-                        dropDownProvider.selectedStatusId =
-                            int.parse(widget.lead.statusId.toString());
-                        leadsProvider.statusController.text =
-                            widget.lead.statusName;
-                        print('status id ${widget.lead.statusId}');
-                        print('status name ${widget.lead.statusName}');
-                        dropDownProvider.selectedUserId =
-                            int.parse(widget.lead.toUserId.toString());
-                        leadsProvider.searchUserController.text =
-                            widget.lead.toUserName;
-                        print('assign to ${widget.lead.toUserName}');
-                        print('assign to id ${widget.lead.toUserId}');
-                        leadsProvider.setCutomerId(widget.lead.customerId);
-                        leadsProvider.branchController.text =
-                            widget.lead.branchName;
-                        settingsProvider.selectedBranchId =
-                            widget.lead.branchId;
-                        print('branch ${widget.lead.branchId}');
-                        print('branch name ${widget.lead.branchName}');
-                        leadsProvider.departmentController.text =
-                            widget.lead.departmentName;
-                        settingsProvider.selectedDepartmentId = int.tryParse(
-                                widget.lead.departmentId.toString()) ??
-                            0;
-                        print('department id ${widget.lead.departmentId}');
-                        print('department name ${widget.lead.departmentName}');
+                        },
+                        icon: Icons.chat_bubble_outline,
+                        text: 'Chat',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: AppColors.appViolet,
+                        onTap: widget.isLead
+                            ? () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomerDetailPageMobile(
+                                            fromLead: true,
+                                            customerId: widget.lead.customerId,
+                                            lead: widget.lead,
+                                          )),
+                                );
+                              }
+                            : () async {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          CustomerDetailPageMobile(
+                                            fromLead: false,
+                                            customerId: widget.lead.customerId,
+                                            lead: widget.lead,
+                                          )),
+                                );
+                              },
+                        icon: Icons.visibility_outlined,
+                        text: 'View',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: CustomActionButton(
+                        onTap: () {
+                          leadsProvider.statusController.clear();
+                          leadsProvider.searchUserController.clear();
+                          leadsProvider.messageController.clear();
+                          leadsProvider.nextFollowUpDateController.clear();
+                          try {
+                            final dropDownProvider =
+                                Provider.of<DropDownProvider>(context,
+                                    listen: false);
+                            dropDownProvider.selectedStatusId =
+                                int.parse(widget.lead.statusId.toString());
+                            leadsProvider.statusController.text =
+                                widget.lead.statusName;
+                            dropDownProvider.selectedUserId =
+                                int.parse(widget.lead.toUserId.toString());
+                            leadsProvider.searchUserController.text =
+                                widget.lead.toUserName;
+                            leadsProvider.setCutomerId(widget.lead.customerId);
+                            leadsProvider.branchController.text =
+                                widget.lead.branchName;
+                            settingsProvider.selectedBranchId =
+                                widget.lead.branchId;
+                            leadsProvider.departmentController.text =
+                                widget.lead.departmentName;
+                            settingsProvider.selectedDepartmentId =
+                                int.tryParse(
+                                        widget.lead.departmentId.toString()) ??
+                                    0;
 
-                        leadsProvider.nextFollowUpDateController.text =
-                            widget.lead.nextFollowUpDate.isNotEmpty
-                                ? _formatDateSafely(
-                                    widget.lead.nextFollowUpDate)
-                                : '';
-                        leadsProvider.messageController.clear();
-                        dropDownProvider.filterStaffByBranchAndDepartment(
-                          branchId: widget.lead.branchId,
-                          departmentId: int.tryParse(
-                                  widget.lead.departmentId.toString()) ??
-                              0,
-                        );
-                      } catch (e) {}
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return AddFollowupDialog(
-                            customerName: widget.lead.customerName,
+                            leadsProvider.nextFollowUpDateController.text =
+                                widget.lead.nextFollowUpDate.isNotEmpty
+                                    ? _formatDateSafely(
+                                        widget.lead.nextFollowUpDate)
+                                    : '';
+                            leadsProvider.messageController.clear();
+                            dropDownProvider.filterStaffByBranchAndDepartment(
+                              branchId: widget.lead.branchId,
+                              departmentId: int.tryParse(
+                                      widget.lead.departmentId.toString()) ??
+                                  0,
+                            );
+                          } catch (e) {}
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return AddFollowupDialog(
+                                customerName: widget.lead.customerName,
+                              );
+                            },
+                          ));
+                        },
+                        imageColor: widget.lead.lateFollowUp == 0
+                            ? AppColors.darkGreen
+                            : AppColors.textRed,
+                        icon: Icons.note_add_outlined,
+                        text: 'Note',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: AppColors.bluebutton,
+                        onTap: () async {
+                          final Uri phoneUri = Uri(
+                            scheme: 'tel',
+                            path: widget.lead.contactNumber,
+                          );
+                          if (await canLaunchUrl(phoneUri)) {
+                            await launchUrl(phoneUri);
+                          } else {
+                            print('Could not launch phone app');
+                          }
+                        },
+                        icon: Icons.call,
+                        text: 'Call',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Consumer<LeadCheckInProvider>(
+                        builder: (context, checkInProvider, child) {
+                          final isCheckedIn = checkInProvider
+                              .isCheckedIn(widget.lead.customerId);
+
+                          return isCheckedIn
+                              ? CustomActionButton(
+                                  onTap: () {
+                                    checkInProvider.saveLeadCheckIn(
+                                      context: context,
+                                      customerId: widget.lead.customerId,
+                                      isCheckIn: false,
+                                      leadName: widget.lead.customerName,
+                                    );
+                                  },
+                                  icon: Icons.location_off_outlined,
+                                  text: 'In/Out',
+                                  imageColor: Colors.red,
+                                  height: 38,
+                                )
+                              : CustomActionButton(
+                                  onTap: () {
+                                    checkInProvider.saveLeadCheckIn(
+                                      context: context,
+                                      customerId: widget.lead.customerId,
+                                      isCheckIn: true,
+                                      leadName: widget.lead.customerName,
+                                    );
+                                  },
+                                  icon: Icons.location_on_outlined,
+                                  text: 'In/Out',
+                                  imageColor: Colors.green,
+                                  height: 38,
+                                );
+                        },
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: AppColors.btnRed,
+                        onTap: () async {
+                          final customerDetailsProvider =
+                              Provider.of<CustomerDetailsProvider>(context,
+                                  listen: false);
+                          customerDetailsProvider.customerId =
+                              widget.lead.customerId.toString();
+                          customerDetailsProvider.clearTaskDetails();
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return AddTaskMobile(
+                                isEdit: false,
+                                taskId: '0',
+                              );
+                            },
+                          ));
+                        },
+                        icon: Icons.task,
+                        text: 'Task',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: AppColors.appViolet,
+                        onTap: () {
+                          final customerDetailsProvider =
+                              Provider.of<CustomerDetailsProvider>(context,
+                                  listen: false);
+                          customerDetailsProvider.customerId =
+                              widget.lead.customerId.toString();
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return AddDocumentPhone(
+                                  customerId:
+                                      widget.lead.customerId.toString());
+                            },
+                          ));
+                        },
+                        icon: Icons.upload_file,
+                        text: 'Docs',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: AppColors.secondaryBlue,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (c) => AddPeriodicServiceMobile(
+                                amcId: '0',
+                                customerId: widget.lead.customerId.toString(),
+                                isEdit: false,
+                              ),
+                            ),
                           );
                         },
-                      ));
-                    },
-                    imageColor: widget.lead.lateFollowUp == 0
-                        ? AppColors.darkGreen
-                        : AppColors.textRed,
-                    icon: Icons.note_add_outlined,
-                    text: 'Note',
-                  ),
-                  const SizedBox(width: 10),
-                  CustomActionButton(
-                    imageColor: AppColors.bluebutton,
-                    onTap: () async {
-                      final Uri phoneUri = Uri(
-                        scheme: 'tel',
-                        path: widget.lead.contactNumber,
-                      );
-                      if (await canLaunchUrl(phoneUri)) {
-                        await launchUrl(phoneUri);
-                      } else {
-                        print('Could not launch phone app');
-                      }
-                    },
-                    icon: Icons.call,
-                    text: 'Call',
-                  ),
-                  const SizedBox(width: 10),
-                  Consumer<LeadCheckInProvider>(
-                    builder: (context, checkInProvider, child) {
-                      final isCheckedIn =
-                          checkInProvider.isCheckedIn(widget.lead.customerId);
+                        icon: Icons.miscellaneous_services,
+                        text: 'Service',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: AppColors.bluebutton,
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (c) => QuotationCreationWidget(
+                                customerId: widget.lead.customerId.toString(),
+                                quotationId: '0',
+                                isEdit: false,
+                              ),
+                            ),
+                          );
+                        },
+                        icon: Icons.request_quote_outlined,
+                        text: 'Quotation',
+                        height: 38,
+                      ),
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: CustomActionButton(
+                        imageColor: Colors.green,
+                        onTap: _showConvertDialog,
+                        icon: Icons.change_circle_outlined,
+                        text: 'Convert',
+                        height: 38,
+                      ),
+                    ),
 
-                      return isCheckedIn
-                          ? CustomActionButton(
-                              onTap: () {
-                                checkInProvider.saveLeadCheckIn(
-                                  context: context,
-                                  customerId: widget.lead.customerId,
-                                  isCheckIn: false,
-                                  leadName: widget.lead.customerName,
-                                );
-                              },
-                              icon: Icons.location_off_outlined,
-                              text: 'Check Out',
-                              imageColor: Colors.red,
-                            )
-                          : CustomActionButton(
-                              onTap: () {
-                                checkInProvider.saveLeadCheckIn(
-                                  context: context,
-                                  customerId: widget.lead.customerId,
-                                  isCheckIn: true,
-                                  leadName: widget.lead.customerName,
-                                );
-                              },
-                              icon: Icons.location_on_outlined,
-                              text: 'Check In',
-                              imageColor: Colors.green,
-                            );
-                    },
-                  ),
-                ],
-              ),
+                  ],
+                ),
+
+
+              ],
             ),
           ),
         if (widget.isExpanded) const SizedBox(height: 12),

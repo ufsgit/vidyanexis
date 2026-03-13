@@ -257,11 +257,29 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
+                               CustomTextfieldWidgetMobile(
                                 readOnly: false,
                                 controller:
                                     customerDetailsProvider.itemNameController,
-                                labelText: 'Item Name',
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(1, 'Item Name'),
+                              ),
+                              const SizedBox(height: 16),
+                               CustomTextfieldWidgetMobile(
+                                readOnly: false,
+                                controller:
+                                    customerDetailsProvider.itemMrpController,
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(2, 'As Per Standerd Warranty'),
+                              ),
+                              const SizedBox(height: 16),
+                              CustomTextfieldWidgetMobile(
+                                readOnly: false,
+                                controller:
+                                    customerDetailsProvider.itemUnitController,
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(
+                                        3, 'As Per Standerds'),
                               ),
                               const SizedBox(height: 16),
                               CustomTextfieldWidgetMobile(
@@ -273,7 +291,8 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                   customerDetailsProvider
                                       .calculateTotalAmount();
                                 },
-                                labelText: 'Price',
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(4, 'Price'),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
                                     RegExp(r'^\d*\.?\d{0,2}'),
@@ -290,20 +309,14 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                   customerDetailsProvider
                                       .calculateTotalAmount();
                                 },
-                                labelText: 'Quantity',
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(5, 'Quantity'),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.digitsOnly
                                 ],
                               ),
                               const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller:
-                                    customerDetailsProvider.itemUnitController,
-                                labelText: 'Unit',
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
+                               CustomTextfieldWidgetMobile(
                                 readOnly: false,
                                 controller: customerDetailsProvider
                                     .itemGstPercentController,
@@ -312,7 +325,8 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                   customerDetailsProvider
                                       .calculateTotalAmount();
                                 },
-                                labelText: 'GST %',
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(6, 'gst %'),
                                 inputFormatters: [
                                   FilteringTextInputFormatter.allow(
                                     RegExp(r'^\d*\.?\d{0,2}'),
@@ -324,14 +338,17 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                 readOnly: true,
                                 controller:
                                     customerDetailsProvider.itemGstController,
-                                labelText: 'GST',
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(
+                                        7, 'GST'),
                               ),
                               const SizedBox(height: 16),
                               CustomTextfieldWidgetMobile(
                                 readOnly: false,
                                 controller: customerDetailsProvider
                                     .itemAdCessController,
-                                labelText: 'AdCESS',
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(8, 'Other Tax'),
                                 onChanged: (value) {
                                   // Calculate GST when GST% changes
                                   customerDetailsProvider
@@ -348,7 +365,8 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                 readOnly: true,
                                 controller:
                                     customerDetailsProvider.itemTotalController,
-                                labelText: 'Amount',
+                                labelText: customerDetailsProvider
+                                    .getQuotationFieldName(9, 'Amount'),
                               ),
                               const SizedBox(height: 16),
                               OutlinedButton.icon(

@@ -14,6 +14,8 @@ import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
+
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -91,28 +93,41 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     //   return null; // Valid total
     // }
 
-    return AlertDialog(
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-              onPressed: () {
-                customerDetailsProvider.clearQuotationDetails();
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.close))
-        ],
+      appBar: CustomAppBarWidget(
+        title: widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
+        onLeadingPressed: () {
+          customerDetailsProvider.clearQuotationDetails();
+          Navigator.pop(context);
+        },
+        onSavePressed: () async {
+          if (!_formKey.currentState!.validate()) return;
+
+          if (customerDetailsProvider.qproductnameController.text.isEmpty) {
+            _showValidationDialog(
+                context, 'Cannot Save', 'Product name is required');
+            return;
+          }
+
+          if (customerDetailsProvider.items.isEmpty &&
+              customerDetailsProvider.commercialItems.isEmpty &&
+              customerDetailsProvider.billOfMaterialsItems.isEmpty) {
+            _showValidationDialog(context, 'Cannot Save', 'No items added');
+            return;
+          }
+
+          try {
+            customerDetailsProvider.saveQuotation(
+                widget.quotationId, widget.customerId, context, widget.isEdit);
+          } catch (e) {
+            _showValidationDialog(context, 'Save Failed', e.toString());
+            print(e);
+          }
+        },
       ),
-      content: Form(
+      body: Form(
+
         key: _formKey,
         child: SingleChildScrollView(
           child: Container(
@@ -1189,48 +1204,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
-      actions: [
-        CustomElevatedButton(
-          buttonText: 'Cancel',
-          onPressed: () {
-            customerDetailsProvider.clearQuotationDetails();
-            Navigator.of(context).pop();
-          },
-          backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
-        ),
-        CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            if (!_formKey.currentState!.validate()) return;
-
-            if (customerDetailsProvider.qproductnameController.text.isEmpty) {
-              _showValidationDialog(
-                  context, 'Cannot Save', 'Product name is required');
-              return;
-            }
-
-            if (customerDetailsProvider.items.isEmpty &&
-                customerDetailsProvider.commercialItems.isEmpty &&
-                customerDetailsProvider.billOfMaterialsItems.isEmpty) {
-              _showValidationDialog(context, 'Cannot Save', 'No items added');
-              return;
-            }
-
-            try {
-              customerDetailsProvider.saveQuotation(widget.quotationId,
-                  widget.customerId, context, widget.isEdit);
-            } catch (e) {
-              _showValidationDialog(context, 'Save Failed', e.toString());
-              print(e);
-            }
-          },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
-        ),
-      ],
     );
   }
 
@@ -1360,13 +1333,39 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     child: CustomTextField(
                       readOnly: false,
                       height: 54,
+                      controller: customerDetailsProvider.itemMrpController,
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          2, 'As Per Standerd Warranty'),
+                      labelText: '',
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
+                      controller: customerDetailsProvider.itemUnitController,
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          3, 'As Per Standerds'),
+                      labelText: '',
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Expanded(
+                    child: CustomTextField(
+                      readOnly: false,
+                      height: 54,
                       controller: customerDetailsProvider.itemPriceController,
                       onChanged: (p0) {
                         // Calculate total amount and GST when price changes
                         customerDetailsProvider.calculateTotalAmount();
                       },
-                      hintText:
-                          customerDetailsProvider.getQuotationFieldName(4, 'Price'),
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          4, 'Price'),
                       labelText: '',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
@@ -1376,20 +1375,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemMrpController,
-                      hintText: 'HSN CODE (Optional)',
-                      labelText: '',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
                   Expanded(
                     child: CustomTextField(
                       readOnly: false,
@@ -1404,17 +1389,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                           5, 'Quantity'),
                       labelText: '',
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemUnitController,
-                      hintText:
-                          customerDetailsProvider.getQuotationFieldName(3, 'As Per Standards'),
-                      labelText: '',
                     ),
                   ),
                 ],
@@ -1433,7 +1407,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         customerDetailsProvider.calculateTotalAmount();
                       },
                       hintText: customerDetailsProvider.getQuotationFieldName(
-                          6, 'GST %'),
+                          6, 'gst %'),
                       labelText: '',
                       inputFormatters: [
                         FilteringTextInputFormatter.allow(
@@ -1448,8 +1422,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       readOnly: true,
                       height: 54,
                       controller: customerDetailsProvider.itemGstController,
-                      hintText:
-                          customerDetailsProvider.getQuotationFieldName(2, 'As Per Standerd Warranty'),
+                      hintText: customerDetailsProvider.getQuotationFieldName(
+                          7, 'GST'),
                       labelText: '',
                     ),
                   ),
