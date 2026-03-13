@@ -1049,6 +1049,30 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                                 overflow: TextOverflow.ellipsis,
                                               ),
                                             ),
+                                            if (task.mobile.isNotEmpty)
+                                              Text(
+                                                task.mobile,
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: AppColors
+                                                            .textGrey3),
+                                              ),
+                                            if (task.address1.isNotEmpty)
+                                              Text(
+                                                '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: AppColors
+                                                            .textGrey3),
+                                                maxLines: 2,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
                                           ],
                                         ),
                                       ),
