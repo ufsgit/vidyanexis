@@ -53,7 +53,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       debugPrint(
           "DEBUG: Opening dialog for Task Type: ${widget.task.taskTypeName} (ID: ${widget.task.taskTypeId})");
 
-      formProvider.getFormDataByCustomer(widget.task.customerId.toString());
+      formProvider.getFormDataByCustomer(
+        widget.task.customerId.toString(),
+        enquiryForId: widget.task.enquiryForId.toString(),
+      );
     });
   }
 
@@ -362,7 +365,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             ),
                           ),
 
-                          // Add Notes Toggle
                           _buildExpansionCard(
                             onTap: () {
                               setState(() {
@@ -384,7 +386,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                           const SizedBox(height: 16),
 
-                          // --- Section: Forms ---
                           Consumer<FormProvider>(
                             builder: (context, formProvider, child) {
                               if (formProvider.isLoadingForms) {

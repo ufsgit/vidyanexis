@@ -8,6 +8,7 @@ class TableWidget extends StatelessWidget {
   final double? width;
   final int flex;
   final EdgeInsetsGeometry? padding;
+  final Alignment alignment;
 
   const TableWidget({
     super.key,
@@ -18,6 +19,7 @@ class TableWidget extends StatelessWidget {
     this.width,
     this.flex = 0,
     this.padding,
+    this.alignment = Alignment.centerLeft,
   });
 
   @override
@@ -30,7 +32,7 @@ class TableWidget extends StatelessWidget {
                   padding: padding ??
                       const EdgeInsets.symmetric(
                           vertical: 12.0, horizontal: 16.0),
-                  child: Align(alignment: Alignment.centerLeft, child: data)),
+                  child: Align(alignment: alignment, child: data)),
             )
           : SizedBox(
               width: width,
@@ -38,7 +40,7 @@ class TableWidget extends StatelessWidget {
                   padding: padding ??
                       const EdgeInsets.symmetric(
                           vertical: 12.0, horizontal: 16.0),
-                  child: Align(alignment: Alignment.centerLeft, child: data)),
+                  child: Align(alignment: alignment, child: data)),
             );
     } else {
       return width == null
@@ -49,7 +51,7 @@ class TableWidget extends StatelessWidget {
                     const EdgeInsets.symmetric(
                         vertical: 12.0, horizontal: 16.0),
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: alignment,
                   child: Text(title,
                       overflow: TextOverflow.visible,
                       maxLines: 4,
@@ -67,7 +69,7 @@ class TableWidget extends StatelessWidget {
                     const EdgeInsets.symmetric(
                         vertical: 12.0, horizontal: 16.0),
                 child: Align(
-                  alignment: Alignment.centerLeft,
+                  alignment: alignment,
                   child: Text(title,
                       overflow: TextOverflow.visible,
                       maxLines: 4,
@@ -81,3 +83,4 @@ class TableWidget extends StatelessWidget {
     }
   }
 }
+

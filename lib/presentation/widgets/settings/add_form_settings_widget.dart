@@ -24,7 +24,9 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
   final TextEditingController _taskTypeController = TextEditingController();
 
   String _selectedDepartment = '';
+  int? _selectedDepartmentId;
   String _selectedTaskType = '';
+  int? _selectedTaskTypeId;
 
   List<FieldModel> _selectedFields = [];
 
@@ -46,7 +48,9 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
       _departmentController.text = widget.existingForm!.department;
       _taskTypeController.text = widget.existingForm!.taskType;
       _selectedDepartment = widget.existingForm!.department;
+      _selectedDepartmentId = widget.existingForm!.departmentId;
       _selectedTaskType = widget.existingForm!.taskType;
+      _selectedTaskTypeId = widget.existingForm!.taskTypeId;
 
       // Deep copy fields so edits don't affect existing state until save
       _selectedFields = widget.existingForm!.fields
@@ -158,10 +162,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                             setDialogState(() {
                               if (value == true) {
                                 tempSelected.add(FieldModel(
-                                    id: DateTime.now()
-                                            .millisecondsSinceEpoch
-                                            .toString() +
-                                        index.toString(),
+                                    id: field.id,
                                     label: field.label,
                                     type: field.type,
                                     options: field.options,
@@ -216,17 +217,17 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
     });
 
     final newForm = FormModel(
-      id: isEdit
-          ? widget.existingForm!.id
-          : DateTime.now().millisecondsSinceEpoch.toString(),
+      id: isEdit ? widget.existingForm!.id : '0',
       name: _formNameController.text.trim(),
       department: _selectedDepartment,
+      departmentId: _selectedDepartmentId,
       taskType: _selectedTaskType,
+      taskTypeId: _selectedTaskTypeId,
       fields: _selectedFields,
     );
 
     if (isEdit) {
-      formProvider.updateForm(widget.existingForm!.id, newForm);
+      await formProvider.updateForm(context, widget.existingForm!.id, newForm);
     } else {
       await formProvider.addForm(context, newForm);
     }
@@ -297,24 +298,25 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                 builder: (context, provider, child) {
                   return provider.isLoadingDepartments
                       ? const Center(child: CircularProgressIndicator())
-                      : CommonDropdown<String>(
-                          hintText: 'Department*',
-                          selectedValue: _selectedDepartment.isNotEmpty
-                              ? _selectedDepartment
-                              : null,
-                          items: provider.departments
-                              .map((dept) => DropdownItem<String>(
-                                    id: dept,
-                                    name: dept,
-                                  ))
-                              .toList(),
-                          controller: _departmentController,
-                          onItemSelected: (selectedDept) {
-                            setState(() {
-                              _selectedDepartment = selectedDept;
-                            });
-                          },
-                        );
+                        : CommonDropdown<int>(
+                            hintText: 'Department*',
+                            selectedValue: _selectedDepartmentId,
+                            items: provider.departments
+                                .map((dept) => DropdownItem<int>(
+                                      id: dept['id'],
+                                      name: dept['name'],
+                                    ))
+                                .toList(),
+                            controller: _departmentController,
+                            onItemSelected: (selectedId) {
+                              setState(() {
+                                _selectedDepartmentId = selectedId;
+                                _selectedDepartment = provider.departments
+                                    .firstWhere(
+                                        (d) => d['id'] == selectedId)['name'];
+                              });
+                            },
+                          );
                 },
               ),
               const SizedBox(height: 16),
@@ -324,24 +326,25 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                 builder: (context, provider, child) {
                   return provider.isLoadingTaskTypes
                       ? const Center(child: CircularProgressIndicator())
-                      : CommonDropdown<String>(
-                          hintText: 'Task Type*',
-                          selectedValue: _selectedTaskType.isNotEmpty
-                              ? _selectedTaskType
-                              : null,
-                          items: provider.taskTypes
-                              .map((type) => DropdownItem<String>(
-                                    id: type,
-                                    name: type,
-                                  ))
-                              .toList(),
-                          controller: _taskTypeController,
-                          onItemSelected: (selectedType) {
-                            setState(() {
-                              _selectedTaskType = selectedType;
-                            });
-                          },
-                        );
+                        : CommonDropdown<int>(
+                            hintText: 'Task Type*',
+                            selectedValue: _selectedTaskTypeId,
+                            items: provider.taskTypes
+                                .map((type) => DropdownItem<int>(
+                                      id: type['id'],
+                                      name: type['name'],
+                                    ))
+                                .toList(),
+                            controller: _taskTypeController,
+                            onItemSelected: (selectedId) {
+                              setState(() {
+                                _selectedTaskTypeId = selectedId;
+                                _selectedTaskType = provider.taskTypes
+                                    .firstWhere(
+                                        (t) => t['id'] == selectedId)['name'];
+                              });
+                            },
+                          );
                 },
               ),
               const SizedBox(height: 24),

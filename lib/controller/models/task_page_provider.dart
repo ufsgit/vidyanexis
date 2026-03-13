@@ -14,6 +14,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 
 class TaskPageProvider extends ChangeNotifier {
   List<TaskReportModel> _taskReport = [];
@@ -722,9 +723,18 @@ class TaskPageProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
+      final Map<String, dynamic> queryParams = {
+        "Task_Type_Id": tasktypeId,
+        "Status_Id": statusId,
+        "Customer_Id": customerId,
+        "Login_User_Id": userId,
+        "Enquiry_For_Id": enquiryForId,
+      };
+
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.getTaskTypesOfProcessFlow}?Task_Type_Id=$tasktypeId&Status_Id=$statusId&Customer_Id=$customerId&Login_User_Id=$userId&Enquiry_For_Id=$enquiryForId');
+        endPoint: HttpUrls.getTaskTypesOfProcessFlow,
+        bodyData: queryParams,
+      );
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -735,8 +745,9 @@ class TaskPageProvider extends ChangeNotifier {
           final newData = data['data'] ?? [];
           final documentData = data['document_types'] ?? [];
           final statusData = data['mandatory_status'] ?? [];
+          final formsData = data['forms'] ?? [];
 
-          print(newData);
+          debugPrint("DEBUG: fetchTaskTypes received ${formsData.length} forms");
 
           _taskTypeModel = (newData as List<dynamic>)
               .map((item) => TaskTypeModel.fromJson(item))
@@ -750,6 +761,12 @@ class TaskPageProvider extends ChangeNotifier {
           _statusData = (statusData as List<dynamic>)
               .map((item) => MandatoryStatusModel.fromJson(item))
               .toList();
+
+          // Update forms in FormProvider if present
+          final formProvider =
+              Provider.of<FormProvider>(context, listen: false);
+          formProvider.setCustomerForms(data);
+
           Loader.stopLoader(context);
           notifyListeners();
         }

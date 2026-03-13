@@ -14,6 +14,8 @@ import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
+
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -91,28 +93,41 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     //   return null; // Valid total
     // }
 
-    return AlertDialog(
+    return Scaffold(
       backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-              onPressed: () {
-                customerDetailsProvider.clearQuotationDetails();
-                Navigator.pop(context);
-              },
-              icon: const Icon(Icons.close))
-        ],
+      appBar: CustomAppBarWidget(
+        title: widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
+        onLeadingPressed: () {
+          customerDetailsProvider.clearQuotationDetails();
+          Navigator.pop(context);
+        },
+        onSavePressed: () async {
+          if (!_formKey.currentState!.validate()) return;
+
+          if (customerDetailsProvider.qproductnameController.text.isEmpty) {
+            _showValidationDialog(
+                context, 'Cannot Save', 'Product name is required');
+            return;
+          }
+
+          if (customerDetailsProvider.items.isEmpty &&
+              customerDetailsProvider.commercialItems.isEmpty &&
+              customerDetailsProvider.billOfMaterialsItems.isEmpty) {
+            _showValidationDialog(context, 'Cannot Save', 'No items added');
+            return;
+          }
+
+          try {
+            customerDetailsProvider.saveQuotation(
+                widget.quotationId, widget.customerId, context, widget.isEdit);
+          } catch (e) {
+            _showValidationDialog(context, 'Save Failed', e.toString());
+            print(e);
+          }
+        },
       ),
-      content: Form(
+      body: Form(
+
         key: _formKey,
         child: SingleChildScrollView(
           child: Container(
@@ -1189,48 +1204,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
-      actions: [
-        CustomElevatedButton(
-          buttonText: 'Cancel',
-          onPressed: () {
-            customerDetailsProvider.clearQuotationDetails();
-            Navigator.of(context).pop();
-          },
-          backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
-        ),
-        CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            if (!_formKey.currentState!.validate()) return;
-
-            if (customerDetailsProvider.qproductnameController.text.isEmpty) {
-              _showValidationDialog(
-                  context, 'Cannot Save', 'Product name is required');
-              return;
-            }
-
-            if (customerDetailsProvider.items.isEmpty &&
-                customerDetailsProvider.commercialItems.isEmpty &&
-                customerDetailsProvider.billOfMaterialsItems.isEmpty) {
-              _showValidationDialog(context, 'Cannot Save', 'No items added');
-              return;
-            }
-
-            try {
-              customerDetailsProvider.saveQuotation(widget.quotationId,
-                  widget.customerId, context, widget.isEdit);
-            } catch (e) {
-              _showValidationDialog(context, 'Save Failed', e.toString());
-              print(e);
-            }
-          },
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
-        ),
-      ],
     );
   }
 
@@ -1633,40 +1606,37 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Row(
+                    child: Wrap(
+                      alignment: WrapAlignment.start,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: 15,
+                      runSpacing: 5,
                       children: [
-                        Expanded(
-                          child: Text(
-                            item.ItemName,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
+                        Text(
+                          item.ItemName,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
-                        const SizedBox(width: 15),
                         Text(
                           'Quantity: ${item.Quantity}',
                           style: TextStyle(
                             color: Colors.grey[600],
                           ),
                         ),
-                        const SizedBox(width: 15),
                         Text(
                           'Unit Price: ₹${item.UnitPrice.toStringAsFixed(2)}',
                           style: TextStyle(
                             color: Colors.grey[600],
                           ),
                         ),
-                        const SizedBox(width: 15),
                         Text(
                           'GST: ₹${item.GST.toStringAsFixed(2)}',
                           style: const TextStyle(
                             color: Colors.black54,
                           ),
                         ),
-                        const SizedBox(width: 15),
                         Text(
                           'Total: ₹${item.Amount.toStringAsFixed(2)}',
                           style: const TextStyle(
@@ -1674,10 +1644,14 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             color: Colors.black54,
                           ),
                         ),
-                        const SizedBox(width: 5),
                         TextButton(
                           onPressed: () => customerDetailsProvider
                               .populateItemFieldsForEditing(index),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
                           child: Text(
                             'Edit',
                             style: TextStyle(
@@ -1688,6 +1662,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         TextButton(
                           onPressed: () =>
                               customerDetailsProvider.deleteItem(index),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(horizontal: 8),
+                            minimumSize: Size.zero,
+                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          ),
                           child: Text(
                             'Delete',
                             style: TextStyle(
@@ -2151,40 +2130,37 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Row(
+                child: Wrap(
+                  alignment: WrapAlignment.start,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 15,
+                  runSpacing: 5,
                   children: [
-                    Expanded(
-                      child: Text(
-                        item.description ?? '',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                    Text(
+                      item.description ?? '',
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
-                    const SizedBox(width: 15),
                     Text(
                       'AC Capacity: ${item.acCapacity}',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
                     ),
-                    const SizedBox(width: 15),
                     Text(
                       'DC Capacity: ${item.dcCapacity}',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
                     ),
-                    const SizedBox(width: 15),
                     Text(
                       'Unit Price: ₹${item.unitPrice}',
                       style: TextStyle(
                         color: Colors.grey[600],
                       ),
                     ),
-                    const SizedBox(width: 15),
                     Text(
                       'Total: ₹${item.total}',
                       style: const TextStyle(
@@ -2192,10 +2168,14 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         color: Colors.black54,
                       ),
                     ),
-                    const SizedBox(width: 5),
                     TextButton(
                       onPressed: () => customerDetailsProvider
                           .populateCommercialItemFieldsForEditing(index),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                       child: Text(
                         'Edit',
                         style: TextStyle(
@@ -2206,6 +2186,11 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     TextButton(
                       onPressed: () =>
                           customerDetailsProvider.deleteCommercialItem(index),
+                      style: TextButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        minimumSize: Size.zero,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
                       child: Text(
                         'Delete',
                         style: TextStyle(

@@ -1941,9 +1941,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 CustomerCard(
                                                                   title:
                                                                       "Additional Details",
-                                                                  content: (leadProvider.customFieldEnquiryFor ?? [])
+                                                                  content: (leadProvider.customFieldEnquiryFor ??
+                                                                              [])
                                                                           .isNotEmpty
-                                                                      ? (leadProvider.customFieldEnquiryFor ?? [])
+                                                                      ? (leadProvider.customFieldEnquiryFor ??
+                                                                              [])
                                                                           .where((field) =>
                                                                               (field.customFieldName != null && field.customFieldName.toString().isNotEmpty) &&
                                                                               (field.datavalue != null && field.datavalue.toString().isNotEmpty))
@@ -1953,9 +1955,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               ))
                                                                           .toList()
                                                                       : [
-                                                                          if ((leadProvider
-                                                                                  .customFieldEnquiryFor ??
-                                                                              [])
+                                                                          if ((leadProvider.customFieldEnquiryFor ?? [])
                                                                               .isEmpty)
                                                                             const Text('No additional details available')
                                                                         ],
@@ -2483,9 +2483,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                             title:
                                                                 "Additional Details",
                                                             content: (leadProvider
-                                                                    .customFieldEnquiryFor ?? [])
+                                                                            .customFieldEnquiryFor ??
+                                                                        [])
                                                                     .isNotEmpty
-                                                                ? (leadProvider.customFieldEnquiryFor ?? [])
+                                                                ? (leadProvider
+                                                                            .customFieldEnquiryFor ??
+                                                                        [])
                                                                     .where((field) =>
                                                                         (field.customFieldName !=
                                                                                 null &&
@@ -2505,8 +2508,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             ))
                                                                     .toList()
                                                                 : [
-                                                                    if ((leadProvider
-                                                                        .customFieldEnquiryFor ?? []).isEmpty)
+                                                                    if ((leadProvider.customFieldEnquiryFor ??
+                                                                            [])
+                                                                        .isEmpty)
                                                                       const Text(
                                                                           'No additional details available')
                                                                   ],
@@ -2826,23 +2830,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   customerDetailsProvider
                                                                       .qsubsidyAmountController
                                                                       .text = '0';
-                                                                  showDialog(
-                                                                    context:
-                                                                        context,
-                                                                    barrierDismissible:
-                                                                        false,
-                                                                    builder:
-                                                                        (BuildContext
+                                                                    Navigator.push(
+                                                                      context,
+                                                                      MaterialPageRoute(
+                                                                        builder: (BuildContext
                                                                             context) {
-                                                                      return QuotationCreationWidget(
-                                                                          quotationId:
-                                                                              '0',
-                                                                          isEdit:
-                                                                              false,
-                                                                          customerId:
-                                                                              widget.customerId);
-                                                                    },
-                                                                  );
+                                                                          return QuotationCreationWidget(
+                                                                              quotationId:
+                                                                                  '0',
+                                                                              isEdit:
+                                                                                  false,
+                                                                              customerId:
+                                                                                  widget.customerId);
+                                                                        },
+                                                                      ),
+                                                                    );
+
                                                                 },
                                                                 icon: const Icon(
                                                                     Icons.add),
@@ -2890,20 +2893,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     context);
                                                             // _scaffoldKey.currentState
                                                             //     ?.openEndDrawer();
-                                                            showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (BuildContext
-                                                                      context) {
-                                                                return QuotationDetailsWidget(
-                                                                  customerId: widget
-                                                                      .customerId,
-                                                                  serviceId:
-                                                                      quatationId
-                                                                          .toString(),
-                                                                );
-                                                              },
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (BuildContext
+                                                                    context) {
+                                                                  return QuotationDetailsWidget(
+                                                                    customerId: widget
+                                                                        .customerId,
+                                                                    serviceId:
+                                                                        quatationId
+                                                                            .toString(),
+                                                                  );
+                                                                },
+                                                              ),
                                                             );
+
                                                           },
                                                           quatationId:
                                                               selectedQuotationStatusId,
@@ -4388,6 +4393,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                             _buildHeaderCell('#', width: 50.0),
                             _buildHeaderCell('Product Name', flex: 3),
                             _buildHeaderCell('Total Amount', flex: 2),
+                            _buildHeaderCell('Created Date', flex: 2),
+                            _buildHeaderCell('Created By', flex: 2),
                             _buildHeaderCell('Options', flex: 2),
                           ],
                         ),
@@ -4423,6 +4430,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         flex: 3, isBold: true),
                                     _buildDataCell('₹ ${task.netTotal}',
                                         flex: 2),
+                                    _buildDataCell(
+                                        task.entryDate != null &&
+                                                task.entryDate.toString() !=
+                                                    'null'
+                                            ? DateFormat('dd MMM yyyy').format(
+                                                DateTime.parse(
+                                                    task.entryDate.toString()))
+                                            : '',
+                                        flex: 2),
+                                    _buildDataCell(task.createdByName, flex: 2),
                                     _buildWidgetCell(
                                       flex: 2,
                                       child: Row(
@@ -4729,14 +4746,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
     customerDetailsProvider.scopeOfWorkItems = quotation.scopeOfWorkItems;
 
-    showDialog(
-      context: context,
-      barrierDismissible: false,
-      builder: (BuildContext context) {
-        return QuotationCreationWidget(
-            quotationId: taskId, isEdit: true, customerId: widget.customerId);
-      },
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (BuildContext context) {
+          return QuotationCreationWidget(
+              quotationId: taskId, isEdit: true, customerId: widget.customerId);
+        },
+      ),
     );
+
   }
 
   Future<void> _openMaps(String location) async {

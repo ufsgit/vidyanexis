@@ -409,16 +409,18 @@ class QuotationCard extends StatelessWidget {
                         customerDetailsProvider.scopeOfWorkItems =
                             quotaion.scopeOfWorkItems;
 
-                        showDialog(
-                          context: context,
-                          barrierDismissible: false,
-                          builder: (BuildContext context) {
-                            return QuotationCreationWidget(
-                                quotationId: taskId,
-                                isEdit: true,
-                                customerId: customerId);
-                          },
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (BuildContext context) {
+                              return QuotationCreationWidget(
+                                  quotationId: taskId,
+                                  isEdit: true,
+                                  customerId: customerId);
+                            },
+                          ),
                         );
+
                       },
                       svgPath: 'assets/images/Edit.svg',
                       label: 'Edit',
