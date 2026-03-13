@@ -1135,7 +1135,7 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width: 1720,
+                            width: 1715,
                             child: Column(
                               children: [
                                 // Header row
@@ -1256,7 +1256,7 @@ class _LeadsPageState extends State<LeadPage> {
                                         ),
                                       ),
                                       TableWidget(
-                                        width: 375,
+                                        width: 250,
                                         padding: EdgeInsets.symmetric(
                                             vertical: 6.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
@@ -1707,7 +1707,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 4.0,
                                                       horizontal: 12.0),
-                                                  width: 375,
+                                                  width: 250,
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   data: Tooltip(
