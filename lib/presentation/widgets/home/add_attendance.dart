@@ -419,6 +419,11 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                   employeeCode: employeeCode,
                   closeOnSuccess: true,
                 );
+                if (success) {
+                  setState(() {
+                    isCheckedIn = false;
+                  });
+                }
               } else {
                 success = await attendanceProvider.saveAttendance(
                   dropDownProvider.selectedUserId ?? 0,

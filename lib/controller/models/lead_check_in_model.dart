@@ -52,12 +52,12 @@ class LeadCheckIn {
       leadId: json['Lead_Id'],
       userDetailId: json['UserDetail_Id'],
       checkoutData: json['CheckoutData'],
-      latitude: (json['latitude'] is num)
-          ? (json['latitude'] as num).toDouble()
-          : null,
-      longitude: (json['longitude'] is num)
-          ? (json['longitude'] as num).toDouble()
-          : null,
+      latitude: json['latitude'] != null
+          ? double.tryParse(json['latitude'].toString())
+          : (json['Latitude'] != null ? double.tryParse(json['Latitude'].toString()) : null),
+      longitude: json['longitude'] != null
+          ? double.tryParse(json['longitude'].toString())
+          : (json['Longitude'] != null ? double.tryParse(json['Longitude'].toString()) : null),
       timeDifference: json['time_difference'],
     );
   }

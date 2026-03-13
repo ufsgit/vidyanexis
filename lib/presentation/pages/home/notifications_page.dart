@@ -331,22 +331,25 @@ class _NotificationTileState extends State<_NotificationTile> {
         MicrotecSocket.readNotification(
             id: int.tryParse(widget.notification.notificationId ?? '0'));
 
-        // final customerId =
-        //     int.tryParse(widget.notification.customerId?.toString() ?? '0') ??
-        //         0;
-        // final taskId =
-        //     int.tryParse(widget.notification.masterId?.toString() ?? '0') ?? 0;
+        final customerId =
+            int.tryParse(widget.notification.customerId?.toString() ?? '0') ??
+                0;
+        final taskId =
+            int.tryParse(widget.notification.masterId?.toString() ?? '0') ?? 0;
+        final redirectId =
+            int.tryParse(widget.notification.redirectId?.toString() ?? '0') ??
+                0;
 
-        final customerId = 21869;
-        final taskId = 13;
-        final redirectId = 1;
+        // final customerId = 21869;
+        // final taskId = 13;
+        // final redirectId = 1;
         print("customerId: $customerId");
         print("taskId: $taskId");
         print("redirectId: $redirectId");
 
         leadProvider.setCutomerId(customerId);
 
-        if (redirectId == 1) {
+        if (redirectId == 3) {
           //task
           customerDetailsProvider.getTaskDetails(taskId.toString(), context);
           showDialog(
@@ -359,7 +362,7 @@ class _NotificationTileState extends State<_NotificationTile> {
               );
             },
           );
-        } else if (redirectId == 2) {
+        } else if (redirectId == 1) {
           //lead
           leadDetailsProvider.fetchLeadDetails(customerId.toString(), context);
           showDialog(

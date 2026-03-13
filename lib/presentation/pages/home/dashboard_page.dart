@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/task_overview_tab.dart';
 import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/custom_tab.dart';
+import 'package:vidyanexis/controller/attendance_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_attendance.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_overview_tab.dart';
@@ -63,6 +64,13 @@ class _DashBoardPageState extends State<DashBoardPage> {
       await dashBoardProvider.getLeadData();
       await dashBoardProvider.getWorkData();
       await dashBoardProvider.getCustomers();
+
+      final attendanceProvider =
+          Provider.of<AttendanceReportProvider>(context, listen: false);
+      if (userId != 0) {
+        await attendanceProvider.checkIsCheckedIn(userId);
+      }
+
       if (mounted) setState(() {});
     });
   }
@@ -191,29 +199,52 @@ class _DashBoardPageState extends State<DashBoardPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              if (settingsProvider.menuIsViewMap[26].toString() == '1')
-                ElevatedButton.icon(
-                  onPressed: () {
-                    showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (BuildContext context) {
-                        return const AddAttendanceWidget(
-                            editId: '0', isEdit: false, user: '', userId: 0);
-                      },
+              Consumer<AttendanceReportProvider>(
+                builder: (context, attendanceProvider, child) {
+                  if (settingsProvider.menuIsViewMap[26].toString() != '1') {
+                    return const SizedBox.shrink();
+                  }
+
+                  if (attendanceProvider.isCompletedToday) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        'Attendance Completed',
+                        style: AppStyles.getBoldTextStyle(
+                          fontColor: AppColors.btnRed,
+                          fontSize: 16,
+                        ),
+                      ),
                     );
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Mark Attendance'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                  }
+
+                  return ElevatedButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        barrierDismissible: false,
+                        context: context,
+                        builder: (BuildContext context) {
+                          return const AddAttendanceWidget(
+                              editId: '0', isEdit: false, user: '', userId: 0);
+                        },
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text('Mark Attendance'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 12,
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
+              ),
             ],
           ),
           const SizedBox(height: 20),

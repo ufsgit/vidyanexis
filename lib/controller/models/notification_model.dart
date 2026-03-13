@@ -19,6 +19,7 @@ class NotificationModel {
   String? createdAt;
   String? deleteStatus;
   String? masterId;
+  String? redirectId;
   var additionalData;
   String? titleNew;
   String? bodyNew;
@@ -34,6 +35,7 @@ class NotificationModel {
     this.createdAt,
     this.deleteStatus,
     this.masterId,
+    this.redirectId,
     this.additionalData,
     this.titleNew,
     this.bodyNew,
@@ -50,6 +52,7 @@ class NotificationModel {
     String? createdAt,
     String? deleteStatus,
     String? masterId,
+    String? redirectId,
     var additionalData,
     String? titleNew,
     String? bodyNew,
@@ -65,6 +68,7 @@ class NotificationModel {
         createdAt: createdAt ?? this.createdAt,
         deleteStatus: deleteStatus ?? this.deleteStatus,
         masterId: masterId ?? this.masterId,
+        redirectId: redirectId ?? this.redirectId,
         additionalData: additionalData ?? this.additionalData,
         titleNew: titleNew ?? this.titleNew,
         bodyNew: bodyNew ?? this.bodyNew,
@@ -141,6 +145,8 @@ class NotificationModel {
           asString(map["Created_At"] ?? map['created_at'] ?? map['createdAt']),
       deleteStatus: asString(map["DeleteStatus"] ?? map['delete_status']),
       masterId: asIntString(map["Master_Id"] ?? map['master_id']),
+      redirectId: asIntString(
+          map["Notification_Type_Id"] ?? map['notification_type_id']),
       titleNew: asString(map["TITLE_NEW"] ?? map['title_new']),
       bodyNew: asString(map["BODY_NEW"] ?? map['body_new']),
       customerId: asIntString(map["Customer_Id"] ?? map['customer_id']),
@@ -158,6 +164,7 @@ class NotificationModel {
         "Created_At": createdAt,
         "DeleteStatus": deleteStatus,
         "Master_Id": masterId,
+        "Notification_Type_Id": redirectId,
         "TITLE_NEW": titleNew,
         "BODY_NEW": bodyNew,
         "Customer_Id": customerId,

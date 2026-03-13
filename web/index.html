@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
-  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <meta name="apple-mobile-web-app-title" content="Solaris">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
@@ -67,8 +67,8 @@
   </style>
 
   <script>
-    const APP_VERSION = '1.0.1+12';
-    // Removed deprecated serviceWorkerVersion declaration.
+    const APP_VERSION = '1.0.2+14';
+    const serviceWorkerVersion = null;
   </script>
 
   <script>
@@ -176,21 +176,38 @@
     }
 
     checkVersionAndClearIfNeeded();
-  </script> <!-- Remove cache busting logic from head since it depends on document.body -->
+  </script>
+
+  <!-- Cache busting for flutter.js -->
+  <script>
+    const timestamp = new Date().getTime();
+    const flutterScript = document.createElement('script');
+    flutterScript.src = 'flutter.js?v=' + APP_VERSION + '&t=' + timestamp;
+    flutterScript.defer = true;
+    document.head.appendChild(flutterScript);
+  </script>
 </head>
 
 <body>
   <div id="loading-container">
     <div class="loader"></div>
   </div>
-
   <script>
-    // Inject the new flutter_bootstrap.js script required for Flutter 3.22+
-    const timestamp = new Date().getTime();
-    const flutterScript = document.createElement('script');
-    flutterScript.src = 'flutter_bootstrap.js?v=' + APP_VERSION + '&t=' + timestamp;
-    flutterScript.async = true;
-    document.body.appendChild(flutterScript);
+    window.addEventListener('load', function () {
+      const version = new Date().getTime();
+
+      _flutter.loader.loadEntrypoint({
+        serviceWorker: {
+          serviceWorkerVersion: serviceWorkerVersion,
+        },
+        entrypointUrl: 'main.dart.js?v=' + APP_VERSION + '&t=' + version,
+        onEntrypointLoaded: function (engineInitializer) {
+          engineInitializer.initializeEngine().then(function (appRunner) {
+            appRunner.runApp();
+          });
+        }
+      });
+    });
   </script>
 </body>
 
