@@ -6,7 +6,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_expansion_tile_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
@@ -217,9 +217,8 @@ class QuotationDetailsWidget extends StatelessWidget {
                   context,
                   MaterialPageRoute(
                     builder: (BuildContext context) {
-                      return QuotationCreationWidget(
+                      return EditQuotationScreen(
                           quotationId: serviceId,
-                          isEdit: true,
                           customerId: customerId);
                     },
                   ),

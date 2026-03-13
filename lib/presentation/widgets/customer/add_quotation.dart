@@ -14,8 +14,6 @@ import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
-import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
-
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -95,50 +93,38 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
 
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: CustomAppBarWidget(
-        title: widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
-        onLeadingPressed: () {
-          customerDetailsProvider.clearQuotationDetails();
-          Navigator.pop(context);
-        },
-        onSavePressed: () async {
-          if (!_formKey.currentState!.validate()) return;
-
-          if (customerDetailsProvider.qproductnameController.text.isEmpty) {
-            _showValidationDialog(
-                context, 'Cannot Save', 'Product name is required');
-            return;
-          }
-
-          if (customerDetailsProvider.items.isEmpty &&
-              customerDetailsProvider.commercialItems.isEmpty &&
-              customerDetailsProvider.billOfMaterialsItems.isEmpty) {
-            _showValidationDialog(context, 'Cannot Save', 'No items added');
-            return;
-          }
-
-          try {
-            customerDetailsProvider.saveQuotation(
-                widget.quotationId, widget.customerId, context, widget.isEdit);
-          } catch (e) {
-            _showValidationDialog(context, 'Save Failed', e.toString());
-            print(e);
-          }
-        },
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        surfaceTintColor: Colors.white,
+        leading: IconButton(
+          onPressed: () {
+            customerDetailsProvider.clearQuotationDetails();
+            Navigator.pop(context);
+          },
+          icon: const Icon(Icons.arrow_back),
+        ),
+        title: Text(
+          widget.isEdit ? 'Edit Quotation' : 'Add Quotation',
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 18,
+            fontWeight: FontWeight.w500,
+            color: AppColors.textBlack,
+          ),
+        ),
       ),
       body: Form(
-
         key: _formKey,
         child: SingleChildScrollView(
-          child: Container(
-            color: Colors.white,
-            width: AppStyles.isWebScreen(context)
-                ? MediaQuery.of(context).size.width / 2
-                : MediaQuery.of(context).size.width,
-            // height: MediaQuery.sizeOf(context).height / 1.5,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
+          child: Center(
+            child: Container(
+              color: Colors.white,
+              width: AppStyles.isWebScreen(context)
+                  ? MediaQuery.of(context).size.width / 2
+                  : MediaQuery.of(context).size.width,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 //basic details
                 ExpansionTile(
@@ -1204,6 +1190,60 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           ),
         ),
       ),
+    ),
+    persistentFooterButtons: [
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              CustomElevatedButton(
+                buttonText: 'Cancel',
+                onPressed: () {
+                  customerDetailsProvider.clearQuotationDetails();
+                  Navigator.of(context).pop();
+                },
+                backgroundColor: AppColors.whiteColor,
+                borderColor: AppColors.appViolet,
+                textColor: AppColors.appViolet,
+              ),
+              const SizedBox(width: 12),
+              CustomElevatedButton(
+                buttonText: 'Save',
+                onPressed: () async {
+                  if (!_formKey.currentState!.validate()) return;
+
+                  if (customerDetailsProvider
+                      .qproductnameController.text.isEmpty) {
+                    _showValidationDialog(
+                        context, 'Cannot Save', 'Product name is required');
+                    return;
+                  }
+
+                  if (customerDetailsProvider.items.isEmpty &&
+                      customerDetailsProvider.commercialItems.isEmpty &&
+                      customerDetailsProvider.billOfMaterialsItems.isEmpty) {
+                    _showValidationDialog(
+                        context, 'Cannot Save', 'No items added');
+                    return;
+                  }
+
+                  try {
+                    customerDetailsProvider.saveQuotation(widget.quotationId,
+                        widget.customerId, context, widget.isEdit);
+                  } catch (e) {
+                    _showValidationDialog(context, 'Save Failed', e.toString());
+                    print(e);
+                  }
+                },
+                backgroundColor: AppColors.appViolet,
+                borderColor: AppColors.appViolet,
+                textColor: AppColors.whiteColor,
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 
@@ -1600,58 +1640,75 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 itemBuilder: (context, index) {
                   final item = customerDetailsProvider.items[index];
                   return Container(
+                    width: double.infinity,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     margin: const EdgeInsets.only(bottom: 10),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: Wrap(
-                      alignment: WrapAlignment.start,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 15,
-                      runSpacing: 5,
+                    child: Row(
                       children: [
-                        Text(
-                          item.ItemName,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
+                        Expanded(
+                          child: Text(
+                            item.ItemName,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                            ),
                           ),
                         ),
-                        Text(
-                          'Quantity: ${item.Quantity}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Quantity: ${item.Quantity}',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
                           ),
                         ),
-                        Text(
-                          'Unit Price: ₹${item.UnitPrice.toStringAsFixed(2)}',
-                          style: TextStyle(
-                            color: Colors.grey[600],
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Unit Price: ₹${item.UnitPrice.toStringAsFixed(2)}',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
                           ),
                         ),
-                        Text(
-                          'GST: ₹${item.GST.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            color: Colors.black54,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'GST: ₹${item.GST.toStringAsFixed(2)}',
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black54,
+                            ),
                           ),
                         ),
-                        Text(
-                          'Total: ₹${item.Amount.toStringAsFixed(2)}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black54,
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Text(
+                            'Total: ₹${item.Amount.toStringAsFixed(2)}',
+                            textAlign: TextAlign.end,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              fontSize: 14,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
+                        const SizedBox(width: 5),
                         TextButton(
                           onPressed: () => customerDetailsProvider
                               .populateItemFieldsForEditing(index),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
                           child: Text(
                             'Edit',
                             style: TextStyle(
@@ -1662,11 +1719,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         TextButton(
                           onPressed: () =>
                               customerDetailsProvider.deleteItem(index),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 8),
-                            minimumSize: Size.zero,
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          ),
                           child: Text(
                             'Delete',
                             style: TextStyle(
@@ -2124,58 +2176,75 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             itemBuilder: (context, index) {
               final item = customerDetailsProvider.commercialItems[index];
               return Container(
+                width: double.infinity,
                 padding: const EdgeInsets.symmetric(horizontal: 10),
                 margin: const EdgeInsets.only(bottom: 10),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: Wrap(
-                  alignment: WrapAlignment.start,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  spacing: 15,
-                  runSpacing: 5,
+                child: Row(
                   children: [
-                    Text(
-                      item.description ?? '',
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
+                    Expanded(
+                      child: Text(
+                        item.description ?? '',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
-                    Text(
-                      'AC Capacity: ${item.acCapacity}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'AC Capacity: ${item.acCapacity}',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
                       ),
                     ),
-                    Text(
-                      'DC Capacity: ${item.dcCapacity}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'DC Capacity: ${item.dcCapacity}',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
                       ),
                     ),
-                    Text(
-                      'Unit Price: ₹${item.unitPrice}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Unit Price: ₹${item.unitPrice}',
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black54,
+                        ),
                       ),
                     ),
-                    Text(
-                      'Total: ₹${item.total}',
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black54,
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        'Total: ₹${item.total}',
+                        textAlign: TextAlign.end,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
+                    const SizedBox(width: 5),
                     TextButton(
                       onPressed: () => customerDetailsProvider
                           .populateCommercialItemFieldsForEditing(index),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
                       child: Text(
                         'Edit',
                         style: TextStyle(
@@ -2186,11 +2255,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     TextButton(
                       onPressed: () =>
                           customerDetailsProvider.deleteCommercialItem(index),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        minimumSize: Size.zero,
-                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                      ),
                       child: Text(
                         'Delete',
                         style: TextStyle(

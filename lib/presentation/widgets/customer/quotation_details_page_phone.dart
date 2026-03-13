@@ -3,16 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
-import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
-import 'package:vidyanexis/presentation/pages/home/add_quotation_widget_mobile.dart';
 
 import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
@@ -336,10 +334,9 @@ class _QuotationDetailsPagePhoneState extends State<QuotationDetailsPagePhone> {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (c) => QuotationCreationWidget(
+                      builder: (c) => EditQuotationScreen(
                         customerId: widget.customerId,
                         quotationId: widget.quotationId,
-                        isEdit: true,
                       ),
                     ),
                   );

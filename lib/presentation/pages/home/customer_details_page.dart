@@ -6,12 +6,12 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
 import 'package:vidyanexis/controller/models/document_checklist_model.dart';
-import 'package:vidyanexis/main.dart';
+
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
-import 'package:vidyanexis/presentation/pages/home/expense_screen.dart';
+
 import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_expense.dart';
@@ -31,13 +31,14 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/document_list_model.dart';
-import 'package:vidyanexis/controller/models/task_document_model.dart';
+
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_service.dart';
+import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_task_overview_tab.dart';
 
@@ -45,11 +46,11 @@ import 'package:vidyanexis/presentation/widgets/customer/amc_creation_widget.dar
 import 'package:vidyanexis/presentation/widgets/customer/amc_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_details_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/reciept_card.dart';
+
 import 'package:vidyanexis/presentation/widgets/customer/service_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/service_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_card.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_chips_widget.dart';
+
 import 'package:vidyanexis/presentation/widgets/customer/follow_up_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
@@ -2830,22 +2831,19 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   customerDetailsProvider
                                                                       .qsubsidyAmountController
                                                                       .text = '0';
-                                                                    Navigator.push(
-                                                                      context,
-                                                                      MaterialPageRoute(
-                                                                        builder: (BuildContext
-                                                                            context) {
-                                                                          return QuotationCreationWidget(
+                                                                  Navigator.push(
+                                                                    context,
+                                                                    MaterialPageRoute(
+                                                                      builder: (context) =>
+                                                                          QuotationCreationWidget(
                                                                               quotationId:
                                                                                   '0',
                                                                               isEdit:
                                                                                   false,
                                                                               customerId:
-                                                                                  widget.customerId);
-                                                                        },
-                                                                      ),
-                                                                    );
-
+                                                                                  widget.customerId),
+                                                                    ),
+                                                                  );
                                                                 },
                                                                 icon: const Icon(
                                                                     Icons.add),
@@ -4750,8 +4748,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       context,
       MaterialPageRoute(
         builder: (BuildContext context) {
-          return QuotationCreationWidget(
-              quotationId: taskId, isEdit: true, customerId: widget.customerId);
+          return EditQuotationScreen(
+              quotationId: taskId, customerId: widget.customerId);
         },
       ),
     );

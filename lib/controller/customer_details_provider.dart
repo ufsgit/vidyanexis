@@ -533,6 +533,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
   int? get editBillOfMaterialsIndex => _editBillOfMaterialsIndex;
   int? get editProductionIndex => _editProductionIndex;
 
+  void setBillOfMaterialIndex(int? index) {
+    _editBillOfMaterialsIndex = index;
+    notifyListeners();
+  }
+
   ScrollController imageScrollController = ScrollController();
   ScrollController imageScrollControllerList = ScrollController();
   ScrollController taskScrollController = ScrollController();

@@ -12,7 +12,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/models/quotaion_list_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_details_widget.dart';
@@ -413,9 +413,8 @@ class QuotationCard extends StatelessWidget {
                           context,
                           MaterialPageRoute(
                             builder: (BuildContext context) {
-                              return QuotationCreationWidget(
+                              return EditQuotationScreen(
                                   quotationId: taskId,
-                                  isEdit: true,
                                   customerId: customerId);
                             },
                           ),
