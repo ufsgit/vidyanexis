@@ -2,12 +2,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/models/menu_model.dart';
-import 'package:vidyanexis/http/socket_io.dart';
-import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -17,7 +12,10 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_page_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
 import 'package:vidyanexis/presentation/pages/home/lead_page_phone.dart';
-import 'package:vidyanexis/presentation/widgets/home/animated_bottom_navbar_widget.dart';
+import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
+import 'package:vidyanexis/presentation/pages/home/task_page.dart';
+import 'package:vidyanexis/http/socket_io.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 
 class HomePageMobile extends StatefulWidget {
   const HomePageMobile({super.key});
@@ -58,7 +56,6 @@ class _HomePageMobileState extends State<HomePageMobile> {
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
-      logo = AppStyles.logo();
     });
   }
 
@@ -73,6 +70,7 @@ class _HomePageMobileState extends State<HomePageMobile> {
   Widget build(BuildContext context) {
     final sideProvider = Provider.of<SidebarProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    // logo = settingsProvider.logo.isNotEmpty ? settingsProvider.logo : AppStyles.logo();
 
     List<Widget> pages = [];
     List<BottomNavigationBarItem> bottomNavItems = [];

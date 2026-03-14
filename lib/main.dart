@@ -105,7 +105,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WarrentyReportProvider()),
         ChangeNotifierProvider(create: (context) => FollowupReportsProvider()),
         ChangeNotifierProvider(create: (context) => QuotationReportProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()),
+        ChangeNotifierProvider(create: (_) => SettingsProvider()..getCompanyDetails()),
         ChangeNotifierProvider(create: (_) => EnquirySourceProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryReportProvider()),
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),

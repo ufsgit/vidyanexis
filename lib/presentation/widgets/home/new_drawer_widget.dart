@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
@@ -266,6 +267,9 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
 
   // late CustomFieldWidgetBuilder widgetBuilder;
   final _formKey = GlobalKey<FormState>();
+  final GlobalKey _basicDetailsKey = GlobalKey();
+  final GlobalKey _addressKey = GlobalKey();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -371,6 +375,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
     final leadProvider = Provider.of<LeadsProvider>(context);
 
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
     print(leadProvider.enquirySourceController.text);
 
     return Consumer<DropDownProvider>(
@@ -384,119 +389,182 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
             child: Column(
               children: [
                 // Scrollable content
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.all(16.0),
+                Container(
+                  padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
+                  color: Colors.white,
+                  child: Column(
                     children: [
-                      // Copy all your existing ExpansionTile widgets here
-                      // (Basic details, Address, Invertor and Panel Details, etc.)
-
-                      Container(
-                        padding: const EdgeInsets.all(16.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(0),
-                            topRight: Radius.circular(0),
-                          ),
-                          border: Border(
-                            bottom: BorderSide(
-                              color: AppColors.textGrey2.withOpacity(0.3),
-                              width: 1,
-                            ),
-                          ),
-                        ),
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  widget.isEdit
-                                      ? 'Edit Lead details'
-                                      : 'Add New Lead',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: AppColors.textBlack,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                if (!widget.isEdit)
-                                  Text(
-                                    '${leadProvider.loginBranchName} | ${leadProvider.loginDepartmentName} | ${leadProvider.loginUserTypeName}',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      color: AppColors.primaryBlue,
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                              ],
-                            ),
                             Row(
                               children: [
-                                // if (widget.isEdit)
-                                //   ElevatedButton(
-                                //     onPressed: () async {
-                                //       Navigator.of(context).pop();
-                                //       //
-                                //       // final leadDetailsProvider =
-                                //       //     Provider.of<LeadDetailsProvider>(context,
-                                //       //         listen: false);
-                                //       //
-                                //       // await leadDetailsProvider.fetchLeadDetails(
-                                //       //     widget.customerId.toString(), context);
-                                //       //
-                                //       // context.push(
-                                //       //     '${CustomerDetailsScreen.route}${widget.customerId.toString()}/${'true'}');
-                                //     },
-                                //     style: ElevatedButton.styleFrom(
-                                //       foregroundColor: AppColors.primaryBlue,
-                                //       backgroundColor:
-                                //           Colors.white, // Text color
-                                //       side: BorderSide(
-                                //           color: AppColors
-                                //               .primaryBlue), // Border color
-                                //       shape: RoundedRectangleBorder(
-                                //         borderRadius: BorderRadius.circular(
-                                //             5), // Border radius
-                                //       ),
-                                //       padding: const EdgeInsets.symmetric(
-                                //           horizontal: 8.0,
-                                //           vertical:
-                                //               0.0), // Reduced horizontal padding
-                                //     ),
-                                //     child: Row(
-                                //       children: [
-                                //         Icon(
-                                //           Icons.person,
-                                //           color: AppColors.primaryBlue,
-                                //         ),
-                                //         if (AppStyles.isWebScreen(context))
-                                //           const Text(
-                                //             'View Details',
-                                //             style: TextStyle(fontSize: 16),
-                                //           ),
-                                //       ],
-                                //     ),
-                                //   ),
-                                if (widget.isEdit) const SizedBox(width: 8),
                                 IconButton(
                                   icon: Icon(Icons.close,
-                                      color: AppColors.textBlack),
+                                      color: AppColors.textGrey3),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                     _onDrawerClosed(context);
                                   },
                                 ),
+                                const SizedBox(width: 4),
+                                Container(
+                                  padding: const EdgeInsets.all(2),
+                                  decoration: const BoxDecoration(
+                                    color: Colors.transparent,
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: CircleAvatar(
+                                    radius: 12,
+                                    backgroundColor: Colors.transparent,
+                                    child: ClipOval(
+                                      child: displayLogo.startsWith('http')
+                                          ? Image.network(
+                                              displayLogo,
+                                              width: 24,
+                                              height: 24,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  const Icon(Icons.business,
+                                                      color: Colors.red,
+                                                      size: 24),
+                                            )
+                                          : Image.asset(
+                                              AppStyles.logo(),
+                                              width: 24,
+                                              height: 24,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context, error,
+                                                      stackTrace) =>
+                                                  const Icon(Icons.business,
+                                                      color: Colors.red,
+                                                      size: 24),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      widget.isEdit
+                                          ? 'Edit Lead details'
+                                          : 'Add New Lead',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: AppColors.textBlack,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    if (!widget.isEdit)
+                                      Text(
+                                        '${leadProvider.loginBranchName} | ${leadProvider.loginDepartmentName}',
+                                        style: GoogleFonts.plusJakartaSans(
+                                          color: AppColors.primaryBlue,
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                  ],
+                                ),
                               ],
+                            ),
+                            TextButton(
+                              onPressed: _saveLead,
+                              child: Text(
+                                'Save',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.primaryBlue,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 12),
+                      // Basic Details / Address Toggle Buttons
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              if (_basicDetailsKey.currentContext != null) {
+                                Scrollable.ensureVisible(
+                                  _basicDetailsKey.currentContext!,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: AppColors.primaryBlue.withOpacity(0.1),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                    color:
+                                        AppColors.primaryBlue.withOpacity(0.5)),
+                              ),
+                              child: Text(
+                                'Basic details',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: AppColors.textBlack,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          GestureDetector(
+                            onTap: () {
+                              if (_addressKey.currentContext != null) {
+                                Scrollable.ensureVisible(
+                                  _addressKey.currentContext!,
+                                  duration: const Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 8),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[50],
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: Colors.grey[300]!),
+                              ),
+                              child: Text(
+                                'Address',
+                                style: GoogleFonts.plusJakartaSans(
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                    ],
+                  ),
+                ),
+                Expanded(
+                  child: ListView(
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16.0, vertical: 8.0),
+                    children: [
                       //basic
                       ExpansionTile(
+                        key: _basicDetailsKey,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
                         ),
@@ -516,7 +584,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 10),
                           // Row 1: Lead Name, Channel Source, Mobile No
-                          Row(
+                          ResponsiveRow(
                             children: [
                               Expanded(
                                 child: Padding(
@@ -647,7 +715,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           const SizedBox(height: 8),
 
                           // Row 2: Enquiry Source, Enquiry For, Sub Source
-                          Row(
+                          ResponsiveRow(
                             children: [
                               Expanded(
                                 child: Padding(
@@ -748,7 +816,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           ),
                           const SizedBox(height: 8),
                           // Row 3: Total Project Cost
-                          Row(
+                          ResponsiveRow(
                             children: [
                               Expanded(
                                 child: Padding(
@@ -930,6 +998,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                       ),
                       //address
                       ExpansionTile(
+                        key: _addressKey,
                         shape: const RoundedRectangleBorder(
                           borderRadius: BorderRadius.zero,
                         ),
@@ -947,7 +1016,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           const SizedBox(
                             height: 10,
                           ),
-                          Row(
+                          ResponsiveRow(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -1049,7 +1118,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Row(
+                          ResponsiveRow(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -1093,7 +1162,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ],
                           ),
                           const SizedBox(height: 8),
-                          Row(
+                          ResponsiveRow(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Expanded(
@@ -1181,7 +1250,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             // const SizedBox(
                             //   height: 10,
                             // ),
-                            Row(
+                            ResponsiveRow(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
@@ -1255,7 +1324,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                             ),
 
                             const SizedBox(height: 8),
-                            Row(
+                            ResponsiveRow(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
@@ -1513,7 +1582,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                               children: [
                                 const SizedBox(height: 10),
                                 // Row 1: Branch, Department, Follow-up Status
-                                Row(
+                                ResponsiveRow(
                                   children: [
                                     Expanded(
                                       child: Padding(
@@ -1677,7 +1746,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                     ),
                                 const SizedBox(height: 8),
                                 // Row 2: Assigned Staff, Remarks, Next Follow-up Date
-                                Row(
+                                ResponsiveRow(
                                   children: [
                                     Expanded(
                                       child: Padding(
@@ -1810,53 +1879,68 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                     ],
                   ),
                 ),
-
-                // Fixed bottom buttons
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16.0),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.2),
-                        spreadRadius: 1,
-                        blurRadius: 3,
-                        offset: const Offset(0, -1),
-                      ),
-                    ],
-                  ),
-                  child: SafeArea(
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        CustomElevatedButton(
-                          buttonText: 'Cancel',
-                          onPressed: () {
-                            _onDrawerClosed(context);
-                            Navigator.of(context).pop();
-                          },
-                          backgroundColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          textColor: AppColors.appViolet,
-                        ),
-                        const SizedBox(width: 16),
-                        CustomElevatedButton(
-                          buttonText: 'Save',
-                          onPressed: _saveLead,
-                          backgroundColor: AppColors.appViolet,
-                          borderColor: AppColors.appViolet,
-                          textColor: AppColors.whiteColor,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
         );
       },
+    );
+  }
+}
+
+// Added responsive row logic
+class ResponsiveRow extends StatelessWidget {
+  final List<Widget> children;
+  final MainAxisAlignment mainAxisAlignment;
+
+  const ResponsiveRow({
+    super.key,
+    required this.children,
+    this.mainAxisAlignment = MainAxisAlignment.start,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    bool isMobile = MediaQuery.sizeOf(context).width <= 800;
+    if (!isMobile) {
+      return Row(
+        mainAxisAlignment: mainAxisAlignment,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: children,
+      );
+    }
+
+    List<Widget> mobileChildren = [];
+    for (var child in children) {
+      if (child is Expanded) {
+        mobileChildren.add(Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: child.child,
+        ));
+      } else if (child is Flexible) {
+        mobileChildren.add(Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: child.child,
+        ));
+      } else if (child is Spacer) {
+        // skip
+      } else if (child is SizedBox) {
+        if (child.width != null && child.height == null) {
+          // skip width-only sizedboxes
+        } else {
+          mobileChildren.add(child);
+        }
+      } else {
+        mobileChildren.add(Padding(
+          padding: const EdgeInsets.only(bottom: 12.0),
+          child: child,
+        ));
+      }
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: mobileChildren,
     );
   }
 }

@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_company_details.dart';
 
@@ -82,7 +81,7 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                                 .toString();
                         settingsProvider.cemailController.text =
                             settingsProvider.companyDetails[0].email.toString();
-                        settingsProvider.saveIamgePath(
+                        settingsProvider.saveImagePath(
                             settingsProvider.companyDetails[0].logo.toString());
                         settingsProvider.setToggleValue(
                             settingsProvider.companyDetails[0].isLocation);
@@ -118,8 +117,11 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       Center(
                         child: CircleAvatar(
                           radius: 60,
-                          backgroundImage: NetworkImage(HttpUrls.imgBaseUrl +
-                              settingsProvider.companyDetails[0].logo),
+                          backgroundImage:
+                              settingsProvider.displayLogo.startsWith('http')
+                                  ? NetworkImage(settingsProvider.displayLogo)
+                                  : AssetImage(settingsProvider.displayLogo)
+                                      as ImageProvider,
                           backgroundColor: Colors.grey[200],
                         ),
                       ),

@@ -74,33 +74,43 @@ class _CustomSidebarState extends State<CustomSidebar> {
                     height: 30,
                     child: Row(
                       children: [
-                        widget.logo.startsWith('assets/')
-                            ? Image.asset(
-                                widget.logo,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
+                        CircleAvatar(
+                          radius: 15,
+                          backgroundColor: Colors.transparent,
+                          child: ClipOval(
+                            child: widget.logo.startsWith('assets/')
+                                ? Image.asset(
+                                    widget.logo,
                                     height: 30,
                                     width: 30,
-                                    color: Colors.grey[200],
-                                    child: const Icon(Icons.broken_image,
-                                        size: 20, color: Colors.grey),
-                                  );
-                                },
-                              )
-                            : Image.network(
-                                widget.logo,
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        height: 30,
+                                        width: 30,
+                                        color: Colors.grey[200],
+                                        child: const Icon(Icons.broken_image,
+                                            size: 20, color: Colors.grey),
+                                      );
+                                    },
+                                  )
+                                : Image.network(
+                                    widget.logo,
                                     height: 30,
                                     width: 30,
-                                    color: Colors.grey[200],
-                                    child: const Icon(Icons.broken_image,
-                                        size: 20, color: Colors.grey),
-                                  );
-                                },
-                              ),
+                                    fit: BoxFit.cover,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Container(
+                                        height: 30,
+                                        width: 30,
+                                        color: Colors.grey[200],
+                                        child: const Icon(Icons.broken_image,
+                                            size: 20, color: Colors.grey),
+                                      );
+                                    },
+                                  ),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -376,6 +386,12 @@ class _CustomSidebarState extends State<CustomSidebar> {
                           attendanceId = prefs.getInt('attendance_id_$userId');
                         }
 
+                        // Backup branding state
+                        String? cachedLogo =
+                            prefs.getString('cached_company_logo');
+                        String? cachedTitle =
+                            prefs.getString('cached_company_title');
+
                         await prefs.clear();
 
                         // Restore attendance state
@@ -396,6 +412,16 @@ class _CustomSidebarState extends State<CustomSidebar> {
                             await prefs.setInt(
                                 'attendance_id_$userId', attendanceId);
                           }
+                        }
+
+                        // Restore branding state
+                        if (cachedLogo != null) {
+                          await prefs.setString(
+                              'cached_company_logo', cachedLogo);
+                        }
+                        if (cachedTitle != null) {
+                          await prefs.setString(
+                              'cached_company_title', cachedTitle);
                         }
 
                         context.go(LoginPage.route);

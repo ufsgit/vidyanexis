@@ -19,6 +19,8 @@ import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 
 class LeadCard extends StatefulWidget {
   final SearchLeadModel lead;
@@ -478,20 +480,48 @@ class _LeadCardState extends State<LeadCard> {
                     Expanded(
                       child: CustomActionButton(
                         imageColor: AppColors.secondaryBlue,
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (c) => AddPeriodicServiceMobile(
-                                amcId: '0',
-                                customerId: widget.lead.customerId.toString(),
-                                isEdit: false,
-                              ),
-                            ),
+                        onTap: () async {
+                          showDialog(
+                            context: context,
+                            barrierDismissible: false,
+                            builder: (BuildContext context) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                          );
+
+                          final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context, listen: false);
+                          await leadDetailsProvider.fetchLeadDetails(
+                              widget.lead.customerId.toString(), context);
+
+                          final leadsProvider = Provider.of<LeadsProvider>(
+                              context,
+                              listen: false);
+                          leadsProvider.setCutomerId(int.tryParse(widget.lead.customerId.toString()) ?? 0);
+                          final dropDownProvider =
+                              Provider.of<DropDownProvider>(context,
+                                  listen: false);
+                          final leadDetails = leadDetailsProvider.leadDetails![0];
+                          leadsProvider.enquirySourceController.text =
+                              leadDetails.enquirySourceName.toString();
+
+                          dropDownProvider.selectedEnquirySourceId =
+                              leadDetails.enquirySourceId;
+                          await leadsProvider.getLeadDropdowns(context);
+                          Navigator.pop(context); // Close loading dialog
+
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const NewLeadDrawerWidget(
+                                isEdit: true,
+                              );
+                            },
                           );
                         },
-                        icon: Icons.miscellaneous_services,
-                        text: 'Service',
+                        icon: Icons.edit_outlined,
+                        text: 'Edit',
                         height: 38,
                       ),
                     ),
@@ -512,7 +542,7 @@ class _LeadCardState extends State<LeadCard> {
                           );
                         },
                         icon: Icons.request_quote_outlined,
-                        text: 'Quotation',
+                        text: 'Quote',
                         height: 38,
                       ),
                     ),

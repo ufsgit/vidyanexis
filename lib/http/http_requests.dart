@@ -56,7 +56,7 @@ class HttpRequest {
         options: Options(headers: {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          if (token.isNotEmpty) "Authorization": "Bearer $token",
           "menuId": sideBarProvider.menuId
         }, responseType: returnBytes ? ResponseType.bytes : ResponseType.json),
         queryParameters: bodyData,
@@ -94,7 +94,7 @@ class HttpRequest {
         options: Options(headers: {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          if (token.isNotEmpty) "Authorization": "Bearer $token",
           "menuId": sideBarProvider.menuId
         }),
         data: bodyData,
@@ -134,7 +134,7 @@ class HttpRequest {
         options: Options(headers: {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          if (token.isNotEmpty) "Authorization": "Bearer $token",
           "menuId": sideBarProvider.menuId
         }),
         data: bodyData,
@@ -171,7 +171,7 @@ class HttpRequest {
         options: Options(headers: {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          if (token.isNotEmpty) "Authorization": "Bearer $token",
           "menuId": sideBarProvider.menuId
         }),
         data: bodyData, // data remains the same
@@ -208,7 +208,7 @@ class HttpRequest {
         options: Options(headers: {
           'ngrok-skip-browser-warning': 'true',
           "Content-Type": "application/json",
-          "Authorization": "Bearer $token",
+          if (token.isNotEmpty) "Authorization": "Bearer $token",
           "menuId": sideBarProvider.menuId
         }),
         queryParameters: bodyData,

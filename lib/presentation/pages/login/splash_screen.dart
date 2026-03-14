@@ -41,6 +41,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
+
     return Scaffold(
       body: Stack(
         children: [
@@ -58,12 +61,51 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           Center(
-              child: Image.asset(
-            AppStyles.logo(),
-            errorBuilder: (context, error, stackTrace) {
-              return Container();
-            },
-          )),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.circle,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 20,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: CircleAvatar(
+                radius: 75,
+                backgroundColor: Colors.transparent,
+                child: ClipOval(
+                  child: displayLogo.startsWith('http')
+                      ? Image.network(
+                          displayLogo,
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
+                              AppStyles.logo(),
+                              height: 150,
+                              width: 150,
+                              fit: BoxFit.cover,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          displayLogo,
+                          height: 150,
+                          width: 150,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container();
+                          },
+                        ),
+                ),
+              ),
+            ),
+          ),
         ],
       ),
     );
