@@ -309,6 +309,7 @@ class FormProvider extends ChangeNotifier {
 
   Future<void> getFormDataByCustomer(String customerId,
       {String? taskTypeId, String? enquiryForId}) async {
+    _customerForms = [];
     isLoadingForms = true;
     notifyListeners();
     try {
@@ -333,20 +334,23 @@ class FormProvider extends ChangeNotifier {
         bodyData: queryParams,
       );
 
-      if (response.statusCode == 200) {
+      if (response != null && response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
           bool hasData = false;
           if (data is Map) {
             hasData = (data['forms'] is List && data['forms'].isNotEmpty) ||
-                      (data['form_data'] is List && data['form_data'].isNotEmpty) ||
-                      (data['data'] is List && data['data'].isNotEmpty);
+                      (data['form_data'] is List && data['form_data'].isNotEmpty);
           } else if (data is List) {
             hasData = data.isNotEmpty;
           }
 
           if (hasData) {
             setCustomerForms(data);
+          } else {
+             _customerForms = [];
+             isLoadingForms = false;
+             notifyListeners();
           }
         }
       }
@@ -365,7 +369,7 @@ class FormProvider extends ChangeNotifier {
       List<dynamic> formsList = [];
       if (data is Map) {
         var fForms = data['forms'];
-        var fData = data['form_data'] ?? data['data'];
+        var fData = data['form_data'];
 
         if (fForms is List && fForms.isNotEmpty) {
           formsList = fForms;
