@@ -438,12 +438,14 @@ class _LeadsPageState extends State<LeadPage> {
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: Row(
-                    children: [
+                child: Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -472,10 +474,14 @@ class _LeadsPageState extends State<LeadPage> {
                                   provider.followUpData
                                       .map((status) => DropdownMenuItem<int>(
                                             value: status.statusId,
-                                            child: Text(
-                                              status.statusName ?? '',
-                                              style:
-                                                  const TextStyle(fontSize: 14),
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(maxWidth: 150),
+                                              child: Text(
+                                                status.statusName ?? '',
+                                                overflow: TextOverflow.ellipsis,
+                                                style:
+                                                    const TextStyle(fontSize: 14),
+                                              ),
                                             ),
                                           ))
                                       .toList(),
@@ -509,16 +515,14 @@ class _LeadsPageState extends State<LeadPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
+
                       GestureDetector(
                         onTap: () {
                           onClickTopButton(context);
                         },
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 1.5),
+                              horizontal: 16, vertical: 6),
                           decoration: BoxDecoration(
                             color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
@@ -549,9 +553,7 @@ class _LeadsPageState extends State<LeadPage> {
                           ),
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
+
                       // Container(
                       //   padding: const EdgeInsets.symmetric(horizontal: 20),
                       //   decoration: BoxDecoration(
@@ -632,12 +634,11 @@ class _LeadsPageState extends State<LeadPage> {
                       // ),
                       if (userType == '1') ...[
                         _buildAssignedStaffFilter(leadProvider),
-                        const SizedBox(
-                          width: 10,
-                        ),
+
                       ],
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -666,10 +667,14 @@ class _LeadsPageState extends State<LeadPage> {
                                   provider.enquiryForList
                                       .map((user) => DropdownMenuItem<int>(
                                             value: user.enquiryForId,
-                                            child: Text(
-                                              user.enquiryForName,
-                                              style:
-                                                  const TextStyle(fontSize: 14),
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(maxWidth: 150),
+                                              child: Text(
+                                                user.enquiryForName,
+                                                overflow: TextOverflow.ellipsis,
+                                                style:
+                                                    const TextStyle(fontSize: 14),
+                                              ),
                                             ),
                                           ))
                                       .toList(),
@@ -703,11 +708,10 @@ class _LeadsPageState extends State<LeadPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(
-                        width: 10,
-                      ),
+
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
@@ -737,10 +741,14 @@ class _LeadsPageState extends State<LeadPage> {
                                   provider.enquiryData
                                       .map((user) => DropdownMenuItem<int>(
                                             value: user.enquirySourceId,
-                                            child: Text(
-                                              user.enquirySourceName,
-                                              style:
-                                                  const TextStyle(fontSize: 14),
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(maxWidth: 150),
+                                              child: Text(
+                                                user.enquirySourceName,
+                                                overflow: TextOverflow.ellipsis,
+                                                style:
+                                                    const TextStyle(fontSize: 14),
+                                              ),
                                             ),
                                           ))
                                       .toList(),
@@ -777,7 +785,7 @@ class _LeadsPageState extends State<LeadPage> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 16),
+
                       if (leadProvider.fromDate != null ||
                           leadProvider.toDate != null ||
                           (leadProvider.selectedStatus != null &&
@@ -815,7 +823,6 @@ class _LeadsPageState extends State<LeadPage> {
                           child: const Text('Reset'),
                         ),
                     ],
-                  ),
                 ),
               ),
             Expanded(
@@ -2144,7 +2151,8 @@ class _LeadsPageState extends State<LeadPage> {
         }
 
         return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 16, vertical: 6),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),

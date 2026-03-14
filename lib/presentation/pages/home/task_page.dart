@@ -539,11 +539,15 @@ class _tasksPageReportState extends State<TaskPage> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 10,
+                        runSpacing: 10,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           // Status filter
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -573,14 +577,18 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   .map((status) =>
                                                       DropdownMenuItem<int>(
                                                         value: status.statusId,
-                                                        child: Text(
-                                                          StatusUtils
-                                                              .getDisplayStatus(
-                                                                  status.statusName ??
-                                                                      ''),
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 14),
+                                                        child: ConstrainedBox(
+                                                          constraints: const BoxConstraints(maxWidth: 150),
+                                                          child: Text(
+                                                            StatusUtils
+                                                                .getDisplayStatus(
+                                                                    status.statusName ??
+                                                                        ''),
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize: 14),
+                                                          ),
                                                         ),
                                                       ))
                                                   .toList())
@@ -603,11 +611,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                           .map((status) =>
                                               DropdownMenuItem<int>(
                                                 value: status.statusId,
-                                                child: Text(
-                                                  StatusUtils.getDisplayStatus(
-                                                      status.statusName ?? ''),
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
+                                                child: ConstrainedBox(
+                                                  constraints: const BoxConstraints(maxWidth: 150),
+                                                  child: Text(
+                                                    StatusUtils.getDisplayStatus(
+                                                        status.statusName ?? ''),
+                                                    overflow: TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
                                                 ),
                                               ))
                                           .toList(),
@@ -634,7 +646,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 10),
+
                           // Date filter
                           GestureDetector(
                             onTap: () {
@@ -642,7 +654,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             },
                             child: Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
+                                  horizontal: 16, vertical: 6),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
@@ -672,10 +684,11 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                             ),
                           ),
-                          const SizedBox(width: 10),
+
                           // Staff filter
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -780,10 +793,11 @@ class _tasksPageReportState extends State<TaskPage> {
                               ],
                             ),
                           ),
-                          const SizedBox(width: 10),
+
                           // Task Type filter
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 6),
                             decoration: BoxDecoration(
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
@@ -813,11 +827,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   .map((type) =>
                                                       DropdownMenuItem<int>(
                                                         value: type.taskTypeId,
-                                                        child: Text(
-                                                          type.taskTypeName,
-                                                          style:
-                                                              const TextStyle(
-                                                                  fontSize: 14),
+                                                        child: ConstrainedBox(
+                                                          constraints: const BoxConstraints(maxWidth: 150),
+                                                          child: Text(
+                                                            type.taskTypeName,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize: 14),
+                                                          ),
                                                         ),
                                                       ))
                                                   .toList())
@@ -839,10 +857,17 @@ class _tasksPageReportState extends State<TaskPage> {
                                       provider.taskType
                                           .map((type) => DropdownMenuItem<int>(
                                                 value: type.taskTypeId,
-                                                child: Text(
-                                                  type.taskTypeName,
-                                                  style: const TextStyle(
-                                                      fontSize: 14),
+                                                child: ConstrainedBox(
+                                                  constraints:
+                                                      const BoxConstraints(
+                                                          maxWidth: 150),
+                                                  child: Text(
+                                                    type.taskTypeName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        fontSize: 14),
+                                                  ),
                                                 ),
                                               ))
                                           .toList(),
@@ -869,7 +894,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               ],
                             ),
                           ),
-                          const Spacer(),
+
                           // Reset button
                           if (reportsProvider.fromDate != null ||
                               reportsProvider.toDate != null ||
