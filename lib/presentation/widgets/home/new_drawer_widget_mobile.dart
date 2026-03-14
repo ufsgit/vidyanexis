@@ -1580,63 +1580,54 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         Provider.of<DropDownProvider>(context, listen: false);
     return Column(
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.addressController,
+          labelText: 'Address',
+          showError: dropDownProvider.showValidation &&
+              !_isFieldValid(leadProvider.addressController.text),
+        ),
+        const SizedBox(height: 8),
+        Stack(
+          alignment: Alignment.centerRight,
           children: [
-            Expanded(
-              child: CustomTextfieldWidgetMobile(
-                controller: leadProvider.addressController,
-                labelText: 'Address',
-                showError: dropDownProvider.showValidation &&
-                    !_isFieldValid(leadProvider.addressController.text),
-              ),
+            CustomTextfieldWidgetMobile(
+              controller: leadProvider.mapLinkController,
+              labelText: 'Map link',
+              onChanged: (value) {
+                leadProvider.extractCoordinates();
+              },
+              showError: dropDownProvider.showValidation &&
+                  !_isFieldValid(leadProvider.mapLinkController.text),
             ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: Stack(
-                alignment: Alignment.centerRight,
+            Positioned(
+              right: 8,
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
                 children: [
-                  CustomTextfieldWidgetMobile(
-                    controller: leadProvider.mapLinkController,
-                    labelText: 'Map link',
-                    onChanged: (value) {
-                      leadProvider.extractCoordinates();
+                  PopupMenuButton<String>(
+                    icon: Icon(Icons.keyboard_arrow_down_rounded,
+                        color: AppColors.textBlack),
+                    onSelected: (String value) {
+                      if (value == 'current') {
+                        leadProvider.useCurrentLocation();
+                      } else if (value == 'custom') {
+                        leadProvider.mapLinkController.text = '';
+                        leadProvider.latitudeController.text = '';
+                        leadProvider.longitudeController.text = '';
+                        leadProvider.extractCoordinates();
+                      }
                     },
-                    showError: dropDownProvider.showValidation &&
-                        !_isFieldValid(leadProvider.mapLinkController.text),
-                  ),
-                  Positioned(
-                    right: 8,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        PopupMenuButton<String>(
-                          icon: Icon(Icons.keyboard_arrow_down_rounded,
-                              color: AppColors.textBlack),
-                          onSelected: (String value) {
-                            if (value == 'current') {
-                              leadProvider.useCurrentLocation();
-                            } else if (value == 'custom') {
-                              leadProvider.mapLinkController.text = '';
-                              leadProvider.latitudeController.text = '';
-                              leadProvider.longitudeController.text = '';
-                              leadProvider.extractCoordinates();
-                            }
-                          },
-                          itemBuilder: (BuildContext context) =>
-                              <PopupMenuEntry<String>>[
-                            const PopupMenuItem<String>(
-                              value: 'current',
-                              child: Text('Use current location'),
-                            ),
-                            const PopupMenuItem<String>(
-                              value: 'custom',
-                              child: Text('Custom entry'),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
+                    itemBuilder: (BuildContext context) =>
+                        <PopupMenuEntry<String>>[
+                      const PopupMenuItem<String>(
+                        value: 'current',
+                        child: Text('Use current location'),
+                      ),
+                      const PopupMenuItem<String>(
+                        value: 'custom',
+                        child: Text('Custom entry'),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -1644,87 +1635,59 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           ],
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: CustomTextfieldWidgetMobile(
-                controller: leadProvider.latitudeController,
-                labelText: 'Latitude',
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: CustomTextfieldWidgetMobile(
-                controller: leadProvider.longitudeController,
-                labelText: 'Longitude',
-              ),
-            ),
-          ],
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.latitudeController,
+          labelText: 'Latitude',
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: CustomTextfieldWidgetMobile(
-                controller: leadProvider.cityController,
-                labelText: 'City',
-                showError: dropDownProvider.showValidation &&
-                    !_isFieldValid(leadProvider.cityController.text),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: CommonDropdown<int>(
-                hintText: 'District',
-                items: dropDownProvider.districtList
-                    .map((status) => DropdownItem<int>(
-                          id: status.districtId ?? 0,
-                          name: status.districtName ?? '',
-                        ))
-                    .toList(),
-                controller: leadProvider.districtController,
-                onItemSelected: (int? newValue) {
-                  if (newValue != null) {
-                    final selectedEnquiryFor = dropDownProvider.districtList
-                        .firstWhere((task) => task.districtId == newValue);
-                    dropDownProvider.updateDistrict(
-                        newValue, selectedEnquiryFor.districtName ?? '');
-                  }
-                },
-                selectedValue: dropDownProvider.selectedDistrictId != null &&
-                        dropDownProvider.districtList.any((item) =>
-                            item.districtId ==
-                            dropDownProvider.selectedDistrictId)
-                    ? dropDownProvider.selectedDistrictId
-                    : null,
-              ),
-            ),
-          ],
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.longitudeController,
+          labelText: 'Longitude',
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: CustomTextfieldWidgetMobile(
-                controller: leadProvider.pincodeController,
-                labelText: 'Pincode',
-                showError: dropDownProvider.showValidation &&
-                    !_isFieldValid(leadProvider.pincodeController.text),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: CustomTextfieldWidgetMobile(
-                controller: leadProvider.stateController,
-                labelText: 'State',
-                showError: dropDownProvider.showValidation &&
-                    !_isFieldValid(leadProvider.stateController.text),
-              ),
-            ),
-          ],
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.cityController,
+          labelText: 'City',
+          showError: dropDownProvider.showValidation &&
+              !_isFieldValid(leadProvider.cityController.text),
+        ),
+        const SizedBox(height: 8),
+        CommonDropdown<int>(
+          hintText: 'District',
+          items: dropDownProvider.districtList
+              .map((status) => DropdownItem<int>(
+                    id: status.districtId ?? 0,
+                    name: status.districtName ?? '',
+                  ))
+              .toList(),
+          controller: leadProvider.districtController,
+          onItemSelected: (int? newValue) {
+            if (newValue != null) {
+              final selectedEnquiryFor = dropDownProvider.districtList
+                  .firstWhere((task) => task.districtId == newValue);
+              dropDownProvider.updateDistrict(
+                  newValue, selectedEnquiryFor.districtName ?? '');
+            }
+          },
+          selectedValue: dropDownProvider.selectedDistrictId != null &&
+                  dropDownProvider.districtList.any((item) =>
+                      item.districtId == dropDownProvider.selectedDistrictId)
+              ? dropDownProvider.selectedDistrictId
+              : null,
+        ),
+        const SizedBox(height: 8),
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.pincodeController,
+          labelText: 'Pincode',
+          showError: dropDownProvider.showValidation &&
+              !_isFieldValid(leadProvider.pincodeController.text),
+        ),
+        const SizedBox(height: 8),
+        CustomTextfieldWidgetMobile(
+          controller: leadProvider.stateController,
+          labelText: 'State',
+          showError: dropDownProvider.showValidation &&
+              !_isFieldValid(leadProvider.stateController.text),
         ),
       ],
     );

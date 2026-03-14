@@ -177,7 +177,31 @@ class _tasksPageReportState extends State<TaskPage> {
       key: _scaffoldKey,
       appBar: !AppStyles.isWebScreen(context)
           ? CustomAppBar(
-              leadingWidget: null,
+              leadingWidget: widget.initialStatusFilter != null
+                  ? Builder(
+                      builder: (context) => IconButton(
+                        icon:
+                            const Icon(Icons.arrow_back, color: Colors.black87),
+                        onPressed: () => Navigator.pop(context),
+                      ),
+                    )
+                  : Builder(
+                      builder: (context) {
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 16),
+                          child: InkWell(
+                            onTap: () {
+                              Scaffold.of(context).openDrawer();
+                            },
+                            child: Image.asset(
+                              'assets/images/menu.png',
+                              height: 24,
+                              width: 24,
+                            ),
+                          ),
+                        );
+                      },
+                    ),
               onExcelTap: () {
                 exportToExcel(
                   headers: [
@@ -291,16 +315,17 @@ class _tasksPageReportState extends State<TaskPage> {
                                     if (!isMobile)
                                       Row(
                                         children: [
-                                          // if (Navigator.canPop(context)) ...[
-                                          //   IconButton(
-                                          //     icon: const Icon(Icons.arrow_back,
-                                          //         color: Color(0xFF152D70)),
-                                          //     onPressed: () {
-                                          //       Navigator.pop(context);
-                                          //     },
-                                          //   ),
-                                          //   const SizedBox(width: 8),
-                                          // ],
+                                          if (widget.initialStatusFilter !=
+                                              null) ...[
+                                            IconButton(
+                                              icon: const Icon(Icons.arrow_back,
+                                                  color: Color(0xFF152D70)),
+                                              onPressed: () {
+                                                Navigator.pop(context);
+                                              },
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
                                           const Text(
                                             'Tasks',
                                             style: TextStyle(
