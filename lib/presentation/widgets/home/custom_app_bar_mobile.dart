@@ -6,6 +6,7 @@ import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -124,27 +125,51 @@ class _CustomAppBarState extends State<CustomAppBar> {
         onTap: () {
           Scaffold.of(context).openDrawer();
         },
-        child: Icon(
-          Icons.menu,
-          size: widget.leadingIconSize,
-          color: widget.iconColor,
+        child: Center(
+          child: Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: AppColors.surfaceGrey,
+              shape: BoxShape.circle,
+            ),
+            child: Icon(
+              Icons.menu,
+              size: widget.leadingIconSize,
+              color: widget.iconColor,
+            ),
+          ),
         ),
       ),
     );
   }
 
   Widget _defaultTitle() {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
+
     return Row(
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Image.asset(
-            AppStyles.logo(),
-            height: 32,
-            width: 32,
-            fit: BoxFit.contain,
-            errorBuilder: (context, error, stackTrace) =>
-                const SizedBox.shrink(),
+        CircleAvatar(
+          radius: 18,
+          backgroundColor: Colors.transparent,
+          child: ClipOval(
+            child: displayLogo.startsWith('http')
+                ? Image.network(
+                    displayLogo,
+                    height: 36,
+                    width: 36,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        Image.asset(AppStyles.logo()),
+                  )
+                : Image.asset(
+                    displayLogo,
+                    height: 36,
+                    width: 36,
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) =>
+                        const SizedBox.shrink(),
+                  ),
           ),
         ),
         const SizedBox(width: 8),

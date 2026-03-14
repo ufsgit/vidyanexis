@@ -30,6 +30,7 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<LoginController>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
 
     return Scaffold(
       body: Stack(
@@ -52,14 +53,63 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
                   children: [
                     // Logo at the top
                     Center(
-                      child: Image.asset(
-                        AppStyles.logo(),
-                        height: 25,
-                        width: 38,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container();
-                        },
-                      ),
+                      child: settingsProvider.isLogoLoading &&
+                              settingsProvider.logo.isEmpty
+                          ? const SizedBox(
+                              height: 80,
+                              width: 80,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                ),
+                              ),
+                            )
+                          : Container(
+                              padding: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.1),
+                                    blurRadius: 10,
+                                    offset: const Offset(0, 4),
+                                  ),
+                                ],
+                              ),
+                              child: CircleAvatar(
+                                radius: 40,
+                                backgroundColor: Colors.transparent,
+                                child: ClipOval(
+                                  child: displayLogo.startsWith('http')
+                                      ? Image.network(
+                                          displayLogo,
+                                          height: 80,
+                                          width: 80,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Image.asset(
+                                              AppStyles.logo(),
+                                              height: 80,
+                                              width: 80,
+                                              fit: BoxFit.cover,
+                                            );
+                                          },
+                                        )
+                                      : Image.asset(
+                                          displayLogo,
+                                          height: 80,
+                                          width: 80,
+                                          fit: BoxFit.cover,
+                                          errorBuilder:
+                                              (context, error, stackTrace) {
+                                            return Container();
+                                          },
+                                        ),
+                                ),
+                              ),
+                            ),
                     ),
                     const SizedBox(height: 8),
 
@@ -80,7 +130,7 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: Text(
-                          settingsProvider.title,
+                          settingsProvider.displayTitle,
                           style: GoogleFonts.plusJakartaSans(
                               fontSize: 30,
                               fontWeight: FontWeight.w500,

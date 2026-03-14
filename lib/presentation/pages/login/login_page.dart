@@ -90,6 +90,8 @@ class SignUpForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
+    
     return Form(
       child: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -99,33 +101,87 @@ class SignUpForm extends StatelessWidget {
           children: [
             // Logo with perfect centering
             Center(
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(12),
-                child: Image.asset(
-                  AppStyles.logo(),
-                  height: 100,
-                  width: 100,
-                  fit: BoxFit.contain,
-                  errorBuilder: (context, error, stackTrace) {
-                    return Container(
-                      height: 60,
-                      width: 60,
+              child: settingsProvider.isLogoLoading &&
+                      settingsProvider.logo.isEmpty
+                  ? const SizedBox(
+                      height: 100,
+                      width: 100,
+                      child: Center(child: CircularProgressIndicator()),
+                    )
+                  : Container(
+                      padding: const EdgeInsets.all(4),
                       decoration: BoxDecoration(
-                        color: Colors.grey.withOpacity(0.1),
+                        color: Colors.white,
                         shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.08),
+                            blurRadius: 15,
+                            offset: const Offset(0, 5),
+                          ),
+                        ],
                       ),
-                      child: const Icon(Icons.apartment_rounded,
-                          color: Colors.grey),
-                    );
-                  },
-                ),
-              ),
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.transparent,
+                        child: ClipOval(
+                          child: displayLogo.startsWith('http')
+                              ? Image.network(
+                                  displayLogo,
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      AppStyles.logo(),
+                                      height: 100,
+                                      width: 100,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Container(
+                                          height: 100,
+                                          width: 100,
+                                          decoration: BoxDecoration(
+                                            color: Colors.grey.withOpacity(0.1),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(
+                                              Icons.apartment_rounded,
+                                              color: Colors.grey,
+                                              size: 40),
+                                        );
+                                      },
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  displayLogo,
+                                  height: 100,
+                                  width: 100,
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      height: 100,
+                                      width: 100,
+                                      decoration: BoxDecoration(
+                                        color: Colors.grey.withOpacity(0.1),
+                                        shape: BoxShape.circle,
+                                      ),
+                                      child: const Icon(Icons.apartment_rounded,
+                                          color: Colors.grey, size: 40),
+                                    );
+                                  },
+                                ),
+                        ),
+                      ),
+                    ),
             ),
             const SizedBox(height: 16),
             // Title with perfect centering and text wrapping
             Center(
               child: Text(
-                "Login to ${settingsProvider.title}",
+                "Login to ${settingsProvider.displayTitle}",
                 style: GoogleFonts.plusJakartaSans(
                     fontSize: 24,
                     fontWeight: FontWeight.w700,

@@ -9,7 +9,6 @@ import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
@@ -624,6 +623,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     final leadProvider = Provider.of<LeadsProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final imageUploadProvider = Provider.of<ImageUploadProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
 
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
@@ -649,15 +649,27 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             surfaceTintColor: Colors.white,
             title: Row(
               children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(8),
-                  child: Image.asset(
-                    AppStyles.logo(),
-                    height: 32,
-                    width: 32,
-                    fit: BoxFit.contain,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const SizedBox.shrink(),
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: Colors.transparent,
+                  child: ClipOval(
+                    child: displayLogo.startsWith('http')
+                        ? Image.network(
+                            displayLogo,
+                            height: 32,
+                            width: 32,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const SizedBox.shrink(),
+                          )
+                        : Image.asset(
+                            displayLogo,
+                            height: 32,
+                            width: 32,
+                            fit: BoxFit.cover,
+                            errorBuilder: (context, error, stackTrace) =>
+                                const SizedBox.shrink(),
+                          ),
                   ),
                 ),
                 const SizedBox(width: 8),

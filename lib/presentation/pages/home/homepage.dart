@@ -1,30 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
-import 'package:vidyanexis/presentation/pages/forms/form_builder_page.dart';
 import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/quotation_report.dart';
-import 'package:vidyanexis/presentation/pages/reports/staff_location_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/checkin_checkout_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_screen.dart';
-import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:package_info_plus/package_info_plus.dart';
-import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/side_bar_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/presentation/pages/feedback/feeback.dart';
-import 'package:vidyanexis/presentation/pages/home/employee_tracking.dart';
-import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
-import 'package:vidyanexis/presentation/pages/reports/feddback_report_screen.dart';
-import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
@@ -40,8 +33,6 @@ import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
-import 'package:vidyanexis/presentation/pages/reports/warrenty_report_screen.dart';
-import 'package:vidyanexis/presentation/pages/reports/out_of_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/upcoming_warrenty_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_summary_screen.dart';
@@ -84,7 +75,6 @@ class _HomePageState extends State<HomePage> {
           Provider.of<SettingsProvider>(context, listen: false);
       settingsProvider.getMenuPermissionData(userId, context);
       await settingsProvider.getCompanyDetails();
-      logo = AppStyles.logo();
     });
   }
 
@@ -100,6 +90,7 @@ class _HomePageState extends State<HomePage> {
     final sideProvider = Provider.of<SidebarProvider>(context);
     final screenWidth = MediaQuery.of(context).size.width;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    String logo = settingsProvider.displayLogo;
 
     final List<SidebarOption> sidebarOptions = [
       if (settingsProvider.menuIsViewMap[12].toString() == '1')
@@ -343,21 +334,42 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.white,
               surfaceTintColor: Colors.white,
               elevation: 0,
-              title: logo.startsWith('assets/')
-                  ? Image.asset(
-                      logo,
-                      height: 30,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container();
-                      },
-                    )
-                  : Image.network(
-                      logo,
-                      height: 30,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Container();
-                      },
+              leading: Builder(
+                builder: (context) => IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceGrey,
+                      shape: BoxShape.circle,
                     ),
+                    child: const Icon(Icons.menu, color: Colors.black87),
+                  ),
+                  onPressed: () => Scaffold.of(context).openDrawer(),
+                ),
+              ),
+              title: CircleAvatar(
+                radius: 18,
+                backgroundColor: Colors.transparent,
+                child: ClipOval(
+                  child: logo.startsWith('assets/')
+                      ? Image.asset(
+                          logo,
+                          height: 36,
+                          width: 36,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(),
+                        )
+                      : Image.network(
+                          logo,
+                          height: 36,
+                          width: 36,
+                          fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) =>
+                              Container(),
+                        ),
+                ),
+              ),
               centerTitle: false,
               actions: [
                 FutureBuilder<String>(

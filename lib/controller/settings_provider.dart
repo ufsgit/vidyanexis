@@ -52,8 +52,37 @@ import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 class SettingsProvider extends ChangeNotifier {
+  SettingsProvider() {
+    _initCache();
+  }
+
+  bool _isCacheLoaded = false;
+  Future<void> _initCache() async {
+    if (_isCacheLoaded) return;
+    try {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String? cachedLogo = preferences.getString('cached_company_logo');
+      String? cachedTitle = preferences.getString('cached_company_title');
+      
+      if (cachedLogo != null || cachedTitle != null) {
+        logo = cachedLogo ?? logo;
+        title = cachedTitle ?? title;
+        _isCacheLoaded = true;
+        print('Branding loaded from cache: $title - $logo');
+        notifyListeners();
+      }
+    } catch (e) {
+      print('Error loading branding cache: $e');
+    }
+  }
+
+  Future<void> _loadCache() async {
+    await _initCache();
+  }
+
   SidebarProvider? _sideBarProvider;
   SidebarProvider? get sideBarProvider {
     if (_sideBarProvider == null &&
@@ -311,6 +340,21 @@ class SettingsProvider extends ChangeNotifier {
   List<Company> get companyDetails => _companyDetails;
   String logo = '';
   String title = '';
+  bool _isLogoLoading = false;
+  bool get isLogoLoading => _isLogoLoading;
+
+  String get displayLogo {
+    if (logo.isNotEmpty) {
+      if (logo.startsWith('http')) {
+        return logo;
+      } else {
+        return "${HttpUrls.imgBaseUrl}$logo";
+      }
+    }
+    return AppStyles.logo();
+  }
+
+  String get displayTitle => title.isNotEmpty ? title : 'Vidya Nexis';
 
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -2707,10 +2751,27 @@ class SettingsProvider extends ChangeNotifier {
     );
   }
 
+  Future<void>? _getCompanyDetailsFuture;
+
   Future<void> getCompanyDetails() async {
+    if (_getCompanyDetailsFuture != null) {
+      print('getCompanyDetails: awaiting existing request...');
+      return _getCompanyDetailsFuture;
+    }
+    
+    _getCompanyDetailsFuture = _performGetCompanyDetails();
     try {
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
+      await _getCompanyDetailsFuture;
+    } finally {
+      _getCompanyDetailsFuture = null;
+    }
+  }
+
+  Future<void> _performGetCompanyDetails() async {
+    _isLogoLoading = true;
+    notifyListeners();
+    try {
+      await _initCache(); // Ensure cache is loaded first
 
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCompany);
@@ -2718,15 +2779,25 @@ class SettingsProvider extends ChangeNotifier {
       if (response != null && response.statusCode == 200) {
         final data = response.data;
 
-        if (data != null) {
-          _companyDetails = (data as List<dynamic>)
+        if (data != null && data is List && data.isNotEmpty) {
+          _companyDetails = data
               .map((item) => Company.fromJson(item))
               .toList();
-          logo = _companyDetails[0].logo;
-          title = _companyDetails[0].companyName ?? '';
-          print(logo);
-
-          notifyListeners();
+          
+          String newLogo = _companyDetails[0].logo;
+          String newTitle = _companyDetails[0].companyName ?? '';
+          
+          if (newLogo != logo || newTitle != title) {
+            logo = newLogo;
+            title = newTitle;
+            
+            SharedPreferences preferences = await SharedPreferences.getInstance();
+            await preferences.setString('cached_company_logo', logo);
+            await preferences.setString('cached_company_title', title);
+            print('Branding updated from API and cached: $title');
+          }
+        } else {
+          print('getCompanyDetails: No company data found in response');
         }
       } else {
         print(
@@ -2735,10 +2806,13 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e, stackTrace) {
       print('Exception occurred in getCompanyDetails: $e');
       print(stackTrace);
+    } finally {
+      _isLogoLoading = false;
+      notifyListeners();
     }
   }
 
-  void saveIamgePath(path) {
+  void saveImagePath(path) {
     uploadedFilePath = path;
   }
 
@@ -2834,7 +2908,7 @@ class SettingsProvider extends ChangeNotifier {
       for (var fileData in files) {
         uploadedFilePath =
             await saveToAws(fileData, fileType, taskId, context) ?? '';
-        if (uploadedFilePath.isEmpty) {
+        if (uploadedFilePath.isNotEmpty) {
           print('$fileType uploaded: $uploadedFilePath');
         } else {
           print('Upload failed for $fileType');

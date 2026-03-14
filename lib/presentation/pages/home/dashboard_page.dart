@@ -10,17 +10,13 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/task_overview_tab.dart';
-import 'package:vidyanexis/presentation/pages/reports/staff_attendance_screen.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/custom_tab.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/add_attendance.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/lead_overview_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/work_overview_tab.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
-import '../../widgets/home/custom_textfield_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/dashboard_task_count_card.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/amc_notification_tab.dart';
@@ -81,6 +77,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
     DashboardProvider dashBoardProvider =
         Provider.of<DashboardProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
 
     return Scaffold(
       appBar: !AppStyles.isWebScreen(context)
@@ -90,16 +87,19 @@ class _DashBoardPageState extends State<DashBoardPage> {
               leadingWidth: 40,
               leading: Builder(
                 builder: (context) {
-                  return Padding(
-                    padding: const EdgeInsets.only(left: 16),
-                    child: InkWell(
-                      onTap: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                      child: Image.asset(
-                        'assets/images/menu.png',
-                        height: 24,
-                        width: 24,
+                  return InkWell(
+                    onTap: () {
+                      Scaffold.of(context).openDrawer();
+                    },
+                    child: Center(
+                      child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceGrey,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.menu,
+                            size: 20, color: Colors.black87),
                       ),
                     ),
                   );
@@ -107,12 +107,26 @@ class _DashBoardPageState extends State<DashBoardPage> {
               ),
               title: Row(
                 children: [
-                  Image.asset(
-                    AppStyles.logo(),
-                    height: 40,
-                    width: 40,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const SizedBox.shrink(),
+                  CircleAvatar(
+                    radius: 18,
+                    backgroundColor: Colors.transparent,
+                    child: ClipOval(
+                      child: displayLogo.startsWith('http')
+                          ? Image.network(
+                              displayLogo,
+                              height: 36,
+                              width: 36,
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) =>
+                                  const SizedBox.shrink(),
+                            )
+                          : Image.asset(
+                              displayLogo,
+                              height: 36,
+                              width: 36,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
                   const SizedBox(width: 8),
                   const Text(

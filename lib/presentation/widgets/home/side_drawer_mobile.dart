@@ -13,8 +13,8 @@ import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/expense_management.dart';
 import 'package:vidyanexis/presentation/pages/inventory/inventory_page.dart';
@@ -64,6 +64,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final displayLogo = settingsProvider.displayLogo;
     Future<String> getUserName() async {
       final prefs = await SharedPreferences.getInstance();
       return prefs.getString('userName') ?? "Admin";
@@ -165,11 +166,24 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   height: 48,
                 ),
                 Center(
-                  child: Image.asset(
-                    AppStyles.logo(),
-                    height: 100,
-                    width: 100,
-                    fit: BoxFit.contain,
+                  child: CircleAvatar(
+                    radius: 40,
+                    backgroundColor: Colors.transparent,
+                    child: ClipOval(
+                      child: displayLogo.startsWith('http')
+                          ? Image.network(
+                              displayLogo,
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
+                            )
+                          : Image.asset(
+                              AppStyles.logo(),
+                              height: 80,
+                              width: 80,
+                              fit: BoxFit.cover,
+                            ),
+                    ),
                   ),
                 ),
                 const SizedBox(
@@ -374,6 +388,12 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                           }
                         }
 
+                        // Backup branding state
+                        String? cachedLogo =
+                            prefs.getString('cached_company_logo');
+                        String? cachedTitle =
+                            prefs.getString('cached_company_title');
+
                         await prefs.clear();
 
                         // Restore attendance state
@@ -394,6 +414,16 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                             await prefs.setInt(
                                 'attendance_id_$userId', attendanceId);
                           }
+                        }
+
+                        // Restore branding state
+                        if (cachedLogo != null) {
+                          await prefs.setString(
+                              'cached_company_logo', cachedLogo);
+                        }
+                        if (cachedTitle != null) {
+                          await prefs.setString(
+                              'cached_company_title', cachedTitle);
                         }
 
                         if (context.mounted) {
