@@ -12,6 +12,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 import '../../../constants/app_colors.dart';
 import '../../../constants/app_styles.dart';
 import '../../../controller/customer_details_provider.dart';
+import '../../../controller/settings_provider.dart';
 
 class PeriodicServicesMobile extends StatefulWidget {
   const PeriodicServicesMobile({super.key, required this.customerId});
@@ -188,21 +189,28 @@ class _PeriodicServicesMobileState extends State<PeriodicServicesMobile> {
             },
           );
         }),
-        floatingActionButton: CustomElevatedButton(
-          prefixIcon: Icons.add,
-          radius: 32,
-          buttonText: 'Add Periodic service',
-          onPressed: () => Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (c) => AddPeriodicServiceMobile(
-                  amcId: '0', customerId: widget.customerId, isEdit: false),
-            ),
-          ),
-          backgroundColor: AppColors.bluebutton,
-          borderColor: AppColors.bluebutton,
-          textColor: AppColors.whiteColor,
-        ));
+        floatingActionButton: Provider.of<SettingsProvider>(context,
+                        listen: false)
+                    .menuIsSaveMap[15] ==
+                1
+            ? CustomElevatedButton(
+                prefixIcon: Icons.add,
+                radius: 32,
+                buttonText: 'Add Periodic service',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (c) => AddPeriodicServiceMobile(
+                        amcId: '0',
+                        customerId: widget.customerId,
+                        isEdit: false),
+                  ),
+                ),
+                backgroundColor: AppColors.bluebutton,
+                borderColor: AppColors.bluebutton,
+                textColor: AppColors.whiteColor,
+              )
+            : null);
   }
 
   String timeAgo(DateTime date) {

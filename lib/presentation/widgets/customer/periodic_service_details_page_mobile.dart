@@ -72,8 +72,11 @@ class _PeriodicServiceDetailsPageMobileState
               color: AppColors.textBlack),
         ),
         actions: [
-          if (settingsprovider.menuIsDeleteMap[14] == 1)
+          if (settingsprovider.menuIsEditMap[15] == 1 ||
+              settingsprovider.menuIsDeleteMap[15] == 1)
             CustomPopMenuButtonWidget(
+              showEdit: settingsprovider.menuIsEditMap[15] == 1,
+              showDelete: settingsprovider.menuIsDeleteMap[15] == 1,
               onOptionSelected: (PopupMenuOptions option) async {
                 // Add async keyword here
                 switch (option) {

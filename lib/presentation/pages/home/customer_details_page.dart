@@ -3673,6 +3673,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       )? onTap}) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsprovider = Provider.of<SettingsProvider>(context);
     var filteredAmcList = amcId == null
         ? customerDetailsProvider.amcList
         : customerDetailsProvider.amcList
@@ -3765,78 +3766,82 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      IconButton(
-                                        tooltip: 'Edit',
-                                        icon: const Icon(Icons.edit,
-                                            size: 20, color: Colors.blue),
-                                        onPressed: () {
-                                          customerDetailsProvider.customerId =
-                                              widget.customerId;
-                                          customerDetailsProvider
-                                              .setAmcDropDown(amc.amcStatusId,
-                                                  amc.amcStatusName);
+                                      if (settingsprovider.menuIsEditMap[15] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Edit',
+                                          icon: const Icon(Icons.edit,
+                                              size: 20, color: Colors.blue),
+                                          onPressed: () {
+                                            customerDetailsProvider.customerId =
+                                                widget.customerId;
+                                            customerDetailsProvider
+                                                .setAmcDropDown(amc.amcStatusId,
+                                                    amc.amcStatusName);
 
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AmcCreationWidget(
-                                                  amcId: amc.amcId.toString(),
-                                                  amcAmountController:
-                                                      amc.amount,
-                                                  amcDescriptionController:
-                                                      amc.description,
-                                                  amcProductNameController:
-                                                      amc.productName,
-                                                  amcServiceController:
-                                                      amc.serviceName,
-                                                  fromDateController:
-                                                      DateFormat('dd-MM-yyyy')
-                                                          .format(
-                                                              DateTime.parse(amc
-                                                                  .fromDate
-                                                                  .toString())),
-                                                  toDateController:
-                                                      DateFormat('dd-MM-yyyy')
-                                                          .format(
-                                                              DateTime.parse(amc
-                                                                  .toDate
-                                                                  .toString())),
-                                                  customerId: widget.customerId,
-                                                  amc: amc,
-                                                  isEdit: true);
-                                            },
-                                          );
-                                        },
-                                      ),
-                                      IconButton(
-                                        tooltip: 'Delete',
-                                        icon: const Icon(Icons.delete,
-                                            size: 20, color: Colors.red),
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return ConfirmationDialog(
-                                                title:
-                                                    'Delete Periodic Service',
-                                                content:
-                                                    'Are you sure you want to delete this service?',
-                                                onCancel: () =>
-                                                    Navigator.of(context).pop(),
-                                                onConfirm: () {
-                                                  Navigator.of(context).pop();
-                                                  customerDetailsProvider
-                                                      .deleteAMC(
-                                                          amc.amcId.toString(),
-                                                          widget.customerId,
-                                                          context);
-                                                },
-                                              );
-                                            },
-                                          );
-                                        },
-                                      ),
+                                            showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AmcCreationWidget(
+                                                    amcId: amc.amcId.toString(),
+                                                    amcAmountController:
+                                                        amc.amount,
+                                                    amcDescriptionController:
+                                                        amc.description,
+                                                    amcProductNameController:
+                                                        amc.productName,
+                                                    amcServiceController:
+                                                        amc.serviceName,
+                                                    fromDateController:
+                                                        DateFormat('dd-MM-yyyy')
+                                                            .format(
+                                                                DateTime.parse(amc
+                                                                    .fromDate
+                                                                    .toString())),
+                                                    toDateController:
+                                                        DateFormat('dd-MM-yyyy')
+                                                            .format(
+                                                                DateTime.parse(amc
+                                                                    .toDate
+                                                                    .toString())),
+                                                    customerId: widget.customerId,
+                                                    amc: amc,
+                                                    isEdit: true);
+                                              },
+                                            );
+                                          },
+                                        ),
+                                      if (settingsprovider.menuIsDeleteMap[15] ==
+                                          1)
+                                        IconButton(
+                                          tooltip: 'Delete',
+                                          icon: const Icon(Icons.delete,
+                                              size: 20, color: Colors.red),
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return ConfirmationDialog(
+                                                  title:
+                                                      'Delete Periodic Service',
+                                                  content:
+                                                      'Are you sure you want to delete this service?',
+                                                  onCancel: () =>
+                                                      Navigator.of(context).pop(),
+                                                  onConfirm: () {
+                                                    Navigator.of(context).pop();
+                                                    customerDetailsProvider
+                                                        .deleteAMC(
+                                                            amc.amcId.toString(),
+                                                            widget.customerId,
+                                                            context);
+                                                  },
+                                                );
+                                              },
+                                            );
+                                          },
+                                        ),
                                     ],
                                   ),
                                 ),
@@ -3890,6 +3895,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   Widget _buildFilteredTaskList({int? taskTypeId, void Function(int)? onTap}) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsprovider = Provider.of<SettingsProvider>(context);
     var filteredTasks = taskTypeId == null
         ? customerDetailsProvider.taskList
         : customerDetailsProvider.taskList
@@ -4095,99 +4101,103 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          IconButton(
-                                            icon: const Icon(Icons.edit,
-                                                size: 20, color: Colors.blue),
-                                            onPressed: () {
-                                              if (onTap != null) {
-                                                // onTap(task.taskMasterId); // Removed to prevent navigation
-                                                customerDetailsProvider
-                                                    .setTaskEditDropDown(
-                                                        task.taskTypeId,
-                                                        task.taskTypeName,
-                                                        task.toUserId,
-                                                        task.toUsername,
-                                                        task.taskStatusId,
-                                                        task.taskStatusName);
-                                                customerDetailsProvider
-                                                        .taskDescriptionController
-                                                        .text =
-                                                    task.description.toString();
-                                                customerDetailsProvider
-                                                    .taskChoosedateController
-                                                    .text = task.taskDate
-                                                                .toString() !=
-                                                            'null' &&
-                                                        task.taskDate
-                                                            .toString()
-                                                            .isNotEmpty
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.taskDate
-                                                                .toString()))
-                                                    : '';
-                                                customerDetailsProvider
-                                                        .taskChoosetimeController
-                                                        .text =
-                                                    task.taskTime.toString();
-                                                customerDetailsProvider
-                                                        .addTaskModel.taskUser =
-                                                    task.taskUser
-                                                        .map((e) =>
-                                                            UserInTaskModel(
-                                                              userDetailsId:
-                                                                  e.toUserId,
-                                                              userDetailsName:
-                                                                  e.toUsername,
-                                                            ))
-                                                        .toList();
+                                          if (settingsprovider.menuIsEditMap[13] ==
+                                              1)
+                                            IconButton(
+                                              icon: const Icon(Icons.edit,
+                                                  size: 20, color: Colors.blue),
+                                              onPressed: () {
+                                                if (onTap != null) {
+                                                  // onTap(task.taskMasterId); // Removed to prevent navigation
+                                                  customerDetailsProvider
+                                                      .setTaskEditDropDown(
+                                                          task.taskTypeId,
+                                                          task.taskTypeName,
+                                                          task.toUserId,
+                                                          task.toUsername,
+                                                          task.taskStatusId,
+                                                          task.taskStatusName);
+                                                  customerDetailsProvider
+                                                          .taskDescriptionController
+                                                          .text =
+                                                      task.description.toString();
+                                                  customerDetailsProvider
+                                                      .taskChoosedateController
+                                                      .text = task.taskDate
+                                                                  .toString() !=
+                                                              'null' &&
+                                                          task.taskDate
+                                                              .toString()
+                                                              .isNotEmpty
+                                                      ? DateFormat('dd MMM yyyy')
+                                                          .format(DateTime.parse(
+                                                              task.taskDate
+                                                                  .toString()))
+                                                      : '';
+                                                  customerDetailsProvider
+                                                          .taskChoosetimeController
+                                                          .text =
+                                                      task.taskTime.toString();
+                                                  customerDetailsProvider
+                                                          .addTaskModel.taskUser =
+                                                      task.taskUser
+                                                          .map((e) =>
+                                                              UserInTaskModel(
+                                                                userDetailsId:
+                                                                    e.toUserId,
+                                                                userDetailsName:
+                                                                    e.toUsername,
+                                                              ))
+                                                          .toList();
 
-                                                // Open TaskCreationWidget in edit mode
+                                                  // Open TaskCreationWidget in edit mode
+                                                  showDialog(
+                                                    barrierDismissible: false,
+                                                    context: context,
+                                                    builder:
+                                                        (BuildContext context) {
+                                                      return TaskCreationWidget(
+                                                        isEdit: true,
+                                                        taskId: task.taskId
+                                                            .toString(),
+                                                      );
+                                                    },
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          if (settingsprovider.menuIsDeleteMap[13] ==
+                                              1)
+                                            IconButton(
+                                              icon: const Icon(Icons.delete,
+                                                  size: 20, color: Colors.red),
+                                              onPressed: () {
                                                 showDialog(
-                                                  barrierDismissible: false,
                                                   context: context,
                                                   builder:
                                                       (BuildContext context) {
-                                                    return TaskCreationWidget(
-                                                      isEdit: true,
-                                                      taskId: task.taskId
-                                                          .toString(),
+                                                    return ConfirmationDialog(
+                                                      title: 'Delete Task',
+                                                      content:
+                                                          'Are you sure you want to delete this task?',
+                                                      onCancel: () =>
+                                                          Navigator.of(context)
+                                                              .pop(),
+                                                      onConfirm: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                        customerDetailsProvider
+                                                            .deleteTask(
+                                                                task.taskId
+                                                                    .toString(),
+                                                                widget.customerId,
+                                                                context);
+                                                      },
                                                     );
                                                   },
                                                 );
-                                              }
-                                            },
-                                          ),
-                                          IconButton(
-                                            icon: const Icon(Icons.delete,
-                                                size: 20, color: Colors.red),
-                                            onPressed: () {
-                                              showDialog(
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return ConfirmationDialog(
-                                                    title: 'Delete Task',
-                                                    content:
-                                                        'Are you sure you want to delete this task?',
-                                                    onCancel: () =>
-                                                        Navigator.of(context)
-                                                            .pop(),
-                                                    onConfirm: () {
-                                                      Navigator.of(context)
-                                                          .pop();
-                                                      customerDetailsProvider
-                                                          .deleteTask(
-                                                              task.taskId
-                                                                  .toString(),
-                                                              widget.customerId,
-                                                              context);
-                                                    },
-                                                  );
-                                                },
-                                              );
-                                            },
-                                          ),
+                                              },
+                                            ),
                                         ],
                                       ),
                                     ),
