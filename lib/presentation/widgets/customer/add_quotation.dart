@@ -118,146 +118,503 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
           child: Center(
             child: Container(
               color: Colors.white,
-              width: AppStyles.isWebScreen(context)
-                  ? MediaQuery.of(context).size.width / 2
-                  : MediaQuery.of(context).size.width,
+              width: MediaQuery.of(context).size.width,
               padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                //basic details
-                ExpansionTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  title: Text(
-                    'Basic details',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey1,
+                children: [
+                  //basic details
+                  ExpansionTile(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
                     ),
-                  ),
-                  tilePadding: EdgeInsets.zero,
-                  initiallyExpanded: true,
-                  children: [
-                    const SizedBox(
-                      height: 5,
+                    title: Text(
+                      'Basic details',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey1,
+                      ),
                     ),
-                    CommonDropdown(
-                      hintText: 'Branch',
-                      items: settingsProvider.branchModel
-                          .map((branch) => DropdownItem<int>(
-                                id: branch.branchId ?? 0,
-                                name: branch.branchName ?? '',
-                              ))
-                          .toList(),
-                      onItemSelected: (value) {
-                        customerDetailsProvider.selectedBranchId = value;
-                      },
-                      selectedValue: customerDetailsProvider.selectedBranchId,
-                    ),
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Row(
-                      children: [
+                    tilePadding: EdgeInsets.zero,
+                    initiallyExpanded: true,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      CommonDropdown(
+                        hintText: 'Branch',
+                        items: settingsProvider.branchModel
+                            .map((branch) => DropdownItem<int>(
+                                  id: branch.branchId ?? 0,
+                                  name: branch.branchName ?? '',
+                                ))
+                            .toList(),
+                        onItemSelected: (value) {
+                          customerDetailsProvider.selectedBranchId = value;
+                        },
+                        selectedValue: customerDetailsProvider.selectedBranchId,
+                      ),
+                      const SizedBox(
+                        height: 16,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller: customerDetailsProvider
+                                  .qproductnameController,
+                              hintText: 'Product name*',
+                              labelText: '',
+                            ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            child: DropdownButtonFormField<int>(
+                              value: (customerDetailsProvider
+                                              .selectedQuotationStatus !=
+                                          null &&
+                                      [1, 2, 3].contains(customerDetailsProvider
+                                          .selectedQuotationStatus))
+                                  ? customerDetailsProvider
+                                      .selectedQuotationStatus
+                                  : 1,
+                              items: const [
+                                DropdownMenuItem<int>(
+                                  value: 1,
+                                  child: Text('Pending'),
+                                ),
+                                DropdownMenuItem<int>(
+                                  value: 3,
+                                  child: Text('Rejected'),
+                                ),
+                                DropdownMenuItem<int>(
+                                  value: 2,
+                                  child: Text('Approved'),
+                                ),
+                              ],
+                              // items: dropDownProvider.amcStatus
+                              //     .map((status) => DropdownMenuItem<int>(
+                              //           value: status.amcStatusId,
+                              //           child: Text(
+                              //             status.amcStatusName,
+                              //             style: TextStyle(fontSize: 14),
+                              //           ),
+                              //         ))
+                              //     .toList(),
+                              onChanged: (int? newValue) {
+                                // if (newValue != null) {
+                                //   final selectedAmcStatus = dropDownProvider.amcStatus
+                                //       .firstWhere((task) => task.amcStatusId == newValue);
+                                //   customerDetailsProvider.updateQuotationStatus(
+                                //       newValue, selectedAmcStatus.amcStatusName);
+                                // }
+                                if (newValue != null) {
+                                  customerDetailsProvider
+                                      .updateQuotationStatus(newValue);
+                                }
+                              },
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14, // Custom font size
+                                fontWeight:
+                                    FontWeight.w600, // Custom font weight
+                                color: AppColors
+                                    .textBlack, // Custom color for selected item
+                              ),
+                              decoration: InputDecoration(
+                                label: RichText(
+                                  text: TextSpan(
+                                    text: 'Choose Status',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColors.textGrey3,
+                                    ),
+                                    children: const <TextSpan>[
+                                      TextSpan(
+                                        text: ' *', // The asterisk part
+                                        style: TextStyle(
+                                            color: Colors
+                                                .red), // Red color for asterisk
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                floatingLabelBehavior: FloatingLabelBehavior
+                                    .auto, // Always show the label
+                                floatingLabelStyle: GoogleFonts.plusJakartaSans(
+                                  fontSize:
+                                      16, // Slightly smaller size for floating label
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors
+                                      .textGrey1, // Color for floating label
+                                ),
+                                labelStyle: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColors.textGrey3,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                  borderSide: BorderSide(
+                                    color: AppColors.textGrey2, // Border color
+                                    width: 1, // Border width
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                  borderSide: BorderSide(
+                                    color: AppColors.textGrey2, // Border color
+                                    width: 1, // Border width
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(
+                                      10), // Rounded corners
+                                  borderSide: BorderSide(
+                                    color: AppColors.textGrey2, // Border color
+                                    width: 1, // Border width
+                                  ),
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    vertical: 18, horizontal: 12),
+                              ),
+                              isDense: true,
+                              iconSize: 18,
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(children: [
                         Expanded(
                           child: CustomTextField(
                             readOnly: false,
                             height: 54,
                             controller:
-                                customerDetailsProvider.qproductnameController,
-                            hintText: 'Product name*',
+                                customerDetailsProvider.qvalidityController,
+                            hintText: 'Validity',
                             labelText: '',
                           ),
                         ),
-                        const SizedBox(width: 16.0),
+                        const SizedBox(width: 16),
                         Expanded(
-                          child: DropdownButtonFormField<int>(
-                            value: (customerDetailsProvider
-                                            .selectedQuotationStatus !=
-                                        null &&
-                                    [1, 2, 3].contains(customerDetailsProvider
-                                        .selectedQuotationStatus))
-                                ? customerDetailsProvider
-                                    .selectedQuotationStatus
-                                : 1,
-                            items: const [
-                              DropdownMenuItem<int>(
-                                value: 1,
-                                child: Text('Pending'),
-                              ),
-                              DropdownMenuItem<int>(
-                                value: 3,
-                                child: Text('Rejected'),
-                              ),
-                              DropdownMenuItem<int>(
-                                value: 2,
-                                child: Text('Approved'),
-                              ),
-                            ],
-                            // items: dropDownProvider.amcStatus
-                            //     .map((status) => DropdownMenuItem<int>(
-                            //           value: status.amcStatusId,
-                            //           child: Text(
-                            //             status.amcStatusName,
-                            //             style: TextStyle(fontSize: 14),
-                            //           ),
-                            //         ))
-                            //     .toList(),
-                            onChanged: (int? newValue) {
-                              // if (newValue != null) {
-                              //   final selectedAmcStatus = dropDownProvider.amcStatus
-                              //       .firstWhere((task) => task.amcStatusId == newValue);
-                              //   customerDetailsProvider.updateQuotationStatus(
-                              //       newValue, selectedAmcStatus.amcStatusName);
-                              // }
-                              if (newValue != null) {
-                                customerDetailsProvider
-                                    .updateQuotationStatus(newValue);
-                              }
-                            },
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 14, // Custom font size
-                              fontWeight: FontWeight.w600, // Custom font weight
-                              color: AppColors
-                                  .textBlack, // Custom color for selected item
+                          child: CustomTextField(
+                            readOnly: false,
+                            height: 54,
+                            controller:
+                                customerDetailsProvider.qtendorNumberController,
+                            hintText: 'Tendor Number',
+                            labelText: '',
+                          ),
+                        ),
+                      ]),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider
+                            .quotationDescriptionController,
+                        hintText: 'Description',
+                        labelText: '',
+                        minLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider
+                            .quotationDescription2Controller,
+                        hintText: 'Description 2',
+                        labelText: '',
+                        minLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider
+                            .quotationDescription3Controller,
+                        hintText: 'Description 3',
+                        labelText: '',
+                        minLines: 3,
+                      ),
+                      const SizedBox(height: 16),
+                      CommonDropdown(
+                        hintText: 'Quotation Type*',
+                        items: customerDetailsProvider.quotationTypeData
+                            .map((status) => DropdownItem<int>(
+                                  id: status.quotationTypeId,
+                                  name: status.quotationTypeName,
+                                ))
+                            .toList(),
+                        onItemSelected: (value) {
+                          customerDetailsProvider.selectedQuotationType = value;
+                          final selectedItem = customerDetailsProvider
+                              .quotationTypeData
+                              .firstWhere(
+                            (status) => status.quotationTypeId == value,
+                          );
+                          customerDetailsProvider.quotationTypeController.text =
+                              selectedItem.quotationTypeName;
+                        },
+                        selectedValue:
+                            customerDetailsProvider.selectedQuotationType,
+                      ),
+                      const SizedBox(height: 16),
+                      if (customerDetailsProvider
+                          .customFieldQuotation.isNotEmpty) ...[
+                        CustomFieldSectionWidget(
+                          key: customFieldQuotationKey,
+                          customFields:
+                              customerDetailsProvider.customFieldQuotation,
+                          initialFieldValues:
+                              customerDetailsProvider.customFieldQuotation
+                                  .map((e) => FieldValueModel(
+                                        customFieldId: e.customFieldId,
+                                        value: e.datavalue,
+                                      ))
+                                  .toList(),
+                          controllerKey: 'quotation',
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+                      loadFromCustomField(context),
+                      const SizedBox(height: 16),
+                      if (customerDetailsProvider.selectedQuotationType ==
+                          1) ...[
+                        residentialItemWidget(context),
+                      ],
+                      if (customerDetailsProvider.selectedQuotationType ==
+                          2) ...[
+                        commercialItemWidget(context),
+                      ],
+                    ],
+                  ),
+
+                  if (customerDetailsProvider.selectedQuotationType == 2)
+                    //solar pv system specification
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      title: Text(
+                        'Solar PV System Specification',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        solarPvSystemSpecificationWidget(context),
+                      ],
+                    ),
+
+                  if (customerDetailsProvider.selectedQuotationType == 2)
+                    //scope of work
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      title: Text(
+                        'Scope of Work',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        scopeOfWorkWidget(context),
+                      ],
+                    ),
+
+                  if (customerDetailsProvider.selectedQuotationType == 2)
+                    //cable details
+                    ExpansionTile(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                      ),
+                      title: Text(
+                        'Cable Details',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w500,
+                          color: AppColors.textGrey1,
+                        ),
+                      ),
+                      tilePadding: EdgeInsets.zero,
+                      initiallyExpanded: false,
+                      children: [
+                        cableDetailsWidget(context),
+                      ],
+                    ),
+
+                  //additional expenses
+                  ExpansionTile(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    title: Text(
+                      'Additional Expenses',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey1,
+                      ),
+                    ),
+                    tilePadding: EdgeInsets.zero,
+                    initiallyExpanded: false,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              height: 54,
+                              controller:
+                                  customerDetailsProvider.systemPriceController,
+                              hintText:
+                                  'System price excluding KSEB paper work',
+                              labelText: '',
                             ),
-                            decoration: InputDecoration(
-                              label: RichText(
-                                text: TextSpan(
-                                  text: 'Choose Status',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColors.textGrey3,
-                                  ),
-                                  children: const <TextSpan>[
-                                    TextSpan(
-                                      text: ' *', // The asterisk part
-                                      style: TextStyle(
-                                          color: Colors
-                                              .red), // Red color for asterisk
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              floatingLabelBehavior: FloatingLabelBehavior
-                                  .auto, // Always show the label
-                              floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                                fontSize:
-                                    16, // Slightly smaller size for floating label
-                                fontWeight: FontWeight.w500,
-                                color: AppColors
-                                    .textGrey1, // Color for floating label
-                              ),
-                              labelStyle: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: AppColors.textGrey3,
-                              ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller: customerDetailsProvider
+                                  .additionalStructureController,
+                              hintText: 'Additional Structure Work',
+                              labelText: '',
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 10,
+                      ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller: customerDetailsProvider
+                                  .feasibilityFeeController,
+                              hintText: 'Fee in KSEB for Feasibility study',
+                              labelText: '',
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 16.0),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller: customerDetailsProvider
+                                  .registrationFeeController,
+                              keyboardType: TextInputType.number,
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              hintText:
+                                  'Registration Fee in KSEB-1000/- per kW (80% of amount will refund)',
+                              labelText: '',
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+
+                  //terms
+                  ExpansionTile(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    title: Text(
+                      'Terms and Conditions',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey1,
+                      ),
+                    ),
+                    tilePadding: EdgeInsets.zero,
+                    initiallyExpanded: false,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.qtermsConditionsController,
+                        hintText: 'Terms and Conditions',
+                        labelText: '',
+                        minLines: 4,
+                        keyboardType: TextInputType.multiline,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
+                  ),
+                  //terms
+                  ExpansionTile(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    title: Text(
+                      'Warranty',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey1,
+                      ),
+                    ),
+                    tilePadding: EdgeInsets.zero,
+                    initiallyExpanded: false,
+                    children: [
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      SizedBox(
+                        child: TextFormField(
+                          controller:
+                              customerDetailsProvider.qwarrentyController,
+                          readOnly: false,
+                          minLines: 12,
+                          maxLines: 12,
+                          keyboardType: TextInputType.multiline,
+                          decoration: InputDecoration(
+                              hintText: 'Warranty',
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(
                                     10), // Rounded corners
@@ -266,144 +623,19 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                   width: 1, // Border width
                                 ),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Rounded corners
-                                borderSide: BorderSide(
-                                  color: AppColors.textGrey2, // Border color
-                                  width: 1, // Border width
-                                ),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(
-                                    10), // Rounded corners
-                                borderSide: BorderSide(
-                                  color: AppColors.textGrey2, // Border color
-                                  width: 1, // Border width
-                                ),
-                              ),
-                              contentPadding: const EdgeInsets.symmetric(
-                                  vertical: 18, horizontal: 12),
-                            ),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
+                              floatingLabelBehavior:
+                                  FloatingLabelBehavior.auto),
                         ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(children: [
-                      Expanded(
-                        child: CustomTextField(
-                          readOnly: false,
-                          height: 54,
-                          controller:
-                              customerDetailsProvider.qvalidityController,
-                          hintText: 'Validity',
-                          labelText: '',
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: CustomTextField(
-                          readOnly: false,
-                          height: 54,
-                          controller:
-                              customerDetailsProvider.qtendorNumberController,
-                          hintText: 'Tendor Number',
-                          labelText: '',
-                        ),
-                      ),
-                    ]),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider
-                          .quotationDescriptionController,
-                      hintText: 'Description',
-                      labelText: '',
-                      minLines: 3,
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider
-                          .quotationDescription2Controller,
-                      hintText: 'Description 2',
-                      labelText: '',
-                      minLines: 3,
-                    ),
-                    const SizedBox(height: 16),
-                    CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider
-                          .quotationDescription3Controller,
-                      hintText: 'Description 3',
-                      labelText: '',
-                      minLines: 3,
-                    ),
-                    const SizedBox(height: 16),
-                    CommonDropdown(
-                      hintText: 'Quotation Type*',
-                      items: customerDetailsProvider.quotationTypeData
-                          .map((status) => DropdownItem<int>(
-                                id: status.quotationTypeId,
-                                name: status.quotationTypeName,
-                              ))
-                          .toList(),
-                      onItemSelected: (value) {
-                        customerDetailsProvider.selectedQuotationType = value;
-                        final selectedItem = customerDetailsProvider
-                            .quotationTypeData
-                            .firstWhere(
-                          (status) => status.quotationTypeId == value,
-                        );
-                        customerDetailsProvider.quotationTypeController.text =
-                            selectedItem.quotationTypeName;
-                      },
-                      selectedValue:
-                          customerDetailsProvider.selectedQuotationType,
-                    ),
-                    const SizedBox(height: 16),
-                    if (customerDetailsProvider
-                        .customFieldQuotation.isNotEmpty) ...[
-                      CustomFieldSectionWidget(
-                        key: customFieldQuotationKey,
-                        customFields:
-                            customerDetailsProvider.customFieldQuotation,
-                        initialFieldValues:
-                            customerDetailsProvider.customFieldQuotation
-                                .map((e) => FieldValueModel(
-                                      customFieldId: e.customFieldId,
-                                      value: e.datavalue,
-                                    ))
-                                .toList(),
-                        controllerKey: 'quotation',
                       ),
                       const SizedBox(height: 16),
                     ],
-                    loadFromCustomField(context),
-                    const SizedBox(height: 16),
-                    if (customerDetailsProvider.selectedQuotationType == 1) ...[
-                      residentialItemWidget(context),
-                    ],
-                    if (customerDetailsProvider.selectedQuotationType == 2) ...[
-                      commercialItemWidget(context),
-                    ],
-                  ],
-                ),
-
-                if (customerDetailsProvider.selectedQuotationType == 2)
-                  //solar pv system specification
+                  ),
                   ExpansionTile(
                     shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.zero,
                     ),
                     title: Text(
-                      'Solar PV System Specification',
+                      'Payment Terms',
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -413,785 +645,557 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     tilePadding: EdgeInsets.zero,
                     initiallyExpanded: false,
                     children: [
-                      solarPvSystemSpecificationWidget(context),
-                    ],
-                  ),
-
-                if (customerDetailsProvider.selectedQuotationType == 2)
-                  //scope of work
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    title: Text(
-                      'Scope of Work',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
+                      const SizedBox(
+                        height: 16,
                       ),
-                    ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      scopeOfWorkWidget(context),
-                    ],
-                  ),
-
-                if (customerDetailsProvider.selectedQuotationType == 2)
-                  //cable details
-                  ExpansionTile(
-                    shape: const RoundedRectangleBorder(
-                      borderRadius: BorderRadius.zero,
-                    ),
-                    title: Text(
-                      'Cable Details',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.textGrey1,
-                      ),
-                    ),
-                    tilePadding: EdgeInsets.zero,
-                    initiallyExpanded: false,
-                    children: [
-                      cableDetailsWidget(context),
-                    ],
-                  ),
-
-                //additional expenses
-                ExpansionTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  title: Text(
-                    'Additional Expenses',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey1,
-                    ),
-                  ),
-                  tilePadding: EdgeInsets.zero,
-                  initiallyExpanded: false,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.systemPriceController,
-                            hintText: 'System price excluding KSEB paper work',
-                            labelText: '',
-                          ),
-                        ),
-                        const SizedBox(width: 16.0),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .additionalStructureController,
-                            hintText: 'Additional Structure Work',
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .feasibilityFeeController,
-                            hintText: 'Fee in KSEB for Feasibility study',
-                            labelText: '',
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                          ),
-                        ),
-                        const SizedBox(width: 16.0),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .registrationFeeController,
-                            keyboardType: TextInputType.number,
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            hintText:
-                                'Registration Fee in KSEB-1000/- per kW (80% of amount will refund)',
-                            labelText: '',
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-
-                //terms
-                ExpansionTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  title: Text(
-                    'Terms and Conditions',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey1,
-                    ),
-                  ),
-                  tilePadding: EdgeInsets.zero,
-                  initiallyExpanded: false,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller:
-                          customerDetailsProvider.qtermsConditionsController,
-                      hintText: 'Terms and Conditions',
-                      labelText: '',
-                      minLines: 4,
-                      keyboardType: TextInputType.multiline,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-                //terms
-                ExpansionTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  title: Text(
-                    'Warranty',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey1,
-                    ),
-                  ),
-                  tilePadding: EdgeInsets.zero,
-                  initiallyExpanded: false,
-                  children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
-                    SizedBox(
-                      child: TextFormField(
-                        controller: customerDetailsProvider.qwarrentyController,
-                        readOnly: false,
-                        minLines: 12,
-                        maxLines: 12,
-                        keyboardType: TextInputType.multiline,
-                        decoration: InputDecoration(
-                            hintText: 'Warranty',
-                            border: OutlineInputBorder(
-                              borderRadius:
-                                  BorderRadius.circular(10), // Rounded corners
-                              borderSide: BorderSide(
-                                color: AppColors.textGrey2, // Border color
-                                width: 1, // Border width
-                              ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller:
+                                  customerDetailsProvider.advanceController,
+                              hintText: customerDetailsProvider
+                                          .selectedQuotationType ==
+                                      1
+                                  ? 'Advance payment up on conformation'
+                                  : 'Advance Against Purchase Order %',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              // onChanged: (value) => _validateTotal(),
                             ),
-                            floatingLabelBehavior: FloatingLabelBehavior.auto),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller:
+                                  customerDetailsProvider.deliveryController,
+                              hintText: customerDetailsProvider
+                                          .selectedQuotationType ==
+                                      1
+                                  ? 'Upon the material ready for dispatch'
+                                  : 'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              // onChanged: (value) => _validateTotal(),
+                            ),
+                          )
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller: customerDetailsProvider
+                                  .workCompletionController,
+                              hintText: customerDetailsProvider
+                                          .selectedQuotationType ==
+                                      1
+                                  ? 'Installation Completion'
+                                  : 'After project completion %',
+                              labelText: '',
+                              inputFormatters: [
+                                FilteringTextInputFormatter.digitsOnly
+                              ],
+                              // onChanged: (value) => _validateTotal(),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller: customerDetailsProvider
+                                  .paymentTermsController,
+                              hintText: 'Payment Terms',
+                              labelText: '',
+                              // onChanged: (value) => _validateTotal(),
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: CustomTextField(
+                              readOnly: false,
+                              height: 54,
+                              controller:
+                                  customerDetailsProvider.incoTermsController,
+                              hintText: 'Inco Terms',
+                              labelText: '',
+                              // onChanged: (value) => _validateTotal(),
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
+                  ),
+                  // ExpansionTile(
+                  //   shape: const RoundedRectangleBorder(
+                  //     borderRadius: BorderRadius.zero,
+                  //   ),
+                  //   title: Text(
+                  //     'Production Chart',
+                  //     style: GoogleFonts.plusJakartaSans(
+                  //       fontSize: 16,
+                  //       fontWeight: FontWeight.w500,
+                  //       color: AppColors.textGrey1,
+                  //     ),
+                  //   ),
+                  //   tilePadding: EdgeInsets.zero,
+                  //   initiallyExpanded: false,
+                  //   children: [
+                  //     const SizedBox(
+                  //       height: 5,
+                  //     ),
+                  //     Column(
+                  //       crossAxisAlignment: CrossAxisAlignment.stretch,
+                  //       children: [
+                  //         Container(
+                  //           decoration: BoxDecoration(
+                  //             color: const Color(0xFFF6F7F9),
+                  //             borderRadius: BorderRadius.circular(10),
+                  //           ),
+                  //           padding: const EdgeInsets.all(16.0),
+                  //           child: Column(
+                  //             crossAxisAlignment: CrossAxisAlignment.start,
+                  //             children: [
+                  //               Row(
+                  //                 children: [
+                  //                   Expanded(
+                  //                     child: CustomTextField(
+                  //                       readOnly: false,
+                  //                       height: 54,
+                  //                       controller: customerDetailsProvider
+                  //                           .unitProductionChartController,
+                  //                       hintText: 'Unit Production Total',
+                  //                       labelText: '',
+                  //                     ),
+                  //                   ),
+                  //                   const SizedBox(width: 16.0),
+                  //                   Expanded(
+                  //                     child: CustomTextField(
+                  //                       readOnly: false,
+                  //                       height: 54,
+                  //                       controller:
+                  //                           customerDetailsProvider.dailyController,
+                  //                       hintText: 'Daily',
+                  //                       labelText: '',
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               const SizedBox(height: 16),
+                  //               Row(
+                  //                 children: [
+                  //                   Expanded(
+                  //                     child: CustomTextField(
+                  //                       readOnly: false,
+                  //                       height: 54,
+                  //                       controller: customerDetailsProvider
+                  //                           .monthlyController,
+                  //                       hintText: 'Monthly',
+                  //                       labelText: '',
+                  //                       inputFormatters: [
+                  //                         FilteringTextInputFormatter.digitsOnly
+                  //                       ],
+                  //                     ),
+                  //                   ),
+                  //                   const SizedBox(width: 16.0),
+                  //                   Expanded(
+                  //                     child: CustomTextField(
+                  //                       readOnly: false,
+                  //                       height: 54,
+                  //                       controller: customerDetailsProvider
+                  //                           .remarksController,
+                  //                       hintText: 'Remarks',
+                  //                       labelText: '',
+                  //                     ),
+                  //                   ),
+                  //                 ],
+                  //               ),
+                  //               const SizedBox(height: 16),
+                  //               OutlinedButton.icon(
+                  //                 onPressed: customerDetailsProvider
+                  //                     .addOrEditProductionChart,
+                  //                 icon: const Icon(Icons.add),
+                  //                 label: const Text('Add Production Chart'),
+                  //                 style: OutlinedButton.styleFrom(
+                  //                   foregroundColor: AppColors
+                  //                       .primaryBlue, // Change foreground color
+                  //                   backgroundColor:
+                  //                       Colors.white, // Change background color
+                  //                   side: BorderSide(
+                  //                       color: AppColors
+                  //                           .primaryBlue), // Change border color
+                  //                   padding: const EdgeInsets.symmetric(
+                  //                     horizontal: 10,
+                  //                     vertical: 0,
+                  //                   ),
+                  //                   shape: RoundedRectangleBorder(
+                  //                     borderRadius: BorderRadius.circular(
+                  //                         8), // Add border radius
+                  //                   ),
+                  //                 ),
+                  //               ),
+                  //               const SizedBox(height: 16),
+                  //               if (customerDetailsProvider
+                  //                   .productionItems.isNotEmpty)
+                  //                 AppStyles.isWebScreen(context)
+                  //                     ? Container(
+                  //                         padding: const EdgeInsets.symmetric(
+                  //                             horizontal: 10, vertical: 5),
+                  //                         decoration: BoxDecoration(
+                  //                           color: Colors.white,
+                  //                           borderRadius: BorderRadius.circular(20),
+                  //                         ),
+                  //                         child: Column(
+                  //                           children: [
+                  //                             Row(
+                  //                               children: [
+                  //                                 SizedBox(
+                  //                                   width: 40,
+                  //                                   child: Text(
+                  //                                     'Sl No',
+                  //                                     style: GoogleFonts
+                  //                                         .plusJakartaSans(
+                  //                                       fontWeight: FontWeight.w600,
+                  //                                       fontSize: 14,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ),
+                  //                                 const SizedBox(
+                  //                                   width: 8,
+                  //                                 ),
+                  //                                 Expanded(
+                  //                                   flex: 2,
+                  //                                   child: Text(
+                  //                                     'Unit Production Total',
+                  //                                     style: GoogleFonts
+                  //                                         .plusJakartaSans(
+                  //                                       fontWeight: FontWeight.w600,
+                  //                                       fontSize: 14,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ),
+                  //                                 Expanded(
+                  //                                   child: Text(
+                  //                                     'Daily',
+                  //                                     style: GoogleFonts
+                  //                                         .plusJakartaSans(
+                  //                                       fontWeight: FontWeight.w600,
+                  //                                       fontSize: 14,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ),
+                  //                                 Expanded(
+                  //                                   child: Text(
+                  //                                     'Monthly',
+                  //                                     style: GoogleFonts
+                  //                                         .plusJakartaSans(
+                  //                                       fontWeight: FontWeight.w600,
+                  //                                       fontSize: 14,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ),
+                  //                                 Expanded(
+                  //                                   flex: 2,
+                  //                                   child: Text(
+                  //                                     'Remarks',
+                  //                                     style: GoogleFonts
+                  //                                         .plusJakartaSans(
+                  //                                       fontWeight: FontWeight.w600,
+                  //                                       fontSize: 14,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ),
+                  //                                 Expanded(
+                  //                                   flex: 2,
+                  //                                   child: Text(
+                  //                                     'Actions',
+                  //                                     textAlign: TextAlign.center,
+                  //                                     style: GoogleFonts
+                  //                                         .plusJakartaSans(
+                  //                                       fontWeight: FontWeight.w600,
+                  //                                       fontSize: 14,
+                  //                                     ),
+                  //                                   ),
+                  //                                 ),
+                  //                               ],
+                  //                             ),
+                  //                             const SizedBox(
+                  //                               height: 10,
+                  //                             ),
+                  //                             ListView.builder(
+                  //                               shrinkWrap: true,
+                  //                               physics:
+                  //                                   const NeverScrollableScrollPhysics(),
+                  //                               itemCount: customerDetailsProvider
+                  //                                   .productionItems.length,
+                  //                               itemBuilder: (context, index) {
+                  //                                 final item =
+                  //                                     customerDetailsProvider
+                  //                                         .productionItems[index];
+                  //                                 return Row(
+                  //                                   children: [
+                  //                                     SizedBox(
+                  //                                       width: 40,
+                  //                                       child: Center(
+                  //                                         child: Text(
+                  //                                           (index + 1).toString(),
+                  //                                           style: GoogleFonts
+                  //                                               .plusJakartaSans(
+                  //                                                   fontSize: 14),
+                  //                                         ),
+                  //                                       ),
+                  //                                     ),
+                  //                                     const SizedBox(
+                  //                                       width: 8,
+                  //                                     ),
+                  //                                     Expanded(
+                  //                                       flex: 2,
+                  //                                       child: Text(
+                  //                                         item.unitProduction,
+                  //                                         style: GoogleFonts
+                  //                                             .plusJakartaSans(
+                  //                                                 fontSize: 14),
+                  //                                       ),
+                  //                                     ),
+                  //                                     Expanded(
+                  //                                       child: Text(
+                  //                                         item.dailyTotal,
+                  //                                         style: GoogleFonts
+                  //                                             .plusJakartaSans(
+                  //                                                 fontSize: 14),
+                  //                                       ),
+                  //                                     ),
+                  //                                     Expanded(
+                  //                                       child: Text(
+                  //                                         item.monthlyTotal
+                  //                                             .toString(),
+                  //                                         style: GoogleFonts
+                  //                                             .plusJakartaSans(
+                  //                                                 fontSize: 14),
+                  //                                       ),
+                  //                                     ),
+                  //                                     Expanded(
+                  //                                       flex: 2,
+                  //                                       child: Text(
+                  //                                         item.remark,
+                  //                                         style: GoogleFonts
+                  //                                             .plusJakartaSans(
+                  //                                                 fontSize: 14),
+                  //                                       ),
+                  //                                     ),
+                  //                                     Expanded(
+                  //                                       flex: 1,
+                  //                                       child: TextButton(
+                  //                                         onPressed: () =>
+                  //                                             customerDetailsProvider
+                  //                                                 .populateProductionFieldsForEditing(
+                  //                                                     index),
+                  //                                         child: Text(
+                  //                                           'Edit',
+                  //                                           style: TextStyle(
+                  //                                             color:
+                  //                                                 Colors.blue[400],
+                  //                                           ),
+                  //                                         ),
+                  //                                       ),
+                  //                                     ),
+                  //                                     Expanded(
+                  //                                       flex: 1,
+                  //                                       child: TextButton(
+                  //                                         onPressed: () =>
+                  //                                             customerDetailsProvider
+                  //                                                 .deleteProduction(
+                  //                                                     index),
+                  //                                         child: Text(
+                  //                                           'Delete',
+                  //                                           style: TextStyle(
+                  //                                             color:
+                  //                                                 Colors.red[400],
+                  //                                           ),
+                  //                                         ),
+                  //                                       ),
+                  //                                     ),
+                  //                                   ],
+                  //                                 );
+                  //                               },
+                  //                             ),
+                  //                           ],
+                  //                         ),
+                  //                       )
+                  //                     : Container(
+                  //                         // padding: const EdgeInsets.all(12),
+                  //                         // decoration: BoxDecoration(
+                  //                         //   color: AppColors.scaffoldColor,
+                  //                         //   borderRadius: BorderRadius.circular(20),
+                  //                         // ),
+                  //                         child: Column(
+                  //                           crossAxisAlignment:
+                  //                               CrossAxisAlignment.start,
+                  //                           children: [
+                  //                             Text(
+                  //                               'Production Chart Items',
+                  //                               style: GoogleFonts.plusJakartaSans(
+                  //                                 fontSize: 18,
+                  //                                 fontWeight: FontWeight.w600,
+                  //                               ),
+                  //                             ),
+                  //                             const SizedBox(height: 12),
+                  //                             ListView.builder(
+                  //                               shrinkWrap: true,
+                  //                               physics:
+                  //                                   const NeverScrollableScrollPhysics(),
+                  //                               itemCount: customerDetailsProvider
+                  //                                   .billOfMaterialsItems.length,
+                  //                               itemBuilder: (context, index) {
+                  //                                 final item =
+                  //                                     customerDetailsProvider
+                  //                                         .productionItems[index];
+                  //                                 return Card(
+                  //                                   color: Colors.white,
+                  //                                   margin: const EdgeInsets.only(
+                  //                                       bottom: 12),
+                  //                                   elevation: 2,
+                  //                                   shape: RoundedRectangleBorder(
+                  //                                     borderRadius:
+                  //                                         BorderRadius.circular(12),
+                  //                                   ),
+                  //                                   child: Padding(
+                  //                                     padding:
+                  //                                         const EdgeInsets.all(16),
+                  //                                     child: Column(
+                  //                                       crossAxisAlignment:
+                  //                                           CrossAxisAlignment
+                  //                                               .start,
+                  //                                       children: [
+                  //                                         _buildInfoRow(
+                  //                                             'Unit Production Total',
+                  //                                             item.unitProduction),
+                  //                                         const SizedBox(height: 8),
+                  //                                         Row(
+                  //                                           children: [
+                  //                                             Expanded(
+                  //                                               child: _buildInfoRow(
+                  //                                                   'Daily',
+                  //                                                   item.dailyTotal),
+                  //                                             ),
+                  //                                             Expanded(
+                  //                                               child:
+                  //                                                   _buildInfoRow(
+                  //                                                 'Monthly',
+                  //                                                 item.monthlyTotal
+                  //                                                     .toString(),
+                  //                                               ),
+                  //                                             ),
+                  //                                           ],
+                  //                                         ),
+                  //                                         const SizedBox(height: 8),
+                  //                                         Row(
+                  //                                           children: [
+                  //                                             Expanded(
+                  //                                               child: _buildInfoRow(
+                  //                                                   'Description',
+                  //                                                   item.remark),
+                  //                                             ),
+                  //                                             const SizedBox(
+                  //                                                 width: 8),
+                  //                                           ],
+                  //                                         ),
+                  //                                         Row(
+                  //                                           children: [
+                  //                                             Expanded(
+                  //                                               child: TextButton(
+                  //                                                 onPressed: () =>
+                  //                                                     customerDetailsProvider
+                  //                                                         .populateProductionFieldsForEditing(
+                  //                                                             index),
+                  //                                                 child: Text(
+                  //                                                   'Edit',
+                  //                                                   style:
+                  //                                                       TextStyle(
+                  //                                                     color: Colors
+                  //                                                             .blue[
+                  //                                                         400],
+                  //                                                   ),
+                  //                                                 ),
+                  //                                               ),
+                  //                                             ),
+                  //                                             Expanded(
+                  //                                               child: TextButton(
+                  //                                                 onPressed: () =>
+                  //                                                     customerDetailsProvider
+                  //                                                         .deleteProduction(
+                  //                                                             index),
+                  //                                                 child: Text(
+                  //                                                   'Delete',
+                  //                                                   style:
+                  //                                                       TextStyle(
+                  //                                                     color: Colors
+                  //                                                         .red[400],
+                  //                                                   ),
+                  //                                                 ),
+                  //                                               ),
+                  //                                             ),
+                  //                                           ],
+                  //                                         ),
+                  //                                       ],
+                  //                                     ),
+                  //                                   ),
+                  //                                 );
+                  //                               },
+                  //                             ),
+                  //                           ],
+                  //                         ),
+                  //                       ),
+                  //             ],
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
+                  //bill of details
+                  ExpansionTile(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                    ),
+                    title: Text(
+                      'Bill of Materials',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w500,
+                        color: AppColors.textGrey1,
                       ),
                     ),
-                    const SizedBox(height: 16),
-                  ],
-                ),
-                ExpansionTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
+                    tilePadding: EdgeInsets.zero,
+                    initiallyExpanded: false,
+                    children: [
+                      billofMaterialsWidget(context),
+                    ],
                   ),
-                  title: Text(
-                    'Payment Terms',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey1,
-                    ),
-                  ),
-                  tilePadding: EdgeInsets.zero,
-                  initiallyExpanded: false,
-                  children: [
-                    const SizedBox(
-                      height: 16,
-                    ),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.advanceController,
-                            hintText:
-                                customerDetailsProvider.selectedQuotationType ==
-                                        1
-                                    ? 'Advance payment up on conformation'
-                                    : 'Advance Against Purchase Order %',
-                            labelText: '',
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            // onChanged: (value) => _validateTotal(),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.deliveryController,
-                            hintText: customerDetailsProvider
-                                        .selectedQuotationType ==
-                                    1
-                                ? 'Upon the material ready for dispatch'
-                                : 'On readiness of major material at our warehouse before dispatch along with 100% taxes and against proforma invoice % ',
-                            labelText: '',
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            // onChanged: (value) => _validateTotal(),
-                          ),
-                        )
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller: customerDetailsProvider
-                                .workCompletionController,
-                            hintText:
-                                customerDetailsProvider.selectedQuotationType ==
-                                        1
-                                    ? 'Installation Completion'
-                                    : 'After project completion %',
-                            labelText: '',
-                            inputFormatters: [
-                              FilteringTextInputFormatter.digitsOnly
-                            ],
-                            // onChanged: (value) => _validateTotal(),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.paymentTermsController,
-                            hintText: 'Payment Terms',
-                            labelText: '',
-                            // onChanged: (value) => _validateTotal(),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: CustomTextField(
-                            readOnly: false,
-                            height: 54,
-                            controller:
-                                customerDetailsProvider.incoTermsController,
-                            hintText: 'Inco Terms',
-                            labelText: '',
-                            // onChanged: (value) => _validateTotal(),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-                // ExpansionTile(
-                //   shape: const RoundedRectangleBorder(
-                //     borderRadius: BorderRadius.zero,
-                //   ),
-                //   title: Text(
-                //     'Production Chart',
-                //     style: GoogleFonts.plusJakartaSans(
-                //       fontSize: 16,
-                //       fontWeight: FontWeight.w500,
-                //       color: AppColors.textGrey1,
-                //     ),
-                //   ),
-                //   tilePadding: EdgeInsets.zero,
-                //   initiallyExpanded: false,
-                //   children: [
-                //     const SizedBox(
-                //       height: 5,
-                //     ),
-                //     Column(
-                //       crossAxisAlignment: CrossAxisAlignment.stretch,
-                //       children: [
-                //         Container(
-                //           decoration: BoxDecoration(
-                //             color: const Color(0xFFF6F7F9),
-                //             borderRadius: BorderRadius.circular(10),
-                //           ),
-                //           padding: const EdgeInsets.all(16.0),
-                //           child: Column(
-                //             crossAxisAlignment: CrossAxisAlignment.start,
-                //             children: [
-                //               Row(
-                //                 children: [
-                //                   Expanded(
-                //                     child: CustomTextField(
-                //                       readOnly: false,
-                //                       height: 54,
-                //                       controller: customerDetailsProvider
-                //                           .unitProductionChartController,
-                //                       hintText: 'Unit Production Total',
-                //                       labelText: '',
-                //                     ),
-                //                   ),
-                //                   const SizedBox(width: 16.0),
-                //                   Expanded(
-                //                     child: CustomTextField(
-                //                       readOnly: false,
-                //                       height: 54,
-                //                       controller:
-                //                           customerDetailsProvider.dailyController,
-                //                       hintText: 'Daily',
-                //                       labelText: '',
-                //                     ),
-                //                   ),
-                //                 ],
-                //               ),
-                //               const SizedBox(height: 16),
-                //               Row(
-                //                 children: [
-                //                   Expanded(
-                //                     child: CustomTextField(
-                //                       readOnly: false,
-                //                       height: 54,
-                //                       controller: customerDetailsProvider
-                //                           .monthlyController,
-                //                       hintText: 'Monthly',
-                //                       labelText: '',
-                //                       inputFormatters: [
-                //                         FilteringTextInputFormatter.digitsOnly
-                //                       ],
-                //                     ),
-                //                   ),
-                //                   const SizedBox(width: 16.0),
-                //                   Expanded(
-                //                     child: CustomTextField(
-                //                       readOnly: false,
-                //                       height: 54,
-                //                       controller: customerDetailsProvider
-                //                           .remarksController,
-                //                       hintText: 'Remarks',
-                //                       labelText: '',
-                //                     ),
-                //                   ),
-                //                 ],
-                //               ),
-                //               const SizedBox(height: 16),
-                //               OutlinedButton.icon(
-                //                 onPressed: customerDetailsProvider
-                //                     .addOrEditProductionChart,
-                //                 icon: const Icon(Icons.add),
-                //                 label: const Text('Add Production Chart'),
-                //                 style: OutlinedButton.styleFrom(
-                //                   foregroundColor: AppColors
-                //                       .primaryBlue, // Change foreground color
-                //                   backgroundColor:
-                //                       Colors.white, // Change background color
-                //                   side: BorderSide(
-                //                       color: AppColors
-                //                           .primaryBlue), // Change border color
-                //                   padding: const EdgeInsets.symmetric(
-                //                     horizontal: 10,
-                //                     vertical: 0,
-                //                   ),
-                //                   shape: RoundedRectangleBorder(
-                //                     borderRadius: BorderRadius.circular(
-                //                         8), // Add border radius
-                //                   ),
-                //                 ),
-                //               ),
-                //               const SizedBox(height: 16),
-                //               if (customerDetailsProvider
-                //                   .productionItems.isNotEmpty)
-                //                 AppStyles.isWebScreen(context)
-                //                     ? Container(
-                //                         padding: const EdgeInsets.symmetric(
-                //                             horizontal: 10, vertical: 5),
-                //                         decoration: BoxDecoration(
-                //                           color: Colors.white,
-                //                           borderRadius: BorderRadius.circular(20),
-                //                         ),
-                //                         child: Column(
-                //                           children: [
-                //                             Row(
-                //                               children: [
-                //                                 SizedBox(
-                //                                   width: 40,
-                //                                   child: Text(
-                //                                     'Sl No',
-                //                                     style: GoogleFonts
-                //                                         .plusJakartaSans(
-                //                                       fontWeight: FontWeight.w600,
-                //                                       fontSize: 14,
-                //                                     ),
-                //                                   ),
-                //                                 ),
-                //                                 const SizedBox(
-                //                                   width: 8,
-                //                                 ),
-                //                                 Expanded(
-                //                                   flex: 2,
-                //                                   child: Text(
-                //                                     'Unit Production Total',
-                //                                     style: GoogleFonts
-                //                                         .plusJakartaSans(
-                //                                       fontWeight: FontWeight.w600,
-                //                                       fontSize: 14,
-                //                                     ),
-                //                                   ),
-                //                                 ),
-                //                                 Expanded(
-                //                                   child: Text(
-                //                                     'Daily',
-                //                                     style: GoogleFonts
-                //                                         .plusJakartaSans(
-                //                                       fontWeight: FontWeight.w600,
-                //                                       fontSize: 14,
-                //                                     ),
-                //                                   ),
-                //                                 ),
-                //                                 Expanded(
-                //                                   child: Text(
-                //                                     'Monthly',
-                //                                     style: GoogleFonts
-                //                                         .plusJakartaSans(
-                //                                       fontWeight: FontWeight.w600,
-                //                                       fontSize: 14,
-                //                                     ),
-                //                                   ),
-                //                                 ),
-                //                                 Expanded(
-                //                                   flex: 2,
-                //                                   child: Text(
-                //                                     'Remarks',
-                //                                     style: GoogleFonts
-                //                                         .plusJakartaSans(
-                //                                       fontWeight: FontWeight.w600,
-                //                                       fontSize: 14,
-                //                                     ),
-                //                                   ),
-                //                                 ),
-                //                                 Expanded(
-                //                                   flex: 2,
-                //                                   child: Text(
-                //                                     'Actions',
-                //                                     textAlign: TextAlign.center,
-                //                                     style: GoogleFonts
-                //                                         .plusJakartaSans(
-                //                                       fontWeight: FontWeight.w600,
-                //                                       fontSize: 14,
-                //                                     ),
-                //                                   ),
-                //                                 ),
-                //                               ],
-                //                             ),
-                //                             const SizedBox(
-                //                               height: 10,
-                //                             ),
-                //                             ListView.builder(
-                //                               shrinkWrap: true,
-                //                               physics:
-                //                                   const NeverScrollableScrollPhysics(),
-                //                               itemCount: customerDetailsProvider
-                //                                   .productionItems.length,
-                //                               itemBuilder: (context, index) {
-                //                                 final item =
-                //                                     customerDetailsProvider
-                //                                         .productionItems[index];
-                //                                 return Row(
-                //                                   children: [
-                //                                     SizedBox(
-                //                                       width: 40,
-                //                                       child: Center(
-                //                                         child: Text(
-                //                                           (index + 1).toString(),
-                //                                           style: GoogleFonts
-                //                                               .plusJakartaSans(
-                //                                                   fontSize: 14),
-                //                                         ),
-                //                                       ),
-                //                                     ),
-                //                                     const SizedBox(
-                //                                       width: 8,
-                //                                     ),
-                //                                     Expanded(
-                //                                       flex: 2,
-                //                                       child: Text(
-                //                                         item.unitProduction,
-                //                                         style: GoogleFonts
-                //                                             .plusJakartaSans(
-                //                                                 fontSize: 14),
-                //                                       ),
-                //                                     ),
-                //                                     Expanded(
-                //                                       child: Text(
-                //                                         item.dailyTotal,
-                //                                         style: GoogleFonts
-                //                                             .plusJakartaSans(
-                //                                                 fontSize: 14),
-                //                                       ),
-                //                                     ),
-                //                                     Expanded(
-                //                                       child: Text(
-                //                                         item.monthlyTotal
-                //                                             .toString(),
-                //                                         style: GoogleFonts
-                //                                             .plusJakartaSans(
-                //                                                 fontSize: 14),
-                //                                       ),
-                //                                     ),
-                //                                     Expanded(
-                //                                       flex: 2,
-                //                                       child: Text(
-                //                                         item.remark,
-                //                                         style: GoogleFonts
-                //                                             .plusJakartaSans(
-                //                                                 fontSize: 14),
-                //                                       ),
-                //                                     ),
-                //                                     Expanded(
-                //                                       flex: 1,
-                //                                       child: TextButton(
-                //                                         onPressed: () =>
-                //                                             customerDetailsProvider
-                //                                                 .populateProductionFieldsForEditing(
-                //                                                     index),
-                //                                         child: Text(
-                //                                           'Edit',
-                //                                           style: TextStyle(
-                //                                             color:
-                //                                                 Colors.blue[400],
-                //                                           ),
-                //                                         ),
-                //                                       ),
-                //                                     ),
-                //                                     Expanded(
-                //                                       flex: 1,
-                //                                       child: TextButton(
-                //                                         onPressed: () =>
-                //                                             customerDetailsProvider
-                //                                                 .deleteProduction(
-                //                                                     index),
-                //                                         child: Text(
-                //                                           'Delete',
-                //                                           style: TextStyle(
-                //                                             color:
-                //                                                 Colors.red[400],
-                //                                           ),
-                //                                         ),
-                //                                       ),
-                //                                     ),
-                //                                   ],
-                //                                 );
-                //                               },
-                //                             ),
-                //                           ],
-                //                         ),
-                //                       )
-                //                     : Container(
-                //                         // padding: const EdgeInsets.all(12),
-                //                         // decoration: BoxDecoration(
-                //                         //   color: AppColors.scaffoldColor,
-                //                         //   borderRadius: BorderRadius.circular(20),
-                //                         // ),
-                //                         child: Column(
-                //                           crossAxisAlignment:
-                //                               CrossAxisAlignment.start,
-                //                           children: [
-                //                             Text(
-                //                               'Production Chart Items',
-                //                               style: GoogleFonts.plusJakartaSans(
-                //                                 fontSize: 18,
-                //                                 fontWeight: FontWeight.w600,
-                //                               ),
-                //                             ),
-                //                             const SizedBox(height: 12),
-                //                             ListView.builder(
-                //                               shrinkWrap: true,
-                //                               physics:
-                //                                   const NeverScrollableScrollPhysics(),
-                //                               itemCount: customerDetailsProvider
-                //                                   .billOfMaterialsItems.length,
-                //                               itemBuilder: (context, index) {
-                //                                 final item =
-                //                                     customerDetailsProvider
-                //                                         .productionItems[index];
-                //                                 return Card(
-                //                                   color: Colors.white,
-                //                                   margin: const EdgeInsets.only(
-                //                                       bottom: 12),
-                //                                   elevation: 2,
-                //                                   shape: RoundedRectangleBorder(
-                //                                     borderRadius:
-                //                                         BorderRadius.circular(12),
-                //                                   ),
-                //                                   child: Padding(
-                //                                     padding:
-                //                                         const EdgeInsets.all(16),
-                //                                     child: Column(
-                //                                       crossAxisAlignment:
-                //                                           CrossAxisAlignment
-                //                                               .start,
-                //                                       children: [
-                //                                         _buildInfoRow(
-                //                                             'Unit Production Total',
-                //                                             item.unitProduction),
-                //                                         const SizedBox(height: 8),
-                //                                         Row(
-                //                                           children: [
-                //                                             Expanded(
-                //                                               child: _buildInfoRow(
-                //                                                   'Daily',
-                //                                                   item.dailyTotal),
-                //                                             ),
-                //                                             Expanded(
-                //                                               child:
-                //                                                   _buildInfoRow(
-                //                                                 'Monthly',
-                //                                                 item.monthlyTotal
-                //                                                     .toString(),
-                //                                               ),
-                //                                             ),
-                //                                           ],
-                //                                         ),
-                //                                         const SizedBox(height: 8),
-                //                                         Row(
-                //                                           children: [
-                //                                             Expanded(
-                //                                               child: _buildInfoRow(
-                //                                                   'Description',
-                //                                                   item.remark),
-                //                                             ),
-                //                                             const SizedBox(
-                //                                                 width: 8),
-                //                                           ],
-                //                                         ),
-                //                                         Row(
-                //                                           children: [
-                //                                             Expanded(
-                //                                               child: TextButton(
-                //                                                 onPressed: () =>
-                //                                                     customerDetailsProvider
-                //                                                         .populateProductionFieldsForEditing(
-                //                                                             index),
-                //                                                 child: Text(
-                //                                                   'Edit',
-                //                                                   style:
-                //                                                       TextStyle(
-                //                                                     color: Colors
-                //                                                             .blue[
-                //                                                         400],
-                //                                                   ),
-                //                                                 ),
-                //                                               ),
-                //                                             ),
-                //                                             Expanded(
-                //                                               child: TextButton(
-                //                                                 onPressed: () =>
-                //                                                     customerDetailsProvider
-                //                                                         .deleteProduction(
-                //                                                             index),
-                //                                                 child: Text(
-                //                                                   'Delete',
-                //                                                   style:
-                //                                                       TextStyle(
-                //                                                     color: Colors
-                //                                                         .red[400],
-                //                                                   ),
-                //                                                 ),
-                //                                               ),
-                //                                             ),
-                //                                           ],
-                //                                         ),
-                //                                       ],
-                //                                     ),
-                //                                   ),
-                //                                 );
-                //                               },
-                //                             ),
-                //                           ],
-                //                         ),
-                //                       ),
-                //             ],
-                //           ),
-                //         ),
-                //       ],
-                //     ),
-                //   ],
-                // ),
-                //bill of details
-                ExpansionTile(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                  ),
-                  title: Text(
-                    'Bill of Materials',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textGrey1,
-                    ),
-                  ),
-                  tilePadding: EdgeInsets.zero,
-                  initiallyExpanded: false,
-                  children: [
-                    billofMaterialsWidget(context),
-                  ],
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
       ),
-    ),
-    persistentFooterButtons: [
+      persistentFooterButtons: [
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Row(
