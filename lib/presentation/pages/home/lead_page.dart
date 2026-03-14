@@ -1284,35 +1284,81 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     context) =>
                                                                 <PopupMenuEntry<
                                                                     String>>[
-                                                          const PopupMenuItem<
-                                                              String>(
+                                                          PopupMenuItem<String>(
                                                             value: 'edit',
-                                                            child: Text(
-                                                                'Edit Lead'),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons.edit,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .blue),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Edit Lead'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                          const PopupMenuItem<
-                                                              String>(
+                                                          PopupMenuItem<String>(
                                                             value: 'convert',
-                                                            child:
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(Icons.sync,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .green),
+                                                                SizedBox(
+                                                                    width: 8),
                                                                 Text('Convert'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                          const PopupMenuItem<
-                                                              String>(
+                                                          PopupMenuItem<String>(
                                                             value: 'quotation',
-                                                            child: Text(
-                                                                'Quotation'),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .request_quote,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .orange),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Quotation'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                          const PopupMenuItem<
-                                                              String>(
+                                                          PopupMenuItem<String>(
                                                             value: 'document',
-                                                            child: Text(
-                                                                'Document'),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .description,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .purple),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Document'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                          const PopupMenuItem<
-                                                              String>(
+                                                          PopupMenuItem<String>(
                                                             value: 'task',
-                                                            child: Text(
-                                                                'Create Task'),
+                                                            child: Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .add_task,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .teal),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Create Task'),
+                                                              ],
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
