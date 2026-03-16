@@ -31,6 +31,7 @@ import 'package:vidyanexis/presentation/widgets/customer/reciept_list_page_mobil
 import 'package:vidyanexis/presentation/widgets/customer/task_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_task_overview_tab.dart';
 
 class CustomerDetailPageMobile extends StatefulWidget {
   static const String route = '/customer-detail-mobile/';
@@ -63,12 +64,14 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
+      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
+      if (settingsprovider.menuIsViewMap[13] == 1)
+        const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "Activity"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[14] == 1)
         const Tab(text: "Complaints"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[15] == 1)
         const Tab(text: "Periodic Services"),
-      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
         const Tab(text: "Receipt"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)
@@ -388,6 +391,14 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             QuotationMobileView(
               customerId: widget.customerId.toString(),
             ),
+          if (settingsprovider.menuIsViewMap[19] == 1)
+            DocumentsListPagePhone(
+              customerId: widget.customerId.toString(),
+            ),
+          if (settingsprovider.menuIsViewMap[13] == 1)
+            CustomerTaskOverviewTab(
+              customerId: widget.customerId.toString(),
+            ),
           if (settingsprovider.menuIsViewMap[73] == 1)
             ActivityTabPage(
               lead: widget.lead,
@@ -400,10 +411,6 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             ),
           if (!widget.fromLead && settingsprovider.menuIsViewMap[15] == 1)
             PeriodicServicesMobile(
-              customerId: widget.customerId.toString(),
-            ),
-          if (settingsprovider.menuIsViewMap[19] == 1)
-            DocumentsListPagePhone(
               customerId: widget.customerId.toString(),
             ),
           if (!widget.fromLead && settingsprovider.menuIsViewMap[18] == 1)

@@ -144,9 +144,9 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
+      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[13] == 1)
         const Tab(text: "Task Overview"),
-      if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
       if (settingsprovider.menuIsViewMap[14] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Complaints"),
@@ -2914,14 +2914,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                       ],
                                                     ),
 
-                                            // Task Overview Tab
-                                            if (settingsprovider
-                                                    .menuIsViewMap[13] ==
-                                                1)
-                                              CustomerTaskOverviewTab(
-                                                  customerId:
-                                                      widget.customerId),
-
                                             //Documents Tab
                                             if (settingsprovider
                                                     .menuIsViewMap[19] ==
@@ -2966,7 +2958,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           var userData =
                                                               customerDetailsProvider
                                                                       .documentList[
-                                                                  index];
+                                                                   index];
                                                           userData.userName;
                                                           List<ImageDetail>
                                                               images = userData
@@ -3177,6 +3169,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   ],
                                                 ),
                                               ),
+
+                                            // Task Overview Tab
+                                            if (settingsprovider
+                                                    .menuIsViewMap[13] ==
+                                                1)
+                                              CustomerTaskOverviewTab(
+                                                  customerId:
+                                                      widget.customerId),
 
                                             // Complaints Tab (can be customized as needed)
                                             if (settingsprovider
