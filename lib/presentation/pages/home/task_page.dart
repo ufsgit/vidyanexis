@@ -150,6 +150,7 @@ class _tasksPageReportState extends State<TaskPage> {
         reportsProvider.AssignedTo,
         reportsProvider.TaskType,
       );
+      reportsProvider.goToPage(1);
       reportsProvider.searchTaskByCustomer(context, isShowLoader: false);
     });
   }
@@ -244,7 +245,7 @@ class _tasksPageReportState extends State<TaskPage> {
                 reportsProvider.selectDateFilterOption(null);
                 reportsProvider.removeStatus();
                 reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
-
+                reportsProvider.goToPage(1);
                 reportsProvider.searchTaskByCustomer(context);
               },
               title: 'Tasks',
@@ -270,6 +271,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     reportsProvider.TaskType,
                   );
                 }
+                reportsProvider.goToPage(1);
                 reportsProvider.searchTaskByCustomer(context);
               },
               searchController: searchController,
@@ -409,9 +411,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         reportsProvider
                                                             .TaskType,
                                                       );
-                                                      reportsProvider
-                                                          .searchTaskByCustomer(
-                                                              context);
+                                                      reportsProvider.goToPage(1);
+                                                      reportsProvider.searchTaskByCustomer(context);
                                                     },
                                                     child: const Icon(
                                                         Icons.search,
@@ -661,8 +662,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                       reportsProvider.selectedTaskType
                                           .toString(),
                                     );
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
+                                    reportsProvider.goToPage(1);
+                                    reportsProvider.searchTaskByCustomer(context);
                                   },
                                   underline: Container(),
                                   isDense: true,
@@ -808,8 +809,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                       reportsProvider.selectedTaskType
                                           .toString(),
                                     );
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
+                                    reportsProvider.goToPage(1);
+                                    reportsProvider.searchTaskByCustomer(context);
                                   },
                                   underline: Container(),
                                   isDense: true,
@@ -909,8 +910,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                       reportsProvider.selectedTaskType
                                           .toString(),
                                     );
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
+                                    reportsProvider.goToPage(1);
+                                    reportsProvider.searchTaskByCustomer(context);
                                   },
                                   underline: Container(),
                                   isDense: true,
@@ -943,6 +944,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                   '',
                                   '',
                                 );
+                                reportsProvider.goToPage(1);
                                 reportsProvider.searchTaskByCustomer(context);
                               },
                               style: ElevatedButton.styleFrom(
@@ -1121,6 +1123,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               statusDialogMobile(t)
                                                   .then((value) {
                                                 if (value == true) {
+                                                  reportsProvider.goToPage(1);
                                                   reportsProvider
                                                       .searchTaskByCustomer(
                                                           context);
@@ -1141,6 +1144,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             updateStatusDialogWithoutTask(task)
                                                 .then((value) {
                                               if (value == true) {
+                                                reportsProvider.goToPage(1);
                                                 reportsProvider
                                                     .searchTaskByCustomer(
                                                         context);
@@ -1151,6 +1155,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 context)) {
                                               statusDialog(task).then((value) {
                                                 if (value == true) {
+                                                  reportsProvider.goToPage(1);
                                                   reportsProvider
                                                       .searchTaskByCustomer(
                                                           context);
@@ -1160,6 +1165,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                               statusDialogMobile(task)
                                                   .then((value) {
                                                 if (value == true) {
+                                                  reportsProvider.goToPage(1);
                                                   reportsProvider
                                                       .searchTaskByCustomer(
                                                           context);
@@ -1338,6 +1344,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           .then((value) {
                                                         if (value == true) {
                                                           reportsProvider
+                                                              .goToPage(1);
+                                                          reportsProvider
                                                               .searchTaskByCustomer(
                                                                   context);
                                                         }
@@ -1349,6 +1357,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             .then((value) {
                                                           if (value == true) {
                                                             reportsProvider
+                                                                .goToPage(1);
+                                                            reportsProvider
                                                                 .searchTaskByCustomer(
                                                                     context);
                                                           }
@@ -1357,6 +1367,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         statusDialogMobile(task)
                                                             .then((value) {
                                                           if (value == true) {
+                                                            reportsProvider
+                                                                .goToPage(1);
                                                             reportsProvider
                                                                 .searchTaskByCustomer(
                                                                     context);
@@ -3183,6 +3195,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             assignedTo,
                             taskType,
                           );
+                          reportsProvider.goToPage(1);
                           reportsProvider.searchTaskByCustomer(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -3226,6 +3239,7 @@ class _tasksPageReportState extends State<TaskPage> {
                             assignedTo,
                             taskType,
                           );
+                          reportsProvider.goToPage(1);
                           reportsProvider.searchTaskByCustomer(context);
                         },
                         style: ElevatedButton.styleFrom(

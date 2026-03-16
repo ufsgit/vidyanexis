@@ -322,6 +322,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                         _durationController,
                         _endDateController);
                     if (isSuccess) {
+                      reportsProvider.goToPage(1);
                       reportsProvider.searchTaskByCustomer(context);
                       Navigator.of(context).pop(true);
                     }
