@@ -24,139 +24,150 @@ class TaskCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Color getAvatarColor(String name) {
-      final colors = [
-        Colors.blue.withOpacity(.75),
-        Colors.purple.withOpacity(.75),
-        Colors.orange.withOpacity(.75),
-        Colors.teal.withOpacity(.75),
-        Colors.pink.withOpacity(.75),
-        Colors.indigo.withOpacity(.75),
-        Colors.green.withOpacity(.75),
-        Colors.deepOrange.withOpacity(.75),
-        Colors.cyan.withOpacity(.75),
-        Colors.brown.withOpacity(.75),
-      ];
-      final nameHash = name.hashCode.abs();
-      return colors[nameHash % colors.length];
+    Color getStatusColor(String statusName) {
+      statusName = statusName.toUpperCase();
+      if (statusName.contains('FOLLOW-UP')) return Colors.blue;
+      if (statusName.contains('NEW')) return Colors.green;
+      if (statusName.contains('AMC')) return Colors.grey;
+      if (statusName.contains('HOT')) return Colors.red;
+      // Default to task.colorCode if available, else primaryBlue
+      return task.colorCode ?? AppColors.primaryBlue;
     }
+
+    final statusColor = getStatusColor(task.taskStatusName);
 
     return Column(
       children: [
-        GestureDetector(
-          onTap: () => showStatusUpdate(context, task),
+        InkWell(
+          onTap: onTap,
           child: Container(
             width: MediaQuery.sizeOf(context).width,
-            decoration: BoxDecoration(color: AppColors.whiteColor),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-              child: IntrinsicHeight(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+            decoration: BoxDecoration(
+              color: AppColors.whiteColor,
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // FIRST LINE
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      width: 3,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(30),
-                        color: task.colorCode?.withOpacity(.4) ??
-                            getAvatarColor(task.customerName).withOpacity(.4),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
                     Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            task.customerName,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.textBlack),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            '${task.taskTypeName}${task.description.isNotEmpty ? ' - ${task.description}' : ''}',
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 1,
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textGrey3),
-                          ),
-                          Text(
-                            task.taskStatusName,
-                            overflow: TextOverflow.clip,
-                            maxLines: 1,
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w500,
-                                color: task.colorCode ?? AppColors.primaryBlue),
-                          ),
-                        ],
+                      child: Text(
+                        task.customerName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.textBlack,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    Row(
                       children: [
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            Text(
-                              task.taskDate.toFormattedDate(),
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12,
-                                color: AppColors.statusGreen,
-                              ),
-                            ),
-                            Text(
-                              task.taskTime,
-                              style: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 11,
-                                color: AppColors.textGrey3,
-                              ),
-                            ),
-                          ],
-                        ),
-                        GestureDetector(
-                          onTap: () {
-                            onTap();
-                          },
-                          behavior: HitTestBehavior.opaque,
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 5),
-                            child: Icon(
-                              isExpanded
-                                  ? Icons.keyboard_arrow_up_outlined
-                                  : Icons.keyboard_arrow_down_outlined,
-                              color: AppColors.textGrey3,
-                            ),
+                        Text(
+                          task.taskDate.toFormattedDate(),
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w400,
+                            color: AppColors.textGrey3,
                           ),
+                        ),
+                        const SizedBox(width: 4),
+                        Icon(
+                          isExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          size: 18,
+                          color: AppColors.textGrey3,
                         ),
                       ],
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 6),
+                // SECOND LINE
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        task.taskTypeName,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textGrey3,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    // STATUS BADGE
+                    GestureDetector(
+                      onTap: () => showStatusUpdate(context, task),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 5,
+                        ),
+                        decoration: BoxDecoration(
+                          color: statusColor.withOpacity(0.12),
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Text(
+                          task.taskStatusName.toUpperCase(),
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: statusColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
         ),
         if (isExpanded)
           Padding(
-            padding: const EdgeInsets.only(right: 16, bottom: 10),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+            padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildChatDropdown(context),
-                const SizedBox(width: 15),
-                _buildCallDropdown(context),
+                if (task.description.isNotEmpty) ...[
+                  Text(
+                    "Description",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    task.description,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textGrey3,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    _buildChatDropdown(context),
+                    const SizedBox(width: 12),
+                    _buildCallDropdown(context),
+                  ],
+                ),
               ],
             ),
           ),

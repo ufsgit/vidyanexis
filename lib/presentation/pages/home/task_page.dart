@@ -1104,7 +1104,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                       return Column(
                                         children: [
                                           Divider(
-                                            height: 2,
+                                            height: 1,
+                                            thickness: 1,
                                             color: AppColors.grey,
                                           ),
                                           TaskCard(
