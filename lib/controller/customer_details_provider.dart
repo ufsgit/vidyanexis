@@ -2339,6 +2339,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     totalCgstPerController.clear();
     totalSgstPerController.clear();
     totalAdCESSController.clear();
+    _selectedBranchId = null;
     _selectedQuotationType = 0;
     quotationTypeController.clear();
     _commercialItems = [];
@@ -3865,6 +3866,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // ---- BASIC DETAILS ----
     qproductnameController.text = quotation.productName;
+    selectedBranchId = quotation.branchId;
     advanceController.text = quotation.advancePercentage;
     deliveryController.text = quotation.onDeliveryPercentage;
     workCompletionController.text = quotation.workCompletionPercentage;
