@@ -140,7 +140,6 @@ class MyApp extends StatelessWidget {
 
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
-          child: const MyApp(),
         ),
       ],
       child: MaterialApp.router(

@@ -230,6 +230,9 @@ class _NotificationsPageState extends State<NotificationsPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header section for mobile
+          SizedBox(
+            height: 24,
+          ),
           Row(
             children: [
               InkWell(
@@ -256,8 +259,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
                       color: Colors.black87,
                     ),
               ),
-              Spacer(),
-              // Mark All as Read button
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
               TextButton(
                 onPressed: () {
                   MicrotecSocket.readNotification(id: 0);
@@ -272,7 +278,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
+          // const SizedBox(height: 24),
           Expanded(
             child: ListView.separated(
               padding: const EdgeInsets.all(12),
