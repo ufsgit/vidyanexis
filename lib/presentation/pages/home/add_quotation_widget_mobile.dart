@@ -13,6 +13,9 @@ import '../../../controller/customer_details_provider.dart';
 import '../../widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+
+
 
 class AddQuotationWidgetMobile extends StatefulWidget {
   const AddQuotationWidgetMobile(
@@ -59,12 +62,34 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
           customerDetailsProvider.clearQuotationDetails();
           Navigator.pop(context);
         },
-        onSavePressed: () {
+        onSavePressed: () async {
           if (customerDetailsProvider
                   .qsubsidyAmountController.text.isNotEmpty &&
               customerDetailsProvider.qproductnameController.text.isNotEmpty) {
-            customerDetailsProvider.saveQuotation(
+            final responseData = await customerDetailsProvider.saveQuotation(
                 widget.quotationId, widget.customerId, context, widget.isEdit);
+
+            if (responseData != null) {
+              // Extract quotation master id from response
+              String masterId = '';
+              if (responseData is Map &&
+                  responseData.containsKey('Quotation_Master_Id')) {
+                masterId = responseData['Quotation_Master_Id'].toString();
+              } else if (responseData is List &&
+                  responseData.isNotEmpty &&
+                  responseData[0] is Map &&
+                  responseData[0].containsKey('Quotation_Master_Id')) {
+                masterId = responseData[0]['Quotation_Master_Id'].toString();
+              }
+
+              if (masterId.isEmpty || masterId == '0') {
+                masterId = widget.quotationId;
+              }
+
+              if (context.mounted) {
+                _showPrintQuotationDialog(context, masterId);
+              }
+            }
           } else {
             showDialog(
               context: context,
@@ -1523,6 +1548,87 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
       ),
     );
   }
+  void _showPrintQuotationDialog(BuildContext context, String masterId) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Print Quotation',
+            style: TextStyle(
+              color: AppColors.appViolet,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text(
+              'Quotation saved successfully. Do you want to print the quotation?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+              },
+              child: Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close dialog
+                final customerDetailsProvider =
+                    Provider.of<CustomerDetailsProvider>(context,
+                        listen: false);
+                final settingsProvider =
+                    Provider.of<SettingsProvider>(context, listen: false);
+
+                // Check permission for printing (menuId 32 or 55)
+                bool hasPrintPermission =
+                    (settingsProvider.menuIsViewMap[32] == 1 ||
+                        settingsProvider.menuIsViewMap[55] == 1);
+
+                if (hasPrintPermission) {
+                  try {
+                    await customerDetailsProvider.getQuotationMasterPdf(
+                        masterId, context);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content:
+                                Text('Printing failed. Please try again.')),
+                      );
+                    }
+                  }
+                } else {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('You do not have permission to print.')),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                'Yes',
+                style: TextStyle(
+                  color: AppColors.appViolet,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
 
 class MultipleExpansionCard extends StatefulWidget {
@@ -1728,6 +1834,7 @@ class _ScrollableMultipleExpansionCardState
       ],
     );
   }
+
 }
 
 String getStatusNameById(int statusId) {

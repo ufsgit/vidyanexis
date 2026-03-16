@@ -2106,7 +2106,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void saveQuotation(String quotationId, String customerId,
+  Future<dynamic> saveQuotation(String quotationId, String customerId,
       BuildContext context, bool isEdit) async {
     try {
       Loader.showLoader(context);
@@ -2229,14 +2229,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
         final data = response.data;
         log('Success');
         getQuatationList(customerId, context);
-        clearQuotationDetails();
         if (isEdit) {
           getQuatationListByMasterId(quotationId, context);
         }
-        Navigator.pop(context);
 
         Loader.stopLoader(context);
         print(data);
+        return data;
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
@@ -2249,6 +2248,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
       Loader.stopLoader(context);
+      rethrow;
     }
   }
 
