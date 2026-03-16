@@ -68,21 +68,7 @@ class NotificationProvider extends ChangeNotifier {
 
     if (index != -1) {
       final notification = _notificationsList[index];
-      final updatedNotification = NotificationModel(
-        notificationId: notification.notificationId,
-        title: notification.title,
-        body: notification.body,
-        menuId: notification.menuId,
-        userDetailsId: notification.userDetailsId,
-        isRead: '1',
-        createdAt: notification.createdAt,
-        deleteStatus: notification.deleteStatus,
-        masterId: notification.masterId,
-        additionalData: notification.additionalData,
-        titleNew: notification.titleNew,
-        bodyNew: notification.bodyNew,
-        customerId: notification.customerId,
-      );
+      final updatedNotification = notification.copyWith(isRead: '1');
 
       _notificationsList[index] = updatedNotification;
       // Update total count to reflect unread notifications
@@ -96,21 +82,7 @@ class NotificationProvider extends ChangeNotifier {
     for (int i = 0; i < _notificationsList.length; i++) {
       if (_notificationsList[i].isRead == '0') {
         final notification = _notificationsList[i];
-        final updatedNotification = NotificationModel(
-          notificationId: notification.notificationId,
-          title: notification.title,
-          body: notification.body,
-          menuId: notification.menuId,
-          userDetailsId: notification.userDetailsId,
-          isRead: '1',
-          createdAt: notification.createdAt,
-          deleteStatus: notification.deleteStatus,
-          masterId: notification.masterId,
-          additionalData: notification.additionalData,
-          titleNew: notification.titleNew,
-          bodyNew: notification.bodyNew,
-          customerId: notification.customerId,
-        );
+        final updatedNotification = notification.copyWith(isRead: '1');
 
         _notificationsList[i] = updatedNotification;
       }

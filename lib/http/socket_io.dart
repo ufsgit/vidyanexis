@@ -132,21 +132,10 @@ class MicrotecSocket {
             log('📋 Transformed Results count: ${transformedResults?.length ?? 0}');
 
             if (transformedResults != null) {
+              print('🔔 [user_notification] ALL NOTIFICATIONS FROM SOCKET: $transformedResults');
               final notifications = transformedResults.map((item) {
                 log('📄 Processing notification item: $item');
-                return NotificationModel(
-                  titleNew: item['TITLE_NEW'].toString(),
-                  bodyNew: item['BODY_NEW'].toString(),
-                  customerId: item['Customer_Id'].toString(),
-                  notificationId: item['Notification_Id'].toString(),
-                  title: item['Title'],
-                  body: item['Body'],
-                  menuId: item['Menu_Id']?.toString(),
-                  userDetailsId: item['User_Details_Id'].toString(),
-                  isRead: item['Is_Read'].toString(),
-                  createdAt: item['Created_At'],
-                  additionalData: {},
-                );
+                return NotificationModel.fromJson(item, {});
               }).toList();
 
               // Update both notifications and total count
@@ -162,22 +151,11 @@ class MicrotecSocket {
             final notificationData =
                 data['notification'] as Map<String, dynamic>?;
             if (notificationData != null) {
-              final singleNotification = NotificationModel(
-                titleNew: notificationData['Title']?.toString() ?? '',
-                bodyNew: notificationData['Body']?.toString() ?? '',
-                customerId: '', // Not available in this format
-                notificationId:
-                    notificationData['Notification_Id']?.toString() ?? '',
-                title: notificationData['Title']?.toString() ?? '',
-                body: notificationData['Body']?.toString() ?? '',
-                menuId: '',
-                userDetailsId: '',
-                isRead: '0', // New notification is unread
-                createdAt: DateTime.now().toIso8601String(),
-                additionalData: {},
-              );
-
-              // Add to existing notifications list              log('✅ Added single notification to current list');
+              final singleNotification =
+                  NotificationModel.fromJson(notificationData, {});
+              // Note: You might want to add this to the provider as well
+              // provider.addNotificationFromSocket(singleNotification);
+              log('✅ Parsed single notification from socket');
             }
           }
         } else {
@@ -264,6 +242,13 @@ class MicrotecSocket {
     } else {
       log('❌ Context is null, unable to update notification provider');
     }
+  }
+
+  static void getNotifications() async {
+    final prefs = await SharedPreferences.getInstance();
+    final String userId = prefs.getString('userId') ?? "";
+    log('📡 Requesting user notifications for userId: $userId');
+    socket?.emit('get_user_notifications', {'userId': userId});
   }
 
   static void sendNotification({int? id}) async {
