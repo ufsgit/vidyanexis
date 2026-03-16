@@ -39,7 +39,7 @@ class _UsersContentState extends State<UsersContent> {
 
   @override
   Widget build(BuildContext context) {
-    const double minContentWidth = 1400.0;
+    const double minContentWidth = 1300.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -55,8 +55,8 @@ class _UsersContentState extends State<UsersContent> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Header section
-                SizedBox(
-                  width: double.infinity,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
                   child: Row(
                     children: [
                       Text(
@@ -69,72 +69,31 @@ class _UsersContentState extends State<UsersContent> {
                       const Spacer(),
                       Container(
                         width: AppStyles.isWebScreen(context)
-                            ? MediaQuery.of(context).size.width / 5
-                            : MediaQuery.of(context).size.width / 2,
+                            ? 350
+                            : MediaQuery.of(context).size.width / 3.5,
                         height: 40,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
                           border: Border.all(color: Colors.grey[300]!),
                         ),
-                        child: Row(
-                          children: [
-                            // 📌 TextField
-                            Expanded(
-                              child: TextField(
-                                controller: settingsProvider.searchController,
-                                decoration: const InputDecoration(
-                                  hintText: 'Search here....',
-                                  prefixIcon: Icon(Icons.search),
-                                border: InputBorder.none,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 4,
-                                  ),
-                                ),
-                              ),
+                        child: TextField(
+                          controller: settingsProvider.searchController,
+                          onChanged: (query) {
+                            settingsProvider.getUserDetails(query, context);
+                          },
+                          decoration: const InputDecoration(
+                            hintText: 'Search here....',
+                            prefixIcon: Icon(Icons.search),
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
                             ),
-
-                            // 📌 Elevated Button
-                            Padding(
-                              padding: const EdgeInsets.only(right: 4.0),
-                              child: ElevatedButton(
-                                onPressed: () {
-                                  final query = settingsProvider
-                                      .searchController.text
-                                      .trim();
-
-                                  settingsProvider.getUserDetails(
-                                      query, context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.textGrey4,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                child: const Text("Search"),
-                              ),
-                            ),
-                          ],
+                          ),
                         ),
                       ),
-
                       const SizedBox(width: 16),
-                      // CustomOutlinedSvgButton(
-                      //   onPressed: () async {},
-                      //   svgPath: 'assets/images/Filter.svg',
-                      //   label: 'Filter',
-                      //   breakpoint: 860,
-                      //   shape: RoundedRectangleBorder(
-                      //       borderRadius: BorderRadius.circular(20)),
-                      //   foregroundColor: AppColors.primaryBlue,
-                      //   backgroundColor: Colors.white,
-                      //   borderSide: BorderSide(color: AppColors.primaryBlue),
-                      // ),
-                      // const SizedBox(width: 16),
                       if (settingsProvider.menuIsSaveMap[1] == 1)
                         CustomOutlinedSvgButton(
                           onPressed: () async {

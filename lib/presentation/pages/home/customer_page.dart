@@ -17,8 +17,16 @@ import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/quotation_details_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 
 class CustomerPage extends StatefulWidget {
   const CustomerPage({super.key});
@@ -834,12 +842,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                       padding: const EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
                                       color: const Color(0xFFFFFFFF)),
-                                  // TableWidget(
-                                  //     flex: 2,
-                                  //     title: 'Action',
-                                  //     padding: const EdgeInsets.symmetric(
-                                  //         vertical: 6.0, horizontal: 8.0),
-                                  //     color: const Color(0xFFFFFFFF)),
+                                  TableWidget(
+                                      flex: 2,
+                                      title: 'Action',
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 6.0, horizontal: 8.0),
+                                      color: const Color(0xFFFFFFFF)),
                                 ],
                               ),
                             ),
@@ -897,8 +905,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       ((index + 1) +
                                                               customerProvider
                                                                   .startLimit -
-                                                          1)
-                                                      .toString(),
+                                                              1)
+                                                          .toString(),
                                                       style: const TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,
@@ -1210,45 +1218,261 @@ class _CustomerPageState extends State<CustomerPage> {
                                                               .parse(lead
                                                                   .nextFollowUpDate))
                                                       : ''),
-                                              // TableWidget(
-                                              //   flex: 2,
-                                              //   padding:
-                                              //       const EdgeInsets.symmetric(
-                                              //           vertical: 6.0,
-                                              //           horizontal: 8.0),
-                                              //   data: InkWell(
-                                              //     onTap: () {
-                                              //       showConfirmationDialog(
-                                              //         context: context,
-                                              //         title: 'Delete Customer',
-                                              //         content:
-                                              //             'Are you sure you want to delete this customer?',
-                                              //         onCancel: () =>
-                                              //             Navigator.of(context)
-                                              //                 .pop(),
-                                              //         onConfirm: () async {
-                                              //           await leadsProvider
-                                              //               .deleteLead(
-                                              //                   context,
-                                              //                   lead.customerId
-                                              //                       .toString());
-                                              //           if (context.mounted) {
-                                              //             Navigator.of(context)
-                                              //                 .pop();
-                                              //             customerProvider
-                                              //                 .getSearchCustomers(
-                                              //                     context);
-                                              //           }
-                                              //         },
-                                              //       );
-                                              //     },
-                                              //     child: const Icon(
-                                              //       Icons.delete_outline,
-                                              //       color: Colors.red,
-                                              //       size: 20,
-                                              //     ),
-                                              //   ),
-                                              // ),
+                                              TableWidget(
+                                                flex: 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
+                                                data: PopupMenuButton<String>(
+                                                  icon: const Icon(
+                                                      Icons.keyboard_arrow_down,
+                                                      size: 20,
+                                                      color: Colors.grey),
+                                                  tooltip: 'Actions',
+                                                  padding: EdgeInsets.zero,
+                                                  onSelected:
+                                                      (String value) async {
+                                                    if (value == 'edit') {
+                                                      showDialog(
+                                                        context: context,
+                                                        barrierDismissible:
+                                                            false,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return const Center(
+                                                            child:
+                                                                CircularProgressIndicator(),
+                                                          );
+                                                        },
+                                                      );
+
+                                                      final leadDetailsProvider =
+                                                          Provider.of<
+                                                                  LeadDetailsProvider>(
+                                                              context,
+                                                              listen: false);
+                                                      await leadDetailsProvider
+                                                          .fetchLeadDetails(
+                                                              lead.customerId
+                                                                  .toString(),
+                                                              context);
+
+                                                      leadsProvider.setCutomerId(
+                                                          int.tryParse(lead
+                                                                  .customerId
+                                                                  .toString()) ??
+                                                              0);
+                                                      final dropDownProvider =
+                                                          Provider.of<
+                                                                  DropDownProvider>(
+                                                              context,
+                                                              listen: false);
+
+                                                      if (leadDetailsProvider
+                                                                  .leadDetails !=
+                                                              null &&
+                                                          leadDetailsProvider
+                                                              .leadDetails!
+                                                              .isNotEmpty) {
+                                                        final leadDetails =
+                                                            leadDetailsProvider
+                                                                .leadDetails![0];
+                                                        leadsProvider
+                                                                .enquirySourceController
+                                                                .text =
+                                                            leadDetails
+                                                                .enquirySourceName
+                                                                .toString();
+                                                        dropDownProvider
+                                                                .selectedEnquirySourceId =
+                                                            leadDetails
+                                                                .enquirySourceId;
+                                                        await leadsProvider
+                                                            .getLeadDropdowns(
+                                                                context);
+                                                      }
+                                                      Navigator.pop(
+                                                          context); // Close loading dialog
+
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (BuildContext
+                                                            context) {
+                                                          return const NewLeadDrawerWidget(
+                                                            isEdit: true,
+                                                          );
+                                                        },
+                                                      );
+                                                    } else if (value ==
+                                                        'quotation') {
+                                                      showDialog(
+                                                        barrierDismissible:
+                                                            false,
+                                                        context: context,
+                                                        builder: (_) =>
+                                                            QuotationCreationWidget(
+                                                          isEdit: false,
+                                                          customerId: lead
+                                                              .customerId
+                                                              .toString(),
+                                                          quotationId: '0',
+                                                        ),
+                                                      );
+                                                    } else if (value ==
+                                                        'document') {
+                                                      showDialog(
+                                                        barrierDismissible:
+                                                            false,
+                                                        context: context,
+                                                        builder: (_) =>
+                                                            ImageUploadAlert(
+                                                          customerId: lead
+                                                              .customerId
+                                                              .toString(),
+                                                        ),
+                                                      );
+                                                    } else if (value ==
+                                                        'task') {
+                                                      final customerDetailsProvider =
+                                                          Provider.of<
+                                                                  CustomerDetailsProvider>(
+                                                              context,
+                                                              listen: false);
+                                                      customerDetailsProvider
+                                                              .customerId =
+                                                          lead.customerId
+                                                              .toString();
+                                                      customerDetailsProvider
+                                                          .clearTaskDetails();
+                                                      if (AppStyles.isWebScreen(
+                                                          context)) {
+                                                        showDialog(
+                                                          barrierDismissible:
+                                                              false,
+                                                          context: context,
+                                                          builder: (_) =>
+                                                              TaskCreationWidget(
+                                                            isEdit: false,
+                                                            taskId: '0',
+                                                          ),
+                                                        );
+                                                      } else {
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder: (context) =>
+                                                                AddTaskMobile(
+                                                              isEdit: false,
+                                                              taskId: '0',
+                                                            ),
+                                                          ),
+                                                        );
+                                                      }
+                                                    } else if (value ==
+                                                        'delete') {
+                                                      showConfirmationDialog(
+                                                        context: context,
+                                                        title:
+                                                            'Delete Customer',
+                                                        content:
+                                                            'Are you sure you want to delete this customer?',
+                                                        onCancel: () =>
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop(),
+                                                        onConfirm: () async {
+                                                          await leadsProvider
+                                                              .deleteLead(
+                                                                  context,
+                                                                  lead.customerId
+                                                                      .toString());
+                                                          if (context.mounted) {
+                                                            Navigator.of(
+                                                                    context)
+                                                                .pop();
+                                                            customerProvider
+                                                                .getSearchCustomers(
+                                                                    context);
+                                                          }
+                                                        },
+                                                      );
+                                                    }
+                                                  },
+                                                  itemBuilder: (BuildContext
+                                                          context) =>
+                                                      <PopupMenuEntry<String>>[
+                                                    const PopupMenuItem<String>(
+                                                      value: 'edit',
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(Icons.edit,
+                                                              size: 18,
+                                                              color:
+                                                                  Colors.blue),
+                                                          SizedBox(width: 8),
+                                                          Text('Edit Customer'),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const PopupMenuItem<String>(
+                                                      value: 'quotation',
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                              Icons
+                                                                  .request_quote,
+                                                              size: 18,
+                                                              color: Colors
+                                                                  .orange),
+                                                          SizedBox(width: 8),
+                                                          Text('Quotation'),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const PopupMenuItem<String>(
+                                                      value: 'document',
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(
+                                                              Icons.description,
+                                                              size: 18,
+                                                              color: Colors
+                                                                  .purple),
+                                                          SizedBox(width: 8),
+                                                          Text('Document'),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const PopupMenuItem<String>(
+                                                      value: 'task',
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(Icons.add_task,
+                                                              size: 18,
+                                                              color:
+                                                                  Colors.teal),
+                                                          SizedBox(width: 8),
+                                                          Text('Task'),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    const PopupMenuItem<String>(
+                                                      value: 'delete',
+                                                      child: Row(
+                                                        children: [
+                                                          Icon(Icons.delete,
+                                                              size: 18,
+                                                              color:
+                                                                  Colors.red),
+                                                          SizedBox(width: 8),
+                                                          Text('Delete'),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                             ],
                                           )
                                         //Mobile Design
@@ -1511,42 +1735,278 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         size: 20,
                                                       ),
                                                     ),
-                                                    const SizedBox(width: 8),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        showConfirmationDialog(
-                                                          context: context,
-                                                          title:
-                                                              'Delete Customer',
-                                                          content:
-                                                              'Are you sure you want to delete this customer?',
-                                                          onCancel: () =>
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop(),
-                                                          onConfirm: () async {
+                                                    PopupMenuButton<String>(
+                                                      icon: const Icon(
+                                                          Icons
+                                                              .keyboard_arrow_down,
+                                                          size: 20,
+                                                          color: Colors.grey),
+                                                      tooltip: 'Actions',
+                                                      padding: EdgeInsets.zero,
+                                                      onSelected:
+                                                          (String value) async {
+                                                        if (value == 'edit') {
+                                                          showDialog(
+                                                            context: context,
+                                                            barrierDismissible:
+                                                                false,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return const Center(
+                                                                child:
+                                                                    CircularProgressIndicator(),
+                                                              );
+                                                            },
+                                                          );
+
+                                                          final leadDetailsProvider =
+                                                              Provider.of<
+                                                                      LeadDetailsProvider>(
+                                                                  context,
+                                                                  listen:
+                                                                      false);
+                                                          await leadDetailsProvider
+                                                              .fetchLeadDetails(
+                                                                  lead.customerId
+                                                                      .toString(),
+                                                                  context);
+
+                                                          leadsProvider.setCutomerId(
+                                                              int.tryParse(lead
+                                                                      .customerId
+                                                                      .toString()) ??
+                                                                  0);
+                                                          final dropDownProvider =
+                                                              Provider.of<
+                                                                      DropDownProvider>(
+                                                                  context,
+                                                                  listen:
+                                                                      false);
+
+                                                          if (leadDetailsProvider
+                                                                      .leadDetails !=
+                                                                  null &&
+                                                              leadDetailsProvider
+                                                                  .leadDetails!
+                                                                  .isNotEmpty) {
+                                                            final leadDetails =
+                                                                leadDetailsProvider
+                                                                    .leadDetails![0];
+                                                            leadsProvider
+                                                                    .enquirySourceController
+                                                                    .text =
+                                                                leadDetails
+                                                                    .enquirySourceName
+                                                                    .toString();
+                                                            dropDownProvider
+                                                                    .selectedEnquirySourceId =
+                                                                leadDetails
+                                                                    .enquirySourceId;
                                                             await leadsProvider
-                                                                .deleteLead(
-                                                                    context,
-                                                                    lead.customerId
-                                                                        .toString());
-                                                            if (context
-                                                                .mounted) {
-                                                              Navigator.of(
-                                                                      context)
-                                                                  .pop();
-                                                              customerProvider
-                                                                  .getSearchCustomers(
-                                                                      context);
-                                                            }
-                                                          },
-                                                        );
+                                                                .getLeadDropdowns(
+                                                                    context);
+                                                          }
+                                                          Navigator.pop(
+                                                              context); // Close loading dialog
+
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return const NewLeadDrawerWidget(
+                                                                isEdit: true,
+                                                              );
+                                                            },
+                                                          );
+                                                        } else if (value ==
+                                                            'quotation') {
+                                                          showDialog(
+                                                            barrierDismissible:
+                                                                false,
+                                                            context: context,
+                                                            builder: (_) =>
+                                                                QuotationCreationWidget(
+                                                              isEdit: false,
+                                                              customerId: lead
+                                                                  .customerId
+                                                                  .toString(),
+                                                              quotationId: '0',
+                                                            ),
+                                                          );
+                                                        } else if (value ==
+                                                            'document') {
+                                                          showDialog(
+                                                            barrierDismissible:
+                                                                false,
+                                                            context: context,
+                                                            builder: (_) =>
+                                                                ImageUploadAlert(
+                                                              customerId: lead
+                                                                  .customerId
+                                                                  .toString(),
+                                                            ),
+                                                          );
+                                                        } else if (value ==
+                                                            'task') {
+                                                          final customerDetailsProvider =
+                                                              Provider.of<
+                                                                      CustomerDetailsProvider>(
+                                                                  context,
+                                                                  listen:
+                                                                      false);
+                                                          customerDetailsProvider
+                                                                  .customerId =
+                                                              lead.customerId
+                                                                  .toString();
+                                                          customerDetailsProvider
+                                                              .clearTaskDetails();
+                                                          if (AppStyles
+                                                              .isWebScreen(
+                                                                  context)) {
+                                                            showDialog(
+                                                              barrierDismissible:
+                                                                  false,
+                                                              context: context,
+                                                              builder: (_) =>
+                                                                  TaskCreationWidget(
+                                                                isEdit: false,
+                                                                taskId: '0',
+                                                              ),
+                                                            );
+                                                          } else {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder:
+                                                                    (context) =>
+                                                                        AddTaskMobile(
+                                                                  isEdit: false,
+                                                                  taskId: '0',
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }
+                                                        } else if (value ==
+                                                            'delete') {
+                                                          showConfirmationDialog(
+                                                            context: context,
+                                                            title:
+                                                                'Delete Customer',
+                                                            content:
+                                                                'Are you sure you want to delete this customer?',
+                                                            onCancel: () =>
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop(),
+                                                            onConfirm:
+                                                                () async {
+                                                              await leadsProvider
+                                                                  .deleteLead(
+                                                                      context,
+                                                                      lead.customerId
+                                                                          .toString());
+                                                              if (context
+                                                                  .mounted) {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                                customerProvider
+                                                                    .getSearchCustomers(
+                                                                        context);
+                                                              }
+                                                            },
+                                                          );
+                                                        }
                                                       },
-                                                      child: const Icon(
-                                                        Icons.delete_outline,
-                                                        color: Colors.red,
-                                                        size: 20,
-                                                      ),
+                                                      itemBuilder: (BuildContext
+                                                              context) =>
+                                                          <PopupMenuEntry<
+                                                              String>>[
+                                                        const PopupMenuItem<
+                                                            String>(
+                                                          value: 'edit',
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(Icons.edit,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .blue),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                  'Edit Customer'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const PopupMenuItem<
+                                                            String>(
+                                                          value: 'quotation',
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .request_quote,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .orange),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text('Quotation'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const PopupMenuItem<
+                                                            String>(
+                                                          value: 'document',
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .description,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .purple),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text('Document'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const PopupMenuItem<
+                                                            String>(
+                                                          value: 'task',
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(
+                                                                  Icons
+                                                                      .add_task,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .teal),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text('Task'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                        const PopupMenuItem<
+                                                            String>(
+                                                          value: 'delete',
+                                                          child: Row(
+                                                            children: [
+                                                              Icon(Icons.delete,
+                                                                  size: 18,
+                                                                  color: Colors
+                                                                      .red),
+                                                              SizedBox(
+                                                                  width: 8),
+                                                              Text('Delete'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                     const Spacer(),
                                                     Container(
