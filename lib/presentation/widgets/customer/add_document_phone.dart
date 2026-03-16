@@ -6,22 +6,14 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:printing/printing.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/controller/models/document_type_model.dart';
-import 'package:vidyanexis/controller/models/follow_up_model.dart';
-import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/dotted_border_container.dart';
-import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 
@@ -36,6 +28,8 @@ class AddDocumentPhone extends StatefulWidget {
 
 class _AddDocumentPhoneState extends State<AddDocumentPhone> {
   late FocusNode complaintNode;
+  final TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -70,55 +64,8 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
         },
         onSavePressed: () async {
           provider.setCutomerId(widget.customerId);
-          if (provider.selectedDocumentType != null) {
-            SharedPreferences preferences =
-                await SharedPreferences.getInstance();
-            String userId = preferences.getString('userId') ?? "0";
-            if (provider.images.isNotEmpty) {
-              await provider.uploadImagesToAws(userId, context);
-            } else if (provider.pdfs.isNotEmpty) {
-              await provider.uploadPdfsToAws(userId, context);
-            } else {
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: Text(
-                      'Cannot save',
-                      style: TextStyle(
-                        color: AppColors.appViolet,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    content: const Text(
-                      'Pick atleast one document',
-                      style: TextStyle(
-                        color: Colors.black87,
-                        fontSize: 16,
-                      ),
-                    ),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                    actions: [
-                      TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-                        },
-                        child: Text(
-                          'OK',
-                          style: TextStyle(
-                            color: AppColors.appViolet,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                          ),
-                        ),
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
+          if (provider.fileInfoList.isNotEmpty) {
+            await provider.uploadAllDocumentsGrouped(context);
           } else {
             showDialog(
               context: context,
@@ -132,7 +79,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                     ),
                   ),
                   content: const Text(
-                    'Choose Document Type',
+                    'Pick atleast one document',
                     style: TextStyle(
                       color: Colors.black87,
                       fontSize: 16,
@@ -202,106 +149,123 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
             //   ],
             // ),
             // const SizedBox(height: 16.0),
-            CustomAutocomplete<DocumentTypeModel>(
-              focusNode: complaintNode,
-              enabled: true,
-              showOptionsOnTap: true,
-              optionsViewOpenDirection: OptionsViewOpenDirection.down,
-              items: dropDownProvider.documentType,
-              displayStringFunction: (model) => model.documentTypeName ?? '',
-              defaultText: provider.docTypeController.text,
-              labelText: 'Document Type',
-              controller: provider.docTypeController,
-              onSelected: (DocumentTypeModel selectedStatus) {
+            CustomTextfieldWidgetMobile(
+              controller: _searchController,
+              labelText: 'Search Document Type',
+              prefixIcon: Icon(Icons.search, color: AppColors.textGrey2, size: 20),
+              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              onChanged: (value) {
                 setState(() {
-                  provider.docTypeController.text =
-                      selectedStatus.documentTypeName ?? '';
-                  provider.updateDocumentType(selectedStatus.documentTypeId,
-                      selectedStatus.documentTypeName);
+                  _searchQuery = value;
                 });
               },
-              onChanged: (value) {},
             ),
-            SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () => provider.addFileMobile(),
-                    child: Container(
-                      color: Colors.white,
-                      height: 130,
-                      width: MediaQuery.sizeOf(context).width,
-                      child: Center(
-                        child: Stack(
+            const SizedBox(height: 12),
+            ListView.builder(
+              shrinkWrap: true,
+              physics: NeverScrollableScrollPhysics(),
+              itemCount: dropDownProvider.documentType
+                  .where((e) => e.documentTypeName
+                      .toLowerCase()
+                      .contains(_searchQuery.toLowerCase()))
+                  .length,
+              itemBuilder: (context, index) {
+                final filteredList = dropDownProvider.documentType
+                    .where((e) => e.documentTypeName
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase()))
+                    .toList();
+                final docType = filteredList[index];
+                final selectedCount = provider.fileInfoList
+                    .where((e) => e['docTypeId'] == docType.documentTypeId)
+                    .length;
+
+                return Container(
+                  margin: EdgeInsets.only(bottom: 8),
+                  padding: EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: AppColors.whiteColor,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(
+                      color: selectedCount > 0
+                          ? AppColors.bluebutton.withOpacity(0.5)
+                          : AppColors.textGrey2.withOpacity(0.2),
+                      width: selectedCount > 0 ? 1.5 : 1,
+                    ),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.01),
+                        blurRadius: 4,
+                        offset: Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            DottedBorderContainer(
-                              height: 130,
-                              width: MediaQuery.sizeOf(context).width,
-                              image: 'assets/icons/document_icon.svg',
+                            CustomText(
+                              docType.documentTypeName ?? '',
+                              fontSize: 13,
+                              fontWeight: selectedCount > 0
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
+                              color: AppColors.textBlack,
                             ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
+                            if (selectedCount > 0)
+                              Padding(
+                                padding: const EdgeInsets.only(top: 2),
                                 child: CustomText(
-                                  'Upload Document',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  color: AppColors.textGrey4,
+                                  '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
+                                  fontSize: 10,
+                                  color: AppColors.bluebutton,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
-                            )
                           ],
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 12),
-                Expanded(
-                  child: InkWell(
-                    onTap: () => provider.addPhotoMobile(),
-                    child: Container(
-                      color: Colors.white,
-                      height: 130,
-                      width: MediaQuery.sizeOf(context).width,
-                      child: Center(
-                        child: Stack(
-                          children: [
-                            DottedBorderContainer(
-                              height: 130,
-                              width: MediaQuery.sizeOf(context).width,
-                            ),
-                            Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: CustomText(
-                                  'Upload Photo',
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  color: AppColors.textGrey4,
-                                ),
-                              ),
-                            )
-                          ],
+                      InkWell(
+                        onTap: () {
+                          provider.updateDocumentType(
+                              docType.documentTypeId, docType.documentTypeName);
+                          _showPickOptions(context, provider);
+                        },
+                        child: Container(
+                          padding: EdgeInsets.all(6),
+                          decoration: BoxDecoration(
+                            color: selectedCount > 0
+                                ? AppColors.bluebutton
+                                : AppColors.bluebutton.withOpacity(0.05),
+                            borderRadius: BorderRadius.circular(6),
+                          ),
+                          child: Icon(
+                            selectedCount > 0 ? Icons.add : Icons.upload_sharp,
+                            color: selectedCount > 0
+                                ? Colors.white
+                                : AppColors.bluebutton,
+                            size: 18,
+                          ),
                         ),
                       ),
-                    ),
+                    ],
                   ),
-                ),
-              ],
+                );
+              },
             ),
             const SizedBox(
               height: 12,
             ),
-            provider.images.isEmpty && provider.pdfs.isEmpty
-                ? CustomText(
-                    'No documents uploaded yet',
-                    fontWeight: FontWeight.w400,
-                    fontSize: 12,
-                    color: AppColors.textGrey4,
+            provider.fileInfoList.isEmpty
+                ? Center(
+                    child: CustomText(
+                      'No documents uploaded yet',
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      color: AppColors.textGrey4,
+                    ),
                   )
                 : Column(
                     children: provider.fileInfoList.map((fileInfo) {
@@ -309,7 +273,9 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                         margin: const EdgeInsets.only(bottom: 8),
                         decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: AppColors.textGrey2.withOpacity(0.3))),
                         child: Padding(
                           padding: const EdgeInsets.all(12.0),
                           child: Row(
@@ -321,11 +287,22 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                                 child: Padding(
                                   padding:
                                       EdgeInsets.symmetric(horizontal: 8.0),
-                                  child: CustomText(
-                                    fileInfo['name'] ??
-                                        'Unknown file', // Display actual file name
-                                    overflow: TextOverflow
-                                        .ellipsis, // Handle long file names
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomText(
+                                        fileInfo['name'] ?? 'Unknown file',
+                                        overflow: TextOverflow.ellipsis,
+                                        fontSize: 13,
+                                      ),
+                                      if (fileInfo['docTypeName'] != null)
+                                        CustomText(
+                                          'Type: ${fileInfo['docTypeName']}',
+                                          fontSize: 11,
+                                          color: AppColors.textGrey4,
+                                        ),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -355,7 +332,7 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
                                         provider.fileInfoList.remove(fileInfo);
                                         provider.notifyListeners();
                                       },
-                                      child: const Icon(
+                                      child: Icon(
                                         Icons.clear,
                                         size: 18,
                                       )),
@@ -370,6 +347,46 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
             const SizedBox(height: 20),
 
             const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showPickOptions(BuildContext context, ImageUploadProvider provider) {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: Icon(Icons.camera_alt, color: AppColors.appViolet),
+              title: const Text('Take Photo'),
+              onTap: () {
+                Navigator.pop(context);
+                provider.addPhotoMobile(allowCamera: true);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.photo_library, color: AppColors.appViolet),
+              title: const Text('Pick from Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                provider.addPhotoMobile(allowCamera: false);
+              },
+            ),
+            ListTile(
+              leading: Icon(Icons.description, color: AppColors.appViolet),
+              title: const Text('Upload Document (PDF/Image)'),
+              onTap: () {
+                Navigator.pop(context);
+                provider.addFileMobile();
+              },
+            ),
           ],
         ),
       ),
