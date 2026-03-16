@@ -54,6 +54,7 @@ import 'package:vidyanexis/controller/work_report_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/controller/solar_lead_report_provider.dart';
+import 'package:vidyanexis/controller/task_summary_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
 import 'package:vidyanexis/routes/routes.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
@@ -106,7 +107,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => WarrentyReportProvider()),
         ChangeNotifierProvider(create: (context) => FollowupReportsProvider()),
         ChangeNotifierProvider(create: (context) => QuotationReportProvider()),
-        ChangeNotifierProvider(create: (_) => SettingsProvider()..getCompanyDetails()),
+        ChangeNotifierProvider(
+            create: (_) => SettingsProvider()..getCompanyDetails()),
         ChangeNotifierProvider(create: (_) => EnquirySourceProvider()),
         ChangeNotifierProvider(create: (_) => EnquiryReportProvider()),
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),
@@ -128,6 +130,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => LeadCheckInReportProvider()),
         ChangeNotifierProvider(create: (context) => SolarLeadReportProvider()),
+        ChangeNotifierProvider(
+            create: (context) => LeadCheckInReportProvider()),
+        ChangeNotifierProvider(create: (context) => TaskSummaryProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),

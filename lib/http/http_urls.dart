@@ -329,4 +329,5 @@ class HttpUrls {
   static String saveInventoryCustomer = "item/save_customer";
   static String getInventoryCustomer = "item/get_all_customers";
   static String deleteInventoryCustomer = "item/Delete_Customer";
+  static String taskSummary = "task/Task_Summary";
 }

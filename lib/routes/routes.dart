@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/pages/reports/enquiry_source_reports_scr
 import 'package:vidyanexis/presentation/pages/reports/enquiry_source_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/expense_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/stock_report.dart';
+import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
@@ -138,6 +139,12 @@ final GoRouter appRouter = GoRouter(
       path: StockReport.route,
       pageBuilder: (context, state) {
         return fadeTransition(const StockReport());
+      },
+    ),
+    GoRoute(
+      path: '/taskSummaryReport',
+      pageBuilder: (context, state) {
+        return fadeTransition(const TaskSummaryReportScreen());
       },
     ),
   ],

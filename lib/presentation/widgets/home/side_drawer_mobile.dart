@@ -36,6 +36,7 @@ import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class SidebarDrawer extends StatefulWidget {
@@ -149,6 +150,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         },
       if (settingsProvider.menuIsViewMap[75].toString() == '1')
         {'title': 'Outstanding Reports', 'page': const OutstandingReportPage()},
+      if (settingsProvider.menuIsViewMap[7].toString() == '1')
+        {
+          'title': 'Task Summary Reports',
+          'page': const TaskSummaryReportScreen()
+        },
     ];
 
     return Drawer(

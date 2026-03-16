@@ -41,6 +41,7 @@ import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dar
 import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_bar_widget.dart';
 
 class HomePage extends StatefulWidget {
@@ -180,11 +181,16 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: ExpenseReportScreen()),
         ),
-      if (settingsProvider.menuIsViewMap[7].toString() == '1')
         SidebarOption(
           title: 'Task Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: TaskPageReport()),
+        ),
+      if (settingsProvider.menuIsViewMap[7].toString() == '1')
+        SidebarOption(
+          title: 'Task Summary Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: TaskSummaryReportScreen()),
         ),
 
       if (settingsProvider.menuIsViewMap[8].toString() == '1')
