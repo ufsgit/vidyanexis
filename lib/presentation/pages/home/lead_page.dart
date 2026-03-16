@@ -267,7 +267,7 @@ class _LeadsPageState extends State<LeadPage> {
     // Adjust search section height based on filter visibility
     final double searchSectionHeight = leadProvider.isFilter ? 130.0 : 70.0;
     const paginationHeight = 60.0;
-    const tableHeaderHeight = 50.0;
+    const tableHeaderHeight = 40.0;
     const double paddingSafety = 10.0;
 
     final double availableHeight = screenHeight -
@@ -278,7 +278,7 @@ class _LeadsPageState extends State<LeadPage> {
         paddingSafety;
 
     // Calculate exact row height for 20 rows
-    final double rowHeight = 35;
+    final double rowHeight = 36;
 
     return Scaffold(
       key: _scaffoldKey,
@@ -857,7 +857,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 TableWidget(
                                   width: 80,
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 12.0),
+                                      vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.center,
                                   data: Text(
                                     'SL',
@@ -870,7 +870,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 TableWidget(
                                   width: 60,
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 12.0),
+                                      vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.center,
                                   data: Text(
                                     'ID',
@@ -881,22 +881,9 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                                 TableWidget(
-                                  width: 110,
-                                  padding: EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 12.0),
-                                  alignment: Alignment.centerLeft,
-                                  data: Text(
-                                    'Date',
-                                    style: TextStyle(
-                                      fontSize: 13,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                                TableWidget(
                                   flex: 3,
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 12.0),
+                                      vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.centerLeft,
                                   data: Text(
                                     'Name',
@@ -909,7 +896,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 TableWidget(
                                   width: 150,
                                   padding: EdgeInsets.symmetric(
-                                      vertical: 6.0, horizontal: 12.0),
+                                      vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.centerLeft,
                                   data: Text(
                                     'Contact',
@@ -1022,23 +1009,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  width: 110,
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  data: Text(
-                                                    "${_formatDateSafely(lead.entryDate)}",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableWidget(
                                                   flex: 3,
                                                   alignment:
                                                       Alignment.centerLeft,
@@ -1087,7 +1057,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                       horizontal:
                                                                           10,
                                                                       vertical:
-                                                                          5),
+                                                                          2),
                                                               minimumSize:
                                                                   const Size(
                                                                       0, 0),
@@ -1410,7 +1380,7 @@ class _LeadsPageState extends State<LeadPage> {
                           controller: _horizontalScrollController,
                           scrollDirection: Axis.horizontal,
                           child: SizedBox(
-                            width: 1295,
+                            width: 1405,
                             child: Column(
                               children: [
                                 // Header row
@@ -1427,7 +1397,7 @@ class _LeadsPageState extends State<LeadPage> {
                                       TableWidget(
                                         width: 150,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
+                                            vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Enquiry for',
@@ -1438,35 +1408,9 @@ class _LeadsPageState extends State<LeadPage> {
                                         ),
                                       ),
                                       TableWidget(
-                                        width: 150,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
-                                        alignment: Alignment.centerLeft,
-                                        data: Text(
-                                          'Source',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      TableWidget(
-                                        width: 120,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
-                                        alignment: Alignment.centerLeft,
-                                        data: Text(
-                                          'Branch',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                      TableWidget(
                                         width: 175,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
+                                            vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Status',
@@ -1479,7 +1423,7 @@ class _LeadsPageState extends State<LeadPage> {
                                       TableWidget(
                                         width: 250,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
+                                            vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Remark',
@@ -1492,7 +1436,7 @@ class _LeadsPageState extends State<LeadPage> {
                                       TableWidget(
                                         width: 150,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
+                                            vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Department',
@@ -1505,7 +1449,7 @@ class _LeadsPageState extends State<LeadPage> {
                                       TableWidget(
                                         width: 150,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
+                                            vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Assigned Staff',
@@ -1518,10 +1462,49 @@ class _LeadsPageState extends State<LeadPage> {
                                       TableWidget(
                                         width: 150,
                                         padding: EdgeInsets.symmetric(
-                                            vertical: 6.0, horizontal: 12.0),
+                                            vertical: 4.0, horizontal: 12.0),
                                         alignment: Alignment.centerLeft,
                                         data: Text(
                                           'Follow-Up Date',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      TableWidget(
+                                        width: 110,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 12.0),
+                                        alignment: Alignment.centerLeft,
+                                        data: Text(
+                                          'Date',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      TableWidget(
+                                        width: 120,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 12.0),
+                                        alignment: Alignment.centerLeft,
+                                        data: Text(
+                                          'Branch',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                      TableWidget(
+                                        width: 150,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: 4.0, horizontal: 12.0),
+                                        alignment: Alignment.centerLeft,
+                                        data: Text(
+                                          'Source',
                                           style: TextStyle(
                                             fontSize: 13,
                                             color: Colors.white,
@@ -1589,39 +1572,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  width: 150,
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  data: Text(
-                                                    '${lead.sourceCategoryName}${lead.referenceName.isNotEmpty ? ' - ${lead.referenceName}' : ''}',
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 12),
-                                                  ),
-                                                ),
-                                                TableWidget(
-                                                  padding: EdgeInsets.symmetric(
-                                                      vertical: 4.0,
-                                                      horizontal: 12.0),
-                                                  width: 120,
-                                                  alignment:
-                                                      Alignment.centerLeft,
-                                                  data: Text(
-                                                    lead.branchName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      fontSize: 13,
-                                                    ),
-                                                  ),
-                                                ),
-                                                TableWidget(
                                                   width: 175,
                                                   alignment:
                                                       Alignment.centerLeft,
@@ -1651,7 +1601,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                             const EdgeInsets
                                                                 .symmetric(
                                                                 horizontal: 10,
-                                                                vertical: 5),
+                                                                vertical: 2),
                                                         minimumSize:
                                                             const Size(0, 0),
                                                         tapTargetSize:
@@ -1745,6 +1695,56 @@ class _LeadsPageState extends State<LeadPage> {
                                                         TextOverflow.ellipsis,
                                                     style: const TextStyle(
                                                         fontSize: 13),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  width: 110,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  data: Text(
+                                                    "${_formatDateSafely(lead.entryDate)}",
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  width: 120,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  data: Text(
+                                                    lead.branchName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 13,
+                                                      ),
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  width: 150,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  data: Text(
+                                                    '${lead.sourceCategoryName}${lead.referenceName.isNotEmpty ? ' - ${lead.referenceName}' : ''}',
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                        fontSize: 12),
                                                   ),
                                                 ),
                                               ],
@@ -2011,7 +2011,7 @@ class _LeadsPageState extends State<LeadPage> {
     return SizedBox(
       width: width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(
@@ -2036,7 +2036,7 @@ class _LeadsPageState extends State<LeadPage> {
     return SizedBox(
       width: width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 8.0),
+        padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
         child: Container(
           padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
           decoration: BoxDecoration(

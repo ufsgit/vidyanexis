@@ -85,7 +85,7 @@ class TaskReportModel {
       description: json['Description'] ?? '',
       entryDate: json['Entry_Date'] ?? '',
       taskStatusId: json['Task_Status_Id'] ?? 0,
-      taskStatusName: json['Task_Status_Name'] ?? '',
+      taskStatusName: json['Task_Status_Name'] ?? 'Unknown',
       toUserId: json['To_User_Id'] ?? 0,
       customerId: json['Customer_Id'] ?? 0,
       enquiryForId: json['Enquiry_For_Id'] ?? 0,

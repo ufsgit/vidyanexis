@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/socket_io.dart';
 import 'package:vidyanexis/main.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
+import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
@@ -40,6 +44,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getFollowUpStatus(context, '1');
       provider.getUserDetails(context);
+      MicrotecSocket.getNotifications();
     });
   }
 
@@ -323,6 +328,7 @@ class _NotificationTileState extends State<_NotificationTile> {
     final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final sideProvider = Provider.of<SidebarProvider>(context);
     final isRead = widget.notification.isRead == '1';
 
     return InkWell(
@@ -337,7 +343,8 @@ class _NotificationTileState extends State<_NotificationTile> {
         final taskId =
             int.tryParse(widget.notification.masterId?.toString() ?? '0') ?? 0;
         final followupId =
-            int.tryParse(widget.notification.followupId?.toString() ?? '0') ?? 0;
+            int.tryParse(widget.notification.followupId?.toString() ?? '0') ??
+                0;
         final redirectId =
             int.tryParse(widget.notification.redirectId?.toString() ?? '0') ??
                 0;
@@ -351,6 +358,7 @@ class _NotificationTileState extends State<_NotificationTile> {
         print("redirectId: $redirectId");
 
         leadProvider.setCutomerId(customerId);
+        customerDetailsProvider.setCustomerId(customerId);
 
         if (redirectId == 3) {
           //task
@@ -367,12 +375,26 @@ class _NotificationTileState extends State<_NotificationTile> {
           );
         } else if (redirectId == 1) {
           //lead
-          leadDetailsProvider.fetchLeadDetails(customerId.toString(), context);
+          customerDetailsProvider.fetchLeadDetails(
+              customerId.toString(), context);
+          sideProvider.name = 'Lead /';
+          context.push('/customerDetails/$customerId/false');
+        } else if (redirectId == 2) {
+          //followup
+          customerDetailsProvider.fetchLeadDetails(
+              customerId.toString(), context);
+          sideProvider.name = 'Lead /';
+          context.push('/customerDetails/$customerId/false');
+        } else if (redirectId == 4) {
+          //task update status
+          customerDetailsProvider.getTaskDetails(taskId.toString(), context);
           showDialog(
             context: context,
             builder: (BuildContext context) {
-              return NewLeadDrawerWidget(
-                isEdit: true,
+              return TaskDetailsWidget(
+                taskId: taskId.toString(),
+                customerId: customerId.toString(),
+                showEdit: false,
               );
             },
           );
@@ -477,70 +499,14 @@ class _NotificationTileState extends State<_NotificationTile> {
                               children: [
                                 TextSpan(text: before + " "), // normal text
                                 WidgetSpan(
-                                  child: InkWell(
-                                    onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  CustomerDetailsScreen(
-                                                    customerId: widget
-                                                            .notification
-                                                            .customerId
-                                                            ?.toString() ??
-                                                        "0",
-                                                    report: "true",
-                                                  )));
-                                      print(widget.notification.toJson());
-                                      print(
-                                          "-CustomerId ${widget.notification.customerId}");
-                                      // leadProvider.statusController.clear();
-                                      // leadProvider.assignToFollowUpController
-                                      //     .clear();
-                                      // leadProvider.messageController.clear();
-                                      // leadProvider.nextFollowUpDateController
-                                      //     .clear();
-
-                                      // final dropDownProvider =
-                                      //     Provider.of<DropDownProvider>(context,
-                                      //         listen: false);
-                                      // dropDownProvider.selectedStatusId = null;
-                                      // dropDownProvider.selectedUserId = null;
-
-                                      // leadProvider.setCutomerId(int.parse(
-                                      //     widget.notification.customerId ??
-                                      //         ''));
-
-                                      // // Extract customer name from message
-                                      // final message =
-                                      //     widget.notification.body ?? '';
-                                      // // Assuming format: "a new lead for NAME has been created"
-                                      // final parts = message.split('for');
-                                      // String customerName = '';
-                                      // if (parts.length > 1) {
-                                      //   customerName = parts[1]
-                                      //       .replaceAll('has been created', '')
-                                      //       .trim();
-                                      // }
-
-                                      // showDialog(
-                                      //   barrierDismissible: false,
-                                      //   context: context,
-                                      //   builder: (BuildContext context) =>
-                                      //       AddFollowupDialog(
-                                      //     customerName: customerName,
-                                      //   ),
-                                      // );
-                                    },
-                                    child: Text(
-                                      name,
-                                      style: TextStyle(
-                                        color: isRead
-                                            ? Colors.grey[500]
-                                            : Colors.blue,
-                                        fontWeight: FontWeight.bold,
-                                        decoration: TextDecoration.underline,
-                                      ),
+                                  child: Text(
+                                    name,
+                                    style: TextStyle(
+                                      color: isRead
+                                          ? Colors.grey[500]
+                                          : Colors.blue,
+                                      fontWeight: FontWeight.bold,
+                                      decoration: TextDecoration.underline,
                                     ),
                                   ),
                                 ),
@@ -566,6 +532,7 @@ class _NotificationTileState extends State<_NotificationTile> {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
     final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context);
+    final sideProvider = Provider.of<SidebarProvider>(context);
     final isRead = widget.notification.isRead == '1';
 
     return Card(
@@ -583,22 +550,31 @@ class _NotificationTileState extends State<_NotificationTile> {
           MicrotecSocket.readNotification(
               id: int.tryParse(widget.notification.notificationId ?? '0'));
 
-          // final customerId =
-          //     int.tryParse(widget.notification.customerId?.toString() ?? '0') ??
-          //         0;
-          // final taskId =
-          //     int.tryParse(widget.notification.masterId?.toString() ?? '0') ?? 0;
+          final customerId =
+              int.tryParse(widget.notification.customerId?.toString() ?? '0') ??
+                  0;
+          final taskId =
+              int.tryParse(widget.notification.masterId?.toString() ?? '0') ??
+                  0;
+          final followupId =
+              int.tryParse(widget.notification.followupId?.toString() ?? '0') ??
+                  0;
+          final redirectId =
+              int.tryParse(widget.notification.redirectId?.toString() ?? '0') ??
+                  0;
 
-          final customerId = 21869;
-          final taskId = 13;
-          final redirectId = 2;
+          // final customerId = 21869;
+          // final taskId = 13;
+          // final redirectId = 1;
           print("customerId: $customerId");
           print("taskId: $taskId");
+          print("followupId: $followupId");
           print("redirectId: $redirectId");
 
           leadProvider.setCutomerId(customerId);
+          customerDetailsProvider.setCustomerId(customerId);
 
-          if (redirectId == 1) {
+          if (redirectId == 3) {
             //task
             customerDetailsProvider.getTaskDetails(taskId.toString(), context);
             showDialog(
@@ -611,16 +587,42 @@ class _NotificationTileState extends State<_NotificationTile> {
                 );
               },
             );
-          } else if (redirectId == 2) {
+          } else if (redirectId == 1) {
             //lead
-            leadDetailsProvider.fetchLeadDetails(
+            customerDetailsProvider.fetchLeadDetails(
                 customerId.toString(), context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CustomerDetailPageMobile(
+                  fromLead: false,
+                  customerId: customerId,
+                ),
+              ),
+            );
+          } else if (redirectId == 2) {
+            //followup
+            customerDetailsProvider.fetchLeadDetails(
+                customerId.toString(), context);
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => CustomerDetailPageMobile(
+                  fromLead: false,
+                  customerId: customerId,
+                ),
+              ),
+            );
+          } else if (redirectId == 4) {
+            //task update status
+            customerDetailsProvider.getTaskDetails(taskId.toString(), context);
             showDialog(
               context: context,
               builder: (BuildContext context) {
-                return NewLeadDrawerMobileWidget(
-                  isEdit: true,
+                return TaskDetailsPagePhone(
+                  taskId: taskId.toString(),
                   customerId: customerId.toString(),
+                  taskMasterId: taskId.toString(),
                 );
               },
             );
@@ -650,128 +652,48 @@ class _NotificationTileState extends State<_NotificationTile> {
             children: [
               if ((widget.notification.body ?? '').isNotEmpty) ...[
                 const SizedBox(height: 4),
-                InkWell(
-                  onTap: () {
-                    // Mark notification as read when body is clicked
-                    MicrotecSocket.readNotification(
-                        id: int.tryParse(
-                            widget.notification.notificationId ?? '0'));
-
-                    leadProvider.statusController.clear();
-                    leadProvider.assignToFollowUpController.clear();
-                    leadProvider.messageController.clear();
-                    leadProvider.nextFollowUpDateController.clear();
-
-                    final dropDownProvider =
-                        Provider.of<DropDownProvider>(context, listen: false);
-                    dropDownProvider.selectedStatusId = null;
-                    dropDownProvider.selectedUserId = null;
-
-                    leadProvider.setCutomerId(
-                        int.parse(widget.notification.customerId ?? ''));
-
-                    // Extract customer name from message
+                Builder(
+                  builder: (context) {
                     final message = widget.notification.body ?? '';
-                    // Assuming format: "a new lead for NAME has been created"
                     final parts = message.split('for');
-                    String customerName = '';
+                    String before = '';
+                    String name = '';
+                    String after = '';
+
                     if (parts.length > 1) {
-                      customerName =
-                          parts[1].replaceAll('has been created', '').trim();
+                      before = parts[0]; // "a new lead "
+                      final nameAndRest = parts[1].split('has been created');
+                      if (nameAndRest.isNotEmpty) {
+                        name = nameAndRest[0].trim(); // "ravi"
+                      }
+                      if (nameAndRest.length > 1) {
+                        after = 'has been created';
+                      }
                     }
 
-                    showDialog(
-                      barrierDismissible: false,
-                      context: context,
-                      builder: (BuildContext context) => AddFollowupDialog(
-                        customerName: customerName,
+                    return RichText(
+                      text: TextSpan(
+                        style: TextStyle(
+                          color: isRead ? Colors.grey[600] : Colors.grey[700],
+                          fontSize: 14,
+                        ),
+                        children: [
+                          TextSpan(text: before + " "), // normal text
+                          WidgetSpan(
+                            child: Text(
+                              name,
+                              style: TextStyle(
+                                color: isRead ? Colors.grey[500] : Colors.blue,
+                                fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                              ),
+                            ),
+                          ),
+                          TextSpan(text: " " + after), // rest of message
+                        ],
                       ),
                     );
                   },
-                  child: Builder(
-                    builder: (context) {
-                      final message = widget.notification.body ?? '';
-                      final parts = message.split('for');
-                      String before = '';
-                      String name = '';
-                      String after = '';
-
-                      if (parts.length > 1) {
-                        before = parts[0]; // "a new lead "
-                        final nameAndRest = parts[1].split('has been created');
-                        if (nameAndRest.isNotEmpty) {
-                          name = nameAndRest[0].trim(); // "ravi"
-                        }
-                        if (nameAndRest.length > 1) {
-                          after = 'has been created';
-                        }
-                      }
-
-                      return RichText(
-                        text: TextSpan(
-                          style: TextStyle(
-                            color: isRead ? Colors.grey[600] : Colors.grey[700],
-                            fontSize: 14,
-                          ),
-                          children: [
-                            TextSpan(text: before + " "), // normal text
-                            WidgetSpan(
-                              child: InkWell(
-                                onTap: () {
-                                  leadProvider.statusController.clear();
-                                  leadProvider.assignToFollowUpController
-                                      .clear();
-                                  leadProvider.messageController.clear();
-                                  leadProvider.nextFollowUpDateController
-                                      .clear();
-
-                                  final dropDownProvider =
-                                      Provider.of<DropDownProvider>(context,
-                                          listen: false);
-                                  dropDownProvider.selectedStatusId = null;
-                                  dropDownProvider.selectedUserId = null;
-
-                                  leadProvider.setCutomerId(int.parse(
-                                      widget.notification.customerId ?? ''));
-
-                                  // Extract customer name from message
-                                  final message =
-                                      widget.notification.body ?? '';
-                                  // Assuming format: "a new lead for NAME has been created"
-                                  final parts = message.split('for');
-                                  String customerName = '';
-                                  if (parts.length > 1) {
-                                    customerName = parts[1]
-                                        .replaceAll('has been created', '')
-                                        .trim();
-                                  }
-
-                                  showDialog(
-                                    barrierDismissible: false,
-                                    context: context,
-                                    builder: (BuildContext context) =>
-                                        AddFollowupDialog(
-                                      customerName: customerName,
-                                    ),
-                                  );
-                                },
-                                child: Text(
-                                  name,
-                                  style: TextStyle(
-                                    color:
-                                        isRead ? Colors.grey[500] : Colors.blue,
-                                    fontWeight: FontWeight.bold,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            TextSpan(text: " " + after), // rest of message
-                          ],
-                        ),
-                      );
-                    },
-                  ),
                 )
               ],
               if (createdStr.isNotEmpty) ...[

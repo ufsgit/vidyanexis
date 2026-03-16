@@ -402,7 +402,7 @@ class TaskPageProvider extends ChangeNotifier {
 
         if (data != null) {
           final newData = data['data'] ?? [];
-          final metaData = data['metadata'] ?? [];
+          final metaData = data['metadata'] ?? {};
 
           // Convert new data to TaskReportModel list
           final newTasks = (newData as List<dynamic>)
@@ -479,6 +479,7 @@ class TaskPageProvider extends ChangeNotifier {
           bool isSuccess = data["success"];
           if (isSuccess) {
             descriptionController.clear();
+            _pageIndex = 1;
           }
           return isSuccess;
         } else {
