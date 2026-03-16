@@ -31,6 +31,8 @@ class ImageUploadProvider extends ChangeNotifier {
   String customerId = '0';
   List<Map<String, dynamic>> _fileInfoList = [];
   List<Map<String, dynamic>> get fileInfoList => _fileInfoList;
+  String? _selectedDocumentTypeName;
+  String? get selectedDocumentTypeName => _selectedDocumentTypeName;
 
   void setCutomerId(String cid) {
     customerId = cid;
@@ -176,14 +178,24 @@ class ImageUploadProvider extends ChangeNotifier {
           if (fileType == 'application/pdf') {
             _pdfs.add(fileData);
             // Add file info to the list
-            _fileInfoList.add(
-                {'name': platformFile.name, 'type': 'pdf', 'data': fileData});
+            _fileInfoList.add({
+              'name': platformFile.name,
+              'type': 'pdf',
+              'data': fileData,
+              'docTypeId': _selectedDocumentType,
+              'docTypeName': _selectedDocumentTypeName,
+            });
             print('PDF file added: ${platformFile.name}');
           } else if (fileType.startsWith('image/')) {
             _images.add(fileData);
             // Add file info to the list
-            _fileInfoList.add(
-                {'name': platformFile.name, 'type': 'image', 'data': fileData});
+            _fileInfoList.add({
+              'name': platformFile.name,
+              'type': 'image',
+              'data': fileData,
+              'docTypeId': _selectedDocumentType,
+              'docTypeName': _selectedDocumentTypeName,
+            });
             print('Image file added: ${platformFile.name}');
           } else {
             print('Unsupported file type: ${platformFile.name}');
@@ -226,6 +238,8 @@ class ImageUploadProvider extends ChangeNotifier {
           'name': photo.name,
           'type': 'image',
           'data': bytes,
+          'docTypeId': _selectedDocumentType,
+          'docTypeName': _selectedDocumentTypeName,
         });
         notifyListeners();
       }
@@ -239,6 +253,8 @@ class ImageUploadProvider extends ChangeNotifier {
           'name': xfile.name,
           'type': 'image',
           'data': bytes,
+          'docTypeId': _selectedDocumentType,
+          'docTypeName': _selectedDocumentTypeName,
         });
       }
       if (images.isNotEmpty) notifyListeners();
@@ -458,9 +474,89 @@ class ImageUploadProvider extends ChangeNotifier {
     }
   }
 
-  void updateDocumentType(int newValue, String taskTypeName) {
+  void updateDocumentType(int newValue, String? taskTypeName) {
     _selectedDocumentType = newValue;
+    _selectedDocumentTypeName = taskTypeName;
     print(_selectedDocumentType);
     notifyListeners();
+  }
+
+  Future<void> uploadAllDocumentsGrouped(BuildContext context) async {
+    try {
+      if (_fileInfoList.isEmpty) return;
+
+      Loader.showLoader(context);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "0";
+
+      // Group files by docTypeId
+      Map<int?, List<Map<String, dynamic>>> groupedFiles = {};
+      for (var file in _fileInfoList) {
+        int? typeId = file['docTypeId'];
+        groupedFiles.putIfAbsent(typeId, () => []).add(file);
+      }
+
+      bool anySuccess = false;
+
+      for (var entry in groupedFiles.entries) {
+        int? typeId = entry.key;
+        List<Map<String, dynamic>> files = entry.value;
+
+        List<Map<String, String>> currentUploadedPaths = [];
+
+        for (var file in files) {
+          Uint8List fileData = file['data'];
+          String mimeType =
+              file['type'] == 'pdf' ? 'application/pdf' : 'image/jpeg';
+
+          String? uploadedPath =
+              await saveToAws(fileData, mimeType, userId, context);
+          if (uploadedPath != null) {
+            currentUploadedPaths
+                .add({'File_Path': HttpUrls.imgBaseUrl + uploadedPath});
+          }
+        }
+
+        if (currentUploadedPaths.isNotEmpty) {
+          // Call the API for this group
+          final response = await HttpRequest.httpPostRequest(
+              endPoint: HttpUrls.saveImage,
+              bodyData: {
+                "Images_Id": 0,
+                "Customer_Id": customerId,
+                "Document_Type_Id": typeId ?? 0,
+                "File_Paths": currentUploadedPaths,
+                "User_Details_Id": userId
+              });
+
+          if (response != null && response.statusCode == 200) {
+            anySuccess = true;
+          }
+        }
+      }
+
+      Loader.stopLoader(context);
+
+      if (anySuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Documents uploaded successfully')),
+        );
+        Navigator.pop(context);
+        clearFiles();
+        final customerDetailsProvider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
+        customerDetailsProvider.getDocument(customerId, context);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to upload some documents')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Error in uploadAllDocumentsGrouped: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred during upload')),
+      );
+    }
   }
 }

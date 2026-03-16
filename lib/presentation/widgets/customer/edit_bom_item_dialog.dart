@@ -73,11 +73,6 @@ class EditBomItemDialog extends StatelessWidget {
                       labelText: provider.getQuotationFieldName(12, 'Quantity'),
                       hintText: provider.getQuotationFieldName(12, 'Quantity'),
                       height: 54,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d*\.?\d*')),
-                      ],
                     ),
                   ),
                   const SizedBox(width: 16),

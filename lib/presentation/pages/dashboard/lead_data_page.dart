@@ -480,6 +480,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
         appBar: isMobile
             ? CustomAppBar(
                 title: title,
+                showFilterIcon: false,
                 onSearchTap: () {
                   sideProvider.startSearch();
                 },

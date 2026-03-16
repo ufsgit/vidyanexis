@@ -44,6 +44,9 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final bool showSearch;
   final bool showExcel;
 
+  final bool showLogo;
+  final bool showUserName;
+
   const CustomAppBar({
     super.key,
     this.title,
@@ -57,6 +60,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.showFilterIcon = true,
     this.onSearchTap,
     this.onExcelTap,
+    this.showLogo = true,
+    this.showUserName = true,
     // Styling defaults
     this.titleStyle,
     this.leadingWidth = 40,
@@ -149,30 +154,31 @@ class _CustomAppBarState extends State<CustomAppBar> {
 
     return Row(
       children: [
-        CircleAvatar(
-          radius: 18,
-          backgroundColor: Colors.transparent,
-          child: ClipOval(
-            child: displayLogo.startsWith('http')
-                ? Image.network(
-                    displayLogo,
-                    height: 36,
-                    width: 36,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        Image.asset(AppStyles.logo()),
-                  )
-                : Image.asset(
-                    displayLogo,
-                    height: 36,
-                    width: 36,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const SizedBox.shrink(),
-                  ),
+        if (widget.showLogo)
+          CircleAvatar(
+            radius: 18,
+            backgroundColor: Colors.transparent,
+            child: ClipOval(
+              child: displayLogo.startsWith('http')
+                  ? Image.network(
+                      displayLogo,
+                      height: 36,
+                      width: 36,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          Image.asset(AppStyles.logo()),
+                    )
+                  : Image.asset(
+                      displayLogo,
+                      height: 36,
+                      width: 36,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) =>
+                          const SizedBox.shrink(),
+                    ),
+            ),
           ),
-        ),
-        const SizedBox(width: 8),
+        if (widget.showLogo) const SizedBox(width: 8),
         Expanded(
           child: Text(
             widget.title!,
@@ -241,7 +247,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
-            if (_userName.isNotEmpty)
+            if (widget.showUserName && _userName.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: ConstrainedBox(

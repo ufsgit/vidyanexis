@@ -7,10 +7,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:mime/mime.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:vidyanexis/controller/customer_provider.dart';
-import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
@@ -21,21 +17,20 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
+import 'package:vidyanexis/controller/customer_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
-import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_card.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
-import 'package:vidyanexis/utils/util_functions.dart';
+import 'package:vidyanexis/controller/models/form_settings_provider.dart';
+import 'package:vidyanexis/controller/models/form_model.dart';
 
 class TaskPage extends StatefulWidget {
   final int? initialStatusFilter;
@@ -230,6 +225,9 @@ class _tasksPageReportState extends State<TaskPage> {
                 );
               },
               showExcel: true,
+              showLogo: false,
+              showUserName: false,
+              showFilterIcon: false,
               onSearchTap: () {
                 reportsProvider.toggleFilter();
 
@@ -1956,6 +1954,231 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 
+  void _showWebFormDialog(BuildContext context, FormModel form, TaskReportModel task) {
+    // Initialize state mapping for field values
+    Map<String, dynamic> fieldValues = {};
+    for (var field in form.fields) {
+      if (field.type == FieldType.text || field.type == FieldType.number) {
+        fieldValues[field.id] = TextEditingController();
+      } else {
+        fieldValues[field.id] = null;
+      }
+    }
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            final isSmallScreen = MediaQuery.of(context).size.width < 600;
+            return Dialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Container(
+                padding: const EdgeInsets.all(24),
+                width: isSmallScreen ? MediaQuery.of(context).size.width * 0.9 : 500,
+                child: SingleChildScrollView(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        form.name,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1A7AE8),
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      ...form.fields.map((field) {
+                        Widget fieldWidget;
+
+                        if (field.type == FieldType.date) {
+                          fieldWidget = GestureDetector(
+                            onTap: () async {
+                              DateTime? pickedDate = await showDatePicker(
+                                context: context,
+                                initialDate: DateTime.now(),
+                                firstDate: DateTime(2000),
+                                lastDate: DateTime(2101),
+                              );
+                              if (pickedDate != null) {
+                                setState(() {
+                                  fieldValues[field.id] = DateFormat('yyyy-MM-dd').format(pickedDate);
+                                });
+                              }
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF8FAFC),
+                                borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                              ),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      fieldValues[field.id] ?? 'Select Date',
+                                      style: TextStyle(
+                                        color: fieldValues[field.id] == null ? const Color(0xFF64748B) : Colors.black87,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(Icons.calendar_today, color: Color(0xFFCBD5E1), size: 20),
+                                ],
+                              ),
+                            ),
+                          );
+                        } else if (field.type == FieldType.dropdown) {
+                          List<String> options = field.options ?? [];
+
+                          fieldWidget = Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<String>(
+                                isExpanded: true,
+                                hint: Text(
+                                  field.label,
+                                  style: const TextStyle(
+                                    color: Color(0xFF64748B),
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                value: fieldValues[field.id],
+                                items: options.map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(
+                                      value,
+                                      style: const TextStyle(
+                                        color: Color(0xFF64748B),
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    fieldValues[field.id] = value;
+                                  });
+                                },
+                              ),
+                            ),
+                          );
+                        } else {
+                          // Text or Number
+                          fieldWidget = Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFF8FAFC),
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                            ),
+                            child: TextField(
+                              controller: fieldValues[field.id],
+                              keyboardType: field.type == FieldType.number ? TextInputType.number : TextInputType.text,
+                              decoration: InputDecoration(
+                                hintText: field.label,
+                                hintStyle: const TextStyle(
+                                  color: Color(0xFF64748B),
+                                  fontSize: 14,
+                                ),
+                                border: InputBorder.none,
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                              ),
+                            ),
+                          );
+                        }
+
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: fieldWidget,
+                        );
+                      }).toList(),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text(
+                              'Cancel',
+                              style: TextStyle(
+                                color: Color(0xFF64748B),
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFF1A7AE8),
+                              foregroundColor: Colors.white,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                            ),
+                            onPressed: () {
+                              List<Map<String, dynamic>> customFieldsPayload = [];
+                              for (var field in form.fields) {
+                                String valueStr = '';
+                                if (field.type == FieldType.text || field.type == FieldType.number) {
+                                  valueStr = (fieldValues[field.id] as TextEditingController).text;
+                                } else {
+                                  valueStr = fieldValues[field.id] ?? '';
+                                }
+
+                                int typeId = 1;
+                                if (field.type == FieldType.number) typeId = 2;
+                                if (field.type == FieldType.dropdown) typeId = 3;
+                                if (field.type == FieldType.date) typeId = 4;
+
+                                customFieldsPayload.add({
+                                  "custom_field_id": int.tryParse(field.id) ?? 0,
+                                  "custom_field_name": field.label,
+                                  "custom_field_type_id": typeId,
+                                  "datavalue": valueStr,
+                                });
+                              }
+
+                              Provider.of<FormProvider>(context, listen: false).saveTaskFormData(
+                                context: context,
+                                taskId: task.taskId,
+                                formId: int.parse(form.id),
+                                customerId: task.customerId,
+                                taskTypeId: task.taskTypeId.toString(),
+                                customFields: customFieldsPayload,
+                              );
+                            },
+                            child: const Text(
+                              'Save',
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
   Future statusDialog(TaskReportModel task) {
     return showDialog<bool>(
       context: context,
@@ -2015,7 +2238,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           child: Container(
                             padding: const EdgeInsets.symmetric(
                                 horizontal: 20, vertical: 16),
-                            child: Text(task.customerName ?? '',
+                            child: Text(task.customerName,
                                 style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 16,
@@ -2101,6 +2324,14 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.fetchTaskTypes(tasktypeId, statusId,
                               customerId, enquiryForId, context);
                           reportsProvider.clearDescription();
+                          
+                          // Also fetch forms for this customer
+                          final formProvider = Provider.of<FormProvider>(context, listen: false);
+                          formProvider.getFormDataByCustomer(
+                            task.customerId.toString(),
+                            enquiryForId: task.enquiryForId.toString(),
+                          );
+                          formProvider.fetchAvailableFields(context);
                         });
 
                         final ValueNotifier<TaskTypeStatusModel>
@@ -2511,6 +2742,64 @@ class _tasksPageReportState extends State<TaskPage> {
                                 ),
                               ),
                               const SizedBox(height: 20),
+                              Consumer<FormProvider>(
+                                builder: (context, formProvider, child) {
+                                  if (formProvider.isLoadingForms) {
+                                    return const Padding(
+                                      padding: EdgeInsets.symmetric(vertical: 20),
+                                      child: Center(
+                                        child: CircularProgressIndicator(
+                                          strokeWidth: 2,
+                                        ),
+                                      ),
+                                    );
+                                  }
+                                  if (formProvider.customerForms.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('FORMS',
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              color: Colors.grey.shade600,
+                                              fontWeight: FontWeight.w600)),
+                                      const SizedBox(height: 8),
+                                      Wrap(
+                                        spacing: 8.0,
+                                        runSpacing: 8.0,
+                                        children: formProvider.customerForms.map((form) {
+                                          return ElevatedButton.icon(
+                                            style: ElevatedButton.styleFrom(
+                                              backgroundColor: const Color(0xFF1A7AE8),
+                                              foregroundColor: Colors.white,
+                                              elevation: 0,
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 16, vertical: 10),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                            icon: const Icon(Icons.description, size: 16),
+                                            label: Text(
+                                              (form.name.isNotEmpty ? form.name : "Form").toUpperCase(),
+                                              style: const TextStyle(
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 13,
+                                              ),
+                                            ),
+                                            onPressed: () {
+                                              _showWebFormDialog(context, form, task);
+                                            },
+                                          );
+                                        }).toList(),
+                                      ),
+                                      const SizedBox(height: 20),
+                                    ],
+                                  );
+                                },
+                              ),
                             ],
                           ),
                         );

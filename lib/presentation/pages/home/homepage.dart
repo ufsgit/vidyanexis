@@ -32,6 +32,7 @@ import 'package:vidyanexis/presentation/pages/reports/service_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_page_report.dart';
 import 'package:vidyanexis/presentation/pages/reports/balance_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/payment_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/receipt_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/time_track_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/upcoming_payment_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/upcoming_warrenty_report_screen.dart';
@@ -48,7 +49,6 @@ class HomePage extends StatefulWidget {
   static String route = '/home';
   const HomePage({super.key});
 
-  static const double _breakpoint = 768;
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -305,6 +305,12 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: PaymentReportPage()),
         ),
+      if (settingsProvider.menuIsViewMap[88].toString() == '1')
+        SidebarOption(
+          title: 'Receipt Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: ReceiptReportPage()),
+        ),
       if (settingsProvider.menuIsViewMap[73].toString() == '1')
         SidebarOption(
           title: 'Upcoming Payment Reports',
@@ -360,52 +366,7 @@ class _HomePageState extends State<HomePage> {
                   onPressed: () => Scaffold.of(context).openDrawer(),
                 ),
               ),
-              title: CircleAvatar(
-                radius: 18,
-                backgroundColor: Colors.transparent,
-                child: ClipOval(
-                  child: logo.startsWith('assets/')
-                      ? Image.asset(
-                          logo,
-                          height: 36,
-                          width: 36,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(),
-                        )
-                      : Image.network(
-                          logo,
-                          height: 36,
-                          width: 36,
-                          fit: BoxFit.cover,
-                          errorBuilder: (context, error, stackTrace) =>
-                              Container(),
-                        ),
-                ),
-              ),
-              centerTitle: false,
               actions: [
-                FutureBuilder<String>(
-                  future: getUserName(),
-                  builder: (context, snapshot) {
-                    if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                      return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.only(right: 12.0),
-                          child: Text(
-                            snapshot.data!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black87,
-                            ),
-                          ),
-                        ),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
                 Consumer<NotificationProvider>(
                   builder: (context, notificationProvider, child) {
                     final count = notificationProvider.totalCount;

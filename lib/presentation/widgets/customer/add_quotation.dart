@@ -1233,8 +1233,36 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   }
 
                   try {
-                    customerDetailsProvider.saveQuotation(widget.quotationId,
-                        widget.customerId, context, widget.isEdit);
+                    final responseData = await customerDetailsProvider.saveQuotation(
+                        widget.quotationId,
+                        widget.customerId,
+                        context,
+                        widget.isEdit);
+
+                    if (responseData != null) {
+                      // Extract quotation master id from response
+                      String masterId = '';
+                      if (responseData is Map &&
+                          responseData.containsKey('Quotation_Master_Id')) {
+                        masterId =
+                            responseData['Quotation_Master_Id'].toString();
+                      } else if (responseData is List &&
+                          responseData.isNotEmpty &&
+                          responseData[0] is Map &&
+                          responseData[0]
+                              .containsKey('Quotation_Master_Id')) {
+                        masterId = responseData[0]['Quotation_Master_Id']
+                            .toString();
+                      }
+
+                      if (masterId.isEmpty || masterId == '0') {
+                        masterId = widget.quotationId;
+                      }
+
+                      if (context.mounted) {
+                        _showPrintQuotationDialog(context, masterId);
+                      }
+                    }
                   } catch (e) {
                     _showValidationDialog(context, 'Save Failed', e.toString());
                     print(e);
@@ -2791,6 +2819,87 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       backgroundColor: Colors.blue,
       borderColor: Colors.blue,
       textColor: Colors.white,
+    );
+  }
+  void _showPrintQuotationDialog(BuildContext context, String masterId) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(
+            'Print Quotation',
+            style: TextStyle(
+              color: AppColors.appViolet,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text('Quotation saved successfully. Do you want to print the quotation?'),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context); // Close dialog
+                // Requirement: stay on the same screen. 
+                // However, we should probably at least clear the form or something if it was a success.
+                // But the user said "stay on the same screen".
+              },
+              child: Text(
+                'No',
+                style: TextStyle(
+                  color: Colors.grey[600],
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: () async {
+                Navigator.pop(context); // Close dialog
+                final customerDetailsProvider =
+                    Provider.of<CustomerDetailsProvider>(context, listen: false);
+                final settingsProvider =
+                    Provider.of<SettingsProvider>(context, listen: false);
+
+                // Check permission for printing (menuId 32 or 55)
+                bool hasPrintPermission =
+                    (settingsProvider.menuIsViewMap[32] == 1 ||
+                        settingsProvider.menuIsViewMap[55] == 1);
+
+                if (hasPrintPermission) {
+                  try {
+                    await customerDetailsProvider.getQuotationMasterPdf(
+                        masterId, context);
+                  } catch (e) {
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(
+                            content: Text('Printing failed. Please try again.')),
+                      );
+                    }
+                  }
+                } else {
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('You do not have permission to print.')),
+                    );
+                  }
+                }
+              },
+              child: Text(
+                'Yes',
+                style: TextStyle(
+                  color: AppColors.appViolet,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }
