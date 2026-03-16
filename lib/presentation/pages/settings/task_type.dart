@@ -84,30 +84,30 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // if (settingsProvider.menuIsSaveMap[22] == 1)
-                      CustomOutlinedSvgButton(
-                        onPressed: () async {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const AddTaskType(
-                                editId: '0',
-                                isEdit: false,
-                                status: '',
-                              );
-                            },
-                          );
-                        },
-                        svgPath: 'assets/images/Plus.svg',
-                        label: 'New Task Type',
-                        breakpoint: 860,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        borderSide: BorderSide(color: AppColors.primaryBlue),
-                      ),
+                      if (settingsProvider.menuIsSaveMap[41] == 1)
+                        CustomOutlinedSvgButton(
+                          onPressed: () async {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AddTaskType(
+                                  editId: '0',
+                                  isEdit: false,
+                                  status: '',
+                                );
+                              },
+                            );
+                          },
+                          svgPath: 'assets/images/Plus.svg',
+                          label: 'New Task Type',
+                          breakpoint: 860,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          foregroundColor: Colors.white,
+                          backgroundColor: AppColors.primaryBlue,
+                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                        ),
                       const SizedBox(width: 16),
                     ],
                   ),
@@ -203,78 +203,80 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                                   SizedBox(
                                     width: 16,
                                   ),
-                                  // if (settingsProvider.menuIsEditMap[22] == 1)
-                                  TextButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AddTaskType(
-                                                editId: settingsProvider
-                                                    .taskType[index].taskTypeId
-                                                    .toString(),
-                                                status: settingsProvider
-                                                    .taskType[index]
-                                                    .taskTypeName,
-                                                isEdit: true,
-                                                taskType: settingsProvider
-                                                    .taskType[index]);
-                                          },
-                                        );
-                                      },
-                                      child: Text(
-                                        'Edit',
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.primaryBlue),
-                                      )),
-                                  // if (settingsProvider.menuIsDeleteMap[22] == 1)
-                                  TextButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title:
-                                                  const Text('Confirm Delete'),
-                                              content: const Text(
-                                                  'Are you sure you want to delete?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    settingsProvider
-                                                        .deleteTaskType(
-                                                            context,
-                                                            settingsProvider
-                                                                .taskType[index]
-                                                                .taskTypeId);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text(
-                                                    'Delete',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
+                                  if (settingsProvider.menuIsEditMap[41] == 1)
+                                    TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AddTaskType(
+                                                  editId: settingsProvider
+                                                      .taskType[index]
+                                                      .taskTypeId
+                                                      .toString(),
+                                                  status: settingsProvider
+                                                      .taskType[index]
+                                                      .taskTypeName,
+                                                  isEdit: true,
+                                                  taskType: settingsProvider
+                                                      .taskType[index]);
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Edit',
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primaryBlue),
+                                        )),
+                                  if (settingsProvider.menuIsDeleteMap[41] == 1)
+                                    TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Confirm Delete'),
+                                                content: const Text(
+                                                    'Are you sure you want to delete?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: const Text('Cancel'),
                                                   ),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Text(
-                                        'Delete',
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.textRed),
-                                      ))
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      settingsProvider
+                                                          .deleteTaskType(
+                                                              context,
+                                                              settingsProvider
+                                                                  .taskType[
+                                                                      index]
+                                                                  .taskTypeId);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Delete',
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textRed),
+                                        ))
                                 ],
                               ),
                             ),

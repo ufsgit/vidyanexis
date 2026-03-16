@@ -118,27 +118,28 @@ class _tasksPageReportState extends State<TaskPageReport> {
                           SizedBox(
                             width: 8,
                           ),
-                        const Text(
+                        Text(
                           'Task Report',
-                          style: TextStyle(
+                          style: GoogleFonts.plusJakartaSans(
                             fontSize: 24,
-                            fontWeight: FontWeight.bold,
+                            fontWeight: FontWeight.w700,
+                            color: const Color(0xFF152D70),
                           ),
                         ),
-                        // Flexible(child: Container()),
+                        const SizedBox(width: 32),
+                        const Spacer(),
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
-                          // height: 40,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(30),
                             border: Border.all(color: Colors.grey[300]!),
                           ),
                           child: TextField(
                             controller: searchController,
+                            textAlignVertical: TextAlignVertical.center,
                             onSubmitted: (query) {
-                              // reportsProvider.selectDateFilterOption(null);
-                              // reportsProvider.removeStatus();
                               reportsProvider.setTaskSearchCriteria(
                                 query,
                                 reportsProvider.fromDateS,
@@ -151,20 +152,24 @@ class _tasksPageReportState extends State<TaskPageReport> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: Colors.grey[400],
+                                fontSize: 14,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: Colors.grey[600],
+                                size: 20,
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
-                                vertical: 4,
                               ),
                               suffixIcon: Padding(
                                 padding: const EdgeInsets.all(4.0),
                                 child: ElevatedButton(
                                   onPressed: () {
                                     String query = searchController.text;
-                                    // leadProvider.selectDateFilterOption(null);
-                                    // leadProvider.removeStatus();
-                                    print(query);
                                     if (reportsProvider.Search.isNotEmpty) {
                                       searchController.clear();
                                       reportsProvider.setTaskSearchCriteria(
@@ -191,16 +196,25 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                     }
                                   },
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
+                                    backgroundColor: AppColors.primaryBlue,
                                     foregroundColor: Colors.white,
+                                    elevation: 0,
                                     padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
+                                      horizontal: 20,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
+                                  child: Text(
+                                    reportsProvider.Search.isNotEmpty
+                                        ? 'Cancel'
+                                        : 'Search',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 13,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),

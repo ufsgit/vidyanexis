@@ -222,6 +222,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                 ),
                                 const Spacer(),
                                 // New Purchase Button - Always visible on mobile
+                                if (settingsProvider.menuIsSaveMap[44] == 1)
                                 SizedBox(
                                   height: 40,
                                   child: ElevatedButton.icon(
@@ -1116,6 +1117,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                         mainAxisAlignment:
                                             MainAxisAlignment.end,
                                         children: [
+                                          if (settingsProvider.menuIsEditMap[44] == 1)
                                           TextButton.icon(
                                             onPressed: () async {
                                               await expenseProvider
@@ -1155,6 +1157,7 @@ class _PurchaseScreenState extends State<PurchaseScreen> {
                                             ),
                                           ),
                                           const SizedBox(width: 8),
+                                          if (settingsProvider.menuIsDeleteMap[44] == 1)
                                           TextButton.icon(
                                             onPressed: () {
                                               showDialog(

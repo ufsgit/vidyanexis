@@ -225,38 +225,44 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
                                                 });
                                               },
                                             ),
-                                            IconButton(
-                                              tooltip: 'Delete',
-                                              icon: const Icon(Icons.delete,
-                                                  size: 20, color: Colors.red),
-                                              onPressed: () {
-                                                showConfirmationDialog(
-                                                  isLoading: false,
-                                                  context: context,
-                                                  title: 'Confirm Deletion',
-                                                  content:
-                                                      'Are you sure you want to delete this checklist?',
-                                                  onCancel: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                  onConfirm: () async {
-                                                    await settingsProvider
-                                                        .deleteChecklist(
-                                                            context,
-                                                            checklistModel
-                                                                .documentCheckListMasterId!);
-                                                    Navigator.of(context).pop();
-                                                    setState(() {
-                                                      checkListListFuture =
-                                                          settingsProvider
-                                                              .getDocumentCheckList(
-                                                                  context);
-                                                    });
-                                                  },
-                                                  confirmButtonText: 'Delete',
-                                                );
-                                              },
-                                            ),
+                                            if (settingsProvider
+                                                    .menuIsDeleteMap[37] ==
+                                                1)
+                                              IconButton(
+                                                tooltip: 'Delete',
+                                                icon: const Icon(Icons.delete,
+                                                    size: 20,
+                                                    color: Colors.red),
+                                                onPressed: () {
+                                                  showConfirmationDialog(
+                                                    isLoading: false,
+                                                    context: context,
+                                                    title: 'Confirm Deletion',
+                                                    content:
+                                                        'Are you sure you want to delete this checklist?',
+                                                    onCancel: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    onConfirm: () async {
+                                                      await settingsProvider
+                                                          .deleteChecklist(
+                                                              context,
+                                                              checklistModel
+                                                                  .documentCheckListMasterId!);
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                      setState(() {
+                                                        checkListListFuture =
+                                                            settingsProvider
+                                                                .getDocumentCheckList(
+                                                                    context);
+                                                      });
+                                                    },
+                                                    confirmButtonText: 'Delete',
+                                                  );
+                                                },
+                                              ),
                                           ],
                                         ),
                                       ),
@@ -368,42 +374,45 @@ class _CheckListManagementWidgetState extends State<CheckListManagementWidget> {
                                             fontSize: 14,
                                           ),
                                         ),
-                                        InkWell(
-                                            onTap: () {
-                                              showConfirmationDialog(
-                                                isLoading: false,
-                                                context: context,
-                                                title: 'Confirm Deletion',
-                                                content:
-                                                    'Are you sure you want to delete this checklist?',
-                                                onCancel: () {
-                                                  Navigator.of(context).pop();
-                                                },
-                                                onConfirm: () async {
-                                                  await settingsProvider
-                                                      .deleteChecklist(
-                                                          context,
-                                                          checklistModel
-                                                              .documentCheckListMasterId!);
-                                                  Navigator.of(context).pop();
-                                                  setState(() {
-                                                    checkListListFuture =
-                                                        settingsProvider
-                                                            .getDocumentCheckList(
-                                                                context);
-                                                  });
-                                                },
-                                                confirmButtonText: 'Delete',
-                                              );
-                                            },
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.all(8.0),
-                                              child: Icon(
-                                                Icons.delete,
-                                                color: Colors.red,
-                                              ),
-                                            ))
+                                        if (settingsProvider
+                                                .menuIsDeleteMap[37] ==
+                                            1)
+                                          InkWell(
+                                              onTap: () {
+                                                showConfirmationDialog(
+                                                  isLoading: false,
+                                                  context: context,
+                                                  title: 'Confirm Deletion',
+                                                  content:
+                                                      'Are you sure you want to delete this checklist?',
+                                                  onCancel: () {
+                                                    Navigator.of(context).pop();
+                                                  },
+                                                  onConfirm: () async {
+                                                    await settingsProvider
+                                                        .deleteChecklist(
+                                                            context,
+                                                            checklistModel
+                                                                .documentCheckListMasterId!);
+                                                    Navigator.of(context).pop();
+                                                    setState(() {
+                                                      checkListListFuture =
+                                                          settingsProvider
+                                                              .getDocumentCheckList(
+                                                                  context);
+                                                    });
+                                                  },
+                                                  confirmButtonText: 'Delete',
+                                                );
+                                              },
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Icon(
+                                                  Icons.delete,
+                                                  color: Colors.red,
+                                                ),
+                                              ))
                                       ],
                                     ),
                                   ],

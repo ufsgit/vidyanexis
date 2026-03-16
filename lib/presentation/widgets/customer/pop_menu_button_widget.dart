@@ -7,11 +7,15 @@ enum PopupMenuOptions { edit, delete }
 class CustomPopMenuButtonWidget extends StatelessWidget {
   final Function(PopupMenuOptions) onOptionSelected;
   final Widget? icon;
+  final bool showEdit;
+  final bool showDelete;
 
   const CustomPopMenuButtonWidget({
     super.key,
     required this.onOptionSelected,
     this.icon,
+    this.showEdit = true,
+    this.showDelete = true,
   });
 
   @override
@@ -36,45 +40,48 @@ class CustomPopMenuButtonWidget extends StatelessWidget {
       color: Colors.white, // White background
       onSelected: onOptionSelected,
       itemBuilder: (BuildContext context) => [
-        PopupMenuItem(
-          height: 35,
-          value: PopupMenuOptions.edit,
-          child: Row(
-            children: [
-              SizedBox(
-                  height: 14,
-                  width: 14,
-                  child:
-                      Icon(Icons.edit, size: 14, color: AppColors.textBlack)),
-              SizedBox(width: 8),
-              CustomText(
-                'Edit',
-                fontSize: 14,
-                color: AppColors.textBlack,
-                fontWeight: FontWeight.w500,
-              )
-            ],
+        if (showEdit)
+          PopupMenuItem(
+            height: 35,
+            value: PopupMenuOptions.edit,
+            child: Row(
+              children: [
+                SizedBox(
+                    height: 14,
+                    width: 14,
+                    child:
+                        Icon(Icons.edit, size: 14, color: AppColors.textBlack)),
+                SizedBox(width: 8),
+                CustomText(
+                  'Edit',
+                  fontSize: 14,
+                  color: AppColors.textBlack,
+                  fontWeight: FontWeight.w500,
+                )
+              ],
+            ),
           ),
-        ),
-        PopupMenuItem(
-          height: 35,
-          value: PopupMenuOptions.delete,
-          child: Row(
-            children: [
-              SizedBox(
-                  height: 14,
-                  width: 14,
-                  child: Icon(Icons.delete, size: 14, color: AppColors.btnRed)),
-              SizedBox(width: 8),
-              CustomText(
-                'Delete',
-                fontSize: 14,
-                color: AppColors.btnRed,
-                fontWeight: FontWeight.w500,
-              )
-            ],
+        if (showDelete)
+          PopupMenuItem(
+            height: 35,
+            value: PopupMenuOptions.delete,
+            child: Row(
+              children: [
+                SizedBox(
+                    height: 14,
+                    width: 14,
+                    child:
+                        Icon(Icons.delete, size: 14, color: AppColors.btnRed)),
+                SizedBox(width: 8),
+                CustomText(
+                  'Delete',
+                  fontSize: 14,
+                  color: AppColors.btnRed,
+                  fontWeight: FontWeight.w500,
+                )
+              ],
+            ),
           ),
-        ),
       ],
     );
   }

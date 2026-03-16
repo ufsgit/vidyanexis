@@ -62,29 +62,30 @@ class _CustomFieldState extends State<CustomField> {
                             color: AppColors.textBlue800),
                       ),
                       Spacer(),
-                      CustomOutlinedSvgButton(
-                        onPressed: () async {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const AddCustomField(
-                                editId: '0',
-                                isEdit: false,
-                                status: '',
-                              );
-                            },
-                          );
-                        },
-                        svgPath: 'assets/images/Plus.svg',
-                        label: 'New Custom Field',
-                        breakpoint: 860,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        borderSide: BorderSide(color: AppColors.primaryBlue),
-                      ),
+                      if (settingsProvider.menuIsSaveMap[60] == 1)
+                        CustomOutlinedSvgButton(
+                          onPressed: () async {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AddCustomField(
+                                  editId: '0',
+                                  isEdit: false,
+                                  status: '',
+                                );
+                              },
+                            );
+                          },
+                          svgPath: 'assets/images/Plus.svg',
+                          label: 'New Custom Field',
+                          breakpoint: 860,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          foregroundColor: Colors.white,
+                          backgroundColor: AppColors.primaryBlue,
+                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                        ),
                       const SizedBox(width: 16),
                     ],
                   ),
@@ -136,75 +137,79 @@ class _CustomFieldState extends State<CustomField> {
                                 ),
                               ),
                               const Spacer(),
-                              TextButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AddCustomField(
-                                          editId: '0',
-                                          isEdit: true,
-                                          status: '',
-                                          customFieldTypeModel: fieldModel,
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Text(
-                                    'Edit',
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.primaryBlue),
-                                  )),
-                              TextButton(
-                                  onPressed: () {
-                                    showDialog(
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return AlertDialog(
-                                          title: const Text('Confirm Delete'),
-                                          content: const Text(
-                                              'Are you sure you want to delete?'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () =>
-                                                  Navigator.pop(context),
-                                              child: const Text('Cancel'),
-                                            ),
-                                            TextButton(
-                                              onPressed: () async {
-                                                settingsProvider
-                                                    .deleteCustomField(
-                                                        context,
-                                                        fieldModel.customFieldId
-                                                            .toString())
-                                                    .then((value) {
-                                                  if (null != value && value) {
-                                                    getData();
-                                                  }
-                                                });
-                                                // Navigator.pop(context);
-                                              },
-                                              child: const Text(
-                                                'Delete',
-                                                style: TextStyle(
-                                                    color: Colors.red),
+                              if (settingsProvider.menuIsEditMap[60] == 1)
+                                TextButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        barrierDismissible: false,
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AddCustomField(
+                                            editId: '0',
+                                            isEdit: true,
+                                            status: '',
+                                            customFieldTypeModel: fieldModel,
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      'Edit',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.primaryBlue),
+                                    )),
+                              if (settingsProvider.menuIsDeleteMap[60] == 1)
+                                TextButton(
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return AlertDialog(
+                                            title: const Text('Confirm Delete'),
+                                            content: const Text(
+                                                'Are you sure you want to delete?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () =>
+                                                    Navigator.pop(context),
+                                                child: const Text('Cancel'),
                                               ),
-                                            ),
-                                          ],
-                                        );
-                                      },
-                                    );
-                                  },
-                                  child: Text(
-                                    'Delete',
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textRed),
-                                  ))
+                                              TextButton(
+                                                onPressed: () async {
+                                                  settingsProvider
+                                                      .deleteCustomField(
+                                                          context,
+                                                          fieldModel
+                                                              .customFieldId
+                                                              .toString())
+                                                      .then((value) {
+                                                    if (null != value &&
+                                                        value) {
+                                                      getData();
+                                                    }
+                                                  });
+                                                  // Navigator.pop(context);
+                                                },
+                                                child: const Text(
+                                                  'Delete',
+                                                  style: TextStyle(
+                                                      color: Colors.red),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      );
+                                    },
+                                    child: Text(
+                                      'Delete',
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColors.textRed),
+                                    ))
                             ],
                           ),
                         ),

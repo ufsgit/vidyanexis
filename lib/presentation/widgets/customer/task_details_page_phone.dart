@@ -16,6 +16,7 @@ import 'package:vidyanexis/presentation/widgets/customer/task_card_mobile_widget
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class TaskDetailsPagePhone extends StatefulWidget {
   static String route = '/taskdetailsPage/';
@@ -69,6 +70,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
   Widget build(BuildContext context) {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
+    final settingsprovider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -97,8 +99,12 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
               color: AppColors.textBlack),
         ),
         actions: [
-          CustomPopMenuButtonWidget(
-            onOptionSelected: (PopupMenuOptions option) async {
+          if (settingsprovider.menuIsEditMap[13] == 1 ||
+              settingsprovider.menuIsDeleteMap[13] == 1)
+            CustomPopMenuButtonWidget(
+              showEdit: settingsprovider.menuIsEditMap[13] == 1,
+              showDelete: settingsprovider.menuIsDeleteMap[13] == 1,
+              onOptionSelected: (PopupMenuOptions option) async {
               switch (option) {
                 case PopupMenuOptions.edit:
                   if (customerDetailsProvider.taskDetails.isEmpty) break;

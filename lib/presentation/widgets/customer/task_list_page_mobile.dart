@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class TaskListPageMobile extends StatefulWidget {
   final String customerId;
@@ -351,48 +352,33 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                       ],
                     ),
                   ),
-        floatingActionButton: CustomElevatedButton(
-          prefixIcon: Icons.add,
-          radius: 32,
-          buttonText: 'Create task',
-          onPressed: () {
-            final customerDetailsProvider =
-                Provider.of<CustomerDetailsProvider>(context, listen: false);
-            customerDetailsProvider.customerId = widget.customerId;
-            customerDetailsProvider.clearTaskDetails();
-            Navigator.push(context, MaterialPageRoute(
-              builder: (context) {
-                return AddTaskMobile(
-                  isEdit: false,
-                  taskId: '0',
-                );
-              },
-            ));
-            // showModalBottomSheet(
-            //   context: context,
-            //   isScrollControlled: true,
-            //   showDragHandle: false,
-            //   isDismissible: false,
-            //   backgroundColor: Colors.transparent,
-            //   builder: (BuildContext context) {
-            //     return Padding(
-            //       padding: EdgeInsets.only(
-            //           bottom: MediaQuery.of(context).viewInsets.bottom),
-            //       child: Wrap(
-            //         children: [
-            //           AddTaskMobile(
-            //             isEdit: false,
-            //             taskId: '0',
-            //           ),
-            //         ],
-            //       ),
-            //     );
-            //   },
-            // );
-          },
-          backgroundColor: AppColors.bluebutton,
-          borderColor: AppColors.bluebutton,
-          textColor: AppColors.whiteColor,
-        ));
+        floatingActionButton: Provider.of<SettingsProvider>(context,
+                        listen: false)
+                    .menuIsSaveMap[13] ==
+                1
+            ? CustomElevatedButton(
+                prefixIcon: Icons.add,
+                radius: 32,
+                buttonText: 'Create task',
+                onPressed: () {
+                  final customerDetailsProvider =
+                      Provider.of<CustomerDetailsProvider>(context,
+                          listen: false);
+                  customerDetailsProvider.customerId = widget.customerId;
+                  customerDetailsProvider.clearTaskDetails();
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return AddTaskMobile(
+                        isEdit: false,
+                        taskId: '0',
+                      );
+                    },
+                  ));
+                },
+                backgroundColor: AppColors.bluebutton,
+                borderColor: AppColors.bluebutton,
+                textColor: AppColors.whiteColor,
+              )
+            : null);
   }
 }

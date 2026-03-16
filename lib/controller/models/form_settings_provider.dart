@@ -29,7 +29,7 @@ class FormProvider extends ChangeNotifier {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.searchDepartment}?Search_department=');
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = response.data;
         if (data != null && data['success'] == true) {
           final List<dynamic> departmentList = data['data'][0];
@@ -56,13 +56,13 @@ class FormProvider extends ChangeNotifier {
           endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name=');
       if (response != null && response.statusCode == 200) {
         final data = response.data;
-          final List<dynamic> tList = data as List<dynamic>;
-          taskTypes = tList
-              .map((item) => {
-                    'id': item['Task_Type_Id'],
-                    'name': item['Task_Type_Name'].toString()
-                  })
-              .toList();
+        final List<dynamic> tList = data as List<dynamic>;
+        taskTypes = tList
+            .map((item) => {
+                  'id': item['Task_Type_Id'],
+                  'name': item['Task_Type_Name'].toString()
+                })
+            .toList();
       }
     } catch (e) {
       debugPrint('Exception in fetchTaskTypes: $e');
@@ -103,7 +103,9 @@ class FormProvider extends ChangeNotifier {
             final label = (cf.customFieldName ?? "Field ${cf.customFieldId}");
             return FieldModel(
               id: cf.customFieldId.toString(),
-              label: label.isEmpty || label == "null" ? "Field ${cf.customFieldId}" : label,
+              label: label.isEmpty || label == "null"
+                  ? "Field ${cf.customFieldId}"
+                  : label,
               type: type,
               options: cf.dropDownValues,
             );
@@ -151,18 +153,21 @@ class FormProvider extends ChangeNotifier {
             if (item['Custom_Fields'] != null &&
                 item['Custom_Fields'] is List) {
               parsedFields = (item['Custom_Fields'] as List).map((f) {
-                final cfId =
-                    (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ??
-                        '0';
+                final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])
+                        ?.toString() ??
+                    '0';
                 final cfName =
-                    (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
+                    (f['Custom_Field_Name'] ?? f['custom_field_name'])
+                        ?.toString();
                 final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
 
                 // Match by ID first, then by Label as a fallback to "repair" corrupted IDs
                 final availableField = availableFields.firstWhere(
                   (a) => a.id == cfId,
                   orElse: () => availableFields.firstWhere(
-                    (a) => cfName != null && a.label.toLowerCase() == cfName.toLowerCase(),
+                    (a) =>
+                        cfName != null &&
+                        a.label.toLowerCase() == cfName.toLowerCase(),
                     orElse: () => FieldModel(
                       id: cfId,
                       label: cfName ?? 'Field $cfId',
@@ -172,8 +177,9 @@ class FormProvider extends ChangeNotifier {
                 );
                 return FieldModel(
                   id: availableField.id,
-                  label: availableField.label.isEmpty || availableField.label == "null" 
-                      ? (cfName ?? "Field $cfId") 
+                  label: availableField.label.isEmpty ||
+                          availableField.label == "null"
+                      ? (cfName ?? "Field $cfId")
                       : availableField.label,
                   type: availableField.type,
                   options: availableField.options,
@@ -245,7 +251,8 @@ class FormProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateForm(BuildContext context, String id, FormModel form) async {
+  Future<void> updateForm(
+      BuildContext context, String id, FormModel form) async {
     try {
       final payload = {
         "Form_Id": int.tryParse(id) ?? 0,
@@ -321,7 +328,9 @@ class FormProvider extends ChangeNotifier {
         "Login_User_Id": userId,
       };
 
-      if (enquiryForId != null && enquiryForId != "0" && enquiryForId.isNotEmpty) {
+      if (enquiryForId != null &&
+          enquiryForId != "0" &&
+          enquiryForId.isNotEmpty) {
         queryParams["Enquiry_For_Id"] = enquiryForId;
       }
 
@@ -340,7 +349,7 @@ class FormProvider extends ChangeNotifier {
           bool hasData = false;
           if (data is Map) {
             hasData = (data['forms'] is List && data['forms'].isNotEmpty) ||
-                      (data['form_data'] is List && data['form_data'].isNotEmpty);
+                (data['form_data'] is List && data['form_data'].isNotEmpty);
           } else if (data is List) {
             hasData = data.isNotEmpty;
           }
@@ -348,9 +357,9 @@ class FormProvider extends ChangeNotifier {
           if (hasData) {
             setCustomerForms(data);
           } else {
-             _customerForms = [];
-             isLoadingForms = false;
-             notifyListeners();
+            _customerForms = [];
+            isLoadingForms = false;
+            notifyListeners();
           }
         }
       }
@@ -399,7 +408,9 @@ class FormProvider extends ChangeNotifier {
             final availableField = availableFields.firstWhere(
               (a) => a.id == cfId,
               orElse: () => availableFields.firstWhere(
-                (a) => cfName != null && a.label.toLowerCase() == cfName.toLowerCase(),
+                (a) =>
+                    cfName != null &&
+                    a.label.toLowerCase() == cfName.toLowerCase(),
                 orElse: () => FieldModel(
                   id: cfId,
                   label: cfName ?? 'Field $cfId',
@@ -409,9 +420,10 @@ class FormProvider extends ChangeNotifier {
             );
             return FieldModel(
               id: availableField.id,
-              label: availableField.label.isEmpty || availableField.label == "null"
-                  ? (cfName ?? 'Field $cfId')
-                  : availableField.label,
+              label:
+                  availableField.label.isEmpty || availableField.label == "null"
+                      ? (cfName ?? 'Field $cfId')
+                      : availableField.label,
               type: availableField.type,
               options: availableField.options,
               isMandatory: (isMandatoryValue == 1 ||
@@ -429,10 +441,11 @@ class FormProvider extends ChangeNotifier {
           fields: parsedFields,
         );
       }).toList();
-      
+
       isLoadingForms = false; // Reset loading state when forms are set
       notifyListeners();
-      debugPrint("DEBUG: customerForms updated, size: ${_customerForms.length}");
+      debugPrint(
+          "DEBUG: customerForms updated, size: ${_customerForms.length}");
     } catch (e) {
       debugPrint('Error in setCustomerForms: $e');
     }
@@ -442,7 +455,8 @@ class FormProvider extends ChangeNotifier {
     required BuildContext context,
     required int taskId,
     required int formId,
-    required List<dynamic> customFields, // Keeping dynamic or Map for flexibility
+    required List<dynamic>
+        customFields, // Keeping dynamic or Map for flexibility
     int formDataDetailsId = 0,
     int customerId = 0,
     String? taskTypeId,
