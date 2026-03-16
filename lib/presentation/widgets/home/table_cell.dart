@@ -31,7 +31,7 @@ class TableWidget extends StatelessWidget {
               child: Padding(
                   padding: padding ??
                       const EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 16.0),
+                          vertical: 4.0, horizontal: 16.0),
                   child: Align(alignment: alignment, child: data)),
             )
           : SizedBox(
@@ -39,7 +39,7 @@ class TableWidget extends StatelessWidget {
               child: Padding(
                   padding: padding ??
                       const EdgeInsets.symmetric(
-                          vertical: 12.0, horizontal: 16.0),
+                          vertical: 4.0, horizontal: 16.0),
                   child: Align(alignment: alignment, child: data)),
             );
     } else {
