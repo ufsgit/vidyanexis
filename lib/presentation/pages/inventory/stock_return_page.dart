@@ -116,30 +116,30 @@ class _StockReturnPageState extends State<StockReturnPage> {
                       ),
                     ),
                     const SizedBox(width: 16),
-                    // if (settingsProvider.menuIsSaveMap[48] == 1)
-                    CustomOutlinedSvgButton(
-                      onPressed: () async {
-                        showDialog(
-                          barrierDismissible: false,
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AddStockReturnPage(
-                              isEdit: false,
-                              customerId: widget.customerId,
-                              editId: 0,
-                            );
-                          },
-                        );
-                      },
-                      svgPath: 'assets/images/Plus.svg',
-                      label: 'Add Stock Return',
-                      breakpoint: 860,
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(20)),
-                      foregroundColor: Colors.white,
-                      backgroundColor: AppColors.primaryBlue,
-                      borderSide: BorderSide(color: AppColors.primaryBlue),
-                    ),
+                    if (settingsProvider.menuIsSaveMap[79] == 1)
+                      CustomOutlinedSvgButton(
+                        onPressed: () async {
+                          showDialog(
+                            barrierDismissible: false,
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AddStockReturnPage(
+                                isEdit: false,
+                                customerId: widget.customerId,
+                                editId: 0,
+                              );
+                            },
+                          );
+                        },
+                        svgPath: 'assets/images/Plus.svg',
+                        label: 'Add Stock Return',
+                        breakpoint: 860,
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20)),
+                        foregroundColor: Colors.white,
+                        backgroundColor: AppColors.primaryBlue,
+                        borderSide: BorderSide(color: AppColors.primaryBlue),
+                      ),
                     const SizedBox(width: 16),
                   ],
                 ),
@@ -289,87 +289,87 @@ class _StockReturnPageState extends State<StockReturnPage> {
                                 SizedBox(
                                   width: 20,
                                 ),
-                                // if (settingsProvider.menuIsEditMap[48] == 1)
-                                TextButton(
-                                    onPressed: () async {
-                                      // expenseProvider.getStockUseDetails(
-                                      //     expenseProvider
-                                      //         .stockUseList[index].stockUseId,
-                                      //     context: context);
-                                      expenseProvider.getStockReturnDetails(
+                                if (settingsProvider.menuIsEditMap[79] == 1)
+                                  TextButton(
+                                      onPressed: () async {
+                                        // expenseProvider.getStockUseDetails(
+                                        //     expenseProvider
+                                        //         .stockUseList[index].stockUseId,
+                                        //     context: context);
+                                        expenseProvider.getStockReturnDetails(
+                                            context: context,
+                                            masterId: expenseProvider
+                                                .stockReturnList[index]
+                                                .stockReturnId
+                                                .toString());
+                                        showDialog(
+                                          barrierDismissible: false,
                                           context: context,
-                                          masterId: expenseProvider
-                                              .stockReturnList[index]
-                                              .stockReturnId
-                                              .toString());
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AddStockReturnPage(
-                                              customerId: widget.customerId,
-                                              isEdit: true,
-                                              editId: expenseProvider
-                                                  .stockReturnList[index]
-                                                  .stockReturnId,
-                                              stockUse: expenseProvider
-                                                  .stockReturnList[index]);
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      'Edit',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.primaryBlue),
-                                    )),
-                                // if (settingsProvider.menuIsDeleteMap[34] == 1)
-                                TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('Confirm Delete'),
-                                            content: const Text(
-                                                'Are you sure you want to delete this item?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('Cancel'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  expenseProvider
-                                                      .deleteStockReturn(
-                                                          context,
-                                                          expenseProvider
-                                                              .stockReturnList[
-                                                                  index]
-                                                              .stockReturnId,
-                                                          widget.customerId);
-                                                  Navigator.pop(context);
-                                                },
-                                                child: const Text(
-                                                  'Delete',
-                                                  style: TextStyle(
-                                                      color: Colors.red),
+                                          builder: (BuildContext context) {
+                                            return AddStockReturnPage(
+                                                customerId: widget.customerId,
+                                                isEdit: true,
+                                                editId: expenseProvider
+                                                    .stockReturnList[index]
+                                                    .stockReturnId,
+                                                stockUse: expenseProvider
+                                                    .stockReturnList[index]);
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        'Edit',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.primaryBlue),
+                                      )),
+                                if (settingsProvider.menuIsDeleteMap[79] == 1)
+                                  TextButton(
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (BuildContext context) {
+                                            return AlertDialog(
+                                              title: const Text('Confirm Delete'),
+                                              content: const Text(
+                                                  'Are you sure you want to delete this item?'),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: const Text('Cancel'),
                                                 ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      'Delete',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textRed),
-                                    ))
+                                                TextButton(
+                                                  onPressed: () async {
+                                                    expenseProvider
+                                                        .deleteStockReturn(
+                                                            context,
+                                                            expenseProvider
+                                                                .stockReturnList[
+                                                                    index]
+                                                                .stockReturnId,
+                                                            widget.customerId);
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: const Text(
+                                                    'Delete',
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      child: Text(
+                                        'Delete',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textRed),
+                                      ))
                               ],
                             ),
                           ),

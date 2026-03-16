@@ -37,6 +37,7 @@ class _SalesScreenState extends State<SalesScreen> {
   @override
   Widget build(BuildContext context) {
     final expenseProvider = Provider.of<ExpenseProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -159,6 +160,7 @@ class _SalesScreenState extends State<SalesScreen> {
                         ),
                       ),
                       const SizedBox(width: 16),
+                      if (settingsProvider.menuIsSaveMap[87] == 1)
                       CustomOutlinedSvgButton(
                         onPressed: () async {
                           showDialog(
@@ -202,6 +204,7 @@ class _SalesScreenState extends State<SalesScreen> {
                             ),
                           ),
                           const Spacer(),
+                          if (settingsProvider.menuIsSaveMap[87] == 1)
                           SizedBox(
                             height: 40,
                             child: ElevatedButton.icon(
@@ -697,6 +700,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                   flex: 2,
                                   child: Row(
                                     children: [
+                                      if (settingsProvider.menuIsEditMap[87] == 1)
                                       TextButton(
                                         onPressed: () async {
                                           await expenseProvider.searchSalesDetails(
@@ -722,6 +726,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                           ),
                                         ),
                                       ),
+                                      if (settingsProvider.menuIsDeleteMap[87] == 1)
                                       TextButton(
                                         onPressed: () {
                                           showDialog(
@@ -923,6 +928,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                 Row(
                                   mainAxisAlignment: MainAxisAlignment.end,
                                   children: [
+                                    if (settingsProvider.menuIsEditMap[87] == 1)
                                     TextButton.icon(
                                       onPressed: () async {
                                         await expenseProvider.searchSalesDetails(
@@ -954,6 +960,7 @@ class _SalesScreenState extends State<SalesScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 8),
+                                    if (settingsProvider.menuIsDeleteMap[87] == 1)
                                     TextButton.icon(
                                       onPressed: () {
                                         showDialog(

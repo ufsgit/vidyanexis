@@ -113,30 +113,30 @@ class _StockUsePageState extends State<StockUsePage> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  // if (settingsProvider.menuIsSaveMap[48] == 1)
-                  CustomOutlinedSvgButton(
-                    onPressed: () async {
-                      showDialog(
-                        barrierDismissible: false,
-                        context: context,
-                        builder: (BuildContext context) {
-                          return AddStockUseWidget(
-                            isEdit: false,
-                            editId: 0,
-                            customerId: widget.customerId,
-                          );
-                        },
-                      );
-                    },
-                    svgPath: 'assets/images/Plus.svg',
-                    label: 'Add Stock Use',
-                    breakpoint: 860,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20)),
-                    foregroundColor: Colors.white,
-                    backgroundColor: AppColors.primaryBlue,
-                    borderSide: BorderSide(color: AppColors.primaryBlue),
-                  ),
+                  if (settingsProvider.menuIsSaveMap[78] == 1)
+                    CustomOutlinedSvgButton(
+                      onPressed: () async {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AddStockUseWidget(
+                              isEdit: false,
+                              editId: 0,
+                              customerId: widget.customerId,
+                            );
+                          },
+                        );
+                      },
+                      svgPath: 'assets/images/Plus.svg',
+                      label: 'Add Stock Use',
+                      breakpoint: 860,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.primaryBlue,
+                      borderSide: BorderSide(color: AppColors.primaryBlue),
+                    ),
                   const SizedBox(width: 16),
                 ],
               ),
@@ -389,7 +389,7 @@ class _StockUsePageState extends State<StockUsePage> {
                               SizedBox(
                                 width: 20,
                               ),
-                              // if (settingsProvider.menuIsEditMap[48] == 1)
+                              if (settingsProvider.menuIsEditMap[78] == 1)
                               TextButton(
                                   onPressed: () async {
                                     // stockuseprovider.getStockUseDetails(
@@ -423,7 +423,7 @@ class _StockUsePageState extends State<StockUsePage> {
                                         fontWeight: FontWeight.w600,
                                         color: AppColors.primaryBlue),
                                   )),
-                              // if (settingsProvider.menuIsDeleteMap[34] == 1)
+                              if (settingsProvider.menuIsDeleteMap[78] == 1)
                               TextButton(
                                   onPressed: () {
                                     showDialog(

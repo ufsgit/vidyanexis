@@ -60,20 +60,22 @@ class _LeadsPageState extends State<ProcessFlowPage> {
     return Scaffold(
       floatingActionButton: AppStyles.isWebScreen(context)
           ? const SizedBox.shrink()
-          : FloatingActionButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (c) => ProcessFlowAddWidget(
-                      isEdit: false,
-                      processFlowModel: ProcessFlowModel(),
-                    ),
-                  ),
-                );
-              },
-              child: Icon(Icons.add),
-            ),
+          : (settingsProvider.menuIsSaveMap[36] == 1
+              ? FloatingActionButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (c) => ProcessFlowAddWidget(
+                          isEdit: false,
+                          processFlowModel: ProcessFlowModel(),
+                        ),
+                      ),
+                    );
+                  },
+                  child: Icon(Icons.add),
+                )
+              : null),
       key: _scaffoldKey,
       backgroundColor: AppColors.whiteColor,
       appBar: AppStyles.isWebScreen(context)
@@ -229,7 +231,7 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                               // ),
                               // const SizedBox(width: 16),
                               // // New Lead Button
-                              if (settingsProvider.menuIsSaveMap[3] == 1)
+                              if (settingsProvider.menuIsSaveMap[36] == 1)
                                 ElevatedButton.icon(
                                   onPressed: () async {
                                     showDialog(
@@ -374,43 +376,35 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                               // ),
                               // const SizedBox(width: 16),
                               // // New Lead Button
-                              // if (settingsProvider.menuIsSaveMap[3] == 1)
-                              //   ElevatedButton.icon(
-                              //     onPressed: () async {
-                              //       final dropDownProvider =
-                              //           Provider.of<DropDownProvider>(context,
-                              //               listen: false);
-                              //       dropDownProvider.updateEnquiryForName(
-                              //           null, '');
-                              //       await leadProvider.getLeadDropdowns(context);
-                              //
-                              //       setState(() {
-                              //         // isEdit = false;
-                              //         viewProfile = false;
-                              //         viewFollowUp = false;
-                              //       });
-                              //       // _scaffoldKey.currentState
-                              //       //     ?.openEndDrawer(); // Open drawer
-                              //       showDialog(
-                              //         context: context,
-                              //         builder: (BuildContext context) {
-                              //           return const ProcessFlowAddWidget(
-                              //             isEdit: false,
-                              //           );
-                              //         },
-                              //       );
-                              //     },
-                              //     icon: const Icon(Icons.add),
-                              //     label: const Text('New Process Flow'),
-                              //     style: ElevatedButton.styleFrom(
-                              //       backgroundColor: AppColors.primaryBlue,
-                              //       foregroundColor: Colors.white,
-                              //       padding: const EdgeInsets.symmetric(
-                              //         horizontal: 16,
-                              //         vertical: 0,
-                              //       ),
-                              //     ),
-                              //   ),
+                              if (settingsProvider.menuIsSaveMap[36] == 1)
+                                SizedBox(
+                                  width: double.infinity,
+                                  height: 40,
+                                  child: ElevatedButton.icon(
+                                    onPressed: () async {
+                                      showDialog(
+                                        context: context,
+                                        builder: (BuildContext context) {
+                                          return ProcessFlowAddWidget(
+                                            isEdit: false,
+                                            processFlowModel:
+                                                ProcessFlowModel(),
+                                          );
+                                        },
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('New Process Flow'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 16,
+                                        vertical: 0,
+                                      ),
+                                    ),
+                                  ),
+                                ),
                               // const SizedBox(width: 16),
                               // // Excel Import Button
                               // // ElevatedButton.icon(
@@ -531,60 +525,62 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                                               TableWidget(
                                                 flex: 1,
                                                 data: InkWell(
-                                                  onTap: () {
-                                                    if (AppStyles.isWebScreen(
-                                                        context)) {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            backgroundColor:
-                                                                Colors.white,
-                                                            content: SizedBox(
-                                                              width: AppStyles
-                                                                      .isWebScreen(
-                                                                          context)
-                                                                  ? MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width /
-                                                                      3
-                                                                  : MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .width,
-                                                              height:
-                                                                  MediaQuery.of(
-                                                                          context)
-                                                                      .size
-                                                                      .height,
-                                                              child:
-                                                                  ProcessFlowAddWidget(
-                                                                isEdit: true,
-                                                                processFlowModel:
-                                                                    processModel
-                                                                        .copyWith(),
+                                                  onTap: (settingsProvider.menuIsEditMap[36] == 1)
+                                                      ? () {
+                                                          if (AppStyles.isWebScreen(
+                                                              context)) {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder: (BuildContext
+                                                                  context) {
+                                                                return AlertDialog(
+                                                                  backgroundColor:
+                                                                      Colors.white,
+                                                                  content: SizedBox(
+                                                                    width: AppStyles
+                                                                            .isWebScreen(
+                                                                                context)
+                                                                        ? MediaQuery.of(
+                                                                                    context)
+                                                                                .size
+                                                                                .width /
+                                                                            3
+                                                                        : MediaQuery.of(
+                                                                                context)
+                                                                            .size
+                                                                            .width,
+                                                                    height:
+                                                                        MediaQuery.of(
+                                                                                context)
+                                                                            .size
+                                                                            .height,
+                                                                    child:
+                                                                        ProcessFlowAddWidget(
+                                                                      isEdit: true,
+                                                                      processFlowModel:
+                                                                          processModel
+                                                                              .copyWith(),
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          } else {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (c) =>
+                                                                    ProcessFlowAddWidget(
+                                                                  isEdit: true,
+                                                                  processFlowModel:
+                                                                      processModel
+                                                                          .copyWith(),
+                                                                ),
                                                               ),
-                                                            ),
-                                                          );
-                                                        },
-                                                      );
-                                                    } else {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (c) =>
-                                                              ProcessFlowAddWidget(
-                                                            isEdit: true,
-                                                            processFlowModel:
-                                                                processModel
-                                                                    .copyWith(),
-                                                          ),
-                                                        ),
-                                                      );
-                                                    }
-                                                  },
+                                                            );
+                                                          }
+                                                        }
+                                                      : null,
                                                   child: Container(
                                                     padding: const EdgeInsets
                                                         .symmetric(
@@ -669,58 +665,59 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                                                   title:
                                                       processModel.statusName ??
                                                           ""),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal: 8.0),
-                                                child: InkWell(
-                                                    onTap: () {
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return AlertDialog(
-                                                            title: const Text(
-                                                                'Confirm Delete'),
-                                                            content: const Text(
-                                                                'Are you sure you want to delete?'),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () =>
-                                                                    Navigator.pop(
-                                                                        context),
-                                                                child: const Text(
-                                                                    'Cancel'),
-                                                              ),
-                                                              TextButton(
-                                                                onPressed:
-                                                                    () async {
-                                                                  await processFlowProvider.deleteProcessFlowById(
-                                                                      context,
-                                                                      processModel
-                                                                          .flowId!);
-                                                                  getData();
-                                                                  Navigator.pop(
-                                                                      context);
-                                                                },
-                                                                child:
-                                                                    const Text(
-                                                                  'Delete',
-                                                                  style: TextStyle(
-                                                                      color: Colors
-                                                                          .red),
+                                              if (settingsProvider.menuIsDeleteMap[36] == 1)
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          horizontal: 8.0),
+                                                  child: InkWell(
+                                                      onTap: () {
+                                                        showDialog(
+                                                          context: context,
+                                                          builder: (BuildContext
+                                                              context) {
+                                                            return AlertDialog(
+                                                              title: const Text(
+                                                                  'Confirm Delete'),
+                                                              content: const Text(
+                                                                  'Are you sure you want to delete?'),
+                                                              actions: [
+                                                                TextButton(
+                                                                  onPressed: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                  child: const Text(
+                                                                      'Cancel'),
                                                                 ),
-                                                              ),
-                                                            ],
-                                                          );
-                                                        },
-                                                      );
-                                                    },
-                                                    child: Icon(
-                                                      Icons.delete,
-                                                      color: Colors.red,
-                                                    )),
-                                              )
+                                                                TextButton(
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await processFlowProvider.deleteProcessFlowById(
+                                                                        context,
+                                                                        processModel
+                                                                            .flowId!);
+                                                                    getData();
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                  },
+                                                                  child:
+                                                                      const Text(
+                                                                    'Delete',
+                                                                    style: TextStyle(
+                                                                        color: Colors
+                                                                            .red),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            );
+                                                          },
+                                                        );
+                                                      },
+                                                      child: const Icon(
+                                                        Icons.delete,
+                                                        color: Colors.red,
+                                                      )),
+                                                )
                                             ],
                                           )
                                           //mobile design
