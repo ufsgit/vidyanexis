@@ -55,6 +55,7 @@ import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/firebase_options.dart';
 import 'package:vidyanexis/routes/routes.dart';
+import 'package:vidyanexis/controller/receipt_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/utils/firebase_notification_service.dart';
 
@@ -126,6 +127,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (context) => LeadCheckInProvider()),
         ChangeNotifierProvider(
             create: (context) => LeadCheckInReportProvider()),
+        ChangeNotifierProvider(create: (context) => ReceiptReportProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
           child: const MyApp(),

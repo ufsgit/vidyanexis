@@ -117,6 +117,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
           customerProvider.getSearchCustomers(context);
         },
         title: 'Customers',
+        showLogo: false,
+        showUserName: false,
+        showFilterIcon: false,
         onSearch: (String query) {
           customerProvider.setSearchCriteria(
             query,

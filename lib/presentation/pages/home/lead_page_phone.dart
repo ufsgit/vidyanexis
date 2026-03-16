@@ -139,107 +139,113 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: widget.fromDashBoard
-          ? CustomAppBar(
-              leadingWidget: InkWell(
-                  onTap: () {
-                    Navigator.pop(context);
-                  },
-                  child: Icon(Icons.arrow_back)),
-              onSearchTap: () {
-                searchProvider.startSearch();
-                leadProvider.toggleFilter();
-              },
-              onFilterTap: () {
-                log('sdf');
-                leadProvider.toggleFilter();
-              },
-              onClearTap: () {
-                searchProvider.stopSearch();
-                leadProvider.toggleFilter();
+            ? CustomAppBar(
+                leadingWidget: InkWell(
+                    onTap: () {
+                      Navigator.pop(context);
+                    },
+                    child: Icon(Icons.arrow_back)),
+                onSearchTap: () {
+                  searchProvider.startSearch();
+                  leadProvider.toggleFilter();
+                },
+                onFilterTap: () {
+                  log('sdf');
+                  leadProvider.toggleFilter();
+                },
+                onClearTap: () {
+                  searchProvider.stopSearch();
+                  leadProvider.toggleFilter();
 
-                leadProvider.selectDateFilterOption(null);
-                leadProvider.removeStatus();
-                searchController.clear();
-                leadProvider.setSearchCriteria(
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                );
-                leadProvider.getSearchLeads(context);
-              },
-              title: "Leads",
-              onSearch: (String query) {
-                if (leadProvider.search.isNotEmpty) {
+                  leadProvider.selectDateFilterOption(null);
+                  leadProvider.removeStatus();
+                  searchController.clear();
                   leadProvider.setSearchCriteria(
                     '',
-                    leadProvider.fromDateS,
-                    leadProvider.toDateS,
-                    leadProvider.status,
-                    leadProvider.enquiryForS,
+                    '',
+                    '',
+                    '',
+                    '',
                   );
-                } else {
-                  leadProvider.setSearchCriteria(
-                    query,
-                    leadProvider.fromDateS,
-                    leadProvider.toDateS,
-                    leadProvider.status,
-                    leadProvider.enquiryForS,
-                  );
-                }
-                leadProvider.getSearchLeads(context);
-              },
-              searchController: searchController,
-            )
-          : CustomAppBar(
-              onSearchTap: () {
-                searchProvider.startSearch();
-                leadProvider.toggleFilter();
-              },
-              onFilterTap: () {
-                log('sdf');
-                leadProvider.toggleFilter();
-              },
-              onClearTap: () {
-                searchProvider.stopSearch();
-                leadProvider.toggleFilter();
+                  leadProvider.getSearchLeads(context);
+                },
+                title: "Leads",
+                showLogo: false,
+                showUserName: false,
+                showFilterIcon: false,
+                onSearch: (String query) {
+                  if (leadProvider.search.isNotEmpty) {
+                    leadProvider.setSearchCriteria(
+                      '',
+                      leadProvider.fromDateS,
+                      leadProvider.toDateS,
+                      leadProvider.status,
+                      leadProvider.enquiryForS,
+                    );
+                  } else {
+                    leadProvider.setSearchCriteria(
+                      query,
+                      leadProvider.fromDateS,
+                      leadProvider.toDateS,
+                      leadProvider.status,
+                      leadProvider.enquiryForS,
+                    );
+                  }
+                  leadProvider.getSearchLeads(context);
+                },
+                searchController: searchController,
+              )
+            : CustomAppBar(
+                onSearchTap: () {
+                  searchProvider.startSearch();
+                  leadProvider.toggleFilter();
+                },
+                onFilterTap: () {
+                  log('sdf');
+                  leadProvider.toggleFilter();
+                },
+                onClearTap: () {
+                  searchProvider.stopSearch();
+                  leadProvider.toggleFilter();
 
-                leadProvider.selectDateFilterOption(null);
-                leadProvider.removeStatus();
-                searchController.clear();
-                leadProvider.setSearchCriteria(
-                  '',
-                  '',
-                  '',
-                  '',
-                  '',
-                );
-                leadProvider.getSearchLeads(context);
-              },
-              title: "Leads",
-              onSearch: (String query) {
-                if (leadProvider.search.isNotEmpty) {
+                  leadProvider.selectDateFilterOption(null);
+                  leadProvider.removeStatus();
+                  searchController.clear();
                   leadProvider.setSearchCriteria(
                     '',
-                    leadProvider.fromDateS,
-                    leadProvider.toDateS,
-                    leadProvider.status,
-                    leadProvider.enquiryForS,
+                    '',
+                    '',
+                    '',
+                    '',
                   );
-                } else {
-                  leadProvider.setSearchCriteria(
-                    query,
-                    leadProvider.fromDateS,
-                    leadProvider.toDateS,
-                    leadProvider.status,
-                    leadProvider.enquiryForS,
-                  );
-                }
-                leadProvider.getSearchLeads(context);
-              },
-              searchController: searchController,
-            ),
+                  leadProvider.getSearchLeads(context);
+                },
+                title: "Leads",
+                showLogo: false,
+                showUserName: false,
+                showFilterIcon: false,
+                onSearch: (String query) {
+                  if (leadProvider.search.isNotEmpty) {
+                    leadProvider.setSearchCriteria(
+                      '',
+                      leadProvider.fromDateS,
+                      leadProvider.toDateS,
+                      leadProvider.status,
+                      leadProvider.enquiryForS,
+                    );
+                  } else {
+                    leadProvider.setSearchCriteria(
+                      query,
+                      leadProvider.fromDateS,
+                      leadProvider.toDateS,
+                      leadProvider.status,
+                      leadProvider.enquiryForS,
+                    );
+                  }
+                  leadProvider.getSearchLeads(context);
+                },
+                searchController: searchController,
+              ),
       drawer: const SidebarDrawer(),
       body: leadProvider.isLoading
           ? const Center(

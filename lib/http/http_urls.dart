@@ -12,7 +12,7 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-  static String baseUrl = 'https://demo3api.trackbox.net.in/';
+//   static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
 //   static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
@@ -20,9 +20,10 @@ class HttpUrls {
   // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
   // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://lumiosapi.trackbox.net.in/';
+//    static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
 
 //dev
-  //static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -296,6 +297,7 @@ class HttpUrls {
   static String outstandingReport = "service/Get_Outstanding_Report";
   static String amcNotification = "task/Get_AMC_Notification";
   static String getPaymentReminders = "task/Get_Payment_Reminders";
+  static String searchReceiptReport = "service/Receipt_Report/";
   static String saveInvoiceTab = "service/Save_Invoice";
   static String getInvoiceByCustomer = "service/Get_All_Invoices";
   static String getInvoiceDetails = "service/Get_Invoice";

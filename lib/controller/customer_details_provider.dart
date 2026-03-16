@@ -1259,7 +1259,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     final newBillOfMaterialsItem = BillOfMaterialItem(
       description: billdescriptionController.text,
       brand: billmakeController.text,
-      quantity: double.tryParse(billquantityController.text) ?? 0,
+      quantity: billquantityController.text,
       distributor: billdistributorController.text,
       comments: billinvoiceController.text,
       uom: billuomController.text,
@@ -1357,7 +1357,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
       billdescriptionController.text = itemToEdit.description;
       billmakeController.text = itemToEdit.brand;
-      billquantityController.text = itemToEdit.quantity.toString();
+      billquantityController.text = itemToEdit.quantity;
       billdistributorController.text = itemToEdit.distributor ?? '';
       billinvoiceController.text = itemToEdit.comments ?? '';
       billuomController.text = itemToEdit.uom;
@@ -2503,7 +2503,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       (index) => BillOfMaterialItem(
           description: '',
           brand: '',
-          quantity: 0,
+          quantity: '0',
           uom: '',
           distributor: '',
           comments: ''),
@@ -2516,7 +2516,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       billOfMaterialsItems[i].description =
           billOfMaterials[i].itemsAndDescription;
       billOfMaterialsItems[i].quantity =
-          double.tryParse(billOfMaterials[i].quantity.toString()) ?? 0;
+          billOfMaterials[i].quantity.toString();
       billOfMaterialsItems[i].brand = billOfMaterials[i].make;
       billOfMaterialsItems[i].distributor = billOfMaterials[i].distributor;
       billOfMaterialsItems[i].comments = billOfMaterials[i].invoiceNo;

@@ -77,7 +77,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
     DashboardProvider dashBoardProvider =
         Provider.of<DashboardProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
-    final displayLogo = settingsProvider.displayLogo;
 
     return Scaffold(
       appBar: !AppStyles.isWebScreen(context)
@@ -105,38 +104,12 @@ class _DashBoardPageState extends State<DashBoardPage> {
                   );
                 },
               ),
-              title: Row(
-                children: [
-                  CircleAvatar(
-                    radius: 18,
-                    backgroundColor: Colors.transparent,
-                    child: ClipOval(
-                      child: displayLogo.startsWith('http')
-                          ? Image.network(
-                              displayLogo,
-                              height: 36,
-                              width: 36,
-                              fit: BoxFit.cover,
-                              errorBuilder: (context, error, stackTrace) =>
-                                  const SizedBox.shrink(),
-                            )
-                          : Image.asset(
-                              displayLogo,
-                              height: 36,
-                              width: 36,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                  ),
-                  const SizedBox(width: 8),
-                  const Text(
-                    'Dashboard',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
+              title: const Text(
+                'Dashboard',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               actions: [
                 Consumer<NotificationProvider>(

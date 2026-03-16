@@ -139,62 +139,71 @@ class _LeadCardState extends State<LeadCard> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  widget.lead.customerName,
-                                  overflow: TextOverflow.ellipsis,
-                                  maxLines: 1,
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textBlack),
-                                ),
-                                const SizedBox(width: 6),
-                                Container(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 2),
-                                  child: Text(
-                                    'ID ${widget.lead.customerId}',
-                                    style: TextStyle(
-                                      color: AppColors.textGrey3,
-                                      fontSize: 11,
-                                      fontWeight: FontWeight.w700,
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Text(
+                                        widget.lead.customerName,
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textBlack),
+                                      ),
                                     ),
-                                  ),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      'ID ${widget.lead.customerId}',
+                                      style: TextStyle(
+                                        color: AppColors.textGrey3,
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                                 const SizedBox(
                                   height: 4,
                                 ),
-                                Text(
-                                  widget.lead.statusName,
-                                  overflow: TextOverflow.clip,
+                                Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: widget.lead.statusName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.parseColor(
+                                                widget.lead.colorCode)),
+                                      ),
+                                      TextSpan(
+                                        text:
+                                            ' , Created By ${widget.lead.createdByName}',
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 12,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColors.textBlack),
+                                      ),
+                                    ],
+                                  ),
+                                  overflow: TextOverflow.ellipsis,
                                   maxLines: 2,
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.parseColor(
-                                          widget.lead.colorCode)),
                                 ),
-                                const SizedBox(
-                                  height: 2,
-                                ),
-                                Text(
-                                  widget.lead.remark,
-                                  overflow: TextOverflow.clip,
-                                  maxLines: 1,
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w400,
-                                      color: AppColors.textGrey4),
-                                ),
-                                Text(
-                                  'Created By ${widget.lead.createdByName}',
-                                  overflow: TextOverflow.clip,
-                                  maxLines: 1,
-                                  style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textBlack),
-                                ),
+                                if (widget.lead.remark.isNotEmpty)
+                                  const SizedBox(
+                                    height: 2,
+                                  ),
+                                if (widget.lead.remark.isNotEmpty)
+                                  Text(
+                                    widget.lead.remark,
+                                    overflow: TextOverflow.clip,
+                                    maxLines: 1,
+                                    style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: AppColors.textGrey4),
+                                  ),
                               ],
                             ),
                           ),

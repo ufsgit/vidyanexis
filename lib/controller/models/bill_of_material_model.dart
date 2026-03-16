@@ -2,7 +2,7 @@ class BillOfMaterialItem {
   int? id;
   String description;
   String brand;
-  double quantity;
+  String quantity;
   String uom;
   String? distributor;
   String? comments;
@@ -38,7 +38,7 @@ class BillOfMaterialItem {
           : int.tryParse(json['id']?.toString() ?? ''),
       description: json['Items_And_Description'] ?? '',
       brand: json['make'] ?? '',
-      quantity: double.tryParse(json['Quantity']?.toString() ?? '0') ?? 0,
+      quantity: json['Quantity']?.toString() ?? '',
       distributor: json['Distributor'],
       comments: json['Invoice_No'],
       uom: json['UOM'] ?? '',

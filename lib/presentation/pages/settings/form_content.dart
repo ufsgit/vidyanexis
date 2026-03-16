@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 // import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
@@ -36,11 +35,9 @@ class _FormContentState extends State<FormContent> {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: SizedBox(
-            width: AppStyles.isWebScreen(context)
-                ? constraints.maxWidth < minContentWidth
-                    ? minContentWidth
-                    : constraints.maxWidth
-                : MediaQuery.of(context).size.width - 30,
+            width: constraints.maxWidth < minContentWidth
+                ? minContentWidth
+                : constraints.maxWidth,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
