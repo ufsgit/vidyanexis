@@ -176,198 +176,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
     }
   }
 
-  void _showWorkerSelectionBottomSheet() {
-    final dropDownProvider =
-        Provider.of<DropDownProvider>(context, listen: false);
-    final customerDetailsProvider =
-        Provider.of<CustomerDetailsProvider>(context, listen: false);
 
-    if (customerDetailsProvider.selectedTaskType == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please select a task type first!')),
-      );
-      return;
-    }
-
-    final selectedTaskType = dropDownProvider.taskType.firstWhere(
-        (task) => task.taskTypeId == customerDetailsProvider.selectedTaskType);
-
-    final filteredUsers = dropDownProvider.searchUserDetails
-        .where((user) =>
-            user.departmentId.toString() ==
-            selectedTaskType.departmentIds.toString())
-        .toList();
-
-    if (filteredUsers.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-            content: Text('No workers available in this department!')),
-      );
-      return;
-    }
-
-    Set<int> selectedUserIds = {
-      if (customerDetailsProvider.addTaskModel.taskUser != null)
-        ...customerDetailsProvider.addTaskModel.taskUser!
-            .map((u) => u.userDetailsId!)
-    };
-
-    showModalBottomSheet(
-      backgroundColor: Colors.white,
-      context: context,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
-        ),
-      ),
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-            builder: (BuildContext context, StateSetter setState) {
-          return Padding(
-            padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-              decoration: const BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(24),
-                  topRight: Radius.circular(24),
-                ),
-              ),
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.7,
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 40,
-                      height: 5,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Colors.grey.withOpacity(0.3),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Select Worker',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 18,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.textBlack,
-                        ),
-                      ),
-                      IconButton(
-                        onPressed: () => Navigator.pop(context),
-                        icon: const Icon(Icons.close),
-                        padding: EdgeInsets.zero,
-                        constraints: const BoxConstraints(),
-                      )
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  Expanded(
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) => const Divider(height: 1),
-                      itemCount: filteredUsers.length,
-                      itemBuilder: (context, index) {
-                        final worker = filteredUsers[index];
-                        bool isSelected =
-                            selectedUserIds.contains(worker.userDetailsId);
-
-                        return ListTile(
-                            contentPadding: EdgeInsets.zero,
-                            leading: CircleAvatar(
-                              backgroundColor: Colors.grey[200],
-                              child: Icon(Icons.person, color: Colors.grey[600]),
-                            ),
-                            title: Text(
-                              worker.userDetailsName ?? '',
-                              style: GoogleFonts.plusJakartaSans(
-                                fontWeight: FontWeight.w600,
-                                fontSize: 16,
-                              ),
-                            ),
-                            subtitle: Text(
-                              worker.departmentName ?? '',
-                              style: GoogleFonts.plusJakartaSans(
-                                color: Colors.grey[600],
-                                fontSize: 13,
-                              ),
-                            ),
-                            trailing: Container(
-                              width: 24,
-                              height: 24,
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                border: Border.all(
-                                  color: isSelected ? AppColors.bluebutton : Colors.grey[400]!,
-                                  width: isSelected ? 6 : 1.5,
-                                ),
-                              ),
-                            ),
-                            onTap: () {
-                              setState(() {
-                                final userInTask = UserInTaskModel(
-                                    userDetailsId: worker.userDetailsId,
-                                    userDetailsName: worker.userDetailsName);
-                                if (isSelected) {
-                                  selectedUserIds.remove(worker.userDetailsId!);
-                                  customerDetailsProvider
-                                      .removeAssignedWorker(userInTask);
-                                } else {
-                                  selectedUserIds.add(worker.userDetailsId!);
-                                  customerDetailsProvider
-                                      .addAssignedWorker(userInTask);
-                                }
-                              });
-                            });
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  SizedBox(
-                    width: double.infinity,
-                    height: 52,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        this.setState(() {});
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.bluebutton,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        elevation: 0,
-                      ),
-                      child: Text(
-                        'Confirm Selection',
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -401,16 +210,16 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.all(20),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.04),
@@ -432,53 +241,60 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: dropDownProvider.taskType.map((taskType) {
-                            bool isSelected = customerDetailsProvider
-                                    .selectedTaskType ==
-                                taskType.taskTypeId;
-                            return InkWell(
-                              onTap: () {
-                                if (customerDetailsProvider.addTaskModel.taskUser !=
-                                    null) {
-                                  customerDetailsProvider.addTaskModel.taskUser!
-                                      .clear();
-                                }
-                                customerDetailsProvider.updateTaskType(
-                                    taskType.taskTypeId, taskType.taskTypeName);
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height * 0.25,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
+                              children: dropDownProvider.taskType.map((taskType) {
+                                bool isSelected = customerDetailsProvider
+                                        .selectedTaskType ==
+                                    taskType.taskTypeId;
+                                return InkWell(
+                                  onTap: () {
+                                    if (customerDetailsProvider.addTaskModel.taskUser !=
+                                        null) {
+                                      customerDetailsProvider.addTaskModel.taskUser!
+                                          .clear();
+                                    }
+                                    customerDetailsProvider.updateTaskType(
+                                        taskType.taskTypeId, taskType.taskTypeName);
 
-                                final defaultStatusId = taskType.defaultStatusId;
-                                customerDetailsProvider.updateAMCStatus(
-                                    defaultStatusId != 0 ? defaultStatusId : 1, '');
-                                
-                                _updateFilteredUsers();
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 18, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.bluebutton
-                                      : const Color(0xFFF3F5F7),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  taskType.taskTypeName ?? '',
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 14,
-                                    fontWeight: isSelected
-                                        ? FontWeight.w700
-                                        : FontWeight.w600,
-                                    color: isSelected
-                                        ? Colors.white
-                                        : Colors.grey[600],
+                                    final defaultStatusId = taskType.defaultStatusId;
+                                    customerDetailsProvider.updateAMCStatus(
+                                        defaultStatusId != 0 ? defaultStatusId : 1, '');
+                                    
+                                    _updateFilteredUsers();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.bluebutton
+                                          : const Color(0xFFF3F5F7),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      taskType.taskTypeName ?? '',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 13,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
+                                        color: isSelected
+                                            ? Colors.white
+                                            : Colors.grey[600],
+                                      ),
+                                    ),
                                   ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                                );
+                              }).toList(),
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -487,10 +303,10 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
 
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.all(20),
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
+                      borderRadius: BorderRadius.circular(16),
                       boxShadow: [
                         BoxShadow(
                           color: Colors.black.withOpacity(0.04),
@@ -512,110 +328,92 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                           ),
                         ),
                         const SizedBox(height: 16),
-                        ..._filteredUsers.take(4).map((worker) {
-                          bool isSelected = customerDetailsProvider
-                                  .addTaskModel.taskUser
-                                  ?.any((u) =>
-                                      u.userDetailsId ==
-                                      worker.userDetailsId) ??
-                              false;
-                          return Padding(
-                            padding: const EdgeInsets.only(bottom: 12.0),
-                            child: InkWell(
-                              onTap: () {
-                                final userInTask = UserInTaskModel(
-                                    userDetailsId: worker.userDetailsId,
-                                    userDetailsName: worker.userDetailsName);
-                                if (isSelected) {
-                                  customerDetailsProvider
-                                      .removeAssignedWorker(userInTask);
-                                } else {
-                                  customerDetailsProvider
-                                      .addAssignedWorker(userInTask);
-                                }
-                                setState(() {});
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(16),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColors.bluebutton.withOpacity(0.04)
-                                      : Colors.white,
-                                  borderRadius: BorderRadius.circular(14),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColors.bluebutton.withOpacity(0.2)
-                                        : Colors.grey.withOpacity(0.15),
-                                    width: 1,
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 20,
-                                      backgroundColor: Colors.grey[100],
-                                      child: Icon(Icons.person, color: Colors.grey[400], size: 24),
-                                    ),
-                                    const SizedBox(width: 14),
-                                    Expanded(
-                                      child: Text(
-                                        worker.userDetailsName ?? '',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          color: const Color(0xFF1E232C),
-                                        ),
-                                      ),
-                                    ),
-                                    Container(
-                                      width: 22,
-                                      height: 22,
+                        ConstrainedBox(
+                          constraints: BoxConstraints(
+                            maxHeight: MediaQuery.of(context).size.height * 0.35,
+                          ),
+                          child: SingleChildScrollView(
+                            child: Column(
+                              children: _filteredUsers.map((worker) {
+                                bool isSelected = customerDetailsProvider
+                                        .addTaskModel.taskUser
+                                        ?.any((u) =>
+                                            u.userDetailsId ==
+                                            worker.userDetailsId) ??
+                                    false;
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 10.0),
+                                  child: InkWell(
+                                    onTap: () {
+                                      final userInTask = UserInTaskModel(
+                                          userDetailsId: worker.userDetailsId,
+                                          userDetailsName: worker.userDetailsName);
+                                      if (isSelected) {
+                                        customerDetailsProvider
+                                            .removeAssignedWorker(userInTask);
+                                      } else {
+                                        customerDetailsProvider
+                                            .addAssignedWorker(userInTask);
+                                      }
+                                      setState(() {});
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.all(12),
                                       decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
+                                        color: isSelected
+                                            ? AppColors.bluebutton.withOpacity(0.04)
+                                            : Colors.white,
+                                        borderRadius: BorderRadius.circular(12),
                                         border: Border.all(
-                                          color: isSelected ? AppColors.bluebutton : Colors.grey[300]!,
-                                          width: isSelected ? 6 : 1.5,
+                                          color: isSelected
+                                              ? AppColors.bluebutton.withOpacity(0.2)
+                                              : Colors.grey.withOpacity(0.1),
+                                          width: 1,
                                         ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        }).toList(),
-                        
-                        const SizedBox(height: 8),
-                        
-                        InkWell(
-                          onTap: _showWorkerSelectionBottomSheet,
-                          child: CustomPaint(
-                            painter: DottedBorderPainter(
-                              color: Colors.grey[400]!,
-                              strokeWidth: 1,
-                              gap: 4,
-                            ),
-                            child: Container(
-                              width: double.infinity,
-                              padding: const EdgeInsets.all(16),
-                              child: Row(
-                                children: [
-                                  Icon(Icons.add, color: Colors.grey[400], size: 20),
-                                  const SizedBox(width: 14),
-                                  Text(
-                                    'Add new assignee',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w500,
-                                      color: Colors.grey[400],
-                                      fontStyle: FontStyle.italic,
+                                      child: Row(
+                                        children: [
+                                          CircleAvatar(
+                                            radius: 18,
+                                            backgroundColor: Colors.grey[100],
+                                            child: Icon(Icons.person,
+                                                color: Colors.grey[400], size: 20),
+                                          ),
+                                          const SizedBox(width: 12),
+                                          Expanded(
+                                            child: Text(
+                                              worker.userDetailsName ?? '',
+                                              style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: const Color(0xFF1E232C),
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: 20,
+                                            height: 20,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                              border: Border.all(
+                                                color: isSelected
+                                                    ? AppColors.bluebutton
+                                                    : Colors.grey[300]!,
+                                                width: isSelected ? 5 : 1.5,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ),
+                        
+
                       ],
                     ),
                   ),
@@ -625,7 +423,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
           ),
           
           Container(
-            padding: const EdgeInsets.all(24),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
@@ -638,7 +436,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
             ),
             child: SizedBox(
               width: double.infinity,
-              height: 56,
+              height: 50,
               child: ElevatedButton(
                 onPressed: _handleSave,
                 style: ElevatedButton.styleFrom(
@@ -672,42 +470,4 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
   }
 }
 
-class DottedBorderPainter extends CustomPainter {
-  final Color color;
-  final double strokeWidth;
-  final double gap;
 
-  DottedBorderPainter({
-    required this.color,
-    this.strokeWidth = 1,
-    this.gap = 4,
-  });
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final Paint paint = Paint()
-      ..color = color
-      ..strokeWidth = strokeWidth
-      ..style = PaintingStyle.stroke;
-
-    final Path path = Path()
-      ..addRRect(RRect.fromRectAndRadius(
-        Rect.fromLTWH(0, 0, size.width, size.height),
-        const Radius.circular(14),
-      ));
-
-    for (PathMetric pathMetric in path.computeMetrics()) {
-      double distance = 0;
-      while (distance < pathMetric.length) {
-        canvas.drawPath(
-          pathMetric.extractPath(distance, distance + gap),
-          paint,
-        );
-        distance += gap * 2;
-      }
-    }
-  }
-
-  @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
-}
