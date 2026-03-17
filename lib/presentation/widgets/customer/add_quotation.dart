@@ -471,79 +471,57 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     tilePadding: EdgeInsets.zero,
                     initiallyExpanded: false,
                     children: [
-                      const SizedBox(
-                        height: 5,
+                      CustomTextField(
+                        readOnly: false,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.systemPriceController,
+                        hintText: 'System price excluding KSEB paper work',
+                        labelText: '',
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              height: 54,
-                              controller:
-                                  customerDetailsProvider.systemPriceController,
-                              hintText:
-                                  'System price excluding KSEB paper work',
-                              labelText: '',
-                            ),
-                          ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .additionalStructureController,
-                              hintText: 'Additional Structure Work',
-                              labelText: '',
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                            ),
-                          ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider
+                            .additionalStructureController,
+                        hintText: 'Additional Structure Work',
+                        labelText: '',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
                         ],
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .feasibilityFeeController,
-                              hintText: 'Fee in KSEB for Feasibility study',
-                              labelText: '',
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .registrationFeeController,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              hintText:
-                                  'Registration Fee in KSEB-1000/- per kW (80% of amount will refund)',
-                              labelText: '',
-                            ),
-                          ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.feasibilityFeeController,
+                        hintText: 'Fee in KSEB for Feasibility study',
+                        labelText: '',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
                         ],
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.registrationFeeController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        hintText:
+                            'Registration Fee in KSEB – 1000/- per kW (80% refundable)',
+                        labelText: '',
                       ),
                       const SizedBox(height: 16),
                     ],

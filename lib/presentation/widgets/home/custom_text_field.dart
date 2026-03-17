@@ -80,27 +80,26 @@ class CustomTextField extends StatelessWidget {
             inputFormatters: inputFormatters,
             decoration: InputDecoration(
               // labelText: hintText,
-              label: RichText(
-                text: TextSpan(
-                  text: hintText.replaceAll('*',
-                      ''), // Regular text part (remove asterisk for normal part)
+              label: Text.rich(
+                TextSpan(
+                  text: hintText.replaceAll('*', ''),
                   style: GoogleFonts.plusJakartaSans(
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                     color: AppColors.textGrey4,
                   ),
                   children: <TextSpan>[
-                    if (hasAsterisk) // Only add the red asterisk if it's present
+                    if (hasAsterisk)
                       const TextSpan(
-                        text: ' *', // The asterisk part
-                        style: TextStyle(
-                            color: Colors.red), // Red color for asterisk
+                        text: ' *',
+                        style: TextStyle(color: Colors.red),
                       ),
                   ],
                 ),
-              ), // Hint displayed as label
+                softWrap: true,
+              ),
               floatingLabelBehavior:
-                  FloatingLabelBehavior.auto, // Always show the label
+                  FloatingLabelBehavior.always, // Always show the label
               hintText: labelText,
               suffixIcon: suffixIcon,
               hintStyle: GoogleFonts.plusJakartaSans(
@@ -109,7 +108,7 @@ class CustomTextField extends StatelessWidget {
                 color: AppColors.textGrey4,
               ),
               floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                fontSize: 16, // Slightly smaller size for floating label
+                fontSize: 14, // Slightly smaller size for floating label
                 fontWeight: FontWeight.w500,
                 color: AppColors.textGrey1, // Color for floating label
               ),

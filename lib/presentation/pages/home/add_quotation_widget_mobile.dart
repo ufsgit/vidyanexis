@@ -793,9 +793,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
 //additional expense
                 Column(
                   children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -803,9 +801,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       controller: customerDetailsProvider.systemPriceController,
                       labelText: 'System price excluding KSEB paper work',
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -814,9 +810,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                           customerDetailsProvider.additionalStructureController,
                       labelText: 'Additional Structure Work',
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -825,9 +819,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                           customerDetailsProvider.feasibilityFeeController,
                       labelText: 'Fee in KSEB for Feasibility study',
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -835,7 +827,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       controller:
                           customerDetailsProvider.registrationFeeController,
                       labelText:
-                          'Registration Fee in KSEB-1000/- per kW (80% of amount will refund)',
+                          'Registration Fee in KSEB – 1000/- per kW (80% refundable)',
                     ),
                     const SizedBox(height: 16),
                   ],
