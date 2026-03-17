@@ -1238,10 +1238,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     context,
                                                                 builder: (_) =>
                                                                     TaskCreationWidget(
-                                                                        isEdit:
-                                                                            false,
-                                                                        taskId:
-                                                                            '0'),
+                                                                  isEdit: false,
+                                                                  taskId: '0',
+                                                                ),
                                                               );
                                                             } else {
                                                               Navigator.push(
