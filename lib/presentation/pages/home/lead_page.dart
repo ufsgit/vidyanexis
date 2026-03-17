@@ -1087,6 +1087,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
+
                                                       _HoverMenuAnchor(
                                                         builder: (context,
                                                             controller, child) {

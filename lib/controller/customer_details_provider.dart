@@ -178,6 +178,30 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
+  void addAssignedWorker(UserInTaskModel user) {
+    addTaskModel.taskUser ??= [];
+    if (!addTaskModel.taskUser!.any((u) => u.userDetailsId == user.userDetailsId)) {
+      addTaskModel.taskUser!.add(user);
+      _selectedAssignWorker = user.userDetailsId;
+      _selectedAssignWorkerName = user.userDetailsName ?? '';
+      notifyListeners();
+    }
+  }
+
+  void removeAssignedWorker(UserInTaskModel user) {
+    addTaskModel.taskUser?.removeWhere((u) => u.userDetailsId == user.userDetailsId);
+    if (_selectedAssignWorker == user.userDetailsId) {
+      if (addTaskModel.taskUser?.isNotEmpty ?? false) {
+        _selectedAssignWorker = addTaskModel.taskUser!.first.userDetailsId;
+        _selectedAssignWorkerName = addTaskModel.taskUser!.first.userDetailsName ?? '';
+      } else {
+        _selectedAssignWorker = null;
+        _selectedAssignWorkerName = '';
+      }
+    }
+    notifyListeners();
+  }
+
   Future<void> savePaymentApi(
       PaymentModel payment, BuildContext context) async {
     try {
@@ -3219,10 +3243,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  removeAssignedWorker(UserInTaskModel taskUser) {
-    addTaskModel.taskUser?.remove(taskUser);
-    notifyListeners();
-  }
+
 
   Future<void> getForm(BuildContext context, String taskId) async {
     try {

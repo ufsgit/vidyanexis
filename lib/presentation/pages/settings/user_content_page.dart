@@ -39,92 +39,92 @@ class _UsersContentState extends State<UsersContent> {
 
   @override
   Widget build(BuildContext context) {
-    const double minContentWidth = 1300.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    const double minContentWidth = 1300.0;
     return LayoutBuilder(
       builder: (context, constraints) {
-        return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: SizedBox(
-            width: AppStyles.isWebScreen(context)
-                ? constraints.maxWidth < minContentWidth
-                    ? minContentWidth
-                    : constraints.maxWidth
-                : MediaQuery.of(context).size.width - 30,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        'Users',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      const Spacer(),
-                      Container(
-                        width: AppStyles.isWebScreen(context)
-                            ? 350
-                            : MediaQuery.of(context).size.width / 3.5,
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey[300]!),
-                        ),
-                        child: TextField(
-                          controller: settingsProvider.searchController,
-                          onChanged: (query) {
-                            settingsProvider.getUserDetails(query, context);
-                          },
-                          decoration: const InputDecoration(
-                            hintText: 'Search here....',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
-                            ),
-                          ),
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header section
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24.0),
+              child: Row(
+                children: [
+                  Text(
+                    'Users',
+                    style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textBlue800),
+                  ),
+                  const Spacer(),
+                  Container(
+                    width: AppStyles.isWebScreen(context)
+                        ? 350
+                        : MediaQuery.of(context).size.width / 3.5,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: TextField(
+                      controller: settingsProvider.searchController,
+                      onChanged: (query) {
+                        settingsProvider.getUserDetails(query, context);
+                      },
+                      decoration: const InputDecoration(
+                        hintText: 'Search here....',
+                        prefixIcon: Icon(Icons.search),
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 4,
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[1] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return SettingsAddUserWidget(
-                                  isEdit: false,
-                                  userId: '0',
-                                );
-                              },
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  if (settingsProvider.menuIsSaveMap[1] == 1)
+                    CustomOutlinedSvgButton(
+                      onPressed: () async {
+                        showDialog(
+                          barrierDismissible: false,
+                          context: context,
+                          builder: (BuildContext context) {
+                            return SettingsAddUserWidget(
+                              isEdit: false,
+                              userId: '0',
                             );
                           },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New User',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
-                        ),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
+                        );
+                      },
+                      svgPath: 'assets/images/Plus.svg',
+                      label: 'New User',
+                      breakpoint: 860,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20)),
+                      foregroundColor: Colors.white,
+                      backgroundColor: AppColors.primaryBlue,
+                      borderSide: BorderSide(color: AppColors.primaryBlue),
+                    ),
+                  const SizedBox(width: 16),
+                ],
+              ),
+            ),
+            const SizedBox(height: 24),
 
-                // Table section
-                AppStyles.isWebScreen(context)
+            // Table section
+            SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: SizedBox(
+                width: AppStyles.isWebScreen(context)
+                    ? constraints.maxWidth < minContentWidth
+                        ? minContentWidth
+                        : constraints.maxWidth
+                    : MediaQuery.of(context).size.width - 30,
+                child: AppStyles.isWebScreen(context)
                     ? Container(
                         decoration: BoxDecoration(
                           color: AppColors.techityfyGrey,
@@ -996,10 +996,10 @@ class _UsersContentState extends State<UsersContent> {
                             ),
                           ],
                         ),
-                      )
-              ],
+                      ),
+              ),
             ),
-          ),
+          ],
         );
       },
     );

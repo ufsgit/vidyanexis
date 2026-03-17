@@ -361,11 +361,12 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
         'Location',
         Icons.location_on,
       ),
-      _buildMenuItem(
-        context,
-        'Forms',
-        Icons.format_list_bulleted,
-      ),
+      if (settingsProvider.menuIsViewMap[85].toString() == '1')
+        _buildMenuItem(
+          context,
+          'Forms',
+          Icons.format_list_bulleted,
+        ),
       // if (settingsProvider.menuIsViewMap[28].toString() == '1')
       //   _buildMenuItem(context, 'Branch', Icons.document_scanner),
     ];

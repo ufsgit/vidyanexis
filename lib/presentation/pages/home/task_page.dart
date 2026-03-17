@@ -7,8 +7,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task.dart'
+    as customer_add_task;
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
+import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
@@ -409,8 +415,11 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         reportsProvider
                                                             .TaskType,
                                                       );
-                                                      reportsProvider.goToPage(1);
-                                                      reportsProvider.searchTaskByCustomer(context);
+                                                      reportsProvider
+                                                          .goToPage(1);
+                                                      reportsProvider
+                                                          .searchTaskByCustomer(
+                                                              context);
                                                     },
                                                     child: const Icon(
                                                         Icons.search,
@@ -602,16 +611,22 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       DropdownMenuItem<int>(
                                                         value: status.statusId,
                                                         child: ConstrainedBox(
-                                                          constraints: const BoxConstraints(maxWidth: 150),
+                                                          constraints:
+                                                              const BoxConstraints(
+                                                                  maxWidth:
+                                                                      150),
                                                           child: Text(
                                                             StatusUtils
                                                                 .getDisplayStatus(
                                                                     status.statusName ??
                                                                         ''),
-                                                            overflow: TextOverflow.ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             style:
                                                                 const TextStyle(
-                                                                    fontSize: 14),
+                                                                    fontSize:
+                                                                        14),
                                                           ),
                                                         ),
                                                       ))
@@ -632,20 +647,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                         ),
                                       ] +
                                       provider.followUpData
-                                          .map((status) =>
-                                              DropdownMenuItem<int>(
-                                                value: status.statusId,
-                                                child: ConstrainedBox(
-                                                  constraints: const BoxConstraints(maxWidth: 150),
-                                                  child: Text(
-                                                    StatusUtils.getDisplayStatus(
-                                                        status.statusName ?? ''),
-                                                    overflow: TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 14),
-                                                  ),
-                                                ),
-                                              ))
+                                          .map(
+                                              (status) => DropdownMenuItem<int>(
+                                                    value: status.statusId,
+                                                    child: ConstrainedBox(
+                                                      constraints:
+                                                          const BoxConstraints(
+                                                              maxWidth: 150),
+                                                      child: Text(
+                                                        StatusUtils
+                                                            .getDisplayStatus(
+                                                                status.statusName ??
+                                                                    ''),
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style: const TextStyle(
+                                                            fontSize: 14),
+                                                      ),
+                                                    ),
+                                                  ))
                                           .toList(),
                                   onChanged: (int? newValue) {
                                     if (newValue != null) {
@@ -661,7 +681,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           .toString(),
                                     );
                                     reportsProvider.goToPage(1);
-                                    reportsProvider.searchTaskByCustomer(context);
+                                    reportsProvider
+                                        .searchTaskByCustomer(context);
                                   },
                                   underline: Container(),
                                   isDense: true,
@@ -808,7 +829,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           .toString(),
                                     );
                                     reportsProvider.goToPage(1);
-                                    reportsProvider.searchTaskByCustomer(context);
+                                    reportsProvider
+                                        .searchTaskByCustomer(context);
                                   },
                                   underline: Container(),
                                   isDense: true,
@@ -852,13 +874,19 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       DropdownMenuItem<int>(
                                                         value: type.taskTypeId,
                                                         child: ConstrainedBox(
-                                                          constraints: const BoxConstraints(maxWidth: 150),
+                                                          constraints:
+                                                              const BoxConstraints(
+                                                                  maxWidth:
+                                                                      150),
                                                           child: Text(
                                                             type.taskTypeName,
-                                                            overflow: TextOverflow.ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                             style:
                                                                 const TextStyle(
-                                                                    fontSize: 14),
+                                                                    fontSize:
+                                                                        14),
                                                           ),
                                                         ),
                                                       ))
@@ -909,7 +937,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                           .toString(),
                                     );
                                     reportsProvider.goToPage(1);
-                                    reportsProvider.searchTaskByCustomer(context);
+                                    reportsProvider
+                                        .searchTaskByCustomer(context);
                                   },
                                   underline: Container(),
                                   isDense: true,
@@ -1007,9 +1036,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                 TableWidget(
                                     flex: 2,
                                     title: 'Customer',
-                                    fontSize: 12,
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 8.0),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 6.0, horizontal: 10.0),
+                                    alignment: Alignment.centerLeft,
                                     color: Colors.white),
                                 TableWidget(
                                     flex: 2,
@@ -1212,31 +1241,189 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     const EdgeInsets.symmetric(
                                                         vertical: 6.0,
                                                         horizontal: 8.0),
-                                                data: InkWell(
-                                                  onTap: () {
-                                                    if (task.customerId !=
-                                                        null) {
-                                                      context.push(
-                                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                    }
-                                                  },
-                                                  child: Text(
-                                                    task.customerName ??
-                                                        'Unknown',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      color: Colors.blue,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 12,
+                                                data: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: Container(
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFFEBF5FF),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(5),
+                                                        ),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                          horizontal: 10,
+                                                          vertical: 2,
+                                                        ),
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            if (task.customerId !=
+                                                                null) {
+                                                              context.push(
+                                                                  '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                            }
+                                                          },
+                                                          child: Text(
+                                                            task.customerName ??
+                                                                'Unknown',
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                            style:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.blue,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                              fontSize: 12,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
                                                     ),
-                                                  ),
+                                                    PopupMenuButton<String>(
+                                                      surfaceTintColor:
+                                                          Colors.white,
+                                                      color: Colors.white,
+                                                      tooltip: 'Actions',
+                                                      icon: const Icon(
+                                                        Icons
+                                                            .keyboard_arrow_down,
+                                                        size: 20,
+                                                        color: Colors.grey,
+                                                      ),
+                                                      onSelected:
+                                                          (String value) {
+                                                        final customerDetailsProvider =
+                                                            Provider.of<
+                                                                    CustomerDetailsProvider>(
+                                                                context,
+                                                                listen: false);
+                                                        if (value == 'edit') {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (_) =>
+                                                                AddTaskWidget(
+                                                              taskId: task
+                                                                  .taskMasterId,
+                                                            ),
+                                                          );
+                                                        } else if (value ==
+                                                            'quotation') {
+                                                          customerDetailsProvider
+                                                              .clearQuotationDetails();
+                                                          Navigator.push(
+                                                            context,
+                                                            MaterialPageRoute(
+                                                              builder: (BuildContext
+                                                                      context) =>
+                                                                  QuotationCreationWidget(
+                                                                quotationId:
+                                                                    '0',
+                                                                isEdit: false,
+                                                                customerId: task
+                                                                    .customerId
+                                                                    .toString(),
+                                                              ),
+                                                            ),
+                                                          );
+                                                        } else if (value ==
+                                                            'document') {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (BuildContext
+                                                                    context) =>
+                                                                ImageUploadAlert(
+                                                              customerId: task
+                                                                  .customerId
+                                                                  .toString(),
+                                                            ),
+                                                          );
+                                                        } else if (value ==
+                                                            'task') {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder: (_) =>
+                                                                customer_add_task
+                                                                    .TaskCreationWidget(
+                                                              isEdit: false,
+                                                              taskId: '0',
+                                                            ),
+                                                          );
+                                                        } else if (value ==
+                                                            'delete') {
+                                                          showDialog(
+                                                            context: context,
+                                                            builder:
+                                                                (BuildContext
+                                                                    context) {
+                                                              return ConfirmationDialog(
+                                                                title:
+                                                                    'Delete Task',
+                                                                content:
+                                                                    'Are you sure you want to delete this task?',
+                                                                onCancel: () =>
+                                                                    Navigator.pop(
+                                                                        context),
+                                                                onConfirm: () {
+                                                                  customerDetailsProvider
+                                                                      .deleteTask(
+                                                                          task.taskId
+                                                                              .toString(),
+                                                                          task.customerId
+                                                                              .toString(),
+                                                                          context)
+                                                                      .then(
+                                                                          (value) {
+                                                                    Navigator.pop(
+                                                                        context);
+                                                                    reportsProvider
+                                                                        .searchTaskByCustomer(
+                                                                            context);
+                                                                  });
+                                                                },
+                                                              );
+                                                            },
+                                                          );
+                                                        }
+                                                      },
+                                                      itemBuilder: (BuildContext
+                                                              context) =>
+                                                          <PopupMenuEntry<
+                                                              String>>[
+                                                        _buildPopupMenuItem(
+                                                            'edit',
+                                                            Icons.edit,
+                                                            'Edit Task',
+                                                            Colors.blue),
+                                                        _buildPopupMenuItem(
+                                                            'quotation',
+                                                            Icons.request_quote,
+                                                            'Quotation',
+                                                            Colors.orange),
+                                                        _buildPopupMenuItem(
+                                                            'document',
+                                                            Icons.description,
+                                                            'Document',
+                                                            Colors.purple),
+                                                        _buildPopupMenuItem(
+                                                            'delete',
+                                                            Icons.delete,
+                                                            'Delete',
+                                                            Colors.red),
+                                                      ],
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                               TableWidget(
-                                                flex: 2, // Changed from 1 to 2
+                                                flex: 2,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         vertical: 6.0,
@@ -1954,7 +2141,8 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 
-  void _showWebFormDialog(BuildContext context, FormModel form, TaskReportModel task) {
+  void _showWebFormDialog(
+      BuildContext context, FormModel form, TaskReportModel task) {
     // Initialize state mapping for field values
     Map<String, dynamic> fieldValues = {};
     for (var field in form.fields) {
@@ -1977,7 +2165,9 @@ class _tasksPageReportState extends State<TaskPage> {
               ),
               child: Container(
                 padding: const EdgeInsets.all(24),
-                width: isSmallScreen ? MediaQuery.of(context).size.width * 0.9 : 500,
+                width: isSmallScreen
+                    ? MediaQuery.of(context).size.width * 0.9
+                    : 500,
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -2006,16 +2196,20 @@ class _tasksPageReportState extends State<TaskPage> {
                               );
                               if (pickedDate != null) {
                                 setState(() {
-                                  fieldValues[field.id] = DateFormat('yyyy-MM-dd').format(pickedDate);
+                                  fieldValues[field.id] =
+                                      DateFormat('yyyy-MM-dd')
+                                          .format(pickedDate);
                                 });
                               }
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
                               decoration: BoxDecoration(
                                 color: const Color(0xFFF8FAFC),
                                 borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: const Color(0xFFE2E8F0)),
+                                border:
+                                    Border.all(color: const Color(0xFFE2E8F0)),
                               ),
                               child: Row(
                                 children: [
@@ -2023,12 +2217,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                     child: Text(
                                       fieldValues[field.id] ?? 'Select Date',
                                       style: TextStyle(
-                                        color: fieldValues[field.id] == null ? const Color(0xFF64748B) : Colors.black87,
+                                        color: fieldValues[field.id] == null
+                                            ? const Color(0xFF64748B)
+                                            : Colors.black87,
                                         fontSize: 14,
                                       ),
                                     ),
                                   ),
-                                  const Icon(Icons.calendar_today, color: Color(0xFFCBD5E1), size: 20),
+                                  const Icon(Icons.calendar_today,
+                                      color: Color(0xFFCBD5E1), size: 20),
                                 ],
                               ),
                             ),
@@ -2037,11 +2234,13 @@ class _tasksPageReportState extends State<TaskPage> {
                           List<String> options = field.options ?? [];
 
                           fieldWidget = Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 4),
                             decoration: BoxDecoration(
                               color: const Color(0xFFF8FAFC),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: DropdownButtonHideUnderline(
                               child: DropdownButton<String>(
@@ -2080,11 +2279,14 @@ class _tasksPageReportState extends State<TaskPage> {
                             decoration: BoxDecoration(
                               color: const Color(0xFFF8FAFC),
                               borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFE2E8F0)),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
                             child: TextField(
                               controller: fieldValues[field.id],
-                              keyboardType: field.type == FieldType.number ? TextInputType.number : TextInputType.text,
+                              keyboardType: field.type == FieldType.number
+                                  ? TextInputType.number
+                                  : TextInputType.text,
                               decoration: InputDecoration(
                                 hintText: field.label,
                                 hintStyle: const TextStyle(
@@ -2092,7 +2294,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                   fontSize: 14,
                                 ),
                                 border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                                contentPadding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 14),
                               ),
                             ),
                           );
@@ -2125,32 +2328,40 @@ class _tasksPageReportState extends State<TaskPage> {
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(24),
                               ),
-                              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
                             ),
                             onPressed: () {
-                              List<Map<String, dynamic>> customFieldsPayload = [];
+                              List<Map<String, dynamic>> customFieldsPayload =
+                                  [];
                               for (var field in form.fields) {
                                 String valueStr = '';
-                                if (field.type == FieldType.text || field.type == FieldType.number) {
-                                  valueStr = (fieldValues[field.id] as TextEditingController).text;
+                                if (field.type == FieldType.text ||
+                                    field.type == FieldType.number) {
+                                  valueStr = (fieldValues[field.id]
+                                          as TextEditingController)
+                                      .text;
                                 } else {
                                   valueStr = fieldValues[field.id] ?? '';
                                 }
 
                                 int typeId = 1;
                                 if (field.type == FieldType.number) typeId = 2;
-                                if (field.type == FieldType.dropdown) typeId = 3;
+                                if (field.type == FieldType.dropdown)
+                                  typeId = 3;
                                 if (field.type == FieldType.date) typeId = 4;
 
                                 customFieldsPayload.add({
-                                  "custom_field_id": int.tryParse(field.id) ?? 0,
+                                  "custom_field_id":
+                                      int.tryParse(field.id) ?? 0,
                                   "custom_field_name": field.label,
                                   "custom_field_type_id": typeId,
                                   "datavalue": valueStr,
                                 });
                               }
 
-                              Provider.of<FormProvider>(context, listen: false).saveTaskFormData(
+                              Provider.of<FormProvider>(context, listen: false)
+                                  .saveTaskFormData(
                                 context: context,
                                 taskId: task.taskId,
                                 formId: int.parse(form.id),
@@ -2324,9 +2535,10 @@ class _tasksPageReportState extends State<TaskPage> {
                           reportsProvider.fetchTaskTypes(tasktypeId, statusId,
                               customerId, enquiryForId, context);
                           reportsProvider.clearDescription();
-                          
+
                           // Also fetch forms for this customer
-                          final formProvider = Provider.of<FormProvider>(context, listen: false);
+                          final formProvider =
+                              Provider.of<FormProvider>(context, listen: false);
                           formProvider.getFormDataByCustomer(
                             task.customerId.toString(),
                             enquiryForId: task.enquiryForId.toString(),
@@ -2746,7 +2958,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                 builder: (context, formProvider, child) {
                                   if (formProvider.isLoadingForms) {
                                     return const Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 20),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 20),
                                       child: Center(
                                         child: CircularProgressIndicator(
                                           strokeWidth: 2,
@@ -2758,7 +2971,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                     return const SizedBox.shrink();
                                   }
                                   return Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Text('FORMS',
                                           style: TextStyle(
@@ -2769,28 +2983,38 @@ class _tasksPageReportState extends State<TaskPage> {
                                       Wrap(
                                         spacing: 8.0,
                                         runSpacing: 8.0,
-                                        children: formProvider.customerForms.map((form) {
+                                        children: formProvider.customerForms
+                                            .map((form) {
                                           return ElevatedButton.icon(
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: const Color(0xFF1A7AE8),
+                                              backgroundColor:
+                                                  const Color(0xFF1A7AE8),
                                               foregroundColor: Colors.white,
                                               elevation: 0,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 16, vertical: 10),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 16,
+                                                      vertical: 10),
                                               shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(10),
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
                                               ),
                                             ),
-                                            icon: const Icon(Icons.description, size: 16),
+                                            icon: const Icon(Icons.description,
+                                                size: 16),
                                             label: Text(
-                                              (form.name.isNotEmpty ? form.name : "Form").toUpperCase(),
+                                              (form.name.isNotEmpty
+                                                      ? form.name
+                                                      : "Form")
+                                                  .toUpperCase(),
                                               style: const TextStyle(
                                                 fontWeight: FontWeight.w700,
                                                 fontSize: 13,
                                               ),
                                             ),
                                             onPressed: () {
-                                              _showWebFormDialog(context, form, task);
+                                              _showWebFormDialog(
+                                                  context, form, task);
                                             },
                                           );
                                         }).toList(),
@@ -3611,6 +3835,20 @@ class _tasksPageReportState extends State<TaskPage> {
           ),
         ),
       ],
+    );
+  }
+
+  PopupMenuEntry<String> _buildPopupMenuItem(
+      String value, IconData icon, String text, Color color) {
+    return PopupMenuItem<String>(
+      value: value,
+      child: Row(
+        children: [
+          Icon(icon, size: 18, color: color),
+          const SizedBox(width: 8),
+          Text(text),
+        ],
+      ),
     );
   }
 }

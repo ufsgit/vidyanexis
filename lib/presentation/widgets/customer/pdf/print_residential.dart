@@ -339,8 +339,8 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             children: [
                               _summaryRow('Discount',
                                   quotation?.subsidyAmount.toString() ?? '0'),
-                              // _summaryRow('CGST',
-                              //     quotation?.totalCgstAmount.toString() ?? '0'),
+                              _summaryRow('CGST',
+                                  quotation?.totalCgstAmount.toString() ?? '0'),
                               _summaryRow('SGST',
                                   quotation?.totalSgstAmount.toString() ?? '0'),
                               _summaryRow('IGST',
