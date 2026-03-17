@@ -22,6 +22,10 @@ class CustomTextField extends StatelessWidget {
   final int? maxlength;
   final bool? enabled;
   final String? Function(String?)? validator;
+  final double? borderRadius;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
+
 
   const CustomTextField({
     super.key,
@@ -42,7 +46,11 @@ class CustomTextField extends StatelessWidget {
     this.maxlength,
     this.validator,
     this.enabled,
+    this.borderRadius,
+    this.borderColor,
+    this.focusedBorderColor,
   });
+
 
   @override
   Widget build(BuildContext context) {
@@ -111,28 +119,29 @@ class CustomTextField extends StatelessWidget {
                 color: AppColors.textGrey4,
               ),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                borderRadius: BorderRadius.circular(borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color: AppColors.textGrey2, // Border color
+                  color: borderColor ?? AppColors.textGrey2, // Border color
                   width: 1, // Border width
                 ),
               ),
               focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                borderRadius: BorderRadius.circular(borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color: AppColors.textGrey2, // Border color
+                  color: focusedBorderColor ?? AppColors.textGrey2, // Border color
                   width: 1, // Border width
                 ),
               ),
               enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10), // Rounded corners
+                borderRadius: BorderRadius.circular(borderRadius ?? 10), // Rounded corners
                 borderSide: BorderSide(
-                  color: AppStyles.isWebScreen(context)
+                  color: borderColor ?? (AppStyles.isWebScreen(context)
                       ? AppColors.textGrey2
-                      : AppColors.grey, // Border color
+                      : AppColors.grey), // Border color
                   width: 1, // Border width
                 ),
               ),
+
               contentPadding:
                   const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
             ),
