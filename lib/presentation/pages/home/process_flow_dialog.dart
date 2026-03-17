@@ -32,6 +32,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   bool isSaving = false;
   bool isInitialized = false;
   bool showScheduleNotes = false;
+  bool showDescription = false;
+  bool showFollowUpDate = false;
+
 
   @override
   void initState() {
@@ -45,7 +48,25 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           Provider.of<DropDownProvider>(context, listen: false);
       final formProvider = Provider.of<FormProvider>(context, listen: false);
 
-      reportsProvider.clearDescription();
+      reportsProvider.descriptionController.text = widget.task.description;
+      if (widget.task.description.isNotEmpty) {
+        showDescription = true;
+      }
+
+      if (widget.task.nextFollowupDate != null &&
+          widget.task.nextFollowupDate!.isNotEmpty) {
+        try {
+          DateTime dt = DateTime.parse(widget.task.nextFollowupDate!);
+          reportsProvider.followUpDateController.text =
+              DateFormat('dd MMM yyyy').format(dt);
+          showFollowUpDate = true;
+        } catch (e) {
+          reportsProvider.followUpDateController.text =
+              widget.task.nextFollowupDate!;
+          showFollowUpDate = true;
+        }
+      }
+
       dropDownProvider.getDocumentType(context);
 
       debugPrint(
@@ -338,9 +359,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                           ),
 
                           // --- Section: Schedule & Notes ---
-
-
-                          // Schedule & Notes Grouped Dropdown
                           _buildExpansionCard(
                             onTap: () {
                               setState(() {
@@ -353,7 +371,31 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             children: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildFieldLabel('FollowUp Date'),
+                                _buildFieldLabel('Next FollowUp Date'),
+                                if (widget.task.nextFollowupDate != null &&
+                                    widget.task.nextFollowupDate!.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 8.0, left: 16.0),
+                                    child: Text(
+                                      (() {
+                                        try {
+                                          DateTime dt = DateTime.parse(
+                                              widget.task.nextFollowupDate!);
+                                          return DateFormat('dd MMM yyyy')
+                                              .format(dt);
+                                        } catch (e) {
+                                          return widget.task.nextFollowupDate!;
+                                        }
+                                      })(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+
                                 _buildInputField(
                                   controller:
                                       reportsProvider.followUpDateController,
@@ -370,7 +412,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         return Theme(
                                           data: Theme.of(context).copyWith(
                                             colorScheme: const ColorScheme.light(
-                                              primary: Color(0xCC1A7AE8),
+                                              primary: Color(0xFF1A7AE8),
                                             ),
                                           ),
                                           child: child!,
@@ -400,70 +442,66 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                           Consumer<FormProvider>(
                             builder: (context, formProvider, child) {
+                              if (formProvider.isLoadingForms) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                );
+                              }
+                              if (formProvider.customerForms.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildSectionHeader('FORMS'),
-                                  const SizedBox(height: 8),
-                                  if (formProvider.isLoadingForms)
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 14,
-                                            height: 14,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
+                                  const SizedBox(height: 12),
+                                  Wrap(
+                                    spacing: 8.0,
+                                    runSpacing: 8.0,
+                                    children:
+                                        formProvider.customerForms.map((form) {
+                                      return ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xFF1A7AE8),
+                                          foregroundColor: Colors.white,
+                                          elevation: 0,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                          SizedBox(width: 12),
-                                          Text("Loading available forms...",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.w500)),
-                                        ],
-                                      ),
-                                    )
-                                  else if (formProvider.customerForms.isEmpty)
-                                    const Text("No forms available",
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey))
-                                  else
-                                    Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 8.0,
-                                      children: formProvider.customerForms
-                                          .map((form) {
-                                        return ElevatedButton.icon(
-                                          onPressed: () {
-                                            _showTestFormDialog(context, form);
-                                          },
-                                          icon: const Icon(Icons.description,
-                                              size: 16),
-                                          label: Text(form.name),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0xFF1A7AE8),
-                                            foregroundColor: Colors.white,
-                                            elevation: 0,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 8),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
+                                        ),
+                                        icon: const Icon(Icons.description,
+                                            size: 16),
+                                        label: Text(
+                                          (form.name.isNotEmpty
+                                                  ? form.name
+                                                  : "Form")
+                                              .toUpperCase(),
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
                                           ),
-                                        );
-                                      }).toList(),
-                                    ),
-                                  const SizedBox(height: 8),
+                                        ),
+                                        onPressed: () {
+                                          _showTestFormDialog(context, form);
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
+                                  const SizedBox(height: 16),
                                 ],
                               );
                             },
                           ),
+
 
                           // --- Section: Pending Documents ---
                           Consumer<TaskPageProvider>(

@@ -13,6 +13,7 @@ import '../../../controller/customer_details_provider.dart';
 import '../../widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 
 
@@ -514,160 +515,30 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                         );
                                       },
                                     )
-                                  : ListView.builder(
+                                  : ListView.separated(
                                       shrinkWrap: true,
                                       physics:
                                           const NeverScrollableScrollPhysics(),
                                       itemCount:
                                           customerDetailsProvider.items.length,
+                                      separatorBuilder: (context, index) =>
+                                          const SizedBox(height: 12),
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 8),
                                       itemBuilder: (context, index) {
                                         final item = customerDetailsProvider
                                             .items[index];
-                                        return Container(
-                                          padding: const EdgeInsets.all(12),
-                                          margin:
-                                              const EdgeInsets.only(bottom: 10),
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: Colors.grey
-                                                    .withOpacity(0.1),
-                                                spreadRadius: 1,
-                                                blurRadius: 4,
-                                                offset: const Offset(0, 2),
-                                              ),
-                                            ],
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Row(
-                                                children: [
-                                                  Expanded(
-                                                    child: Text(
-                                                      item.ItemName,
-                                                      style: const TextStyle(
-                                                        fontSize: 16,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'Qty: ${item.Quantity} ${item.Unit}',
-                                                    style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'Price: ₹${item.UnitPrice.toStringAsFixed(2)}',
-                                                    style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  Text(
-                                                    'GST (${item.GSTPercent}%): ₹${item.GST.toStringAsFixed(2)}',
-                                                    style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    'AdCESS: ₹${item.AdCESS.toStringAsFixed(2)}',
-                                                    style: TextStyle(
-                                                      color: Colors.grey[600],
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 4),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
-                                                children: [
-                                                  const Text(
-                                                    'Total:',
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black54,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    '₹${item.Amount.toStringAsFixed(2)}',
-                                                    style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      color: Colors.black54,
-                                                      fontSize: 14,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              const SizedBox(height: 8),
-                                              Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.end,
-                                                children: [
-                                                  TextButton.icon(
-                                                    onPressed: () =>
-                                                        customerDetailsProvider
-                                                            .populateItemFieldsForEditing(
-                                                                index),
-                                                    icon: Icon(Icons.edit,
-                                                        size: 18,
-                                                        color:
-                                                            Colors.blue[400]),
-                                                    label: Text(
-                                                      'Edit',
-                                                      style: TextStyle(
-                                                        color: Colors.blue[400],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  TextButton.icon(
-                                                    onPressed: () =>
-                                                        customerDetailsProvider
-                                                            .deleteItem(index),
-                                                    icon: Icon(Icons.delete,
-                                                        size: 18,
-                                                        color: Colors.red[400]),
-                                                    label: Text(
-                                                      'Delete',
-                                                      style: TextStyle(
-                                                        color: Colors.red[400],
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
+                                        return QuotationItemCard(
+                                          item: item,
+                                          onEdit: () {
+                                            customerDetailsProvider
+                                                .populateItemFieldsForEditing(
+                                                    index);
+                                          },
+                                          onDelete: () {
+                                            customerDetailsProvider
+                                                .deleteItem(index);
+                                          },
                                         );
                                       },
                                     ),
@@ -922,9 +793,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
 //additional expense
                 Column(
                   children: [
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -932,9 +801,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       controller: customerDetailsProvider.systemPriceController,
                       labelText: 'System price excluding KSEB paper work',
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -943,9 +810,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                           customerDetailsProvider.additionalStructureController,
                       labelText: 'Additional Structure Work',
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -954,9 +819,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                           customerDetailsProvider.feasibilityFeeController,
                       labelText: 'Fee in KSEB for Feasibility study',
                     ),
-                    const SizedBox(
-                      height: 5,
-                    ),
+                    const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(
                       readOnly: false,
                       keyBoardType: TextInputType.number,
@@ -964,7 +827,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       controller:
                           customerDetailsProvider.registrationFeeController,
                       labelText:
-                          'Registration Fee in KSEB-1000/- per kW (80% of amount will refund)',
+                          'Registration Fee in KSEB – 1000/- per kW (80% refundable)',
                     ),
                     const SizedBox(height: 16),
                   ],

@@ -14,6 +14,9 @@ import 'package:vidyanexis/controller/models/field_value_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/commercial_item_card.dart';
+import 'package:vidyanexis/presentation/widgets/customer/scope_of_work_card.dart';
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -468,79 +471,57 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     tilePadding: EdgeInsets.zero,
                     initiallyExpanded: false,
                     children: [
-                      const SizedBox(
-                        height: 5,
+                      CustomTextField(
+                        readOnly: false,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.systemPriceController,
+                        hintText: 'System price excluding KSEB paper work',
+                        labelText: '',
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              height: 54,
-                              controller:
-                                  customerDetailsProvider.systemPriceController,
-                              hintText:
-                                  'System price excluding KSEB paper work',
-                              labelText: '',
-                            ),
-                          ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .additionalStructureController,
-                              hintText: 'Additional Structure Work',
-                              labelText: '',
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                            ),
-                          ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider
+                            .additionalStructureController,
+                        hintText: 'Additional Structure Work',
+                        labelText: '',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
                         ],
                       ),
-                      const SizedBox(
-                        height: 10,
-                      ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .feasibilityFeeController,
-                              hintText: 'Fee in KSEB for Feasibility study',
-                              labelText: '',
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                            ),
-                          ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .registrationFeeController,
-                              keyboardType: TextInputType.number,
-                              inputFormatters: [
-                                FilteringTextInputFormatter.digitsOnly
-                              ],
-                              hintText:
-                                  'Registration Fee in KSEB-1000/- per kW (80% of amount will refund)',
-                              labelText: '',
-                            ),
-                          ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.feasibilityFeeController,
+                        hintText: 'Fee in KSEB for Feasibility study',
+                        labelText: '',
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
                         ],
+                      ),
+                      const SizedBox(height: 16),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller:
+                            customerDetailsProvider.registrationFeeController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly
+                        ],
+                        hintText:
+                            'Registration Fee in KSEB – 1000/- per kW (80% refundable)',
+                        labelText: '',
                       ),
                       const SizedBox(height: 16),
                     ],
@@ -1657,101 +1638,23 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 ),
               ),
               const SizedBox(height: 16),
-              ListView.builder(
+              ListView.separated(
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 itemCount: customerDetailsProvider.items.length,
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 12),
                 itemBuilder: (context, index) {
                   final item = customerDetailsProvider.items[index];
-                  return Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    margin: const EdgeInsets.only(bottom: 10),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            item.ItemName,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Quantity: ${item.Quantity}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Unit Price: ₹${item.UnitPrice.toStringAsFixed(2)}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'GST: ₹${item.GST.toStringAsFixed(2)}',
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black54,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Total: ₹${item.Amount.toStringAsFixed(2)}',
-                            textAlign: TextAlign.end,
-                            overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 5),
-                        TextButton(
-                          onPressed: () => customerDetailsProvider
-                              .populateItemFieldsForEditing(index),
-                          child: Text(
-                            'Edit',
-                            style: TextStyle(
-                              color: Colors.blue[400],
-                            ),
-                          ),
-                        ),
-                        TextButton(
-                          onPressed: () =>
-                              customerDetailsProvider.deleteItem(index),
-                          child: Text(
-                            'Delete',
-                            style: TextStyle(
-                              color: Colors.red[400],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                  return QuotationItemCard(
+                    item: item,
+                    onEdit: () {
+                      customerDetailsProvider
+                          .populateItemFieldsForEditing(index);
+                    },
+                    onDelete: () {
+                      customerDetailsProvider.deleteItem(index);
+                    },
                   );
                 },
               ),
@@ -2193,101 +2096,22 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             ),
           ),
           const SizedBox(height: 16),
-          ListView.builder(
+          ListView.separated(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: customerDetailsProvider.commercialItems.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
             itemBuilder: (context, index) {
               final item = customerDetailsProvider.commercialItems[index];
-              return Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.description ?? '',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'AC Capacity: ${item.acCapacity}',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'DC Capacity: ${item.dcCapacity}',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Unit Price: ₹${item.unitPrice}',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black54,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Total: ₹${item.total}',
-                        textAlign: TextAlign.end,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 5),
-                    TextButton(
-                      onPressed: () => customerDetailsProvider
-                          .populateCommercialItemFieldsForEditing(index),
-                      child: Text(
-                        'Edit',
-                        style: TextStyle(
-                          color: Colors.blue[400],
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () =>
-                          customerDetailsProvider.deleteCommercialItem(index),
-                      child: Text(
-                        'Delete',
-                        style: TextStyle(
-                          color: Colors.red[400],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              return CommercialItemCard(
+                item: item,
+                onEdit: () {
+                  customerDetailsProvider
+                      .populateCommercialItemFieldsForEditing(index);
+                },
+                onDelete: () {
+                  customerDetailsProvider.deleteCommercialItem(index);
+                },
               );
             },
           ),
@@ -2536,63 +2360,15 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             itemCount: customerDetailsProvider.scopeOfWorkItems.length,
             itemBuilder: (context, index) {
               final item = customerDetailsProvider.scopeOfWorkItems[index];
-              return Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                margin: const EdgeInsets.only(bottom: 10),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        item.designAndEngineering ?? '',
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Text(
-                      '${item.a3SScope}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    Text(
-                      '${item.clientScope}',
-                      style: TextStyle(
-                        color: Colors.grey[600],
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    const SizedBox(width: 5),
-                    TextButton(
-                      onPressed: () => customerDetailsProvider
-                          .populateScopeOfWorkItemFieldsForEditing(index),
-                      child: Text(
-                        'Edit',
-                        style: TextStyle(
-                          color: Colors.blue[400],
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () =>
-                          customerDetailsProvider.deleteScopeOfWorkItem(index),
-                      child: Text(
-                        'Delete',
-                        style: TextStyle(
-                          color: Colors.red[400],
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+              return ScopeOfWorkCard(
+                item: item,
+                onEdit: () {
+                  customerDetailsProvider
+                      .populateScopeOfWorkItemFieldsForEditing(index);
+                },
+                onDelete: () {
+                  customerDetailsProvider.deleteScopeOfWorkItem(index);
+                },
               );
             },
           ),
