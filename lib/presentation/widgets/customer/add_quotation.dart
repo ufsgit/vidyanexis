@@ -159,136 +159,128 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       const SizedBox(
                         height: 16,
                       ),
-                      Row(
-                        children: [
-                          Expanded(
-                            child: CustomTextField(
-                              readOnly: false,
-                              height: 54,
-                              controller: customerDetailsProvider
-                                  .qproductnameController,
-                              hintText: 'Product name*',
-                              labelText: '',
-                            ),
+                      CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: customerDetailsProvider
+                            .qproductnameController,
+                        hintText: 'Product name*',
+                        labelText: '',
+                      ),
+                      const SizedBox(height: 16.0),
+                      DropdownButtonFormField<int>(
+                        value: (customerDetailsProvider
+                                        .selectedQuotationStatus !=
+                                    null &&
+                                [1, 2, 3].contains(customerDetailsProvider
+                                    .selectedQuotationStatus))
+                            ? customerDetailsProvider
+                                .selectedQuotationStatus
+                            : 1,
+                        items: const [
+                          DropdownMenuItem<int>(
+                            value: 1,
+                            child: Text('Pending'),
                           ),
-                          const SizedBox(width: 16.0),
-                          Expanded(
-                            child: DropdownButtonFormField<int>(
-                              value: (customerDetailsProvider
-                                              .selectedQuotationStatus !=
-                                          null &&
-                                      [1, 2, 3].contains(customerDetailsProvider
-                                          .selectedQuotationStatus))
-                                  ? customerDetailsProvider
-                                      .selectedQuotationStatus
-                                  : 1,
-                              items: const [
-                                DropdownMenuItem<int>(
-                                  value: 1,
-                                  child: Text('Pending'),
-                                ),
-                                DropdownMenuItem<int>(
-                                  value: 3,
-                                  child: Text('Rejected'),
-                                ),
-                                DropdownMenuItem<int>(
-                                  value: 2,
-                                  child: Text('Approved'),
-                                ),
-                              ],
-                              // items: dropDownProvider.amcStatus
-                              //     .map((status) => DropdownMenuItem<int>(
-                              //           value: status.amcStatusId,
-                              //           child: Text(
-                              //             status.amcStatusName,
-                              //             style: TextStyle(fontSize: 14),
-                              //           ),
-                              //         ))
-                              //     .toList(),
-                              onChanged: (int? newValue) {
-                                // if (newValue != null) {
-                                //   final selectedAmcStatus = dropDownProvider.amcStatus
-                                //       .firstWhere((task) => task.amcStatusId == newValue);
-                                //   customerDetailsProvider.updateQuotationStatus(
-                                //       newValue, selectedAmcStatus.amcStatusName);
-                                // }
-                                if (newValue != null) {
-                                  customerDetailsProvider
-                                      .updateQuotationStatus(newValue);
-                                }
-                              },
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14, // Custom font size
-                                fontWeight:
-                                    FontWeight.w600, // Custom font weight
-                                color: AppColors
-                                    .textBlack, // Custom color for selected item
-                              ),
-                              decoration: InputDecoration(
-                                label: RichText(
-                                  text: TextSpan(
-                                    text: 'Choose Status',
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textGrey3,
-                                    ),
-                                    children: const <TextSpan>[
-                                      TextSpan(
-                                        text: ' *', // The asterisk part
-                                        style: TextStyle(
-                                            color: Colors
-                                                .red), // Red color for asterisk
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                floatingLabelBehavior: FloatingLabelBehavior
-                                    .auto, // Always show the label
-                                floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                                  fontSize:
-                                      16, // Slightly smaller size for floating label
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors
-                                      .textGrey1, // Color for floating label
-                                ),
-                                labelStyle: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.textGrey3,
-                                ),
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      10), // Rounded corners
-                                  borderSide: BorderSide(
-                                    color: AppColors.textGrey2, // Border color
-                                    width: 1, // Border width
-                                  ),
-                                ),
-                                focusedBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      10), // Rounded corners
-                                  borderSide: BorderSide(
-                                    color: AppColors.textGrey2, // Border color
-                                    width: 1, // Border width
-                                  ),
-                                ),
-                                enabledBorder: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(
-                                      10), // Rounded corners
-                                  borderSide: BorderSide(
-                                    color: AppColors.textGrey2, // Border color
-                                    width: 1, // Border width
-                                  ),
-                                ),
-                                contentPadding: const EdgeInsets.symmetric(
-                                    vertical: 18, horizontal: 12),
-                              ),
-                              isDense: true,
-                              iconSize: 18,
-                            ),
+                          DropdownMenuItem<int>(
+                            value: 3,
+                            child: Text('Rejected'),
+                          ),
+                          DropdownMenuItem<int>(
+                            value: 2,
+                            child: Text('Approved'),
                           ),
                         ],
+                        // items: dropDownProvider.amcStatus
+                        //     .map((status) => DropdownMenuItem<int>(
+                        //           value: status.amcStatusId,
+                        //           child: Text(
+                        //             status.amcStatusName,
+                        //             style: TextStyle(fontSize: 14),
+                        //           ),
+                        //         ))
+                        //     .toList(),
+                        onChanged: (int? newValue) {
+                          // if (newValue != null) {
+                          //   final selectedAmcStatus = dropDownProvider.amcStatus
+                          //       .firstWhere((task) => task.amcStatusId == newValue);
+                          //   customerDetailsProvider.updateQuotationStatus(
+                          //       newValue, selectedAmcStatus.amcStatusName);
+                          // }
+                          if (newValue != null) {
+                            customerDetailsProvider
+                                .updateQuotationStatus(newValue);
+                          }
+                        },
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14, // Custom font size
+                          fontWeight:
+                              FontWeight.w600, // Custom font weight
+                          color: AppColors
+                              .textBlack, // Custom color for selected item
+                        ),
+                        decoration: InputDecoration(
+                          label: RichText(
+                            text: TextSpan(
+                              text: 'Choose Status',
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: AppColors.textGrey3,
+                              ),
+                              children: const <TextSpan>[
+                                TextSpan(
+                                  text: ' *', // The asterisk part
+                                  style: TextStyle(
+                                      color: Colors
+                                          .red), // Red color for asterisk
+                                ),
+                              ],
+                            ),
+                          ),
+                          floatingLabelBehavior: FloatingLabelBehavior
+                              .auto, // Always show the label
+                          floatingLabelStyle: GoogleFonts.plusJakartaSans(
+                            fontSize:
+                                16, // Slightly smaller size for floating label
+                            fontWeight: FontWeight.w500,
+                            color: AppColors
+                                .textGrey1, // Color for floating label
+                          ),
+                          labelStyle: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: AppColors.textGrey3,
+                          ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                                10), // Rounded corners
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2, // Border color
+                              width: 1, // Border width
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                                10), // Rounded corners
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2, // Border color
+                              width: 1, // Border width
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(
+                                10), // Rounded corners
+                            borderSide: BorderSide(
+                              color: AppColors.textGrey2, // Border color
+                              width: 1, // Border width
+                            ),
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(
+                              vertical: 18, horizontal: 12),
+                        ),
+                        isDense: true,
+                        iconSize: 18,
                       ),
                       const SizedBox(height: 16),
                       Row(children: [
