@@ -186,7 +186,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: TaskPageReport()),
         ),
-      if (settingsProvider.menuIsViewMap[7].toString() == '1')
+      if (settingsProvider.menuIsViewMap[89].toString() == '1')
         SidebarOption(
           title: 'Task Summary Reports',
           iconPath: 'assets/images/Reports.svg',

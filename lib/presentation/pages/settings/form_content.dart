@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 // import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 import '../../../controller/models/form_model.dart';
@@ -28,6 +29,7 @@ class _FormContentState extends State<FormContent> {
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
     final formProvider = Provider.of<FormProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
     final filteredForms = formProvider.filteredForms;
 
     return LayoutBuilder(
@@ -79,38 +81,38 @@ class _FormContentState extends State<FormContent> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      // Add New Form Button
-                      Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: Colors.orange, // 🔥 Orange theme
-                          borderRadius: BorderRadius.circular(25),
-                        ),
-                        child: TextButton.icon(
-                          onPressed: () {
-                            showDialog(
-                              context: context,
-                              builder: (dialogContext) {
-                                return const AddFormSettingsWidget();
-                              },
-                            );
-                          },
-                          icon: const Icon(Icons.add, color: Colors.white),
-                          label: const Text(
-                            "New Form",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w600,
+                      if (settingsProvider.menuIsSaveMap[85].toString() == '1')
+                        Container(
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: Colors.orange, // 🔥 Orange theme
+                            borderRadius: BorderRadius.circular(25),
+                          ),
+                          child: TextButton.icon(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (dialogContext) {
+                                  return const AddFormSettingsWidget();
+                                },
+                              );
+                            },
+                            icon: const Icon(Icons.add, color: Colors.white),
+                            label: const Text(
+                              "New Form",
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(horizontal: 20),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(25),
+                              ),
                             ),
                           ),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(25),
-                            ),
-                          ),
                         ),
-                      ),
                       const SizedBox(width: 16),
                     ],
                   ),
@@ -212,65 +214,67 @@ class _FormContentState extends State<FormContent> {
                                     ),
 
                                     // Action Buttons
-                                    TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AddFormSettingsWidget(
-                                                existingForm: formModel,
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Edit',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.primaryBlue),
-                                        )),
-                                    TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'Confirm Delete'),
-                                                content: const Text(
-                                                    'Are you sure you want to delete this form?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    child: const Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      formProvider.deleteForm(
-                                                          formModel.id);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text(
-                                                      'Delete',
-                                                      style: TextStyle(
-                                                          color: Colors.red),
+                                    if (settingsProvider.menuIsEditMap[85].toString() == '1')
+                                      TextButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              barrierDismissible: false,
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AddFormSettingsWidget(
+                                                  existingForm: formModel,
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            'Edit',
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.primaryBlue),
+                                          )),
+                                    if (settingsProvider.menuIsDeleteMap[85].toString() == '1')
+                                      TextButton(
+                                          onPressed: () {
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return AlertDialog(
+                                                  title: const Text(
+                                                      'Confirm Delete'),
+                                                  content: const Text(
+                                                      'Are you sure you want to delete this form?'),
+                                                  actions: [
+                                                    TextButton(
+                                                      onPressed: () =>
+                                                          Navigator.pop(context),
+                                                      child: const Text('Cancel'),
                                                     ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Delete',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.textRed),
-                                        ))
+                                                    TextButton(
+                                                      onPressed: () {
+                                                        formProvider.deleteForm(
+                                                            formModel.id);
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: const Text(
+                                                        'Delete',
+                                                        style: TextStyle(
+                                                            color: Colors.red),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                );
+                                              },
+                                            );
+                                          },
+                                          child: Text(
+                                            'Delete',
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.textRed),
+                                          ))
                                   ],
                                 ),
                               ),
