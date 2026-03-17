@@ -46,7 +46,25 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           Provider.of<DropDownProvider>(context, listen: false);
       final formProvider = Provider.of<FormProvider>(context, listen: false);
 
-      reportsProvider.clearDescription();
+      reportsProvider.descriptionController.text = widget.task.description;
+      if (widget.task.description.isNotEmpty) {
+        showDescription = true;
+      }
+
+      if (widget.task.nextFollowupDate != null &&
+          widget.task.nextFollowupDate!.isNotEmpty) {
+        try {
+          DateTime dt = DateTime.parse(widget.task.nextFollowupDate!);
+          reportsProvider.followUpDateController.text =
+              DateFormat('dd MMM yyyy').format(dt);
+          showFollowUpDate = true;
+        } catch (e) {
+          reportsProvider.followUpDateController.text =
+              widget.task.nextFollowupDate!;
+          showFollowUpDate = true;
+        }
+      }
+
       dropDownProvider.getDocumentType(context);
 
       debugPrint(
@@ -362,37 +380,67 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               });
                             },
                             isExpanded: showFollowUpDate,
-                            title: 'FollowUp Date',
+                            title: 'Next FollowUp Date',
                             icon: Icons.calendar_today_outlined,
-                            children: _buildInputField(
-                              controller:
-                                  reportsProvider.followUpDateController,
-                              hint: 'Choose FollowUp Date',
-                              icon: Icons.calendar_today,
-                              readOnly: true,
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime.now(),
-                                  lastDate: DateTime(2101),
-                                  builder: (context, child) {
-                                    return Theme(
-                                      data: Theme.of(context).copyWith(
-                                        colorScheme: const ColorScheme.light(
-                                          primary: Color(0xCC1A7AE8),
-                                        ),
+                            children: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (widget.task.nextFollowupDate != null &&
+                                    widget.task.nextFollowupDate!.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 8.0, left: 16.0),
+                                    child: Text(
+                                      (() {
+                                        try {
+                                          DateTime dt = DateTime.parse(
+                                              widget.task.nextFollowupDate!);
+                                          return DateFormat('dd MMM yyyy')
+                                              .format(dt);
+                                        } catch (e) {
+                                          return widget.task.nextFollowupDate!;
+                                        }
+                                      })(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
                                       ),
-                                      child: child!,
+                                    ),
+                                  ),
+                                _buildInputField(
+                                  controller:
+                                      reportsProvider.followUpDateController,
+                                  hint: 'Choose FollowUp Date',
+                                  icon: Icons.calendar_today,
+                                  readOnly: true,
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime(2101),
+                                      builder: (context, child) {
+                                        return Theme(
+                                          data: Theme.of(context).copyWith(
+                                            colorScheme:
+                                                const ColorScheme.light(
+                                              primary: Color(0xCC1A7AE8),
+                                            ),
+                                          ),
+                                          child: child!,
+                                        );
+                                      },
                                     );
+                                    if (pickedDate != null) {
+                                      reportsProvider
+                                              .followUpDateController.text =
+                                          DateFormat('dd MMM yyyy')
+                                              .format(pickedDate);
+                                    }
                                   },
-                                );
-                                if (pickedDate != null) {
-                                  reportsProvider.followUpDateController.text =
-                                      DateFormat('dd MMM yyyy')
-                                          .format(pickedDate);
-                                }
-                              },
+                                ),
+                              ],
                             ),
                           ),
 
@@ -419,65 +467,60 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                           Consumer<FormProvider>(
                             builder: (context, formProvider, child) {
+                              if (formProvider.isLoadingForms) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                );
+                              }
+                              if (formProvider.customerForms.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildSectionHeader('FORMS'),
                                   const SizedBox(height: 12),
-                                  if (formProvider.isLoadingForms)
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 14,
-                                            height: 14,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
+                                  Wrap(
+                                    spacing: 8.0,
+                                    runSpacing: 8.0,
+                                    children:
+                                        formProvider.customerForms.map((form) {
+                                      return ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xFF1A7AE8),
+                                          foregroundColor: Colors.white,
+                                          elevation: 0,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                          SizedBox(width: 12),
-                                          Text("Loading available forms...",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.w500)),
-                                        ],
-                                      ),
-                                    )
-                                  else if (formProvider.customerForms.isEmpty)
-                                    const Text("No forms available",
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey))
-                                  else
-                                    Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 8.0,
-                                      children: formProvider.customerForms
-                                          .map((form) {
-                                        return ElevatedButton.icon(
-                                          onPressed: () {
-                                            _showTestFormDialog(context, form);
-                                          },
-                                          icon: const Icon(Icons.description,
-                                              size: 16),
-                                          label: Text(form.name),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0xFF1A7AE8),
-                                            foregroundColor: Colors.white,
-                                            elevation: 0,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 8),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
+                                        ),
+                                        icon: const Icon(Icons.description,
+                                            size: 16),
+                                        label: Text(
+                                          (form.name.isNotEmpty
+                                                  ? form.name
+                                                  : "Form")
+                                              .toUpperCase(),
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
                                           ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                        ),
+                                        onPressed: () {
+                                          _showTestFormDialog(context, form);
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
                                   const SizedBox(height: 16),
                                 ],
                               );

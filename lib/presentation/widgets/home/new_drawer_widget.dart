@@ -153,13 +153,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
     final validation2 =
         customFieldEnquirySourceKey.currentState?.validateForm();
 
-    if (leadProvider.leadNameController.text.isEmpty) {
-      errorMessage = 'Lead name is required';
-    } else if (dropDownProvider.selectedEnquirySourceId == null) {
-      errorMessage = 'Please select an Enquiry source';
-    } else if (leadProvider.enquirySourceController.text.isEmpty) {
-      errorMessage = 'Please select an Enquiry source';
-    } else if (leadProvider.contactNoController.text.isEmpty) {
+    if (leadProvider.contactNoController.text.isEmpty) {
       errorMessage = 'Mobile number is required';
     } else if (validatePhone &&
         leadProvider.contactNoController.text.length != 10) {
@@ -172,10 +166,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         !(leadProvider.emailIdController.text.contains('@') &&
             leadProvider.emailIdController.text.contains('.'))) {
       errorMessage = 'Enter Valid Email';
-    } else if (dropDownProvider.selectedEnquiryForId == null) {
-      errorMessage = 'Please select Enquiry For';
-    } else if (dropDownProvider.selectedEnquiryForName.isEmpty) {
-      errorMessage = 'Please select Enquiry For';
     }
     // else if (leadProvider.mapLinkController.text.isEmpty) {
     //   errorMessage = 'Location is required';
@@ -592,7 +582,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   child: CustomTextField(
                                     height: 54,
                                     controller: leadProvider.leadNameController,
-                                    hintText: 'Lead Name*',
+                                    hintText: 'Lead Name',
                                     labelText: '',
                                     focusNode: _leadNameFocusNode,
                                     showError:
@@ -607,7 +597,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 4.0),
                                   child: CommonDropdown<int>(
-                                    hintText: 'Source*',
+                                    hintText: 'Source',
                                     items: settingsProvider.searchSourceCategory
                                         .map((source) => DropdownItem<int>(
                                               id: source.sourceId,
@@ -721,7 +711,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 8.0),
                                   child: CommonDropdown<int>(
-                                    hintText: 'Enquiry Source*',
+                                    hintText: 'Enquiry Source',
                                     items: dropDownProvider.enquiryData
                                         .map((source) => DropdownItem<int>(
                                               id: source.enquirySourceId,
@@ -755,7 +745,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 4.0),
                                   child: CommonDropdown<int>(
-                                    hintText: 'Enquiry For*',
+                                    hintText: 'Enquiry For',
                                     enabled:
                                         dropDownProvider.selectedSourceId !=
                                             null,
