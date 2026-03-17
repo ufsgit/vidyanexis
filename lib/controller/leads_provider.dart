@@ -1182,7 +1182,7 @@ class LeadsProvider extends ChangeNotifier {
           bodyData: {
             "lead": {
               "Customer_Id": custId,
-              "Customer_Name": leadNameController.text,
+              "Customer_Name": leadNameController.text.isEmpty ? 'Null' : leadNameController.text,
               "Address": addressController.text,
               "City": cityController.text,
               "State": stateController.text,

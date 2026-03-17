@@ -244,19 +244,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
     final validation2 =
         customFieldEnquirySourceKey.currentState?.validateForm();
 
-    if (leadProvider.leadNameController.text.isEmpty) {
-      errorMessage = 'Lead name is required';
-    } else if (dropDownProvider.selectedEnquirySourceId == null) {
-      errorMessage = 'Please select an Enquiry source';
-    } else if (leadProvider.enquirySourceController.text.isEmpty) {
-      errorMessage = 'Please select an Enquiry source';
-    } else if (leadProvider.contactNoController.text.isEmpty) {
+    if (leadProvider.contactNoController.text.isEmpty) {
       errorMessage = 'Mobile number is required';
     } else if (validatePhone &&
         leadProvider.contactNoController.text.length != 10) {
       errorMessage = 'Mobile number must be 10 digits';
-    } else if (dropDownProvider.selectedEnquiryForId == null) {
-      errorMessage = 'Please select Enquiry For';
     } else if (leadProvider.followUpStatusController.text.isEmpty &&
         widget.isEdit == false) {
       errorMessage = 'Please select Follow-up Status';
@@ -2189,7 +2181,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         CustomTextfieldWidgetMobile(
           // height: 54,
           controller: leadProvider.leadNameController,
-          labelText: 'Lead Name *',
+          labelText: 'Lead Name',
           // labelText: '',
           focusNode: _leadNameFocusNode,
           // showError: dropDownProvider.showValidation &&
@@ -2200,7 +2192,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         ),
 
         CommonDropdown<int>(
-          hintText: 'Source*',
+          hintText: 'Source',
           items: settingsProvider.searchSourceCategory
               .map((source) => DropdownItem<int>(
                     id: source.sourceId,
@@ -2235,7 +2227,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         if (dropDownProvider.selectedSourceId != null &&
             dropDownProvider.selectedSourceId! > 0)
           CommonDropdown<int>(
-            hintText: 'Enquiry Source*',
+            hintText: 'Enquiry Source',
             items: dropDownProvider.enquiryData
                 .map((source) => DropdownItem<int>(
                       id: source.enquirySourceId,
@@ -2309,7 +2301,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(height: 10),
 
         CommonDropdown<int>(
-          hintText: 'Enquiry For*',
+          hintText: 'Enquiry For',
           enabled: dropDownProvider.selectedSourceId != null,
           items: dropDownProvider.filteredEnquiryForData
               .map((status) => DropdownItem<int>(
