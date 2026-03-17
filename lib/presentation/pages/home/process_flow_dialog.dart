@@ -66,14 +66,19 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       }
 
       dropDownProvider.getDocumentType(context);
-      formProvider.fetchAvailableFields(context);
 
       debugPrint(
-          "DEBUG: Opening dialog for Task Type: ${widget.task.taskTypeName} (ID: ${widget.task.taskTypeId})");
+          "DEBUG: Opening dialog for Task: ${widget.task.taskId}, Type: ${widget.task.taskTypeId}");
 
+      // Clear previous forms to ensure fresh load and show spinner
+      formProvider.clearForms();
+
+      // Initial proactive fetch
       formProvider.getFormDataByCustomer(
         widget.task.customerId.toString(),
+        taskTypeId: widget.task.taskTypeId.toString(),
         enquiryForId: widget.task.enquiryForId.toString(),
+        taskId: widget.task.taskId.toString(),
       );
     });
   }
@@ -200,6 +205,17 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 reportsProvider.fetchTaskTypes(
                     tasktypeId, statusId, customerId, enquiryForId, context);
+
+                // Always ensure forms are fetched with the determined initial task type
+                // The provider's internal check will still prevent redundant network calls
+                final formProvider =
+                    Provider.of<FormProvider>(context, listen: false);
+                formProvider.getFormDataByCustomer(
+                  customerId.toString(),
+                  taskTypeId: tasktypeId.toString(),
+                  enquiryForId: enquiryForId.toString(),
+                  taskId: widget.task.taskId.toString(),
+                );
               });
             }
 
@@ -250,6 +266,21 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                               customerId,
                                               enquiryForId,
                                               context);
+
+                                          final formProvider =
+                                              Provider.of<FormProvider>(context,
+                                                  listen: false);
+                                          debugPrint(
+                                              "DEBUG: Status changed to ${status.statusName}, refreshing forms for taskTypeId: $tasktypeId");
+                                          await formProvider
+                                              .getFormDataByCustomer(
+                                            customerId.toString(),
+                                            taskTypeId: tasktypeId.toString(),
+                                            enquiryForId:
+                                                enquiryForId.toString(),
+                                            taskId:
+                                                widget.task.taskId.toString(),
+                                          );
                                         },
                                         child: AnimatedContainer(
                                           duration:
@@ -354,14 +385,18 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             children: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                if (widget.task.nextFollowupDate != null && widget.task.nextFollowupDate!.isNotEmpty)
+                                if (widget.task.nextFollowupDate != null &&
+                                    widget.task.nextFollowupDate!.isNotEmpty)
                                   Padding(
-                                    padding: const EdgeInsets.only(bottom: 8.0, left: 16.0),
+                                    padding: const EdgeInsets.only(
+                                        bottom: 8.0, left: 16.0),
                                     child: Text(
                                       (() {
                                         try {
-                                          DateTime dt = DateTime.parse(widget.task.nextFollowupDate!);
-                                          return DateFormat('dd MMM yyyy').format(dt);
+                                          DateTime dt = DateTime.parse(
+                                              widget.task.nextFollowupDate!);
+                                          return DateFormat('dd MMM yyyy')
+                                              .format(dt);
                                         } catch (e) {
                                           return widget.task.nextFollowupDate!;
                                         }
@@ -388,7 +423,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       builder: (context, child) {
                                         return Theme(
                                           data: Theme.of(context).copyWith(
-                                            colorScheme: const ColorScheme.light(
+                                            colorScheme:
+                                                const ColorScheme.light(
                                               primary: Color(0xCC1A7AE8),
                                             ),
                                           ),
@@ -397,7 +433,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       },
                                     );
                                     if (pickedDate != null) {
-                                      reportsProvider.followUpDateController.text =
+                                      reportsProvider
+                                              .followUpDateController.text =
                                           DateFormat('dd MMM yyyy')
                                               .format(pickedDate);
                                     }
@@ -440,11 +477,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   ),
                                 );
                               }
-                              final validForms = formProvider.customerForms.where((form) {
-                                return form.id.isNotEmpty && form.id != '0' && form.name.isNotEmpty;
-                              }).toList();
-
-                              if (validForms.isEmpty) {
+                              if (formProvider.customerForms.isEmpty) {
                                 return const SizedBox.shrink();
                               }
                               return Column(
@@ -456,7 +489,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                     spacing: 8.0,
                                     runSpacing: 8.0,
                                     children:
-                                        validForms.map((form) {
+                                        formProvider.customerForms.map((form) {
                                       return ElevatedButton.icon(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:
@@ -801,9 +834,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     Map<String, dynamic> fieldValues = {};
     for (var field in form.fields) {
       if (field.type == FieldType.text || field.type == FieldType.number) {
-        fieldValues[field.id] = TextEditingController();
+        fieldValues[field.id] =
+            TextEditingController(text: field.value?.toString() ?? '');
       } else {
-        fieldValues[field.id] = null;
+        fieldValues[field.id] = field.value;
       }
     }
 
@@ -1016,8 +1050,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 context: context,
                                 taskId: widget.task.taskId,
                                 formId: int.parse(form.id),
+                                formDataDetailsId: form.instanceId ?? 0,
                                 customerId: widget.task.customerId,
                                 taskTypeId: widget.task.taskTypeId.toString(),
+                                enquiryForId: widget.task.enquiryForId,
                                 customFields: customFieldsPayload,
                               );
                             },

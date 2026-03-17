@@ -1,72 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/controller/customer_details_provider.dart';
-import 'package:vidyanexis/controller/models/bill_of_material_model.dart';
+import 'package:vidyanexis/controller/models/item_model.dart';
 
-class BomItemCard extends StatelessWidget {
-  final BillOfMaterialItem item;
+class QuotationItemCard extends StatelessWidget {
+  final Item item;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
-  const BomItemCard({
+  const QuotationItemCard({
     super.key,
     required this.item,
     required this.onDelete,
     required this.onEdit,
   });
 
-  void _showDeleteConfirmation(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-          title: Text(
-            'Confirm Delete',
-            style: GoogleFonts.plusJakartaSans(
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          content: Text(
-            'Are you sure you want to delete this material?',
-            style: GoogleFonts.plusJakartaSans(),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Cancel',
-                style: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey[600],
-                ),
-              ),
-            ),
-            TextButton(
-              onPressed: () {
-                onDelete();
-                Navigator.pop(context);
-              },
-              child: Text(
-                'Delete',
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.textRed,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-          ],
-        );
-      },
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
-    final provider = context.read<CustomerDetailsProvider>();
     return GestureDetector(
       onTap: onEdit,
       child: Container(
@@ -93,7 +43,7 @@ class BomItemCard extends StatelessWidget {
                 children: [
                   Expanded(
                     child: Text(
-                      item.description,
+                      item.ItemName,
                       style: GoogleFonts.plusJakartaSans(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -102,9 +52,7 @@ class BomItemCard extends StatelessWidget {
                     ),
                   ),
                   GestureDetector(
-                    onTap: () {
-                      _showDeleteConfirmation(context);
-                    },
+                    onTap: onDelete,
                     child: Text(
                       'Delete',
                       style: GoogleFonts.plusJakartaSans(
@@ -119,25 +67,13 @@ class BomItemCard extends StatelessWidget {
               const SizedBox(height: 12),
               
               // Details
-              _buildDetailRow(
-                provider.getQuotationFieldName(12, 'Quantity'),
-                '${item.quantity} ${item.uom}',
-              ),
+              _buildDetailRow('Quantity', '${item.Quantity} ${item.Unit}'),
               const SizedBox(height: 8),
-              _buildDetailRow(
-                provider.getQuotationFieldName(11, 'Specification'),
-                item.brand.isNotEmpty ? item.brand : '-',
-              ),
+              _buildDetailRow('Unit Price', '₹${item.UnitPrice.toStringAsFixed(2)}'),
               const SizedBox(height: 8),
-              _buildDetailRow(
-                provider.getQuotationFieldName(13, 'Manufacturer'),
-                (item.distributor?.isNotEmpty ?? false) ? item.distributor! : '-',
-              ),
+              _buildDetailRow('GST', '₹${item.GST.toStringAsFixed(2)}'),
               const SizedBox(height: 8),
-              _buildDetailRow(
-                provider.getQuotationFieldName(14, 'Comments'),
-                (item.comments?.isNotEmpty ?? false) ? item.comments! : '-',
-              ),
+              _buildDetailRow('Total', '₹${item.Amount.toStringAsFixed(2)}'),
             ],
           ),
         ),

@@ -5,6 +5,7 @@ class FieldModel {
   final String label;
   final FieldType type;
   bool isMandatory;
+  String? value;
   final List<String>? options;
 
   FieldModel({
@@ -12,6 +13,7 @@ class FieldModel {
     required this.label,
     required this.type,
     this.isMandatory = false,
+    this.value,
     this.options,
   });
 }
@@ -24,6 +26,7 @@ class FormModel {
   final String taskType;
   final int? taskTypeId;
   final List<FieldModel> fields;
+  final int? instanceId;
 
   FormModel({
     required this.id,
@@ -33,5 +36,6 @@ class FormModel {
     required this.taskType,
     this.taskTypeId,
     required this.fields,
+    this.instanceId,
   });
 }
