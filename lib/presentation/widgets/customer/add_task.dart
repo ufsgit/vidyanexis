@@ -20,19 +20,19 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
-
 class TaskCreationWidget extends StatefulWidget {
   bool isEdit;
   String taskId;
   TaskCustomerModel? task;
   TaskDetails? taskDetails;
 
-  TaskCreationWidget(
-      {super.key,
-      required this.isEdit,
-      required this.taskId,
-      this.task,
-      this.taskDetails});
+  TaskCreationWidget({
+    super.key,
+    required this.isEdit,
+    required this.taskId,
+    this.task,
+    this.taskDetails,
+  });
 
   @override
   State<TaskCreationWidget> createState() => _TaskCreationWidgetState();
