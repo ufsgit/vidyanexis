@@ -1224,187 +1224,31 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     const EdgeInsets.symmetric(
                                                         vertical: 6.0,
                                                         horizontal: 8.0),
-                                                data: PopupMenuButton<String>(
-                                                  icon: const Icon(
-                                                      Icons.keyboard_arrow_down,
-                                                      size: 20,
-                                                      color: Colors.grey),
-                                                  tooltip: 'Actions',
-                                                  padding: EdgeInsets.zero,
-                                                  onSelected:
-                                                      (String value) async {
-                                                    if (value == 'edit') {
-                                                      showDialog(
-                                                        context: context,
-                                                        barrierDismissible:
-                                                            false,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return const Center(
-                                                            child:
-                                                                CircularProgressIndicator(),
-                                                          );
-                                                        },
-                                                      );
-
-                                                      final leadDetailsProvider =
-                                                          Provider.of<
-                                                                  LeadDetailsProvider>(
-                                                              context,
-                                                              listen: false);
-                                                      await leadDetailsProvider
-                                                          .fetchLeadDetails(
-                                                              lead.customerId
-                                                                  .toString(),
-                                                              context);
-
-                                                      leadsProvider.setCutomerId(
-                                                          int.tryParse(lead
-                                                                  .customerId
-                                                                  .toString()) ??
-                                                              0);
-                                                      final dropDownProvider =
-                                                          Provider.of<
-                                                                  DropDownProvider>(
-                                                              context,
-                                                              listen: false);
-
-                                                      if (leadDetailsProvider
-                                                                  .leadDetails !=
-                                                              null &&
-                                                          leadDetailsProvider
-                                                              .leadDetails!
-                                                              .isNotEmpty) {
-                                                        final leadDetails =
-                                                            leadDetailsProvider
-                                                                .leadDetails![0];
-                                                        leadsProvider
-                                                                .enquirySourceController
-                                                                .text =
-                                                            leadDetails
-                                                                .enquirySourceName
-                                                                .toString();
-                                                        dropDownProvider
-                                                                .selectedEnquirySourceId =
-                                                            leadDetails
-                                                                .enquirySourceId;
-                                                        await leadsProvider
-                                                            .getLeadDropdowns(
-                                                                context);
-                                                      }
-                                                      Navigator.pop(
-                                                          context); // Close loading dialog
-
-                                                      showDialog(
-                                                        context: context,
-                                                        builder: (BuildContext
-                                                            context) {
-                                                          return const NewLeadDrawerWidget(
-                                                            isEdit: true,
-                                                          );
-                                                        },
-                                                      );
-                                                    } else if (value ==
-                                                        'quotation') {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (_) =>
-                                                            QuotationCreationWidget(
-                                                          isEdit: false,
-                                                          customerId: lead
-                                                              .customerId
-                                                              .toString(),
-                                                          quotationId: '0',
-                                                        ),
-                                                      );
-                                                    } else if (value ==
-                                                        'document') {
-                                                      showDialog(
-                                                        barrierDismissible:
-                                                            false,
-                                                        context: context,
-                                                        builder: (_) =>
-                                                            ImageUploadAlert(
-                                                          customerId: lead
-                                                              .customerId
-                                                              .toString(),
-                                                        ),
-                                                      );
-                                                    } else if (value ==
-                                                        'task') {
-                                                      final customerDetailsProvider =
-                                                          Provider.of<
-                                                                  CustomerDetailsProvider>(
-                                                              context,
-                                                              listen: false);
-                                                      customerDetailsProvider
-                                                              .customerId =
-                                                          lead.customerId
-                                                              .toString();
-                                                      customerDetailsProvider
-                                                          .clearTaskDetails();
-                                                      if (AppStyles.isWebScreen(
-                                                          context)) {
-                                                        showDialog(
-                                                          barrierDismissible:
-                                                              false,
-                                                          context: context,
-                                                          builder: (_) =>
-                                                              TaskCreationWidget(
-                                                            isEdit: false,
-                                                            taskId: '0',
-                                                          ),
-                                                        );
-                                                      } else {
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder: (context) =>
-                                                                AddTaskMobile(
-                                                              isEdit: false,
-                                                              taskId: '0',
-                                                            ),
-                                                          ),
-                                                        );
-                                                      }
-                                                    } else if (value ==
-                                                        'delete') {
-                                                      showConfirmationDialog(
-                                                        context: context,
-                                                        title:
-                                                            'Delete Customer',
-                                                        content:
-                                                            'Are you sure you want to delete this customer?',
-                                                        onCancel: () =>
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop(),
-                                                        onConfirm: () async {
-                                                          await leadsProvider
-                                                              .deleteLead(
-                                                                  context,
-                                                                  lead.customerId
-                                                                      .toString());
-                                                          if (context.mounted) {
-                                                            Navigator.of(
-                                                                    context)
-                                                                .pop();
-                                                            customerProvider
-                                                                .getSearchCustomers(
-                                                                    context);
-                                                          }
-                                                        },
-                                                      );
-                                                    }
+                                                data: _HoverMenuAnchor(
+                                                  builder: (context, controller,
+                                                      child) {
+                                                    return IconButton(
+                                                      onPressed: () {
+                                                        if (controller.isOpen) {
+                                                          controller.close();
+                                                        } else {
+                                                          controller.open();
+                                                        }
+                                                      },
+                                                      icon: const Icon(
+                                                          Icons
+                                                              .keyboard_arrow_down,
+                                                          size: 20,
+                                                          color: Colors.grey),
+                                                      padding: EdgeInsets.zero,
+                                                    );
                                                   },
-                                                  itemBuilder: (BuildContext
-                                                          context) =>
-                                                      <PopupMenuEntry<String>>[
-                                                    const PopupMenuItem<String>(
-                                                      value: 'edit',
-                                                      child: Row(
+                                                  menuChildren: [
+                                                    MenuItemButton(
+                                                      onPressed: () =>
+                                                          _handleLeadAction(
+                                                              'edit', lead),
+                                                      child: const Row(
                                                         children: [
                                                           Icon(Icons.edit,
                                                               size: 18,
@@ -1415,9 +1259,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         ],
                                                       ),
                                                     ),
-                                                    const PopupMenuItem<String>(
-                                                      value: 'quotation',
-                                                      child: Row(
+                                                    MenuItemButton(
+                                                      onPressed: () =>
+                                                          _handleLeadAction(
+                                                              'quotation',
+                                                              lead),
+                                                      child: const Row(
                                                         children: [
                                                           Icon(
                                                               Icons
@@ -1430,9 +1277,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         ],
                                                       ),
                                                     ),
-                                                    const PopupMenuItem<String>(
-                                                      value: 'document',
-                                                      child: Row(
+                                                    MenuItemButton(
+                                                      onPressed: () =>
+                                                          _handleLeadAction(
+                                                              'document', lead),
+                                                      child: const Row(
                                                         children: [
                                                           Icon(
                                                               Icons.description,
@@ -1444,9 +1293,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         ],
                                                       ),
                                                     ),
-                                                    const PopupMenuItem<String>(
-                                                      value: 'task',
-                                                      child: Row(
+                                                    MenuItemButton(
+                                                      onPressed: () =>
+                                                          _handleLeadAction(
+                                                              'task', lead),
+                                                      child: const Row(
                                                         children: [
                                                           Icon(Icons.add_task,
                                                               size: 18,
@@ -1457,9 +1308,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         ],
                                                       ),
                                                     ),
-                                                    const PopupMenuItem<String>(
-                                                      value: 'delete',
-                                                      child: Row(
+                                                    MenuItemButton(
+                                                      onPressed: () =>
+                                                          _handleLeadAction(
+                                                              'delete', lead),
+                                                      child: const Row(
                                                         children: [
                                                           Icon(Icons.delete,
                                                               size: 18,
@@ -1735,199 +1588,36 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         size: 20,
                                                       ),
                                                     ),
-                                                    PopupMenuButton<String>(
-                                                      icon: const Icon(
-                                                          Icons
-                                                              .keyboard_arrow_down,
-                                                          size: 20,
-                                                          color: Colors.grey),
-                                                      tooltip: 'Actions',
-                                                      padding: EdgeInsets.zero,
-                                                      onSelected:
-                                                          (String value) async {
-                                                        if (value == 'edit') {
-                                                          showDialog(
-                                                            context: context,
-                                                            barrierDismissible:
-                                                                false,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return const Center(
-                                                                child:
-                                                                    CircularProgressIndicator(),
-                                                              );
-                                                            },
-                                                          );
-
-                                                          final leadDetailsProvider =
-                                                              Provider.of<
-                                                                      LeadDetailsProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
-                                                          await leadDetailsProvider
-                                                              .fetchLeadDetails(
-                                                                  lead.customerId
-                                                                      .toString(),
-                                                                  context);
-
-                                                          leadsProvider.setCutomerId(
-                                                              int.tryParse(lead
-                                                                      .customerId
-                                                                      .toString()) ??
-                                                                  0);
-                                                          final dropDownProvider =
-                                                              Provider.of<
-                                                                      DropDownProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
-
-                                                          if (leadDetailsProvider
-                                                                      .leadDetails !=
-                                                                  null &&
-                                                              leadDetailsProvider
-                                                                  .leadDetails!
-                                                                  .isNotEmpty) {
-                                                            final leadDetails =
-                                                                leadDetailsProvider
-                                                                    .leadDetails![0];
-                                                            leadsProvider
-                                                                    .enquirySourceController
-                                                                    .text =
-                                                                leadDetails
-                                                                    .enquirySourceName
-                                                                    .toString();
-                                                            dropDownProvider
-                                                                    .selectedEnquirySourceId =
-                                                                leadDetails
-                                                                    .enquirySourceId;
-                                                            await leadsProvider
-                                                                .getLeadDropdowns(
-                                                                    context);
-                                                          }
-                                                          Navigator.pop(
-                                                              context); // Close loading dialog
-
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return const NewLeadDrawerWidget(
-                                                                isEdit: true,
-                                                              );
-                                                            },
-                                                          );
-                                                        } else if (value ==
-                                                            'quotation') {
-                                                          showDialog(
-                                                            barrierDismissible:
-                                                                false,
-                                                            context: context,
-                                                            builder: (_) =>
-                                                                QuotationCreationWidget(
-                                                              isEdit: false,
-                                                              customerId: lead
-                                                                  .customerId
-                                                                  .toString(),
-                                                              quotationId: '0',
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'document') {
-                                                          showDialog(
-                                                            barrierDismissible:
-                                                                false,
-                                                            context: context,
-                                                            builder: (_) =>
-                                                                ImageUploadAlert(
-                                                              customerId: lead
-                                                                  .customerId
-                                                                  .toString(),
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'task') {
-                                                          final customerDetailsProvider =
-                                                              Provider.of<
-                                                                      CustomerDetailsProvider>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
-                                                          customerDetailsProvider
-                                                                  .customerId =
-                                                              lead.customerId
-                                                                  .toString();
-                                                          customerDetailsProvider
-                                                              .clearTaskDetails();
-                                                          if (AppStyles
-                                                              .isWebScreen(
-                                                                  context)) {
-                                                            showDialog(
-                                                              barrierDismissible:
-                                                                  false,
-                                                              context: context,
-                                                              builder: (_) =>
-                                                                  TaskCreationWidget(
-                                                                isEdit: false,
-                                                                taskId: '0',
-                                                              ),
-                                                            );
-                                                          } else {
-                                                            Navigator.push(
-                                                              context,
-                                                              MaterialPageRoute(
-                                                                builder:
-                                                                    (context) =>
-                                                                        AddTaskMobile(
-                                                                  isEdit: false,
-                                                                  taskId: '0',
-                                                                ),
-                                                              ),
-                                                            );
-                                                          }
-                                                        } else if (value ==
-                                                            'delete') {
-                                                          showConfirmationDialog(
-                                                            context: context,
-                                                            title:
-                                                                'Delete Customer',
-                                                            content:
-                                                                'Are you sure you want to delete this customer?',
-                                                            onCancel: () =>
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop(),
-                                                            onConfirm:
-                                                                () async {
-                                                              await leadsProvider
-                                                                  .deleteLead(
-                                                                      context,
-                                                                      lead.customerId
-                                                                          .toString());
-                                                              if (context
-                                                                  .mounted) {
-                                                                Navigator.of(
-                                                                        context)
-                                                                    .pop();
-                                                                customerProvider
-                                                                    .getSearchCustomers(
-                                                                        context);
-                                                              }
-                                                            },
-                                                          );
-                                                        }
+                                                    _HoverMenuAnchor(
+                                                      builder: (context,
+                                                          controller, child) {
+                                                        return IconButton(
+                                                          onPressed: () {
+                                                            if (controller
+                                                                .isOpen) {
+                                                              controller
+                                                                  .close();
+                                                            } else {
+                                                              controller
+                                                                  .open();
+                                                            }
+                                                          },
+                                                          icon: const Icon(
+                                                              Icons
+                                                                  .keyboard_arrow_down,
+                                                              size: 20,
+                                                              color: Colors
+                                                                  .grey),
+                                                          padding:
+                                                              EdgeInsets.zero,
+                                                        );
                                                       },
-                                                      itemBuilder: (BuildContext
-                                                              context) =>
-                                                          <PopupMenuEntry<
-                                                              String>>[
-                                                        const PopupMenuItem<
-                                                            String>(
-                                                          value: 'edit',
-                                                          child: Row(
+                                                      menuChildren: [
+                                                        MenuItemButton(
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'edit', lead),
+                                                          child: const Row(
                                                             children: [
                                                               Icon(Icons.edit,
                                                                   size: 18,
@@ -1940,10 +1630,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                                             ],
                                                           ),
                                                         ),
-                                                        const PopupMenuItem<
-                                                            String>(
-                                                          value: 'quotation',
-                                                          child: Row(
+                                                        MenuItemButton(
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'quotation',
+                                                                  lead),
+                                                          child: const Row(
                                                             children: [
                                                               Icon(
                                                                   Icons
@@ -1957,10 +1649,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                                             ],
                                                           ),
                                                         ),
-                                                        const PopupMenuItem<
-                                                            String>(
-                                                          value: 'document',
-                                                          child: Row(
+                                                        MenuItemButton(
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'document',
+                                                                  lead),
+                                                          child: const Row(
                                                             children: [
                                                               Icon(
                                                                   Icons
@@ -1974,10 +1668,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                                             ],
                                                           ),
                                                         ),
-                                                        const PopupMenuItem<
-                                                            String>(
-                                                          value: 'task',
-                                                          child: Row(
+                                                        MenuItemButton(
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'task', lead),
+                                                          child: const Row(
                                                             children: [
                                                               Icon(
                                                                   Icons
@@ -1991,10 +1686,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                                             ],
                                                           ),
                                                         ),
-                                                        const PopupMenuItem<
-                                                            String>(
-                                                          value: 'delete',
-                                                          child: Row(
+                                                        MenuItemButton(
+                                                          onPressed: () =>
+                                                              _handleLeadAction(
+                                                                  'delete',
+                                                                  lead),
+                                                          child: const Row(
                                                             children: [
                                                               Icon(Icons.delete,
                                                                   size: 18,
@@ -2297,6 +1994,100 @@ class _CustomerPageState extends State<CustomerPage> {
     );
   }
 
+  void _handleLeadAction(String value, SearchLeadModel lead) async {
+    final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+    final customerProvider =
+        Provider.of<CustomerProvider>(context, listen: false);
+    if (value == 'edit') {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
+      );
+
+      final leadDetailsProvider =
+          Provider.of<LeadDetailsProvider>(context, listen: false);
+      await leadDetailsProvider.fetchLeadDetails(
+          lead.customerId.toString(), context);
+
+      leadsProvider.setCutomerId(int.tryParse(lead.customerId.toString()) ?? 0);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+
+      if (leadDetailsProvider.leadDetails != null &&
+          leadDetailsProvider.leadDetails!.isNotEmpty) {
+        final leadDetails = leadDetailsProvider.leadDetails![0];
+        leadsProvider.enquirySourceController.text =
+            leadDetails.enquirySourceName.toString();
+        dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
+        await leadsProvider.getLeadDropdowns(context);
+      }
+      Navigator.pop(context); // Close loading dialog
+
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return const NewLeadDrawerWidget(
+            isEdit: true,
+          );
+        },
+      );
+    } else if (value == 'quotation') {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => QuotationCreationWidget(
+          isEdit: false,
+          customerId: lead.customerId.toString(),
+          quotationId: '0',
+        ),
+      );
+    } else if (value == 'document') {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (_) => ImageUploadAlert(
+          customerId: lead.customerId.toString(),
+        ),
+      );
+    } else if (value == 'task') {
+      final customerDetailsProvider =
+          Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.customerId = lead.customerId.toString();
+      customerDetailsProvider.clearTaskDetails();
+      if (AppStyles.isWebScreen(context)) {
+        showDialog(
+          barrierDismissible: false,
+          context: context,
+          builder: (_) => TaskCreationWidget(isEdit: false, taskId: '0'),
+        );
+      } else {
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
+      }
+    } else if (value == 'delete') {
+      showConfirmationDialog(
+        context: context,
+        title: 'Delete Customer',
+        content: 'Are you sure you want to delete this customer?',
+        onCancel: () => Navigator.of(context).pop(),
+        onConfirm: () async {
+          await leadsProvider.deleteLead(context, lead.customerId.toString());
+          if (context.mounted) {
+            Navigator.of(context).pop();
+            customerProvider.getSearchCustomers(context);
+          }
+        },
+      );
+    }
+  }
+
   String _formatDateSafely(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
@@ -2322,5 +2113,70 @@ class _CustomerPageState extends State<CustomerPage> {
     } catch (e) {
       return const Color(0xff34c759); // Default green color
     }
+  }
+}
+
+class _HoverMenuAnchor extends StatefulWidget {
+  final Widget Function(BuildContext, MenuController, Widget?) builder;
+  final List<Widget> menuChildren;
+
+  const _HoverMenuAnchor({
+    required this.builder,
+    required this.menuChildren,
+  });
+
+  @override
+  State<_HoverMenuAnchor> createState() => _HoverMenuAnchorState();
+}
+
+class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
+  final MenuController _controller = MenuController();
+  Timer? _hoverTimer;
+
+  void _updateHover(bool isIn) {
+    _hoverTimer?.cancel();
+    if (isIn) {
+      // Small 50ms delay before opening to ensure it's intentional
+      _hoverTimer = Timer(const Duration(milliseconds: 50), () {
+        if (mounted && !_controller.isOpen) {
+          _controller.open();
+        }
+      });
+    } else {
+      // 200ms grace period to move pointer from button to menu
+      _hoverTimer = Timer(const Duration(milliseconds: 200), () {
+        if (mounted && _controller.isOpen) {
+          _controller.close();
+        }
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    _hoverTimer?.cancel();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => _updateHover(true),
+      onExit: (_) => _updateHover(false),
+      child: MenuAnchor(
+        controller: _controller,
+        // Adjust vertically to overlap slightly for smoother transition
+        alignmentOffset: const Offset(0, -5),
+        builder: (context, controller, child) =>
+            widget.builder(context, controller, child),
+        menuChildren: widget.menuChildren.map((child) {
+          return MouseRegion(
+            onEnter: (_) => _updateHover(true),
+            onExit: (_) => _updateHover(false),
+            child: child,
+          );
+        }).toList(),
+      ),
+    );
   }
 }

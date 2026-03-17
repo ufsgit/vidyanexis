@@ -12,6 +12,15 @@ class FormProvider extends ChangeNotifier {
   List<FormModel> _customerForms = [];
   List<FormModel> get customerForms => _customerForms;
 
+  void clearForms() {
+    _customerForms = [];
+    _lastFetchedCustomerId = null;
+    _lastFetchedTaskTypeId = null;
+    _lastFetchedEnquiryForId = null;
+    _lastFetchedTaskId = null;
+    notifyListeners();
+  }
+
   String searchQuery = "";
 
   List<Map<String, dynamic>> departments = [];
@@ -71,7 +80,18 @@ class FormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> fetchAvailableFields(BuildContext context) async {
+  Future<void>? _activeFieldsFetch;
+
+  Future<void> fetchAvailableFields([BuildContext? context]) async {
+    if (isLoadingFields || (availableFields.isNotEmpty && _activeFieldsFetch == null)) {
+      return _activeFieldsFetch;
+    }
+    
+    _activeFieldsFetch = _performFieldsFetch();
+    return _activeFieldsFetch;
+  }
+
+  Future<void> _performFieldsFetch() async {
     isLoadingFields = true;
     notifyListeners();
     try {
@@ -114,9 +134,11 @@ class FormProvider extends ChangeNotifier {
       }
     } catch (e) {
       debugPrint('Exception in fetchAvailableFields: $e');
+    } finally {
+      isLoadingFields = false;
+      _activeFieldsFetch = null;
+      notifyListeners();
     }
-    isLoadingFields = false;
-    notifyListeners();
   }
 
   bool isLoadingForms = false;
@@ -314,12 +336,44 @@ class FormProvider extends ChangeNotifier {
         .toList();
   }
 
+  String? _lastFetchedCustomerId;
+  String? _lastFetchedTaskTypeId;
+  String? _lastFetchedEnquiryForId;
+  String? _lastFetchedTaskId;
+  Future<void>? _activeFetch;
+
   Future<void> getFormDataByCustomer(String customerId,
-      {String? taskTypeId, String? enquiryForId}) async {
+      {String? taskTypeId, String? enquiryForId, String? taskId}) async {
+    // Avoid redundant fetches if parameters are identical
+    if (_lastFetchedCustomerId == customerId &&
+        _lastFetchedTaskTypeId == taskTypeId &&
+        _lastFetchedEnquiryForId == enquiryForId &&
+        _lastFetchedTaskId == taskId &&
+        (_customerForms.isNotEmpty || isLoadingForms)) {
+      debugPrint(
+          "DEBUG: getFormDataByCustomer - skipping redundant or overlapping fetch");
+      return _activeFetch;
+    }
+
+    _lastFetchedCustomerId = customerId;
+    _lastFetchedTaskTypeId = taskTypeId;
+    _lastFetchedEnquiryForId = enquiryForId;
+    _lastFetchedTaskId = taskId;
+
     _customerForms = [];
     isLoadingForms = true;
     notifyListeners();
+
+    _activeFetch = _performFetch(customerId, taskTypeId, enquiryForId, taskId);
+    return _activeFetch;
+  }
+
+  Future<void> _performFetch(String customerId, String? taskTypeId,
+      String? enquiryForId, String? taskId) async {
     try {
+      if (availableFields.isEmpty) {
+        await fetchAvailableFields();
+      }
       final prefs = await SharedPreferences.getInstance();
       final String userId = prefs.getString('userId') ?? "0";
 
@@ -336,6 +390,10 @@ class FormProvider extends ChangeNotifier {
 
       if (taskTypeId != null && taskTypeId.isNotEmpty && taskTypeId != "0") {
         queryParams["Task_Type_Id"] = taskTypeId;
+      }
+
+      if (taskId != null && taskId.isNotEmpty && taskId != "0") {
+        queryParams["Task_Id"] = taskId;
       }
 
       final response = await HttpRequest.httpGetRequest(
@@ -367,6 +425,7 @@ class FormProvider extends ChangeNotifier {
       debugPrint('Exception occurred in getFormDataByCustomer: $e');
     } finally {
       isLoadingForms = false;
+      _activeFetch = null;
       notifyListeners();
     }
   }
@@ -418,6 +477,8 @@ class FormProvider extends ChangeNotifier {
                 ),
               ),
             );
+            final dataValue = f['datavalue'] ?? f['DataValue'] ?? f['value'];
+
             return FieldModel(
               id: availableField.id,
               label:
@@ -426,6 +487,7 @@ class FormProvider extends ChangeNotifier {
                       : availableField.label,
               type: availableField.type,
               options: availableField.options,
+              value: dataValue?.toString(),
               isMandatory: (isMandatoryValue == 1 ||
                   isMandatoryValue == true ||
                   isMandatoryValue == "1"),
@@ -439,6 +501,7 @@ class FormProvider extends ChangeNotifier {
           department: item['Department_Name']?.toString() ?? '',
           taskType: item['Task_Type_Name']?.toString() ?? '',
           fields: parsedFields,
+          instanceId: item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
         );
       }).toList();
 
@@ -460,6 +523,7 @@ class FormProvider extends ChangeNotifier {
     int formDataDetailsId = 0,
     int customerId = 0,
     String? taskTypeId,
+    int? enquiryForId,
   }) async {
     try {
       final response = await HttpRequest.httpPostRequest(
@@ -476,7 +540,10 @@ class FormProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Form data saved successfully')),
         );
-        getFormDataByCustomer(customerId.toString(), taskTypeId: taskTypeId);
+        getFormDataByCustomer(customerId.toString(),
+            taskTypeId: taskTypeId,
+            enquiryForId: enquiryForId?.toString(),
+            taskId: taskId.toString());
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to save form data')),

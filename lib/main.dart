@@ -115,7 +115,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => ProcessFlowProvider()),
         ChangeNotifierProvider(create: (_) => CheckInOutProvider()),
         ChangeNotifierProvider(create: (_) => NotificationProvider()),
-        ChangeNotifierProvider(create: (_) => FormProvider()),
+        ChangeNotifierProvider(create: (_) => FormProvider()..fetchAvailableFields()),
         ChangeNotifierProvider(create: (_) => FormBuilderProvider()),
         ChangeNotifierProvider(create: (context) => AudioFileProvider()),
         ChangeNotifierProvider(create: (context) => TimeTrackReportProvider()),

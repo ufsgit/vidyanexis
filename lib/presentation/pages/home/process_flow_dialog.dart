@@ -48,14 +48,19 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
       reportsProvider.clearDescription();
       dropDownProvider.getDocumentType(context);
-      formProvider.fetchAvailableFields(context);
 
       debugPrint(
-          "DEBUG: Opening dialog for Task Type: ${widget.task.taskTypeName} (ID: ${widget.task.taskTypeId})");
+          "DEBUG: Opening dialog for Task: ${widget.task.taskId}, Type: ${widget.task.taskTypeId}");
 
+      // Clear previous forms to ensure fresh load and show spinner
+      formProvider.clearForms();
+
+      // Initial proactive fetch
       formProvider.getFormDataByCustomer(
         widget.task.customerId.toString(),
+        taskTypeId: widget.task.taskTypeId.toString(),
         enquiryForId: widget.task.enquiryForId.toString(),
+        taskId: widget.task.taskId.toString(),
       );
     });
   }
@@ -182,6 +187,17 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 reportsProvider.fetchTaskTypes(
                     tasktypeId, statusId, customerId, enquiryForId, context);
+
+                // Always ensure forms are fetched with the determined initial task type
+                // The provider's internal check will still prevent redundant network calls
+                final formProvider =
+                    Provider.of<FormProvider>(context, listen: false);
+                formProvider.getFormDataByCustomer(
+                  customerId.toString(),
+                  taskTypeId: tasktypeId.toString(),
+                  enquiryForId: enquiryForId.toString(),
+                  taskId: widget.task.taskId.toString(),
+                );
               });
             }
 
@@ -232,6 +248,21 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                               customerId,
                                               enquiryForId,
                                               context);
+
+                                          final formProvider =
+                                              Provider.of<FormProvider>(context,
+                                                  listen: false);
+                                          debugPrint(
+                                              "DEBUG: Status changed to ${status.statusName}, refreshing forms for taskTypeId: $tasktypeId");
+                                          await formProvider
+                                              .getFormDataByCustomer(
+                                            customerId.toString(),
+                                            taskTypeId: tasktypeId.toString(),
+                                            enquiryForId:
+                                                enquiryForId.toString(),
+                                            taskId:
+                                                widget.task.taskId.toString(),
+                                          );
                                         },
                                         child: AnimatedContainer(
                                           duration:
@@ -388,60 +419,65 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                           Consumer<FormProvider>(
                             builder: (context, formProvider, child) {
-                              if (formProvider.isLoadingForms) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 20),
-                                  child: Center(
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  ),
-                                );
-                              }
-                              if (formProvider.customerForms.isEmpty) {
-                                return const SizedBox.shrink();
-                              }
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildSectionHeader('FORMS'),
                                   const SizedBox(height: 12),
-                                  Wrap(
-                                    spacing: 8.0,
-                                    runSpacing: 8.0,
-                                    children:
-                                        formProvider.customerForms.map((form) {
-                                      return ElevatedButton.icon(
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor:
-                                              const Color(0xFF1A7AE8),
-                                          foregroundColor: Colors.white,
-                                          elevation: 0,
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16, vertical: 10),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
+                                  if (formProvider.isLoadingForms)
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 10),
+                                      child: Row(
+                                        children: [
+                                          SizedBox(
+                                            width: 14,
+                                            height: 14,
+                                            child: CircularProgressIndicator(
+                                              strokeWidth: 2,
+                                            ),
                                           ),
-                                        ),
-                                        icon: const Icon(Icons.description,
-                                            size: 16),
-                                        label: Text(
-                                          (form.name.isNotEmpty
-                                                  ? form.name
-                                                  : "Form")
-                                              .toUpperCase(),
-                                          style: GoogleFonts.plusJakartaSans(
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 13,
+                                          SizedBox(width: 12),
+                                          Text("Loading available forms...",
+                                              style: TextStyle(
+                                                  fontSize: 12,
+                                                  color: Colors.grey,
+                                                  fontWeight: FontWeight.w500)),
+                                        ],
+                                      ),
+                                    )
+                                  else if (formProvider.customerForms.isEmpty)
+                                    const Text("No forms available",
+                                        style: TextStyle(
+                                            fontSize: 12, color: Colors.grey))
+                                  else
+                                    Wrap(
+                                      spacing: 8.0,
+                                      runSpacing: 8.0,
+                                      children: formProvider.customerForms
+                                          .map((form) {
+                                        return ElevatedButton.icon(
+                                          onPressed: () {
+                                            _showTestFormDialog(context, form);
+                                          },
+                                          icon: const Icon(Icons.description,
+                                              size: 16),
+                                          label: Text(form.name),
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                const Color(0xFF1A7AE8),
+                                            foregroundColor: Colors.white,
+                                            elevation: 0,
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 16, vertical: 8),
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
                                           ),
-                                        ),
-                                        onPressed: () {
-                                          _showTestFormDialog(context, form);
-                                        },
-                                      );
-                                    }).toList(),
-                                  ),
+                                        );
+                                      }).toList(),
+                                    ),
                                   const SizedBox(height: 16),
                                 ],
                               );
@@ -755,9 +791,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     Map<String, dynamic> fieldValues = {};
     for (var field in form.fields) {
       if (field.type == FieldType.text || field.type == FieldType.number) {
-        fieldValues[field.id] = TextEditingController();
+        fieldValues[field.id] =
+            TextEditingController(text: field.value?.toString() ?? '');
       } else {
-        fieldValues[field.id] = null;
+        fieldValues[field.id] = field.value;
       }
     }
 
@@ -970,8 +1007,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 context: context,
                                 taskId: widget.task.taskId,
                                 formId: int.parse(form.id),
+                                formDataDetailsId: form.instanceId ?? 0,
                                 customerId: widget.task.customerId,
                                 taskTypeId: widget.task.taskTypeId.toString(),
+                                enquiryForId: widget.task.enquiryForId,
                                 customFields: customFieldsPayload,
                               );
                             },
