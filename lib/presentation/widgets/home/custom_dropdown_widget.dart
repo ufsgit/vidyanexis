@@ -21,7 +21,15 @@ class CommonDropdown<T> extends StatelessWidget {
     this.selectedValue,
     this.enabled = true, // Default to true
     this.isMultiLine = false,
+    this.borderRadius,
+    this.borderColor,
+    this.focusedBorderColor,
   });
+
+  final double? borderRadius;
+  final Color? borderColor;
+  final Color? focusedBorderColor;
+
 
   @override
   Widget build(BuildContext context) {
@@ -81,21 +89,22 @@ class CommonDropdown<T> extends StatelessWidget {
               color: AppColors.textGrey3,
             ),
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: AppColors.textGrey2, width: 1),
+              borderRadius: BorderRadius.circular(borderRadius ?? 10),
+              borderSide: BorderSide(color: borderColor ?? AppColors.textGrey2, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: AppColors.textGrey2, width: 1),
+              borderRadius: BorderRadius.circular(borderRadius ?? 10),
+              borderSide: BorderSide(color: focusedBorderColor ?? AppColors.textGrey2, width: 1),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(borderRadius ?? 10),
               borderSide: BorderSide(
-                  color: (AppStyles.isWebScreen(context)
+                  color: borderColor ?? (AppStyles.isWebScreen(context)
                       ? AppColors.textGrey2
                       : AppColors.grey),
                   width: 1),
             ),
+
             contentPadding:
                 const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
           ),

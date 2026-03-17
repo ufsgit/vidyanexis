@@ -4,10 +4,12 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
-class EditBomItemDialog extends StatelessWidget {
+class EditBomItemDialog extends StatefulWidget {
   final int index;
   final bool isEdit;
 
@@ -18,8 +20,28 @@ class EditBomItemDialog extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<EditBomItemDialog> createState() => _EditBomItemDialogState();
+}
+
+class _EditBomItemDialogState extends State<EditBomItemDialog> {
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CustomerDetailsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
+    // Find the selected unit ID based on the text in the controller
+    int? selectedUnitId;
+    if (provider.billuomController.text.isNotEmpty) {
+      try {
+        selectedUnitId = settingsProvider.searchUnit
+            .firstWhere(
+              (u) => u.unitName == provider.billuomController.text,
+            )
+            .unitId;
+      } catch (e) {
+        // Unit not found in the list
+      }
+    }
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -29,13 +51,13 @@ class EditBomItemDialog extends StatelessWidget {
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    isEdit ? 'Edit Material' : 'Add Material',
+                    widget.isEdit ? 'Edit Material' : 'Add Material',
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -56,6 +78,9 @@ class EditBomItemDialog extends StatelessWidget {
                 labelText: provider.getQuotationFieldName(10, 'Equipment'),
                 hintText: provider.getQuotationFieldName(10, 'Equipment'),
                 height: 54,
+                borderRadius: 12,
+                borderColor: const Color(0xFFD0D5DD),
+                focusedBorderColor: AppColors.bluebutton,
               ),
               const SizedBox(height: 16),
               CustomTextField(
@@ -63,6 +88,9 @@ class EditBomItemDialog extends StatelessWidget {
                 labelText: provider.getQuotationFieldName(11, 'Specification'),
                 hintText: provider.getQuotationFieldName(11, 'Specification'),
                 height: 54,
+                borderRadius: 12,
+                borderColor: const Color(0xFFD0D5DD),
+                focusedBorderColor: AppColors.bluebutton,
               ),
               const SizedBox(height: 16),
               Row(
@@ -73,15 +101,34 @@ class EditBomItemDialog extends StatelessWidget {
                       labelText: provider.getQuotationFieldName(12, 'Quantity'),
                       hintText: provider.getQuotationFieldName(12, 'Quantity'),
                       height: 54,
+                      borderRadius: 12,
+                      borderColor: const Color(0xFFD0D5DD),
+                      focusedBorderColor: AppColors.bluebutton,
+                      keyboardType: TextInputType.number,
                     ),
                   ),
                   const SizedBox(width: 16),
                   Expanded(
-                    child: CustomTextField(
-                      controller: provider.billuomController,
-                      labelText: 'UOM',
-                      hintText: 'Unit of measure',
-                      height: 54,
+                    child: CommonDropdown<int>(
+                      hintText: 'UOM',
+                      borderRadius: 12,
+                      borderColor: const Color(0xFFD0D5DD),
+                      focusedBorderColor: AppColors.bluebutton,
+                      items: settingsProvider.searchUnit
+                          .map((unit) => DropdownItem<int>(
+                                id: unit.unitId,
+                                name: unit.unitName,
+                              ))
+                          .toList(),
+                      onItemSelected: (value) {
+                        setState(() {
+                          provider.billuomController.text = settingsProvider
+                              .searchUnit
+                              .firstWhere((u) => u.unitId == value)
+                              .unitName;
+                        });
+                      },
+                      selectedValue: selectedUnitId,
                     ),
                   ),
                 ],
@@ -92,6 +139,9 @@ class EditBomItemDialog extends StatelessWidget {
                 labelText: provider.getQuotationFieldName(13, 'Manufacturer'),
                 hintText: provider.getQuotationFieldName(13, 'Manufacturer'),
                 height: 54,
+                borderRadius: 12,
+                borderColor: const Color(0xFFD0D5DD),
+                focusedBorderColor: AppColors.bluebutton,
               ),
               const SizedBox(height: 16),
               CustomTextField(
@@ -99,11 +149,14 @@ class EditBomItemDialog extends StatelessWidget {
                 labelText: provider.getQuotationFieldName(14, 'Comments'),
                 hintText: provider.getQuotationFieldName(14, 'Comments'),
                 height: 54,
+                borderRadius: 12,
+                borderColor: const Color(0xFFD0D5DD),
+                focusedBorderColor: AppColors.bluebutton,
               ),
               const SizedBox(height: 24),
               Row(
                 children: [
-                  if (isEdit) ...[
+                  if (widget.isEdit) ...[
                     Expanded(
                       child: CustomElevatedButton(
                         buttonText: 'Delete',
@@ -130,6 +183,7 @@ class EditBomItemDialog extends StatelessWidget {
                   ),
                 ],
               ),
+
             ],
           ),
         ),
@@ -158,18 +212,18 @@ class EditBomItemDialog extends StatelessWidget {
               onPressed: () => Navigator.pop(context),
               child: Text(
                 'Cancel',
-                style: TextStyle(color: Colors.grey[600]),
+                style: GoogleFonts.plusJakartaSans(color: Colors.grey[600]),
               ),
             ),
             TextButton(
               onPressed: () {
-                provider.deleteBillOfMaterialsItem(index);
-                Navigator.pop(context); // Pop confirmation
-                Navigator.pop(context); // Pop Edit dialog
+                provider.deleteBillOfMaterialsItem(widget.index);
+                Navigator.pop(context); // Close confirm
+                Navigator.pop(context); // Close dialog
               },
-              child: const Text(
+              child: Text(
                 'Delete',
-                style: TextStyle(color: Colors.red),
+                style: GoogleFonts.plusJakartaSans(color: Colors.red),
               ),
             ),
           ],
