@@ -187,6 +187,21 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
         LeadGraphBarChart(
           leadData: widget.leadConversionData,
         ),
+        ConversionGraphBarChart(
+          leadData: widget.leadConversionData,
+        ),
+        LeadDistributionPieChart(
+          leadData: widget.leadConversionData,
+        ),
+        LeadEnquiryForReportCard(
+          dashboardProvider: widget.dashBoardProvider,
+        ),
+
+        WeeklyReportCard(
+          isLeadOverView: true,
+          data: widget.pieData,
+          dashboardProvider: widget.dashBoardProvider,
+        ),
         // Container(
         //   padding: const EdgeInsets.all(10),
         //   decoration: BoxDecoration(boxShadow: const [

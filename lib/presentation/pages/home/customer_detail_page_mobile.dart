@@ -26,7 +26,7 @@ import 'package:vidyanexis/presentation/widgets/customer/complaints_page_mobile.
 import 'package:vidyanexis/presentation/widgets/customer/details_tab_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/documents_list_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_services_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
+
 import 'package:vidyanexis/presentation/widgets/customer/reciept_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
@@ -217,41 +217,34 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
           Builder(
             builder: (context) {
               final currentIndex = _tabController.index;
-              return Visibility(
-                visible: currentIndex == 0,
-                maintainState: true,
-                maintainAnimation: true,
-                maintainSize: false,
-                child: CustomPopMenuButtonWidget(
-                  onOptionSelected: (PopupMenuOptions option) async {
-                    switch (option) {
-                      case PopupMenuOptions.edit:
-                        final leadsProvider =
-                            Provider.of<LeadsProvider>(context, listen: false);
-                        await leadsProvider.getLeadDropdowns(context);
-
-                        final dropDownProvider = Provider.of<DropDownProvider>(
+              if (currentIndex != 0) return const SizedBox.shrink();
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (settingsprovider.menuIsEditMap[3] == 1)
+                    IconButton(
+                      icon: Icon(Icons.edit_outlined,
+                          size: 22, color: AppColors.primaryBlue),
+                      tooltip: 'Edit',
+                      onPressed: () async {
+                        final leadsProvider = Provider.of<LeadsProvider>(
                             context,
                             listen: false);
-
+                        await leadsProvider.getLeadDropdowns(context);
+                        final dropDownProvider =
+                            Provider.of<DropDownProvider>(context,
+                                listen: false);
                         if (leadDetailsProvider.leadDetails != null &&
                             leadDetailsProvider.leadDetails!.isNotEmpty) {
                           leadsProvider.enquirySourceController.text =
                               leadDetailsProvider
                                   .leadDetails![0].enquirySourceName;
-
                           leadsProvider.enquiryForController.text =
                               leadDetailsProvider
                                   .leadDetails![0].enquiryForName;
                         }
-                        // log(leadsProvider.enquiryForController.text);
                         dropDownProvider.selectedEnquirySourceId = int.parse(
                             widget.lead?.enquirySourceId.toString() ?? '0');
-
-                        // log(leadsProvider.enquirySourceController.text);
-                        // log(dropDownProvider.selectedEnquirySourceId
-                        //     .toString());
-
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -261,9 +254,14 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                             ),
                           ),
                         );
-                        break;
-
-                      case PopupMenuOptions.delete:
+                      },
+                    ),
+                  if (settingsprovider.menuIsDeleteMap[3] == 1)
+                    IconButton(
+                      icon: Icon(Icons.delete_outline,
+                          size: 22, color: Colors.red),
+                      tooltip: 'Delete',
+                      onPressed: () {
                         widget.fromLead
                             ? showConfirmationDialog(
                                 context: context,
@@ -281,17 +279,12 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                                           listen: false);
                                   final customerId =
                                       widget.customerId.toString();
-
-                                  // Optimistic removal
                                   leadsProvider.removeLeadFromList(customerId);
                                   Provider.of<CustomerProvider>(context,
                                           listen: false)
                                       .removeCustomerFromList(customerId);
-
                                   Navigator.pop(context); // dialog
                                   Navigator.pop(context); // details page
-
-                                  // Perform actions in background
                                   if (widget.fromLead) {
                                     leadsProvider.deleteLead(
                                         context, customerId);
@@ -310,24 +303,25 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title: const Text('Remove Registration'),
+                                    title:
+                                        const Text('Remove Registration'),
                                     content: const Text(
                                         'Are you sure you want to Remove Registration '),
                                     actions: <Widget>[
                                       TextButton(
                                         child: const Text('Cancel'),
                                         onPressed: () {
-                                          Navigator.of(context)
-                                              .pop(); // Close the dialog
+                                          Navigator.of(context).pop();
                                         },
                                       ),
                                       TextButton(
-                                        child:
-                                            const Text('Remove Registration'),
+                                        child: const Text(
+                                            'Remove Registration'),
                                         onPressed: () async {
                                           await customerDetailsProvider
                                               .removeRegister(
-                                                  widget.customerId.toString(),
+                                                  widget.customerId
+                                                      .toString(),
                                                   context);
                                           Navigator.pop(context);
                                         },
@@ -336,11 +330,9 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                                   );
                                 },
                               );
-
-                        break;
-                    }
-                  },
-                ),
+                      },
+                    ),
+                ],
               );
             },
           ),
