@@ -178,7 +178,6 @@
 //   }
 // }
 import 'package:flutter/material.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -227,11 +226,10 @@ class CustomTab extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Container(
-          height: 36,
+          height: 40,
           width: containerWidth,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(15),
-            color: Colors.grey.shade100,
+          decoration: const BoxDecoration(
+            color: Colors.transparent,
           ),
           child: Stack(
             children: [
@@ -251,8 +249,9 @@ class CustomTab extends StatelessWidget {
                               ? _getShortTabName(tabOptions[index])
                               : tabOptions[index],
                           style: AppStyles.getBodyTextStyle(
-                              fontSize: screenWidth < 400 ? 11 : 13,
-                              fontColor: AppColors.textGrey3),
+                            fontSize: screenWidth < 400 ? 11 : 13,
+                            fontColor: const Color(0xFF607085),
+                          ).copyWith(fontWeight: FontWeight.w500),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           textAlign: TextAlign.center,
@@ -277,15 +276,8 @@ class CustomTab extends StatelessWidget {
                       width: dynamicButtonWidth,
                       height: 32,
                       decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(13),
-                        color: Colors.white,
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black.withOpacity(0.1),
-                            blurRadius: 4,
-                            offset: const Offset(0, 2),
-                          ),
-                        ],
+                        borderRadius: BorderRadius.circular(10),
+                        color: const Color(0xFFE3F2FD),
                       ),
                       child: Center(
                         child: Padding(
@@ -295,8 +287,9 @@ class CustomTab extends StatelessWidget {
                                 ? _getShortTabName(tabOptions[currentIndex])
                                 : tabOptions[currentIndex],
                             style: AppStyles.getBodyTextStyle(
-                                fontSize: screenWidth < 400 ? 11 : 13,
-                                fontColor: AppColors.primaryBlue),
+                              fontSize: screenWidth < 400 ? 11 : 13,
+                              fontColor: const Color(0xFF1A7AE8),
+                            ).copyWith(fontWeight: FontWeight.w700),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                             textAlign: TextAlign.center,

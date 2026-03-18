@@ -92,8 +92,10 @@ class FirebaseNotificationService {
               channel.id,
               channel.name,
               channelDescription: channel.description,
-              icon: android.smallIcon,
-              // other properties...
+              icon: android.smallIcon ?? '@mipmap/ic_launcher',
+              importance: Importance.max,
+              priority: Priority.high,
+              channelShowBadge: true,
             ),
           ),
           payload: jsonEncode(message.data), // Pass JSON string as payload
@@ -103,8 +105,9 @@ class FirebaseNotificationService {
 
     // Handle when notification is clicked
     FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationClick);
+  }
 
-    // Check if the app was opened from a terminated state
+  Future<void> handleInitialMessage() async {
     RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
@@ -123,8 +126,7 @@ class FirebaseNotificationService {
     print('--- Navigating with data ---');
     print('Data for navigation: $data');
 
-    // Give the app a moment to settle if it's just booting or resuming
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 0));
 
     // Wait for context to be available if it's null
     BuildContext? context = appRouter.configuration.navigatorKey.currentContext;

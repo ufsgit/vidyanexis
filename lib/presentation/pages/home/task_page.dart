@@ -2544,6 +2544,24 @@ class _tasksPageReportState extends State<TaskPage> {
                             enquiryForId: task.enquiryForId.toString(),
                           );
                           formProvider.fetchAvailableFields(context);
+
+                          // Pre-fill Description and Follow-Up Date if available
+                          reportsProvider.descriptionController.text =
+                              task.description ?? '';
+                          if (task.nextFollowupDate != null &&
+                              task.nextFollowupDate!.isNotEmpty) {
+                            try {
+                              DateTime parsedDate =
+                                  DateTime.parse(task.nextFollowupDate!);
+                              reportsProvider.followUpDateController.text =
+                                  DateFormat('dd MMM yyyy').format(parsedDate);
+                            } catch (e) {
+                              reportsProvider.followUpDateController.text =
+                                  task.nextFollowupDate!;
+                            }
+                          } else {
+                            reportsProvider.followUpDateController.clear();
+                          }
                         });
 
                         final ValueNotifier<TaskTypeStatusModel>
@@ -2967,7 +2985,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ),
                                     );
                                   }
-                                  if (formProvider.customerForms.isEmpty) {
+                                  final validForms =
+                                      formProvider.customerForms.where((form) {
+                                    return form.id.isNotEmpty &&
+                                        form.id != '0' &&
+                                        form.name.isNotEmpty;
+                                  }).toList();
+
+                                  if (validForms.isEmpty) {
                                     return const SizedBox.shrink();
                                   }
                                   return Column(
@@ -2983,8 +3008,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                       Wrap(
                                         spacing: 8.0,
                                         runSpacing: 8.0,
-                                        children: formProvider.customerForms
-                                            .map((form) {
+                                        children: validForms.map((form) {
                                           return ElevatedButton.icon(
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor:
@@ -3790,7 +3814,6 @@ class _tasksPageReportState extends State<TaskPage> {
   Widget dateFollowUpWidget() {
     final taskProvider = Provider.of<TaskPageProvider>(context, listen: false);
     final theme = Theme.of(context);
-    taskProvider.followUpDateController.clear();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

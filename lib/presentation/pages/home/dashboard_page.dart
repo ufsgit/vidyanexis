@@ -180,7 +180,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
               style: AppStyles.getHeadingTextStyle(
                   fontSize: 24, fontColor: AppColors.primaryViolet),
             ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
+          CustomTab(dashBoardProvider: dashBoardProvider),
+          const SizedBox(height: 16),
           _buildTaskReports(context, dashBoardProvider),
           const SizedBox(height: 20),
           Column(
@@ -234,9 +236,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
               ),
             ],
           ),
-          const SizedBox(height: 20),
-          CustomTab(dashBoardProvider: dashBoardProvider),
-          const SizedBox(height: 24),
+          const SizedBox(height: 8),
           // Render tab body only if permitted
           Builder(builder: (context) {
             final allowedTabs = <int>[

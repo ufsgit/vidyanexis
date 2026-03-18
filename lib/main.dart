@@ -74,9 +74,14 @@ Future<void> main() async {
 
     final notificationService = FirebaseNotificationService();
     await notificationService.initialize();
-  }
 
-  runApp(const MyApp());
+    runApp(const MyApp());
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await notificationService.handleInitialMessage();
+    });
+  } else {
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatelessWidget {

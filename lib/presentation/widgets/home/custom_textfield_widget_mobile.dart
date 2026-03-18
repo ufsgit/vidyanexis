@@ -336,11 +336,10 @@ class _CustomTextfieldWidgetMobileState
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               if ((widget.showAsUpperLabel ?? true) &&
-                                  !widget.labelText.isNullOrEmpty() &&
-                                  !value.text.isNullOrEmpty())
+                                  !widget.labelText.isNullOrEmpty())
                                 Padding(
                                   padding:
-                                      const EdgeInsets.only(left: 10.0, top: 5),
+                                      const EdgeInsets.only(left: 10.0, top: 8),
                                   child: CustomText(
                                     textAlign: TextAlign.start,
                                     widget.labelText,
@@ -349,6 +348,7 @@ class _CustomTextfieldWidgetMobileState
                                         ? Colors.red
                                         : AppColors.textGrey4,
                                     fontWeight: FontWeight.w500,
+                                    softWrap: true,
                                   ),
                                 ),
                               TextFormField(
@@ -386,7 +386,7 @@ class _CustomTextfieldWidgetMobileState
                                     fontFamily: "Inter",
                                   ),
                                   filled: false,
-                                  hintText: widget.labelText,
+                                  hintText: (widget.showAsUpperLabel ?? true) ? null : widget.labelText,
                                   counterText: widget.counterText,
                                   fillColor: widget.fillColor ??
                                       (isDarkMode(context)
@@ -402,14 +402,11 @@ class _CustomTextfieldWidgetMobileState
                                   isDense: true,
                                   isCollapsed: true,
                                   contentPadding: widget.contentPadding ??
-                                      EdgeInsets.symmetric(
-                                          horizontal: 10,
-                                          vertical: (value.text.isNullOrEmpty())
-                                              ? 15
-                                              : (widget.showAsUpperLabel ??
-                                                      true)
-                                                  ? 4
-                                                  : 15),
+                                      const EdgeInsets.only(
+                                          left: 10,
+                                          right: 10,
+                                          top: 8,
+                                          bottom: 12),
                                   suffix: widget.suffix,
                                   prefix: widget.prefix,
                                   errorText: widget.errorText,

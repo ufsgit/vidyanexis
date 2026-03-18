@@ -160,6 +160,27 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
+                if (task.nextFollowupDate != null &&
+                    task.nextFollowupDate!.isNotEmpty) ...[
+                  Text(
+                    "Next Follow-up",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    task.nextFollowupDate!.toFormattedDate(),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textGrey3,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [

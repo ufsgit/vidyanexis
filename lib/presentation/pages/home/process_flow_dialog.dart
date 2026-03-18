@@ -31,8 +31,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   late TaskTypeStatusModel selectedStatus;
   bool isSaving = false;
   bool isInitialized = false;
+  bool showScheduleNotes = false;
   bool showDescription = false;
   bool showFollowUpDate = false;
+
 
   @override
   void initState() {
@@ -46,7 +48,25 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           Provider.of<DropDownProvider>(context, listen: false);
       final formProvider = Provider.of<FormProvider>(context, listen: false);
 
-      reportsProvider.clearDescription();
+      reportsProvider.descriptionController.text = widget.task.description;
+      if (widget.task.description.isNotEmpty) {
+        showDescription = true;
+      }
+
+      if (widget.task.nextFollowupDate != null &&
+          widget.task.nextFollowupDate!.isNotEmpty) {
+        try {
+          DateTime dt = DateTime.parse(widget.task.nextFollowupDate!);
+          reportsProvider.followUpDateController.text =
+              DateFormat('dd MMM yyyy').format(dt);
+          showFollowUpDate = true;
+        } catch (e) {
+          reportsProvider.followUpDateController.text =
+              widget.task.nextFollowupDate!;
+          showFollowUpDate = true;
+        }
+      }
+
       dropDownProvider.getDocumentType(context);
 
       debugPrint(
@@ -108,38 +128,42 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           onPressed: () => Navigator.pop(context, false),
         ),
         titleSpacing: 0,
-        title: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              widget.task.taskTypeName,
-              style: GoogleFonts.plusJakartaSans(
-                color: const Color(0xFF64748B),
-                fontSize: 12,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return CustomerDetailPageMobile(
-                        fromLead: false, customerId: widget.task.customerId);
-                  },
-                ));
-              },
-              child: Text(
-                widget.task.customerName,
-                style: GoogleFonts.plusJakartaSans(
-                  color: const Color(0xFF1A7AE8).withOpacity(0.8),
-                  fontSize: 16,
-                  fontWeight: FontWeight.w800,
-                  decoration: TextDecoration.underline,
-                  decorationColor: const Color(0xFF1A7AE8).withOpacity(0.4),
+        title: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(
+                    builder: (context) {
+                      return CustomerDetailPageMobile(
+                          fromLead: false, customerId: widget.task.customerId);
+                    },
+                  ));
+                },
+                child: Text(
+                  widget.task.customerName,
+                  style: GoogleFonts.plusJakartaSans(
+                    color: const Color(0xFF1A7AE8).withOpacity(0.8),
+                    fontSize: 15,
+                    fontWeight: FontWeight.w800,
+                    decoration: TextDecoration.underline,
+                    decorationColor: const Color(0xFF1A7AE8).withOpacity(0.4),
+                  ),
                 ),
               ),
-            ),
-          ],
+              const SizedBox(width: 6),
+              Text(
+                "/ ${widget.task.taskTypeName}",
+                style: GoogleFonts.plusJakartaSans(
+                  color: const Color(0xFF64748B),
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
       body: FutureBuilder<List<TaskTypeStatusModel>>(
@@ -211,12 +235,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                         children: [
                           // Status Segmented Control
                           Container(
-                            height: 42,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF1F5F9),
-                              borderRadius: BorderRadius.circular(12),
+                            height: 45,
+                            decoration: const BoxDecoration(
+                              color: Colors.transparent,
                             ),
-                            padding: const EdgeInsets.all(5),
+                            padding: const EdgeInsets.symmetric(vertical: 4),
                             child: LayoutBuilder(
                               builder: (context, constraints) {
                                 return SingleChildScrollView(
@@ -268,25 +291,15 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           duration:
                                               const Duration(milliseconds: 200),
                                           padding: const EdgeInsets.symmetric(
-                                              horizontal: 20),
+                                              horizontal: 16),
                                           margin: const EdgeInsets.symmetric(
-                                              horizontal: 2),
+                                              horizontal: 4),
                                           decoration: BoxDecoration(
                                             color: isSelected
-                                                ? Colors.white
+                                                ? const Color(0xFFE3F2FD)
                                                 : Colors.transparent,
                                             borderRadius:
                                                 BorderRadius.circular(10),
-                                            boxShadow: isSelected
-                                                ? [
-                                                    BoxShadow(
-                                                        color: Colors.black
-                                                            .withOpacity(0.06),
-                                                        blurRadius: 8,
-                                                        offset:
-                                                            const Offset(0, 2))
-                                                  ]
-                                                : [],
                                           ),
                                           alignment: Alignment.center,
                                           child: Text(
@@ -294,12 +307,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             style: GoogleFonts.plusJakartaSans(
                                               color: isSelected
                                                   ? const Color(0xFF1A7AE8)
-                                                      .withOpacity(0.8)
                                                   : const Color(0xFF64748B),
                                               fontWeight: isSelected
                                                   ? FontWeight.w700
-                                                  : FontWeight.w600,
-                                              fontSize: 12,
+                                                  : FontWeight.w500,
+                                              fontSize: 13,
                                             ),
                                           ),
                                         ),
@@ -311,7 +323,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             ),
                           ),
 
-                          const SizedBox(height: 12),
+                          const SizedBox(height: 8),
 
                           // --- Section: Tasks ---
                           Consumer<TaskPageProvider>(
@@ -321,7 +333,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     _buildSectionHeader('SELECT TASKS'),
-                                    const SizedBox(height: 12),
+                                    const SizedBox(height: 8),
                                     ...reportsProvider.taskTypeModel
                                         .map((task) {
                                       bool isSelected = reportsProvider
@@ -338,7 +350,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             : task.taskTypeName,
                                       );
                                     }).toList(),
-                                    const SizedBox(height: 16),
+                                    const SizedBox(height: 8),
                                   ],
                                 );
                               }
@@ -347,142 +359,149 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                           ),
 
                           // --- Section: Schedule & Notes ---
-                          _buildSectionHeader('SCHEDULE & NOTES'),
-                          const SizedBox(height: 12),
-
-                          // Follow Up Date Toggle
                           _buildExpansionCard(
                             onTap: () {
                               setState(() {
-                                showFollowUpDate = !showFollowUpDate;
-                                if (!showFollowUpDate) {
-                                  reportsProvider.followUpDateController
-                                      .clear();
-                                }
+                                showScheduleNotes = !showScheduleNotes;
                               });
                             },
-                            isExpanded: showFollowUpDate,
-                            title: 'FollowUp Date',
-                            icon: Icons.calendar_today_outlined,
-                            children: _buildInputField(
-                              controller:
-                                  reportsProvider.followUpDateController,
-                              hint: 'Choose FollowUp Date',
-                              icon: Icons.calendar_today,
-                              readOnly: true,
-                              onTap: () async {
-                                DateTime? pickedDate = await showDatePicker(
-                                  context: context,
-                                  initialDate: DateTime.now(),
-                                  firstDate: DateTime.now(),
-                                  lastDate: DateTime(2101),
-                                  builder: (context, child) {
-                                    return Theme(
-                                      data: Theme.of(context).copyWith(
-                                        colorScheme: const ColorScheme.light(
-                                          primary: Color(0xCC1A7AE8),
-                                        ),
+                            isExpanded: showScheduleNotes,
+                            title: 'Schedule & Notes',
+                            icon: Icons.event_note_outlined,
+                            children: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                _buildFieldLabel('Next FollowUp Date'),
+                                if (widget.task.nextFollowupDate != null &&
+                                    widget.task.nextFollowupDate!.isNotEmpty)
+                                  Padding(
+                                    padding: const EdgeInsets.only(
+                                        bottom: 8.0, left: 16.0),
+                                    child: Text(
+                                      (() {
+                                        try {
+                                          DateTime dt = DateTime.parse(
+                                              widget.task.nextFollowupDate!);
+                                          return DateFormat('dd MMM yyyy')
+                                              .format(dt);
+                                        } catch (e) {
+                                          return widget.task.nextFollowupDate!;
+                                        }
+                                      })(),
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
                                       ),
-                                      child: child!,
+                                    ),
+                                  ),
+
+                                _buildInputField(
+                                  controller:
+                                      reportsProvider.followUpDateController,
+                                  hint: 'Choose FollowUp Date',
+                                  icon: Icons.calendar_today,
+                                  readOnly: true,
+                                  onTap: () async {
+                                    DateTime? pickedDate = await showDatePicker(
+                                      context: context,
+                                      initialDate: DateTime.now(),
+                                      firstDate: DateTime.now(),
+                                      lastDate: DateTime(2101),
+                                      builder: (context, child) {
+                                        return Theme(
+                                          data: Theme.of(context).copyWith(
+                                            colorScheme: const ColorScheme.light(
+                                              primary: Color(0xFF1A7AE8),
+                                            ),
+                                          ),
+                                          child: child!,
+                                        );
+                                      },
                                     );
-                                  },
-                                );
-                                if (pickedDate != null) {
-                                  reportsProvider.followUpDateController.text =
-                                      DateFormat('dd MMM yyyy')
+                                    if (pickedDate != null) {
+                                      reportsProvider.followUpDateController
+                                          .text = DateFormat('dd MMM yyyy')
                                           .format(pickedDate);
-                                }
-                              },
+                                    }
+                                  },
+                                ),
+                                const SizedBox(height: 16),
+                                _buildFieldLabel('Add Notes'),
+                                _buildInputField(
+                                  controller:
+                                      reportsProvider.descriptionController,
+                                  hint: 'Enter detailed description...',
+                                  maxLines: 4,
+                                ),
+                              ],
                             ),
                           ),
 
-                          _buildExpansionCard(
-                            onTap: () {
-                              setState(() {
-                                showDescription = !showDescription;
-                                if (!showDescription) {
-                                  reportsProvider.descriptionController.clear();
-                                }
-                              });
-                            },
-                            isExpanded: showDescription,
-                            title: 'Add Notes',
-                            icon: Icons.notes_outlined,
-                            children: _buildInputField(
-                              controller: reportsProvider.descriptionController,
-                              hint: 'Enter detailed description...',
-                              maxLines: 4,
-                            ),
-                          ),
-
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 8),
 
                           Consumer<FormProvider>(
                             builder: (context, formProvider, child) {
+                              if (formProvider.isLoadingForms) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 20),
+                                  child: Center(
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  ),
+                                );
+                              }
+                              if (formProvider.customerForms.isEmpty) {
+                                return const SizedBox.shrink();
+                              }
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildSectionHeader('FORMS'),
                                   const SizedBox(height: 12),
-                                  if (formProvider.isLoadingForms)
-                                    const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 10),
-                                      child: Row(
-                                        children: [
-                                          SizedBox(
-                                            width: 14,
-                                            height: 14,
-                                            child: CircularProgressIndicator(
-                                              strokeWidth: 2,
-                                            ),
+                                  Wrap(
+                                    spacing: 8.0,
+                                    runSpacing: 8.0,
+                                    children:
+                                        formProvider.customerForms.map((form) {
+                                      return ElevatedButton.icon(
+                                        style: ElevatedButton.styleFrom(
+                                          backgroundColor:
+                                              const Color(0xFF1A7AE8),
+                                          foregroundColor: Colors.white,
+                                          elevation: 0,
+                                          padding: const EdgeInsets.symmetric(
+                                              horizontal: 16, vertical: 10),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
                                           ),
-                                          SizedBox(width: 12),
-                                          Text("Loading available forms...",
-                                              style: TextStyle(
-                                                  fontSize: 12,
-                                                  color: Colors.grey,
-                                                  fontWeight: FontWeight.w500)),
-                                        ],
-                                      ),
-                                    )
-                                  else if (formProvider.customerForms.isEmpty)
-                                    const Text("No forms available",
-                                        style: TextStyle(
-                                            fontSize: 12, color: Colors.grey))
-                                  else
-                                    Wrap(
-                                      spacing: 8.0,
-                                      runSpacing: 8.0,
-                                      children: formProvider.customerForms
-                                          .map((form) {
-                                        return ElevatedButton.icon(
-                                          onPressed: () {
-                                            _showTestFormDialog(context, form);
-                                          },
-                                          icon: const Icon(Icons.description,
-                                              size: 16),
-                                          label: Text(form.name),
-                                          style: ElevatedButton.styleFrom(
-                                            backgroundColor:
-                                                const Color(0xFF1A7AE8),
-                                            foregroundColor: Colors.white,
-                                            elevation: 0,
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 8),
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
+                                        ),
+                                        icon: const Icon(Icons.description,
+                                            size: 16),
+                                        label: Text(
+                                          (form.name.isNotEmpty
+                                                  ? form.name
+                                                  : "Form")
+                                              .toUpperCase(),
+                                          style: GoogleFonts.plusJakartaSans(
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 13,
                                           ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                        ),
+                                        onPressed: () {
+                                          _showTestFormDialog(context, form);
+                                        },
+                                      );
+                                    }).toList(),
+                                  ),
                                   const SizedBox(height: 16),
                                 ],
                               );
                             },
                           ),
+
 
                           // --- Section: Pending Documents ---
                           Consumer<TaskPageProvider>(
@@ -557,7 +576,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         },
                                       ),
                                     ),
-                                    const SizedBox(height: 20),
+                                    const SizedBox(height: 8),
                                   ],
                                 );
                               }
@@ -566,7 +585,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                           ),
 
                           // --- Section: Mandatory Tasks ---
-                          const SizedBox(height: 16),
+                          const SizedBox(height: 8),
                           Consumer<TaskPageProvider>(
                             builder: (context, reportsProvider, child) {
                               if (reportsProvider.statusData.isNotEmpty) {
@@ -610,7 +629,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         ),
                                       );
                                     }).toList(),
-                                    const SizedBox(height: 16),
+                                    const SizedBox(height: 8),
                                   ],
                                 );
                               }
@@ -629,7 +648,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                   right: 0,
                   bottom: 0,
                   child: Container(
-                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 24),
+                    padding: const EdgeInsets.fromLTRB(20, 10, 20, 10),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
                         begin: Alignment.topCenter,
@@ -766,7 +785,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                         color: Colors.white, strokeWidth: 2),
                                   )
                                 : Text(
-                                    'Save & Continue',
+                                    'Save',
                                     style: GoogleFonts.plusJakartaSans(
                                       fontWeight: FontWeight.w700,
                                       fontSize: 14,
@@ -1038,7 +1057,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
   Widget _buildSectionHeader(String title) {
     return Padding(
-      padding: const EdgeInsets.only(left: 4.0, bottom: 2),
+      padding: const EdgeInsets.only(left: 4.0, bottom: 2, top: 0),
       child: Text(
         title,
         style: GoogleFonts.plusJakartaSans(
@@ -1046,6 +1065,20 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           fontWeight: FontWeight.w800,
           color: const Color(0xFF94A3B8),
           letterSpacing: 1.2,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFieldLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6, left: 2),
+      child: Text(
+        label,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 12,
+          fontWeight: FontWeight.w600,
+          color: const Color(0xFF64748B),
         ),
       ),
     );
