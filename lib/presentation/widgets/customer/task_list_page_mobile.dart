@@ -1,16 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/controller/customer_details_provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';

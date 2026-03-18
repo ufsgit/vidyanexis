@@ -56,7 +56,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
     initDevicePlugin();
   }
 
-  initDevicePlugin() async {
+  Future<void> initDevicePlugin() async {
     await PackageInfo.fromPlatform().then((value) {
       packageInfo = value;
       setState(() {});

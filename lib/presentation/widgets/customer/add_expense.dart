@@ -81,7 +81,7 @@ class _AddExpenseWidgetState extends State<AddExpenseWidget> {
             ),
             const SizedBox(height: 16.0),
             DropdownButtonFormField<int>(
-              value: customerDetailsProvider.selectedExpenseType,
+              initialValue: customerDetailsProvider.selectedExpenseType,
               items: customerDetailsProvider.expenseTypeList
                   .map((type) => DropdownMenuItem<int>(
                         value: type.expenseTypeId,

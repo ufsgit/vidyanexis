@@ -10,7 +10,6 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/user_info_card_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class TaskDetailsWidget extends StatefulWidget {
   final String taskId;

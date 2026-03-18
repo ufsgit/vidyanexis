@@ -111,7 +111,7 @@ class LeadsProvider extends ChangeNotifier {
 
   bool _isLoadingEnquiryCustomFields = false;
   bool get isLoadingEnquiryCustomFields => _isLoadingEnquiryCustomFields;
-  bool _isSavingFollowup = false;
+  final bool _isSavingFollowup = false;
   bool get isSavingFollowup => _isSavingFollowup;
   bool _isFeasibilityChecked = false;
   bool get isFeasibilityChecked => _isFeasibilityChecked;
@@ -637,7 +637,7 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners so that UI can rebuild
   }
 
-  toggleFilter() {
+  void toggleFilter() {
     _isFilter = !_isFilter;
     // selectDateFilterOption(null);
     // removeStatus();
@@ -969,7 +969,7 @@ class LeadsProvider extends ChangeNotifier {
   // }
 
 // //no context only for back in customer detail
-  getSearchLeadsNoContext() async {
+  Future<void> getSearchLeadsNoContext() async {
     try {
       print('Start$_startLimit');
       print('End$_endLimit');
@@ -1028,7 +1028,7 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  saveLead({
+  Future<void> saveLead({
     required BuildContext context,
     required String customerName,
     required String contactNumber,
@@ -1431,7 +1431,7 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  Map<int, String> _customFieldValues = {};
+  final Map<int, String> _customFieldValues = {};
 
   // Getter for custom field values
   Map<int, String> get customFieldValues => _customFieldValues;
@@ -1452,7 +1452,7 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getCustomFieldsByStatusId(BuildContext context,
+  Future<void> getCustomFieldsByStatusId(BuildContext context,
       {required int statusId, required int leadId}) async {
     try {
       // Loader.showLoader(context);
@@ -1463,8 +1463,8 @@ class LeadsProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        print('dfooigwe9 ${data}');
-        print('missing_mandatory_document_count check: ${data}');
+        print('dfooigwe9 $data');
+        print('missing_mandatory_document_count check: $data');
 
         // Initialize to 0
         _missingMandatoryDocumentCount = 0;
@@ -1542,7 +1542,7 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  getCustomFieldsByEnquiryForId(BuildContext context,
+  Future<void> getCustomFieldsByEnquiryForId(BuildContext context,
       {required int enquiryForId, required int leadId}) async {
     try {
       _isLoadingEnquiryCustomFields = true;
@@ -1554,7 +1554,7 @@ class LeadsProvider extends ChangeNotifier {
         _isLoadingEnquiryCustomFields = false;
 
         final data = response.data;
-        print('Custom fields by enquiry for ID: ${data}');
+        print('Custom fields by enquiry for ID: $data');
         if (data != null && data.isNotEmpty) {
           _customFieldEnquiryFor = (data as List<dynamic>)
               .map((e) => CustomFieldByStatusId.fromJson(e))
@@ -1746,7 +1746,7 @@ class LeadsProvider extends ChangeNotifier {
     print(_customerId);
   }
 
-  getLeadDropdowns(BuildContext context) async {
+  Future<void> getLeadDropdowns(BuildContext context) async {
     try {
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getLeadDropdowns);
@@ -1772,7 +1772,7 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  getSearchLeadReports(String search, String fromDate, String toDate,
+  Future<void> getSearchLeadReports(String search, String fromDate, String toDate,
       String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
@@ -1873,7 +1873,7 @@ class LeadsProvider extends ChangeNotifier {
     );
   }
 
-  saveBulkImport(
+  Future<void> saveBulkImport(
       {required List data,
       required BuildContext context,
       required int statusId,

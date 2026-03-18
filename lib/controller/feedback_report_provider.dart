@@ -174,7 +174,7 @@ class FeedbackReportProvider extends ChangeNotifier {
   }
 
   //amc report
-  getSearchAmcReport(BuildContext context) async {
+  Future<void> getSearchAmcReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {

@@ -14,7 +14,7 @@ class CustomActionButton extends StatelessWidget {
   final double? iconSize; // Renamed from imageSize
 
   const CustomActionButton({
-    Key? key,
+    super.key,
     required this.icon,
     required this.text,
     this.onTap,
@@ -24,7 +24,7 @@ class CustomActionButton extends StatelessWidget {
     this.height = 34,
     this.iconSize = 16,
 
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

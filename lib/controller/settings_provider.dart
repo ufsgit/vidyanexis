@@ -446,7 +446,7 @@ class SettingsProvider extends ChangeNotifier {
   List<InventoryCustomerModel> get searchInventoryCustomer =>
       _searchInventoryCustomer;
 
-  saveBranch({
+  Future<void> saveBranch({
     required BuildContext context,
     required String branchId,
   }) async {
@@ -559,7 +559,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  saveCustomField(
+  Future<void> saveCustomField(
       BuildContext context, CustomFieldModel customFieldModel) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -657,7 +657,7 @@ class SettingsProvider extends ChangeNotifier {
     return false;
   }
 
-  deleteBranch(BuildContext context, int branchId) async {
+  Future<void> deleteBranch(BuildContext context, int branchId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
@@ -728,7 +728,7 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  searchSupplierApi(String query, BuildContext context) async {
+  Future<void> searchSupplierApi(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -760,7 +760,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addSupplier({
+  Future<void> addSupplier({
     required BuildContext context,
     required String statusId,
   }) async {
@@ -956,7 +956,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  getSearchLeadStatus(String query, String viewId, BuildContext context) async {
+  Future<void> getSearchLeadStatus(String query, String viewId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1154,7 +1154,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addCategoryName({
+  Future<void> addCategoryName({
     required BuildContext context,
     required String statusId,
     required String statusName,
@@ -1190,7 +1190,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addUnitName({
+  Future<void> addUnitName({
     required BuildContext context,
     required String statusId,
     required String statusName,
@@ -1296,7 +1296,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  saveMenuPermission({
+  Future<void> saveMenuPermission({
     required BuildContext context,
     required int userId,
     required List<UserMenuSelection> menuPermissions,
@@ -1339,7 +1339,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  getUserDetails(String query, BuildContext context) async {
+  Future<void> getUserDetails(String query, BuildContext context) async {
     try {
       // Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -1373,7 +1373,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  getMenuPermissionData(String userId, BuildContext context) async {
+  Future<void> getMenuPermissionData(String userId, BuildContext context) async {
     try {
       log(userId);
       final response = await HttpRequest.httpGetRequest(
@@ -1517,7 +1517,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchUnitApi(String query, BuildContext context) async {
+  Future<void> searchUnitApi(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1549,7 +1549,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchCategoryApi(String query, BuildContext context) async {
+  Future<void> searchCategoryApi(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1616,7 +1616,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchUserTypeDetails(BuildContext context) async {
+  Future<void> searchUserTypeDetails(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1646,7 +1646,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchWorkingStatusData(BuildContext context) async {
+  Future<void> searchWorkingStatusData(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1676,7 +1676,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchEnquiryStatusData(String query, BuildContext context) async {
+  Future<void> searchEnquiryStatusData(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1707,7 +1707,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchStageData(String query, BuildContext context) async {
+  Future<void> searchStageData(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1737,7 +1737,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchsourceCategoryData(String query, BuildContext context) async {
+  Future<void> searchsourceCategoryData(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1836,7 +1836,7 @@ class SettingsProvider extends ChangeNotifier {
     return categoryList;
   }
 
-  addCheckListItem({
+  Future<void> addCheckListItem({
     required BuildContext context,
     required CheckListItemModel itemModel,
   }) async {
@@ -2005,7 +2005,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addUser({
+  Future<void> addUser({
     required BuildContext context,
     required String userDetailsId,
     required String userDetailsName,
@@ -2118,7 +2118,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addLeadStatus({
+  Future<void> addLeadStatus({
     required BuildContext context,
     required String statusId,
     required String statusName,
@@ -2173,7 +2173,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addEnquiryName({
+  Future<void> addEnquiryName({
     required BuildContext context,
     required String statusId,
     required String statusName,
@@ -2217,7 +2217,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addStage({
+  Future<void> addStage({
     required BuildContext context,
     required String stageId,
     required String stageName,
@@ -2253,7 +2253,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addSourceCategory({
+  Future<void> addSourceCategory({
     required BuildContext context,
     required String sourceCategoryId,
     required String sourceCategoryName,
@@ -2292,7 +2292,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addEnquiryForName({
+  Future<void> addEnquiryForName({
     required BuildContext context,
     required String forId,
     required String forName,
@@ -2338,7 +2338,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchEnquiryForData(String query, BuildContext context) async {
+  Future<void> searchEnquiryForData(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -2404,7 +2404,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  saveDepartment({
+  Future<void> saveDepartment({
     required BuildContext context,
     required String departmentId,
   }) async {
@@ -2478,11 +2478,11 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  deleteDepartment(BuildContext context, int userId) async {
+  Future<void> deleteDepartment(BuildContext context, int userId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
-          endPoint: '${HttpUrls.deleteDepartment}',
+          endPoint: HttpUrls.deleteDepartment,
           bodyData: {"department_id": userId});
 
       if (response != null && response.statusCode == 200) {
@@ -2652,7 +2652,7 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  reset() {
+  void reset() {
     _selectedDepartmentId = -1;
     _selectedBranchId = -1;
 
@@ -2776,7 +2776,7 @@ class SettingsProvider extends ChangeNotifier {
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCompany);
 
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = response.data;
 
         if (data != null && data is List && data.isNotEmpty) {
@@ -2801,7 +2801,7 @@ class SettingsProvider extends ChangeNotifier {
         }
       } else {
         print(
-            'getCompanyDetails failed: ${response?.statusCode} - ${response?.statusMessage}');
+            'getCompanyDetails failed: ${response.statusCode} - ${response.statusMessage}');
       }
     } catch (e, stackTrace) {
       print('Exception occurred in getCompanyDetails: $e');
@@ -2957,7 +2957,7 @@ class SettingsProvider extends ChangeNotifier {
     uploadedFilePath = '';
   }
 
-  searchPermission(BuildContext context) async {
+  Future<void> searchPermission(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -3134,7 +3134,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addDocumentType({
+  Future<void> addDocumentType({
     required BuildContext context,
     required String forId,
     required String forName,
@@ -3175,7 +3175,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  saveStatus({
+  Future<void> saveStatus({
     required BuildContext context,
     required bool followUp,
     required int? statusId,
@@ -3250,7 +3250,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchDocumentType(String query, BuildContext context) async {
+  Future<void> searchDocumentType(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -3280,7 +3280,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchStatus(BuildContext context, String viewId) async {
+  Future<void> searchStatus(BuildContext context, String viewId) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -3362,7 +3362,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
 //checklist
-  addCheckListType({
+  Future<void> addCheckListType({
     required BuildContext context,
     required String forId,
     required String forName,
@@ -3398,7 +3398,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  searchCheckList(String query, BuildContext context) async {
+  Future<void> searchCheckList(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -3495,7 +3495,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addTaskType({
+  Future<void> addTaskType({
     required BuildContext context,
     required var data,
   }) async {
@@ -3623,7 +3623,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addCheckListCategory({
+  Future<void> addCheckListCategory({
     required BuildContext context,
     required CheckListCategoryModel categoryModel,
   }) async {
@@ -3686,6 +3686,7 @@ class SettingsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+    return null;
   }
 
   Future<bool?> deleteCheckListCategory(
@@ -3721,6 +3722,7 @@ class SettingsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     }
+    return null;
   }
 
   Future<List<ProjectTypeModel>> searchProjectTypes(
@@ -3758,7 +3760,7 @@ class SettingsProvider extends ChangeNotifier {
     return _projectTypeList;
   }
 
-  addExpenseType({
+  Future<void> addExpenseType({
     required BuildContext context,
     required String expenseId,
     required String expenseName,
@@ -3910,7 +3912,7 @@ class SettingsProvider extends ChangeNotifier {
     return _projectList;
   }
 
-  addProject({
+  Future<void> addProject({
     required BuildContext context,
     required String forId,
     required String forName,
@@ -3946,7 +3948,7 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  addProjectType({
+  Future<void> addProjectType({
     required BuildContext context,
     required String forId,
     required String forName,
@@ -3986,7 +3988,7 @@ class SettingsProvider extends ChangeNotifier {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
-          endPoint: '${HttpUrls.deleteProjectType}',
+          endPoint: HttpUrls.deleteProjectType,
           bodyData: {"Project_Type_Id": projectIdTypeId});
 
       if (response != null && response.statusCode == 200) {
@@ -4022,7 +4024,7 @@ class SettingsProvider extends ChangeNotifier {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
-          endPoint: '${HttpUrls.deleteProjects}',
+          endPoint: HttpUrls.deleteProjects,
           bodyData: {"project_ID": projectId});
 
       if (response != null && response.statusCode == 200) {
@@ -4063,7 +4065,7 @@ class SettingsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-        endPoint: '${HttpUrls.getAllLeadDropDown}',
+        endPoint: HttpUrls.getAllLeadDropDown,
       );
 
       if (response.statusCode == 200) {
@@ -4249,7 +4251,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   // Inventory Customer methods (separate from existing customer code)
-  addInventoryCustomer({
+  Future<void> addInventoryCustomer({
     required BuildContext context,
     required String statusId,
   }) async {
@@ -4316,7 +4318,7 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   // Inventory Customer search API
-  searchInventoryCustomerApi(String query, BuildContext context) async {
+  Future<void> searchInventoryCustomerApi(String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";

@@ -28,7 +28,7 @@ class _CheckListCategoryPageState extends State<CheckListCategoryPage> {
     super.initState();
   }
 
-  getData() {
+  void getData() {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
     categoryListFuture =

@@ -17,7 +17,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';

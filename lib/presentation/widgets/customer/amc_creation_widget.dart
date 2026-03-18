@@ -263,7 +263,7 @@ class _AmcCreationWidgetState extends State<AmcCreationWidget> {
               const SizedBox(height: 16.0),
               if (widget.isEdit)
                 DropdownButtonFormField<int>(
-                  value: customerDetailsProvider.selectedAMCStatus ?? 1,
+                  initialValue: customerDetailsProvider.selectedAMCStatus ?? 1,
                   items: dropDownProvider.amcStatus
                       .map((status) => DropdownMenuItem<int>(
                             value: status.amcStatusId,

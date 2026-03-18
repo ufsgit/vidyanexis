@@ -250,7 +250,7 @@ class _PaymentReminderTabState extends State<PaymentReminderTab> {
                       overflow: TextOverflow.ellipsis,
                     )),
               );
-            }).toList(),
+            }),
           ],
           onChanged: (value) {
             provider.setUserFilterStatus(value ?? 0);

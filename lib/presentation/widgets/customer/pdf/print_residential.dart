@@ -121,12 +121,12 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             pw.Text('Buyer Details : ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text('${customer?.customerName ?? ''}',
+                            pw.Text(customer?.customerName ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),
                         pw.SizedBox(height: 4),
-                        pw.Text('${customer?.address ?? ''}',
+                        pw.Text(customer?.address ?? '',
                             style: pw.TextStyle(font: font, fontSize: 11)),
                         pw.SizedBox(height: 4),
                         pw.Row(
@@ -135,7 +135,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             pw.Text('Mob : ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text('${customer?.phoneNumber ?? ''}',
+                            pw.Text(customer?.phoneNumber ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),
@@ -157,7 +157,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
                             pw.Text(
-                                '${quotation?.entryDate.toDDMMYYYY() ?? ''}',
+                                quotation?.entryDate.toDDMMYYYY() ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),
@@ -167,7 +167,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             pw.Text('Payment Terms : ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text('${quotation?.paymentTermsName ?? ''}',
+                            pw.Text(quotation?.paymentTermsName ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),
@@ -177,7 +177,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             pw.Text('Inco Terms : ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text('${quotation?.incoTerms ?? ''}',
+                            pw.Text(quotation?.incoTerms ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),
@@ -187,7 +187,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             pw.Text('Quote Validity : ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text('${quotation?.validity ?? ''}',
+                            pw.Text(quotation?.validity ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),
@@ -197,7 +197,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                             pw.Text('MNRE Empanelment Number : ',
                                 style:
                                     pw.TextStyle(font: boldFont, fontSize: 11)),
-                            pw.Text('${quotation?.tendorNumber ?? ''}',
+                            pw.Text(quotation?.tendorNumber ?? '',
                                 style: pw.TextStyle(font: font, fontSize: 11)),
                           ],
                         ),
@@ -295,7 +295,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                               align: pw.Alignment.center, isBold: true),
                           _tableCell(item.Unit ?? '',
                               align: pw.Alignment.center, isBold: true),
-                          _tableCell(item.unitPrice?.toString() ?? '',
+                          _tableCell(item.unitPrice.toString() ?? '',
                               align: pw.Alignment.center, isBold: true),
                           // _tableCell(((item.GSTPercent) / 2)?.toString() ?? '',
                           //     align: pw.Alignment.center, isBold: true),
@@ -303,10 +303,10 @@ Future<void> _addItemPage(pw.Document pdf) async {
                           //     align: pw.Alignment.center, isBold: true),
                           // _tableCell("0",
                           //     align: pw.Alignment.center, isBold: true),
-                          _tableCell(item.AdCESS?.toString() ?? '',
+                          _tableCell(item.AdCESS.toString() ?? '',
                               align: pw.Alignment.center,
                               isBold: true), // adcess is other tax
-                          _tableCell(item.amount?.toString() ?? '',
+                          _tableCell(item.amount.toString() ?? '',
                               align: pw.Alignment.center, isBold: true),
                         ],
                       );
@@ -410,7 +410,7 @@ pw.Widget _summaryRow(String label, String value) {
     child: pw.Row(
       mainAxisAlignment: pw.MainAxisAlignment.end,
       children: [
-        pw.Text(label + ' :',
+        pw.Text('$label :',
             style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold)),
         pw.Text(value,
             style: pw.TextStyle(fontSize: 11, fontWeight: pw.FontWeight.bold)),
@@ -586,7 +586,7 @@ pw.Widget _tableCell(String text, {pw.Alignment? align, bool isBold = false}) {
 }
 
 Future<void> _addSecondPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/residential_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -638,7 +638,7 @@ Future<void> _addSecondPage(pw.Document pdf, int pageNumber) async {
 }
 
 Future<void> _addThirdPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/residential_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -690,7 +690,7 @@ Future<void> _addThirdPage(pw.Document pdf, int pageNumber) async {
 }
 
 Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/residential_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -790,7 +790,7 @@ Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                       pw.Text(
-                        '${quotation?.branchDetails?.branchName ?? ''}',
+                        quotation?.branchDetails?.branchName ?? '',
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                     ],
@@ -808,7 +808,7 @@ Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
 }
 
 Future<void> _addWarrantyPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/residential_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -860,7 +860,7 @@ Future<void> _addWarrantyPage(pw.Document pdf, int pageNumber) async {
 }
 
 Future<void> _addPaymentTermsPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/residential_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -1004,7 +1004,7 @@ Future<void> _addPaymentTermsPage(pw.Document pdf, int pageNumber) async {
 }
 
 Future<void> _addPlaceholderPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/residential_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/residential_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 

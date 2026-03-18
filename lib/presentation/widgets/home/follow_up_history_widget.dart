@@ -75,7 +75,7 @@ class _FollowUpCardState extends State<FollowUpCard> {
       }
     } else {
       final url = widget.entry.audios.firstOrNull?.filePath ?? '';
-      print('URL-----' + url);
+      print('URL-----$url');
       if (url.isEmpty) return;
 
       try {

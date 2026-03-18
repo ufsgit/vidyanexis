@@ -198,7 +198,7 @@ class AttendanceReportProvider extends ChangeNotifier {
   }
 
   //task report
-  getSearchTaskReport(BuildContext context) async {
+  Future<void> getSearchTaskReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -260,7 +260,7 @@ class AttendanceReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchTaskReportNoContext() async {
+  Future<void> getSearchTaskReportNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
@@ -308,7 +308,7 @@ class AttendanceReportProvider extends ChangeNotifier {
     }
   }
 
-  getLocation({required BuildContext context}) async {
+  Future<void> getLocation({required BuildContext context}) async {
     // if (!kIsWeb) {
     Loader.showLoader(context);
     PermissionStatus locationStatus = await Permission.location.status;

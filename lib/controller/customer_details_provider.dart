@@ -180,7 +180,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   void addAssignedWorker(UserInTaskModel user) {
     addTaskModel.taskUser ??= [];
-    if (!addTaskModel.taskUser!.any((u) => u.userDetailsId == user.userDetailsId)) {
+    if (!addTaskModel.taskUser!
+        .any((u) => u.userDetailsId == user.userDetailsId)) {
       addTaskModel.taskUser!.add(user);
       _selectedAssignWorker = user.userDetailsId;
       _selectedAssignWorkerName = user.userDetailsName ?? '';
@@ -189,11 +190,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
   }
 
   void removeAssignedWorker(UserInTaskModel user) {
-    addTaskModel.taskUser?.removeWhere((u) => u.userDetailsId == user.userDetailsId);
+    addTaskModel.taskUser
+        ?.removeWhere((u) => u.userDetailsId == user.userDetailsId);
     if (_selectedAssignWorker == user.userDetailsId) {
       if (addTaskModel.taskUser?.isNotEmpty ?? false) {
         _selectedAssignWorker = addTaskModel.taskUser!.first.userDetailsId;
-        _selectedAssignWorkerName = addTaskModel.taskUser!.first.userDetailsName ?? '';
+        _selectedAssignWorkerName =
+            addTaskModel.taskUser!.first.userDetailsName ?? '';
       } else {
         _selectedAssignWorker = null;
         _selectedAssignWorkerName = '';
@@ -731,13 +734,13 @@ class CustomerDetailsProvider extends ChangeNotifier {
     try {
       _isLoadingQuotationCustomFields = true;
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getCustomFieldQuotation}');
+          endPoint: HttpUrls.getCustomFieldQuotation);
 
       if (response.statusCode == 200) {
         _isLoadingQuotationCustomFields = false;
 
         final data = response.data;
-        print('Custom fields by quotation ID: ${data}');
+        print('Custom fields by quotation ID: $data');
         if (data != null && data.isNotEmpty) {
           _customFieldQuotation = (data as List<dynamic>)
               .map((e) => CustomFieldByStatusId.fromJson(e))
@@ -1042,7 +1045,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _maintenanceDates = List.from(newDates);
   }
 
-  updateTotalAmount(int total) {
+  void updateTotalAmount(int total) {
     _totalAmount = total;
     notifyListeners();
   }
@@ -1446,7 +1449,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   void updateAssignWorker(int value, DropDownProvider dropDownProvider) {
     _selectedAssignWorkerName = dropDownProvider.searchUserDetails
         .firstWhere((status) => status.userDetailsId == value)
-        .userDetailsName!;
+        .userDetailsName;
     // _selectedAssignWorker = value;
     bool userExists = false;
     print('1');
@@ -1540,7 +1543,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getTaskList(String customerId, BuildContext context,
+  Future<bool> getTaskList(String customerId, BuildContext context,
       {bool isLoadMore = false}) async {
     if (!isLoadMore) {
       _isLoading = true;
@@ -1608,7 +1611,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     return false;
   }
 
-  getTaskDetails(String taskId, BuildContext context) async {
+  Future<void> getTaskDetails(String taskId, BuildContext context) async {
     _isLoadingDetails = true;
     notifyListeners();
 
@@ -1641,7 +1644,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  saveTask(
+  Future<void> saveTask(
     String taskId,
     String taskType,
     String description,
@@ -1686,7 +1689,10 @@ class CustomerDetailsProvider extends ChangeNotifier {
       }
       addTaskModel.taskMasterId = int.tryParse(taskId) ?? 0;
       addTaskModel.taskStatusId = _selectedAMCStatus ?? 1;
-      addTaskModel.taskStatusName = _selectedAMCStatusName ?? 'Not Started';
+      addTaskModel.taskStatusName =
+          (_selectedAMCStatusName != null && _selectedAMCStatusName!.isNotEmpty)
+              ? _selectedAMCStatusName!
+              : 'Not Started';
       addTaskModel.customerId = int.tryParse(customerId) ?? 0;
       addTaskModel.createdBy = int.tryParse(userId) ?? 0;
       addTaskModel.taskDate = DateTime.parse(date);
@@ -1751,7 +1757,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getServiceList(String customerId, BuildContext context) async {
+  Future<void> getServiceList(String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -1789,7 +1795,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getServiceDetails(String serviceId, BuildContext context) async {
+  Future<void> getServiceDetails(String serviceId, BuildContext context) async {
     _isLoadingDetails = true;
     notifyListeners();
 
@@ -1915,7 +1921,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getAmc(String customerId, String amcId, BuildContext context) async {
+  Future<void> getAmc(String customerId, String amcId, BuildContext context) async {
     _isAmcListLoading = true;
     notifyListeners();
 
@@ -1955,7 +1961,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  saveAmc(
+  Future<void> saveAmc(
       {required String description,
       required String fromDate,
       required String toDate,
@@ -2034,7 +2040,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getQuatationList(String customerId, BuildContext context) async {
+  Future<void> getQuatationList(String customerId, BuildContext context) async {
     _isQuotationListLoading = true;
     notifyListeners();
 
@@ -2539,8 +2545,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       // Update the item fields
       billOfMaterialsItems[i].description =
           billOfMaterials[i].itemsAndDescription;
-      billOfMaterialsItems[i].quantity =
-          billOfMaterials[i].quantity.toString();
+      billOfMaterialsItems[i].quantity = billOfMaterials[i].quantity.toString();
       billOfMaterialsItems[i].brand = billOfMaterials[i].make;
       billOfMaterialsItems[i].distributor = billOfMaterials[i].distributor;
       billOfMaterialsItems[i].comments = billOfMaterials[i].invoiceNo;
@@ -2617,7 +2622,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getDocument(String customerId, BuildContext context) async {
+  Future<void> getDocument(String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -2654,7 +2659,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getRecieptListApi(String customerId, BuildContext context) async {
+  Future<void> getRecieptListApi(String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -2691,7 +2696,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  saveReciept(String recieptId, String customerId, BuildContext context) async {
+  Future<void> saveReciept(String recieptId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -2754,7 +2759,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     paymentDescriptionController.clear();
   }
 
-  savePayment(String recieptId, String customerId, BuildContext context) async {
+  Future<void> savePayment(String recieptId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -2809,7 +2814,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  saveRefund(String refundId, String customerId, BuildContext context) async {
+  Future<void> saveRefund(String refundId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -2867,7 +2872,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     electricalsectionplacecontroller.clear();
   }
 
-  getRefundDetails(String customerId, BuildContext context) async {
+  Future<void> getRefundDetails(String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -2904,7 +2909,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getInvoiceListApi(String customerId, BuildContext context) async {
+  Future<void> getInvoiceListApi(String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -2941,7 +2946,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  saveInvoice(String recieptId, String customerId, BuildContext context) async {
+  Future<void> saveInvoice(String recieptId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -3205,7 +3210,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getTaskDocument(String customerId, BuildContext context) async {
+  Future<void> getTaskDocument(String customerId, BuildContext context) async {
     // _isLoading = true;
     notifyListeners();
 
@@ -3242,8 +3247,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
       notifyListeners(); // Notify listeners to rebuild with the final state
     }
   }
-
-
 
   Future<void> getForm(BuildContext context, String taskId) async {
     try {
@@ -3319,7 +3322,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  getInvoiceRecieptTotal(String customerId, BuildContext context) async {
+  Future<void> getInvoiceRecieptTotal(String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -3366,7 +3369,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              HttpUrls.getUserLocationDetails + "?User_Details_Name=" + query);
+              "${HttpUrls.getUserLocationDetails}?User_Details_Name=$query");
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -3727,7 +3730,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getQuotationTypes}');
+          endPoint: HttpUrls.getQuotationTypes);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -3812,6 +3815,63 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
     // Notify listeners only once at the end
     notifyListeners();
+  }
+
+  Future<void> getAnnexurePdf(
+      String endpoint, String annexureName, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: endpoint,
+          returnBytes: true);
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        print("getAnnexurePdf $annexureName response received");
+
+        if (data is List<int>) {
+          if (kIsWeb) {
+            final blob =
+                html.Blob([Uint8List.fromList(data)], 'application/pdf');
+            final url = html.Url.createObjectUrlFromBlob(blob);
+            final anchor = html.AnchorElement(href: url)
+              ..setAttribute("download", "${annexureName}.pdf")
+              ..click();
+
+            // Delay cleanup to ensure download starts
+            await Future.delayed(const Duration(seconds: 2));
+            html.Url.revokeObjectUrl(url);
+
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Downloading $annexureName...')));
+            }
+          } else {
+            if (context.mounted) {
+              await Printing.layoutPdf(
+                  onLayout: (format) async => Uint8List.fromList(data));
+            }
+          }
+        } else {
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                content: Text('Invalid PDF data received. Please try again.')));
+          }
+        }
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Server Error')),
+          );
+        }
+      }
+    } catch (e) {
+      print('Exception occurred: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
+    }
   }
 
   Future<void> getQuotationMasterPdf(

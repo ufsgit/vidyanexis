@@ -25,12 +25,14 @@ class FormProvider extends ChangeNotifier {
 
   List<Map<String, dynamic>> departments = [];
   List<Map<String, dynamic>> taskTypes = [];
+  List<Map<String, dynamic>> customers = [];
 
   List<FieldModel> availableFields = [];
 
   bool isLoadingFields = false;
   bool isLoadingDepartments = false;
   bool isLoadingTaskTypes = false;
+  bool isLoadingCustomers = false;
 
   void fetchDepartments(BuildContext context) async {
     isLoadingDepartments = true;
@@ -57,13 +59,44 @@ class FormProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void fetchCustomers(BuildContext context) async {
+    isLoadingCustomers = true;
+    notifyListeners();
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchCustomer}?Customer_Name=&Is_Date=0&Fromdate=&Todate=&To_User_Id=0&Status_Id=0&Page_Index1=1&Page_Index2=500');
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          final list = List<dynamic>.from(data);
+          // Last item is the total count sentinel — remove it
+          if (list.isNotEmpty) list.removeLast();
+          customers = list
+              .map((item) => {
+                    'id': item['Customer_Id'] ?? item['customer_id'],
+                    'name': (item['Customer_Name'] ??
+                            item['customer_name'] ??
+                            '')
+                        .toString()
+                  })
+              .toList();
+        }
+      }
+    } catch (e) {
+      debugPrint('Exception in fetchCustomers: $e');
+    }
+    isLoadingCustomers = false;
+    notifyListeners();
+  }
+
   void fetchTaskTypes(BuildContext context) async {
     isLoadingTaskTypes = true;
     notifyListeners();
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name=');
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = response.data;
         final List<dynamic> tList = data as List<dynamic>;
         taskTypes = tList
@@ -97,7 +130,7 @@ class FormProvider extends ChangeNotifier {
     try {
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCustomField);
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final body = response.data;
         if (body != null) {
           final customFieldModelList = (body as List<dynamic>)
@@ -153,7 +186,7 @@ class FormProvider extends ChangeNotifier {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: '${HttpUrls.searchFormData}?Form_Name=');
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
           List<dynamic> formsList = [];
@@ -222,6 +255,7 @@ class FormProvider extends ChangeNotifier {
               departmentId: item['Department_Id'],
               taskType: item['Task_Type_Name']?.toString() ?? '',
               taskTypeId: item['Task_Type_Id'],
+              customerId: item['Customer_Id'],
               fields: parsedFields,
             );
           }).toList();
@@ -244,6 +278,7 @@ class FormProvider extends ChangeNotifier {
         "Department_Name": form.department,
         "Task_Type_Id": form.taskTypeId,
         "Task_Type_Name": form.taskType,
+        "Customer_Id": form.customerId ?? 0,
         "Custom_Fields": form.fields
             .map((f) => {
                   "Custom_Field_Id": int.tryParse(f.id) ?? 0,
@@ -287,6 +322,7 @@ class FormProvider extends ChangeNotifier {
         "Department_Name": form.department,
         "Task_Type_Id": form.taskTypeId,
         "Task_Type_Name": form.taskType,
+        "Customer_Id": form.customerId ?? 0,
         "Custom_Fields": form.fields
             .map((f) => {
                   "Custom_Field_Id": int.tryParse(f.id) ?? 0,
@@ -406,7 +442,7 @@ class FormProvider extends ChangeNotifier {
         bodyData: queryParams,
       );
 
-      if (response != null && response.statusCode == 200) {
+      if (response.statusCode == 200) {
         final data = response.data;
         if (data != null) {
           bool hasData = false;

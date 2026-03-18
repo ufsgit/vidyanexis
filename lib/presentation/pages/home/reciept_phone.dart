@@ -27,6 +27,7 @@ class _RecieptPhoneState extends State<RecieptPhone> {
       Provider.of<CustomerDetailsProvider>(navigatorKey.currentState!.context);
   SettingsProvider settingsProvider =
       Provider.of<SettingsProvider>(navigatorKey.currentState!.context);
+  @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final cdProvider =
@@ -112,7 +113,7 @@ class _RecieptPhoneState extends State<RecieptPhone> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Container(
+                      SizedBox(
                           height: 24,
                           width: 24,
                           child:

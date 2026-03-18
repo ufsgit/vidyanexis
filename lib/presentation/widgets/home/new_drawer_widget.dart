@@ -35,7 +35,7 @@ class NewLeadDrawerWidget extends StatefulWidget {
 class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
   bool _isFieldValid(String? value) => value != null && value.isNotEmpty;
   late FocusNode _leadNameFocusNode;
-  FocusNode _leadAgeFocusNode = FocusNode();
+  final FocusNode _leadAgeFocusNode = FocusNode();
   ScrollController scrollController = ScrollController();
   bool validatePhone = false;
 
@@ -130,7 +130,7 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
         enquiryForName: dropDownProvider.selectedEnquiryForName,
         branchId: settingsProvider.selectedBranchId!,
         branchName: leadProvider.branchController.text,
-        departmentId: settingsProvider.selectedDepartmentId!,
+        departmentId: settingsProvider.selectedDepartmentId,
         departmentName: leadProvider.departmentController.text,
         sourceId: dropDownProvider.selectedSourceId ?? 0,
         sourceName: leadProvider.sourceCategoryController.text,
@@ -1770,9 +1770,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                               dropDownProvider.selectedUserId,
                                           enabled: settingsProvider
                                                       .selectedBranchId !=
-                                                  null &&
-                                              settingsProvider
-                                                      .selectedDepartmentId !=
                                                   null,
                                         ),
                                       ),

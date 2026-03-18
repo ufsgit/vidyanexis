@@ -270,7 +270,7 @@ class _AddPeriodicServiceMobileState extends State<AddPeriodicServiceMobile> {
             children: [
               if (widget.isEdit)
                 DropdownButtonFormField<int>(
-                  value: customerDetailsProvider.selectedAMCStatus ?? 1,
+                  initialValue: customerDetailsProvider.selectedAMCStatus ?? 1,
                   items: dropDownProvider.amcStatus
                       .map((status) => DropdownMenuItem<int>(
                             value: status.amcStatusId,

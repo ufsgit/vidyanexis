@@ -846,7 +846,7 @@ class _ProcessFlowAddWidgetState extends State<ProcessFlowAddWidget> {
     );
   }
 
-  showStatusTypeDialog(
+  void showStatusTypeDialog(
       int index, List<TaskTypeStatusModel> taskTypeStatusList) {
     List<String> selectedStatusIds =
         processFlowProvider.mandatoryTaskModel.statusIds ?? [];

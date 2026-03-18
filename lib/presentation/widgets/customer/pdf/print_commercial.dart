@@ -60,7 +60,7 @@ Future<void> printCommercialPDFs({
 }
 
 Future<void> _addFirstPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/commercial_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/commercial_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -137,7 +137,7 @@ Future<void> _addFirstPage(pw.Document pdf, int pageNumber) async {
 }
 
 Future<void> _addThirdPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/commercial_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/commercial_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -446,7 +446,7 @@ Future<void> _addFifthPage(pw.Document pdf) async {
 }
 
 Future<void> _addSixthPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/commercial_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/commercial_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -700,7 +700,7 @@ Future<void> _addEightPage(pw.Document pdf) async {
 }
 
 Future<void> _addNinthPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/commercial_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/commercial_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 
@@ -792,7 +792,7 @@ pw.Widget _tableCell(String text, {pw.Alignment? align, bool isBold = false}) {
 }
 
 Future<void> _addPlaceholderPage(pw.Document pdf, int pageNumber) async {
-  String contentImagePath = 'assets/images/commercial_${pageNumber}.jpg';
+  String contentImagePath = 'assets/images/commercial_$pageNumber.jpg';
   Uint8List? contentImageBytes;
   pw.MemoryImage? contentImage;
 

@@ -32,7 +32,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
   final double? spacing;
   final String controllerKey;
   const CustomFieldSectionWidget({
-    Key? key,
+    super.key,
     required this.customFields,
     this.initialFieldValues,
     this.initialValues,
@@ -42,7 +42,7 @@ class CustomFieldSectionWidget extends StatefulWidget {
     this.padding,
     this.spacing,
     required this.controllerKey,
-  }) : super(key: key);
+  });
 
   @override
   _CustomFieldSectionWidgetState createState() =>
@@ -1005,7 +1005,7 @@ class CustomFieldWidgetBuilder {
             }).toList()
           : [],
       hint: Text("Select $fieldName"),
-      value: selectedValue,
+      initialValue: selectedValue,
       onChanged: enabled
           ? (value) {
               onChanged(value?.dropdownValue);

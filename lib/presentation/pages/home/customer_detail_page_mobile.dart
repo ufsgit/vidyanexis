@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -6,9 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_phone.dart';
-import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_document_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -27,7 +24,6 @@ import 'package:vidyanexis/presentation/widgets/customer/details_tab_mobile.dart
 import 'package:vidyanexis/presentation/widgets/customer/documents_list_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_services_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/reciept_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';

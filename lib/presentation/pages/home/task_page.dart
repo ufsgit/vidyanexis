@@ -375,8 +375,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                 onChanged: _onSearchChanged,
                                                 onSubmitted: (query) {
                                                   if (_debounce?.isActive ??
-                                                      false)
+                                                      false) {
                                                     _debounce!.cancel();
+                                                  }
                                                   reportsProvider
                                                       .setTaskSearchCriteria(
                                                     query,
@@ -401,8 +402,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                   suffixIcon: GestureDetector(
                                                     onTap: () {
                                                       if (_debounce?.isActive ??
-                                                          false)
+                                                          false) {
                                                         _debounce!.cancel();
+                                                      }
                                                       reportsProvider
                                                           .setTaskSearchCriteria(
                                                         searchController.text,
@@ -1036,7 +1038,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 TableWidget(
                                     flex: 2,
                                     title: 'Customer',
-                                    padding: const EdgeInsets.symmetric(
+                                    padding: EdgeInsets.symmetric(
                                         vertical: 6.0, horizontal: 10.0),
                                     alignment: Alignment.centerLeft,
                                     color: Colors.white),
@@ -1167,8 +1169,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           reportsProvider.selectedTaskTypeIds
                                               .clear();
                                           reportsProvider.taskTypeModel.clear();
-                                          if (task.customerName == null ||
-                                              task.customerName!.isEmpty) {
+                                          if (task.customerName.isEmpty) {
                                             updateStatusDialogWithoutTask(task)
                                                 .then((value) {
                                               if (value == true) {
@@ -1261,12 +1262,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ),
                                                         child: InkWell(
                                                           onTap: () {
-                                                            if (task.customerId !=
-                                                                null) {
-                                                              context.push(
-                                                                  '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                            }
-                                                          },
+                                                            context.push(
+                                                                '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                                                                                    },
                                                           child: Text(
                                                             task.customerName ??
                                                                 'Unknown',
@@ -1493,10 +1491,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         vertical: 6.0,
                                                         horizontal: 8.0),
                                                 data: Text(
-                                                  task.taskDate != null
-                                                      ? task.taskDate
-                                                          .toDayMonthYearFormat()
-                                                      : '',
+                                                  task.taskDate
+                                                          .toDayMonthYearFormat(),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,
@@ -1521,9 +1517,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     reportsProvider
                                                         .taskTypeModel
                                                         .clear();
-                                                    if (task.customerName ==
-                                                            null ||
-                                                        task.customerName!
+                                                    if (task.customerName
                                                             .isEmpty) {
                                                       updateStatusDialogWithoutTask(
                                                               task)
@@ -1954,7 +1948,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                 builder: (ctx, value, child) {
                                   return DropdownButtonFormField<
                                       TaskTypeStatusModel>(
-                                    value: value,
+                                    initialValue: value,
                                     isExpanded: true,
                                     icon: Icon(Icons.arrow_drop_down,
                                         color: theme.primaryColor),
@@ -2305,7 +2299,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: fieldWidget,
                         );
-                      }).toList(),
+                      }),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -2347,8 +2341,9 @@ class _tasksPageReportState extends State<TaskPage> {
 
                                 int typeId = 1;
                                 if (field.type == FieldType.number) typeId = 2;
-                                if (field.type == FieldType.dropdown)
+                                if (field.type == FieldType.dropdown) {
                                   typeId = 3;
+                                }
                                 if (field.type == FieldType.date) typeId = 4;
 
                                 customFieldsPayload.add({
@@ -2597,7 +2592,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                         contentPadding:
                                             EdgeInsets.symmetric(vertical: 12),
                                       ),
-                                      value: value,
+                                      initialValue: value,
                                       isExpanded: true,
                                       icon: const Icon(Icons.arrow_drop_down),
                                       onChanged: (TaskTypeStatusModel?
@@ -2895,8 +2890,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                             )
                                           : const SizedBox.shrink();
 
-                                      if (!showDate && !showRightList)
+                                      if (!showDate && !showRightList) {
                                         return const SizedBox.shrink();
+                                      }
 
                                       if (isSmallScreen) {
                                         return Column(
@@ -3425,8 +3421,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                         .getCurrentLocation()
                                                                     : null);
 
-                                                        if (!context.mounted)
+                                                        if (!context.mounted) {
                                                           return;
+                                                        }
 
                                                         if (isSuccess) {
                                                           Navigator.pop(
@@ -3448,8 +3445,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                           "Failed to update status")));
                                                         }
                                                       } catch (e) {
-                                                        if (!context.mounted)
+                                                        if (!context.mounted) {
                                                           return;
+                                                        }
                                                         isSaving.value = false;
                                                         ScaffoldMessenger.of(
                                                                 context)

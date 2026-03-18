@@ -27,6 +27,7 @@ class FormModel {
   final int? departmentId;
   final String taskType;
   final int? taskTypeId;
+  final int? customerId;
   final List<FieldModel> fields;
   final int? instanceId;
 
@@ -37,6 +38,7 @@ class FormModel {
     this.departmentId,
     required this.taskType,
     this.taskTypeId,
+    this.customerId,
     required this.fields,
     this.instanceId,
   });

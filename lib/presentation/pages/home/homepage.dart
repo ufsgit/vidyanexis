@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  initDevicePlugin() async {
+  Future<void> initDevicePlugin() async {
     await PackageInfo.fromPlatform().then((value) {
       packageInfo = value;
       setState(() {});

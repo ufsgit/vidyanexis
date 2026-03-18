@@ -252,7 +252,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
             ),
             const SizedBox(height: 16.0),
             DropdownButtonFormField<int>(
-              value: customerDetailsProvider.selectedTaskType,
+              initialValue: customerDetailsProvider.selectedTaskType,
               items: dropDownProvider.taskType
                   .map((status) => DropdownMenuItem<int>(
                         value: status.taskTypeId,
@@ -262,7 +262,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                         ),
                       ))
                   .toList(),
-              onChanged: (int? newValue) {
+              onChanged: (int? newValue) async {
                 if (newValue != null) {
                   final selectedTaskType = dropDownProvider.taskType
                       .firstWhere((task) => task.taskTypeId == newValue);
@@ -272,17 +272,27 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                   customerDetailsProvider.updateTaskType(
                       newValue, selectedTaskType.taskTypeName);
 
+                  _updateStatusDropdown(newValue.toString());
+
+                  final statusList = await dropDownProvider
+                      .getStatusByTaskTypeId(context, newValue.toString(), '3');
+
                   final defaultStatusId = selectedTaskType.defaultStatusId;
                   if (defaultStatusId != 0) {
+                    final defaultStatus = statusList.firstWhere(
+                      (status) => status.statusId == defaultStatusId,
+                      orElse: () => TaskTypeStatusModel(
+                        statusId: defaultStatusId,
+                        statusName: '',
+                      ),
+                    );
                     customerDetailsProvider.updateAMCStatus(
-                        defaultStatusId, '');
+                      defaultStatusId,
+                      defaultStatus.statusName ?? '',
+                    );
                   } else {
                     customerDetailsProvider.updateAMCStatus(0, '');
                   }
-
-                  _updateStatusDropdown(newValue.toString());
-                  dropDownProvider.getStatusByTaskTypeId(
-                      context, newValue.toString(), '3');
                 }
               },
               style: GoogleFonts.plusJakartaSans(
@@ -351,7 +361,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
               builder: (context, snapshot) {
                 if (_selectedTaskTypeId.isEmpty) {
                   return DropdownButtonFormField<int>(
-                    value: null,
+                    initialValue: null,
                     items: const [],
                     onChanged: null,
                     decoration: InputDecoration(
@@ -482,7 +492,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                 }
                 final statusList = snapshot.data!;
                 return DropdownButtonFormField<int>(
-                  value: statusList.any((status) =>
+                  initialValue: statusList.any((status) =>
                           status.statusId ==
                           customerDetailsProvider.selectedAMCStatus)
                       ? customerDetailsProvider.selectedAMCStatus
@@ -1469,10 +1479,10 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                                   user.workingStatus == '1')
                                               .map((user) {
                                             bool isSelected = selectedUsers
-                                                .contains(user.userDetailsId!);
+                                                .contains(user.userDetailsId);
                                             bool isMarkedForRemoval =
                                                 removedUsers.contains(
-                                                    user.userDetailsId!);
+                                                    user.userDetailsId);
 
                                             return ListTile(
                                               title: Text(
@@ -1492,14 +1502,14 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                                 setState(() {
                                                   if (isSelected) {
                                                     removedUsers.add(
-                                                        user.userDetailsId!);
+                                                        user.userDetailsId);
                                                     selectedUsers.remove(
-                                                        user.userDetailsId!);
+                                                        user.userDetailsId);
                                                   } else {
                                                     removedUsers.remove(
-                                                        user.userDetailsId!);
+                                                        user.userDetailsId);
                                                     selectedUsers.add(
-                                                        user.userDetailsId!);
+                                                        user.userDetailsId);
                                                   }
                                                 });
                                               },

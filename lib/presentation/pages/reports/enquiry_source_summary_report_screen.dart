@@ -414,7 +414,7 @@ class _EnquirySourceSummaryReportScreenState
                                                 ),
                                               ],
                                             );
-                                          }).toList(),
+                                          }),
                                       ],
                                     ),
                                   ),

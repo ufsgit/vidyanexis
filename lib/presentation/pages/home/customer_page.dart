@@ -108,7 +108,7 @@ class _CustomerPageState extends State<CustomerPage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  onItemClick(int customerId) {
+  void onItemClick(int customerId) {
     // final context = navigatorKey.currentState?.context;
     // if (context != null) {
     //   final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
@@ -121,7 +121,7 @@ class _CustomerPageState extends State<CustomerPage> {
     //     false, customerId.toString());
   }
 
-  loadExistingAudioFiles(List<AudioFileLead> audioFiless) async {
+  Future<void> loadExistingAudioFiles(List<AudioFileLead> audioFiless) async {
     final audioProvider =
         Provider.of<AudioFileProvider>(context, listen: false);
 
@@ -218,8 +218,9 @@ class _CustomerPageState extends State<CustomerPage> {
                               textAlignVertical: TextAlignVertical.center,
                               onChanged: _onSearchChanged,
                               onSubmitted: (query) {
-                                if (_debounce?.isActive ?? false)
+                                if (_debounce?.isActive ?? false) {
                                   _debounce!.cancel();
+                                }
                                 customerProvider.setSearchCriteria(
                                   query,
                                   customerProvider.fromDateS,
@@ -235,8 +236,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                     left: 16, right: 16, bottom: 11),
                                 suffixIcon: GestureDetector(
                                   onTap: () {
-                                    if (_debounce?.isActive ?? false)
+                                    if (_debounce?.isActive ?? false) {
                                       _debounce!.cancel();
+                                    }
                                     customerProvider.setSearchCriteria(
                                       searchController.text,
                                       customerProvider.fromDateS,
@@ -316,8 +318,9 @@ class _CustomerPageState extends State<CustomerPage> {
                               textAlignVertical: TextAlignVertical.center,
                               onChanged: _onSearchChanged,
                               onSubmitted: (query) {
-                                if (_debounce?.isActive ?? false)
+                                if (_debounce?.isActive ?? false) {
                                   _debounce!.cancel();
+                                }
                                 customerProvider.setSearchCriteria(
                                   query,
                                   customerProvider.fromDateS,
@@ -333,8 +336,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                     left: 16, right: 16, bottom: 11),
                                 suffixIcon: GestureDetector(
                                   onTap: () {
-                                    if (_debounce?.isActive ?? false)
+                                    if (_debounce?.isActive ?? false) {
                                       _debounce!.cancel();
+                                    }
                                     customerProvider.setSearchCriteria(
                                       searchController.text,
                                       customerProvider.fromDateS,
@@ -794,7 +798,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       child: Text('No.',
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold,
-                                              color: const Color(0xFFFFFFFF))),
+                                              color: Color(0xFFFFFFFF))),
                                     ),
                                   ),
                                   // TableWidget(
@@ -803,51 +807,51 @@ class _CustomerPageState extends State<CustomerPage> {
                                   TableWidget(
                                       flex: 3,
                                       title: 'Customer Name',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Mobile no',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Assigned Staff',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Remarks',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 1,
                                       title: 'Follow-Up',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Status',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Date',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Action',
-                                      padding: const EdgeInsets.symmetric(
+                                      padding: EdgeInsets.symmetric(
                                           vertical: 6.0, horizontal: 8.0),
-                                      color: const Color(0xFFFFFFFF)),
+                                      color: Color(0xFFFFFFFF)),
                                 ],
                               ),
                             ),
@@ -1037,7 +1041,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       .symmetric(
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
-                                                  title: '${lead.remark}'),
+                                                  title: lead.remark),
                                               TableWidget(
                                                 flex: 1,
                                                 padding:

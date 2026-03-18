@@ -25,7 +25,7 @@ class ProcessFlowProvider extends ChangeNotifier {
   List<ProcessFlowModel> processFlowFilteredList = [];
   List<ProcessFlowModel> processFlowList = [];
 
-  filterData(String searchText) {
+  void filterData(String searchText) {
     processFlowFilteredList = processFlowList
         .where((element) => element.taskTypeName!
             .toLowerCase()
@@ -34,7 +34,7 @@ class ProcessFlowProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  clearData() {
+  void clearData() {
     processFlowModel = ProcessFlowModel();
     taskFlowList = [];
     mandatoryTaskList = [];
@@ -43,11 +43,11 @@ class ProcessFlowProvider extends ChangeNotifier {
     _selectedDocuments = [];
   }
 
-  removeTaskFlow(int index) {
+  void removeTaskFlow(int index) {
     taskFlowList.removeAt(index);
   }
 
-  updateTaskFlow(int index, TaskFlowModel value) {
+  void updateTaskFlow(int index, TaskFlowModel value) {
     if (index == -1) {
       taskFlowList.add(value);
     } else {
@@ -55,11 +55,11 @@ class ProcessFlowProvider extends ChangeNotifier {
     }
   }
 
-  removeMandatory(int index) {
+  void removeMandatory(int index) {
     mandatoryTaskList.removeAt(index);
   }
 
-  updateMandatoryTask(int index, MandatoryTaskModel value) {
+  void updateMandatoryTask(int index, MandatoryTaskModel value) {
     if (index == -1) {
       mandatoryTaskList.add(value);
     } else {
@@ -67,17 +67,17 @@ class ProcessFlowProvider extends ChangeNotifier {
     }
   }
 
-  setTaskFlowModel(TaskFlowModel value) {
+  void setTaskFlowModel(TaskFlowModel value) {
     taskFlowModel = value.copyWith();
     notifyListeners();
   }
 
-  setMandatoryTaskModel(MandatoryTaskModel value) {
+  void setMandatoryTaskModel(MandatoryTaskModel value) {
     mandatoryTaskModel = value.copyWith();
     notifyListeners();
   }
 
-  setProcessFlowModel(ProcessFlowModel value) {
+  void setProcessFlowModel(ProcessFlowModel value) {
     processFlowModel = value;
   }
 
@@ -250,7 +250,7 @@ class ProcessFlowProvider extends ChangeNotifier {
       BuildContext context, int flowId) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getProcessFlowById + "/" + flowId.toString());
+          endPoint: "${HttpUrls.getProcessFlowById}/$flowId");
 
       if (response.statusCode == 200) {
         final data = response.data as Map<String, dynamic>;
@@ -259,7 +259,7 @@ class ProcessFlowProvider extends ChangeNotifier {
           final data = response.data as Map<String, dynamic>;
 
           var flowData = data["data"]["flow_tasks"] as List;
-          var mandatoryData = data["data"]["mandatory_tasks"] ?? [] as List;
+          var mandatoryData = data["data"]["mandatory_tasks"] ?? [];
           var documentsData = data["data"]["flow_documents"] ?? [];
           int taskTypeId = data["data"]["task_type_id"];
 

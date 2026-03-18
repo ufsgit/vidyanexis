@@ -8,9 +8,9 @@ class TaskChipsScroller extends StatefulWidget {
   final List<Widget> chips;
 
   const TaskChipsScroller({
-    Key? key,
+    super.key,
     required this.chips,
-  }) : super(key: key);
+  });
 
   @override
   State<TaskChipsScroller> createState() => _TaskChipsScrollerState();

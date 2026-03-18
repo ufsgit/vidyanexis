@@ -11,14 +11,14 @@ class AnimatedBottomBarWidget extends StatefulWidget {
   final TextStyle selectedLabelStyle;
 
   const AnimatedBottomBarWidget({
-    Key? key,
+    super.key,
     required this.items,
     required this.currentIndex,
     required this.onTap,
     required this.selectedItemColor,
     required this.unselectedItemColor,
     required this.selectedLabelStyle,
-  }) : super(key: key);
+  });
 
   @override
   State<AnimatedBottomBarWidget> createState() =>

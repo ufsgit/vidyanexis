@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_report_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/followup_reports.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
@@ -11,9 +10,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/presentation/pages/home/homepage.dart';
-import 'package:vidyanexis/presentation/pages/home/lead_page.dart';
-import 'package:vidyanexis/presentation/pages/home/lead_page_phone.dart';
 import 'package:vidyanexis/presentation/pages/reports/amc_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/complaint_page_reports_mobile.dart';
 import 'package:vidyanexis/presentation/pages/reports/conversion_report_page.dart';

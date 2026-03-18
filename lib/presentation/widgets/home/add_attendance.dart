@@ -252,7 +252,7 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                           hintText: 'Choose User*',
                           items: dropDownProvider.searchUserDetails
                               .map((status) => DropdownItem<int>(
-                                    id: status.userDetailsId!,
+                                    id: status.userDetailsId,
                                     name: status.userDetailsName ?? '',
                                   ))
                               .toList(),

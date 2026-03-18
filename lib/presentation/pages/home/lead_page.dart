@@ -91,7 +91,7 @@ class _LeadsPageState extends State<LeadPage> {
     Colors.blue
   ];
 
-  Map<int, Map<String, bool>> _checkedCustomers = {};
+  final Map<int, Map<String, bool>> _checkedCustomers = {};
 
   @override
   void dispose() {
@@ -180,7 +180,7 @@ class _LeadsPageState extends State<LeadPage> {
     });
   }
 
-  getDaysCount(String date) {
+  String getDaysCount(String date) {
     if (date.isNotEmpty) {
       DateTime dateTime = DateTime.parse(date);
 
@@ -215,7 +215,7 @@ class _LeadsPageState extends State<LeadPage> {
     _isSyncing = false;
   }
 
-  loadExistingAudioFiles(List<AudioFileLead> audioFiless) async {
+  Future<void> loadExistingAudioFiles(List<AudioFileLead> audioFiless) async {
     final audioProvider =
         Provider.of<AudioFileProvider>(context, listen: false);
 
@@ -347,8 +347,9 @@ class _LeadsPageState extends State<LeadPage> {
                             horizontal: 16, vertical: 8),
                         suffixIcon: GestureDetector(
                           onTap: () {
-                            if (_debounce?.isActive ?? false)
+                            if (_debounce?.isActive ?? false) {
                               _debounce!.cancel();
+                            }
                             leadProvider.setSearchCriteria(
                               searchController.text,
                               leadProvider.fromDateS,
@@ -843,7 +844,7 @@ class _LeadsPageState extends State<LeadPage> {
                           Container(
                             height: tableHeaderHeight,
                             decoration: const BoxDecoration(
-                              color: const Color.fromARGB(255, 0, 90, 69),
+                              color: Color.fromARGB(255, 0, 90, 69),
                               borderRadius: BorderRadius.only(
                                   topLeft: Radius.circular(8),
                                   bottomLeft: Radius.circular(8)),
@@ -1065,9 +1066,9 @@ class _LeadsPageState extends State<LeadPage> {
                                                             ),
                                                             child: Text(
                                                               (lead.customerName
-                                                                          ?.isNotEmpty ??
+                                                                          .isNotEmpty ??
                                                                       false)
-                                                                  ? '${lead.customerName![0].toUpperCase()}${lead.customerName!.substring(1)}'
+                                                                  ? '${lead.customerName[0].toUpperCase()}${lead.customerName.substring(1)}'
                                                                   : lead.customerName ??
                                                                       '',
                                                               overflow:
@@ -1258,7 +1259,7 @@ class _LeadsPageState extends State<LeadPage> {
                                 Container(
                                   height: tableHeaderHeight,
                                   decoration: const BoxDecoration(
-                                    color: const Color.fromARGB(255, 0, 90, 69),
+                                    color: Color.fromARGB(255, 0, 90, 69),
                                     borderRadius: BorderRadius.only(
                                         topRight: Radius.circular(8),
                                         bottomRight: Radius.circular(8)),
@@ -1576,7 +1577,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                       vertical: 4.0,
                                                       horizontal: 12.0),
                                                   data: Text(
-                                                    "${_formatDateSafely(lead.entryDate)}",
+                                                    _formatDateSafely(lead.entryDate),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
@@ -1991,7 +1992,7 @@ class _LeadsPageState extends State<LeadPage> {
               ] +
               dropDownProvider.searchUserDetails
                   .map((user) => DropdownMenuItem<int>(
-                        value: user.userDetailsId!,
+                        value: user.userDetailsId,
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 150),
                           child: Text(

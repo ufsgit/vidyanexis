@@ -178,7 +178,7 @@ class ServiceReportProvider extends ChangeNotifier {
   }
 
   //service report
-  getSearchServiceReport(BuildContext context) async {
+  Future<void> getSearchServiceReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -235,7 +235,7 @@ class ServiceReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchServiceReportNoContext() async {
+  Future<void> getSearchServiceReportNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';

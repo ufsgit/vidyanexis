@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-hideKeyboard() async {
+Future<void> hideKeyboard() async {
   // await SystemChannels.textInput.invokeMethod('TextInput.hide');
   FocusManager.instance.primaryFocus?.unfocus();
 }

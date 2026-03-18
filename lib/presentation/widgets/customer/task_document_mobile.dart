@@ -128,8 +128,9 @@ class _TaskDocumentsPageState extends State<TaskDocumentsPage> {
                                               fit: BoxFit.fill,
                                               loadingBuilder: (context, child,
                                                   loadingProgress) {
-                                                if (loadingProgress == null)
+                                                if (loadingProgress == null) {
                                                   return child;
+                                                }
                                                 return SizedBox(
                                                   height: 100,
                                                   width: 100,

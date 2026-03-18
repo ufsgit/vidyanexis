@@ -84,12 +84,10 @@ class QuotationPrintNewDesign {
                 style: pw.TextStyle(font: ttfRegular, fontSize: 8)),
             pw.Text(companyDetails.address2,
                 style: pw.TextStyle(font: ttfRegular, fontSize: 8)),
-            pw.Text(companyDetails.address3 + "," + companyDetails.address4,
+            pw.Text("${companyDetails.address3},${companyDetails.address4}",
                 style: pw.TextStyle(font: ttfRegular, fontSize: 8)),
             pw.Text(
-                companyDetails.mobileNumber +
-                    " | " +
-                    companyDetails.phoneNumber,
+                "${companyDetails.mobileNumber} | ${companyDetails.phoneNumber}",
                 style: pw.TextStyle(font: ttfRegular, fontSize: 8)),
           ],
         ),
@@ -208,14 +206,10 @@ class QuotationPrintNewDesign {
                   crossAxisAlignment: pw.CrossAxisAlignment.start,
                   children: [
                     pw.Text(
-                        customerDetails.address1.toString() +
-                            " " +
-                            customerDetails.address2.toString(),
+                        "${customerDetails.address1} ${customerDetails.address2}",
                         style: pw.TextStyle(font: ttfRegular, fontSize: 10)),
                     pw.Text(
-                        customerDetails.address3.toString() +
-                            " " +
-                            customerDetails.address4.toString(),
+                        "${customerDetails.address3} ${customerDetails.address4}",
                         style: pw.TextStyle(font: ttfRegular, fontSize: 10)),
                   ],
                 ),

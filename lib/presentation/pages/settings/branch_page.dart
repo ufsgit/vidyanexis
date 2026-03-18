@@ -5,7 +5,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/settings/add_branch.dart';
-import 'package:vidyanexis/presentation/pages/settings/add_department_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 class BranchPage extends StatefulWidget {

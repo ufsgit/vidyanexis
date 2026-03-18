@@ -106,7 +106,7 @@ class _AddCustomerState extends State<AddCustomer> {
         print('GstNo controller set to: ${settingsProvider.inventoryCustomerGstNoController.text}');
         
         settingsProvider.inventoryCustomerOpeningBalanceController.text =
-            widget.data!.openingBalance?.toString() ?? '';
+            widget.data!.openingBalance.toString() ?? '';
         print('OpeningBalance controller set to: ${settingsProvider.inventoryCustomerOpeningBalanceController.text}');
         
         print('>>> All controllers set <<<');

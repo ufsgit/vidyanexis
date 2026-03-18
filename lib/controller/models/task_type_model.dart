@@ -2,7 +2,6 @@
 //
 //     final taskTypeModel = taskTypeModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 List<TaskTypeModel> taskTypeModelFromJson(String str) =>

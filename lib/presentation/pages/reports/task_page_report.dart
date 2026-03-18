@@ -1181,7 +1181,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
               child: AppStyles.isWebScreen(context)
                   ? SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(context).size.width < 1700
                             ? 1700
                             : MediaQuery.of(context).size.width,

@@ -4,20 +4,12 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
-import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/document_list_model.dart';
-import 'package:vidyanexis/controller/models/search_leads_model.dart';
-import 'package:vidyanexis/http/http_urls.dart';
-import 'package:vidyanexis/presentation/widgets/customer/activity_tab_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/full_screen_image_view.dart';
-import 'package:vidyanexis/presentation/widgets/customer/label_value_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
-import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DocumentsListPagePhone extends StatefulWidget {

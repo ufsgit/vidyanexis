@@ -249,7 +249,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
               ),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
-                value: customerDetailsProvider.selectedStockStatus ?? 'Pending',
+                initialValue: customerDetailsProvider.selectedStockStatus ?? 'Pending',
                 items: const [
                   DropdownMenuItem<String>(
                     value: 'Pending',
@@ -492,7 +492,7 @@ class _AddStockUseWidgetState extends State<AddStockUseWidget> {
                           child: Column(
                             children: [
                               Text(
-                                item.itemName + " (${item.categoryName})",
+                                "${item.itemName} (${item.categoryName})",
                                 style: const TextStyle(
                                   fontSize: 13,
                                   fontWeight: FontWeight.bold,

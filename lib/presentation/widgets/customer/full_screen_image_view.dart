@@ -5,9 +5,9 @@ class FullScreenImageView extends StatefulWidget {
   final String imagePath;
 
   const FullScreenImageView({
-    Key? key,
+    super.key,
     required this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   State<FullScreenImageView> createState() => _FullScreenImageViewState();

@@ -7,7 +7,7 @@ class HttpUrls {
   // static String baseUrl = 'https://oxysolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://vidyanexisapi.trackbox.net.in/';
   // static String baseUrl = 'https://jibinsolarapi.trackbox.net.in/';
-  // static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
+//   static String baseUrl = 'https://a3secosaveapi.trackbox.net.in/';
   // static String baseUrl = 'https://risingsunsolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
@@ -24,8 +24,8 @@ class HttpUrls {
  
 
 //dev
-  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
-  // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+//   static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
 
   static String imgBaseUrl =
@@ -336,4 +336,7 @@ class HttpUrls {
   static String deleteInventoryCustomer = "item/Delete_Customer";
   static String taskSummary = "task/Task_Summary";
   static String getLeadStatusReport = "Lead/Get_Lead_Status_Report";
+  static String getPdfAnnexure1 = "lead/get_pdf_annexure1/";
+  static String getPdfAnnexure2 = "lead/get_pdf_annexure2/";
+  static String getPdfAnnexure3 = "lead/get_pdf_annexure3/";
 }

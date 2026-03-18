@@ -243,7 +243,7 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
                                     ),
                                   ),
                                 ))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (int? newValue) {
                         if (newValue == 0 || newValue == null) {

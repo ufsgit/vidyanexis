@@ -15,7 +15,7 @@ class ReportListItem extends StatelessWidget {
   final String? bottomRightText;
 
   const ReportListItem({
-    Key? key,
+    super.key,
     this.onTap,
     this.onSubtitleTap,
     required this.title,
@@ -26,7 +26,7 @@ class ReportListItem extends StatelessWidget {
     this.bottomLeftText,
     this.bottomLeftIcon,
     this.bottomRightText,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

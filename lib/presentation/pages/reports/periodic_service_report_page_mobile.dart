@@ -1,4 +1,3 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -10,20 +9,9 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/controller/models/service_customer_model.dart';
-import 'package:vidyanexis/controller/service_report_provider.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_complaint_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/expanded_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_service_details_page_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_card_mobile_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';

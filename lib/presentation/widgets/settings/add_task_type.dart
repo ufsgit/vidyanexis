@@ -121,7 +121,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
   }
 
   // Map to store the selected status items
-  Map<int, bool> _selectedStatuses = {};
+  final Map<int, bool> _selectedStatuses = {};
   List<int> get _selectedStatusIds => _selectedStatuses.entries
       .where((entry) => entry.value)
       .map((entry) => entry.key)
@@ -218,8 +218,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
         if (widget.taskType?.statuses != null &&
             widget.taskType!.statuses.isNotEmpty) {
           for (var status in widget.taskType!.statuses) {
-            if (status.statusId != null && status.statusId! > 0) {
-              _selectedStatuses[status.statusId!] = true;
+            if (status.statusId > 0) {
+              _selectedStatuses[status.statusId] = true;
             }
           }
           _updateSelectAllState();

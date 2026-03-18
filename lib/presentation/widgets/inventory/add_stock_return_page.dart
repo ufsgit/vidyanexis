@@ -343,7 +343,7 @@ class _AddStockReturnPageState extends State<AddStockReturnPage> {
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Text(
-                                item.itemName + " (${item.categoryName})",
+                                "${item.itemName} (${item.categoryName})",
                                 style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.bold,

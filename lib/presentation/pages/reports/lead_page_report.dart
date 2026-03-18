@@ -278,10 +278,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   'Remark': task.remark,
                                   'Assigned To': task.toUserName,
                                   'Next Follow-up Date':
-                                      task.nextFollowUpDate!.isNotEmpty
+                                      task.nextFollowUpDate.isNotEmpty
                                           ? DateFormat('dd MMM yyyy').format(
                                               DateTime.parse(
-                                                  task.nextFollowUpDate!))
+                                                  task.nextFollowUpDate))
                                           : '',
                                   'Status': task.statusName,
                                 };
@@ -351,7 +351,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                     fontSize: 14),
                                               ),
                                             ))
-                                        .toList(),
+                                        ,
                                   ],
                                   onChanged: (int? newValue) {
                                     leadReportProvider.setStatus(newValue ??
@@ -443,14 +443,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     ),
                                     ...provider.searchUserDetails
                                         .map((user) => DropdownMenuItem<int?>(
-                                              value: user.userDetailsId!,
+                                              value: user.userDetailsId,
                                               child: Text(
                                                 user.userDetailsName ?? '',
                                                 style: const TextStyle(
                                                     fontSize: 14),
                                               ),
                                             ))
-                                        .toList(),
+                                        ,
                                   ],
                                   onChanged: (int? newValue) {
                                     leadReportProvider
@@ -505,14 +505,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     ...provider.enquiryForList
                                         .map((enquiry) =>
                                             DropdownMenuItem<int?>(
-                                              value: enquiry.enquiryForId!,
+                                              value: enquiry.enquiryForId,
                                               child: Text(
                                                 enquiry.enquiryForName ?? '',
                                                 style: const TextStyle(
                                                     fontSize: 14),
                                               ),
                                             ))
-                                        .toList(),
+                                        ,
                                   ],
                                   onChanged: (int? newValue) {
                                     leadReportProvider
@@ -568,14 +568,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                     ),
                                     ...provider.enquiryData
                                         .map((source) => DropdownMenuItem<int?>(
-                                              value: source.enquirySourceId!,
+                                              value: source.enquirySourceId,
                                               child: Text(
                                                 source.enquirySourceName ?? '',
                                                 style: const TextStyle(
                                                     fontSize: 14),
                                               ),
                                             ))
-                                        .toList(),
+                                        ,
                                   ],
                                   onChanged: (int? newValue) {
                                     leadReportProvider

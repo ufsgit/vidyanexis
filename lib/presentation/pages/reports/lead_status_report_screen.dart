@@ -535,7 +535,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              headingRowColor: MaterialStateProperty.resolveWith((states) => Colors.grey[100]),
+              headingRowColor: WidgetStateProperty.resolveWith((states) => Colors.grey[100]),
               columns: const [
                 DataColumn(label: Text('Status ID', style: TextStyle(fontWeight: FontWeight.bold))),
                 DataColumn(label: Text('Status Name', style: TextStyle(fontWeight: FontWeight.bold))),

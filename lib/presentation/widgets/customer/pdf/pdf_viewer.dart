@@ -12,10 +12,10 @@ class PdfViewerScreen extends StatefulWidget {
   final String title;
 
   const PdfViewerScreen({
-    Key? key,
+    super.key,
     required this.pdfData,
     required this.title,
-  }) : super(key: key);
+  });
 
   @override
   _PdfViewerScreenState createState() => _PdfViewerScreenState();

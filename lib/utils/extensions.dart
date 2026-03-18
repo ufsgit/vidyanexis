@@ -15,8 +15,8 @@ extension DateStringFormatter on String {
   }
 
   String toUniversalYyyyMmDd() {
-    if (this == null || this!.trim().isEmpty) return '';
-    final value = this!.trim();
+    if (this.trim().isEmpty) return '';
+    final value = this.trim();
 
     // Try parsing with common formats
     final List<DateFormat> formats = [
@@ -64,15 +64,15 @@ extension DateStringFormatter on String {
 
   String to24HourTime() {
     // Return empty string if the input is empty
-    if (this.isEmpty) return '';
+    if (isEmpty) return '';
 
     try {
       // Check if the string contains AM/PM
-      bool isPM = this.toUpperCase().contains('PM');
-      bool isAM = this.toUpperCase().contains('AM');
+      bool isPM = toUpperCase().contains('PM');
+      bool isAM = toUpperCase().contains('AM');
 
       // Extract the time part (remove AM/PM)
-      String timePart = this.replaceAll(RegExp(r'[aApP][mM]'), '').trim();
+      String timePart = replaceAll(RegExp(r'[aApP][mM]'), '').trim();
 
       // Split into hours and minutes
       List<String> parts = timePart.split(':');
@@ -165,19 +165,19 @@ extension DateStringFormatter on String {
   }
 
   String toMonthDayYearFormat() {
-    if (this.isEmpty) return this;
+    if (isEmpty) return this;
 
     try {
       DateTime date;
 
       // Check if string contains time component (has a space or 'T' separator)
-      if (this.contains(' ') || this.contains('T')) {
+      if (contains(' ') || contains('T')) {
         // Split the datetime string
         String dateStr;
-        if (this.contains(' ')) {
-          dateStr = this.split(' ')[0]; // Take only the date part
+        if (contains(' ')) {
+          dateStr = split(' ')[0]; // Take only the date part
         } else {
-          dateStr = this.split('T')[0]; // Take only the date part
+          dateStr = split('T')[0]; // Take only the date part
         }
 
         // Process the date part
@@ -193,10 +193,10 @@ extension DateStringFormatter on String {
         }
       }
       // Handle time in format "11:37:52" (just time, no date)
-      else if (this.contains(':') && !this.contains('-')) {
+      else if (contains(':') && !contains('-')) {
         // If it's just a time, use today's date
         final now = DateTime.now();
-        final timeParts = this.split(':');
+        final timeParts = split(':');
 
         if (timeParts.length >= 2) {
           final hour = int.parse(timeParts[0]);
@@ -209,8 +209,8 @@ extension DateStringFormatter on String {
         }
       }
       // Parse date from ISO format (YYYY-MM-DD)
-      else if (this.contains('-') && this.split('-').length >= 3) {
-        final parts = this.split('-');
+      else if (contains('-') && split('-').length >= 3) {
+        final parts = split('-');
 
         // Handle standard ISO format (YYYY-MM-DD)
         if (parts[0].length == 4) {
@@ -236,29 +236,29 @@ extension DateStringFormatter on String {
   }
 
   String toDayMonthYearFormat() {
-    if (this.isEmpty) return this;
+    if (isEmpty) return this;
 
     try {
       DateTime date;
 
       // Check if string contains time component (has a space or 'T' separator)
-      if (this.contains(' ') || this.contains('T')) {
+      if (contains(' ') || contains('T')) {
         String dateStr =
-            this.split(RegExp(r'[ T]'))[0]; // Extract only the date part
+            split(RegExp(r'[ T]'))[0]; // Extract only the date part
         date = DateTime.parse(dateStr);
       }
       // Handle time in format "HH:mm:ss" (just time, no date)
-      else if (this.contains(':') && !this.contains('-')) {
+      else if (contains(':') && !contains('-')) {
         return this; // Return as it is if it's just a time
       }
       // Handle DD-MM-YYYY format
       else if (RegExp(r'^\d{2}-\d{2}-\d{4}$').hasMatch(this)) {
-        List<String> parts = this.split('-');
+        List<String> parts = split('-');
         date = DateTime.parse(
             '${parts[2]}-${parts[1]}-${parts[0]}'); // Convert to YYYY-MM-DD
       }
       // Parse date from ISO format (YYYY-MM-DD)
-      else if (this.contains('-')) {
+      else if (contains('-')) {
         date = DateTime.parse(this);
       } else {
         return this; // If the format is unknown, return original string
@@ -272,12 +272,12 @@ extension DateStringFormatter on String {
   }
 
   String toDate() {
-    if (this.isEmpty) return this;
+    if (isEmpty) return this;
 
     try {
       // First format: DD-MM-YYYY-HH:MM
-      if (this.contains('-') && this.split('-').length == 4) {
-        final parts = this.split('-');
+      if (contains('-') && split('-').length == 4) {
+        final parts = split('-');
         final day = int.parse(parts[0]);
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);
@@ -292,8 +292,8 @@ extension DateStringFormatter on String {
       }
 
       // Second format: DD-MM-YYYY
-      else if (this.contains('-') && this.split('-').length == 3) {
-        final parts = this.split('-');
+      else if (contains('-') && split('-').length == 3) {
+        final parts = split('-');
         final day = int.parse(parts[0]);
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);
@@ -312,14 +312,14 @@ extension DateStringFormatter on String {
   }
 
   String toWeekdayDate() {
-    if (this.isEmpty) return this;
+    if (isEmpty) return this;
 
     try {
       DateTime date;
 
       // Format: DD-MM-YYYY-HH:MM
-      if (this.contains('-') && this.split('-').length == 4) {
-        final parts = this.split('-');
+      if (contains('-') && split('-').length == 4) {
+        final parts = split('-');
         final day = int.parse(parts[0]);
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);
@@ -332,8 +332,8 @@ extension DateStringFormatter on String {
         date = DateTime(year, month, day, hour, minute);
       }
       // Format: DD-MM-YYYY
-      else if (this.contains('-') && this.split('-').length == 3) {
-        final parts = this.split('-');
+      else if (contains('-') && split('-').length == 3) {
+        final parts = split('-');
         final day = int.parse(parts[0]);
         final month = int.parse(parts[1]);
         final year = int.parse(parts[2]);

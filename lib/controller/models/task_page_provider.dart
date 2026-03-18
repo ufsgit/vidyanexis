@@ -86,7 +86,7 @@ class TaskPageProvider extends ChangeNotifier {
 
   bool get hasMorePages => _pageIndex < _totalPages;
 
-  List<String> _selectedTaskTypeIds = [];
+  final List<String> _selectedTaskTypeIds = [];
   List<String> get selectedTaskTypeIds => _selectedTaskTypeIds;
 
   final TextEditingController descriptionController = TextEditingController();
@@ -645,7 +645,7 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  getSearchTaskReportNoContext() async {
+  Future<void> getSearchTaskReportNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';

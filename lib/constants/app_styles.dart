@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppStyles {
-  static logo() {
+  static String logo() {
     String logo = 'assets/images/logo_2.png';
     // String logo = 'assets/images/app_logo.png';
     // String logo = 'assets/images/solaris_logo.png';
     return logo;
   }
 
-  static name() {
+  static String name() {
     String name = 'solaris'; // dont change this
 
     return name;

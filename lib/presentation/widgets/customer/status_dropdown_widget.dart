@@ -20,7 +20,7 @@ class StatusDropdownWidget<T> extends StatefulWidget {
   final bool enabled; // Whether the dropdown is enabled
 
   const StatusDropdownWidget({
-    Key? key,
+    super.key,
     required this.items,
     this.initialValue,
     required this.onChanged,
@@ -32,7 +32,7 @@ class StatusDropdownWidget<T> extends StatefulWidget {
     required this.areItemsEqual,
     required this.statusName,
     this.enabled = true, // Default enabled by default
-  }) : super(key: key);
+  });
 
   @override
   State<StatusDropdownWidget<T>> createState() =>
@@ -72,7 +72,7 @@ class _StatusDropdownWidgetState<T> extends State<StatusDropdownWidget<T>> {
     if (widget.initialValue != oldWidget.initialValue) {
       if (widget.initialValue != null) {
         setState(() {
-          selectedValue = widget.initialValue!;
+          selectedValue = widget.initialValue as T;
         });
       }
     }

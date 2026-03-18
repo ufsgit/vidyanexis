@@ -57,7 +57,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
           children: [
             if (widget.initialDocumentTypeId == null)
               DropdownButtonFormField<int>(
-                value: provider.selectedDocumentType,
+                initialValue: provider.selectedDocumentType,
                 items: dropDownProvider.documentType
                     .map((status) => DropdownMenuItem<int>(
                           value: status.documentTypeId,

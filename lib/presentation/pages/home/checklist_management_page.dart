@@ -15,9 +15,9 @@ class CheckListManagementWidget extends StatefulWidget {
   final String customerId;
 
   const CheckListManagementWidget({
-    Key? key,
+    super.key,
     required this.customerId,
-  }) : super(key: key);
+  });
 
   @override
   State<CheckListManagementWidget> createState() =>

@@ -11,7 +11,7 @@ import 'package:vidyanexis/utils/extensions.dart';
 LeadDetails? customer;
 GetQuotationbyMasterIdmodel? quotation;
 pw.Font malayalamFont = pw.Font();
-loadMalayalamFont() async {
+Future<void> loadMalayalamFont() async {
   final ByteData fontData = await rootBundle
       .load('assets/fonts/NotoSansMalayalam-VariableFont_wdth,wght.ttf');
   final Uint8List fontBytes = fontData.buffer.asUint8List();
@@ -22,7 +22,7 @@ pw.Text getMalayalamText(String text, pw.TextStyle style,
     {pw.TextAlign? textAlign}) {
   return pw.Text(text,
       textAlign: textAlign,
-      style: style?.copyWith(font: malayalamFont, fontSize: 10));
+      style: style.copyWith(font: malayalamFont, fontSize: 10));
 }
 
 Future<void> RefundFormPDFs({

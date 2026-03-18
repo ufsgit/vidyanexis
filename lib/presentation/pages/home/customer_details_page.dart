@@ -9,15 +9,12 @@ import 'package:vidyanexis/controller/models/document_checklist_model.dart';
 
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
-import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_screen.dart';
 
 import 'package:vidyanexis/presentation/pages/inventory/stock_return_page.dart';
 import 'package:vidyanexis/presentation/pages/inventory/stock_use_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_expense.dart';
 import 'package:vidyanexis/presentation/pages/home/refund_form_page.dart';
-import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
-import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_checklist_management_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_payment_widget.dart';
@@ -1876,15 +1873,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         textColor:
                                                                             AppColors.bluebutton,
                                                                         buttonText:
-                                                                            'KSEB',
+                                                                            'Annexture1',
                                                                         onPressed:
                                                                             () async {
-                                                                          final customer = (customerDetailsProvider.leadDetails != null && customerDetailsProvider.leadDetails!.isNotEmpty)
-                                                                              ? customerDetailsProvider.leadDetails?.first
-                                                                              : null;
-                                                                          ksebPdf(
-                                                                              customerDetails: customer,
-                                                                              context: context);
+                                                                          await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure1}${widget.customerId}', 'Annexture1', context);
                                                                         },
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[63] ==
@@ -1899,15 +1891,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         textColor:
                                                                             AppColors.bluebutton,
                                                                         buttonText:
-                                                                            'Vendor Agreement',
+                                                                            'Annexture2',
                                                                         onPressed:
                                                                             () async {
-                                                                          final customer = (customerDetailsProvider.leadDetails != null && customerDetailsProvider.leadDetails!.isNotEmpty)
-                                                                              ? customerDetailsProvider.leadDetails?.first
-                                                                              : null;
-                                                                          vendorAgreementPdf(
-                                                                              customerDetails: customer,
-                                                                              context: context);
+                                                                          await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure2}${widget.customerId}', 'Annexture2', context);
                                                                         },
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[62] ==
@@ -1922,16 +1909,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         textColor:
                                                                             AppColors.bluebutton,
                                                                         buttonText:
-                                                                            'Vendor Feasibility',
+                                                                            'Annexture3',
                                                                         onPressed:
                                                                             () async {
-                                                                          final customer = (customerDetailsProvider.leadDetails != null && customerDetailsProvider.leadDetails!.isNotEmpty)
-                                                                              ? customerDetailsProvider.leadDetails?.first
-                                                                              : null;
-
-                                                                          rtsFeasibilityReportPdf(
-                                                                              customerDetails: customer,
-                                                                              context: context);
+                                                                          await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure3}${widget.customerId}', 'Annexture3', context);
                                                                         },
                                                                       ),
                                                                   ],
@@ -2384,22 +2365,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       AppColors
                                                                           .bluebutton,
                                                                   buttonText:
-                                                                      'KSEB',
+                                                                      'Annexture1',
                                                                   onPressed:
                                                                       () async {
-                                                                    final customer = (customerDetailsProvider.leadDetails !=
-                                                                                null &&
-                                                                            customerDetailsProvider
-                                                                                .leadDetails!.isNotEmpty)
-                                                                        ? customerDetailsProvider
-                                                                            .leadDetails
-                                                                            ?.first
-                                                                        : null;
-                                                                    ksebPdf(
-                                                                        customerDetails:
-                                                                            customer,
-                                                                        context:
-                                                                            context);
+                                                                    await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure1}${widget.customerId}', 'Annexture1', context);
                                                                   },
                                                                 ),
                                                               if (settingsprovider
@@ -2420,22 +2389,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       AppColors
                                                                           .bluebutton,
                                                                   buttonText:
-                                                                      'Vendor Agreement',
+                                                                      'Annexture2',
                                                                   onPressed:
                                                                       () async {
-                                                                    final customer = (customerDetailsProvider.leadDetails !=
-                                                                                null &&
-                                                                            customerDetailsProvider
-                                                                                .leadDetails!.isNotEmpty)
-                                                                        ? customerDetailsProvider
-                                                                            .leadDetails
-                                                                            ?.first
-                                                                        : null;
-                                                                    vendorAgreementPdf(
-                                                                        customerDetails:
-                                                                            customer,
-                                                                        context:
-                                                                            context);
+                                                                    await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure2}${widget.customerId}', 'Annexture2', context);
                                                                   },
                                                                 ),
                                                               if (settingsprovider
@@ -2456,23 +2413,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       AppColors
                                                                           .bluebutton,
                                                                   buttonText:
-                                                                      'Vendor Feasibility',
+                                                                      'Annexture3',
                                                                   onPressed:
                                                                       () async {
-                                                                    final customer = (customerDetailsProvider.leadDetails !=
-                                                                                null &&
-                                                                            customerDetailsProvider
-                                                                                .leadDetails!.isNotEmpty)
-                                                                        ? customerDetailsProvider
-                                                                            .leadDetails
-                                                                            ?.first
-                                                                        : null;
-
-                                                                    rtsFeasibilityReportPdf(
-                                                                        customerDetails:
-                                                                            customer,
-                                                                        context:
-                                                                            context);
+                                                                    await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure3}${widget.customerId}', 'Annexture3', context);
                                                                   },
                                                                 ),
                                                             ],
@@ -3097,7 +3041,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                                                     color: Colors.red,
                                                                                                     size: 50,
                                                                                                   ),
-                                                                                                  const SizedBox(height: 2),
+                                                                                                  SizedBox(height: 2),
                                                                                                   Text(
                                                                                                     'Open PDF',
                                                                                                     style: TextStyle(color: Colors.blue, decoration: TextDecoration.underline),
@@ -5203,14 +5147,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               .showSnackBar(const SnackBar(
                                                   content: Text(
                                                       'Could not open WhatsApp.')));
-                                          ;
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: Text(
                                                     'Could not share image: $e')));
-                                        ;
                                       }
                                     },
                                   ),
@@ -5231,14 +5173,12 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               .showSnackBar(const SnackBar(
                                                   content: Text(
                                                       'Could not open mail client.')));
-                                          ;
                                         }
                                       } catch (e) {
                                         ScaffoldMessenger.of(context)
                                             .showSnackBar(SnackBar(
                                                 content: Text(
                                                     'Could not share via mail: $e')));
-                                        ;
                                       }
                                     },
                                   ),

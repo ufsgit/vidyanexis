@@ -172,7 +172,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       ),
                       const SizedBox(height: 16.0),
                       DropdownButtonFormField<int>(
-                        value: (customerDetailsProvider
+                        initialValue: (customerDetailsProvider
                                         .selectedQuotationStatus !=
                                     null &&
                                 [1, 2, 3].contains(customerDetailsProvider

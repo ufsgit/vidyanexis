@@ -46,7 +46,7 @@ class _LeadsPageState extends State<ProcessFlowPage> {
     });
   }
 
-  getData() async {
+  Future<void> getData() async {
     isLoadingData = true;
     setState(() {});
     await processFlowProvider.getProcessFlow(context);

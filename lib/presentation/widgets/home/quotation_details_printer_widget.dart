@@ -384,7 +384,7 @@ class QuotationPDFPrinter {
               pw.Padding(
                 padding: const pw.EdgeInsets.all(5),
                 child: pw.Text(
-                  '${detail.MRP}',
+                  detail.MRP,
                   softWrap: false,
                 ), // MRP
               ),
@@ -684,7 +684,7 @@ class QuotationPDFPrinter {
     return _convertNumberToWordsRecursive(number);
   }
 
-  static formatDate(String? date) {
+  static String formatDate(String? date) {
     if (date == null || date.isEmpty) {
       return ''; // Return empty string if null or empty
     }

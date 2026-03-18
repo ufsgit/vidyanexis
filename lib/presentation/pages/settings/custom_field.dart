@@ -19,6 +19,7 @@ class CustomField extends StatefulWidget {
 
 class _CustomFieldState extends State<CustomField> {
   Future<List<CustomFieldModel>>? customfieldListFuture;
+  @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       getData();
@@ -26,7 +27,7 @@ class _CustomFieldState extends State<CustomField> {
     super.initState();
   }
 
-  getData() async {
+  Future<void> getData() async {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
     settingsProvider.getCustomField(context);

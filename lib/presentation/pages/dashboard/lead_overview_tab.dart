@@ -6,8 +6,6 @@ import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
-import 'package:vidyanexis/presentation/pages/dashboard/lead_enquiry_for_report_card.dart';
 
 class LeadsOverViewTab extends StatefulWidget {
   const LeadsOverViewTab({

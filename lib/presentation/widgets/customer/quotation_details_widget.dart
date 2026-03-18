@@ -8,10 +8,8 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_expansion_tile_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/pdf/print_kre_pdf.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_label_widget.dart';
 
-import 'package:vidyanexis/presentation/widgets/home/quotation_details_printer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card_widget.dart';
 
 class QuotationDetailsWidget extends StatelessWidget {

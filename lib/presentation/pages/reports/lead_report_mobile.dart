@@ -168,9 +168,9 @@ class _leadReportMobile extends State<LeadReportMobile> {
                 'Mobile no': task.contactNumber,
                 'Remark': task.remark,
                 'Assigned To': task.toUserName,
-                'Next Follow-up Date': task.nextFollowUpDate!.isNotEmpty
+                'Next Follow-up Date': task.nextFollowUpDate.isNotEmpty
                     ? DateFormat('dd MMM yyyy')
-                        .format(DateTime.parse(task.nextFollowUpDate!))
+                        .format(DateTime.parse(task.nextFollowUpDate))
                     : '',
                 'Status': task.statusName,
               };
@@ -233,7 +233,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                 const TextStyle(fontSize: 14),
                                           ),
                                         ))
-                                    .toList(),
+                                    ,
                               ],
                               onChanged: (int? newValue) {
                                 if (newValue != null) {
@@ -335,14 +335,14 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                 ),
                                 ...provider.searchUserDetails
                                     .map((user) => DropdownMenuItem<int>(
-                                          value: user.userDetailsId!,
+                                          value: user.userDetailsId,
                                           child: Text(
                                             user.userDetailsName ?? '',
                                             style:
                                                 const TextStyle(fontSize: 14),
                                           ),
                                         ))
-                                    .toList(),
+                                    ,
                               ],
                               onChanged: (int? newValue) {
                                 if (newValue != null) {
@@ -409,14 +409,14 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                 ),
                                 ...provider.enquiryForList
                                     .map((enquiry) => DropdownMenuItem<int>(
-                                          value: enquiry.enquiryForId!,
+                                          value: enquiry.enquiryForId,
                                           child: Text(
                                             enquiry.enquiryForName ?? '',
                                             style:
                                                 const TextStyle(fontSize: 14),
                                           ),
                                         ))
-                                    .toList(),
+                                    ,
                               ],
                               onChanged: (int? newValue) {
                                 leadReportProvider
@@ -471,14 +471,14 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                 ),
                                 ...provider.enquiryData
                                     .map((source) => DropdownMenuItem<int>(
-                                          value: source.enquirySourceId!,
+                                          value: source.enquirySourceId,
                                           child: Text(
                                             source.enquirySourceName ?? '',
                                             style:
                                                 const TextStyle(fontSize: 14),
                                           ),
                                         ))
-                                    .toList(),
+                                    ,
                               ],
                               onChanged: (int? newValue) {
                                 leadReportProvider
@@ -590,7 +590,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                             );
                                           },
                                           child: Text(
-                                            lead.customerName + ' >',
+                                            '${lead.customerName} >',
                                             style: GoogleFonts.plusJakartaSans(
                                               fontSize: 16,
                                               fontWeight: FontWeight.w500,

@@ -2,7 +2,6 @@
 //
 //     final subUserModel = subUserModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 SubUserModel subUserModelFromJson(String str) =>

@@ -225,16 +225,15 @@ class QuotationPDFPrinterWeb {
     }
 
     // Add rows
-    if (quotationData.quotationDetails != null &&
-        quotationData.quotationDetails is List) {
+    if (quotationData.quotationDetails is List) {
       for (var item in quotationData.quotationDetails) {
         PdfGridRow row = grid.rows.add();
         row.cells[0].value = item.itemName ?? '';
-        row.cells[1].value = item.quantity?.toString() ?? '';
-        row.cells[2].value = item.amount?.toString() ?? '';
+        row.cells[1].value = item.quantity.toString() ?? '';
+        row.cells[2].value = item.amount.toString() ?? '';
 
         double total = 0;
-        if (item.quantity != null && item.amount != null) {
+        if (item.amount != null) {
           total = (double.parse(item.quantity.toString()) * item.amount);
         }
         row.cells[3].value = total.toString();
@@ -251,7 +250,7 @@ class QuotationPDFPrinterWeb {
     PdfFont totalFont =
         PdfStandardFont(PdfFontFamily.helvetica, 12, style: PdfFontStyle.bold);
     graphics.drawString(
-      'Total Amount: ${quotationData.subsidyAmount?.toString() ?? ""}',
+      'Total Amount: ${quotationData.subsidyAmount.toString() ?? ""}',
       totalFont,
       brush: PdfSolidBrush(PdfColor(0, 0, 0)),
       bounds: Rect.fromLTWH(page.getClientSize().width - 250, 500, 200, 30),

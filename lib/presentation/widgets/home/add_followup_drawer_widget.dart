@@ -206,8 +206,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                           selectedStaff.userDetailsName;
                     },
                     selectedValue: dropDownProvider.selectedUserId,
-                    enabled: settingsProvider.selectedBranchId != null &&
-                        settingsProvider.selectedDepartmentId != null,
+                    enabled: settingsProvider.selectedBranchId != null,
                   ),
                 ),
                 const SizedBox(height: 10),
@@ -384,7 +383,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
                               style:
                                   const TextStyle(fontWeight: FontWeight.w500)),
                         ))
-                    .toList(),
+                    ,
               ],
             ),
           ),
@@ -968,8 +967,7 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
       errorMessage = 'Please select Branch';
     }
     // Priority 4: Check Department
-    else if (settingsProvider.selectedDepartmentId == null ||
-        settingsProvider.selectedDepartmentId <= 0 ||
+    else if (settingsProvider.selectedDepartmentId <= 0 ||
         settingsProvider.selectedDepartmentId == -1) {
       errorMessage = 'Please select Department';
     }
