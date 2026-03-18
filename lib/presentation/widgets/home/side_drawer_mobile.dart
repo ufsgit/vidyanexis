@@ -38,6 +38,7 @@ import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.da
 import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 
 class SidebarDrawer extends StatefulWidget {
   const SidebarDrawer({super.key});
@@ -134,6 +135,8 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
       if (settingsProvider.menuIsViewMap[56].toString() == '1')
         {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
+      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+        {'title': 'Sales Pipeline', 'page': const LeadStatusReportScreen()},
       if (settingsProvider.menuIsViewMap[65].toString() == '1')
         {'title': 'Balance Reports', 'page': const BalanceReportPage()},
       if (settingsProvider.menuIsViewMap[72].toString() == '1')

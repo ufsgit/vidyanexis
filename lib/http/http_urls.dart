@@ -24,7 +24,7 @@ class HttpUrls {
  
 
 //dev
-  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
   // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
 
@@ -335,4 +335,5 @@ class HttpUrls {
   static String getInventoryCustomer = "item/get_all_customers";
   static String deleteInventoryCustomer = "item/Delete_Customer";
   static String taskSummary = "task/Task_Summary";
+  static String getLeadStatusReport = "Lead/Get_Lead_Status_Report";
 }
