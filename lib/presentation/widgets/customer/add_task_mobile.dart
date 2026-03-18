@@ -210,13 +210,13 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         children: [
           Expanded(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -234,7 +234,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         Text(
                           'SELECT TASK TYPE',
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
+                            fontSize: 13,
                             fontWeight: FontWeight.w800,
                             color: Colors.grey[400],
                             letterSpacing: 1.2,
@@ -243,7 +243,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         const SizedBox(height: 16),
                         ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.25,
+                            maxHeight: MediaQuery.of(context).size.height * 0.45,
                           ),
                           child: SingleChildScrollView(
                             child: Wrap(
@@ -271,7 +271,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                   },
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 14, vertical: 10),
+                                        horizontal: 10, vertical: 6),
                                     decoration: BoxDecoration(
                                       color: isSelected
                                           ? AppColors.bluebutton
@@ -281,7 +281,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                     child: Text(
                                       taskType.taskTypeName ?? '',
                                       style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 13,
+                                        fontSize: 11,
                                         fontWeight: isSelected
                                             ? FontWeight.w700
                                             : FontWeight.w600,
@@ -299,11 +299,11 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 12),
 
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 20),
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -321,7 +321,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         Text(
                           'ASSIGN TO',
                           style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
+                            fontSize: 13,
                             fontWeight: FontWeight.w800,
                             color: Colors.grey[400],
                             letterSpacing: 1.2,
@@ -330,10 +330,12 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         const SizedBox(height: 16),
                         ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.35,
+                            maxHeight: MediaQuery.of(context).size.height * 0.45,
                           ),
                           child: SingleChildScrollView(
-                            child: Column(
+                            child: Wrap(
+                              spacing: 10,
+                              runSpacing: 10,
                               children: _filteredUsers.map((worker) {
                                 bool isSelected = customerDetailsProvider
                                         .addTaskModel.taskUser
@@ -341,69 +343,39 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                             u.userDetailsId ==
                                             worker.userDetailsId) ??
                                     false;
-                                return Padding(
-                                  padding: const EdgeInsets.only(bottom: 10.0),
-                                  child: InkWell(
-                                    onTap: () {
-                                      final userInTask = UserInTaskModel(
-                                          userDetailsId: worker.userDetailsId,
-                                          userDetailsName: worker.userDetailsName);
-                                      if (isSelected) {
-                                        customerDetailsProvider
-                                            .removeAssignedWorker(userInTask);
-                                      } else {
-                                        customerDetailsProvider
-                                            .addAssignedWorker(userInTask);
-                                      }
-                                      setState(() {});
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.all(12),
-                                      decoration: BoxDecoration(
+                                return InkWell(
+                                  onTap: () {
+                                    final userInTask = UserInTaskModel(
+                                        userDetailsId: worker.userDetailsId,
+                                        userDetailsName: worker.userDetailsName);
+                                    if (isSelected) {
+                                      customerDetailsProvider
+                                          .removeAssignedWorker(userInTask);
+                                    } else {
+                                      customerDetailsProvider
+                                          .addAssignedWorker(userInTask);
+                                    }
+                                    setState(() {});
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.bluebutton
+                                          : const Color(0xFFF3F5F7),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      worker.userDetailsName ?? '',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 11,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
                                         color: isSelected
-                                            ? AppColors.bluebutton.withOpacity(0.04)
-                                            : Colors.white,
-                                        borderRadius: BorderRadius.circular(12),
-                                        border: Border.all(
-                                          color: isSelected
-                                              ? AppColors.bluebutton.withOpacity(0.2)
-                                              : Colors.grey.withOpacity(0.1),
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          CircleAvatar(
-                                            radius: 18,
-                                            backgroundColor: Colors.grey[100],
-                                            child: Icon(Icons.person,
-                                                color: Colors.grey[400], size: 20),
-                                          ),
-                                          const SizedBox(width: 12),
-                                          Expanded(
-                                            child: Text(
-                                              worker.userDetailsName ?? '',
-                                              style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w600,
-                                                color: const Color(0xFF1E232C),
-                                              ),
-                                            ),
-                                          ),
-                                          Container(
-                                            width: 20,
-                                            height: 20,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              border: Border.all(
-                                                color: isSelected
-                                                    ? AppColors.bluebutton
-                                                    : Colors.grey[300]!,
-                                                width: isSelected ? 5 : 1.5,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                            ? Colors.white
+                                            : Colors.grey[600],
                                       ),
                                     ),
                                   ),
@@ -412,8 +384,6 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                             ),
                           ),
                         ),
-                        
-
                       ],
                     ),
                   ),

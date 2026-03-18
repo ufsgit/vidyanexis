@@ -59,7 +59,8 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
               label: f.label,
               type: f.type,
               options: f.options,
-              isMandatory: f.isMandatory))
+              isMandatory: f.isMandatory,
+              orderBy: f.orderBy))
           .toList();
     }
   }
@@ -151,28 +152,148 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                       itemCount: provider.availableFields.length,
                       itemBuilder: (context, index) {
                         final field = provider.availableFields[index];
-                        final isSelected =
-                            tempSelected.any((f) => f.label == field.label);
+                        final selectedIndex = tempSelected
+                            .indexWhere((f) => f.id == field.id);
+                        final isSelected = selectedIndex != -1;
 
-                        return CheckboxListTile(
-                          title: Text(field.label),
-                          subtitle: Text(field.type.name),
-                          value: isSelected,
-                          onChanged: (bool? value) {
-                            setDialogState(() {
-                              if (value == true) {
-                                tempSelected.add(FieldModel(
-                                    id: field.id,
-                                    label: field.label,
-                                    type: field.type,
-                                    options: field.options,
-                                    isMandatory: false));
-                              } else {
-                                tempSelected
-                                    .removeWhere((f) => f.label == field.label);
-                              }
-                            });
-                          },
+                        return Container(
+                          margin: const EdgeInsets.symmetric(vertical: 4),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12),
+                            color: isSelected
+                                ? AppColors.primaryBlue.withOpacity(0.05)
+                                : Colors.transparent,
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.primaryBlue.withOpacity(0.3)
+                                  : Colors.transparent,
+                            ),
+                          ),
+                          child: Column(
+                            children: [
+                              CheckboxListTile(
+                                title: Text(
+                                  field.label,
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontWeight: isSelected
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                    fontSize: 15,
+                                  ),
+                                ),
+                                subtitle: Text(
+                                  field.type.name.toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: Colors.grey[600],
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                                value: isSelected,
+                                activeColor: AppColors.primaryBlue,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                onChanged: (bool? value) {
+                                  setDialogState(() {
+                                    if (value == true) {
+                                      tempSelected.add(FieldModel(
+                                          id: field.id,
+                                          label: field.label,
+                                          type: field.type,
+                                          options: field.options,
+                                          isMandatory: false,
+                                          orderBy: 0));
+                                    } else {
+                                      tempSelected.removeAt(selectedIndex);
+                                    }
+                                  });
+                                },
+                              ),
+                              if (isSelected)
+                                Padding(
+                                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                                  child: Row(
+                                    children: [
+                                      // Mandatory Toggle
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Mandatory',
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 13,
+                                              color: Colors.grey[700],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Transform.scale(
+                                            scale: 0.75,
+                                            child: Switch(
+                                              value: tempSelected[selectedIndex]
+                                                  .isMandatory,
+                                              activeColor: Colors.white,
+                                              activeTrackColor:
+                                                  AppColors.primaryBlue,
+                                              onChanged: (bool val) {
+                                                setDialogState(() {
+                                                  tempSelected[selectedIndex]
+                                                      .isMandatory = val;
+                                                });
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const Spacer(),
+                                      // Order By input
+                                      Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            'Order By',
+                                            style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 13,
+                                              color: Colors.grey[700],
+                                            ),
+                                          ),
+                                          const SizedBox(width: 8),
+                                          SizedBox(
+                                            width: 60,
+                                            height: 32,
+                                            child: TextField(
+                                              controller: TextEditingController(
+                                                  text: tempSelected[selectedIndex]
+                                                      .orderBy
+                                                      .toString()),
+                                              keyboardType: TextInputType.number,
+                                              style: const TextStyle(fontSize: 13),
+                                              textAlign: TextAlign.center,
+                                              decoration: InputDecoration(
+                                                hintText: '0',
+                                                isDense: true,
+                                                contentPadding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 8, vertical: 6),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                ),
+                                              ),
+                                              onChanged: (val) {
+                                                tempSelected[selectedIndex]
+                                                        .orderBy =
+                                                    int.tryParse(val) ?? 0;
+                                              },
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                            ],
+                          ),
                         );
                       },
                     );
@@ -390,70 +511,156 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                   itemBuilder: (context, index) {
                     final field = _selectedFields[index];
                     return Container(
-                      margin: const EdgeInsets.only(bottom: 8),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
                       decoration: BoxDecoration(
-                        border: Border.all(color: Colors.grey[300]!),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  field.label,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                Text(
-                                  field.type.name.toUpperCase(),
-                                  style: GoogleFonts.plusJakartaSans(
-                                    fontSize: 12,
-                                    color: Colors.grey[600],
-                                  ),
-                                ),
-                              ],
-                            ),
+                        color: Colors.white,
+                        border: Border.all(color: Colors.grey[200]!),
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.02),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
                           ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
                           Row(
                             children: [
-                              Text(
-                                'Mandatory',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      field.label,
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15,
+                                        color: AppColors.textBlack,
+                                      ),
+                                    ),
+                                    Text(
+                                      field.type.name.toUpperCase(),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 11,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey[500],
+                                        letterSpacing: 0.5,
+                                      ),
+                                    ),
+                                  ],
                                 ),
                               ),
-                              const SizedBox(width: 8),
-                              Switch(
-                                value: field.isMandatory,
-                                activeColor: Colors.white,
-                                activeTrackColor: AppColors.primaryBlue,
-                                inactiveThumbColor: Colors.white,
-                                inactiveTrackColor: Colors.grey[300],
-                                trackOutlineColor: MaterialStateProperty.all(
-                                    Colors.transparent),
-                                onChanged: (bool value) {
+                              IconButton(
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.redAccent, size: 20),
+                                onPressed: () {
                                   setState(() {
-                                    field.isMandatory = value;
+                                    _selectedFields.removeAt(index);
                                   });
                                 },
+                                tooltip: 'Remove field',
                               ),
                             ],
                           ),
-                          const SizedBox(width: 8),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outline,
-                                color: Colors.red),
-                            onPressed: () {
-                              setState(() {
-                                _selectedFields.removeAt(index);
-                              });
-                            },
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 8.0),
+                            child: Divider(height: 1, thickness: 0.5),
+                          ),
+                          // Options Row (Responsive)
+                          Wrap(
+                            alignment: WrapAlignment.spaceBetween,
+                            crossAxisAlignment: WrapCrossAlignment.center,
+                            spacing: 16,
+                            runSpacing: 12,
+                            children: [
+                              // Mandatory toggle
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Mandatory',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 4),
+                                  Transform.scale(
+                                    scale: 0.8,
+                                    child: Switch(
+                                      value: field.isMandatory,
+                                      activeColor: Colors.white,
+                                      activeTrackColor: AppColors.primaryBlue,
+                                      onChanged: (bool value) {
+                                        setState(() {
+                                          field.isMandatory = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // Order By input
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Order By',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.grey[700],
+                                    ),
+                                  ),
+                                  const SizedBox(width: 8),
+                                  SizedBox(
+                                    width: 70,
+                                    height: 38,
+                                    child: TextField(
+                                      controller: TextEditingController(
+                                          text: field.orderBy.toString()),
+                                      keyboardType: TextInputType.number,
+                                      style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 14),
+                                      decoration: InputDecoration(
+                                        hintText: '0',
+                                        isDense: true,
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 10, vertical: 8),
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey[300]!),
+                                        ),
+                                        enabledBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide(
+                                              color: Colors.grey[200]!),
+                                        ),
+                                        focusedBorder: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                          borderSide: BorderSide(
+                                              color: AppColors.primaryBlue),
+                                        ),
+                                      ),
+                                      onChanged: (value) {
+                                        field.orderBy =
+                                            int.tryParse(value) ?? 0;
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ],
                       ),

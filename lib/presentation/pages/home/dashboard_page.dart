@@ -17,8 +17,8 @@ import 'package:vidyanexis/presentation/pages/dashboard/lead_overview_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/work_overview_tab.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 
-import 'package:vidyanexis/presentation/widgets/home/dashboard_task_count_card.dart';
-import 'package:vidyanexis/presentation/pages/home/task_page.dart';
+// import 'package:vidyanexis/presentation/widgets/home/dashboard_task_count_card.dart';
+// import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/amc_notification_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/payment_reminder_tab.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/dashboard_count_tab.dart';
@@ -182,8 +182,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
             ),
           const SizedBox(height: 10),
           CustomTab(dashBoardProvider: dashBoardProvider),
-          const SizedBox(height: 16),
-          _buildTaskReports(context, dashBoardProvider),
+          const SizedBox(height: 10),
           const SizedBox(height: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
@@ -703,6 +702,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
     );
   }
 
+  /*
   Widget _buildTaskReports(
       BuildContext context, DashboardProvider dashBoardProvider) {
     // Access DropDownProvider to map names to IDs for navigation
@@ -799,4 +799,5 @@ class _DashBoardPageState extends State<DashBoardPage> {
       ),
     );
   }
+  */
 }

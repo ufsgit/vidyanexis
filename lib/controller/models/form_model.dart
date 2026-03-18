@@ -5,6 +5,7 @@ class FieldModel {
   final String label;
   final FieldType type;
   bool isMandatory;
+  int orderBy;
   String? value;
   final List<String>? options;
 
@@ -13,6 +14,7 @@ class FieldModel {
     required this.label,
     required this.type,
     this.isMandatory = false,
+    this.orderBy = 0,
     this.value,
     this.options,
   });

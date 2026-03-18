@@ -183,6 +183,8 @@ class FormProvider extends ChangeNotifier {
                         ?.toString();
                 final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
 
+                final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
+
                 // Match by ID first, then by Label as a fallback to "repair" corrupted IDs
                 final availableField = availableFields.firstWhere(
                   (a) => a.id == cfId,
@@ -208,6 +210,7 @@ class FormProvider extends ChangeNotifier {
                   isMandatory: (isMandatoryValue == 1 ||
                       isMandatoryValue == true ||
                       isMandatoryValue == "1"),
+                  orderBy: int.tryParse(orderBy.toString()) ?? 0,
                 );
               }).toList();
             }
@@ -244,7 +247,8 @@ class FormProvider extends ChangeNotifier {
         "Custom_Fields": form.fields
             .map((f) => {
                   "Custom_Field_Id": int.tryParse(f.id) ?? 0,
-                  "Is_Mandatory": f.isMandatory ? 1 : 0
+                  "Is_Mandatory": f.isMandatory ? 1 : 0,
+                  "Order_By": f.orderBy
                 })
             .toList(),
       };
@@ -286,7 +290,8 @@ class FormProvider extends ChangeNotifier {
         "Custom_Fields": form.fields
             .map((f) => {
                   "Custom_Field_Id": int.tryParse(f.id) ?? 0,
-                  "Is_Mandatory": f.isMandatory ? 1 : 0
+                  "Is_Mandatory": f.isMandatory ? 1 : 0,
+                  "Order_By": f.orderBy
                 })
             .toList(),
       };
@@ -478,6 +483,7 @@ class FormProvider extends ChangeNotifier {
               ),
             );
             final dataValue = f['datavalue'] ?? f['DataValue'] ?? f['value'];
+            final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
 
             return FieldModel(
               id: availableField.id,
@@ -491,6 +497,7 @@ class FormProvider extends ChangeNotifier {
               isMandatory: (isMandatoryValue == 1 ||
                   isMandatoryValue == true ||
                   isMandatoryValue == "1"),
+              orderBy: int.tryParse(orderBy.toString()) ?? 0,
             );
           }).toList();
         }
