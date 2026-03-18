@@ -3051,8 +3051,8 @@ class _tasksPageReportState extends State<TaskPage> {
                           ),
                         );
 
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
+                        return ListView(
+                          shrinkWrap: true,
                           children: [
                             isSmallScreen
                                 ? Flexible(
