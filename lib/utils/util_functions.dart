@@ -81,8 +81,10 @@ String formatIndianPhoneNumber(String input) {
     number = number.substring(2);
   }
 
-  if (number.length == 10 && RegExp(r'^[6-9]\d{9}$').hasMatch(number)) {
+  if (number.length == 10) {
     return '91$number';
+  } else if (number.isNotEmpty) {
+    return number;
   } else {
     return '';
   }

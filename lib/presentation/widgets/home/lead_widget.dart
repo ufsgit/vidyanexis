@@ -15,12 +15,13 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
-import 'package:vidyanexis/utils/util_functions.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_periodic_service_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:vidyanexis/utils/chat_launcher.dart';
 
 class LeadCard extends StatefulWidget {
   final SearchLeadModel lead;
@@ -258,23 +259,10 @@ class _LeadCardState extends State<LeadCard> {
                     Expanded(
                       child: CustomActionButton(
                         imageColor: AppColors.textGreen,
-                        onTap: () async {
-                          String formatted = formatIndianPhoneNumber(
-                              widget.lead.contactNumber.toString());
-
-                          if (formatted.isNotEmpty) {
-                            final url = 'https://wa.me/$formatted';
-                            await launchUrl(Uri.parse(url),
-                                mode: LaunchMode.externalApplication);
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text('Invalid Indian mobile number')),
-                            );
-                          }
+                        onTap: () {
+                          ChatLauncher.handleChat(context, widget.lead.contactNumber.toString());
                         },
-                        icon: Icons.chat_bubble_outline,
+                        icon: FontAwesomeIcons.whatsapp,
                         text: 'Chat',
                         height: 38,
                       ),
