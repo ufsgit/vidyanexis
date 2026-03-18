@@ -5,8 +5,10 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vidyanexis/utils/extensions.dart';
-import 'package:vidyanexis/utils/util_functions.dart';
+import 'package:vidyanexis/utils/chat_launcher.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskReportModel task;
@@ -186,6 +188,8 @@ class TaskCard extends StatelessWidget {
                   children: [
                     _buildChatDropdown(context),
                     const SizedBox(width: 12),
+                    _buildViewDropdown(context),
+                    const SizedBox(width: 12),
                     _buildCallDropdown(context),
                   ],
                 ),
@@ -197,50 +201,33 @@ class TaskCard extends StatelessWidget {
   }
 
   Widget _buildChatDropdown(BuildContext context) {
-    return PopupMenuButton<String>(
-      onSelected: (value) async {
-        String formatted = formatIndianPhoneNumber(task.mobile);
-        if (formatted.isNotEmpty) {
-          if (value == 'WhatsApp') {
-            final url = 'https://wa.me/$formatted';
-            await launchUrl(Uri.parse(url),
-                mode: LaunchMode.externalApplication);
-          } else if (value == 'WhatsApp Business') {
-            // Try to open WhatsApp Business specifically if possible, else wa.me
-            final Uri businessWhatsappUri =
-                Uri.parse('whatsapp-business://send?phone=$formatted');
-            final Uri webWhatsapp = Uri.parse('https://wa.me/$formatted');
-
-            if (await canLaunchUrl(webWhatsapp)) {
-              await launchUrl(webWhatsapp,
-                  mode: LaunchMode.externalApplication);
-            } else if (await canLaunchUrl(businessWhatsappUri)) {
-              await launchUrl(businessWhatsappUri,
-                  mode: LaunchMode.externalApplication);
-            }
-          } else if (value == 'SMS') {
-            final Uri smsUri = Uri(scheme: 'sms', path: formatted);
-            if (await canLaunchUrl(smsUri)) {
-              await launchUrl(smsUri);
-            }
-          }
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Invalid Indian mobile number')),
-          );
-        }
+    return CustomActionButton(
+      onTap: () {
+        ChatLauncher.handleChat(context, task.mobile);
       },
-      itemBuilder: (context) => [
-        const PopupMenuItem(value: 'WhatsApp', child: Text('Normal WhatsApp')),
-        const PopupMenuItem(
-            value: 'WhatsApp Business', child: Text('WhatsApp Business')),
-        const PopupMenuItem(value: 'SMS', child: Text('SMS')),
-      ],
-      child: CustomActionButton(
-        imageColor: AppColors.textGreen,
-        icon: Icons.chat_bubble_outline,
-        text: 'Chat',
-      ),
+      imageColor: AppColors.textGreen,
+      icon: FontAwesomeIcons.whatsapp,
+      text: 'Chat',
+    );
+  }
+
+  Widget _buildViewDropdown(BuildContext context) {
+    return CustomActionButton(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => TaskDetailsPagePhone(
+              taskId: task.taskId.toString(),
+              taskMasterId: task.taskMasterId.toString(),
+              customerId: task.customerId.toString(),
+            ),
+          ),
+        );
+      },
+      imageColor: AppColors.appViolet,
+      icon: Icons.visibility_outlined,
+      text: 'View',
     );
   }
 

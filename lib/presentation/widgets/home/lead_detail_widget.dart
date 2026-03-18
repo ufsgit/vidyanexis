@@ -81,124 +81,74 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                         SizedBox(height: 2),
                       ],
                     ),
-                    PopupMenuButton<String>(
-                      icon: const Icon(Icons.more_vert_outlined),
-                      elevation: 2,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    if (settingsProvider.menuIsEditMap[3] == 1)
+                      IconButton(
+                        icon: const Icon(Icons.edit_outlined,
+                            size: 22, color: Colors.blue),
+                        tooltip: 'Edit',
+                        onPressed: () async {
+                          await leadDetailsProvider.fetchLeadDetails(
+                              widget.customerId, context);
+                          final leadsProvider = Provider.of<LeadsProvider>(
+                              context,
+                              listen: false);
+                          final dropDownProvider =
+                              Provider.of<DropDownProvider>(context,
+                                  listen: false);
+                          leadsProvider.enquirySourceController.text =
+                              leadDetails.enquirySourceName.toString();
+                          dropDownProvider.selectedEnquirySourceId =
+                              leadDetails.enquirySourceId;
+                          await leadsProvider.getLeadDropdowns(context);
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const NewLeadDrawerWidget(
+                                isEdit: true,
+                              );
+                            },
+                          );
+                        },
                       ),
-                      onSelected: (value) async {
-                        switch (value) {
-                          case 'edit':
-                            await leadDetailsProvider.fetchLeadDetails(
-                                widget.customerId, context);
-
-                            final leadsProvider = Provider.of<LeadsProvider>(
-                                context,
-                                listen: false);
-                            final dropDownProvider =
-                                Provider.of<DropDownProvider>(context,
-                                    listen: false);
-                            leadsProvider.enquirySourceController.text =
-                                leadDetails.enquirySourceName.toString();
-                            // leadsProvider.enquiryForController.text =
-                            //     leadDetails.enquiryForName.toString();
-
-                            dropDownProvider.selectedEnquirySourceId =
-                                leadDetails.enquirySourceId;
-                            // widget.onEditPressed();
-                            await leadsProvider.getLeadDropdowns(context);
-
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const NewLeadDrawerWidget(
-                                  isEdit: true,
-                                );
-                              },
-                            );
-
-                            print('............../////////////');
-                            break;
-                          case 'convert':
-                            _showConvertDialog();
-                            break;
-                          case 'delete':
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: const Text('Confirm Delete'),
-                                  content: const Text(
-                                      'Are you sure you want to delete this lead?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      child: const Text('Cancel'),
+                    if (settingsProvider.menuIsDeleteMap[3] == 1)
+                      IconButton(
+                        icon: const Icon(Icons.delete_outline,
+                            size: 22, color: Colors.red),
+                        tooltip: 'Delete',
+                        onPressed: () {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: const Text('Confirm Delete'),
+                                content: const Text(
+                                    'Are you sure you want to delete this lead?'),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: const Text('Cancel'),
+                                  ),
+                                  TextButton(
+                                    onPressed: () async {
+                                      final leadsProvider =
+                                          Provider.of<LeadsProvider>(context,
+                                              listen: false);
+                                      await leadsProvider.deleteLead(
+                                          context, widget.customerId);
+                                      Navigator.pop(context);
+                                      Navigator.pop(context);
+                                    },
+                                    child: const Text(
+                                      'Delete',
+                                      style: TextStyle(color: Colors.red),
                                     ),
-                                    TextButton(
-                                      onPressed: () async {
-                                        final leadsProvider =
-                                            Provider.of<LeadsProvider>(context,
-                                                listen: false);
-
-                                        await leadsProvider.deleteLead(
-                                            context, widget.customerId);
-
-                                        Navigator.pop(context);
-                                        Navigator.pop(context);
-                                      },
-                                      child: const Text(
-                                        'Delete',
-                                        style: TextStyle(color: Colors.red),
-                                      ),
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
-                            break;
-                        }
-                      },
-                      itemBuilder: (BuildContext context) => [
-                        if (settingsProvider.menuIsEditMap[3] == 1)
-                          const PopupMenuItem<String>(
-                            value: 'edit',
-                            child: Row(
-                              children: [
-                                Icon(Icons.edit_outlined, size: 20),
-                                SizedBox(width: 8),
-                                Text('Edit'),
-                              ],
-                            ),
-                          ),
-                        const PopupMenuItem<String>(
-                          value: 'convert',
-                          child: Row(
-                            children: [
-                              Icon(Icons.change_circle_outlined,
-                                  size: 20, color: Colors.green),
-                              SizedBox(width: 8),
-                              Text('Convert Lead',
-                                  style: TextStyle(color: Colors.green)),
-                            ],
-                          ),
-                        ),
-                        if (settingsProvider.menuIsDeleteMap[3] == 1)
-                          const PopupMenuItem<String>(
-                            value: 'delete',
-                            child: Row(
-                              children: [
-                                Icon(Icons.delete_outline,
-                                    size: 20, color: Colors.red),
-                                SizedBox(width: 8),
-                                Text('Delete',
-                                    style: TextStyle(color: Colors.red)),
-                              ],
-                            ),
-                          ),
-                      ],
-                    ),
+                                  ),
+                                ],
+                              );
+                            },
+                          );
+                        },
+                      ),
                     const Spacer(),
                     ElevatedButton(
                       onPressed: () {

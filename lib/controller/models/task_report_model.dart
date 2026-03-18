@@ -99,7 +99,7 @@ class TaskReportModel {
       completionTime: json['Completion_Time'] as String?,
       deleteStatus: json['DeleteStatus'] ?? 0,
       customerName: json['Customer_Name'] ?? '',
-      mobile: json['Phone_Number'] ?? json['Contact_Number'] ?? '',
+      mobile: json['Phone_Number'] ?? json['Contact_Number'] ?? json['Contact_No'] ?? json['Mobile_No'] ?? json['Mobile_Number'] ?? json['Mobile'] ?? json['phone_number'] ?? json['contact_number'] ?? json['contact_no'] ?? json['mobile_no'] ?? json['mobile'] ?? '',
       address1: json['Address1'] ?? '',
       address2: json['Address2'] ?? '',
       address3: json['Address3'] ?? '',

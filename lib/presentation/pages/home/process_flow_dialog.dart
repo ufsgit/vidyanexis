@@ -48,10 +48,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           Provider.of<DropDownProvider>(context, listen: false);
       final formProvider = Provider.of<FormProvider>(context, listen: false);
 
-      reportsProvider.descriptionController.text = widget.task.description;
-      if (widget.task.description.isNotEmpty) {
-        showDescription = true;
-      }
+      reportsProvider.descriptionController.clear();
 
       if (widget.task.nextFollowupDate != null &&
           widget.task.nextFollowupDate!.isNotEmpty) {

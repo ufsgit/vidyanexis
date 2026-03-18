@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class CustomActionButton extends StatelessWidget {
-  final IconData icon;
+  final dynamic icon;
   final String text;
   final VoidCallback? onTap;
   final Color? backgroundColor;
@@ -43,11 +44,18 @@ class CustomActionButton extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(
-                  icon,
-                  size: iconSize,
-                  color: imageColor ?? AppColors.textGrey3,
-                ),
+                icon is IconData
+                    ? Icon(
+                        icon,
+                        size: iconSize,
+                        color: imageColor ?? AppColors.textGrey3,
+                      )
+                    : FaIcon(
+                        icon,
+                        size: iconSize,
+                        color: imageColor ?? AppColors.textGrey3,
+                      ),
+
                 const SizedBox(width: 4),
                 Flexible(
                   child: Text(

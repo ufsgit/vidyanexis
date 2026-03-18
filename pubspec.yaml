@@ -71,6 +71,8 @@ dependencies:
   audioplayers: ^6.5.0
   record: ^6.1.2
   flutter_local_notifications: ^20.1.0
+  android_intent_plus: ^6.0.0
+  font_awesome_flutter: ^11.0.0
 dependency_overrides:
   record_linux: 
     git:

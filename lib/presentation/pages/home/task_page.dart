@@ -2541,8 +2541,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           formProvider.fetchAvailableFields(context);
 
                           // Pre-fill Description and Follow-Up Date if available
-                          reportsProvider.descriptionController.text =
-                              task.description ?? '';
+                          reportsProvider.descriptionController.clear();
                           if (task.nextFollowupDate != null &&
                               task.nextFollowupDate!.isNotEmpty) {
                             try {
@@ -3048,8 +3047,8 @@ class _tasksPageReportState extends State<TaskPage> {
                           ),
                         );
 
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
+                        return ListView(
+                          shrinkWrap: true,
                           children: [
                             isSmallScreen
                                 ? Flexible(
