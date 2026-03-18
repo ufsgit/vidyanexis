@@ -15,7 +15,7 @@ import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
+
 
 class AddDocumentPhone extends StatefulWidget {
   String customerId;
@@ -28,8 +28,7 @@ class AddDocumentPhone extends StatefulWidget {
 
 class _AddDocumentPhoneState extends State<AddDocumentPhone> {
   late FocusNode complaintNode;
-  final TextEditingController _searchController = TextEditingController();
-  String _searchQuery = '';
+
 
   @override
   void initState() {
@@ -149,32 +148,13 @@ class _AddDocumentPhoneState extends State<AddDocumentPhone> {
             //   ],
             // ),
             // const SizedBox(height: 16.0),
-            CustomTextfieldWidgetMobile(
-              controller: _searchController,
-              labelText: 'Search Document Type',
-              prefixIcon: Icon(Icons.search, color: AppColors.textGrey2, size: 20),
-              contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              onChanged: (value) {
-                setState(() {
-                  _searchQuery = value;
-                });
-              },
-            ),
-            const SizedBox(height: 12),
+
             ListView.builder(
               shrinkWrap: true,
               physics: NeverScrollableScrollPhysics(),
-              itemCount: dropDownProvider.documentType
-                  .where((e) => e.documentTypeName
-                      .toLowerCase()
-                      .contains(_searchQuery.toLowerCase()))
-                  .length,
+              itemCount: dropDownProvider.documentType.length,
               itemBuilder: (context, index) {
-                final filteredList = dropDownProvider.documentType
-                    .where((e) => e.documentTypeName
-                        .toLowerCase()
-                        .contains(_searchQuery.toLowerCase()))
-                    .toList();
+                final filteredList = dropDownProvider.documentType;
                 final docType = filteredList[index];
                 final selectedCount = provider.fileInfoList
                     .where((e) => e['docTypeId'] == docType.documentTypeId)
