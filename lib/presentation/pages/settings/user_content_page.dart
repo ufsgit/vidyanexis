@@ -179,7 +179,7 @@ class _UsersContentState extends State<UsersContent> {
                                     ),
                                   ),
                                   SizedBox(
-                                    width: 60,
+                                    width: 50,
                                     child: Center(
                                       child: Text(
                                         'Edit',
@@ -190,9 +190,9 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 32),
+                                  // const SizedBox(width: 32),
                                   SizedBox(
-                                    width: 70,
+                                    width: 60,
                                     child: Center(
                                       child: Text(
                                         'Delete',
@@ -203,9 +203,9 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 32),
+                                  // const SizedBox(width: 32),
                                   SizedBox(
-                                    width: 100,
+                                    width: 110,
                                     child: Center(
                                       child: Text(
                                         'Team',
@@ -216,9 +216,9 @@ class _UsersContentState extends State<UsersContent> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(width: 64),
+                                  const SizedBox(width: 16),
                                   SizedBox(
-                                    width: 100,
+                                    width: 80,
                                     child: Text(
                                       'Status',
                                       style: GoogleFonts.plusJakartaSans(
@@ -227,9 +227,9 @@ class _UsersContentState extends State<UsersContent> {
                                           color: AppColors.textGrey1),
                                     ),
                                   ),
-                                  const SizedBox(width: 32),
+                                  const SizedBox(width: 16),
                                   SizedBox(
-                                    width: 160,
+                                    width: 200,
                                     child: Text(
                                       'View details',
                                       style: GoogleFonts.plusJakartaSans(
@@ -398,7 +398,7 @@ class _UsersContentState extends State<UsersContent> {
                                         if (settingsProvider.menuIsEditMap[1] ==
                                             1)
                                           SizedBox(
-                                            width: 60,
+                                            width: 50,
                                             child: Center(
                                               child: IconButton(
                                                 onPressed: () {
@@ -453,12 +453,11 @@ class _UsersContentState extends State<UsersContent> {
                                               ),
                                             ),
                                           ),
-                                        const SizedBox(width: 32),
                                         if (settingsProvider
                                                 .menuIsDeleteMap[1] ==
                                             1)
                                           SizedBox(
-                                            width: 70,
+                                            width: 60,
                                             child: Center(
                                               child: IconButton(
                                                 onPressed: () {
@@ -517,9 +516,8 @@ class _UsersContentState extends State<UsersContent> {
                                               ),
                                             ),
                                           ),
-                                        const SizedBox(width: 32),
                                         SizedBox(
-                                          width: 100,
+                                          width: 110,
                                           child: Center(
                                             child: ActionChip(
                                                 shape:
@@ -560,16 +558,16 @@ class _UsersContentState extends State<UsersContent> {
                                                 )),
                                           ),
                                         ),
-                                        const SizedBox(width: 64),
+                                        const SizedBox(width: 16),
                                         SizedBox(
-                                          width: 100,
+                                          width: 80,
                                           child: Container(
                                             padding: const EdgeInsets.symmetric(
                                                 horizontal: 8, vertical: 4),
                                             decoration: BoxDecoration(
                                               color: settingsProvider
                                                           .searchUserDetails[
-                                                              index]
+                                                               index]
                                                           .workingStatus ==
                                                       '1'
                                                   ? Colors.green.shade50
@@ -580,7 +578,7 @@ class _UsersContentState extends State<UsersContent> {
                                             child: Text(
                                               settingsProvider
                                                           .searchUserDetails[
-                                                              index]
+                                                               index]
                                                           .workingStatus ==
                                                       '1'
                                                   ? 'Active'
@@ -598,9 +596,9 @@ class _UsersContentState extends State<UsersContent> {
                                             ),
                                           ),
                                         ),
-                                        const SizedBox(width: 32),
+                                        const SizedBox(width: 16),
                                         SizedBox(
-                                          width: 160,
+                                          width: 200,
                                           child: CustomOutlinedSvgButton(
                                             showIcon: false,
                                             onPressed: () async {

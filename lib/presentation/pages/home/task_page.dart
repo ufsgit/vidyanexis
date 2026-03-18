@@ -2546,8 +2546,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           formProvider.fetchAvailableFields(context);
 
                           // Pre-fill Description and Follow-Up Date if available
-                          reportsProvider.descriptionController.text =
-                              task.description ?? '';
+                          reportsProvider.descriptionController.clear();
                           if (task.nextFollowupDate != null &&
                               task.nextFollowupDate!.isNotEmpty) {
                             try {
