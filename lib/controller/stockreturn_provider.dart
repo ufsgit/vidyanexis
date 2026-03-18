@@ -199,7 +199,7 @@ class StockreturnProvider extends ChangeNotifier {
   String _search = '';
   String _fromDateS = '';
   String _supplier = '';
-  String _enquiryForS = '';
+  final String _enquiryForS = '';
 
   String get search => _search;
   String get fromDateS => _fromDateS;
@@ -263,7 +263,7 @@ class StockreturnProvider extends ChangeNotifier {
   List<ItemListStock> _itemListStock = [];
   List<ItemListStock> get itemListStock => _itemListStock;
 //purchase
-  List<PurchaseModel> _purchaseList = [];
+  final List<PurchaseModel> _purchaseList = [];
   List<PurchaseModel> get purchaseList => _purchaseList;
   List<PurchaseItemModel> purchaseItems = [];
   List<PurchaseItemModel> _purchaseDetails = [];
@@ -287,7 +287,7 @@ class StockreturnProvider extends ChangeNotifier {
   List<ItemListModel> _filteredItemList = [];
   //item type dropdown
   String get selectedType => _selectedType;
-  String _selectedType = 'service';
+  final String _selectedType = 'service';
 //expense
   String _formattedFromDate = '';
   String _formattedToDate = '';
@@ -464,13 +464,13 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-  searchPurchaseDetails(String purchaseMasterId, BuildContext context) async {
+  Future<void> searchPurchaseDetails(String purchaseMasterId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getPurchaseDetails + "/$purchaseMasterId");
+          endPoint: "${HttpUrls.getPurchaseDetails}/$purchaseMasterId");
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -728,7 +728,7 @@ class StockreturnProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  searchItemListPurchase(BuildContext context) async {
+  Future<void> searchItemListPurchase(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -827,7 +827,7 @@ class StockreturnProvider extends ChangeNotifier {
       stockReturnItems[_editReturnIndex!] = newItem;
     } else {
       stockReturnItems.add(newItem);
-      print('list/////${stockReturnItems}');
+      print('list/////$stockReturnItems');
     }
 
     resetStockReturnForm();
@@ -965,7 +965,7 @@ class StockreturnProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  searchItemListStock(BuildContext context) async {
+  Future<void> searchItemListStock(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1550,7 +1550,7 @@ class StockreturnProvider extends ChangeNotifier {
 
   
 
-  deleteStockUse(BuildContext context, int userId, int customerId) async {
+  Future<void> deleteStockUse(BuildContext context, int userId, int customerId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpDeleteRequest(
@@ -1586,7 +1586,7 @@ class StockreturnProvider extends ChangeNotifier {
     }
   }
 
-  deleteStockReturn(BuildContext context, int userId, int customerId) async {
+  Future<void> deleteStockReturn(BuildContext context, int userId, int customerId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpDeleteRequest(
@@ -1673,7 +1673,7 @@ class StockreturnProvider extends ChangeNotifier {
     );
   }
 
-  searchStockList(BuildContext context) async {
+  Future<void> searchStockList(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1800,7 +1800,7 @@ class StockreturnProvider extends ChangeNotifier {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
-        endPoint: HttpUrls.deleteExpenseManagement + "/" + id.toString(),
+        endPoint: "${HttpUrls.deleteExpenseManagement}/$id",
       );
 
       if (response != null && response.statusCode == 200) {

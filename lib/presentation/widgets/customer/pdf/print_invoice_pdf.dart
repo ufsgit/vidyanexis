@@ -19,7 +19,7 @@ Future<void> invoicePDFPrint({
   required List<QuatationListModel> quotationList,
   required List<ReceiptListModel> receiptList,
 }) async {
-  String _formatAmount(dynamic amount) {
+  String formatAmount(dynamic amount) {
     try {
       if (amount == null) return '0.00';
       final double value =
@@ -30,7 +30,7 @@ Future<void> invoicePDFPrint({
     }
   }
 
-  String _calculateTotalAmount(List<QuatationListModel> quotations) {
+  String calculateTotalAmount(List<QuatationListModel> quotations) {
     double total = 0.0;
     for (var quotation in quotations) {
       try {
@@ -42,7 +42,7 @@ Future<void> invoicePDFPrint({
     return total.toStringAsFixed(2);
   }
 
-  String _calculateTotalNetAmount(List<QuatationListModel> quotations) {
+  String calculateTotalNetAmount(List<QuatationListModel> quotations) {
     double total = 0.0;
     for (var quotation in quotations) {
       try {
@@ -54,7 +54,7 @@ Future<void> invoicePDFPrint({
     return total.toStringAsFixed(2);
   }
 
-  String _calculateTotalSubsidyAmount(List<QuatationListModel> quotations) {
+  String calculateTotalSubsidyAmount(List<QuatationListModel> quotations) {
     double total = 0.0;
     for (var quotation in quotations) {
       try {
@@ -94,7 +94,7 @@ Future<void> invoicePDFPrint({
   //   return total.toStringAsFixed(2);
   // }
 
-  String _calculateTotalPayments(List<ReceiptListModel> receipts) {
+  String calculateTotalPayments(List<ReceiptListModel> receipts) {
     double total = 0.0;
     for (var receipt in receipts) {
       total += receipt.amount;
@@ -102,18 +102,18 @@ Future<void> invoicePDFPrint({
     return total.toStringAsFixed(2);
   }
 
-  String _calculateOutstandingBalance(
+  String calculateOutstandingBalance(
       List<QuatationListModel> quotations, List<ReceiptListModel> receipts) {
-    double totalInvoices = double.parse(_calculateTotalAmount(quotations));
-    double totalPayments = double.parse(_calculateTotalPayments(receipts));
+    double totalInvoices = double.parse(calculateTotalAmount(quotations));
+    double totalPayments = double.parse(calculateTotalPayments(receipts));
     double balance = totalInvoices - totalPayments;
     return balance.toStringAsFixed(2);
   }
 
-  PdfColor _getOutstandingBalanceColor(
+  PdfColor getOutstandingBalanceColor(
       List<QuatationListModel> quotations, List<ReceiptListModel> receipts) {
     double balance =
-        double.parse(_calculateOutstandingBalance(quotations, receipts));
+        double.parse(calculateOutstandingBalance(quotations, receipts));
     if (balance > 0) {
       return PdfColors.red; // Outstanding amount
     } else if (balance < 0) {
@@ -242,7 +242,7 @@ Future<void> invoicePDFPrint({
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  quotation.quotationNo?.toString() ?? 'N/A',
+                                  quotation.quotationNo.toString() ?? 'N/A',
                                   textAlign: pw.TextAlign.center,
                                 ),
                               ),
@@ -256,7 +256,7 @@ Future<void> invoicePDFPrint({
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  'Rs. ${_formatAmount(quotation.subsidyAmount)}',
+                                  'Rs. ${formatAmount(quotation.subsidyAmount)}',
                                   textAlign: pw.TextAlign.right,
                                 ),
                               ),
@@ -277,20 +277,20 @@ Future<void> invoicePDFPrint({
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  'Rs. ${_formatAmount(quotation.netTotal)}',
+                                  'Rs. ${formatAmount(quotation.netTotal)}',
                                   textAlign: pw.TextAlign.right,
                                 ),
                               ),
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  'Rs. ${_formatAmount(quotation.totalAmount)}',
+                                  'Rs. ${formatAmount(quotation.totalAmount)}',
                                   textAlign: pw.TextAlign.right,
                                 ),
                               ),
                             ],
                           );
-                        }).toList(),
+                        }),
 
                         // Total row
                         if (quotationList.isNotEmpty)
@@ -311,7 +311,7 @@ Future<void> invoicePDFPrint({
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  'Rs. ${_calculateTotalSubsidyAmount(quotationList)}',
+                                  'Rs. ${calculateTotalSubsidyAmount(quotationList)}',
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold),
                                   textAlign: pw.TextAlign.right,
@@ -338,7 +338,7 @@ Future<void> invoicePDFPrint({
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  'Rs. ${_calculateTotalNetAmount(quotationList)}',
+                                  'Rs. ${calculateTotalNetAmount(quotationList)}',
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold),
                                   textAlign: pw.TextAlign.right,
@@ -347,7 +347,7 @@ Future<void> invoicePDFPrint({
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  'Rs. ${_calculateTotalAmount(quotationList)}',
+                                  'Rs. ${calculateTotalAmount(quotationList)}',
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold),
                                   textAlign: pw.TextAlign.right,
@@ -464,7 +464,7 @@ Future<void> invoicePDFPrint({
                                 ),
                               ],
                             );
-                          }).toList(),
+                          }),
 
                           // Total payments row
                           pw.TableRow(
@@ -484,7 +484,7 @@ Future<void> invoicePDFPrint({
                               pw.Padding(
                                 padding: const pw.EdgeInsets.all(8),
                                 child: pw.Text(
-                                  'Rs. ${_calculateTotalPayments(receiptList)}',
+                                  'Rs. ${calculateTotalPayments(receiptList)}',
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold),
                                   textAlign: pw.TextAlign.right,
@@ -522,7 +522,7 @@ Future<void> invoicePDFPrint({
                             children: [
                               pw.Text('Total Invoice Amount:'),
                               pw.Text(
-                                'Rs. ${_calculateTotalAmount(quotationList)}',
+                                'Rs. ${calculateTotalAmount(quotationList)}',
                                 style: pw.TextStyle(
                                     fontWeight: pw.FontWeight.bold),
                               ),
@@ -535,7 +535,7 @@ Future<void> invoicePDFPrint({
                               children: [
                                 pw.Text('Total Payments Received:'),
                                 pw.Text(
-                                  'Rs. ${_calculateTotalPayments(receiptList)}',
+                                  'Rs. ${calculateTotalPayments(receiptList)}',
                                   style: pw.TextStyle(
                                       fontWeight: pw.FontWeight.bold),
                                 ),
@@ -552,10 +552,10 @@ Future<void> invoicePDFPrint({
                                     fontWeight: pw.FontWeight.bold),
                               ),
                               pw.Text(
-                                'Rs. ${_calculateOutstandingBalance(quotationList, receiptList)}',
+                                'Rs. ${calculateOutstandingBalance(quotationList, receiptList)}',
                                 style: pw.TextStyle(
                                   fontWeight: pw.FontWeight.bold,
-                                  color: _getOutstandingBalanceColor(
+                                  color: getOutstandingBalanceColor(
                                       quotationList, receiptList),
                                 ),
                               ),

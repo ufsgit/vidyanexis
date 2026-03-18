@@ -8,7 +8,6 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
-import 'package:vidyanexis/presentation/pages/reports/work_report_details_screen_phone.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 

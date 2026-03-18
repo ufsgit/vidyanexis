@@ -16,11 +16,11 @@ import 'package:vidyanexis/helpers/media_stream_helper_stub.dart'
     if (dart.library.html) 'package:vidyanexis/helpers/media_stream_helper_web.dart';
 
 class AudioFileProvider extends ChangeNotifier {
-  List<AudioFile> _audios = [];
+  final List<AudioFile> _audios = [];
   List<AudioFile> get audios => _audios;
 
 // Audio player instance
-  AudioPlayer _audioPlayer = AudioPlayer();
+  final AudioPlayer _audioPlayer = AudioPlayer();
   int? _currentPlayingIndex;
   final AudioRecorder _audioRecorder = AudioRecorder();
   bool _isRecording = false;
@@ -33,7 +33,7 @@ class AudioFileProvider extends ChangeNotifier {
   // Web-specific recording variables
   html.MediaRecorder? _nativeMediaRecorder;
   html.MediaStream? _mediaStream;
-  List<html.Blob> _recordedChunks = [];
+  final List<html.Blob> _recordedChunks = [];
   StreamSubscription? _playerCompleteSubscription;
   StreamSubscription? _positionChangedSubscription;
   StreamSubscription? _durationChangedSubscription;
@@ -120,16 +120,11 @@ class AudioFileProvider extends ChangeNotifier {
 
         final stream = await mediaDevices.getUserMedia({'audio': true});
 
-        if (stream != null) {
-          print('✓ Microphone permission granted');
-          // FIXED: Use helper function instead of direct call
-          stopMediaStreamHelper(stream);
-          return true;
-        } else {
-          print('ERROR: getUserMedia returned null');
-          return false;
-        }
-      } catch (e) {
+        print('✓ Microphone permission granted');
+        // FIXED: Use helper function instead of direct call
+        stopMediaStreamHelper(stream);
+        return true;
+            } catch (e) {
         print('ERROR: Web microphone permission check failed: $e');
         return false;
       }
@@ -976,9 +971,7 @@ class AudioFileProvider extends ChangeNotifier {
         } else if (audioFile.data.isNotEmpty) {
           // Create blob URL from data (for uploaded files)
           String mimeType = _getMimeType(audioFile.extension);
-          if (audioFile.blobUrl == null) {
-            audioFile.blobUrl = _createBlobUrl(audioFile.data, mimeType);
-          }
+          audioFile.blobUrl ??= _createBlobUrl(audioFile.data, mimeType);
           playbackUrl = audioFile.blobUrl!;
           print('Created new blob URL from data for playback');
         } else {

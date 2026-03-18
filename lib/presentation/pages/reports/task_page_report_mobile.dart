@@ -1034,7 +1034,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                                 );
                                               },
                                               child: Text(
-                                                task.customerName + ' >',
+                                                '${task.customerName} >',
                                                 style:
                                                     GoogleFonts.plusJakartaSans(
                                                   fontSize: 16,

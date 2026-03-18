@@ -12,7 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.
 
 class ReceiptScreen extends StatefulWidget {
   String customerId;
-  ReceiptScreen(this.customerId);
+  ReceiptScreen(this.customerId, {super.key});
 
   @override
   State<ReceiptScreen> createState() => _ReceiptScreenState();

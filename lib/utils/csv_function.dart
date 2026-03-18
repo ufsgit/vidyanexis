@@ -148,7 +148,7 @@ Future<void> exportToExcel({
         final cellValue = rowData[header]?.toString() ?? '';
         sheet.cell(CellIndex.indexByColumnRow(
             columnIndex: colIndex, rowIndex: rowIndex + 1))
-          ..value = TextCellValue(cellValue);
+          .value = TextCellValue(cellValue);
       }
     }
 
@@ -203,10 +203,6 @@ Future<void> exportToExcel({
       directory = await getApplicationDocumentsDirectory();
     } else {
       throw 'Platform not supported';
-    }
-
-    if (directory == null) {
-      throw 'Could not access storage directory';
     }
 
     final filePath = '${directory.path}/$safeFileName';

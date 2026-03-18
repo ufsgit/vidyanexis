@@ -73,16 +73,16 @@ class CloudflareUpload {
       final stringToSign =
           "AWS4-HMAC-SHA256\n$amzDate\n$scope\n$canonicalRequestHash";
 
-      List<int> _hmacSha256(List<int> key, String data) =>
+      List<int> hmacSha256(List<int> key, String data) =>
           Hmac(sha256, key).convert(utf8.encode(data)).bytes;
 
       final kSecret = utf8.encode("AWS4$secretKey");
-      final kDate = _hmacSha256(kSecret, dateStamp);
-      final kRegion = _hmacSha256(kDate, "auto"); // Changed to "auto"
-      final kService = _hmacSha256(kRegion, "s3");
-      final kSigning = _hmacSha256(kService, "aws4_request");
+      final kDate = hmacSha256(kSecret, dateStamp);
+      final kRegion = hmacSha256(kDate, "auto"); // Changed to "auto"
+      final kService = hmacSha256(kRegion, "s3");
+      final kSigning = hmacSha256(kService, "aws4_request");
 
-      final signature = hex.encode(_hmacSha256(kSigning, stringToSign));
+      final signature = hex.encode(hmacSha256(kSigning, stringToSign));
 
       final authorization =
           "AWS4-HMAC-SHA256 Credential=$accessKey/$scope, SignedHeaders=$signedHeaders, Signature=$signature";
@@ -202,16 +202,16 @@ class CloudflareUpload {
       final stringToSign =
           "AWS4-HMAC-SHA256\n$amzDate\n$scope\n$canonicalRequestHash";
 
-      List<int> _hmacSha256(List<int> key, String data) =>
+      List<int> hmacSha256(List<int> key, String data) =>
           Hmac(sha256, key).convert(utf8.encode(data)).bytes;
 
       final kSecret = utf8.encode("AWS4$secretKey");
-      final kDate = _hmacSha256(kSecret, dateStamp);
-      final kRegion = _hmacSha256(kDate, "auto");
-      final kService = _hmacSha256(kRegion, "s3");
-      final kSigning = _hmacSha256(kService, "aws4_request");
+      final kDate = hmacSha256(kSecret, dateStamp);
+      final kRegion = hmacSha256(kDate, "auto");
+      final kService = hmacSha256(kRegion, "s3");
+      final kSigning = hmacSha256(kService, "aws4_request");
 
-      final signature = hex.encode(_hmacSha256(kSigning, stringToSign));
+      final signature = hex.encode(hmacSha256(kSigning, stringToSign));
 
       final authorization =
           "AWS4-HMAC-SHA256 Credential=$accessKey/$scope, SignedHeaders=$signedHeaders, Signature=$signature";

@@ -1002,7 +1002,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
               child: AppStyles.isWebScreen(context)
                   ? SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(context).size.width < 1500
                             ? 1500
                             : MediaQuery.of(context).size.width,
@@ -1273,7 +1273,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                     )
                   : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
-                      child: Container(
+                      child: SizedBox(
                         width: MediaQuery.of(context).size.width < 2200
                             ? 2200
                             : MediaQuery.of(context).size.width,

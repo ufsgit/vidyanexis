@@ -40,7 +40,7 @@ class _EmployeeLocationReportScreenState
     getData();
   }
 
-  getData() {
+  void getData() {
     final reportsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
     userLocationFuture =

@@ -119,7 +119,7 @@ class CustomerWorkSummary extends StatelessWidget {
                                   e.key, e.value.taskStatusName ?? ""),
                             ),
                           );
-                        }).toList(),
+                        }),
 
                         // Center circle for contrast/showing as donut
                         Center(

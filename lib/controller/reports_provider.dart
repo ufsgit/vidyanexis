@@ -212,7 +212,7 @@ class ReportsProvider extends ChangeNotifier {
   }
 
 //task report
-  getSearchTaskReport(String search, String fromDate, String toDate,
+  Future<void> getSearchTaskReport(String search, String fromDate, String toDate,
       String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
@@ -269,7 +269,7 @@ class ReportsProvider extends ChangeNotifier {
   }
 
 //service
-  getSearchServiceReport(String search, String fromDate, String toDate,
+  Future<void> getSearchServiceReport(String search, String fromDate, String toDate,
       String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
@@ -325,7 +325,7 @@ class ReportsProvider extends ChangeNotifier {
     }
   }
 
-  getSearchConversionReport(String fromDate, String toDate, String enquiryId,
+  Future<void> getSearchConversionReport(String fromDate, String toDate, String enquiryId,
       String registeredBy, String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
@@ -381,7 +381,7 @@ class ReportsProvider extends ChangeNotifier {
     }
   }
 
-  getSearchAmcReport(
+  Future<void> getSearchAmcReport(
       {required String amcNo,
       required String amcId,
       required String fromDate,
@@ -444,7 +444,7 @@ class ReportsProvider extends ChangeNotifier {
     }
   }
 
-  getSearchInvoiceReport(
+  Future<void> getSearchInvoiceReport(
       {required String fromDate,
       required String toDate,
       required String search,

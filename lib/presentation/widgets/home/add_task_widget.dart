@@ -156,7 +156,7 @@ class _AddTaskWidgetState extends State<AddTaskWidget> {
                           hintText: 'User',
                           items: provider.searchUserDetails
                               .map((user) => DropdownItem<int>(
-                                    id: user.userDetailsId!,
+                                    id: user.userDetailsId,
                                     name: user.userDetailsName ?? '',
                                   ))
                               .toList(),

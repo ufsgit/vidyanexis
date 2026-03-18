@@ -178,7 +178,7 @@ class WorkSummaryProvider extends ChangeNotifier {
   }
 
   //work report
-  getSearchWorkSummary(BuildContext context) async {
+  Future<void> getSearchWorkSummary(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -235,7 +235,7 @@ class WorkSummaryProvider extends ChangeNotifier {
     }
   }
 
-  getSearchWorkSummaryNoContext() async {
+  Future<void> getSearchWorkSummaryNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';

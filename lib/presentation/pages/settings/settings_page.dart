@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:vidyanexis/controller/models/menu_model.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +11,6 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/bulk_importing_screen.dart';
 import 'package:vidyanexis/presentation/pages/settings/branch_page.dart';
-import 'package:vidyanexis/presentation/pages/settings/checklist_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/company_details.dart';
 import 'package:vidyanexis/presentation/pages/settings/custom_field.dart';
 import 'package:vidyanexis/presentation/pages/settings/department_page.dart';
@@ -26,7 +24,6 @@ import 'package:vidyanexis/presentation/pages/settings/source_cateGory_page.dart
 import 'package:vidyanexis/presentation/pages/settings/stage_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/task_type.dart';
 import 'package:vidyanexis/presentation/pages/settings/user_content_page.dart';
-import 'package:vidyanexis/presentation/pages/settings/version_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

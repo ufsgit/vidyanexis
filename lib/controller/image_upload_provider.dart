@@ -29,7 +29,7 @@ class ImageUploadProvider extends ChangeNotifier {
   int? _selectedDocumentType;
   int? get selectedDocumentType => _selectedDocumentType;
   String customerId = '0';
-  List<Map<String, dynamic>> _fileInfoList = [];
+  final List<Map<String, dynamic>> _fileInfoList = [];
   List<Map<String, dynamic>> get fileInfoList => _fileInfoList;
   String? _selectedDocumentTypeName;
   String? get selectedDocumentTypeName => _selectedDocumentTypeName;

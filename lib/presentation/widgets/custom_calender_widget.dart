@@ -352,7 +352,7 @@ class _CustomCalendarWidgetState extends State<CustomCalendarWidget> {
     );
   }
 
-  onClickMonthAndYear() {
+  void onClickMonthAndYear() {
     _selectedMonth = _currentMonth.month;
     _selectedYear = _currentMonth.year;
     showDialog(

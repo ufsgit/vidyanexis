@@ -11,7 +11,7 @@ class ConfirmationDialog extends StatefulWidget {
   final Color confirmButtonColor;
 
   const ConfirmationDialog({
-    Key? key,
+    super.key,
     required this.title,
     required this.content,
     this.cancelButtonText = 'Cancel',
@@ -20,7 +20,7 @@ class ConfirmationDialog extends StatefulWidget {
     required this.onConfirm,
     this.isLoading = false,
     this.confirmButtonColor = Colors.red,
-  }) : super(key: key);
+  });
 
   @override
   State<ConfirmationDialog> createState() => _ConfirmationDialogState();

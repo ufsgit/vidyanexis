@@ -290,7 +290,7 @@ class _AmcNotificationTabState extends State<AmcNotificationTab> {
                       overflow: TextOverflow.ellipsis,
                     )),
               );
-            }).toList(),
+            }),
           ],
           onChanged: (value) {
             provider.setUserFilterStatus(value ?? 0);

@@ -2,7 +2,6 @@
 //
 //     final saveLeadDropdownModel = saveLeadDropdownModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 SaveLeadDropdownModel saveLeadDropdownModelFromJson(String str) =>

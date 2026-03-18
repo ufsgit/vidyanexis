@@ -1509,13 +1509,13 @@ class MultipleExpansionCard extends StatefulWidget {
 
 class _MultipleExpansionCardState extends State<MultipleExpansionCard> {
   int? expandedIndex;
-  List<ExpansionTileController> controllers = [];
+  List<ExpansibleController> controllers = [];
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     controllers = List.generate(
-        widget.childrens.length, (index) => ExpansionTileController());
+        widget.childrens.length, (index) => ExpansibleController());
     for (int index in widget.initialExpanded.keys) {
       if (widget.initialExpanded[index] == true) {
         expandedIndex = index;
@@ -1586,7 +1586,7 @@ class ScrollableMultipleExpansionCard extends StatefulWidget {
   final Map<int, bool> initialExpanded;
   final Color activeColor;
   final bool showScrollArrows;
-  final Function(List<ExpansionTileController>)? controllersCallback;
+  final Function(List<ExpansibleController>)? controllersCallback;
   final Function(int)? onTabToggle;
 
   @override
@@ -1598,18 +1598,18 @@ class _ScrollableMultipleExpansionCardState
     extends State<ScrollableMultipleExpansionCard> {
   // Changed from int? to Set<int> to track multiple expanded indices
   Set<int> expandedIndices = {};
-  List<ExpansionTileController> controllers = [];
+  List<ExpansibleController> controllers = [];
   final ScrollController _scrollController = ScrollController();
   final ScrollController _headerScrollController = ScrollController();
   final List<GlobalKey> _tileKeys = [];
-  bool _isProcessingClick = false;
+  final bool _isProcessingClick = false;
 
   @override
   void initState() {
     super.initState();
 
     controllers = List.generate(
-        widget.childrens.length, (index) => ExpansionTileController());
+        widget.childrens.length, (index) => ExpansibleController());
 
     if (widget.controllersCallback != null) {
       widget.controllersCallback!(controllers);

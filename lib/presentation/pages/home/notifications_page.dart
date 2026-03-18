@@ -313,7 +313,7 @@ class _NotificationTile extends StatefulWidget {
 }
 
 class _NotificationTileState extends State<_NotificationTile> {
-  bool _isHovered = false;
+  final bool _isHovered = false;
 
   @override
   Widget build(BuildContext context) {
@@ -503,7 +503,7 @@ class _NotificationTileState extends State<_NotificationTile> {
                                 fontSize: 14,
                               ),
                               children: [
-                                TextSpan(text: before + " "), // normal text
+                                TextSpan(text: "$before "), // normal text
                                 WidgetSpan(
                                   child: Text(
                                     name,
@@ -516,7 +516,7 @@ class _NotificationTileState extends State<_NotificationTile> {
                                     ),
                                   ),
                                 ),
-                                TextSpan(text: " " + after), // rest of message
+                                TextSpan(text: " $after"), // rest of message
                               ],
                             ),
                           );
@@ -684,7 +684,7 @@ class _NotificationTileState extends State<_NotificationTile> {
                           fontSize: 14,
                         ),
                         children: [
-                          TextSpan(text: before + " "), // normal text
+                          TextSpan(text: "$before "), // normal text
                           WidgetSpan(
                             child: Text(
                               name,
@@ -695,7 +695,7 @@ class _NotificationTileState extends State<_NotificationTile> {
                               ),
                             ),
                           ),
-                          TextSpan(text: " " + after), // rest of message
+                          TextSpan(text: " $after"), // rest of message
                         ],
                       ),
                     );

@@ -45,7 +45,7 @@ class DashboardProvider extends ChangeNotifier {
   List<dynamic> customersCount = [];
   List<TaskInfoDashboardModel> _taskInfoModel = [];
   List<TaskInfoDashboardModel> get taskInfoModel => _taskInfoModel;
-  List<DashBoardTaskModel> _dashBoardTasks = [];
+  final List<DashBoardTaskModel> _dashBoardTasks = [];
   List<DashBoardTaskModel>? get dashBoardTasks => _dashBoardTasks;
   List<LeadEnquiryReportModel> leadEnquiryReport = [];
   bool isLeadEnquiryReportLoading = false;
@@ -116,10 +116,10 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getTaskInfoDashBoard(BuildContext context) async {
+  Future<void> getTaskInfoDashBoard(BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: "${HttpUrls.getTaskInfoDashBoard}",
+          endPoint: HttpUrls.getTaskInfoDashBoard,
           bodyData: {
             "Page_Index1": _taskStartLimit,
             "Page_Index2": _taskEndLimit,
@@ -284,7 +284,7 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getFollowUpSummary() async {
+  Future<void> getFollowUpSummary() async {
     try {
       notifyListeners();
       await HttpRequest.httpGetRequest(
@@ -308,7 +308,7 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getTaskAllocationSummary({bool isFilter = false, String? filterValue}) async {
+  Future<void> getTaskAllocationSummary({bool isFilter = false, String? filterValue}) async {
     try {
       selectedeTaskAllocationValue = filterValue;
       late DateTime fromDate;
@@ -357,7 +357,7 @@ class DashboardProvider extends ChangeNotifier {
   /// Generic dashboard count (work summary) - also supports an optional
   /// keyword parameter that will be forwarded to the server. The backend may
   /// ignore the value if it only understands lead-related keywords.
-  getDashBoardCount(
+  Future<void> getDashBoardCount(
       {bool isFilter = false, String? filterValue, String? keyword}) async {
     try {
       notifyListeners();
@@ -405,7 +405,7 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getWorkSummary({bool isFilter = false, String? filterValue}) async {
+  Future<void> getWorkSummary({bool isFilter = false, String? filterValue}) async {
     try {
       notifyListeners();
       selectedWorkSummaryValue = filterValue;
@@ -448,7 +448,7 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getCustomers() async {
+  Future<void> getCustomers() async {
     try {
       notifyListeners();
 
@@ -484,7 +484,7 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  changeTab(int index) {
+  void changeTab(int index) {
     _tabIndex = index;
     notifyListeners();
   }
@@ -580,7 +580,7 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  getWorkData() async {
+  Future<void> getWorkData() async {
     try {
       isDashBoardLoading = true;
       notifyListeners();

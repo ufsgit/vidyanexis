@@ -15,7 +15,7 @@ class TimeTrackReportProvider extends ChangeNotifier {
   List<TimeTrackChartData> get chartData => _chartData;
 
   //List<TimeTrackRecord> _allRecords = [];
-  List<TimeTrackRecord> _filteredRecords = [];
+  final List<TimeTrackRecord> _filteredRecords = [];
   List<TimeTrackRecord> get records => _filteredRecords;
 
   String? _selectedDateFilter;

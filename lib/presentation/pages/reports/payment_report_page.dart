@@ -246,7 +246,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
                                     ),
                                   ),
                                 ))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (int? newValue) {
                         if (newValue == 0 || newValue == null) {

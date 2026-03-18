@@ -74,7 +74,7 @@ class suryaprabhaSocket {
     });
   }
 
-  static disconnectSocket() {
+  static void disconnectSocket() {
     socket?.disconnect();
     print('Socket disconnected');
   }

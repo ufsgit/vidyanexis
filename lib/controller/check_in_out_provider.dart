@@ -196,7 +196,7 @@ class CheckInOutProvider extends ChangeNotifier {
   }
 
   //task report
-  getSearchTaskReport(BuildContext context) async {
+  Future<void> getSearchTaskReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       // if (_Status.isEmpty || _Status == 'null') {
@@ -257,7 +257,7 @@ class CheckInOutProvider extends ChangeNotifier {
     }
   }
 
-  getAttendanceDetails(String editId, BuildContext context) async {
+  Future<void> getAttendanceDetails(String editId, BuildContext context) async {
     try {
       Loader.showLoader(context);
 

@@ -270,7 +270,7 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
               leadsProvider.nextFollowUpDateController.text =
                   (widget.lead?.nextFollowUpDate ?? '').isNotEmpty
                       ? DateFormat('dd MMM yyyy').format(
-                          DateTime.tryParse(widget.lead!.nextFollowUpDate!) ??
+                          DateTime.tryParse(widget.lead!.nextFollowUpDate) ??
                               DateTime(2000, 1, 1))
                       : '';
               // leadsProvider.messageController.text =
@@ -433,7 +433,7 @@ class _ActivityTabPageState extends State<ActivityTabPage> {
                               ),
                               const SizedBox(height: 8),
                               if (lead.remark.isNotEmpty)
-                                Container(
+                                SizedBox(
                                   width: MediaQuery.sizeOf(context).width - 100,
                                   child: Text(
                                     lead.remark,

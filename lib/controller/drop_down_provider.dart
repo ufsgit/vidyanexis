@@ -6,7 +6,6 @@ import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/duration_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
 import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
-import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/follow_up_status_model.dart';
 import 'package:vidyanexis/controller/models/interval_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';

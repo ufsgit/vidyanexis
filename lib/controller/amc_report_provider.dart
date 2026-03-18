@@ -178,7 +178,7 @@ class AMCReportProvider extends ChangeNotifier {
   }
 
   //amc report
-  getSearchAmcReport(BuildContext context) async {
+  Future<void> getSearchAmcReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -212,7 +212,7 @@ class AMCReportProvider extends ChangeNotifier {
           // log(data.toString());
 
           if (data is List) {
-            _amcReport = (data as List<dynamic>)
+            _amcReport = (data)
                 .map((item) => AmcReportModeld.fromJson(item))
                 .toList();
           } else {
@@ -238,7 +238,7 @@ class AMCReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchAmcReportNoContext() async {
+  Future<void> getSearchAmcReportNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
@@ -282,7 +282,7 @@ class AMCReportProvider extends ChangeNotifier {
     }
   }
 
-  updateAmcStatusApi(int amcId, int statusId, BuildContext context) async {
+  Future<void> updateAmcStatusApi(int amcId, int statusId, BuildContext context) async {
     try {
       Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();

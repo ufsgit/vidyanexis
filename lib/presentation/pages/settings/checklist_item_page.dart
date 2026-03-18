@@ -30,7 +30,7 @@ class _CheckListItemPageState extends State<CheckListItemPage> {
     super.initState();
   }
 
-  getData() {
+  void getData() {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
     checkListItemFuture =

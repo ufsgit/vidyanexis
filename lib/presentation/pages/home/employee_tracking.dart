@@ -360,7 +360,7 @@ class _EmployeeTrackingState extends State<EmployeeTracking> {
                                       fontWeight: FontWeight.w500),
                                 ),
                                 const SizedBox(width: 10),
-                                Container(
+                                SizedBox(
                                   width:
                                       MediaQuery.of(context).size.width / 1.6,
                                   child: Text(

@@ -214,7 +214,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                               style:
                                   const TextStyle(fontWeight: FontWeight.w500)),
                         ))
-                    .toList(),
+                    ,
               ],
             ),
           ),
@@ -342,7 +342,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
     return true;
   }
 
-  _addFollowUpSection({
+  Padding _addFollowUpSection({
     required SettingsProvider settingsProvider,
     required LeadsProvider leadProvider,
     required DropDownProvider dropDownProvider,
@@ -456,8 +456,7 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                   selectedStaff.userDetailsName;
             },
             selectedValue: dropDownProvider.selectedUserId,
-            enabled: settingsProvider.selectedBranchId != null &&
-                settingsProvider.selectedDepartmentId != null,
+            enabled: settingsProvider.selectedBranchId != null,
           ),
 
           const SizedBox(height: 16),

@@ -199,7 +199,7 @@ class SidebarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  setSubMenuId(subMenuId) {
+  void setSubMenuId(subMenuId) {
     _subMenuId = subMenuId;
     notifyListeners();
   }
@@ -209,14 +209,14 @@ class SidebarProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  replaceWidget(bool value, String string) {
+  void replaceWidget(bool value, String string) {
     _customerId = string;
     _replaceLead = value;
     _name = 'Lead /';
     notifyListeners();
   }
 
-  replaceWidgetCustomer(bool value, String string) {
+  void replaceWidgetCustomer(bool value, String string) {
     _customerId = string;
     _replaceCustomer = value;
     _name = 'Customer /';
@@ -280,12 +280,12 @@ class SidebarProvider extends ChangeNotifier {
   bool get isSearching => _isSearching;
   String get searchQuery => _searchQuery;
 
-  startSearch() {
+  void startSearch() {
     _isSearching = true;
     notifyListeners();
   }
 
-  stopSearch() {
+  void stopSearch() {
     _isSearching = false;
     _searchQuery = '';
     notifyListeners();

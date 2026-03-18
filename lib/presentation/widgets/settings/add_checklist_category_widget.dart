@@ -19,7 +19,7 @@ class AddCheckListCategoryPage extends StatefulWidget {
 
   @override
   State<AddCheckListCategoryPage> createState() =>
-      _AddCheckListCategoryPageState(this.checkListCategoryModel);
+      _AddCheckListCategoryPageState(checkListCategoryModel);
 }
 
 class _AddCheckListCategoryPageState extends State<AddCheckListCategoryPage> {

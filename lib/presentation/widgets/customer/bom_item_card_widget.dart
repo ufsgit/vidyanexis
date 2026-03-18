@@ -14,7 +14,7 @@ class BomItemCardWidget extends StatelessWidget {
   final VoidCallback? onDelete;
 
   const BomItemCardWidget({
-    Key? key,
+    super.key,
     required this.itemName,
     required this.quantity,
     required this.make,
@@ -24,7 +24,7 @@ class BomItemCardWidget extends StatelessWidget {
     this.price,
     this.onEdit,
     this.onDelete,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

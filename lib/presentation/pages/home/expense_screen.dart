@@ -3,7 +3,6 @@ import 'package:vidyanexis/constants/app_colors.dart';
 
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_expense.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';

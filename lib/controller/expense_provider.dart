@@ -125,7 +125,7 @@ class ExpenseProvider extends ChangeNotifier {
   String _search = '';
   String _fromDateS = '';
   String _supplier = '';
-  String _enquiryForS = '';
+  final String _enquiryForS = '';
 
   String get search => _search;
   String get fromDateS => _fromDateS;
@@ -211,7 +211,7 @@ class ExpenseProvider extends ChangeNotifier {
   List<ItemListModel> _filteredItemList = [];
   //item type dropdown
   String get selectedType => _selectedType;
-  String _selectedType = 'service';
+  final String _selectedType = 'service';
 //expense
   String _formattedFromDate = '';
   String _formattedToDate = '';
@@ -284,7 +284,7 @@ class ExpenseProvider extends ChangeNotifier {
   int? _editSalesItemIndex;
   int? _selectedSalesCustomerId;
   int? get selectedSalesCustomerId => _selectedSalesCustomerId;
-  String _customer = '';
+  final String _customer = '';
   String get customer => _customer;
 
   bool _isFilterSales = false;
@@ -716,13 +716,13 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  searchPurchaseDetails(String purchaseMasterId, BuildContext context) async {
+  Future<void> searchPurchaseDetails(String purchaseMasterId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getPurchaseDetails + "/$purchaseMasterId");
+          endPoint: "${HttpUrls.getPurchaseDetails}/$purchaseMasterId");
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -995,7 +995,7 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  searchItemListPurchase(BuildContext context) async {
+  Future<void> searchItemListPurchase(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1148,7 +1148,7 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  searchItemListStock(BuildContext context) async {
+  Future<void> searchItemListStock(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1563,7 +1563,7 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  getPurchaseData(BuildContext context) async {
+  Future<void> getPurchaseData(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1806,7 +1806,7 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  getItemMaterialList(int itemId, BuildContext context) async {
+  Future<void> getItemMaterialList(int itemId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1952,7 +1952,7 @@ class ExpenseProvider extends ChangeNotifier {
     );
   }
 
-  searchStockList(BuildContext context) async {
+  Future<void> searchStockList(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -2175,7 +2175,7 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  getPurchaseDataMaster(BuildContext context) async {
+  Future<void> getPurchaseDataMaster(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -2224,7 +2224,7 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  deletePurchaseItem(BuildContext context, int userId) async {
+  Future<void> deletePurchaseItem(BuildContext context, int userId) async {
     try {
       Loader.showLoader(context);
       final response = await HttpRequest.httpDeleteRequest(
@@ -2270,7 +2270,7 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners so that UI can rebuild
   }
 
-  getSalesMaster(BuildContext context) async {
+  Future<void> getSalesMaster(BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -2321,10 +2321,10 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  searchSalesDetails(String salesMasterId, BuildContext context) async {
+  Future<void> searchSalesDetails(String salesMasterId, BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: HttpUrls.getSalesDataDetails + "/$salesMasterId");
+          endPoint: "${HttpUrls.getSalesDataDetails}/$salesMasterId");
 
       if (response.statusCode == 200) {
         final data = response.data;

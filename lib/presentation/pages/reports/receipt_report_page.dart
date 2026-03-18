@@ -242,7 +242,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
                                     ),
                                   ),
                                 ))
-                            .toList(),
+                            ,
                       ],
                       onChanged: (int? newValue) {
                         if (newValue == 0 || newValue == null) {

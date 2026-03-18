@@ -6,7 +6,6 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
-import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 
 class TaskSummaryPage extends StatefulWidget {
   const TaskSummaryPage({

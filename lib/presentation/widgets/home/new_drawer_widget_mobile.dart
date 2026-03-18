@@ -50,11 +50,11 @@ class NewLeadDrawerMobileWidget extends StatefulWidget {
 class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
   bool _isFieldValid(String? value) => value != null && value.isNotEmpty;
   late FocusNode _leadNameFocusNode;
-  List<ExpansionTileController> _expansionControllers = [];
+  List<ExpansibleController> _expansionControllers = [];
 
   ScrollController scrollController = ScrollController();
   final ScrollController _headerScrollController = ScrollController();
-  Map<int, bool> _expandedSections = {0: true, 5: true};
+  final Map<int, bool> _expandedSections = {0: true, 5: true};
   late FocusNode enquiryNameNode;
   late FocusNode inverterTypeNode;
   late FocusNode panelBrandNode;
@@ -222,7 +222,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         enquiryForName: dropDownProvider.selectedEnquiryForName,
         branchId: settingsProvider.selectedBranchId!,
         branchName: leadProvider.branchController.text,
-        departmentId: settingsProvider.selectedDepartmentId!,
+        departmentId: settingsProvider.selectedDepartmentId,
         departmentName: leadProvider.departmentController.text,
         sourceId: dropDownProvider.selectedSourceId ?? 0,
         sourceName: leadProvider.sourceCategoryController.text,
@@ -513,7 +513,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         ),
     ];
 
-    return Container(
+    return SizedBox(
       height: 60,
       child: Stack(
         children: [
@@ -968,8 +968,7 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
               },
               selectedValue: dropDownProvider.selectedUserId,
               // Disable if branch or department is not selected
-              enabled: settingsProvider.selectedBranchId != null &&
-                  settingsProvider.selectedDepartmentId != null,
+              enabled: settingsProvider.selectedBranchId != null,
             ),
             if (dropDownProvider.selectedFollowUpId != null &&
                 dropDownProvider.selectedFollowUpId != 0)

@@ -26,7 +26,7 @@ class QuotationReportProvider extends ChangeNotifier {
   String _fromDateS = '';
   String _toDateS = '';
   String _Status = '';
-  String _AssignedTo = '';
+  final String _AssignedTo = '';
   String _TaskType = '';
 
   String get Search => _Search;
@@ -195,7 +195,7 @@ class QuotationReportProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners so that UI can rebuild
   }
 
-  getQuotationReports(BuildContext context) async {
+  Future<void> getQuotationReports(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {

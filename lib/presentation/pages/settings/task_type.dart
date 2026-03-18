@@ -294,7 +294,7 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
     );
   }
 
-  assignStatusDialog(BuildContext context) {
+  Future<dynamic> assignStatusDialog(BuildContext context) {
     return showDialog(
       barrierDismissible: false,
       context: context,

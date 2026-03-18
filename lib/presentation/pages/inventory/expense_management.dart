@@ -409,7 +409,7 @@ class _ExpenseManagementState extends State<ExpenseManagement> {
                             ),
                           ),
                         ))
-                    .toList(),
+                    ,
               ];
               // For admin, use the selected value from provider
               dropdownValue = expenseProvider.selectedUser ?? 0;

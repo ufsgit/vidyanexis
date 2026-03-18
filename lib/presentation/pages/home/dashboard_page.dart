@@ -540,7 +540,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
               ] +
               dropDownProvider.searchUserDetails
                   .map((user) => DropdownMenuItem<int>(
-                        value: user.userDetailsId!,
+                        value: user.userDetailsId,
                         child: ConstrainedBox(
                           constraints: const BoxConstraints(maxWidth: 150),
                           child: Text(
@@ -576,8 +576,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: (dashBoardProvider.selectedUser != null &&
-                      dashBoardProvider.selectedUser != 0)
+              color: (dashBoardProvider.selectedUser != 0)
                   ? AppColors.primaryBlue
                   : Colors.grey[300]!,
             ),

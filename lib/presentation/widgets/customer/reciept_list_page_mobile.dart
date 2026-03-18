@@ -284,7 +284,7 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                       height: 24,
                       width: 24,
                       child: Icon(Icons.receipt,
@@ -370,7 +370,7 @@ class _BillingDetailsPagePhoneState extends State<BillingDetailsPagePhone> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Container(
+                  SizedBox(
                       height: 24,
                       width: 24,
                       child: Icon(Icons.currency_rupee,

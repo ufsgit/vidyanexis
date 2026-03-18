@@ -174,7 +174,7 @@ class ConversionReportProvider extends ChangeNotifier {
   }
 
   //conversion report
-  getSearchConversionReport(BuildContext context) async {
+  Future<void> getSearchConversionReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -231,7 +231,7 @@ class ConversionReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchConversionReportNoContext() async {
+  Future<void> getSearchConversionReportNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';

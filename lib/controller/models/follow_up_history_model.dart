@@ -33,15 +33,15 @@ class FollowUpHistoryModel {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['FollowUp_Id'] = this.followUpId;
-    data['FollowUp_Date'] = this.followUpDate;
-    data['Next_FollowUp_Date'] = this.nextFollowUpDate;
-    data['Remarks'] = this.remarks;
-    data['Status_Name'] = this.statusName;
-    data['Assigned_To_Name'] = this.assignedToName;
-    data['Assigned_By_Name'] = this.assignedByName;
-    data['Status_Id'] = this.statusId;
+    final Map<String, dynamic> data = <String, dynamic>{};
+    data['FollowUp_Id'] = followUpId;
+    data['FollowUp_Date'] = followUpDate;
+    data['Next_FollowUp_Date'] = nextFollowUpDate;
+    data['Remarks'] = remarks;
+    data['Status_Name'] = statusName;
+    data['Assigned_To_Name'] = assignedToName;
+    data['Assigned_By_Name'] = assignedByName;
+    data['Status_Id'] = statusId;
     return data;
   }
 }

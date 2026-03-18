@@ -12,7 +12,7 @@ import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
-  const ExpenseReportScreen({Key? key}) : super(key: key);
+  const ExpenseReportScreen({super.key});
 
   @override
   State<ExpenseReportScreen> createState() => _ExpenseReportScreenState();
@@ -569,7 +569,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           child: SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              headingRowColor: MaterialStateProperty.all(Colors.grey[50]),
+              headingRowColor: WidgetStateProperty.all(Colors.grey[50]),
               horizontalMargin: 24,
               columnSpacing: 24,
               columns: [

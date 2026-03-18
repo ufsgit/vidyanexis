@@ -7,9 +7,9 @@ class FinancialSummaryChart extends StatelessWidget {
   final DashboardProvider dashboardProvider;
 
   const FinancialSummaryChart({
-    Key? key,
+    super.key,
     required this.dashboardProvider,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

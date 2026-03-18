@@ -285,7 +285,7 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  getSearchCustomers(BuildContext context) async {
+  Future<void> getSearchCustomers(BuildContext context) async {
     try {
       // Loader.showLoader(context);
       // _isLoading = true;
@@ -377,7 +377,7 @@ class CustomerProvider extends ChangeNotifier {
   }
 
 //no context only for back in customer detail
-  getSearchCustomersNoContext() async {
+  Future<void> getSearchCustomersNoContext() async {
     try {
       if (_status.isEmpty || _status == 'null') {
         _status = '0';

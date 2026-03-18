@@ -205,15 +205,15 @@ class TaskCard extends StatelessWidget {
                           task.taskStatusName,
                         );
                         customerDetailsProvider.taskDescriptionController.text =
-                            task.description?.toString() ?? '';
+                            task.description.toString() ?? '';
                         customerDetailsProvider.taskChoosedateController
-                            .text = task.taskDate?.toString() != 'null' &&
-                                task.taskDate?.toString()?.isNotEmpty == true
+                            .text = task.taskDate.toString() != 'null' &&
+                                task.taskDate.toString().isNotEmpty == true
                             ? DateFormat('dd MMM yyyy').format(
                                 DateTime.parse(task.taskDate.toString()))
                             : '';
                         customerDetailsProvider.taskChoosetimeController.text =
-                            task.taskTime?.toString() ?? '';
+                            task.taskTime.toString() ?? '';
                             
                         customerDetailsProvider.addTaskModel.taskUser =
                             task.taskUser
@@ -463,13 +463,13 @@ class TaskCard extends StatelessWidget {
                                     );
                                     customerDetailsProvider
                                             .taskDescriptionController.text =
-                                        task.description?.toString() ?? '';
+                                        task.description.toString() ?? '';
                                     customerDetailsProvider
                                             .taskChoosedateController.text =
-                                        task.taskDate?.toString() != 'null' &&
+                                        task.taskDate.toString() != 'null' &&
                                                 task.taskDate
-                                                        ?.toString()
-                                                        ?.isNotEmpty ==
+                                                        .toString()
+                                                        .isNotEmpty ==
                                                     true
                                             ? DateFormat('dd MMM yyyy').format(
                                                 DateTime.parse(
@@ -477,7 +477,7 @@ class TaskCard extends StatelessWidget {
                                             : '';
                                     customerDetailsProvider
                                         .taskChoosetimeController
-                                        .text = task.taskTime?.toString() ?? '';
+                                        .text = task.taskTime.toString() ?? '';
                                     customerDetailsProvider.addTaskModel.taskUser =
                                         task.taskUser
                                             .map((e) => UserInTaskModel(

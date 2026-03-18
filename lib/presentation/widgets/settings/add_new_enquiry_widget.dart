@@ -458,7 +458,7 @@ class _AddEnquirySourceState extends State<AddEnquirySource> {
                                               value ? 1 : 0;
                                         });
                                       },
-                                      activeColor: Colors.blue.shade600,
+                                      activeThumbColor: Colors.blue.shade600,
                                       materialTapTargetSize:
                                           MaterialTapTargetSize.shrinkWrap,
                                     ),

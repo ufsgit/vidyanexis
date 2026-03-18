@@ -5,7 +5,7 @@ import 'package:vidyanexis/controller/models/get_user_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
 class ManageStatusWidget extends StatefulWidget {
-  ManageStatusWidget({super.key});
+  const ManageStatusWidget({super.key});
   @override
   _ManageStatusWidgetState createState() => _ManageStatusWidgetState();
 }

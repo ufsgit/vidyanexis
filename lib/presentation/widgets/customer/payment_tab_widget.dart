@@ -9,8 +9,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_payment_widget.dart
 
 class PaymentTabWidget extends StatefulWidget {
   final String customerId;
-  const PaymentTabWidget({Key? key, required this.customerId})
-      : super(key: key);
+  const PaymentTabWidget({super.key, required this.customerId});
 
   @override
   State<PaymentTabWidget> createState() => _PaymentTabWidgetState();

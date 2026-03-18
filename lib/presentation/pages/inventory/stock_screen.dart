@@ -217,7 +217,7 @@ class _StockScreenState extends State<StockScreen> {
     });
   }
 
-  showAddStockSheet(BuildContext context) {
+  void showAddStockSheet(BuildContext context) {
     final customerProvider =
         Provider.of<CustomerProvider>(context, listen: false);
     final screenWidth = MediaQuery.of(context).size.width;

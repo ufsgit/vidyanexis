@@ -194,7 +194,7 @@ class FollowupReportsProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners so that UI can rebuild
   }
 
-  getFollowupReports(BuildContext context) async {
+  Future<void> getFollowupReports(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {

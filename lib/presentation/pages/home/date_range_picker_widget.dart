@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class DateRangePickerExample extends StatefulWidget {
-  const DateRangePickerExample({Key? key}) : super(key: key);
+  const DateRangePickerExample({super.key});
 
   @override
   State<DateRangePickerExample> createState() => _DateRangePickerExampleState();

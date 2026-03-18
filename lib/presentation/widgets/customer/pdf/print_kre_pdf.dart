@@ -151,27 +151,35 @@ pw.Widget _buildQuotationHeader(GetQuotationbyMasterIdmodel quotationData,
     LeadDetails customerDetails, Company companyDetails) {
   // Build company address from Company model
   List<String> addressParts = [];
-  if (companyDetails.address1.isNotEmpty)
+  if (companyDetails.address1.isNotEmpty) {
     addressParts.add(companyDetails.address1);
-  if (companyDetails.address2.isNotEmpty)
+  }
+  if (companyDetails.address2.isNotEmpty) {
     addressParts.add(companyDetails.address2);
-  if (companyDetails.address3.isNotEmpty)
+  }
+  if (companyDetails.address3.isNotEmpty) {
     addressParts.add(companyDetails.address3);
-  if (companyDetails.address4.isNotEmpty)
+  }
+  if (companyDetails.address4.isNotEmpty) {
     addressParts.add(companyDetails.address4);
+  }
 
   String companyAddress = addressParts.join(', ');
 
   // Build customer address from LeadDetails model
   List<String> customerAddressParts = [];
-  if (customerDetails.address.isNotEmpty)
+  if (customerDetails.address.isNotEmpty) {
     customerAddressParts.add(customerDetails.address);
-  if (customerDetails.address1?.isNotEmpty == true)
+  }
+  if (customerDetails.address1?.isNotEmpty == true) {
     customerAddressParts.add(customerDetails.address1!);
-  if (customerDetails.address2?.isNotEmpty == true)
+  }
+  if (customerDetails.address2?.isNotEmpty == true) {
     customerAddressParts.add(customerDetails.address2!);
-  if (customerDetails.location.isNotEmpty)
+  }
+  if (customerDetails.location.isNotEmpty) {
     customerAddressParts.add(customerDetails.location);
+  }
 
   String customerAddress = customerAddressParts.join(', ');
   return pw.Row(
@@ -321,7 +329,7 @@ pw.Widget _buildQuotationHeader(GetQuotationbyMasterIdmodel quotationData,
                     crossAxisAlignment: pw.CrossAxisAlignment.end,
                     children: [
                       pw.Text(
-                          quotationData.entryDate?.toDDMMYYYY() ??
+                          quotationData.entryDate.toDDMMYYYY() ??
                               '09 / 09 / 2025',
                           style: pw.TextStyle(fontSize: 10)),
                       pw.Text('24 / 09 / 2025',
@@ -385,11 +393,11 @@ pw.Widget _buildItemsTable(List<QuotationDetail> materials,
       item.itemName ?? '',
       '85176290', // Default HSN - you might want to add this to QuotationDetail model
       '${item.quantity ?? 1}\n${item.Unit ?? 'PCS'}',
-      '${(item.unitPrice ?? 0).toStringAsFixed(2)}',
-      '${taxableValue.toStringAsFixed(2)}',
+      ((item.unitPrice ?? 0).toStringAsFixed(2)),
+      (taxableValue.toStringAsFixed(2)),
       '${((item.GSTPercent ?? 0) / 2).toStringAsFixed(1)}%\n${cgstAmount.toStringAsFixed(2)}',
       '${((item.GSTPercent ?? 0) / 2).toStringAsFixed(1)}%\n${sgstAmount.toStringAsFixed(2)}',
-      '${amount.toStringAsFixed(2)}',
+      (amount.toStringAsFixed(2)),
     ];
   }).toList();
 
@@ -522,7 +530,7 @@ pw.Widget _buildItemsTable(List<QuotationDetail> materials,
               child: pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                  '${totalTaxableValue.toStringAsFixed(2)}',
+                  totalTaxableValue.toStringAsFixed(2),
                   style:
                       pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
                 ),
@@ -534,7 +542,7 @@ pw.Widget _buildItemsTable(List<QuotationDetail> materials,
               child: pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                  '${totalCGST.toStringAsFixed(2)}',
+                  totalCGST.toStringAsFixed(2),
                   style:
                       pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
                 ),
@@ -546,7 +554,7 @@ pw.Widget _buildItemsTable(List<QuotationDetail> materials,
               child: pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                  '${totalSGST.toStringAsFixed(2)}',
+                  totalSGST.toStringAsFixed(2),
                   style:
                       pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
                 ),
@@ -558,7 +566,7 @@ pw.Widget _buildItemsTable(List<QuotationDetail> materials,
               child: pw.Align(
                 alignment: pw.Alignment.centerRight,
                 child: pw.Text(
-                  '${totalAmount.toStringAsFixed(2)}',
+                  totalAmount.toStringAsFixed(2),
                   style:
                       pw.TextStyle(fontWeight: pw.FontWeight.bold, fontSize: 9),
                 ),
@@ -767,7 +775,7 @@ pw.Widget _buildTermsList(
                     ),
                   ),
                 );
-              }).toList(),
+              }),
             ],
           ),
         ),

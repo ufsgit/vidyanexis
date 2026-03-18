@@ -2,7 +2,6 @@
 //
 //     final searchStatusModel = searchStatusModelFromJson(jsonString);
 
-import 'package:meta/meta.dart';
 import 'dart:convert';
 
 List<SearchStatusModel> searchStatusModelFromJson(String str) =>

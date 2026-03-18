@@ -262,7 +262,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                                       .where(
                                           (staff) => staff.workingStatus == "1")
                                       .map((status) => DropdownItem<int>(
-                                            id: status.userDetailsId!,
+                                            id: status.userDetailsId,
                                             name: status.userDetailsName ?? '',
                                           ))
                                       .toList(),
@@ -296,7 +296,7 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
                           children: [
                             Expanded(
                               child: DropdownButtonFormField<int>(
-                                value: dropDownProvider.selectedEnquiryForId !=
+                                initialValue: dropDownProvider.selectedEnquiryForId !=
                                             null &&
                                         dropDownProvider.enquiryForList.any(
                                             (item) =>

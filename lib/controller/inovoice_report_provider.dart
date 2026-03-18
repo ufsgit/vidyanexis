@@ -201,7 +201,7 @@ class InvoiceReportProvider extends ChangeNotifier {
   }
 
 //bill and payments report
-  getBillandPaymentsReport(BuildContext context) async {
+  Future<void> getBillandPaymentsReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -279,7 +279,7 @@ class InvoiceReportProvider extends ChangeNotifier {
   }
 
   //task report
-  getSearchTaskReport(BuildContext context) async {
+  Future<void> getSearchTaskReport(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -356,7 +356,7 @@ class InvoiceReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchTaskReportNoContext() async {
+  Future<void> getSearchTaskReportNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';

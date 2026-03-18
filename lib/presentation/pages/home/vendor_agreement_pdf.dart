@@ -448,13 +448,13 @@ List<pw.Widget> _buildFinalSection(pw.TextStyle bodyStyle) {
         pw.Column(
           crossAxisAlignment: pw.CrossAxisAlignment.start,
           children: [
-            pw.Text('${customer?.consumerNumber ?? ''}',
+            pw.Text(customer?.consumerNumber ?? '',
                 style: bodyStyle.copyWith(fontWeight: pw.FontWeight.bold)),
-            pw.Text('${customer?.customerName ?? ''}', style: bodyStyle),
+            pw.Text(customer?.customerName ?? '', style: bodyStyle),
             pw.Text(
                 '${customer?.address ?? ''} ${customer?.address1 ?? ''} ${customer?.address2 ?? ''} ${customer?.address3 ?? ''} ${customer?.address4 ?? ''} ',
                 style: bodyStyle),
-            pw.Text('${customer?.pinCode ?? ''}', style: bodyStyle),
+            pw.Text(customer?.pinCode ?? '', style: bodyStyle),
             // pw.Text('${customer?.pinCode ?? ''}', style: bodyStyle),
           ],
         ),

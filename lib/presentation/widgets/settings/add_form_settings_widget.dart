@@ -27,6 +27,8 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
   int? _selectedDepartmentId;
   String _selectedTaskType = '';
   int? _selectedTaskTypeId;
+  String _selectedCustomerName = '';
+  int? _selectedCustomerId;
 
   List<FieldModel> _selectedFields = [];
 
@@ -42,6 +44,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
       provider.fetchAvailableFields(context);
       provider.fetchDepartments(context);
       provider.fetchTaskTypes(context);
+      provider.fetchCustomers(context);
     });
     if (isEdit) {
       _formNameController.text = widget.existingForm!.name;
@@ -51,6 +54,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
       _selectedDepartmentId = widget.existingForm!.departmentId;
       _selectedTaskType = widget.existingForm!.taskType;
       _selectedTaskTypeId = widget.existingForm!.taskTypeId;
+      _selectedCustomerId = widget.existingForm!.customerId;
 
       // Deep copy fields so edits don't affect existing state until save
       _selectedFields = widget.existingForm!.fields
@@ -232,7 +236,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                             child: Switch(
                                               value: tempSelected[selectedIndex]
                                                   .isMandatory,
-                                              activeColor: Colors.white,
+                                              activeThumbColor: Colors.white,
                                               activeTrackColor:
                                                   AppColors.primaryBlue,
                                               onChanged: (bool val) {
@@ -344,6 +348,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
       departmentId: _selectedDepartmentId,
       taskType: _selectedTaskType,
       taskTypeId: _selectedTaskTypeId,
+      customerId: _selectedCustomerId,
       fields: _selectedFields,
     );
 
@@ -466,6 +471,35 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                               });
                             },
                           );
+                },
+              ),
+              const SizedBox(height: 16),
+
+              // Customer Dropdown
+              Consumer<FormProvider>(
+                builder: (context, provider, child) {
+                  return provider.isLoadingCustomers
+                      ? const Center(child: CircularProgressIndicator())
+                      : CommonDropdown<int>(
+                          hintText: 'Customer (optional)',
+                          selectedValue: _selectedCustomerId,
+                          items: provider.customers
+                              .map((c) => DropdownItem<int>(
+                                    id: c['id'],
+                                    name: c['name'],
+                                  ))
+                              .toList(),
+                          controller: TextEditingController(
+                              text: _selectedCustomerName),
+                          onItemSelected: (selectedId) {
+                            setState(() {
+                              _selectedCustomerId = selectedId;
+                              _selectedCustomerName = provider.customers
+                                  .firstWhere(
+                                      (c) => c['id'] == selectedId)['name'];
+                            });
+                          },
+                        );
                 },
               ),
               const SizedBox(height: 24),
@@ -594,7 +628,7 @@ class _AddFormSettingsWidgetState extends State<AddFormSettingsWidget> {
                                     scale: 0.8,
                                     child: Switch(
                                       value: field.isMandatory,
-                                      activeColor: Colors.white,
+                                      activeThumbColor: Colors.white,
                                       activeTrackColor: AppColors.primaryBlue,
                                       onChanged: (bool value) {
                                         setState(() {

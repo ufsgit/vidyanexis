@@ -499,7 +499,7 @@ class InvoiceTabProvider extends ChangeNotifier {
     }
   }
 
-  searchItemListPurchase(BuildContext context) async {
+  Future<void> searchItemListPurchase(BuildContext context) async {
     try {
       // SharedPreferences preferences = await SharedPreferences.getInstance();
       // String userId = preferences.getString('userId') ?? "";
@@ -530,7 +530,7 @@ class InvoiceTabProvider extends ChangeNotifier {
     }
   }
 
-  searchQutationNo(BuildContext context, String customerId) async {
+  Future<void> searchQutationNo(BuildContext context, String customerId) async {
     try {
       // SharedPreferences preferences = await SharedPreferences.getInstance();
       // String userId = preferences.getString('userId') ?? "";
@@ -561,7 +561,7 @@ class InvoiceTabProvider extends ChangeNotifier {
     }
   }
 
-  getItemsFromQuotation(String id) async {
+  Future<void> getItemsFromQuotation(String id) async {
     try {
       // SharedPreferences preferences = await SharedPreferences.getInstance();
       // String userId = preferences.getString('userId') ?? "";

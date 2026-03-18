@@ -1,30 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/followup_reports_provider.dart';
-import 'package:vidyanexis/controller/quotation_report_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/customer_details_provider.dart';
-import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/controller/models/search_leads_model.dart';
-import 'package:vidyanexis/controller/reports_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
-import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
-import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class FollowupReportMobile extends StatefulWidget {

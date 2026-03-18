@@ -10,7 +10,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
 
 class LeadCheckInProvider extends ChangeNotifier {
-  Map<int, List<LeadCheckIn>> _customerCheckInHistory = {};
+  final Map<int, List<LeadCheckIn>> _customerCheckInHistory = {};
   Map<int, List<LeadCheckIn>> get customerCheckInHistory =>
       _customerCheckInHistory;
 

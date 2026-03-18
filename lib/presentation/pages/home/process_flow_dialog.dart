@@ -18,9 +18,9 @@ class ProcessFlowDialog extends StatefulWidget {
   final TaskReportModel task;
 
   const ProcessFlowDialog({
-    Key? key,
+    super.key,
     required this.task,
-  }) : super(key: key);
+  });
 
   @override
   State<ProcessFlowDialog> createState() => ProcessFlowDialogState();
@@ -152,7 +152,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               ),
               const SizedBox(width: 6),
               Text(
-                "/ ${widget.task.taskTypeName}",
+                "| ${widget.task.taskTypeName}",
                 style: GoogleFonts.plusJakartaSans(
                   color: const Color(0xFF64748B),
                   fontSize: 13,
@@ -346,7 +346,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                             ? '${task.taskTypeName} (${task.departmentName})'
                                             : task.taskTypeName,
                                       );
-                                    }).toList(),
+                                    }),
                                     const SizedBox(height: 8),
                                   ],
                                 );
@@ -625,7 +625,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           ],
                                         ),
                                       );
-                                    }).toList(),
+                                    }),
                                     const SizedBox(height: 8),
                                   ],
                                 );
@@ -963,7 +963,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                           padding: const EdgeInsets.only(bottom: 16),
                           child: fieldWidget,
                         );
-                      }).toList(),
+                      }),
                       const SizedBox(height: 16),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.end,
@@ -1005,8 +1005,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                                 int typeId = 1;
                                 if (field.type == FieldType.number) typeId = 2;
-                                if (field.type == FieldType.dropdown)
+                                if (field.type == FieldType.dropdown) {
                                   typeId = 3;
+                                }
                                 if (field.type == FieldType.date) typeId = 4;
 
                                 customFieldsPayload.add({

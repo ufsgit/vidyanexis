@@ -21,7 +21,7 @@ class AddCheckListItemPage extends StatefulWidget {
 
   @override
   State<AddCheckListItemPage> createState() =>
-      _AddCheckListItemPageState(this.checkListItemModel);
+      _AddCheckListItemPageState(checkListItemModel);
 }
 
 class _AddCheckListItemPageState extends State<AddCheckListItemPage> {

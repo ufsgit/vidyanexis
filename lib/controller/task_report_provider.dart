@@ -45,7 +45,7 @@ class TaskReportProvider extends ChangeNotifier {
   int? get selectedTaskType => _selectedTaskType;
 
   int _pageIndex = 1;
-  int _pageSize = 20;
+  final int _pageSize = 20;
 
   int get pageIndex => _pageIndex;
 
@@ -300,7 +300,7 @@ class TaskReportProvider extends ChangeNotifier {
     return false;
   }
 
-  getFollowupReports(BuildContext context) async {
+  Future<void> getFollowupReports(BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -360,7 +360,7 @@ class TaskReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchTaskReportNoContext() async {
+  Future<void> getSearchTaskReportNoContext() async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';

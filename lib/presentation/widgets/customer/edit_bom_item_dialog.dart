@@ -14,10 +14,10 @@ class EditBomItemDialog extends StatefulWidget {
   final bool isEdit;
 
   const EditBomItemDialog({
-    Key? key,
+    super.key,
     required this.index,
     this.isEdit = true,
-  }) : super(key: key);
+  });
 
   @override
   State<EditBomItemDialog> createState() => _EditBomItemDialogState();

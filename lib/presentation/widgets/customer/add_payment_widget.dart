@@ -9,8 +9,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 
 class AddPaymentWidget extends StatefulWidget {
   final String customerId;
-  const AddPaymentWidget({Key? key, required this.customerId})
-      : super(key: key);
+  const AddPaymentWidget({super.key, required this.customerId});
 
   @override
   State<AddPaymentWidget> createState() => _AddPaymentWidgetState();
@@ -149,7 +148,7 @@ class _AddPaymentWidgetState extends State<AddPaymentWidget> {
                     contentPadding: const EdgeInsets.symmetric(
                         horizontal: 12, vertical: 16),
                   ),
-                  value: _selectedPaymentMode,
+                  initialValue: _selectedPaymentMode,
                   items: _paymentModes.map((String mode) {
                     return DropdownMenuItem<String>(
                       value: mode,

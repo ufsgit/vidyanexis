@@ -9,8 +9,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 
 class ExpenseTabWidget extends StatefulWidget {
   final String customerId;
-  const ExpenseTabWidget({Key? key, required this.customerId})
-      : super(key: key);
+  const ExpenseTabWidget({super.key, required this.customerId});
 
   @override
   State<ExpenseTabWidget> createState() => _ExpenseTabWidgetState();

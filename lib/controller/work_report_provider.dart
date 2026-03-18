@@ -188,7 +188,7 @@ class WorkReportProvider extends ChangeNotifier {
   }
 
   //task report
-  getSearchTaskReport(String byUserId, BuildContext context) async {
+  Future<void> getSearchTaskReport(String byUserId, BuildContext context) async {
     try {
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
@@ -245,7 +245,7 @@ class WorkReportProvider extends ChangeNotifier {
     }
   }
 
-  getSearchTaskReportNoContext(String byUserId) async {
+  Future<void> getSearchTaskReportNoContext(String byUserId) async {
     try {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';

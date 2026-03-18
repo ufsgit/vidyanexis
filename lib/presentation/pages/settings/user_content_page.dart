@@ -710,11 +710,10 @@ class _UsersContentState extends State<UsersContent> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    "Department : " +
-                                                        settingsProvider
+                                                    "Department : ${settingsProvider
                                                             .searchUserDetails[
                                                                 index]
-                                                            .departmentName,
+                                                            .departmentName}",
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: GoogleFonts
@@ -727,11 +726,10 @@ class _UsersContentState extends State<UsersContent> {
                                                   ),
                                                   const SizedBox(width: 8),
                                                   Text(
-                                                    "Branch : " +
-                                                        settingsProvider
+                                                    "Branch : ${settingsProvider
                                                             .searchUserDetails[
                                                                 index]
-                                                            .branchName,
+                                                            .branchName}",
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: GoogleFonts
@@ -1003,7 +1001,7 @@ class _UsersContentState extends State<UsersContent> {
     );
   }
 
-  assignTeamDialogue(BuildContext context, GetUserModel searchUserDetail) {
+  Future<dynamic> assignTeamDialogue(BuildContext context, GetUserModel searchUserDetail) {
     return showDialog(
       barrierDismissible: false,
       context: context,

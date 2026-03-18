@@ -97,7 +97,7 @@ class FileShare {
     }
 
     // Prepare encoded params for web composers
-    final encode = (String? s) => s == null ? '' : Uri.encodeComponent(s);
+    String encode(String? s) => s == null ? '' : Uri.encodeComponent(s);
     final toParam = toPart.isNotEmpty ? Uri.encodeComponent(toPart) : '';
     final ccParam =
         cc != null && cc.isNotEmpty ? Uri.encodeComponent(cc.join(',')) : '';

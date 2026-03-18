@@ -613,37 +613,37 @@ pw.Widget _buildHeaderDetailCell(
 
 pw.Widget _buildItemsTable(pw.Font regularFont, pw.Font boldFont,
     List<InvoiceItemModel> invoiceItems) {
-  double _parseDouble(String value) {
+  double parseDouble(String value) {
     return double.tryParse(value.replaceAll(',', '').trim()) ?? 0.0;
   }
 
-  String _formatAmount(double value) {
+  String formatAmount(double value) {
     return value.toStringAsFixed(2);
   }
 
-  bool _isConsumable(InvoiceItemModel item) {
+  bool isConsumable(InvoiceItemModel item) {
     final name = item.itemName.toLowerCase();
     return name.contains('consumable') || name.contains('installation');
   }
 
   final List<InvoiceItemModel> goodsItems =
-      invoiceItems.where((i) => !_isConsumable(i)).toList();
+      invoiceItems.where((i) => !isConsumable(i)).toList();
 
   final InvoiceItemModel? consumableItem =
-      invoiceItems.where((i) => _isConsumable(i)).isNotEmpty
-          ? invoiceItems.firstWhere((i) => _isConsumable(i))
+      invoiceItems.where((i) => isConsumable(i)).isNotEmpty
+          ? invoiceItems.firstWhere((i) => isConsumable(i))
           : null;
 
   // Calculate subtotal using 'amount' field from each item
   final double subtotalGoodsAmount =
-      goodsItems.fold(0.0, (sum, item) => sum + _parseDouble(item.amount));
+      goodsItems.fold(0.0, (sum, item) => sum + parseDouble(item.amount));
 
   final double totalQuantity =
-      goodsItems.fold(0.0, (sum, item) => sum + _parseDouble(item.quantity));
+      goodsItems.fold(0.0, (sum, item) => sum + parseDouble(item.quantity));
 
   // Calculate total using all items' 'amount' field
   final double subtotalAllAmount =
-      invoiceItems.fold(0.0, (sum, item) => sum + _parseDouble(item.amount));
+      invoiceItems.fold(0.0, (sum, item) => sum + parseDouble(item.amount));
 
   return pw.Container(
     decoration: pw.BoxDecoration(
@@ -708,7 +708,7 @@ pw.Widget _buildItemsTable(pw.Font regularFont, pw.Font boldFont,
               _buildTableDataCell('nos', regularFont,
                   alignment: pw.Alignment.center),
               // Show the 'amount' field (base amount without GST)
-              _buildTableDataCell('${item.amount}', regularFont,
+              _buildTableDataCell(item.amount, regularFont,
                   alignment: pw.Alignment.centerRight),
             ],
           );
@@ -803,7 +803,7 @@ pw.Widget _buildItemsTable(pw.Font regularFont, pw.Font boldFont,
             _buildTableDataCell('', regularFont),
             _buildTableDataCell('', regularFont),
             _buildTableDataCell(
-                '₹ ${_formatAmount(subtotalAllAmount)}', boldFont,
+                '₹ ${formatAmount(subtotalAllAmount)}', boldFont,
                 alignment: pw.Alignment.centerRight),
           ],
         ),
@@ -1002,7 +1002,7 @@ pw.Widget _buildTaxRateAmountCell(String rate, String amount, pw.Font font) {
 
 pw.Widget _buildTaxSummary(pw.Font regularFont, pw.Font boldFont) {
   // Fallback-safe parser
-  double _p(String v) =>
+  double p(String v) =>
       double.tryParse((v).toString().replaceAll(',', '')) ?? 0.0;
 
   final rows = <pw.TableRow>[];
@@ -1034,9 +1034,9 @@ pw.Widget _buildTaxSummary(pw.Font regularFont, pw.Font boldFont) {
   if (invoice?.invoiceItems != null) {
     for (var item in invoice!.invoiceItems) {
       String hsnCode = item.hsnCode;
-      double amount = _p(item.amount);
-      double cgstAmount = _p(item.cgstAmount);
-      double sgstAmount = _p(item.sgstAmount);
+      double amount = p(item.amount);
+      double cgstAmount = p(item.cgstAmount);
+      double sgstAmount = p(item.sgstAmount);
       String cgstRate = item.cgst;
       String sgstRate = item.sgst;
 

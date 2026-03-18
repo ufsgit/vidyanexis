@@ -11,7 +11,7 @@ import 'package:vidyanexis/presentation/widgets/customer/refund_card.dart';
 class RefundFormPage extends StatefulWidget {
   String customerId;
 
-  RefundFormPage(this.customerId);
+  RefundFormPage(this.customerId, {super.key});
 
   @override
   State<RefundFormPage> createState() => _RefundFormPageState();

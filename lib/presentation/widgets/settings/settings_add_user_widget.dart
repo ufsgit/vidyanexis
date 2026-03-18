@@ -557,7 +557,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                           },
                           trackOutlineColor:
                               WidgetStatePropertyAll(AppColors.textGrey3),
-                          activeColor: AppColors.whiteColor,
+                          activeThumbColor: AppColors.whiteColor,
                           activeTrackColor: AppColors.primaryBlue,
                           inactiveThumbColor: AppColors.textGrey1,
                           inactiveTrackColor: AppColors.whiteColor,

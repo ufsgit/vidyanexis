@@ -38,7 +38,7 @@ class _AddCheckListManagementWidgetState
     getData();
   }
 
-  getData() {
+  void getData() {
     settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
     categoryListFuture = settingsProvider.getDocumentChecklistDetails(
         (widget.documentChecklistModel.documentCheckListMasterId ?? 0)

@@ -282,7 +282,7 @@ class _PeriodicServiceDetailsPageMobileState
                             text: "Created by ",
                           ),
                           TextSpan(
-                            text: "${widget.item.createdByName}",
+                            text: widget.item.createdByName,
                             style: GoogleFonts.plusJakartaSans(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w500,

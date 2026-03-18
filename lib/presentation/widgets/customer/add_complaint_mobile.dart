@@ -1,21 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/controller/models/follow_up_model.dart';
-import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 
 class AddComplaintMobile extends StatefulWidget {

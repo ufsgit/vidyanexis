@@ -664,7 +664,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
               widget.isEdit ? widget.expenseModel.expenseTypeId : null,
           items: expenseTypeList
               .map((status) => DropdownItem<int>(
-                    id: status.expenseTypeId!,
+                    id: status.expenseTypeId,
                     name: status.expenseTypeName ?? "",
                   ))
               .toList(),
@@ -694,7 +694,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
           selectedValue: widget.isEdit ? widget.expenseModel.customerId : null,
           items: customerTypeList
               .map((status) => DropdownItem<int>(
-                    id: int.parse(status.customerId!),
+                    id: int.parse(status.customerId),
                     name: status.customerName ?? "",
                   ))
               .toList(),
@@ -965,7 +965,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
                       fit: BoxFit.contain,
                     )
                   : CustomText(
-                      (widget.expenseModel.fileType ?? "") + " file",
+                      "${widget.expenseModel.fileType ?? ""} file",
                       fontSize: _getResponsiveFontSize(context, 14),
                     ),
         ),
@@ -1145,7 +1145,7 @@ class _AddExpenseManagementState extends State<AddExpenseManagement> {
             CustomerModel(customerId: '0', customerName: '', isRegistered: ''),
       );
       if (customer != null && customer.customerId != '0') {
-        widget.expenseModel.customerId = int.parse(customer.customerId!);
+        widget.expenseModel.customerId = int.parse(customer.customerId);
         widget.expenseModel.customerName = customer.customerName;
       } else {
         showErrorDialog(
