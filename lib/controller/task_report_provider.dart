@@ -257,6 +257,12 @@ class TaskReportProvider extends ChangeNotifier {
           final dataMap = data is Map ? data['data'] ?? data : data;
           if (dataMap is List && dataMap.isEmpty) return true;
 
+          if (dataMap.isNotEmpty) {
+            print("================ DEBUG TASK JSON ================");
+            print(dataMap[0]);
+            print("=================================================");
+          }
+
           final newTasks = (dataMap as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
               .toList();
