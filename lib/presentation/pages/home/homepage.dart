@@ -44,6 +44,7 @@ import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.da
 import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_bar_widget.dart';
+import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -292,6 +293,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Solar Lead Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: SolarLeadReportPage()),
+        ),
+      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+        SidebarOption(
+          title: 'Sales Pipeline',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: LeadStatusReportScreen()),
         ),
       if (settingsProvider.menuIsViewMap[65].toString() == '1')
         SidebarOption(
