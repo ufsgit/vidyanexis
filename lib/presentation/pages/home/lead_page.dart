@@ -1088,7 +1088,6 @@ class _LeadsPageState extends State<LeadPage> {
                                                           ),
                                                         ),
                                                       ),
-
                                                       _HoverMenuAnchor(
                                                         builder: (context,
                                                             controller, child) {
@@ -1577,7 +1576,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                       vertical: 4.0,
                                                       horizontal: 12.0),
                                                   data: Text(
-                                                    _formatDateSafely(lead.entryDate),
+                                                    _formatDateSafely(
+                                                        lead.entryDate),
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
@@ -2105,6 +2105,7 @@ class _LeadsPageState extends State<LeadPage> {
       return ''; // Return an empty string if parsing fails
     }
   }
+
   void _handleLeadAction(String value, SearchLeadModel lead) async {
     final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
     if (value == 'edit') {
@@ -2124,8 +2125,7 @@ class _LeadsPageState extends State<LeadPage> {
           lead.customerId.toString(), context);
 
       final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-      leadsProvider
-          .setCutomerId(int.tryParse(lead.customerId.toString()) ?? 0);
+      leadsProvider.setCutomerId(int.tryParse(lead.customerId.toString()) ?? 0);
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       if (leadDetailsProvider.leadDetails != null &&
@@ -2182,7 +2182,8 @@ class _LeadsPageState extends State<LeadPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
+                builder: (context) =>
+                    AddTaskMobile(isEdit: false, taskId: '0')));
       }
     }
   }
