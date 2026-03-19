@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
-import 'package:vidyanexis/presentation/widgets/customer/quotation_details_page_phone.dart';
+
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
@@ -81,31 +81,13 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (c) => QuotationDetailsPagePhone(
-                            productiopnChart: item.productionChartModel ?? [],
-                            advance: item.advancePercentage.toString(),
-                            completion:
-                                item.workCompletionPercentage.toString(),
-                            onDelivery: item.onDeliveryPercentage.toString(),
-                            quotationId: item.quotationMasterId.toString(),
-                            category: "0",
-                            title: item.productName.toString(),
-                            servicename: item.totalAmount.toString(),
-                            statusId: item.quotationStatusId.toString(),
-                            createdBy: item.createdByName.toString(),
-                            status: item.quotationStatusName.toString(),
-                            posted: item.orderDate.toString(),
-                            customerId: widget.customerId.toString(),
-                            warranty: item.warranty,
-                            terms: item.termsAndConditions,
-                            subsidy: item.subsidyAmount,
-                            quotation_details: item.quotationDetails ?? [],
-                            bill_of_materials: item.billOfMaterials ?? [],
-                            quotation: item),
+                        builder: (c) => QuotationCreationWidget(
+                          isEdit: true,
+                          quotationId: item.quotationMasterId.toString(),
+                          customerId: widget.customerId.toString(),
+                        ),
                       ),
                     );
-                    // context.push(
-                    //     '${QuotationDetailsPagePhone.route}${item.quotationMasterId}');
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
