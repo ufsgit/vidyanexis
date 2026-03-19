@@ -36,7 +36,7 @@ class _MultiLevelHoverMenuState extends State<MultiLevelHoverMenu> {
     widget.onHoverChange?.call(isHovering);
 
     if (isHovering) {
-      _hoverTimer = Timer(const Duration(milliseconds: 150), () {
+      _hoverTimer = Timer(const Duration(milliseconds: 1000), () {
         if (mounted && !_controller.isOpen) {
           _controller.open();
         }
@@ -92,17 +92,21 @@ class _MultiLevelHoverMenuState extends State<MultiLevelHoverMenu> {
             style: MenuItemButton.styleFrom(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               surfaceTintColor: Colors.transparent,
-              overlayColor: widget.hoverColor ?? AppColors.appViolet.withOpacity(0.05),
+              overlayColor:
+                  widget.hoverColor ?? AppColors.appViolet.withOpacity(0.05),
             ),
-            onPressed: widget.onTap ?? () {
-              if (controller.isOpen) {
-                controller.close();
-              } else {
-                controller.open();
-              }
-            },
+            onPressed: widget.onTap ??
+                () {
+                  if (controller.isOpen) {
+                    controller.close();
+                  } else {
+                    controller.open();
+                  }
+                },
             leadingIcon: widget.leadingIcon,
-            trailingIcon: widget.isSubMenu ? Icon(Icons.chevron_right, size: 16, color: Colors.grey[600]) : null,
+            trailingIcon: widget.isSubMenu
+                ? Icon(Icons.chevron_right, size: 16, color: Colors.grey[600])
+                : null,
             child: Text(
               widget.title,
               style: const TextStyle(
