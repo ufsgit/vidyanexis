@@ -544,7 +544,10 @@ class FormProvider extends ChangeNotifier {
           department: item['Department_Name']?.toString() ?? '',
           taskType: item['Task_Type_Name']?.toString() ?? '',
           fields: parsedFields,
-          instanceId: item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
+          instanceId:
+              item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
+          createdUser: item['Created_User'] ?? item['created_user'],
+          createdDate: item['Created_Date'] ?? item['created_date'],
         );
       }).toList();
 

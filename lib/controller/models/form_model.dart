@@ -30,6 +30,8 @@ class FormModel {
   final int? customerId;
   final List<FieldModel> fields;
   final int? instanceId;
+  final String? createdUser;
+  final String? createdDate;
 
   FormModel({
     required this.id,
@@ -41,5 +43,7 @@ class FormModel {
     this.customerId,
     required this.fields,
     this.instanceId,
+    this.createdUser,
+    this.createdDate,
   });
 }
