@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/widgets/customer/expanded_text_widget.dart';
 
 class TaskCardMobileWidget extends StatelessWidget {
   final String taskTypeName;
   final String taskStatusName;
+  final String enquiryForName;
   final String description;
   final String taskDate;
   final String taskTime;
@@ -18,6 +20,7 @@ class TaskCardMobileWidget extends StatelessWidget {
     super.key,
     required this.taskTypeName,
     required this.taskStatusName,
+    required this.enquiryForName,
     required this.description,
     required this.taskDate,
     required this.taskTime,
@@ -89,6 +92,20 @@ class TaskCardMobileWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 12),
+            if (enquiryForName.isNotEmpty) ...[
+              Align(
+                alignment: Alignment.topLeft,
+                child: Text(
+                  enquiryForName,
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.appViolet,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
             Align(
               alignment: Alignment.topLeft,
               child: ExpandableText(

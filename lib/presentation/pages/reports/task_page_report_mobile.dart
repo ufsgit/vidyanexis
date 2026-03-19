@@ -1018,6 +1018,15 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                                       color:
                                                           AppColors.textBlack),
                                             ),
+                                            if (task.enquiryForName.isNotEmpty)
+                                              Text(
+                                                task.enquiryForName,
+                                                style: GoogleFonts.plusJakartaSans(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w600,
+                                                  color: AppColors.appViolet,
+                                                ),
+                                              ),
                                             InkWell(
                                               onTap: () {
                                                 print("object");

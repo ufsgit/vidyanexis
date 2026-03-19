@@ -258,6 +258,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 'Phone Number',
                                 'Address',
                                 'Task',
+                                'Enquiry for',
                                 'Assigned To',
                                 'Description',
                                 'Date',
@@ -270,6 +271,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                   'Address':
                                       '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
                                   'Task': task.taskTypeName,
+                                  'Enquiry for': task.enquiryForName,
                                   'Assigned To': task.toUserName,
                                   'Description': task.description,
                                   'Date': task.entryDate.isNotEmpty
@@ -394,6 +396,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                         'Phone Number',
                                         'Address',
                                         'Task',
+                                        'Enquiry for',
                                         'Assigned To',
                                         'Description',
                                         'Date',
@@ -407,6 +410,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                           'Address':
                                               '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
                                           'Task': task.taskTypeName,
+                                          'Enquiry for': task.enquiryForName,
                                           'Assigned To': task.toUserName,
                                           'Description': task.description,
                                           'Date': task.entryDate.isNotEmpty
@@ -1263,6 +1267,19 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                     vertical: 12.0,
                                                     horizontal: 8.0),
                                                 child: Text('Task',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        SizedBox(
+                                            width: 140,
+                                            child: Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Enquiry for',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,

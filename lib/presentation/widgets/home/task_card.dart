@@ -151,6 +151,26 @@ class TaskCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (task.enquiryForName.isNotEmpty) ...[
+                  Text(
+                    "Enquiry For",
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    task.enquiryForName,
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textGrey3,
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
                 if (task.description.isNotEmpty) ...[
                   Text(
                     "Description",
