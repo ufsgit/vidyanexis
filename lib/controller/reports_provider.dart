@@ -246,6 +246,11 @@ class ReportsProvider extends ChangeNotifier {
         if (data != null) {
           // log(data.toString());
 
+          if (data is List && data.isNotEmpty) {
+            print("================ DEBUG TASK JSON (ReportsProvider) ================");
+            print(data[0]);
+            print("===================================================================");
+          }
           _taskReport = (data as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
               .toList();

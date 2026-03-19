@@ -7,7 +7,11 @@ import 'package:vidyanexis/constants/app_colors.dart';
 
 class ChatLauncher {
   static Future<void> handleChat(BuildContext context, String phone) async {
+    print("================ DEBUG CHAT PHONE ================");
+    print("Raw: $phone");
     String formatted = formatIndianPhoneNumber(phone);
+    print("Formatted: $formatted");
+    print("==================================================");
 
     if (formatted.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -130,6 +130,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   bool _isControllerInitialized = false;
   Key _checklistKey = UniqueKey();
 
+  bool _canScrollLeft = false;
+  bool _canScrollRight = false;
+  final GlobalKey _firstTabKey = GlobalKey();
+
+  void _scrollTabs(double delta) {
+    if (_firstTabKey.currentContext != null) {
+      final scrollable = Scrollable.of(_firstTabKey.currentContext!);
+      scrollable.position.animateTo(
+        scrollable.position.pixels + delta,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -137,7 +152,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     final sideprovider = Provider.of<SidebarProvider>(context);
 
     final newTabs = [
-      const Tab(text: "Info"),
+      Tab(key: _firstTabKey, text: "Info"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
@@ -551,26 +566,59 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       color: Colors.red),
                                 ),
                               const SizedBox(width: 20),
+                              if (_canScrollLeft)
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () => _scrollTabs(-150),
+                                  icon: const Icon(Icons.arrow_back_ios_new,
+                                      size: 16),
+                                ),
                               Expanded(
-                                child: TabBar(
-                                  controller: _tabController,
-                                  labelColor: AppColors.primaryBlue,
-                                  unselectedLabelColor: Colors.black54,
-                                  indicatorColor: AppColors.primaryBlue,
-                                  tabAlignment: TabAlignment.start,
-                                  isScrollable: true,
-                                  dividerColor: Colors.transparent,
-                                  labelPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  labelStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13),
-                                  unselectedLabelStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13),
-                                  tabs: _tabs,
+                                child: NotificationListener<ScrollNotification>(
+                                  onNotification: (notification) {
+                                    if (notification.metrics.maxScrollExtent >
+                                        0) {
+                                      setState(() {
+                                        _canScrollLeft =
+                                            notification.metrics.pixels > 5;
+                                        _canScrollRight =
+                                            notification.metrics.pixels <
+                                                notification.metrics
+                                                        .maxScrollExtent -
+                                                    5;
+                                      });
+                                    }
+                                    return false;
+                                  },
+                                  child: TabBar(
+                                    controller: _tabController,
+                                    labelColor: AppColors.primaryBlue,
+                                    unselectedLabelColor: Colors.black54,
+                                    indicatorColor: AppColors.primaryBlue,
+                                    tabAlignment: TabAlignment.start,
+                                    isScrollable: true,
+                                    dividerColor: Colors.transparent,
+                                    labelPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    labelStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13),
+                                    unselectedLabelStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13),
+                                    tabs: _tabs,
+                                  ),
                                 ),
                               ),
+                              if (_canScrollRight)
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () => _scrollTabs(150),
+                                  icon: const Icon(Icons.arrow_forward_ios,
+                                      size: 16),
+                                ),
                               if (settingsprovider.menuIsSaveMap[13] == 1 &&
                                   _isControllerInitialized &&
                                   _isControllerInitialized &&
@@ -791,6 +839,42 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                     },
                                     icon: const Icon(Icons.add),
                                     label: const Text('Add Payment'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 16, vertical: 12),
+                                    ),
+                                  ),
+                                ),
+                              if (settingsprovider.menuIsSaveMap[16] == 1 &&
+                                  _isControllerInitialized &&
+                                  _tabs[_tabController.index].text ==
+                                      "Quotations")
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0),
+                                  child: ElevatedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.customerId =
+                                          widget.customerId;
+                                      customerDetailsProvider
+                                          .qsubsidyAmountController
+                                          .text = '0';
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              QuotationCreationWidget(
+                                                  quotationId: '0',
+                                                  isEdit: false,
+                                                  customerId:
+                                                      widget.customerId),
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add),
+                                    label: const Text('New Quotation '),
                                     style: ElevatedButton.styleFrom(
                                       backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
@@ -2702,124 +2786,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                               .start,
                                                       children: [
                                                         // Display 4 Chips based on Task_Type_Id filter
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            //chips
-                                                            AppStyles
-                                                                    .isWebScreen(
-                                                                        context)
-                                                                ? Container(
-                                                                    margin:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            8.0),
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: const Color(
-                                                                          0xFFEFF2F5),
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              8),
-                                                                    ),
-                                                                    child:
-                                                                        Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .all(
-                                                                          4.0),
-                                                                      child:
-                                                                          Wrap(
-                                                                        spacing:
-                                                                            8.0, // Space between chips
-                                                                        runSpacing:
-                                                                            4.0, // Space between rows
-                                                                        children: [
-                                                                          _buildQuatationChip(
-                                                                              'All Quotations',
-                                                                              null), // All tasks (no filter)
-                                                                          _buildQuatationChip(
-                                                                              'Approved',
-                                                                              2), // Task Type Id 1
-                                                                          _buildQuatationChip(
-                                                                              'Rejected',
-                                                                              3), // Task Type Id 2
-                                                                          _buildQuatationChip(
-                                                                              'Pending',
-                                                                              1), // Task Type Id 2
-                                                                          // _buildServiceChip(
-                                                                          //     'In Progress',
-                                                                          //     2), // Task Type Id 3
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  )
-                                                                : Container(
-                                                                    margin:
-                                                                        const EdgeInsets
-                                                                            .all(
-                                                                            30),
-                                                                  ),
-                                                            if (settingsprovider
-                                                                        .menuIsSaveMap[
-                                                                    16] ==
-                                                                1)
-                                                              ElevatedButton
-                                                                  .icon(
-                                                                onPressed: () {
-                                                                  customerDetailsProvider
-                                                                          .customerId =
-                                                                      widget
-                                                                          .customerId;
-                                                                  customerDetailsProvider
-                                                                      .qsubsidyAmountController
-                                                                      .text = '0';
-                                                                  Navigator.push(
-                                                                    context,
-                                                                    MaterialPageRoute(
-                                                                      builder: (context) =>
-                                                                          QuotationCreationWidget(
-                                                                              quotationId:
-                                                                                  '0',
-                                                                              isEdit:
-                                                                                  false,
-                                                                              customerId:
-                                                                                  widget.customerId),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                icon: const Icon(
-                                                                    Icons.add),
-                                                                label: const Text(
-                                                                    'New Quotation '),
-                                                                style: ElevatedButton
-                                                                    .styleFrom(
-                                                                  backgroundColor:
-                                                                      AppColors
-                                                                          .primaryBlue,
-                                                                  foregroundColor:
-                                                                      Colors
-                                                                          .white,
-                                                                  padding: AppStyles
-                                                                          .isWebScreen(
-                                                                              context)
-                                                                      ? const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              16,
-                                                                          vertical:
-                                                                              12)
-                                                                      : const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              16,
-                                                                          vertical:
-                                                                              0),
-                                                                ),
-                                                              ),
-                                                          ],
-                                                        ),
                                                         // Display filtered task list
                                                         _buildFilteredQuatationList(
                                                           onTap: (quatationId) {
@@ -3138,57 +3104,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 .start,
                                                         children: [
                                                           // Display 4 Chips based on Task_Type_Id filter
-                                                          Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
-                                                            children: [
-                                                              //chips
-                                                              AppStyles.isWebScreen(
-                                                                      context)
-                                                                  ? Container(
-                                                                      margin: const EdgeInsets
-                                                                          .all(
-                                                                          8.0),
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: const Color(
-                                                                            0xFFEFF2F5),
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(8),
-                                                                      ),
-                                                                      child:
-                                                                          Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .all(
-                                                                            4.0),
-                                                                        child:
-                                                                            Wrap(
-                                                                          spacing:
-                                                                              8.0, // Space between chips
-                                                                          runSpacing:
-                                                                              4.0, // Space between rows
-                                                                          children: [
-                                                                            _buildServiceChip('All Complaints',
-                                                                                null), // All tasks (no filter)
-                                                                            _buildServiceChip('Completed',
-                                                                                2), // Task Type Id 1
-                                                                            _buildServiceChip('Pending',
-                                                                                1), // Task Type Id 2
-                                                                            // _buildServiceChip(
-                                                                            //     'In Progress',
-                                                                            //     2), // Task Type Id 3
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    )
-                                                                  : Container(
-                                                                      margin: const EdgeInsets
-                                                                          .all(
-                                                                          30),
-                                                                    ),
-                                                            ],
-                                                          ),
                                                           // Display filtered task list
                                                           _buildFilteredServiceList(
                                                             onTap: (serviceId) {
@@ -3476,39 +3391,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         ));
   }
 
-//service
-  Widget _buildServiceChip(String label, int? serviceStatusId) {
-    return FilterChip(
-      label: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold, // Make text bold
-          fontSize: 14,
-          color: selectedServiceStatusId == serviceStatusId
-              ? AppColors.primaryBlue
-              : const Color(0xFF607085),
-        ),
-      ),
-      selected: selectedServiceStatusId == serviceStatusId,
-      onSelected: (bool selected) {
-        setState(() {
-          selectedServiceStatusId = selected
-              ? serviceStatusId
-              : null; // Update the selectedServiceStatusId
-        });
-      },
-      backgroundColor:
-          const Color(0xFFEFF2F5), // Color when the chip is selected
-      selectedColor: Colors.white, // Color when the chip is unselected
-      showCheckmark: false, // Removes the tick mark
-      shape: RoundedRectangleBorder(
-        // Removes the border by making it flat
-        borderRadius: BorderRadius.circular(8),
-      ),
-      side: BorderSide.none, // Ensures no border is displayed
-      elevation: 0, // Removes the elevation
-    );
-  }
 
   Widget _buildFilteredServiceList(
       {int? serviceId, void Function(int)? onTap}) {
@@ -3802,38 +3684,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
           );
   }
 
-//task
-  Widget _buildTaskChip(String label, int? taskTypeId) {
-    return FilterChip(
-      label: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.normal, // Make text bold
-          fontSize: 14,
-          color: selectedTaskTypeId == taskTypeId
-              ? AppColors.primaryBlue
-              : const Color(0xFF607085),
-        ),
-      ),
-      selected: selectedTaskTypeId == taskTypeId,
-      onSelected: (bool selected) {
-        setState(() {
-          selectedTaskTypeId =
-              selected ? taskTypeId : null; // Update the selectedTaskTypeId
-        });
-      },
-      backgroundColor:
-          const Color(0xFFEFF2F5), // Color when the chip is selected
-      selectedColor: Colors.white, // Color when the chip is unselected
-      showCheckmark: false, // Removes the tick mark
-      shape: RoundedRectangleBorder(
-        // Removes the border by making it flat
-        borderRadius: BorderRadius.circular(8),
-      ),
-      side: BorderSide.none, // Ensures no border is displayed
-      elevation: 0, // Removes the elevation
-    );
-  }
 
 // Method to build filtered task list based on task type ID
   Widget _buildFilteredTaskList({int? taskTypeId, void Function(int)? onTap}) {
@@ -4244,39 +4094,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     );
   }
 
-  //quatations
-  Widget _buildQuatationChip(String label, int? serviceStatusId) {
-    return FilterChip(
-      label: Text(
-        label,
-        style: TextStyle(
-          fontWeight: FontWeight.bold, // Make text bold
-          fontSize: 14,
-          color: selectedQuotationStatusId == serviceStatusId
-              ? AppColors.primaryBlue
-              : const Color(0xFF607085),
-        ),
-      ),
-      selected: selectedQuotationStatusId == serviceStatusId,
-      onSelected: (bool selected) {
-        setState(() {
-          selectedQuotationStatusId = selected
-              ? serviceStatusId
-              : null; // Update the selectedServiceStatusId
-        });
-      },
-      backgroundColor:
-          const Color(0xFFEFF2F5), // Color when the chip is selected
-      selectedColor: Colors.white, // Color when the chip is unselected
-      showCheckmark: false, // Removes the tick mark
-      shape: RoundedRectangleBorder(
-        // Removes the border by making it flat
-        borderRadius: BorderRadius.circular(8),
-      ),
-      side: BorderSide.none, // Ensures no border is displayed
-      elevation: 0, // Removes the elevation
-    );
-  }
 
   Widget _buildFilteredQuatationList(
       {int? quatationId, void Function(int)? onTap}) {

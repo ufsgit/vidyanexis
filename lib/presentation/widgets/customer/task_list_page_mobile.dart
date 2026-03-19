@@ -6,7 +6,6 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 
@@ -241,94 +240,6 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                                               fontWeight: FontWeight.w400,
                                               color: AppColors.textGrey3),
                                         ),
-                                      ),
-                                      const SizedBox(
-                                        height: 12,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Container(
-                                            height: 22,
-                                            decoration: BoxDecoration(
-                                                color: AppColors.scaffoldColor,
-                                                border: Border.all(
-                                                    color: AppColors.grey),
-                                                borderRadius:
-                                                    BorderRadius.circular(6)),
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                horizontal: 6,
-                                              ),
-                                              child: Row(
-                                                children: [
-                                                  Icon(
-                                                    Icons
-                                                        .calendar_month_outlined,
-                                                    size: 16,
-                                                    color: AppColors.textGrey3,
-                                                  ),
-                                                  const SizedBox(
-                                                    width: 4,
-                                                  ),
-                                                  Text(
-                                                    task.taskDate
-                                                        .toString()
-                                                        .toFormattedDate(),
-                                                    maxLines: 2,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: AppColors
-                                                                .textGrey3),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          // Padding(
-                                          //   padding:
-                                          //       const EdgeInsets.symmetric(horizontal: 5),
-                                          //   child: Text(
-                                          //     '•',
-                                          //     style: GoogleFonts.plusJakartaSans(
-                                          //         fontSize: 10,
-                                          //         fontWeight: FontWeight.w500,
-                                          //         color: AppColors.textGrey3),
-                                          //   ),
-                                          // ),
-                                          // Container(
-                                          //   height: 20,
-                                          //   width: 20,
-                                          //   decoration: BoxDecoration(
-                                          //       borderRadius: BorderRadius.circular(100),
-                                          //       color: AppColors.textRed),
-                                          // ),
-                                          // const SizedBox(width: 4),
-                                          // Text(
-                                          //   'David',
-                                          //   style: GoogleFonts.plusJakartaSans(
-                                          //       fontSize: 14,
-                                          //       fontWeight: FontWeight.w500,
-                                          //       color: AppColors.textGrey3),
-                                          // ),
-                                          const Spacer(),
-                                          Text(
-                                            task.entryDate
-                                                .toString()
-                                                .toTimeAgo(),
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.textGrey3),
-                                          ),
-                                        ],
                                       ),
                                     ],
                                   ),

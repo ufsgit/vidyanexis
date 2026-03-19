@@ -7,7 +7,6 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -405,102 +404,30 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            InkWell(
-                                              onTap: () {
-                                                print("object");
-                                                Navigator.push(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        CustomerDetailPageMobile(
-                                                      customerId: quotation
-                                                              .customerId ??
-                                                          0,
-                                                      fromLead: false,
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                              child: Text(
-                                                '${quotation.customerName ?? ''} >',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColors.bluebutton,
-                                                  decoration:
-                                                      TextDecoration.underline,
-                                                  decorationColor:
-                                                      AppColors.bluebutton,
-                                                ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
+                                            Text(
+                                              quotation.customerName ?? '',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColors.textBlack,
                                               ),
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                             Text(
                                               quotation.phoneNumber ?? '',
                                               style:
                                                   GoogleFonts.plusJakartaSans(
-                                                      fontSize: 16,
+                                                      fontSize: 14,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color:
-                                                          AppColors.textBlack),
+                                                          AppColors.textGrey3),
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                          height: 22,
-                                          decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                              color: getAvatarColor(quotation
-                                                          .quotationStatusName ??
-                                                      '')
-                                                  .withOpacity(.15)),
-                                          child: Center(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 2),
-                                              child: Text(
-                                                quotation.quotationStatusName ??
-                                                    "",
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: getAvatarColor(quotation
-                                                          .quotationStatusName ??
-                                                      ''),
-                                                ),
-                                              ),
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Align(
-                                    alignment: Alignment.topLeft,
-                                    child: Text(
-                                      quotation.productName ?? '',
-                                      maxLines: 2,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.textBlack),
-                                    ),
-                                  ),
-                                  const SizedBox(
-                                    height: 12,
-                                  ),
-                                  Row(
-                                    children: [
                                       Container(
                                         height: 22,
                                         decoration: BoxDecoration(
@@ -531,7 +458,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                                                 overflow: TextOverflow.ellipsis,
                                                 style:
                                                     GoogleFonts.plusJakartaSans(
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColors
@@ -544,41 +471,19 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                                           ),
                                         ),
                                       ),
-                                      // Padding(
-                                      //   padding:
-                                      //       const EdgeInsets.symmetric(horizontal: 5),
-                                      //   child: Text(
-                                      //     '•',
-                                      //     style: GoogleFonts.plusJakartaSans(
-                                      //         fontSize: 10,
-                                      //         fontWeight: FontWeight.w500,
-                                      //         color: AppColors.textGrey3),
-                                      //   ),
-                                      // ),
-                                      // Container(
-                                      //   height: 20,
-                                      //   width: 20,
-                                      //   decoration: BoxDecoration(
-                                      //       borderRadius: BorderRadius.circular(100),
-                                      //       color: AppColors.textRed),
-                                      // ),
-                                      // const SizedBox(width: 4),
-                                      // Text(
-                                      //   'David',
-                                      //   style: GoogleFonts.plusJakartaSans(
-                                      //       fontSize: 14,
-                                      //       fontWeight: FontWeight.w500,
-                                      //       color: AppColors.textGrey3),
-                                      // ),
-                                      const Spacer(),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 12,
+                                  ),
+                                  Row(
+                                    children: [
                                       Text(
                                         'Total amount - ${quotation.totalAmount}',
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColors.textGrey3),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColors.textBlack),
                                       ),
                                     ],
                                   ),

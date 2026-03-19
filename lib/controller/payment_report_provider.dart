@@ -166,15 +166,9 @@ class PaymentReportProvider with ChangeNotifier {
     isUpcomingLoading = true;
     notifyListeners();
 
-    // Default dates if null
-    if (fromDate == null) {
-      var now = DateTime.now();
-      fromDate = DateTime(now.year, now.month, 1);
-      toDate = DateTime(now.year, now.month + 1, 0);
-    }
-    formatDate();
+    String isDate = fromDate == null ? "0" : "1";
 
-    String isDate = "1"; // Default to check date as per standard logic
+    formatDate();
 
     try {
       final response = await HttpRequest.httpGetRequest(

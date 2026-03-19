@@ -14,7 +14,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/conversion_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
+
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
@@ -224,9 +224,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             exportToExcel(
                               headers: [
                                 'Customer Name',
-                                'Registered By',
+                                'Conversion By',
                                 'Creation Date',
-                                'Registered Date',
+                                'Conversion Date',
                                 'Enquiry For',
                                 'Status'
                               ],
@@ -234,14 +234,14 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                   reportsProvider.conversionReport.map((task) {
                                 return {
                                   'Customer Name': task.customerName,
-                                  'Registered By': task.registerdBy,
+                                  'Conversion By': task.registerdBy,
                                   'Creation Date':
                                       task.creationDate.toString().isNotEmpty
                                           ? DateFormat('dd MMM yyyy').format(
                                               DateTime.parse(
                                                   task.creationDate.toString()))
                                           : '',
-                                  'Registered Date': task.registeredDate
+                                  'Conversion Date': task.registeredDate
                                           .toString()
                                           .isNotEmpty
                                       ? DateFormat('dd MMM yyyy').format(
@@ -389,9 +389,9 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 exportToExcel(
                                   headers: [
                                     'Customer Name',
-                                    'Registered By',
+                                    'Conversion By',
                                     'Creation Date',
-                                    'Registered Date',
+                                    'Conversion Date',
                                     'Enquiry For',
                                     'Status',
                                   ],
@@ -399,7 +399,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                       .map((task) {
                                     return {
                                       'Customer Name': task.customerName,
-                                      'Registered By': task.registerdBy,
+                                      'Conversion By': task.registerdBy,
                                       'Creation Date': task.creationDate
                                               .toString()
                                               .isNotEmpty
@@ -407,7 +407,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                               DateTime.parse(
                                                   task.creationDate.toString()))
                                           : '',
-                                      'Registered Date': task.registeredDate
+                                      'Conversion Date': task.registeredDate
                                               .toString()
                                               .isNotEmpty
                                           ? DateFormat('dd MMM yyyy').format(
@@ -536,7 +536,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 children: [
                                   if (reportsProvider.fromDate == null &&
                                       reportsProvider.toDate == null)
-                                    const Text('Registered Date: All'),
+                                    const Text('Conversion Date: All'),
                                   if (reportsProvider.fromDate != null &&
                                       reportsProvider.toDate != null)
                                     Text(
@@ -569,7 +569,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             ),
                             child: Row(
                               children: [
-                                const Text('Registered By: '),
+                                const Text('Conversion By: '),
                                 DropdownButton<int>(
                                   value: reportsProvider.selectedUser,
                                   hint: const Text('All'),
@@ -849,7 +849,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             ),
                           ),
 
-                          // Registered Date
+                          // Conversion Date
                           GestureDetector(
                             onTap: () {
                               onClickTopButton(context);
@@ -872,7 +872,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 children: [
                                   if (reportsProvider.fromDate == null &&
                                       reportsProvider.toDate == null)
-                                    const Text('Registered Date: All'),
+                                    const Text('Conversion Date: All'),
                                   if (reportsProvider.fromDate != null &&
                                       reportsProvider.toDate != null)
                                     Text(
@@ -888,7 +888,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             ),
                           ),
 
-                          // Registered By
+                          // Conversion By
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
                             decoration: BoxDecoration(
@@ -904,7 +904,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Text('Registered By: '),
+                                const Text('Conversion By: '),
                                 DropdownButton<int>(
                                   value: reportsProvider.selectedUser,
                                   hint: const Text('All'),
@@ -1106,7 +1106,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                     //     color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
-                                        title: 'Registered By',
+                                        title: 'Conversion By',
                                         fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
@@ -1116,7 +1116,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                         color: Color(0xFF607185)),
                                     TableWidget(
                                         flex: 1,
-                                        title: 'Registered Date',
+                                        title: 'Conversion Date',
                                         fontSize: 14,
                                         color: Color(0xFF607185)),
                                     TableWidget(
@@ -1129,11 +1129,11 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                         title: 'Status',
                                         fontSize: 14,
                                         color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'View Details',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
+                                    // TableWidget(
+                                    //     flex: 1,
+                                    //     title: 'View Details',
+                                    //     fontSize: 14,
+                                    //     color: Color(0xFF607185)),
                                   ],
                                 ),
                               ),
@@ -1353,48 +1353,48 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                 ),
                                               ),
                                             ),
-                                            Expanded(
-                                              child: CustomOutlinedSvgButton(
-                                                showIcon: false,
-                                                onPressed: () async {
-                                                  String serviceId = conversion
-                                                      .enquiryForName
-                                                      .toString();
-                                                  String customerId = conversion
-                                                      .customerId
-                                                      .toString();
-                                                  print(
-                                                      'Service ID: $serviceId');
-                                                  // customerDetailsProvider
-                                                  //     .getServiceDetails(
-                                                  //         serviceId.toString(),
-                                                  //         context);
+                                            // Expanded(
+                                            //   child: CustomOutlinedSvgButton(
+                                            //     showIcon: false,
+                                            //     onPressed: () async {
+                                            //       String serviceId = conversion
+                                            //           .enquiryForName
+                                            //           .toString();
+                                            //       String customerId = conversion
+                                            //           .customerId
+                                            //           .toString();
+                                            //       print(
+                                            //           'Service ID: $serviceId');
+                                            //       // customerDetailsProvider
+                                            //       //     .getServiceDetails(
+                                            //       //         serviceId.toString(),
+                                            //       //         context);
 
-                                                  showDialog(
-                                                    context: context,
-                                                    builder:
-                                                        (BuildContext context) {
-                                                      return ConversionDetailsPage(
-                                                          conversionModel:
-                                                              conversion,
-                                                          customerId: customerId
-                                                              .toString(),
-                                                          showEdit: false);
-                                                    },
-                                                  );
-                                                },
-                                                svgPath:
-                                                    'assets/images/Print.svg',
-                                                label: 'View Details',
-                                                breakpoint: 860,
-                                                foregroundColor:
-                                                    AppColors.primaryBlue,
-                                                backgroundColor: Colors.white,
-                                                borderSide: BorderSide(
-                                                    color:
-                                                        AppColors.primaryBlue),
-                                              ),
-                                            ),
+                                            //       showDialog(
+                                            //         context: context,
+                                            //         builder:
+                                            //             (BuildContext context) {
+                                            //           return ConversionDetailsPage(
+                                            //               conversionModel:
+                                            //                   conversion,
+                                            //               customerId: customerId
+                                            //                   .toString(),
+                                            //               showEdit: false);
+                                            //         },
+                                            //       );
+                                            //     },
+                                            //     svgPath:
+                                            //         'assets/images/Print.svg',
+                                            //     label: 'View Details',
+                                            //     breakpoint: 860,
+                                            //     foregroundColor:
+                                            //         AppColors.primaryBlue,
+                                            //     backgroundColor: Colors.white,
+                                            //     borderSide: BorderSide(
+                                            //         color:
+                                            //             AppColors.primaryBlue),
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
                                       ),
@@ -1554,7 +1554,7 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                         children: [
                                           Expanded(
                                             child: Text(
-                                              'Registered by: ${conversion.registerdBy}',
+                                              'Conversion by: ${conversion.registerdBy}',
                                               style:
                                                   AppStyles.getRegularTextStyle(
                                                 fontSize: 12,
