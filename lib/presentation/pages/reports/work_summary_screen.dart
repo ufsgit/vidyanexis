@@ -171,30 +171,35 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                       ],
                     ),
                   ),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                height: 45,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(25),
-                  border: Border.all(color: Colors.grey[300]!),
-                ),
-                child: TabBar(
-                  indicatorSize: TabBarIndicatorSize.tab,
-                  indicator: BoxDecoration(
-                    color: AppColors.primaryBlue,
-                    borderRadius: BorderRadius.circular(25),
-                  ),
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.grey,
-                  dividerColor: Colors.transparent,
-                  labelStyle: const TextStyle(fontWeight: FontWeight.bold),
-                  tabs: const [
-                    Tab(text: 'Data'),
-                    Tab(text: 'Graph'),
-                  ],
-                ),
-              ),
+              Builder(builder: (context) {
+                final tabController = DefaultTabController.of(context);
+                return AnimatedBuilder(
+                  animation: tabController,
+                  builder: (context, child) {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: Row(
+                        children: [
+                          _buildIndividualTab(
+                            context,
+                            tabController,
+                            index: 0,
+                            label: 'Data',
+                          ),
+                          const SizedBox(width: 10),
+                          _buildIndividualTab(
+                            context,
+                            tabController,
+                            index: 1,
+                            label: 'Graph',
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                );
+              }),
 
             if (reportsProvider.isFilter)
               !AppStyles.isWebScreen(context)
@@ -1208,6 +1213,47 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildIndividualTab(
+    BuildContext context,
+    TabController tabController, {
+    required int index,
+    required String label,
+  }) {
+    bool isSelected = tabController.index == index;
+    return GestureDetector(
+      onTap: () {
+        tabController.animateTo(index);
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppColors.primaryBlue : Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(
+            color: isSelected ? AppColors.primaryBlue : Colors.grey[300]!,
+          ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.primaryBlue.withOpacity(0.3),
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  )
+                ]
+              : [],
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            color: isSelected ? Colors.white : Colors.grey[600],
+            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            fontSize: 14,
+          ),
+        ),
       ),
     );
   }

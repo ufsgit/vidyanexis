@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
@@ -45,9 +46,9 @@ class _HomePageMobileState extends State<HomePageMobile> {
       String userId = preferences.getString('userId') ?? "0";
       if (!kIsWeb && userId.isNotEmpty) {
         try {
-          print("Subscribing to topic: Trackbox-$userId");
-          await FirebaseMessaging.instance
-              .subscribeToTopic('Trackbox-$userId');
+          final String topicName = '${AppStyles.name()}-$userId';
+          print("Subscribing to topic: $topicName");
+          await FirebaseMessaging.instance.subscribeToTopic(topicName);
         } catch (e) {
           print(e);
         }
