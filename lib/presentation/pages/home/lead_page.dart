@@ -1094,31 +1094,33 @@ class _LeadsPageState extends State<LeadPage> {
                                                         ),
                                                       ),
                                                       _HoverMenuAnchor(
-                                                        builder: (context,
-                                                            controller, child) {
-                                                          return IconButton(
-                                                            onPressed: () {
-                                                              if (controller
-                                                                  .isOpen) {
-                                                                controller
-                                                                    .close();
-                                                              } else {
-                                                                controller
-                                                                    .open();
-                                                              }
-                                                            },
-                                                            icon: const Icon(
-                                                                Icons
-                                                                    .keyboard_arrow_down,
-                                                                size: 20,
-                                                                color: Colors
-                                                                    .grey),
-                                                            padding:
-                                                                EdgeInsets.zero,
-                                                          );
-                                                        },
+                                                         builder: (context,
+                                                             controller,
+                                                             onHoverNotify,
+                                                             child) {
+                                                           return IconButton(
+                                                             onPressed: () {
+                                                               if (controller
+                                                                   .isOpen) {
+                                                                 controller
+                                                                     .close();
+                                                               } else {
+                                                                 controller
+                                                                     .open();
+                                                               }
+                                                             },
+                                                             icon: const Icon(
+                                                                 Icons
+                                                                     .keyboard_arrow_down,
+                                                                 size: 20,
+                                                                 color: Colors
+                                                                     .grey),
+                                                             padding:
+                                                                 EdgeInsets.zero,
+                                                           );
+                                                         },
                                                         menuChildren: [
-                                                          MenuItemButton(
+                                                          (onHover) => MenuItemButton(
                                                             onPressed: () =>
                                                                 _handleLeadAction(
                                                                     'edit',
@@ -1136,7 +1138,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ],
                                                             ),
                                                           ),
-                                                          MenuItemButton(
+                                                          (onHover) => MenuItemButton(
                                                             onPressed: () =>
                                                                 _handleLeadAction(
                                                                     'convert',
@@ -1153,7 +1155,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ],
                                                             ),
                                                           ),
-                                                          MenuItemButton(
+                                                          (onHover) => MenuItemButton(
                                                             onPressed: () =>
                                                                 _handleLeadAction(
                                                                     'quotation',
@@ -1173,7 +1175,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ],
                                                             ),
                                                           ),
-                                                          MenuItemButton(
+                                                          (onHover) => MenuItemButton(
                                                             onPressed: () =>
                                                                 _handleLeadAction(
                                                                     'document',
@@ -1194,9 +1196,13 @@ class _LeadsPageState extends State<LeadPage> {
                                                             ),
                                                           ),
                                                            // Multi-level Create Task menu
-                                                           MultiLevelHoverMenu(
+                                                           (onHover) => MultiLevelHoverMenu(
                                                              isSubMenu: false,
                                                              title: 'Create Task',
+                                                             onHoverChange: (hovering) {
+                                                               // This is the logic for _HoverMenuAnchor that we will expose
+                                                               onHover(hovering);
+                                                             },
                                                              leadingIcon: const Icon(
                                                                  Icons.add_task,
                                                                  size: 18,
@@ -2245,8 +2251,9 @@ class _LeadsPageState extends State<LeadPage> {
 }
 
 class _HoverMenuAnchor extends StatefulWidget {
-  final Widget Function(BuildContext, MenuController, Widget?) builder;
-  final List<Widget> menuChildren;
+  final Widget Function(
+      BuildContext, MenuController, void Function(bool), Widget?) builder;
+  final List<Widget Function(void Function(bool))> menuChildren;
 
   const _HoverMenuAnchor({
     required this.builder,
@@ -2264,15 +2271,15 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
   void _updateHover(bool isIn) {
     _hoverTimer?.cancel();
     if (isIn) {
-      // Small 50ms delay before opening to ensure it's intentional
-      _hoverTimer = Timer(const Duration(milliseconds: 50), () {
+      // Small 150ms delay before opening to ensure it's intention
+      _hoverTimer = Timer(const Duration(milliseconds: 150), () {
         if (mounted && !_controller.isOpen) {
           _controller.open();
         }
       });
     } else {
-      // 1000ms grace period to move pointer between menu levels
-      _hoverTimer = Timer(const Duration(milliseconds: 1000), () {
+      // 200ms grace period to move pointer between menu levels
+      _hoverTimer = Timer(const Duration(milliseconds: 200), () {
         if (mounted && _controller.isOpen) {
           _controller.close();
         }
@@ -2296,8 +2303,23 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
         // Adjust vertically to overlap slightly for smoother transition
         alignmentOffset: const Offset(0, -5),
         builder: (context, controller, child) =>
-            widget.builder(context, controller, child),
-        menuChildren: widget.menuChildren.map((child) {
+            widget.builder(context, controller, _updateHover, child),
+        menuChildren: widget.menuChildren.map((builder) {
+          final child = builder(_updateHover);
+          // Check if the child is our MultiLevelHoverMenu to pass the recursive callback
+          if (child is MultiLevelHoverMenu) {
+            return MultiLevelHoverMenu(
+              title: child.title,
+              leadingIcon: child.leadingIcon,
+              onTap: child.onTap,
+              isSubMenu: child.isSubMenu,
+              hoverColor: child.hoverColor,
+              onHoverChange: (hovering) {
+                _updateHover(hovering);
+              },
+              children: child.children,
+            );
+          }
           return MouseRegion(
             onEnter: (_) => _updateHover(true),
             onExit: (_) => _updateHover(false),

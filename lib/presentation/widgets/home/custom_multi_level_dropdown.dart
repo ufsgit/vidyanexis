@@ -36,13 +36,13 @@ class _MultiLevelHoverMenuState extends State<MultiLevelHoverMenu> {
     widget.onHoverChange?.call(isHovering);
 
     if (isHovering) {
-      _hoverTimer = Timer(const Duration(milliseconds: 1000), () {
+      _hoverTimer = Timer(const Duration(milliseconds: 150), () {
         if (mounted && !_controller.isOpen) {
           _controller.open();
         }
       });
     } else {
-      _hoverTimer = Timer(const Duration(milliseconds: 1000), () {
+      _hoverTimer = Timer(const Duration(milliseconds: 200), () {
         if (mounted && _controller.isOpen) {
           _controller.close();
         }
@@ -65,7 +65,8 @@ class _MultiLevelHoverMenuState extends State<MultiLevelHoverMenu> {
         controller: _controller,
         // Position the submenu to the right of the current item with a slight overlap
         // By default submenus open at the top-right of the item in Flutter's MenuAnchor
-        alignmentOffset: widget.isSubMenu ? const Offset(-5, 0) : Offset.zero,
+        // Position the submenu to the right of the current item with a slight overlap (Hover Bridge)
+        alignmentOffset: widget.isSubMenu ? const Offset(-2, 0) : Offset.zero,
         menuChildren: widget.children.map((child) {
           // If the child is also a MultiLevelHoverMenu, pass our hover handler
           if (child is MultiLevelHoverMenu) {
