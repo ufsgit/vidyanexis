@@ -1,8 +1,5 @@
 // Check line 1776
 import 'dart:async';
-import 'dart:io';
-
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,7 +10,6 @@ import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart'
     as customer_add_task;
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
-import 'package:vidyanexis/presentation/widgets/home/add_task_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
@@ -1264,7 +1260,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                           onTap: () {
                                                             context.push(
                                                                 '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                                                                                    },
+                                                          },
                                                           child: Text(
                                                             task.customerName ??
                                                                 'Unknown',
@@ -1304,14 +1300,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 context,
                                                                 listen: false);
                                                         if (value == 'edit') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (_) =>
-                                                                AddTaskWidget(
-                                                              taskId: task
-                                                                  .taskMasterId,
-                                                            ),
-                                                          );
+                                                          context.push(
+                                                              '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                         } else if (value ==
                                                             'quotation') {
                                                           customerDetailsProvider
@@ -1398,7 +1388,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         _buildPopupMenuItem(
                                                             'edit',
                                                             Icons.edit,
-                                                            'Edit Task',
+                                                            'Edit profile',
                                                             Colors.blue),
                                                         _buildPopupMenuItem(
                                                             'quotation',
@@ -1492,7 +1482,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         horizontal: 8.0),
                                                 data: Text(
                                                   task.taskDate
-                                                          .toDayMonthYearFormat(),
+                                                      .toDayMonthYearFormat(),
                                                   overflow:
                                                       TextOverflow.ellipsis,
                                                   maxLines: 1,
@@ -1517,8 +1507,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     reportsProvider
                                                         .taskTypeModel
                                                         .clear();
-                                                    if (task.customerName
-                                                            .isEmpty) {
+                                                    if (task
+                                                        .customerName.isEmpty) {
                                                       updateStatusDialogWithoutTask(
                                                               task)
                                                           .then((value) {
