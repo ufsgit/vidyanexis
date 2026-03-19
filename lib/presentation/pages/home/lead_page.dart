@@ -21,7 +21,11 @@ import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
-import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
+import 'package:vidyanexis/controller/models/add_task_model.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
+import 'package:flutter/foundation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
@@ -140,6 +144,7 @@ class _LeadsPageState extends State<LeadPage> {
 
       provider.getEnquiryFor(context);
       provider.getUserDetails(context);
+      provider.getTaskType(context);
       provider.getFollowUpStatus(context, "1");
       leadProvider.setSearchCriteria(
         '',
@@ -1188,26 +1193,59 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ],
                                                             ),
                                                           ),
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'task',
-                                                                    lead),
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .add_task,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .teal),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Create Task'),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                           // Multi-level Create Task menu
+                                                           MultiLevelHoverMenu(
+                                                             isSubMenu: false,
+                                                             title: 'Create Task',
+                                                             leadingIcon: const Icon(
+                                                                 Icons.add_task,
+                                                                 size: 18,
+                                                                 color: Colors.teal),
+                                                             children: provider
+                                                                 .taskType
+                                                                 .map((taskType) {
+                                                               // Find users for this task type based on department
+                                                               final users = provider
+                                                                   .searchUserDetails
+                                                                   .where((user) {
+                                                                 return user
+                                                                         .departmentId
+                                                                         .toString() ==
+                                                                     taskType
+                                                                         .departmentIds
+                                                                         .toString();
+                                                               }).toList();
+
+                                                               if (users.isEmpty) {
+                                                                 return MenuItemButton(
+                                                                   onPressed:
+                                                                       null,
+                                                                   child: Text(
+                                                                       taskType
+                                                                           .taskTypeName),
+                                                                 );
+                                                               }
+
+                                                               return MultiLevelHoverMenu(
+                                                                 title: taskType
+                                                                     .taskTypeName,
+                                                                 children: users
+                                                                     .map((user) {
+                                                                   return MenuItemButton(
+                                                                     onPressed:
+                                                                         () {
+                                                                       _openTaskDialog(
+                                                                           lead,
+                                                                           taskType,
+                                                                           user);
+                                                                     },
+                                                                     child: Text(user
+                                                                         .userDetailsName),
+                                                                   );
+                                                                 }).toList(),
+                                                               );
+                                                             }).toList(),
+                                                           ),
                                                         ],
                                                       ),
                                                     ],
@@ -2123,6 +2161,7 @@ class _LeadsPageState extends State<LeadPage> {
           Provider.of<LeadDetailsProvider>(context, listen: false);
       await leadDetailsProvider.fetchLeadDetails(
           lead.customerId.toString(), context);
+      if (!mounted) return;
 
       final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
       leadsProvider.setCutomerId(int.tryParse(lead.customerId.toString()) ?? 0);
@@ -2136,6 +2175,7 @@ class _LeadsPageState extends State<LeadPage> {
 
         dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
         await leadsProvider.getLeadDropdowns(context);
+        if (!mounted) return;
       }
       Navigator.pop(context); // Close loading dialog
 
@@ -2167,24 +2207,39 @@ class _LeadsPageState extends State<LeadPage> {
           customerId: lead.customerId.toString(),
         ),
       );
-    } else if (value == 'task') {
-      final customerDetailsProvider =
-          Provider.of<CustomerDetailsProvider>(context, listen: false);
-      customerDetailsProvider.customerId = lead.customerId.toString();
-      customerDetailsProvider.clearTaskDetails();
-      if (AppStyles.isWebScreen(context)) {
-        showDialog(
-          barrierDismissible: false,
-          context: context,
-          builder: (_) => TaskCreationWidget(isEdit: false, taskId: '0'),
-        );
-      } else {
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                builder: (context) =>
-                    AddTaskMobile(isEdit: false, taskId: '0')));
-      }
+    }
+  }
+
+  void _openTaskDialog(
+      SearchLeadModel lead, TaskTypeModel taskType, SearchUserDetails user) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    customerDetailsProvider.customerId = lead.customerId.toString();
+    customerDetailsProvider.clearTaskDetails();
+
+    // Pre-populate data
+    customerDetailsProvider.updateTaskType(
+        taskType.taskTypeId, taskType.taskTypeName);
+    final userInTask = UserInTaskModel(
+        userDetailsId: user.userDetailsId,
+        userDetailsName: user.userDetailsName);
+    customerDetailsProvider.addAssignedWorker(userInTask);
+
+    // Open Dialog
+    if (AppStyles.isWebScreen(context)) {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: TaskCreationWidget(isEdit: false, taskId: '0'),
+        ),
+      );
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
     }
   }
 }
@@ -2216,8 +2271,8 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
         }
       });
     } else {
-      // 200ms grace period to move pointer from button to menu
-      _hoverTimer = Timer(const Duration(milliseconds: 200), () {
+      // 1000ms grace period to move pointer between menu levels
+      _hoverTimer = Timer(const Duration(milliseconds: 1000), () {
         if (mounted && _controller.isOpen) {
           _controller.close();
         }

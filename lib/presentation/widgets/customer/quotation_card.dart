@@ -14,7 +14,7 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/pages/home/edit_quotation_screen.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
-import 'package:vidyanexis/presentation/widgets/customer/quotation_details_widget.dart';
+
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
@@ -88,15 +88,14 @@ class QuotationCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 16.0),
       child: InkWell(
         onTap: () {
-          showDialog(
-            context: context,
-            barrierDismissible: false,
-            builder: (BuildContext context) {
-              return QuotationDetailsWidget(
-                serviceId: taskId,
-                customerId: customerId,
-              );
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (BuildContext context) {
+                return EditQuotationScreen(
+                    quotationId: taskId, customerId: customerId);
+              },
+            ),
           );
         },
         borderRadius: BorderRadius.circular(16),

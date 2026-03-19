@@ -20,7 +20,6 @@ import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.da
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/quotation_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';

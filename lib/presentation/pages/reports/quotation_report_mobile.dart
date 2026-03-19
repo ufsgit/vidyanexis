@@ -474,14 +474,14 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                                     ],
                                   ),
                                   const SizedBox(
-                                    height: 12,
+                                    height: 10,
                                   ),
                                   Row(
                                     children: [
                                       Text(
                                         'Total amount - ${quotation.totalAmount}',
                                         style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
+                                            fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             color: AppColors.textBlack),
                                       ),
