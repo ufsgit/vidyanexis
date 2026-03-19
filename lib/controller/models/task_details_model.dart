@@ -22,6 +22,7 @@ class TaskDetails {
   final String customerName;
   final String toUserName;
   final String createdByName;
+  final String enquiryForName;
   final List<TaskNote> taskNotes;
   final List<TaskDocument> taskDocuments;
   final List<TaskUser> taskUser;
@@ -49,6 +50,7 @@ class TaskDetails {
     required this.deleteStatus,
     required this.customerName,
     required this.toUserName,
+    required this.enquiryForName,
     required this.taskNotes,
     required this.taskDocuments,
     required this.taskUser,
@@ -79,6 +81,7 @@ class TaskDetails {
       deleteStatus: json['DeleteStatus'] ?? 0,
       customerName: json['Customer_Name'] ?? '',
       toUserName: json['To_User_Name'] ?? '',
+      enquiryForName: json['Enquiry_For_Name'] ?? '',
 
       // Null check for task_notes and task_document
       taskNotes: (json['task_notes'] as List<dynamic>?)

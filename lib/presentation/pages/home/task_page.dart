@@ -205,6 +205,7 @@ class _tasksPageReportState extends State<TaskPage> {
                   headers: [
                     'Customer',
                     'Task',
+                    'Enquiry for',
                     'Assigned To',
                     'Description',
                     'Date',
@@ -214,6 +215,7 @@ class _tasksPageReportState extends State<TaskPage> {
                     return {
                       'Customer': task.customerName,
                       'Task': task.taskTypeName,
+                      'Enquiry for': task.enquiryForName,
                       'Assigned To': task.toUserName,
                       'Description': task.description,
                       'Date': task.taskDate.isNotEmpty
@@ -506,6 +508,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         headers: [
                                                           'Customer',
                                                           'Task',
+                                                          'Enquiry for',
                                                           'Assigned To',
                                                           'Description',
                                                           'Date',
@@ -519,6 +522,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 .customerName,
                                                             'Task': task
                                                                 .taskTypeName,
+                                                            'Enquiry for': task
+                                                                .enquiryForName,
                                                             'Assigned To':
                                                                 task.toUserName,
                                                             'Description': task
@@ -1047,6 +1052,13 @@ class _tasksPageReportState extends State<TaskPage> {
                                     color: Colors.white),
                                 TableWidget(
                                     flex: 2,
+                                    title: 'Enquiry for',
+                                    fontSize: 12,
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 6.0, horizontal: 8.0),
+                                    color: Colors.white),
+                                TableWidget(
+                                    flex: 2,
                                     title: 'Staff',
                                     fontSize: 12,
                                     padding: EdgeInsets.symmetric(
@@ -1421,6 +1433,29 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       task.taskTypeName ?? '',
                                                   child: Text(
                                                     task.taskTypeName ?? '',
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                      color: Color(0xFF334155),
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                flex: 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 8.0),
+                                                data: Tooltip(
+                                                  message:
+                                                      task.enquiryForName ?? '',
+                                                  child: Text(
+                                                    task.enquiryForName ?? '',
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     maxLines: 1,
