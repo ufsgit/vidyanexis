@@ -56,6 +56,7 @@ import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/customer_profie_widget.dart';
+import 'package:vidyanexis/presentation/widgets/customer/forms_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/utils/file_share_function.dart';
@@ -157,6 +158,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
+      const Tab(text: "Forms"),
       if (settingsprovider.menuIsViewMap[13] == 1)
         const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[14] == 1 &&
@@ -3079,6 +3081,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   ],
                                                 ),
                                               ),
+                                            FormsTabWidget(
+                                                customerId: widget.customerId),
 
                                             // Task Overview Tab
                                             if (settingsprovider
