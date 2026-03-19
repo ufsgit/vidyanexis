@@ -368,30 +368,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             children: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                _buildFieldLabel('Next FollowUp Date'),
-                                if (widget.task.nextFollowupDate != null &&
-                                    widget.task.nextFollowupDate!.isNotEmpty)
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        bottom: 8.0, left: 16.0),
-                                    child: Text(
-                                      (() {
-                                        try {
-                                          DateTime dt = DateTime.parse(
-                                              widget.task.nextFollowupDate!);
-                                          return DateFormat('dd MMM yyyy')
-                                              .format(dt);
-                                        } catch (e) {
-                                          return widget.task.nextFollowupDate!;
-                                        }
-                                      })(),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
+                                 _buildFieldLabel('Next FollowUp Date'),
 
                                 _buildInputField(
                                   controller:
