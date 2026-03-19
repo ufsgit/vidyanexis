@@ -5,6 +5,8 @@ import 'package:vidyanexis/controller/models/lead_conversion_model.dart';
 import 'package:vidyanexis/controller/models/lead_progress_model.dart';
 import 'package:vidyanexis/controller/models/task_allocation_model.dart';
 import 'package:vidyanexis/presentation/pages/dashboard/chart.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/lead_enquiry_for_report_card.dart';
+import 'package:vidyanexis/presentation/pages/dashboard/weekly_report_card.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
 class LeadsOverViewTab extends StatefulWidget {
@@ -105,8 +107,13 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
                         children: [
                           Expanded(
                             child: Text(
-                              item.title.replaceAll('_', ' ').split(' ').map((w) => w.isNotEmpty ?
-                                  w[0].toUpperCase() + w.substring(1) : w).join(' '),
+                              item.title
+                                  .replaceAll('_', ' ')
+                                  .split(' ')
+                                  .map((w) => w.isNotEmpty
+                                      ? w[0].toUpperCase() + w.substring(1)
+                                      : w)
+                                  .join(' '),
                               style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
