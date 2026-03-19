@@ -60,13 +60,39 @@ class DashboardProvider extends ChangeNotifier {
   int _selectedUser = 0;
   int get selectedUser => _selectedUser;
 
-  // Pagination for Task Summary
-  int _taskStartLimit = 1;
-  int _taskEndLimit = 20;
-  int _taskTotalCount = 0;
-  int get taskStartLimit => _taskStartLimit;
-  int get taskEndLimit => _taskEndLimit;
-  int get taskTotalCount => _taskTotalCount;
+  // Pagination for Task Summary (Frontend only)
+  int _taskCurrentPage = 0;
+  final int _taskItemsPerPage = 20;
+  int get taskCurrentPage => _taskCurrentPage;
+  int get taskItemsPerPage => _taskItemsPerPage;
+
+  // Total items = actual list length (not the backend marker)
+  int get taskTotalCount => _taskInfoModel.length;
+
+  int get taskStartLimit {
+    if (_taskInfoModel.isEmpty) return 0;
+    return (_taskCurrentPage * _taskItemsPerPage) + 1;
+  }
+
+  int get taskEndLimit {
+    int end = (_taskCurrentPage + 1) * _taskItemsPerPage;
+    return end > _taskInfoModel.length ? _taskInfoModel.length : end;
+  }
+
+  List<TaskInfoDashboardModel> get pagedTaskInfoModel {
+    if (_taskInfoModel.isEmpty) return [];
+    int start = _taskCurrentPage * _taskItemsPerPage;
+    int end = start + _taskItemsPerPage;
+    if (start >= _taskInfoModel.length) {
+      // Page out of range, reset to last valid page
+      _taskCurrentPage =
+          ((_taskInfoModel.length - 1) / _taskItemsPerPage).floor();
+      start = _taskCurrentPage * _taskItemsPerPage;
+      end = start + _taskItemsPerPage;
+    }
+    return _taskInfoModel.sublist(
+        start, end > _taskInfoModel.length ? _taskInfoModel.length : end);
+  }
 
   // Date filter properties
   int? _selectedDateFilterIndex;
@@ -118,11 +144,13 @@ class DashboardProvider extends ChangeNotifier {
 
   Future<void> getTaskInfoDashBoard(BuildContext context) async {
     try {
+      isDashBoardLoading = true;
+      notifyListeners();
       final response = await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.getTaskInfoDashBoard,
           bodyData: {
-            "Page_Index1": _taskStartLimit,
-            "Page_Index2": _taskEndLimit,
+            "Page_Index1": 1,
+            "Page_Index2": 1000,
           });
       if (response.statusCode == 200) {
         final data = response.data;
@@ -133,12 +161,14 @@ class DashboardProvider extends ChangeNotifier {
               .toList();
 
           if (tempData.isNotEmpty) {
-            _taskTotalCount = tempData.last.customerId ?? 0;
+            // The last item is a backend total-count marker — remove it.
+            // We use the local list length for pagination, so no need to store it.
             tempData.removeLast();
             _taskInfoModel = tempData;
+            _taskCurrentPage = 0; // Reset to first page on fresh load
           } else {
             _taskInfoModel = [];
-            _taskTotalCount = 0;
+            _taskCurrentPage = 0;
           }
           notifyListeners();
         }
@@ -156,34 +186,24 @@ class DashboardProvider extends ChangeNotifier {
           const SnackBar(content: Text('An error occurred')),
         );
       });
+    } finally {
+      isDashBoardLoading = false;
+      notifyListeners();
     }
   }
 
   Future<void> fetchNextPageTasks(BuildContext context) async {
-    if (_taskEndLimit >= _taskTotalCount) return;
-
-    _taskStartLimit = _taskEndLimit + 1;
-    int limitPerPage = 20;
-    _taskEndLimit = _taskStartLimit + limitPerPage - 1;
-
-    if (_taskEndLimit > _taskTotalCount) {
-      _taskEndLimit = _taskTotalCount;
+    if ((_taskCurrentPage + 1) * _taskItemsPerPage < _taskInfoModel.length) {
+      _taskCurrentPage++;
+      notifyListeners();
     }
-
-    await getTaskInfoDashBoard(context);
-    // Removed redundant notifyListeners() as getTaskInfoDashBoard calls it
   }
 
   Future<void> fetchPreviousPageTasks(BuildContext context) async {
-    if (_taskStartLimit <= 1) return;
-
-    int limitPerPage = 20;
-    _taskStartLimit = _taskStartLimit - limitPerPage;
-    if (_taskStartLimit < 1) _taskStartLimit = 1;
-    _taskEndLimit = _taskStartLimit + limitPerPage - 1;
-
-    await getTaskInfoDashBoard(context);
-    // Removed redundant notifyListeners()
+    if (_taskCurrentPage > 0) {
+      _taskCurrentPage--;
+      notifyListeners();
+    }
   }
 
   void setCommonDateFilter(String? filterValue) {

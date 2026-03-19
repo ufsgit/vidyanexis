@@ -839,8 +839,8 @@ class LeadReportProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSearchLeadReports(String search, String fromDate, String toDate,
-      String status, BuildContext context) async {
+  Future<void> getSearchLeadReports(String search, String fromDate,
+      String toDate, String status, BuildContext context) async {
     try {
       if (!isLoadingMore) {
         _isLoading = true;
@@ -986,7 +986,9 @@ class LeadReportProvider extends ChangeNotifier {
         if (tpCount > 0) {
           _totalCount = tpCount;
         } else {
-          _totalCount = _tempData.last.tp > 0 ? _tempData.last.tp : _tempData.last.customerId;
+          _totalCount = _tempData.last.tp > 0
+              ? _tempData.last.tp
+              : _tempData.last.customerId;
         }
 
         _tempData.removeLast();
@@ -1813,7 +1815,7 @@ class LeadReportProvider extends ChangeNotifier {
 
   void removeStatus() {
     _selectedStatus = null;
-    // _selectedUser = null;
+    _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
     notifyListeners();
@@ -1850,8 +1852,8 @@ class LeadReportProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getSearchLeadReportsOld(String search, String fromDate, String toDate,
-      String status, BuildContext context) async {
+  Future<void> getSearchLeadReportsOld(String search, String fromDate,
+      String toDate, String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
       print('Start$_startLimit');

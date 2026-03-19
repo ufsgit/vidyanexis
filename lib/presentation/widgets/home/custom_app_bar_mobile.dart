@@ -1,12 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutter_svg/svg.dart';
-import 'package:vidyanexis/controller/notification_provider.dart';
-import 'package:vidyanexis/presentation/pages/home/notifications_page.dart';
+
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
@@ -90,20 +85,6 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
-  String _userName = "";
-
-  @override
-  void initState() {
-    super.initState();
-    _loadUserName();
-  }
-
-  Future<void> _loadUserName() async {
-    final prefs = await SharedPreferences.getInstance();
-    setState(() {
-      _userName = prefs.getString('userName') ?? "";
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -149,49 +130,14 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   Widget _defaultTitle() {
-    final settingsProvider = Provider.of<SettingsProvider>(context);
-    final displayLogo = settingsProvider.displayLogo;
-
-    return Row(
-      children: [
-        if (widget.showLogo)
-          CircleAvatar(
-            radius: 18,
-            backgroundColor: Colors.transparent,
-            child: ClipOval(
-              child: displayLogo.startsWith('http')
-                  ? Image.network(
-                      displayLogo,
-                      height: 36,
-                      width: 36,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          Image.asset(AppStyles.logo()),
-                    )
-                  : Image.asset(
-                      displayLogo,
-                      height: 36,
-                      width: 36,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) =>
-                          const SizedBox.shrink(),
-                    ),
-            ),
+    return Text(
+      widget.title!,
+      overflow: TextOverflow.ellipsis,
+      style: widget.titleStyle ??
+          const TextStyle(
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
           ),
-        if (widget.showLogo) const SizedBox(width: 8),
-        Expanded(
-          child: Text(
-            widget.title!,
-            overflow: TextOverflow.ellipsis,
-            style: widget.titleStyle ??
-                const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-        ),
-
-      ],
     );
   }
 
@@ -247,29 +193,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
         padding: widget.actionsPadding,
         child: Row(
           children: [
-            if (widget.showUserName && _userName.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 80),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        _userName,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.black87,
-                        ),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
             if (widget.showSearch)
               IconButton(
                 icon: Icon(
@@ -288,68 +211,6 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 onPressed: onExcelTap,
               ),
-            Consumer<NotificationProvider>(
-              builder: (context, notificationProvider, child) {
-                final count = notificationProvider.totalCount;
-
-                return Stack(
-                  children: [
-                    IconButton(
-                      icon: const Icon(
-                        Icons.notifications_active_outlined,
-                        size: 28,
-                      ),
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return const NotificationsPage();
-                          },
-                        ));
-                      },
-                    ),
-                    if (count > 0)
-                      Positioned(
-                        right: 4,
-                        top: 4,
-                        child: Container(
-                          padding: const EdgeInsets.all(2),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          constraints: const BoxConstraints(
-                            minWidth: 16,
-                            minHeight: 16,
-                          ),
-                          child: Text(
-                            count > 99 ? '99+' : count.toString(),
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ),
-                  ],
-                );
-              },
-            ),
-            if (widget.showFilterIcon) ...[
-              const SizedBox(width: 8),
-              InkWell(
-                onTap: widget.onFilterTap,
-                child: SvgPicture.asset(
-                  "assets/images/filter_icon_svg.svg",
-                  width: widget.filterIconSize,
-                  height: widget.filterIconSize,
-                  colorFilter: widget.iconColor != null
-                      ? ColorFilter.mode(widget.iconColor!, BlendMode.srcIn)
-                      : null,
-                ),
-              ),
-            ],
           ],
         ),
       ),

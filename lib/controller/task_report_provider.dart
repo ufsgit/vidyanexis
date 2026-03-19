@@ -252,10 +252,18 @@ class TaskReportProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null) {
-          if (data is List && data.isEmpty) return true;
+          if (data is List && data.isEmpty) {
+            if (!isLoadMore) Loader.stopLoader(context);
+            notifyListeners();
+            return true;
+          }
 
           final dataMap = data is Map ? data['data'] ?? data : data;
-          if (dataMap is List && dataMap.isEmpty) return true;
+          if (dataMap is List && dataMap.isEmpty) {
+            if (!isLoadMore) Loader.stopLoader(context);
+            notifyListeners();
+            return true;
+          }
 
           if (dataMap.isNotEmpty) {
             print("================ DEBUG TASK JSON ================");

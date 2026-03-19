@@ -405,6 +405,11 @@ class TaskPageProvider extends ChangeNotifier {
           final metaData = data['metadata'] ?? {};
 
           // Convert new data to TaskReportModel list
+          if (newData.isNotEmpty) {
+            print("================ DEBUG TASK JSON (searchTaskByCustomer) ================");
+            print(newData[0]);
+            print("=========================================================================");
+          }
           final newTasks = (newData as List<dynamic>)
               .map((item) => TaskReportModel.fromJson(item))
               .toList();

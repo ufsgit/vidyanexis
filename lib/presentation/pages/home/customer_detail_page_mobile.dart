@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -25,7 +24,6 @@ import 'package:vidyanexis/presentation/widgets/customer/documents_list_page_pho
 import 'package:vidyanexis/presentation/widgets/customer/periodic_services_mobile.dart';
 
 import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
-
 
 import 'package:vidyanexis/presentation/widgets/customer/reciept_list_page_mobile.dart';
 
@@ -228,13 +226,12 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                           size: 22, color: AppColors.primaryBlue),
                       tooltip: 'Edit',
                       onPressed: () async {
-                        final leadsProvider = Provider.of<LeadsProvider>(
+                        final leadsProvider =
+                            Provider.of<LeadsProvider>(context, listen: false);
+                        await leadsProvider.getLeadDropdowns(context);
+                        final dropDownProvider = Provider.of<DropDownProvider>(
                             context,
                             listen: false);
-                        await leadsProvider.getLeadDropdowns(context);
-                        final dropDownProvider =
-                            Provider.of<DropDownProvider>(context,
-                                listen: false);
                         if (leadDetailsProvider.leadDetails != null &&
                             leadDetailsProvider.leadDetails!.isNotEmpty) {
                           leadsProvider.enquirySourceController.text =
@@ -304,8 +301,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                                 context: context,
                                 builder: (BuildContext context) {
                                   return AlertDialog(
-                                    title:
-                                        const Text('Remove Registration'),
+                                    title: const Text('Remove Registration'),
                                     content: const Text(
                                         'Are you sure you want to Remove Registration '),
                                     actions: <Widget>[
@@ -316,13 +312,12 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                                         },
                                       ),
                                       TextButton(
-                                        child: const Text(
-                                            'Remove Registration'),
+                                        child:
+                                            const Text('Remove Registration'),
                                         onPressed: () async {
                                           await customerDetailsProvider
                                               .removeRegister(
-                                                  widget.customerId
-                                                      .toString(),
+                                                  widget.customerId.toString(),
                                                   context);
                                           Navigator.pop(context);
                                         },
@@ -346,10 +341,10 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                 controller: _tabController,
                 dividerColor: AppColors.grey,
                 tabAlignment: TabAlignment.start,
-                padding: const EdgeInsets.symmetric(horizontal: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 4),
                 isScrollable: true,
                 dividerHeight: 2,
-                indicatorSize: TabBarIndicatorSize.tab,
+                indicatorSize: TabBarIndicatorSize.label,
                 indicatorColor: AppColors.primaryBlue,
                 labelColor: AppColors.primaryBlue,
                 unselectedLabelColor: AppColors.textGrey4,

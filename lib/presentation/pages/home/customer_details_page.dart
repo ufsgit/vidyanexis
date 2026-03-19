@@ -131,6 +131,21 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
   bool _isControllerInitialized = false;
   Key _checklistKey = UniqueKey();
 
+  bool _canScrollLeft = false;
+  bool _canScrollRight = false;
+  final GlobalKey _firstTabKey = GlobalKey();
+
+  void _scrollTabs(double delta) {
+    if (_firstTabKey.currentContext != null) {
+      final scrollable = Scrollable.of(_firstTabKey.currentContext!);
+      scrollable.position.animateTo(
+        scrollable.position.pixels + delta,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -138,7 +153,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
     final sideprovider = Provider.of<SidebarProvider>(context);
 
     final newTabs = [
-      const Tab(text: "Info"),
+      Tab(key: _firstTabKey, text: "Info"),
       if (settingsprovider.menuIsViewMap[13] == 1) const Tab(text: "Tasks"),
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
@@ -553,26 +568,59 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       color: Colors.red),
                                 ),
                               const SizedBox(width: 20),
+                              if (_canScrollLeft)
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () => _scrollTabs(-150),
+                                  icon: const Icon(Icons.arrow_back_ios_new,
+                                      size: 16),
+                                ),
                               Expanded(
-                                child: TabBar(
-                                  controller: _tabController,
-                                  labelColor: AppColors.primaryBlue,
-                                  unselectedLabelColor: Colors.black54,
-                                  indicatorColor: AppColors.primaryBlue,
-                                  tabAlignment: TabAlignment.start,
-                                  isScrollable: true,
-                                  dividerColor: Colors.transparent,
-                                  labelPadding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  labelStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13),
-                                  unselectedLabelStyle: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 13),
-                                  tabs: _tabs,
+                                child: NotificationListener<ScrollNotification>(
+                                  onNotification: (notification) {
+                                    if (notification.metrics.maxScrollExtent >
+                                        0) {
+                                      setState(() {
+                                        _canScrollLeft =
+                                            notification.metrics.pixels > 5;
+                                        _canScrollRight =
+                                            notification.metrics.pixels <
+                                                notification.metrics
+                                                        .maxScrollExtent -
+                                                    5;
+                                      });
+                                    }
+                                    return false;
+                                  },
+                                  child: TabBar(
+                                    controller: _tabController,
+                                    labelColor: AppColors.primaryBlue,
+                                    unselectedLabelColor: Colors.black54,
+                                    indicatorColor: AppColors.primaryBlue,
+                                    tabAlignment: TabAlignment.start,
+                                    isScrollable: true,
+                                    dividerColor: Colors.transparent,
+                                    labelPadding: const EdgeInsets.symmetric(
+                                        horizontal: 10),
+                                    labelStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13),
+                                    unselectedLabelStyle: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 13),
+                                    tabs: _tabs,
+                                  ),
                                 ),
                               ),
+                              if (_canScrollRight)
+                                IconButton(
+                                  padding: EdgeInsets.zero,
+                                  constraints: const BoxConstraints(),
+                                  onPressed: () => _scrollTabs(150),
+                                  icon: const Icon(Icons.arrow_forward_ios,
+                                      size: 16),
+                                ),
                               if (settingsprovider.menuIsSaveMap[13] == 1 &&
                                   _isControllerInitialized &&
                                   _isControllerInitialized &&

@@ -165,8 +165,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       CustomTextField(
                         readOnly: false,
                         height: 54,
-                        controller: customerDetailsProvider
-                            .qproductnameController,
+                        controller:
+                            customerDetailsProvider.qproductnameController,
                         hintText: 'Product name*',
                         labelText: '',
                       ),
@@ -177,8 +177,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                     null &&
                                 [1, 2, 3].contains(customerDetailsProvider
                                     .selectedQuotationStatus))
-                            ? customerDetailsProvider
-                                .selectedQuotationStatus
+                            ? customerDetailsProvider.selectedQuotationStatus
                             : 1,
                         items: const [
                           DropdownMenuItem<int>(
@@ -217,8 +216,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         },
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 14, // Custom font size
-                          fontWeight:
-                              FontWeight.w600, // Custom font weight
+                          fontWeight: FontWeight.w600, // Custom font weight
                           color: AppColors
                               .textBlack, // Custom color for selected item
                         ),
@@ -235,8 +233,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                                 TextSpan(
                                   text: ' *', // The asterisk part
                                   style: TextStyle(
-                                      color: Colors
-                                          .red), // Red color for asterisk
+                                      color:
+                                          Colors.red), // Red color for asterisk
                                 ),
                               ],
                             ),
@@ -247,8 +245,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             fontSize:
                                 16, // Slightly smaller size for floating label
                             fontWeight: FontWeight.w500,
-                            color: AppColors
-                                .textGrey1, // Color for floating label
+                            color:
+                                AppColors.textGrey1, // Color for floating label
                           ),
                           labelStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
@@ -256,24 +254,24 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             color: AppColors.textGrey3,
                           ),
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                10), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(10), // Rounded corners
                             borderSide: BorderSide(
                               color: AppColors.textGrey2, // Border color
                               width: 1, // Border width
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                10), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(10), // Rounded corners
                             borderSide: BorderSide(
                               color: AppColors.textGrey2, // Border color
                               width: 1, // Border width
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(
-                                10), // Rounded corners
+                            borderRadius:
+                                BorderRadius.circular(10), // Rounded corners
                             borderSide: BorderSide(
                               color: AppColors.textGrey2, // Border color
                               width: 1, // Border width
@@ -1206,11 +1204,12 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   }
 
                   try {
-                    final responseData = await customerDetailsProvider.saveQuotation(
-                        widget.quotationId,
-                        widget.customerId,
-                        context,
-                        widget.isEdit);
+                    final responseData =
+                        await customerDetailsProvider.saveQuotation(
+                            widget.quotationId,
+                            widget.customerId,
+                            context,
+                            widget.isEdit);
 
                     if (responseData != null) {
                       // Extract quotation master id from response
@@ -1222,10 +1221,9 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       } else if (responseData is List &&
                           responseData.isNotEmpty &&
                           responseData[0] is Map &&
-                          responseData[0]
-                              .containsKey('Quotation_Master_Id')) {
-                        masterId = responseData[0]['Quotation_Master_Id']
-                            .toString();
+                          responseData[0].containsKey('Quotation_Master_Id')) {
+                        masterId =
+                            responseData[0]['Quotation_Master_Id'].toString();
                       }
 
                       if (masterId.isEmpty || masterId == '0') {
@@ -2589,6 +2587,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       textColor: Colors.white,
     );
   }
+
   void _showPrintQuotationDialog(BuildContext context, String masterId) {
     showDialog(
       context: context,
@@ -2596,13 +2595,13 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text(
-            'Print Quotation',
+            'Saved Successfully',
             style: TextStyle(
               color: AppColors.appViolet,
               fontWeight: FontWeight.bold,
             ),
           ),
-          content: const Text('Quotation saved successfully. Do you want to print the quotation?'),
+          content: const Text('Do you want to print the quotation?'),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
           ),
@@ -2610,7 +2609,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             TextButton(
               onPressed: () {
                 Navigator.pop(context); // Close dialog
-                // Requirement: stay on the same screen. 
+                // Requirement: stay on the same screen.
                 // However, we should probably at least clear the form or something if it was a success.
                 // But the user said "stay on the same screen".
               },
@@ -2626,7 +2625,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
               onPressed: () async {
                 Navigator.pop(context); // Close dialog
                 final customerDetailsProvider =
-                    Provider.of<CustomerDetailsProvider>(context, listen: false);
+                    Provider.of<CustomerDetailsProvider>(context,
+                        listen: false);
                 final settingsProvider =
                     Provider.of<SettingsProvider>(context, listen: false);
 
@@ -2643,7 +2643,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
-                            content: Text('Printing failed. Please try again.')),
+                            content:
+                                Text('Printing failed. Please try again.')),
                       );
                     }
                   }
