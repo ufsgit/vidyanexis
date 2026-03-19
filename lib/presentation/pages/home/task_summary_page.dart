@@ -70,9 +70,9 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
     return Consumer<DashboardProvider>(
       builder: (context, dashBoardProvider, child) {
         final List<TaskInfoDashboardModel> taskInfoList =
-            dashBoardProvider.taskInfoModel;
+            dashBoardProvider.pagedTaskInfoModel;
 
-        if (taskInfoList.isEmpty) {
+        if (taskInfoList.isEmpty && dashBoardProvider.isDashBoardLoading) {
           return const Center(
             child: CircularProgressIndicator(),
           );
@@ -249,10 +249,8 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
     final dashBoardProvider = Provider.of<DashboardProvider>(context);
 
     int startItem = dashBoardProvider.taskStartLimit;
-    int endItem =
-        (dashBoardProvider.taskEndLimit < dashBoardProvider.taskTotalCount)
-            ? dashBoardProvider.taskEndLimit
-            : dashBoardProvider.taskTotalCount;
+    int endItem = dashBoardProvider.taskEndLimit;
+    int total = dashBoardProvider.taskTotalCount;
 
     return SizedBox(
       height: 50,
@@ -261,24 +259,25 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
         children: [
           IconButton(
             icon: const Icon(Icons.arrow_back),
-            onPressed: dashBoardProvider.taskStartLimit > 1
+            onPressed: dashBoardProvider.taskCurrentPage > 0
                 ? () {
                     dashBoardProvider.fetchPreviousPageTasks(context);
                   }
                 : null,
           ),
           Text(
-            'Showing $startItem / $endItem of ${dashBoardProvider.taskTotalCount}',
-            style: const TextStyle(fontSize: 16),
+            'Showing $startItem - $endItem of $total',
+            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
           ),
           IconButton(
             icon: const Icon(Icons.arrow_forward),
-            onPressed:
-                dashBoardProvider.taskEndLimit < dashBoardProvider.taskTotalCount
-                    ? () {
-                        dashBoardProvider.fetchNextPageTasks(context);
-                      }
-                    : null,
+            onPressed: (dashBoardProvider.taskCurrentPage + 1) *
+                        dashBoardProvider.taskItemsPerPage <
+                    dashBoardProvider.taskInfoModel.length
+                ? () {
+                    dashBoardProvider.fetchNextPageTasks(context);
+                  }
+                : null,
           ),
         ],
       ),

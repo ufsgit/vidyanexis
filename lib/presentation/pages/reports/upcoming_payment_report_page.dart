@@ -4,9 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/payment_report_provider.dart';
-import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
@@ -36,8 +34,6 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<PaymentReportProvider>(context, listen: false);
-      final customerProvider =
-          Provider.of<CustomerProvider>(context, listen: false);
 
       // Initialize filters
       provider.selectedCustomerId = null;
@@ -48,17 +44,12 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
       provider.isFilter = false;
 
       provider.getUpcomingPaymentReport(context);
-
-      customerProvider.setLimit();
-      customerProvider.setSearchCriteria('', '', '', '0');
-      customerProvider.getSearchCustomers(context);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<PaymentReportProvider>(context);
-    final sideProvider = Provider.of<SidebarProvider>(context);
     bool isWeb = AppStyles.isWebScreen(context);
 
     return Scaffold(
@@ -67,31 +58,15 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
           ? null
           : CustomAppBar(
               title: 'Upcoming Payment Reports',
-              onSearchTap: () {
-                sideProvider.startSearch();
-              },
+              showSearch: false,
               leadingWidth: 40,
               leadingWidget: IconButton(
                 onPressed: () {
-                  sideProvider.stopSearch();
                   context.pop();
                 },
                 icon: Icon(Icons.arrow_back, color: AppColors.textGrey4),
               ),
-              onSearch: (query) {
-                provider.setSearch(query);
-                provider.getUpcomingPaymentReport(context);
-              },
-              onClearTap: () {
-                searchController.clear();
-                // customerFilterController.clear();
-                sideProvider.stopSearch();
-                provider.setSearch('');
-                provider.selectedCustomerId = null;
-                provider.selectedCustomerName = null;
-                provider.getUpcomingPaymentReport(context);
-              },
-              searchController: searchController,
+              onSearch: (query) {},
             ),
       body: isWeb ? _buildWebBody(provider) : _buildMobileBody(provider),
     );
@@ -195,75 +170,6 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
                   ),
                 ],
               ),
-            ),
-          ),
-          const SizedBox(width: 16),
-
-          // Customer Name Filter
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                  color: provider.selectedCustomerId != null
-                      ? AppColors.primaryBlue
-                      : Colors.grey[300]!),
-            ),
-            child: Consumer<CustomerProvider>(
-              builder: (context, customerProvider, child) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('Customer Name: '),
-                    DropdownButton<int?>(
-                      value: customerProvider.customerData.any((element) =>
-                              element.customerId == provider.selectedCustomerId)
-                          ? provider.selectedCustomerId
-                          : null,
-                      hint: const Text('All'),
-                      items: [
-                        const DropdownMenuItem<int?>(
-                          value: 0,
-                          child: Text(
-                            'All',
-                            style: TextStyle(fontSize: 14),
-                          ),
-                        ),
-                        ...customerProvider.customerData
-                            .map((customer) => DropdownMenuItem<int?>(
-                                  value: customer.customerId,
-                                  child: ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 200),
-                                    child: Text(
-                                      customer.customerName,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ))
-                            ,
-                      ],
-                      onChanged: (int? newValue) {
-                        if (newValue == 0 || newValue == null) {
-                          provider.setCustomer(null, '');
-                          provider.setSearch('');
-                        } else {
-                          final selectedCustomer = customerProvider.customerData
-                              .firstWhere((c) => c.customerId == newValue);
-                          provider.setCustomer(
-                              newValue, selectedCustomer.customerName);
-                          provider.setSearch(selectedCustomer.customerName);
-                        }
-                      },
-                      underline: Container(),
-                      isDense: true,
-                      iconSize: 18,
-                    ),
-                  ],
-                );
-              },
             ),
           ),
           const Spacer(),
