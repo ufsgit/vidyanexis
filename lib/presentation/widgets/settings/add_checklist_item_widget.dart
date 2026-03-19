@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vidyanexis/controller/expense_provider.dart';
 import 'package:vidyanexis/controller/models/checklist_category_model.dart';
 import 'package:vidyanexis/controller/models/checklist_item_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';

@@ -23,9 +23,7 @@ import 'package:vidyanexis/presentation/widgets/customer/details_tab_mobile.dart
 import 'package:vidyanexis/presentation/widgets/customer/documents_list_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_services_mobile.dart';
 
-import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
 
-import 'package:vidyanexis/presentation/widgets/customer/reciept_list_page_mobile.dart';
 
 import 'package:vidyanexis/presentation/widgets/customer/task_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';

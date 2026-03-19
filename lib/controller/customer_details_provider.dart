@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart';
-import 'dart:typed_data';
 import 'package:printing/printing.dart';
 
 import 'package:flutter/material.dart';
@@ -3834,7 +3833,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 html.Blob([Uint8List.fromList(data)], 'application/pdf');
             final url = html.Url.createObjectUrlFromBlob(blob);
             final anchor = html.AnchorElement(href: url)
-              ..setAttribute("download", "${annexureName}.pdf")
+              ..setAttribute("download", "$annexureName.pdf")
               ..click();
 
             // Delay cleanup to ensure download starts

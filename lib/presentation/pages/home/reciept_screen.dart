@@ -5,7 +5,6 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/main.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_reciept.dart';
-import 'package:vidyanexis/presentation/widgets/customer/reciept_card.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';

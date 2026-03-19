@@ -1,14 +1,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:aws_s3_upload_lite/aws_s3_upload_lite.dart';
-import 'package:aws_s3_upload_lite/enum/acl.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:crypto/crypto.dart';
 import 'package:intl/intl.dart';
 import 'package:convert/convert.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
-import 'package:vidyanexis/http/loader.dart';
 
 class CloudflareUpload {
   static Future<String?> uploadToCloudflare(

@@ -1,15 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:vidyanexis/controller/models/checklist_category_model.dart';
 import 'package:vidyanexis/controller/models/checklist_item_model.dart';
-import 'package:vidyanexis/presentation/widgets/settings/add_checklist_category_widget.dart';
 import 'package:vidyanexis/presentation/widgets/settings/add_checklist_item_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/settings/add_new_enquiry_widget.dart';
 
 class CheckListItemPage extends StatefulWidget {
   const CheckListItemPage({super.key});

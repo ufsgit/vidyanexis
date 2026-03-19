@@ -13,10 +13,8 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_page_phone.dart';
 import 'package:vidyanexis/presentation/pages/home/dashboard_page.dart';
 import 'package:vidyanexis/presentation/pages/home/lead_page_phone.dart';
-import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:vidyanexis/presentation/pages/home/task_page.dart';
 import 'package:vidyanexis/http/socket_io.dart';
-import 'package:vidyanexis/http/http_urls.dart';
 
 class HomePageMobile extends StatefulWidget {
   const HomePageMobile({super.key});
