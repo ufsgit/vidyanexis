@@ -144,13 +144,13 @@ class ConversionDetailsPage extends StatelessWidget {
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
-                            label: 'Registered by',
+                            label: 'Conversion by',
                             value: conversionModel.registerdBy,
                           ),
                           const SizedBox(height: 16),
                           TaskLabelValue(
                             colorUser: AppColors.grey,
-                            label: 'Registered Date',
+                            label: 'Conversion date',
                             value: DateFormat('MMM dd, yyyy').format(
                                 DateTime.parse(
                                     conversionModel.registeredDate.toString())),

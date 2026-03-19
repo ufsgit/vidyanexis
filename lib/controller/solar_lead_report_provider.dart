@@ -27,23 +27,189 @@ class SolarLeadReportProvider extends ChangeNotifier {
 
   DateTime? _fromDate;
   DateTime? _toDate;
+  String _formattedFromDate = '';
+  String _formattedToDate = '';
   
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
+  String get formattedFromDate => _formattedFromDate;
+  String get formattedToDate => _formattedToDate;
+
+  set formattedFromDate(String value) {
+    _formattedFromDate = value;
+    notifyListeners();
+  }
+
+  set formattedToDate(String value) {
+    _formattedToDate = value;
+    notifyListeners();
+  }
+
+  bool _isFilter = false;
+  bool get isFilter => _isFilter;
+  String _search = '';
+  String _fromDateS = '';
+  String _toDateS = '';
+  String _status = '';
+  String _assignedTo = '';
+
+  String get Search => _search;
+  String get fromDateS => _fromDateS;
+  String get toDateS => _toDateS;
+  String get Status => _status;
+  String get AssignedTo => _assignedTo;
+
+  int _selectedStatus = 0;
+  int _selectedUser = 0;
+  int? _selectedDateFilterIndex;
+
+  int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+  int get selectedStatus => _selectedStatus;
+  int get selectedUser => _selectedUser;
+
+  void toggleFilter() {
+    _isFilter = !_isFilter;
+    notifyListeners();
+  }
+
+  void selectDateFilterOption(int? index) {
+    if (index == null) {
+      _selectedDateFilterIndex = null;
+      _fromDate = null;
+      _toDate = null;
+      _formattedFromDate = '';
+      _formattedToDate = '';
+    } else {
+      _selectedDateFilterIndex = index;
+      formatDate();
+    }
+    notifyListeners();
+  }
+
+  void setDateFilter(String title) {
+    final now = DateTime.now();
+    switch (title) {
+      case 'Yesterday':
+        _fromDate = now.subtract(const Duration(days: 1));
+        _toDate = now.subtract(const Duration(days: 1));
+        break;
+      case 'Today':
+        _fromDate = now;
+        _toDate = now;
+        break;
+      case 'Tomorrow':
+        _fromDate = now.add(const Duration(days: 1));
+        _toDate = now.add(const Duration(days: 1));
+        break;
+      case 'This Week':
+        _fromDate = now.subtract(Duration(days: now.weekday - 1));
+        _toDate = now.add(Duration(days: 7 - now.weekday));
+        break;
+      case 'This Month':
+        _fromDate = DateTime(now.year, now.month, 1);
+        _toDate = DateTime(now.year, now.month + 1, 0);
+        break;
+      default:
+        _fromDate = null;
+        _toDate = null;
+        break;
+    }
+    notifyListeners();
+  }
+
+  void setFromDate(DateTime date) {
+    _fromDate = date;
+    _selectedDateFilterIndex = -1;
+    formatDate();
+    notifyListeners();
+  }
+
+  void setToDate(DateTime date) {
+    _toDate = date;
+    _selectedDateFilterIndex = -1;
+    formatDate();
+    notifyListeners();
+  }
+
+  void formatDate() {
+    final from = _fromDate;
+    if (from != null) {
+      _formattedFromDate = DateFormat('yyyy-MM-dd').format(from);
+    } else {
+      _formattedFromDate = '';
+    }
+    final to = _toDate;
+    if (to != null) {
+      _formattedToDate = DateFormat('yyyy-MM-dd').format(to);
+    } else {
+      _formattedToDate = '';
+    }
+  }
+
+  Future<void> selectDate(BuildContext context, bool isFromDate) async {
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: isFromDate
+          ? (_fromDate ?? DateTime.now())
+          : (_toDate ?? DateTime.now()),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2101),
+    );
+
+    if (pickedDate != null) {
+      if (isFromDate) {
+        setFromDate(pickedDate);
+      } else {
+        setToDate(pickedDate);
+      }
+    }
+    notifyListeners();
+  }
+
+  void setStatus(int newStatus) {
+    _selectedStatus = newStatus;
+    notifyListeners();
+  }
+
+  void setUserFilterStatus(int newUser) {
+    _selectedUser = newUser;
+    notifyListeners();
+  }
+
+  void removeStatus() {
+    _selectedStatus = 0;
+    _selectedUser = 0;
+    _selectedDateFilterIndex = null;
+    _search = '';
+    _fromDateS = '';
+    _toDateS = '';
+    notifyListeners();
+  }
+
+  void setTaskSearchCriteria(String search, String fromDate, String toDate,
+      String status, String assignedTo) {
+    _search = search;
+    _fromDateS = fromDate;
+    _toDateS = toDate;
+    _status = status;
+    _assignedTo = assignedTo;
+    notifyListeners();
+  }
 
   void setDateRange(DateTime? from, DateTime? to) {
     _fromDate = from;
     _toDate = to;
+    formatDate();
     notifyListeners();
   }
 
-  Future<void> fetchReportData(BuildContext context) async {
+  Future<void> getSolarLeadReport(BuildContext context, String search, String fromDate, String toDate,
+      String status, String assignedTo) async {
+    setTaskSearchCriteria(search, fromDate, toDate, status, assignedTo);
     _isLoading = true;
     notifyListeners();
 
     try {
-      // Fetch leads without date filter (Is_Date=0) to get a pool for both Chart 1 (Created) and 2&3 (Converted)
-      // This ensures we catch leads created in one period but converted in another.
       const int poolLimit = 2000;
       final response = await HttpRequest.httpGetRequest(
         endPoint: '${HttpUrls.searchLead}?lead_Name=&Is_Date=0&Fromdate=&Todate=&Page_Index1=1&Page_Index2=$poolLimit'
@@ -60,7 +226,6 @@ class SolarLeadReportProvider extends ChangeNotifier {
              _allLeads.removeLast();
           }
 
-          // Debug Logging as per Requirement 6
           debugPrint("Total leads fetched for processing: ${_allLeads.length}");
           _processData();
         }
@@ -76,11 +241,9 @@ class SolarLeadReportProvider extends ChangeNotifier {
   DateTime? _parseDate(String dateStr) {
     if (dateStr.isEmpty || dateStr == "null") return null;
     try {
-      // Try standard ISO parse
       return DateTime.parse(dateStr);
     } catch (_) {
       try {
-        // Try DD/MM/YYYY or DD-MM-YYYY
         if (dateStr.contains('/')) {
           return DateFormat('dd/MM/yyyy').parse(dateStr);
         } else if (dateStr.contains('-') && dateStr.split('-')[0].length == 2) {
@@ -98,15 +261,32 @@ class SolarLeadReportProvider extends ChangeNotifier {
 
     final DateFormat formatter = DateFormat('yyyy-MM-dd');
     
-    // Date Range filtering
     DateTime rangeStart = _fromDate ?? DateTime(2000);
     DateTime rangeEnd = _toDate ?? DateTime.now().add(const Duration(days: 1));
-    // Normalize range end to include the whole day
     rangeEnd = DateTime(rangeEnd.year, rangeEnd.month, rangeEnd.day, 23, 59, 59);
 
     for (var lead in _allLeads) {
-      // 1. Leads Created Per Day (Grouped by DATE only)
-      // Filter by Entry_Date within range
+      // Apply Search Filter locally
+      if (_search.isNotEmpty) {
+        if (!lead.customerName.toLowerCase().contains(_search.toLowerCase())) {
+          continue;
+        }
+      }
+
+      // Apply Status Filter locally
+      if (_selectedStatus != 0) {
+        if (lead.statusId != _selectedStatus) {
+          continue;
+        }
+      }
+
+      // Apply User Filter locally
+      if (_selectedUser != 0) {
+        if (lead.toUserId != _selectedUser) {
+          continue;
+        }
+      }
+
       DateTime? createdDate = _parseDate(lead.entryDate);
       if (createdDate != null) {
         if (createdDate.isAfter(rangeStart.subtract(const Duration(seconds: 1))) && 
@@ -116,18 +296,13 @@ class SolarLeadReportProvider extends ChangeNotifier {
         }
       }
 
-      // 2. Lead Conversion Count & 3. Project Cost
-      // Filter by Registered_Date (conversion date) within range
       DateTime? conversionDate = _parseDate(lead.registeredDate);
       if (conversionDate != null) {
         if (conversionDate.isAfter(rangeStart.subtract(const Duration(seconds: 1))) && 
             conversionDate.isBefore(rangeEnd.add(const Duration(seconds: 1)))) {
           String key = formatter.format(conversionDate);
-          
-          // Group conversions count
           conversionsGrouped[key] = (conversionsGrouped[key] ?? 0) + 1;
           
-          // Group project cost sum
           String cleanCost = lead.totalProjectCost.replaceAll(RegExp(r'[^0-9.]'), '');
           double cost = double.tryParse(cleanCost) ?? 0.0;
           projectCostGrouped[key] = (projectCostGrouped[key] ?? 0.0) + cost;
@@ -135,7 +310,6 @@ class SolarLeadReportProvider extends ChangeNotifier {
       }
     }
 
-    // Convert grouped Maps back to sorted Lists of ChartData
     _leadsCreatedPerDay = leadsCreatedGrouped.entries
         .map((e) => ChartData(formatter.parse(e.key), e.value.toDouble()))
         .toList()
@@ -151,11 +325,8 @@ class SolarLeadReportProvider extends ChangeNotifier {
         .toList()
       ..sort((a, b) => a.date.compareTo(b.date));
 
-    // Debug Logging as per Requirement 6
     debugPrint("Conversion chart data points: ${_conversionsPerDay.length}");
     debugPrint("Project cost chart data points: ${_projectCostPerDay.length}");
-    if (_conversionsPerDay.isNotEmpty) {
-      debugPrint("Sample conversion data: ${_conversionsPerDay.first.date} -> ${_conversionsPerDay.first.value}");
-    }
   }
 }
+
