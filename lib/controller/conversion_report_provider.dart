@@ -158,6 +158,7 @@ class ConversionReportProvider extends ChangeNotifier {
     _selectedStatus = null;
     _selectedUser = null;
     _selectedDateFilterIndex = null;
+    selectedFollowUpStatusId = null;
     _fromDateS = '';
     _toDateS = '';
     notifyListeners();

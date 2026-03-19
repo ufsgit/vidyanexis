@@ -323,10 +323,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color:
-                                      leadReportProvider.selectedStatus != null
-                                          ? AppColors.primaryBlue
-                                          : Colors.grey[300]!),
+                                  color: leadReportProvider.selectedStatus !=
+                                              null &&
+                                          leadReportProvider.selectedStatus != 0
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!),
                             ),
                             child: Row(
                               children: [
@@ -418,7 +419,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: leadReportProvider.selectedUser != null
+                                  color: leadReportProvider.selectedUser != null &&
+                                          leadReportProvider.selectedUser != 0
                                       ? AppColors.primaryBlue
                                       : Colors.grey[300]!),
                             ),
@@ -478,7 +480,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               border: Border.all(
                                   color:
                                       leadReportProvider.selectedEnquiryFor !=
-                                              null
+                                              null &&
+                                          leadReportProvider
+                                                  .selectedEnquiryFor !=
+                                              0
                                           ? AppColors.primaryBlue
                                           : Colors.grey[300]!),
                             ),
@@ -517,7 +522,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   onChanged: (int? newValue) {
                                     leadReportProvider
                                         .setEnquiryForFilter(newValue ?? 0);
-
                                     leadReportProvider.getSearchLeadReports(
                                         leadReportProvider.search,
                                         leadReportProvider.fromDateS,
@@ -542,8 +546,11 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
                                   color: leadReportProvider
-                                              .selectedEnquirySource !=
-                                          null
+                                                  .selectedEnquirySource !=
+                                              null &&
+                                          leadReportProvider
+                                                  .selectedEnquirySource !=
+                                              0
                                       ? AppColors.primaryBlue
                                       : Colors.grey[300]!),
                             ),
@@ -580,7 +587,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                   onChanged: (int? newValue) {
                                     leadReportProvider
                                         .setEnquirySourceFilter(newValue ?? 0);
-
                                     leadReportProvider.getSearchLeadReports(
                                         leadReportProvider.search,
                                         leadReportProvider.fromDateS,
@@ -626,10 +632,14 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           ),
                           if (leadReportProvider.fromDate != null ||
                               leadReportProvider.toDate != null ||
-                              leadReportProvider.selectedStatus != null ||
-                              leadReportProvider.selectedUser != null ||
-                              leadReportProvider.selectedEnquiryFor != null ||
-                              leadReportProvider.selectedEnquirySource != null)
+                              (leadReportProvider.selectedStatus != null &&
+                                  leadReportProvider.selectedStatus != 0) ||
+                              (leadReportProvider.selectedUser != null &&
+                                  leadReportProvider.selectedUser != 0) ||
+                              (leadReportProvider.selectedEnquiryFor != null &&
+                                  leadReportProvider.selectedEnquiryFor != 0) ||
+                              (leadReportProvider.selectedEnquirySource != null &&
+                                  leadReportProvider.selectedEnquirySource != 0))
                             ElevatedButton(
                               onPressed: () {
                                 leadReportProvider.selectDateFilterOption(null);

@@ -314,8 +314,9 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: leadReportProvider.selectedUser != null
+                            border: Border.all(
+                              color: leadReportProvider.selectedUser != null &&
+                                      leadReportProvider.selectedUser != 0
                                   ? AppColors.primaryBlue
                                   : Colors.grey[300]!),
                         ),
@@ -383,11 +384,12 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color:
-                                  leadReportProvider.selectedEnquiryFor != null
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                            border: Border.all(
+                              color: leadReportProvider.selectedEnquiryFor !=
+                                          null &&
+                                      leadReportProvider.selectedEnquiryFor != 0
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[300]!),
                         ),
                         child: Row(
                           children: [
@@ -445,9 +447,12 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
+                            border: Border.all(
                               color: leadReportProvider.selectedEnquirySource !=
-                                      null
+                                          null &&
+                                      leadReportProvider
+                                              .selectedEnquirySource !=
+                                          0
                                   ? AppColors.primaryBlue
                                   : Colors.grey[300]!),
                         ),
@@ -504,10 +509,14 @@ class _leadReportMobile extends State<LeadReportMobile> {
                       ),
                       if (leadReportProvider.fromDate != null ||
                           leadReportProvider.toDate != null ||
-                          leadReportProvider.selectedStatus != null ||
-                          leadReportProvider.selectedUser != null ||
-                          leadReportProvider.selectedEnquiryFor != null ||
-                          leadReportProvider.selectedEnquirySource != null)
+                          (leadReportProvider.selectedStatus != null &&
+                              leadReportProvider.selectedStatus != 0) ||
+                          (leadReportProvider.selectedUser != null &&
+                              leadReportProvider.selectedUser != 0) ||
+                          (leadReportProvider.selectedEnquiryFor != null &&
+                              leadReportProvider.selectedEnquiryFor != 0) ||
+                          (leadReportProvider.selectedEnquirySource != null &&
+                              leadReportProvider.selectedEnquirySource != 0))
                         ElevatedButton(
                           onPressed: () {
                             leadReportProvider.selectDateFilterOption(null);

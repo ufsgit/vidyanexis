@@ -644,8 +644,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                  color: reportsProvider.selectedUser != null &&
-                                          reportsProvider.selectedUser != 0
+                                  color: reportsProvider
+                                                  .selectedFollowUpStatusId !=
+                                              null &&
+                                          reportsProvider
+                                                  .selectedFollowUpStatusId !=
+                                              0
                                       ? AppColors.primaryBlue
                                       : Colors.grey[300]!),
                             ),
@@ -732,6 +736,10 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                   reportsProvider.selectedStatus != 0) ||
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
+                              (reportsProvider.selectedFollowUpStatusId !=
+                                      null &&
+                                  reportsProvider.selectedFollowUpStatusId !=
+                                      0) ||
                               reportsProvider.Search.isNotEmpty)
                             ElevatedButton(
                               onPressed: () {
@@ -960,8 +968,12 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                               color: Colors.white,
                               borderRadius: BorderRadius.circular(20),
                               border: Border.all(
-                                color: reportsProvider.selectedUser != null &&
-                                        reportsProvider.selectedUser != 0
+                                color: reportsProvider
+                                                .selectedFollowUpStatusId !=
+                                            null &&
+                                        reportsProvider
+                                                .selectedFollowUpStatusId !=
+                                            0
                                     ? AppColors.primaryBlue
                                     : Colors.grey[300]!,
                               ),
@@ -1017,6 +1029,10 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                   reportsProvider.selectedStatus != 0) ||
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
+                              (reportsProvider.selectedFollowUpStatusId !=
+                                      null &&
+                                  reportsProvider.selectedFollowUpStatusId !=
+                                      0) ||
                               reportsProvider.Search.isNotEmpty)
                             ElevatedButton(
                               onPressed: () {
