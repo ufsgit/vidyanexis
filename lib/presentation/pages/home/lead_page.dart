@@ -2271,8 +2271,8 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
         }
       });
     } else {
-      // 200ms grace period to move pointer from button to menu
-      _hoverTimer = Timer(const Duration(milliseconds: 200), () {
+      // 1000ms grace period to move pointer between menu levels
+      _hoverTimer = Timer(const Duration(milliseconds: 1000), () {
         if (mounted && _controller.isOpen) {
           _controller.close();
         }

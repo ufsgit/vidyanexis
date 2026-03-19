@@ -9,6 +9,7 @@ class MultiLevelHoverMenu extends StatefulWidget {
   final VoidCallback? onTap;
   final bool isSubMenu;
   final Color? hoverColor;
+  final ValueChanged<bool>? onHoverChange;
 
   const MultiLevelHoverMenu({
     super.key,
@@ -18,6 +19,7 @@ class MultiLevelHoverMenu extends StatefulWidget {
     this.onTap,
     this.isSubMenu = true,
     this.hoverColor,
+    this.onHoverChange,
   });
 
   @override
@@ -28,9 +30,11 @@ class _MultiLevelHoverMenuState extends State<MultiLevelHoverMenu> {
   final MenuController _controller = MenuController();
   Timer? _hoverTimer;
 
-  // Add a slight delay for both opening and closing to prevent flickering
   void _handleHover(bool isHovering) {
     _hoverTimer?.cancel();
+    // Notify parent to stay open/close
+    widget.onHoverChange?.call(isHovering);
+
     if (isHovering) {
       _hoverTimer = Timer(const Duration(milliseconds: 150), () {
         if (mounted && !_controller.isOpen) {
@@ -38,7 +42,7 @@ class _MultiLevelHoverMenuState extends State<MultiLevelHoverMenu> {
         }
       });
     } else {
-      _hoverTimer = Timer(const Duration(milliseconds: 200), () {
+      _hoverTimer = Timer(const Duration(milliseconds: 1000), () {
         if (mounted && _controller.isOpen) {
           _controller.close();
         }
@@ -61,8 +65,22 @@ class _MultiLevelHoverMenuState extends State<MultiLevelHoverMenu> {
         controller: _controller,
         // Position the submenu to the right of the current item with a slight overlap
         // By default submenus open at the top-right of the item in Flutter's MenuAnchor
-        alignmentOffset: widget.isSubMenu ? const Offset(-10, 0) : Offset.zero,
+        alignmentOffset: widget.isSubMenu ? const Offset(-5, 0) : Offset.zero,
         menuChildren: widget.children.map((child) {
+          // If the child is also a MultiLevelHoverMenu, pass our hover handler
+          if (child is MultiLevelHoverMenu) {
+            return MultiLevelHoverMenu(
+              title: child.title,
+              leadingIcon: child.leadingIcon,
+              onTap: child.onTap,
+              isSubMenu: child.isSubMenu,
+              hoverColor: child.hoverColor,
+              onHoverChange: (isChildHovering) {
+                _handleHover(isChildHovering);
+              },
+              children: child.children,
+            );
+          }
           return MouseRegion(
             onEnter: (_) => _handleHover(true),
             onExit: (_) => _handleHover(false),
