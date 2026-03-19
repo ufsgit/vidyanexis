@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -9,6 +11,13 @@ import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/chat_launcher.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 
 class TaskCard extends StatelessWidget {
   final TaskReportModel task;
@@ -183,14 +192,32 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
+                Column(
                   children: [
-                    _buildChatDropdown(context),
-                    const SizedBox(width: 12),
-                    _buildViewDropdown(context),
-                    const SizedBox(width: 12),
-                    _buildCallDropdown(context),
+                    Row(
+                      children: [
+                        Expanded(child: _buildChatButton(context)),
+                        const SizedBox(width: 4),
+                        Expanded(child: _buildViewButton(context)),
+                        const SizedBox(width: 4),
+                        Expanded(child: _buildCallButton(context)),
+                        const Expanded(child: SizedBox()), // Placeholder to match spacing
+                        const Expanded(child: SizedBox()), // Placeholder to match spacing
+                      ],
+                    ),
+                    const SizedBox(height: 8),
+                    Row(
+                      children: [
+                        Expanded(child: _buildTaskButton(context)),
+                        const SizedBox(width: 4),
+                        Expanded(child: _buildDocsButton(context)),
+                        const SizedBox(width: 4),
+                        Expanded(child: _buildEditButton(context)),
+                        const SizedBox(width: 4),
+                        Expanded(child: _buildQuoteButton(context)),
+                        const Expanded(child: SizedBox()), // Placeholder to match spacing
+                      ],
+                    ),
                   ],
                 ),
               ],
@@ -200,18 +227,56 @@ class TaskCard extends StatelessWidget {
     );
   }
 
-  Widget _buildChatDropdown(BuildContext context) {
+  Widget _buildChatButton(BuildContext context) {
     return CustomActionButton(
-      onTap: () {
-        ChatLauncher.handleChat(context, task.mobile);
+      onTap: () async {
+        String phone = task.mobile;
+
+        if (phone.isEmpty) {
+          showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (context) => const Center(
+              child: CircularProgressIndicator(),
+            ),
+          );
+
+          try {
+            final leadDetailsProvider =
+                Provider.of<LeadDetailsProvider>(context, listen: false);
+            await leadDetailsProvider
+                .fetchLeadDetailsNoContext(task.customerId.toString());
+
+            if (leadDetailsProvider.leadDetails != null &&
+                leadDetailsProvider.leadDetails!.isNotEmpty) {
+              phone = leadDetailsProvider.leadDetails![0].contactNumber;
+            }
+          } catch (e) {
+            print("Error fetching fallback phone: $e");
+          } finally {
+            if (context.mounted) {
+              Navigator.pop(context);
+            }
+          }
+        }
+
+        if (phone.isNotEmpty) {
+          ChatLauncher.handleChat(context, phone);
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+                content: Text('Mobile number not found for this customer')),
+          );
+        }
       },
       imageColor: AppColors.textGreen,
       icon: FontAwesomeIcons.whatsapp,
       text: 'Chat',
+      height: 38,
     );
   }
 
-  Widget _buildViewDropdown(BuildContext context) {
+  Widget _buildViewButton(BuildContext context) {
     return CustomActionButton(
       onTap: () {
         Navigator.push(
@@ -228,33 +293,136 @@ class TaskCard extends StatelessWidget {
       imageColor: AppColors.appViolet,
       icon: Icons.visibility_outlined,
       text: 'View',
+      height: 38,
     );
   }
 
-  Widget _buildCallDropdown(BuildContext context) {
-    return PopupMenuButton<String>(
-      onSelected: (value) async {
-        if (value == 'Call') {
-          final Uri phoneUri = Uri(scheme: 'tel', path: task.mobile);
-          if (await canLaunchUrl(phoneUri)) {
-            await launchUrl(phoneUri);
-          }
-        } else if (value == 'Copy') {
-          Clipboard.setData(ClipboardData(text: task.mobile));
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Phone number copied to clipboard')),
+  Widget _buildCallButton(BuildContext context) {
+    return CustomActionButton(
+      onTap: () async {
+        final Uri phoneUri = Uri(scheme: 'tel', path: task.mobile);
+        if (await canLaunchUrl(phoneUri)) {
+          await launchUrl(phoneUri);
+        }
+      },
+      imageColor: AppColors.bluebutton,
+      icon: Icons.call,
+      text: 'Call',
+      height: 38,
+    );
+  }
+
+  Widget _buildTaskButton(BuildContext context) {
+    return CustomActionButton(
+      imageColor: AppColors.btnRed,
+      onTap: () async {
+        final customerDetailsProvider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
+        customerDetailsProvider.customerId = task.customerId.toString();
+        customerDetailsProvider.clearTaskDetails();
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return AddTaskMobile(
+              isEdit: false,
+              taskId: '0',
+            );
+          },
+        ));
+      },
+      icon: Icons.task,
+      text: 'Task',
+      height: 38,
+    );
+  }
+
+  Widget _buildDocsButton(BuildContext context) {
+    return CustomActionButton(
+      imageColor: AppColors.appViolet,
+      onTap: () {
+        final customerDetailsProvider =
+            Provider.of<CustomerDetailsProvider>(context, listen: false);
+        customerDetailsProvider.customerId = task.customerId.toString();
+        Navigator.push(context, MaterialPageRoute(
+          builder: (context) {
+            return AddDocumentPhone(customerId: task.customerId.toString());
+          },
+        ));
+      },
+      icon: Icons.upload_file,
+      text: 'Docs',
+      height: 38,
+    );
+  }
+
+  Widget _buildEditButton(BuildContext context) {
+    return CustomActionButton(
+      imageColor: AppColors.secondaryBlue,
+      onTap: () async {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+        );
+
+        final leadDetailsProvider =
+            Provider.of<LeadDetailsProvider>(context, listen: false);
+        await leadDetailsProvider.fetchLeadDetails(
+            task.customerId.toString(), context);
+
+        final leadsProvider =
+            Provider.of<LeadsProvider>(context, listen: false);
+        leadsProvider.setCutomerId(task.customerId);
+        final dropDownProvider =
+            Provider.of<DropDownProvider>(context, listen: false);
+        final leadDetails = leadDetailsProvider.leadDetails![0];
+        leadsProvider.enquirySourceController.text =
+            leadDetails.enquirySourceName.toString();
+
+        dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
+        await leadsProvider.getLeadDropdowns(context);
+        if (context.mounted) {
+          Navigator.pop(context); // Close loading dialog
+        }
+
+        if (context.mounted) {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return const NewLeadDrawerWidget(
+                isEdit: true,
+              );
+            },
           );
         }
       },
-      itemBuilder: (context) => [
-        const PopupMenuItem(value: 'Call', child: Text('Call')),
-        const PopupMenuItem(value: 'Copy', child: Text('Copy Number')),
-      ],
-      child: CustomActionButton(
-        imageColor: AppColors.bluebutton,
-        icon: Icons.call,
-        text: 'Call',
-      ),
+      icon: Icons.edit_outlined,
+      text: 'Edit',
+      height: 38,
+    );
+  }
+
+  Widget _buildQuoteButton(BuildContext context) {
+    return CustomActionButton(
+      imageColor: AppColors.bluebutton,
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (c) => QuotationCreationWidget(
+              customerId: task.customerId.toString(),
+              quotationId: '0',
+              isEdit: false,
+            ),
+          ),
+        );
+      },
+      icon: Icons.request_quote_outlined,
+      text: 'Quote',
+      height: 38,
     );
   }
 }
