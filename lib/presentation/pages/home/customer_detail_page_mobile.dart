@@ -23,8 +23,6 @@ import 'package:vidyanexis/presentation/widgets/customer/details_tab_mobile.dart
 import 'package:vidyanexis/presentation/widgets/customer/documents_list_page_phone.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_services_mobile.dart';
 
-
-
 import 'package:vidyanexis/presentation/widgets/customer/task_list_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
@@ -258,72 +256,69 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                           size: 22, color: Colors.red),
                       tooltip: 'Delete',
                       onPressed: () {
-                        widget.fromLead
-                            ? showConfirmationDialog(
-                                context: context,
-                                isLoading:
-                                    customerDetailsProvider.isDeleteLoading,
-                                title: 'Confirm Deletion',
-                                content:
-                                    'Are you sure you want to delete this Lead?',
-                                onCancel: () {
-                                  Navigator.of(context).pop();
-                                },
-                                onConfirm: () async {
-                                  final leadsProvider =
-                                      Provider.of<LeadsProvider>(context,
-                                          listen: false);
-                                  final customerId =
-                                      widget.customerId.toString();
-                                  leadsProvider.removeLeadFromList(customerId);
-                                  Provider.of<CustomerProvider>(context,
-                                          listen: false)
-                                      .removeCustomerFromList(customerId);
-                                  Navigator.pop(context); // dialog
-                                  Navigator.pop(context); // details page
-                                  if (widget.fromLead) {
-                                    leadsProvider.deleteLead(
-                                        context, customerId);
-                                  } else {
-                                    Provider.of<CustomerProvider>(context,
-                                            listen: false)
-                                        .deleteCustomer(context, customerId);
-                                  }
-                                  Provider.of<CustomerProvider>(context,
-                                          listen: false)
-                                      .getSearchCustomers(context);
-                                },
-                                confirmButtonText: 'Delete',
-                              )
-                            : showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: const Text('Remove Registration'),
-                                    content: const Text(
-                                        'Are you sure you want to Remove Registration '),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: const Text('Cancel'),
-                                        onPressed: () {
-                                          Navigator.of(context).pop();
-                                        },
-                                      ),
-                                      TextButton(
-                                        child:
-                                            const Text('Remove Registration'),
-                                        onPressed: () async {
-                                          await customerDetailsProvider
-                                              .removeRegister(
-                                                  widget.customerId.toString(),
-                                                  context);
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
+                        // widget.fromLead
+                        //     ?
+                        showConfirmationDialog(
+                          context: context,
+                          isLoading: customerDetailsProvider.isDeleteLoading,
+                          title: 'Confirm Deletion',
+                          content: 'Are you sure you want to delete this Lead?',
+                          onCancel: () {
+                            Navigator.of(context).pop();
+                          },
+                          onConfirm: () async {
+                            final leadsProvider = Provider.of<LeadsProvider>(
+                                context,
+                                listen: false);
+                            final customerId = widget.customerId.toString();
+                            leadsProvider.removeLeadFromList(customerId);
+                            Provider.of<CustomerProvider>(context,
+                                    listen: false)
+                                .removeCustomerFromList(customerId);
+                            Navigator.pop(context); // dialog
+                            Navigator.pop(context); // details page
+                            // if (widget.fromLead) {
+                            leadsProvider.deleteLead(context, customerId);
+                            // } else {
+                            //   Provider.of<CustomerProvider>(context,
+                            //           listen: false)
+                            //       .deleteCustomer(context, customerId);
+                            // }
+                            Provider.of<CustomerProvider>(context,
+                                    listen: false)
+                                .getSearchCustomers(context);
+                          },
+                          confirmButtonText: 'Delete',
+                        );
+                        // : showDialog(
+                        //     context: context,
+                        //     builder: (BuildContext context) {
+                        //       return AlertDialog(
+                        //         title: const Text('Remove Registration'),
+                        //         content: const Text(
+                        //             'Are you sure you want to Remove Registration '),
+                        //         actions: <Widget>[
+                        //           TextButton(
+                        //             child: const Text('Cancel'),
+                        //             onPressed: () {
+                        //               Navigator.of(context).pop();
+                        //             },
+                        //           ),
+                        //           TextButton(
+                        //             child:
+                        //                 const Text('Remove Registration'),
+                        //             onPressed: () async {
+                        //               await customerDetailsProvider
+                        //                   .removeRegister(
+                        //                       widget.customerId.toString(),
+                        //                       context);
+                        //               Navigator.pop(context);
+                        //             },
+                        //           ),
+                        //         ],
+                        //       );
+                        //     },
+                        //   );
                       },
                     ),
                 ],
