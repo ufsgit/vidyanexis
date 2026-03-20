@@ -21,12 +21,10 @@ class HttpUrls {
   // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
   // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
- 
 
 //dev
   // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
 //   static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
-
 
   static String imgBaseUrl =
       'https://pub-b2e3330da2344ea490c08dd119392728.r2.dev/';
@@ -91,8 +89,7 @@ class HttpUrls {
   static String searchConversionReport = "lead/Conversion_Report";
   static String searchInvoiceReport = "lead/Search_Invoice_Report";
   static String searchAmcReport = "amc/Search_AMC_Report";
-  static String searchUser =
-      'user_details/Search_user_details?user_details_Name';
+  static String searchUser = 'user_details/Search_user_details';
   static String addUser = "user_details/Save_user_details";
   static String searchWorkingStatus =
       "working_status/Search_working_status?working_status_Name";
