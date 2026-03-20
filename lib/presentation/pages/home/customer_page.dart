@@ -857,11 +857,6 @@ class _CustomerPageState extends State<CustomerPage> {
                           // Data Rows
                           Expanded(
                             child: ListView.builder(
-                              shrinkWrap:
-                                  true, // To avoid scrolling issues when inside a parent widget
-                              physics: AppStyles.isWebScreen(context)
-                                  ? const NeverScrollableScrollPhysics()
-                                  : const AlwaysScrollableScrollPhysics(),
                               itemCount: customerProvider
                                   .customerData.length, // Number of leads
                               itemBuilder: (context, index) {
