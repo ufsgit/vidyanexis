@@ -321,7 +321,7 @@ class CustomerProvider extends ChangeNotifier {
               .map((item) => SearchLeadModel.fromJson(item))
               .toList();
 
-          _totalCount = _tempData.last.tp > 0 ? _tempData.last.tp : _tempData.last.customerId;
+          _totalCount = _tempData.last.customerId;
           print("Last customer's ID: $_totalCount");
 
           _tempData.removeLast();
@@ -420,7 +420,7 @@ class CustomerProvider extends ChangeNotifier {
 
             // Remove the last item from _tempData and print its customerId
 
-            _totalCount = _tempData.last.tp > 0 ? _tempData.last.tp : _tempData.last.customerId;
+            _totalCount = _tempData.last.customerId;
             print("Last customer's ID: $_totalCount");
 
             // Remove the last item from _tempData

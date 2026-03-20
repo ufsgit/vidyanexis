@@ -852,7 +852,7 @@ class LeadsProvider extends ChangeNotifier {
             .toList();
 
         if (_tempData.isNotEmpty) {
-          _totalCount = _tempData.last.tp > 0 ? _tempData.last.tp : _tempData.last.customerId;
+          _totalCount = _tempData.last.customerId;
           _tempData.removeLast();
 
           if (_tempData.isNotEmpty) {
@@ -1008,7 +1008,7 @@ class LeadsProvider extends ChangeNotifier {
 
           // Remove the last item from _tempData and print its customerId
 
-          _totalCount = _tempData.last.tp > 0 ? _tempData.last.tp : _tempData.last.customerId;
+          _totalCount = _tempData.last.customerId;
           print("Last customer's ID: $_totalCount");
 
           // Remove the last item from _tempData
