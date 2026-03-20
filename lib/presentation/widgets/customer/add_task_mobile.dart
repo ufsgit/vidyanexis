@@ -24,6 +24,7 @@ class AddTaskMobile extends StatefulWidget {
 class _AddTaskMobileState extends State<AddTaskMobile> {
   String _selectedTaskTypeId = '';
   List<SearchUserDetails> _filteredUsers = [];
+  bool isSingleSelect = true;
 
   void _updateFilteredUsers() {
     final dropDownProvider =
@@ -34,8 +35,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
     if (customerDetailsProvider.selectedTaskType != null) {
       try {
         final selectedTaskTypeModel = dropDownProvider.taskType.firstWhere(
-          (task) =>
-              task.taskTypeId == customerDetailsProvider.selectedTaskType,
+          (task) => task.taskTypeId == customerDetailsProvider.selectedTaskType,
         );
 
         setState(() {
@@ -85,16 +85,15 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
   Future<void> _handleSave() async {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
-    
+
     if (customerDetailsProvider.selectedTaskType != null &&
         customerDetailsProvider.addTaskModel.taskUser != null &&
         customerDetailsProvider.addTaskModel.taskUser!.isNotEmpty) {
-      
       if (customerDetailsProvider.taskChoosedateController.text.isEmpty) {
-        customerDetailsProvider.taskChoosedateController.text = 
+        customerDetailsProvider.taskChoosedateController.text =
             DateFormat('dd MMM yyyy').format(DateTime.now());
       }
-      
+
       if (customerDetailsProvider.selectedAMCStatus == 0) {
         customerDetailsProvider.updateAMCStatus(1, 'Not Started');
       }
@@ -173,8 +172,6 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
     }
   }
 
-
-
   @override
   Widget build(BuildContext context) {
     final dropDownProvider = Provider.of<DropDownProvider>(context);
@@ -188,7 +185,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.grey),
+          icon: const Icon(Icons.arrow_back_ios_new,
+              size: 20, color: Colors.grey),
           onPressed: () {
             customerDetailsProvider.clearTaskDetails();
             Navigator.pop(context);
@@ -213,7 +211,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                 children: [
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -240,30 +239,39 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         const SizedBox(height: 16),
                         ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.45,
+                            maxHeight:
+                                MediaQuery.of(context).size.height * 0.45,
                           ),
                           child: SingleChildScrollView(
                             child: Wrap(
                               spacing: 10,
                               runSpacing: 10,
-                              children: dropDownProvider.taskType.map((taskType) {
-                                bool isSelected = customerDetailsProvider
-                                        .selectedTaskType ==
-                                    taskType.taskTypeId;
+                              children:
+                                  dropDownProvider.taskType.map((taskType) {
+                                bool isSelected =
+                                    customerDetailsProvider.selectedTaskType ==
+                                        taskType.taskTypeId;
                                 return InkWell(
                                   onTap: () {
-                                    if (customerDetailsProvider.addTaskModel.taskUser !=
+                                    if (customerDetailsProvider
+                                            .addTaskModel.taskUser !=
                                         null) {
-                                      customerDetailsProvider.addTaskModel.taskUser!
+                                      customerDetailsProvider
+                                          .addTaskModel.taskUser!
                                           .clear();
                                     }
                                     customerDetailsProvider.updateTaskType(
-                                        taskType.taskTypeId, taskType.taskTypeName);
+                                        taskType.taskTypeId,
+                                        taskType.taskTypeName);
 
-                                    final defaultStatusId = taskType.defaultStatusId;
+                                    final defaultStatusId =
+                                        taskType.defaultStatusId;
                                     customerDetailsProvider.updateAMCStatus(
-                                        defaultStatusId != 0 ? defaultStatusId : 1, '');
-                                    
+                                        defaultStatusId != 0
+                                            ? defaultStatusId
+                                            : 1,
+                                        '');
+
                                     _updateFilteredUsers();
                                   },
                                   child: Container(
@@ -297,10 +305,10 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                     ),
                   ),
                   const SizedBox(height: 12),
-
                   Container(
                     width: double.infinity,
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 16),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(16),
@@ -327,7 +335,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         const SizedBox(height: 16),
                         ConstrainedBox(
                           constraints: BoxConstraints(
-                            maxHeight: MediaQuery.of(context).size.height * 0.45,
+                            maxHeight:
+                                MediaQuery.of(context).size.height * 0.45,
                           ),
                           child: SingleChildScrollView(
                             child: Wrap(
@@ -344,13 +353,28 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                   onTap: () {
                                     final userInTask = UserInTaskModel(
                                         userDetailsId: worker.userDetailsId,
-                                        userDetailsName: worker.userDetailsName);
-                                    if (isSelected) {
-                                      customerDetailsProvider
-                                          .removeAssignedWorker(userInTask);
+                                        userDetailsName:
+                                            worker.userDetailsName);
+                                    // to multiselect change to false
+                                    if (isSingleSelect) {
+                                      if (isSelected) {
+                                        customerDetailsProvider
+                                            .removeAssignedWorker(userInTask);
+                                      } else {
+                                        customerDetailsProvider
+                                            .addTaskModel.taskUser
+                                            ?.clear();
+                                        customerDetailsProvider
+                                            .addAssignedWorker(userInTask);
+                                      }
                                     } else {
-                                      customerDetailsProvider
-                                          .addAssignedWorker(userInTask);
+                                      if (isSelected) {
+                                        customerDetailsProvider
+                                            .removeAssignedWorker(userInTask);
+                                      } else {
+                                        customerDetailsProvider
+                                            .addAssignedWorker(userInTask);
+                                      }
                                     }
                                     setState(() {});
                                   },
@@ -388,7 +412,6 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
               ),
             ),
           ),
-          
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             decoration: BoxDecoration(
@@ -436,5 +459,3 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
     );
   }
 }
-
-

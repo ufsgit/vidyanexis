@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
@@ -33,6 +32,7 @@ class TaskCreationWidget extends StatefulWidget {
 class _TaskCreationWidgetState extends State<TaskCreationWidget> {
   String _selectedTaskTypeId = '';
   List<SearchUserDetails> _filteredUsers = [];
+  bool isSingleSelect = true;
 
   void _updateFilteredUsers() {
     final dropDownProvider =
@@ -43,8 +43,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
     if (customerDetailsProvider.selectedTaskType != null) {
       try {
         final selectedTaskTypeModel = dropDownProvider.taskType.firstWhere(
-          (task) =>
-              task.taskTypeId == customerDetailsProvider.selectedTaskType,
+          (task) => task.taskTypeId == customerDetailsProvider.selectedTaskType,
         );
 
         setState(() {
@@ -94,16 +93,15 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
   Future<void> _handleSave() async {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context, listen: false);
-    
+
     if (customerDetailsProvider.selectedTaskType != null &&
         customerDetailsProvider.addTaskModel.taskUser != null &&
         customerDetailsProvider.addTaskModel.taskUser!.isNotEmpty) {
-      
       if (customerDetailsProvider.taskChoosedateController.text.isEmpty) {
-        customerDetailsProvider.taskChoosedateController.text = 
+        customerDetailsProvider.taskChoosedateController.text =
             DateFormat('dd MMM yyyy').format(DateTime.now());
       }
-      
+
       if (customerDetailsProvider.selectedAMCStatus == 0) {
         customerDetailsProvider.updateAMCStatus(1, 'Not Started');
       }
@@ -240,7 +238,8 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
             children: [
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -274,12 +273,13 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                           spacing: 10,
                           runSpacing: 10,
                           children: dropDownProvider.taskType.map((taskType) {
-                            bool isSelected = customerDetailsProvider
-                                    .selectedTaskType ==
-                                taskType.taskTypeId;
+                            bool isSelected =
+                                customerDetailsProvider.selectedTaskType ==
+                                    taskType.taskTypeId;
                             return InkWell(
                               onTap: () {
-                                if (customerDetailsProvider.addTaskModel.taskUser !=
+                                if (customerDetailsProvider
+                                        .addTaskModel.taskUser !=
                                     null) {
                                   customerDetailsProvider.addTaskModel.taskUser!
                                       .clear();
@@ -287,10 +287,12 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                 customerDetailsProvider.updateTaskType(
                                     taskType.taskTypeId, taskType.taskTypeName);
 
-                                final defaultStatusId = taskType.defaultStatusId;
+                                final defaultStatusId =
+                                    taskType.defaultStatusId;
                                 customerDetailsProvider.updateAMCStatus(
-                                    defaultStatusId != 0 ? defaultStatusId : 1, '');
-                                
+                                    defaultStatusId != 0 ? defaultStatusId : 1,
+                                    '');
+
                                 _updateFilteredUsers();
                               },
                               child: Container(
@@ -324,10 +326,10 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                 ),
               ),
               const SizedBox(height: 16),
-
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(16),
@@ -372,12 +374,26 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                                 final userInTask = UserInTaskModel(
                                     userDetailsId: worker.userDetailsId,
                                     userDetailsName: worker.userDetailsName);
-                                if (isSelected) {
-                                  customerDetailsProvider
-                                      .removeAssignedWorker(userInTask);
+                                // to multiselect change to false
+                                if (isSingleSelect) {
+                                  if (isSelected) {
+                                    customerDetailsProvider
+                                        .removeAssignedWorker(userInTask);
+                                  } else {
+                                    customerDetailsProvider
+                                        .addTaskModel.taskUser
+                                        ?.clear();
+                                    customerDetailsProvider
+                                        .addAssignedWorker(userInTask);
+                                  }
                                 } else {
-                                  customerDetailsProvider
-                                      .addAssignedWorker(userInTask);
+                                  if (isSelected) {
+                                    customerDetailsProvider
+                                        .removeAssignedWorker(userInTask);
+                                  } else {
+                                    customerDetailsProvider
+                                        .addAssignedWorker(userInTask);
+                                  }
                                 }
                                 setState(() {});
                               },
