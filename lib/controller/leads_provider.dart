@@ -1384,11 +1384,10 @@ class LeadsProvider extends ChangeNotifier {
             "Customer_Id": custId
           });
 
-      if (response!.statusCode == 200) {
-        final customerProvider =
-            Provider.of<CustomerProvider>(context, listen: false);
-        final leadDetailsProvider =
-            Provider.of<LeadDetailsProvider>(context, listen: false);
+      if (response != null && response.statusCode == 200) {
+        Loader.stopLoader(context);
+        final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
+        final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context, listen: false);
         final data = response.data;
         log('Success');
 
@@ -1401,29 +1400,29 @@ class LeadsProvider extends ChangeNotifier {
         }
 
         await getSearchLeads(context);
-        leadDetailsProvider.fetchLeadDetails(customerId.toString(), context);
-        leadDetailsProvider.fetchFollowUpHistory(customerId.toString());
+        leadDetailsProvider.fetchLeadDetails(custId.toString(), context);
+        leadDetailsProvider.fetchFollowUpHistory(custId.toString());
         await customerProvider.getSearchCustomers(context);
 
         messageController.clear();
         statusController.clear();
         assignToFollowUpController.clear();
         nextFollowUpDateController.clear();
-        Navigator.pop(context);
-        Loader.stopLoader(context);
         notifyListeners();
         print(data);
       } else {
+        Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        Loader.stopLoader(context);
       }
     } catch (e) {
+      Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
       Loader.stopLoader(context);
     }
   }

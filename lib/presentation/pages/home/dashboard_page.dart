@@ -36,31 +36,49 @@ class _DashBoardPageState extends State<DashBoardPage> {
   String userType = "";
 
   @override
-  initState() {
+  void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      // getData();
       final dashBoardProvider =
           Provider.of<DashboardProvider>(context, listen: false);
-      await dashBoardProvider.getTaskInfoDashBoard(context);
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+
+      // Essential calls
       dropDownProvider.getUserDetails(context);
       dropDownProvider.getFollowUpStatus(context, "3");
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
       userName = preferences.getString('userName') ?? "";
       userType = preferences.getString('userType') ?? "";
-      //not admin type assign user filter
+
       if (userType != "1") {
         dashBoardProvider.setUserFilterStatus(userId);
       }
 
-      // Load initial data
-      await dashBoardProvider.getLeadData();
-      await dashBoardProvider.getWorkData();
-      await dashBoardProvider.getCustomers();
+      // Load data for the initial tab only
+      final allowedTabs = <int>[
+        if ((settingsProvider.menuIsViewMap[84] ?? 1).toString() != '0') 6,
+        if ((settingsProvider.menuIsViewMap[49] ?? 1).toString() != '0') 0,
+        if ((settingsProvider.menuIsViewMap[50] ?? 1).toString() != '0') 1,
+        if ((settingsProvider.menuIsViewMap[76] ?? 1).toString() != '0') 4,
+        if ((settingsProvider.menuIsViewMap[77] ?? 1).toString() != '0') 5,
+        if ((settingsProvider.menuIsViewMap[51] ?? 1).toString() != '0') 2,
+        if ((settingsProvider.menuIsViewMap[52] ?? 1).toString() != '0') 3,
+      ];
 
+      if (allowedTabs.isNotEmpty) {
+        if (!mounted) return;
+        final safeIndex =
+            dashBoardProvider.tabIndex.clamp(0, allowedTabs.length - 1);
+        final activeTab = allowedTabs[safeIndex];
+        await dashBoardProvider.loadDataForTab(activeTab, context);
+      }
+
+      if (!mounted) return;
       final attendanceProvider =
           Provider.of<AttendanceReportProvider>(context, listen: false);
       if (userId != 0) {
@@ -73,7 +91,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
   @override
   Widget build(BuildContext context) {
-    GlobalKey<FormState> formKey = GlobalKey();
     DashboardProvider dashBoardProvider =
         Provider.of<DashboardProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
@@ -459,8 +476,6 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
                           dashBoardProvider.formatDate();
 
-                          print(dashBoardProvider.formattedFromDate);
-                          print(dashBoardProvider.formattedToDate);
                           dashBoardProvider.getLeadData();
                           dashBoardProvider.getWorkData();
                         },
@@ -523,7 +538,7 @@ class _DashBoardPageState extends State<DashBoardPage> {
   Widget _buildAssignedStaffFilter(DashboardProvider dashBoardProvider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
-        bool isAdmin = true; // Enabled for all as per request
+        bool isAdmin = userType == "1" || userType == "0"; 
         int dropdownValue;
         List<DropdownMenuItem<int>> dropdownItems;
 
