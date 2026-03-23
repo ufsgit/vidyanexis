@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -7,6 +8,19 @@ import 'package:vidyanexis/controller/models/payment_reminder_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+
+// Top-level parsing functions for compute()
+List<AmcNotificationModel> _parseAmcNotification(List<dynamic> data) {
+  return data.map((e) => AmcNotificationModel.fromJson(e)).toList();
+}
+
+List<PaymentReminderModel> _parsePaymentReminder(List<dynamic> data) {
+  return data.map((e) => PaymentReminderModel.fromJson(e)).toList();
+}
+
+List<WarrentyModel> _parseWarrenty(List<dynamic> data) {
+  return data.map((item) => WarrentyModel.fromJson(item)).toList();
+}
 
 class WarrentyReportProvider extends ChangeNotifier {
   List<WarrentyModel> _amcReport = [];
@@ -210,9 +224,7 @@ class WarrentyReportProvider extends ChangeNotifier {
         if (data != null) {
           // log(data.toString());
           final newData = data['data'];
-          _amcReport = (newData as List<dynamic>)
-              .map((item) => WarrentyModel.fromJson(item))
-              .toList();
+          _amcReport = await compute(_parseWarrenty, newData as List<dynamic>);
 
           Loader.stopLoader(context);
           notifyListeners();
@@ -309,9 +321,7 @@ class WarrentyReportProvider extends ChangeNotifier {
           } else {
             final newData = data['data'];
             if (newData != null) {
-              _outOfWarrentyReport = (newData as List<dynamic>)
-                  .map((item) => WarrentyModel.fromJson(item))
-                  .toList();
+              _outOfWarrentyReport = await compute(_parseWarrenty, newData as List<dynamic>);
             } else {
               _outOfWarrentyReport = [];
             }
@@ -367,9 +377,7 @@ class WarrentyReportProvider extends ChangeNotifier {
           } else {
             final newData = data['data'];
             if (newData != null) {
-              _upcomingWarrantyReport = (newData as List<dynamic>)
-                  .map((item) => WarrentyModel.fromJson(item))
-                  .toList();
+              _upcomingWarrantyReport = await compute(_parseWarrenty, newData as List<dynamic>);
             } else {
               _upcomingWarrantyReport = [];
             }
@@ -397,10 +405,13 @@ class WarrentyReportProvider extends ChangeNotifier {
   List<AmcNotificationModel> _amcNotificationList = [];
   List<AmcNotificationModel> get amcNotificationList => _amcNotificationList;
   bool isAmcNotificationLoading = false;
+  bool isAmcLoaded = false;
+  bool isPaymentLoaded = false;
 
-  Future<void> getAmcNotification(BuildContext context) async {
+  Future<void> getAmcNotification(BuildContext context, {bool isFilter = false, bool shouldNotify = true}) async {
+    if (isAmcLoaded && !isFilter) return;
     isAmcNotificationLoading = true;
-    notifyListeners();
+    if (shouldNotify) notifyListeners();
 
     // Default dates if null
     if (fromDate == null) {
@@ -424,9 +435,7 @@ class WarrentyReportProvider extends ChangeNotifier {
 
         if (data != null && data['list'] != null) {
           if (data['list'] is List) {
-            _amcNotificationList = (data['list'] as List)
-                .map((e) => AmcNotificationModel.fromJson(e))
-                .toList();
+            _amcNotificationList = await compute(_parseAmcNotification, data['list'] as List<dynamic>);
           } else {
             _amcNotificationList = [];
           }
@@ -442,7 +451,8 @@ class WarrentyReportProvider extends ChangeNotifier {
       print('Error fetching amc notification: $e');
     } finally {
       isAmcNotificationLoading = false;
-      notifyListeners();
+      isAmcLoaded = true;
+      if (shouldNotify) notifyListeners();
     }
   }
 
@@ -451,9 +461,10 @@ class WarrentyReportProvider extends ChangeNotifier {
   List<PaymentReminderModel> get paymentReminderList => _paymentReminderList;
   bool isPaymentReminderLoading = false;
 
-  Future<void> getPaymentReminders(BuildContext context) async {
+  Future<void> getPaymentReminders(BuildContext context, {bool isFilter = false, bool shouldNotify = true}) async {
+    if (isPaymentLoaded && !isFilter) return;
     isPaymentReminderLoading = true;
-    notifyListeners();
+    if (shouldNotify) notifyListeners();
 
     // Default dates if null
     if (fromDate == null) {
@@ -476,9 +487,7 @@ class WarrentyReportProvider extends ChangeNotifier {
 
         if (data != null && data['data'] != null) {
           if (data['data'] is List) {
-            _paymentReminderList = (data['data'] as List)
-                .map((e) => PaymentReminderModel.fromJson(e))
-                .toList();
+            _paymentReminderList = await compute(_parsePaymentReminder, data['data'] as List<dynamic>);
           } else {
             _paymentReminderList = [];
           }
@@ -493,7 +502,8 @@ class WarrentyReportProvider extends ChangeNotifier {
       print('Error fetching payment reminders: $e');
     } finally {
       isPaymentReminderLoading = false;
-      notifyListeners();
+      isPaymentLoaded = true;
+      if (shouldNotify) notifyListeners();
     }
   }
 }

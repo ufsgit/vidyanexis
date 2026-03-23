@@ -23,13 +23,8 @@ class DashboardCountTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (dashBoardProvider.isDashBoardLoading) {
-      return const SizedBox(
-        height: 300,
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+    if (dashBoardProvider.isDashBoardLoading && dashBoardProvider.leadCountMap.isEmpty) {
+      return _buildSkeleton(context);
     }
 
     if (dashBoardProvider.leadCountMap.isEmpty) {
@@ -201,6 +196,60 @@ class DashboardCountTab extends StatelessWidget {
                 ),
               );
             },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildSkeleton(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 4,
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 16,
+          mainAxisSpacing: 16,
+          childAspectRatio: 2.0,
+        ),
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+              color: Colors.grey.shade200,
+              borderRadius: BorderRadius.circular(16),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                   Container(
+                     height: 12,
+                     width: 80,
+                     decoration: BoxDecoration(
+                       color: Colors.grey.shade300,
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                   ),
+                   const SizedBox(height: 10),
+                   Container(
+                     height: 24,
+                     width: 40,
+                     decoration: BoxDecoration(
+                       color: Colors.grey.shade300,
+                       borderRadius: BorderRadius.circular(4),
+                     ),
+                   ),
+                ],
+              ),
+            ),
           );
         },
       ),
