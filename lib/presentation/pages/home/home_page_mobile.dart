@@ -100,27 +100,10 @@ class _HomePageMobileState extends State<HomePageMobile> {
       appBar: bottomNavItems.isEmpty ? AppBar() : null,
       body: bottomNavItems.isEmpty
           ? const Center(child: CircularProgressIndicator())
-          : pages[sideProvider.selectedIndexMobile],
-      // bottomNavigationBar: bottomNavItems.isNotEmpty
-      //     ? AnimatedBottomBarWidget(
-      //         items: bottomNavItems,
-      //         currentIndex: sideProvider.selectedIndexMobile,
-      //         selectedItemColor: AppColors.primaryBlue,
-      //         unselectedItemColor: AppColors.textBlack,
-      //         selectedLabelStyle: GoogleFonts.plusJakartaSans(
-      //           fontSize: 12,
-      //           fontWeight: FontWeight.w700,
-      //         ),
-      //         onTap: (index) {
-      //           sideProvider.setSelectedIndexMobile(index);
-      //           sideProvider
-      //               .updateSelectedName(bottomNavItems[index].label ?? '');
-      //         },
-      //       )
-      //     : null,
+          : pages[sideProvider.selectedIndexMobile.clamp(0, pages.length - 1)],
       bottomNavigationBar: bottomNavItems.length >= 2
           ? BottomNavigationBar(
-              currentIndex: sideProvider.selectedIndexMobile,
+              currentIndex: sideProvider.selectedIndexMobile.clamp(0, bottomNavItems.length - 1),
               iconSize: 20,
               backgroundColor: AppColors.whiteColor,
               elevation: 1,

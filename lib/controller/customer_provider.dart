@@ -368,7 +368,7 @@ class CustomerProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      Loader.stopLoader(context);
+      // Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
