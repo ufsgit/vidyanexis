@@ -68,7 +68,7 @@ class _TaskCardState extends State<TaskCard> {
     return Column(
       children: [
         InkWell(
-          onTap: widget.onTap,
+          onTap: () => widget.showStatusUpdate(context, widget.task),
           child: Container(
             width: MediaQuery.sizeOf(context).width,
             decoration: BoxDecoration(
@@ -106,12 +106,17 @@ class _TaskCardState extends State<TaskCard> {
                           ),
                         ),
                         const SizedBox(width: 4),
-                        Icon(
-                          widget.isExpanded
-                              ? Icons.keyboard_arrow_up
-                              : Icons.keyboard_arrow_down,
-                          size: 18,
-                          color: AppColors.textGrey3,
+                        IconButton(
+                          onPressed: () {
+                            widget.onTap();
+                          },
+                          icon: Icon(
+                            widget.isExpanded
+                                ? Icons.keyboard_arrow_up
+                                : Icons.keyboard_arrow_down,
+                            size: 18,
+                            color: AppColors.textGrey3,
+                          ),
                         ),
                       ],
                     ),
@@ -181,42 +186,50 @@ class _TaskCardState extends State<TaskCard> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (widget.task.enquiryForName.isNotEmpty) ...[
-                  Text(
-                    "Enquiry For",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.task.enquiryForName,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textGrey3,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "Enquiry For",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.task.enquiryForName,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textGrey3,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12),
                 ],
                 if (widget.task.description.isNotEmpty) ...[
-                  Text(
-                    "Description",
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.textBlack,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    widget.task.description,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textGrey3,
-                    ),
+                  Row(
+                    children: [
+                      Text(
+                        "Description",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.textBlack,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        widget.task.description,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w400,
+                          color: AppColors.textGrey3,
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 12),
                 ],

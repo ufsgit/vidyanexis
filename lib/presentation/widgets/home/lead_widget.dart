@@ -179,7 +179,7 @@ class _LeadCardState extends State<LeadCard> {
                                       ),
                                       TextSpan(
                                         text:
-                                            ' , Created By ${widget.lead.createdByName}',
+                                            ' , Created By ${widget.lead.toUserName}',
                                         style: GoogleFonts.plusJakartaSans(
                                             fontSize: 12,
                                             fontWeight: FontWeight.w500,
