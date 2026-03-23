@@ -17,6 +17,7 @@ class CustomTextField extends StatelessWidget {
   final List<TextInputFormatter>? inputFormatters;
   final GestureTapCallback? onTap;
   final int minLines;
+  final int? maxLines;
   final FocusNode? focusNode;
   final Function(String)? onChanged;
   final int? maxlength;
@@ -31,16 +32,17 @@ class CustomTextField extends StatelessWidget {
     super.key,
     required this.controller,
     required this.hintText,
-    required this.labelText,
+    this.labelText = '',
     this.isObscureText = false,
     this.keyboardType = TextInputType.text,
-    required this.height,
+    this.height = 54.0,
     this.showError = false,
     this.inputFormatters,
     this.readOnly = false,
     this.suffixIcon,
     this.onTap,
     this.minLines = 1,
+    this.maxLines,
     this.focusNode,
     this.onChanged,
     this.maxlength,
@@ -74,7 +76,7 @@ class CustomTextField extends StatelessWidget {
             validator: validator,
             minLines: minLines,
             maxLength: maxlength,
-            maxLines: 5,
+            maxLines: maxLines ?? 5,
             obscureText: isObscureText,
             keyboardType: keyboardType,
             inputFormatters: inputFormatters,
