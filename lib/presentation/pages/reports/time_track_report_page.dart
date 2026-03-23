@@ -196,7 +196,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                               series: <CartesianSeries<TimeTrackChartData,
                                   String>>[
                                 SplineSeries<TimeTrackChartData, String>(
-                                  name: 'Tracked',
+                                  name: 'Follow Up',
                                   dataSource: List<TimeTrackChartData>.from(
                                       providerTimeTrack.chartData),
                                   xValueMapper: (TimeTrackChartData data, _) =>

@@ -188,7 +188,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios_new, size: 20, color: Colors.grey),
+          icon: const Icon(Icons.arrow_back, size: 24, color: Color(0xFF1E232C)),
           onPressed: () {
             customerDetailsProvider.clearTaskDetails();
             Navigator.pop(context);

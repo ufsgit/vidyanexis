@@ -451,15 +451,6 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    if (!widget.isEdit)
-                                      Text(
-                                        '${leadProvider.loginBranchName} | ${leadProvider.loginDepartmentName}',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          color: AppColors.primaryBlue,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                        ),
-                                      ),
                                   ],
                                 ),
                               ],
