@@ -7,20 +7,21 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
-import 'package:vidyanexis/controller/models/enquiry_for_model.dart';
-import 'package:vidyanexis/controller/models/enquiry_source_model.dart';
-import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
-import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+
+
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/presentation/widgets/customer/status_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+
+
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/loading_circle.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+
 
 class LeadPagePhone extends StatefulWidget {
   final bool fromDashBoard;
@@ -51,9 +52,16 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     provider.getDistricts(context);
     settingsProvider.searchBranch(context);
     settingsProvider.searchDepartment('', context);
+    leadProvider.selectedStatusIds.clear();
+    leadProvider.selectedStatusIds.add(0);
+    leadProvider.selectedUserIds.clear();
+    leadProvider.selectedUserIds.add(0);
+    leadProvider.selectedEnquiryForIds.clear();
+    leadProvider.selectedEnquiryForIds.add(0);
+    leadProvider.selectedEnquirySourceIds.clear();
+    leadProvider.selectedEnquirySourceIds.add(0);
+
     leadProvider.setSearchCriteria(
-      '',
-      '',
       '',
       '',
       '',
@@ -96,9 +104,18 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
       provider.getFollowUpStatus(context, '1');
       settingsProvider.searchsourceCategoryData('', context);
       provider.getDistricts(context);
+      leadProvider.totalCount;
+
+      leadProvider.selectedStatusIds.clear();
+      leadProvider.selectedStatusIds.add(0);
+      leadProvider.selectedUserIds.clear();
+      leadProvider.selectedUserIds.add(0);
+      leadProvider.selectedEnquiryForIds.clear();
+      leadProvider.selectedEnquiryForIds.add(0);
+      leadProvider.selectedEnquirySourceIds.clear();
+      leadProvider.selectedEnquirySourceIds.add(0);
+
       leadProvider.setSearchCriteria(
-        '',
-        '',
         '',
         '',
         '',
@@ -156,13 +173,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   leadProvider.selectDateFilterOption(null);
                   leadProvider.removeStatus();
                   searchController.clear();
-                  leadProvider.setSearchCriteria(
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                  );
+                  leadProvider.setSearchCriteria('', '', '');
                   leadProvider.getSearchLeads(context);
                 },
                 title: "Leads",
@@ -170,23 +181,11 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 showUserName: false,
                 showFilterIcon: false,
                 onSearch: (String query) {
-                  if (leadProvider.search.isNotEmpty) {
-                    leadProvider.setSearchCriteria(
-                      '',
-                      leadProvider.fromDateS,
-                      leadProvider.toDateS,
-                      leadProvider.status,
-                      leadProvider.enquiryForS,
-                    );
-                  } else {
-                    leadProvider.setSearchCriteria(
-                      query,
-                      leadProvider.fromDateS,
-                      leadProvider.toDateS,
-                      leadProvider.status,
-                      leadProvider.enquiryForS,
-                    );
-                  }
+                  leadProvider.setSearchCriteria(
+                    query,
+                    leadProvider.fromDateS,
+                    leadProvider.toDateS,
+                  );
                   leadProvider.getSearchLeads(context);
                 },
                 searchController: searchController,
@@ -207,13 +206,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   leadProvider.selectDateFilterOption(null);
                   leadProvider.removeStatus();
                   searchController.clear();
-                  leadProvider.setSearchCriteria(
-                    '',
-                    '',
-                    '',
-                    '',
-                    '',
-                  );
+                  leadProvider.setSearchCriteria('', '', '');
                   leadProvider.getSearchLeads(context);
                 },
                 title: "Leads",
@@ -221,23 +214,11 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 showUserName: false,
                 showFilterIcon: false,
                 onSearch: (String query) {
-                  if (leadProvider.search.isNotEmpty) {
-                    leadProvider.setSearchCriteria(
-                      '',
-                      leadProvider.fromDateS,
-                      leadProvider.toDateS,
-                      leadProvider.status,
-                      leadProvider.enquiryForS,
-                    );
-                  } else {
-                    leadProvider.setSearchCriteria(
-                      query,
-                      leadProvider.fromDateS,
-                      leadProvider.toDateS,
-                      leadProvider.status,
-                      leadProvider.enquiryForS,
-                    );
-                  }
+                  leadProvider.setSearchCriteria(
+                    query,
+                    leadProvider.fromDateS,
+                    leadProvider.toDateS,
+                  );
                   leadProvider.getSearchLeads(context);
                 },
                 searchController: searchController,
@@ -249,599 +230,230 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
             )
           : RefreshIndicator(
               onRefresh: _refreshData,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child: CustomScrollView(
+                controller: leadProvider.scrollController,
+                slivers: [
                   if (leadProvider.isFilter)
-                    const SizedBox(
-                      height: 16,
-                    ),
-                  if (leadProvider.isFilter)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Wrap(
-                        spacing: 8.0, // horizontal spacing between items
-                        runSpacing: 8.0, // vertical spacing between lines
-                        alignment: WrapAlignment.start,
-                        children: [
-                          StatusDropdownWidget<int>(
-                            containerWidth:
-                                MediaQuery.sizeOf(context).width / 1.1,
-                            statusName: 'Status',
-                            items: [0] +
-                                provider.followUpData
-                                    .map((status) => status.statusId ?? 0)
-                                    .toList(),
-                            initialValue: leadProvider.selectedStatus,
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  leadProvider.selectedStatus.toString();
-                              String fromDate = leadProvider.formattedFromDate;
-                              String toDate = leadProvider.formattedToDate;
-                              String enquiryFor =
-                                  leadProvider.selectedEnquiryFor.toString();
-
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                              );
-                              leadProvider.getSearchLeads(context);
-                            },
-                            displayStringFor: (int statusId) {
-                              if (statusId == 0) return 'All';
-
-                              final status = provider.followUpData.firstWhere(
-                                  (status) => status.statusId == statusId,
-                                  orElse: () => SearchLeadStatusModel(
-                                      statusId: statusId,
-                                      statusName: "Unknown"));
-
-                              return status.statusName ?? 'Unknown';
-                            },
-                            areItemsEqual: (a, b) => a == b,
-                            label: 'Status',
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: AppColors.scaffoldColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8, right: 8),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Flexible(
-                                      child: ConstrainedBox(
-                                        constraints:
-                                            const BoxConstraints(maxWidth: 230),
-                                        child: CustomText(
-                                          leadProvider.fromDate == null &&
-                                                  leadProvider.toDate == null
-                                              ? 'Date'
-                                              : leadProvider.fromDate != null &&
-                                                      leadProvider.toDate !=
-                                                          null
-                                                  ? 'Date : ${leadProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${leadProvider.formattedToDate.toString().toDayMonthYearFormat()}'
-                                                  : "Date",
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColors.textBlack,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            CustomText(
+                              'Status',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textBlack,
+                            ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                FilterChipWidget(
+                                  label: 'All',
+                                  isSelected:
+                                      leadProvider.selectedStatusIds.contains(0),
+                                  onTap: () {
+                                    leadProvider.toggleStatus(0);
+                                  },
+                                ),
+                                ...provider.followUpData.map((status) {
+                                  return FilterChipWidget(
+                                    label: status.statusName ?? 'Unknown',
+                                    isSelected: leadProvider.selectedStatusIds
+                                        .contains(status.statusId),
+                                    onTap: () {
+                                      leadProvider
+                                          .toggleStatus(status.statusId ?? 0);
+                                    },
+                                  );
+                                }).toList(),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              alignment: WrapAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    onClickTopButton(context);
+                                  },
+                                  child: Container(
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.scaffoldColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Flexible(
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                  maxWidth: 200),
+                                              child: CustomText(
+                                                leadProvider.fromDate == null &&
+                                                        leadProvider.toDate ==
+                                                            null
+                                                    ? 'Date'
+                                                    : 'Date : ${leadProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${leadProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.textBlack,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: AppColors.textGrey3,
+                                            size: 18,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(width: 4),
-                                    Icon(
-                                      Icons.keyboard_arrow_down,
-                                      color: AppColors.textGrey3,
-                                      size: 18,
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ),
-                          StatusDropdownWidget<int>(
-                            containerWidth:
-                                MediaQuery.sizeOf(context).width / 2.5,
-                            statusName: 'Assigned staff',
-                            items: [0] +
-                                provider.searchUserDetails
-                                    .map((status) => status.userDetailsId ?? 0)
-                                    .toList(),
-                            initialValue: leadProvider.selectedUser,
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setUserFilterStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  leadProvider.selectedStatus.toString();
-                              String fromDate = leadProvider.formattedFromDate;
-                              String toDate = leadProvider.formattedToDate;
-                              String enquiryFor =
-                                  leadProvider.selectedEnquiryFor.toString();
-                              print(
-                                  'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                              );
-                              leadProvider.getSearchLeads(context);
-                            },
-                            displayStringFor: (int statusId) {
-                              if (statusId == 0) return 'All';
-
-                              final status = provider.searchUserDetails
-                                  .firstWhere(
-                                      (status) =>
-                                          status.userDetailsId == statusId,
-                                      orElse: () => SearchUserDetails(
-                                          userDetailsId: 0,
-                                          userDetailsName: ''));
-
-                              return status.userDetailsName ?? 'Unknown';
-                            },
-                            enabled: userId == 1 ? true : false,
-                            areItemsEqual: (a, b) => a == b,
-                            label: 'All Staff',
-                          ),
-                          StatusDropdownWidget<int>(
-                            containerWidth:
-                                MediaQuery.sizeOf(context).width / 2.5,
-                            statusName: 'Enquiry for',
-                            items: [0] +
-                                provider.enquiryForList
-                                    .map((status) => status.enquiryForId ?? 0)
-                                    .toList(),
-                            initialValue: leadProvider.selectedEnquiryFor,
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setEnquiryForFilter(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  leadProvider.selectedStatus.toString();
-                              String fromDate = leadProvider.formattedFromDate;
-                              String toDate = leadProvider.formattedToDate;
-                              String enquiryFor =
-                                  leadProvider.selectedEnquiryFor.toString();
-
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                              );
-                              leadProvider.getSearchLeads(context);
-                            },
-                            displayStringFor: (int statusId) {
-                              if (statusId == 0) return 'All';
-
-                              final status = provider.enquiryForList.firstWhere(
-                                  (status) => status.enquiryForId == statusId,
-                                  orElse: () => EnquiryForModel(
-                                      enquiryForId: 0,
-                                      enquiryForName: '',
-                                      sourceCategoryId: 0,
-                                      sourceCategoryName: '',
-                                      deleteStatus: 0));
-
-                              return status.enquiryForName ?? '';
-                            },
-                            areItemsEqual: (a, b) => a == b,
-                            label: 'Enquiry for',
-                          ),
-                          StatusDropdownWidget<int>(
-                            containerWidth:
-                                MediaQuery.sizeOf(context).width / 2.5,
-                            statusName: 'Enquiry Source',
-                            items: [0] +
-                                provider.enquiryData
-                                    .map(
-                                        (status) => status.enquirySourceId ?? 0)
-                                    .toList(),
-                            initialValue: leadProvider.selectedEnquirySource,
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setEnquirySourceFilter(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  leadProvider.selectedStatus.toString();
-                              String fromDate = leadProvider.formattedFromDate;
-                              String toDate = leadProvider.formattedToDate;
-                              String enquiryFor =
-                                  leadProvider.selectedEnquiryFor.toString();
-                              int enquirySource =
-                                  leadProvider.selectedEnquirySource ?? 0;
-
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                                enquirySource: enquirySource,
-                              );
-                              leadProvider.getSearchLeads(context);
-                            },
-                            displayStringFor: (int statusId) {
-                              if (statusId == 0) return 'All';
-
-                              final status = provider.enquiryData.firstWhere(
-                                  (status) =>
-                                      status.enquirySourceId == statusId,
-                                  orElse: () => Enquirysourcemodel(
-                                      enquirySourceId: 0,
-                                      enquirySourceName: '',
-                                      sourceCategoryId: 0,
-                                      sourceCategoryName: '',
-                                      deleteStatus: 0));
-
-                              return status.enquirySourceName ?? '';
-                            },
-                            areItemsEqual: (a, b) => a == b,
-                            label: 'Enquiry Source',
-                          ),
-                        ],
+                            if (userId == 1) ...[
+                              const SizedBox(height: 16),
+                              CustomText(
+                                'Assigned Staff',
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.textBlack,
+                              ),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 8.0,
+                                runSpacing: 8.0,
+                                children: [
+                                  FilterChipWidget(
+                                    label: 'All',
+                                    isSelected:
+                                        leadProvider.selectedUserIds.contains(0),
+                                    onTap: () {
+                                      leadProvider.toggleUserFilter(0);
+                                    },
+                                  ),
+                                  ...provider.searchUserDetails.map((staff) {
+                                    return FilterChipWidget(
+                                      label: staff.userDetailsName,
+                                      isSelected: leadProvider.selectedUserIds
+                                          .contains(staff.userDetailsId),
+                                      onTap: () {
+                                        leadProvider.toggleUserFilter(
+                                            staff.userDetailsId ?? 0);
+                                      },
+                                    );
+                                  }).toList(),
+                                ],
+                              ),
+                            ],
+                            const SizedBox(height: 16),
+                            CustomText(
+                              'Enquiry For',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textBlack,
+                            ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                FilterChipWidget(
+                                  label: 'All',
+                                  isSelected: leadProvider.selectedEnquiryForIds
+                                      .contains(0),
+                                  onTap: () {
+                                    leadProvider.toggleEnquiryForFilter(0);
+                                  },
+                                ),
+                                ...provider.enquiryForList.map((enquiry) {
+                                  return FilterChipWidget(
+                                    label: enquiry.enquiryForName,
+                                    isSelected: leadProvider
+                                        .selectedEnquiryForIds
+                                        .contains(enquiry.enquiryForId),
+                                    onTap: () {
+                                      leadProvider.toggleEnquiryForFilter(
+                                          enquiry.enquiryForId ?? 0);
+                                    },
+                                  );
+                                }).toList(),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            CustomText(
+                              'Enquiry Source',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textBlack,
+                            ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                FilterChipWidget(
+                                  label: 'All',
+                                  isSelected: leadProvider
+                                      .selectedEnquirySourceIds
+                                      .contains(0),
+                                  onTap: () {
+                                    leadProvider.toggleEnquirySourceFilter(0);
+                                  },
+                                ),
+                                ...provider.enquiryData.map((source) {
+                                  return FilterChipWidget(
+                                    label: source.enquirySourceName,
+                                    isSelected: leadProvider
+                                        .selectedEnquirySourceIds
+                                        .contains(source.enquirySourceId),
+                                    onTap: () {
+                                      leadProvider.toggleEnquirySourceFilter(
+                                          source.enquirySourceId ?? 0);
+                                    },
+                                  );
+                                }).toList(),
+                              ],
+                            ),
+                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
                       ),
                     ),
-                  if (leadProvider.isFilter)
-                    const SizedBox(
-                      height: 16,
-                    ),
-                  // if (leadProvider.isFilter)
-                  //   Container(
-                  //     // margin: const EdgeInsets.only(top: 10),
-                  //     padding: const EdgeInsets.all(10.0),
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.white,
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: Wrap(
-                  //       runSpacing: 10,
-                  //       crossAxisAlignment: WrapCrossAlignment.center,
-                  //       children: [
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //           decoration: BoxDecoration(
-                  //             color: Colors.white,
-                  //             borderRadius: BorderRadius.circular(20),
-                  //             border: Border.all(
-                  //                 color: leadProvider.selectedStatus != null &&
-                  //                         leadProvider.selectedStatus != 0
-                  //                     ? AppColors.primaryBlue
-                  //                     : Colors.grey[300]!),
-                  //           ),
-                  //           child: Row(
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               const Text('Status: '),
-                  //               DropdownButton<int>(
-                  //                 value: leadProvider.selectedStatus,
-                  //                 hint: const Text('All'),
-                  //                 items: [
-                  //                       const DropdownMenuItem<int>(
-                  //                         value:
-                  //                             0, // Use 0 or null to represent "All"
-                  //                         child: Text(
-                  //                           'All',
-                  //                           style: TextStyle(fontSize: 14),
-                  //                         ),
-                  //                       ),
-                  //                     ] +
-                  //                     provider.followUpData
-                  //                         .map((status) => DropdownMenuItem<int>(
-                  //                               value: status.statusId,
-                  //                               child: Text(
-                  //                                 status.statusName ?? '',
-                  //                                 style:
-                  //                                     const TextStyle(fontSize: 14),
-                  //                               ),
-                  //                             ))
-                  //                         .toList(),
-                  //                 onChanged: (int? newValue) {
-                  //                   if (newValue != null) {
-                  //                     leadProvider.setStatus(
-                  //                         newValue); // Update the status in the provider
-                  //                   }
-                  //                   String status =
-                  //                       leadProvider.selectedStatus.toString();
-                  //                   String fromDate = leadProvider.formattedFromDate;
-                  //                   String toDate = leadProvider.formattedToDate;
-                  //                   String enquiryFor =
-                  //                       leadProvider.selectedEnquiryFor.toString();
-                  //                   print(
-                  //                       'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                  //                   leadProvider.setSearchCriteria(
-                  //                     leadProvider.search,
-                  //                     fromDate,
-                  //                     toDate,
-                  //                     status,
-                  //                     enquiryFor,
-                  //                   );
-                  //                   leadProvider.getSearchLeads(context);
-                  //                 },
-                  //                 underline: Container(),
-                  //                 isDense: true,
-                  //                 iconSize: 18,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //         const SizedBox(
-                  //           width: 10,
-                  //         ),
-                  //         GestureDetector(
-                  //           onTap: () {
-                  //             onClickTopButton(context);
-                  //           },
-                  //           child: Container(
-                  //             padding: const EdgeInsets.symmetric(
-                  //                 horizontal: 20, vertical: 1.5),
-                  //             decoration: BoxDecoration(
-                  //               color: Colors.white,
-                  //               borderRadius: BorderRadius.circular(20),
-                  //               border: Border.all(
-                  //                   color: leadProvider.fromDate != null ||
-                  //                           leadProvider.toDate != null
-                  //                       ? AppColors.primaryBlue
-                  //                       : Colors.grey[300]!),
-                  //             ),
-                  //             child: Row(
-                  //               mainAxisSize: MainAxisSize.min,
-                  //               children: [
-                  //                 if (leadProvider.fromDate == null &&
-                  //                     leadProvider.toDate == null)
-                  //                   const Text('Follow-Up Date: All'),
-                  //                 if (leadProvider.fromDate != null &&
-                  //                     leadProvider.toDate != null)
-                  //                   CustomText(
-                  //                     'Date : ${leadProvider.formattedFromDate} - ${leadProvider.formattedToDate}',
-                  //                     fontSize: 14,
-                  //                     fontWeight: FontWeight.w400,
-                  //                     color: AppColors.textBlack,
-                  //                     overflow: TextOverflow.ellipsis,
-                  //                   ),
-                  //                 const SizedBox(
-                  //                   width: 10,
-                  //                 ),
-                  //                 const Icon(
-                  //                   Icons.arrow_drop_down_outlined,
-                  //                   color: Colors.black45,
-                  //                   size: 20,
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         const SizedBox(
-                  //           width: 10,
-                  //         ),
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //           decoration: BoxDecoration(
-                  //             color: Colors.white,
-                  //             borderRadius: BorderRadius.circular(20),
-                  //             border: Border.all(
-                  //                 color: leadProvider.selectedUser != null &&
-                  //                         leadProvider.selectedUser != 0
-                  //                     ? AppColors.primaryBlue
-                  //                     : Colors.grey[300]!),
-                  //           ),
-                  //           child: Row(
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               const Text('Assigned Staff: '),
-                  //               DropdownButton<int>(
-                  //                 value: leadProvider.selectedUser,
-                  //                 hint: const Text('All'),
-                  //                 items: [
-                  //                       const DropdownMenuItem<int>(
-                  //                         value:
-                  //                             0, // Use 0 or null to represent "All"
-                  //                         child: Text(
-                  //                           'All',
-                  //                           style: TextStyle(fontSize: 14),
-                  //                         ),
-                  //                       ),
-                  //                     ] +
-                  //                     provider.searchUserDetails
-                  //                         .map((user) => DropdownMenuItem<int>(
-                  //                               value: user.userDetailsId!,
-                  //                               child: ConstrainedBox(
-                  //                                 constraints: const BoxConstraints(
-                  //                                     maxWidth: 150),
-                  //                                 child: Text(
-                  //                                   user.userDetailsName ?? '',
-                  //                                   overflow: TextOverflow
-                  //                                       .ellipsis, // Adds ellipsis when the text is too long
-                  //                                   style:
-                  //                                       const TextStyle(fontSize: 14),
-                  //                                 ),
-                  //                               ),
-                  //                             ))
-                  //                         .toList(),
-                  //                 onChanged: (int? newValue) {
-                  //                   if (newValue != null) {
-                  //                     leadProvider.setUserFilterStatus(
-                  //                         newValue); // Update the status in the provider
-                  //                   }
-                  //                   String status =
-                  //                       leadProvider.selectedStatus.toString();
-                  //                   String fromDate = leadProvider.formattedFromDate;
-                  //                   String toDate = leadProvider.formattedToDate;
-                  //                   String enquiryFor =
-                  //                       leadProvider.selectedEnquiryFor.toString();
-                  //                   print(
-                  //                       'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                  //                   leadProvider.setSearchCriteria(
-                  //                     leadProvider.search,
-                  //                     fromDate,
-                  //                     toDate,
-                  //                     status,
-                  //                     enquiryFor,
-                  //                   );
-                  //                   leadProvider.getSearchLeads(context);
-                  //                 },
-                  //                 underline: Container(),
-                  //                 isDense: true,
-                  //                 iconSize: 18,
-                  //               )
-                  //             ],
-                  //           ),
-                  //         ),
-                  //         const SizedBox(
-                  //           width: 10,
-                  //         ),
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //           decoration: BoxDecoration(
-                  //             color: Colors.white,
-                  //             borderRadius: BorderRadius.circular(20),
-                  //             border: Border.all(
-                  //                 color: leadProvider.selectedEnquiryFor != null &&
-                  //                         leadProvider.selectedEnquiryFor != 0
-                  //                     ? AppColors.primaryBlue
-                  //                     : Colors.grey[300]!),
-                  //           ),
-                  //           child: Row(
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               const Text('Enquiry For: '),
-                  //               DropdownButton<int>(
-                  //                 value: leadProvider.selectedEnquiryFor,
-                  //                 hint: const Text('All'),
-                  //                 items: [
-                  //                       const DropdownMenuItem<int>(
-                  //                         value:
-                  //                             0, // Use 0 or null to represent "All"
-                  //                         child: Text(
-                  //                           'All',
-                  //                           style: TextStyle(fontSize: 14),
-                  //                         ),
-                  //                       ),
-                  //                     ] +
-                  //                     provider.enquiryForList
-                  //                         .map((user) => DropdownMenuItem<int>(
-                  //                               value: user.enquiryForId,
-                  //                               child: Text(
-                  //                                 user.enquiryForName,
-                  //                                 style:
-                  //                                     const TextStyle(fontSize: 14),
-                  //                               ),
-                  //                             ))
-                  //                         .toList(),
-                  //                 onChanged: (int? newValue) {
-                  //                   if (newValue != null) {
-                  //                     leadProvider.setEnquiryForFilter(
-                  //                         newValue); // Update the status in the provider
-                  //                   }
-                  //                   String status =
-                  //                       leadProvider.selectedStatus.toString();
-                  //                   String fromDate = leadProvider.formattedFromDate;
-                  //                   String toDate = leadProvider.formattedToDate;
-                  //                   String enquiryFor =
-                  //                       leadProvider.selectedEnquiryFor.toString();
-                  //                   print(
-                  //                       'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                  //                   leadProvider.setSearchCriteria(
-                  //                     leadProvider.search,
-                  //                     fromDate,
-                  //                     toDate,
-                  //                     status,
-                  //                     enquiryFor,
-                  //                   );
-                  //                   leadProvider.getSearchLeads(context);
-                  //                 },
-                  //                 underline: Container(),
-                  //                 isDense: true,
-                  //                 iconSize: 18,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //         const SizedBox(
-                  //           width: 10,
-                  //         ),
-                  //         if (leadProvider.fromDate != null ||
-                  //             leadProvider.toDate != null ||
-                  //             (leadProvider.selectedStatus != null &&
-                  //                 leadProvider.selectedStatus != 0) ||
-                  //             (leadProvider.selectedUser != null &&
-                  //                 leadProvider.selectedUser != 0) ||
-                  //             (leadProvider.selectedEnquiryFor != null &&
-                  //                 leadProvider.selectedEnquiryFor != 0) ||
-                  //             leadProvider.search.isNotEmpty)
-                  //           ElevatedButton(
-                  //             onPressed: () {
-                  //               leadProvider.selectDateFilterOption(null);
-                  //               leadProvider.removeStatus();
-                  //               searchController.clear();
-                  //               leadProvider.setSearchCriteria(
-                  //                 '',
-                  //                 '',
-                  //                 '',
-                  //                 '',
-                  //                 '',
-                  //               );
-                  //               leadProvider.getSearchLeads(context);
-                  //             },
-                  //             style: ElevatedButton.styleFrom(
-                  //               backgroundColor: Colors.white,
-                  //               foregroundColor: AppColors.textRed,
-                  //               side: BorderSide(color: AppColors.textRed),
-                  //               padding: const EdgeInsets.symmetric(
-                  //                 horizontal: 16,
-                  //                 vertical: 0,
-                  //               ),
-                  //             ),
-                  //             child: const Text('Reset'),
-                  //           ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: leadProvider
-                          .scrollController, // Keep the original controller for pagination
-                      physics:
-                          const AlwaysScrollableScrollPhysics(), // Enable pull to refresh
-                      itemCount: leadProvider.leadData.length +
-                          (leadProvider.isLoadingMore ? 1 : 0),
-                      itemBuilder: (context, index) {
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
                         if (index == leadProvider.leadData.length) {
-                          return const Padding(
-                            padding: EdgeInsets.all(16),
-                            child: Center(
-                              child: CircularProgressIndicator(),
-                            ),
-                          );
+                          return leadProvider.isLoadingMore
+                              ? const Padding(
+                                  padding: EdgeInsets.all(16),
+                                  child: Center(
+                                    child: CircularProgressIndicator(),
+                                  ),
+                                )
+                              : const SizedBox.shrink();
                         }
                         var lead = leadProvider.leadData[index];
                         return Column(
                           children: [
                             Divider(
-                              height: 2,
+                              height: 1,
                               color: AppColors.grey,
                             ),
                             LeadCard(
@@ -851,7 +463,6 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               onTap: () {
                                 leadProvider.toggleExpansion(index);
                                 if (leadProvider.expandedIndex == index) {
-                                  // Fetch check-in history when expanding to show correct status
                                   Provider.of<LeadCheckInProvider>(context,
                                           listen: false)
                                       .fetchLeadCheckInReports(
@@ -862,6 +473,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                           ],
                         );
                       },
+                      childCount: leadProvider.leadData.length + 1,
                     ),
                   ),
                 ],
@@ -869,32 +481,52 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
             ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 32),
-        child: FloatingActionButton(
-          shape: const CircleBorder(),
-          elevation: 0,
-          backgroundColor: AppColors.bluebutton,
-          onPressed: () async {
-            final dropDownProvider =
-                Provider.of<DropDownProvider>(context, listen: false);
-            dropDownProvider.updateEnquiryForName(null, '');
-            dropDownProvider.updateDistrict(null, '');
+        child: leadProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_filter_fab',
+                  onPressed: () {
+                    leadProvider.getSearchLeads(context);
+                    leadProvider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : FloatingActionButton(
+                heroTag: 'add_lead_fab',
+                shape: const CircleBorder(),
+                elevation: 0,
+                backgroundColor: AppColors.bluebutton,
+                onPressed: () async {
+                  final dropDownProvider =
+                      Provider.of<DropDownProvider>(context, listen: false);
+                  dropDownProvider.updateEnquiryForName(null, '');
+                  dropDownProvider.updateDistrict(null, '');
 
-            await leadProvider.getLeadDropdowns(context);
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const NewLeadDrawerMobileWidget(
-                  isEdit: false,
-                  customerId: '0',
+                  await leadProvider.getLeadDropdowns(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const NewLeadDrawerMobileWidget(
+                        isEdit: false,
+                        customerId: '0',
+                      ),
+                    ),
+                  );
+                },
+                child: Icon(
+                  Icons.add,
+                  color: AppColors.whiteColor,
                 ),
               ),
-            );
-          },
-          child: Icon(
-            Icons.add,
-            color: AppColors.whiteColor,
-          ),
-        ),
       ),
     );
   }
@@ -1031,8 +663,6 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             leadProvider.search,
                             fromDate,
                             toDate,
-                            status,
-                            enquiryFor,
                           );
                           leadProvider.getSearchLeads(context);
                         },
@@ -1069,8 +699,6 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             leadProvider.search,
                             fromDate,
                             toDate,
-                            status,
-                            enquiryFor,
                           );
                           leadProvider.getSearchLeads(context);
                         },
@@ -1105,3 +733,5 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     'This Month',
   ];
 }
+
+

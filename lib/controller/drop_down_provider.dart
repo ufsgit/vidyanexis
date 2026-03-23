@@ -652,7 +652,7 @@ class DropDownProvider extends ChangeNotifier {
     }
   }
 
-  void getFollowUpStatus(BuildContext context, String viewId) async {
+  Future<void> getFollowUpStatus(BuildContext context, String viewId) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
