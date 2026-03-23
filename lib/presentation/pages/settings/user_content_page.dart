@@ -32,7 +32,10 @@ class _UsersContentState extends State<UsersContent> {
         context,
       );
       settingsProvider.searchDepartment('', context);
+      settingsProvider.searchBranch(context);
       settingsProvider.searchController.clear();
+      settingsProvider.selectedFilterDepartmentId = 0;
+      settingsProvider.selectedFilterBranchId = 0;
     });
     super.initState();
   }
@@ -112,6 +115,90 @@ class _UsersContentState extends State<UsersContent> {
                   const SizedBox(width: 16),
                 ],
               ),
+            ),
+            const SizedBox(height: 12),
+            // Branch Filter
+            Row(
+              children: [
+                Container(
+                  width: 180,
+                  height: 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: settingsProvider.selectedFilterBranchId ?? 0,
+                      hint: Text("Branch",
+                          style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                      isExpanded: true,
+                      items: [
+                        const DropdownMenuItem(
+                          value: 0,
+                          child: Text("All Branches"),
+                        ),
+                        ...settingsProvider.branchModel.map((branch) {
+                          return DropdownMenuItem(
+                            value: branch.branchId,
+                            child: Text(branch.branchName ?? "",
+                                overflow: TextOverflow.ellipsis),
+                          );
+                        }),
+                      ],
+                      onChanged: (value) {
+                        settingsProvider.selectedFilterBranchId = value;
+                        settingsProvider.getUserDetails(
+                          settingsProvider.searchController.text,
+                          context,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                // Department Filter
+                Container(
+                  width: 180,
+                  height: 40,
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<int>(
+                      value: settingsProvider.selectedFilterDepartmentId ?? 0,
+                      hint: Text("Department",
+                          style: GoogleFonts.plusJakartaSans(fontSize: 14)),
+                      isExpanded: true,
+                      items: [
+                        const DropdownMenuItem(
+                          value: 0,
+                          child: Text("All Depts"),
+                        ),
+                        ...settingsProvider.departmentModel.map((dept) {
+                          return DropdownMenuItem(
+                            value: dept.departmentId,
+                            child: Text(dept.departmentName,
+                                overflow: TextOverflow.ellipsis),
+                          );
+                        }),
+                      ],
+                      onChanged: (value) {
+                        settingsProvider.selectedFilterDepartmentId = value;
+                        settingsProvider.getUserDetails(
+                          settingsProvider.searchController.text,
+                          context,
+                        );
+                      },
+                    ),
+                  ),
+                ),
+              ],
             ),
             const SizedBox(height: 24),
 

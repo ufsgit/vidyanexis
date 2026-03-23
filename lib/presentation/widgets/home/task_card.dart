@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -18,7 +19,7 @@ import 'package:vidyanexis/presentation/widgets/customer/add_document_phone.dart
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 
-class TaskCard extends StatelessWidget {
+class TaskCard extends StatefulWidget {
   final TaskReportModel task;
   final bool isExpanded;
   final VoidCallback onTap;
@@ -33,6 +34,24 @@ class TaskCard extends StatelessWidget {
   });
 
   @override
+  State<TaskCard> createState() => _TaskCardState();
+}
+
+class _TaskCardState extends State<TaskCard> {
+  String userType = "";
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      // userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
+      // userName = preferences.getString('userName') ?? "";
+      userType = preferences.getString('userType') ?? "";
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     Color getStatusColor(String statusName) {
       statusName = statusName.toUpperCase();
@@ -41,15 +60,15 @@ class TaskCard extends StatelessWidget {
       if (statusName.contains('AMC')) return Colors.grey;
       if (statusName.contains('HOT')) return Colors.red;
       // Default to task.colorCode if available, else primaryBlue
-      return task.colorCode ?? AppColors.primaryBlue;
+      return widget.task.colorCode ?? AppColors.primaryBlue;
     }
 
-    final statusColor = getStatusColor(task.taskStatusName);
+    final statusColor = getStatusColor(widget.task.taskStatusName);
 
     return Column(
       children: [
         InkWell(
-          onTap: onTap,
+          onTap: widget.onTap,
           child: Container(
             width: MediaQuery.sizeOf(context).width,
             decoration: BoxDecoration(
@@ -65,7 +84,7 @@ class TaskCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        task.customerName,
+                        widget.task.customerName,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: GoogleFonts.plusJakartaSans(
@@ -79,7 +98,7 @@ class TaskCard extends StatelessWidget {
                     Row(
                       children: [
                         Text(
-                          task.taskDate.toFormattedDate(),
+                          widget.task.taskDate.toFormattedDate(),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 12,
                             fontWeight: FontWeight.w400,
@@ -88,7 +107,7 @@ class TaskCard extends StatelessWidget {
                         ),
                         const SizedBox(width: 4),
                         Icon(
-                          isExpanded
+                          widget.isExpanded
                               ? Icons.keyboard_arrow_up
                               : Icons.keyboard_arrow_down,
                           size: 18,
@@ -105,7 +124,7 @@ class TaskCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(
-                        task.taskTypeName,
+                        widget.task.taskTypeName,
                         overflow: TextOverflow.ellipsis,
                         maxLines: 1,
                         style: GoogleFonts.plusJakartaSans(
@@ -118,7 +137,8 @@ class TaskCard extends StatelessWidget {
                     const SizedBox(width: 8),
                     // STATUS BADGE
                     GestureDetector(
-                      onTap: () => showStatusUpdate(context, task),
+                      onTap: () =>
+                          widget.showStatusUpdate(context, widget.task),
                       child: Container(
                         padding: const EdgeInsets.symmetric(
                           horizontal: 12,
@@ -129,7 +149,7 @@ class TaskCard extends StatelessWidget {
                           borderRadius: BorderRadius.circular(30),
                         ),
                         child: Text(
-                          task.taskStatusName.toUpperCase(),
+                          widget.task.taskStatusName.toUpperCase(),
                           style: GoogleFonts.plusJakartaSans(
                             fontSize: 11,
                             fontWeight: FontWeight.w600,
@@ -140,17 +160,27 @@ class TaskCard extends StatelessWidget {
                     ),
                   ],
                 ),
+                const SizedBox(height: 6),
+                if (userType == "1")
+                  Text(
+                    'Assigned To: ${widget.task.toUserName}',
+                    style: GoogleFonts.plusJakartaSans(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textBlack,
+                    ),
+                  ),
               ],
             ),
           ),
         ),
-        if (isExpanded)
+        if (widget.isExpanded)
           Padding(
             padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (task.enquiryForName.isNotEmpty) ...[
+                if (widget.task.enquiryForName.isNotEmpty) ...[
                   Text(
                     "Enquiry For",
                     style: GoogleFonts.plusJakartaSans(
@@ -161,7 +191,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    task.enquiryForName,
+                    widget.task.enquiryForName,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -170,7 +200,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
-                if (task.description.isNotEmpty) ...[
+                if (widget.task.description.isNotEmpty) ...[
                   Text(
                     "Description",
                     style: GoogleFonts.plusJakartaSans(
@@ -181,7 +211,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    task.description,
+                    widget.task.description,
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -190,8 +220,8 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                 ],
-                if (task.nextFollowupDate != null &&
-                    task.nextFollowupDate!.isNotEmpty) ...[
+                if (widget.task.nextFollowupDate != null &&
+                    widget.task.nextFollowupDate!.isNotEmpty) ...[
                   Text(
                     "Next Follow-up",
                     style: GoogleFonts.plusJakartaSans(
@@ -202,7 +232,7 @@ class TaskCard extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    task.nextFollowupDate!.toFormattedDate(),
+                    widget.task.nextFollowupDate!.toFormattedDate(),
                     style: GoogleFonts.plusJakartaSans(
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -220,8 +250,10 @@ class TaskCard extends StatelessWidget {
                         Expanded(child: _buildViewButton(context)),
                         const SizedBox(width: 4),
                         Expanded(child: _buildCallButton(context)),
-                        const Expanded(child: SizedBox()), // Placeholder to match spacing
-                        const Expanded(child: SizedBox()), // Placeholder to match spacing
+                        const Expanded(
+                            child: SizedBox()), // Placeholder to match spacing
+                        const Expanded(
+                            child: SizedBox()), // Placeholder to match spacing
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -234,7 +266,8 @@ class TaskCard extends StatelessWidget {
                         Expanded(child: _buildEditButton(context)),
                         const SizedBox(width: 4),
                         Expanded(child: _buildQuoteButton(context)),
-                        const Expanded(child: SizedBox()), // Placeholder to match spacing
+                        const Expanded(
+                            child: SizedBox()), // Placeholder to match spacing
                       ],
                     ),
                   ],
@@ -249,7 +282,7 @@ class TaskCard extends StatelessWidget {
   Widget _buildChatButton(BuildContext context) {
     return CustomActionButton(
       onTap: () async {
-        String phone = task.mobile;
+        String phone = widget.task.mobile;
 
         if (phone.isEmpty) {
           showDialog(
@@ -264,7 +297,7 @@ class TaskCard extends StatelessWidget {
             final leadDetailsProvider =
                 Provider.of<LeadDetailsProvider>(context, listen: false);
             await leadDetailsProvider
-                .fetchLeadDetailsNoContext(task.customerId.toString());
+                .fetchLeadDetailsNoContext(widget.task.customerId.toString());
 
             if (leadDetailsProvider.leadDetails != null &&
                 leadDetailsProvider.leadDetails!.isNotEmpty) {
@@ -302,9 +335,9 @@ class TaskCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (context) => TaskDetailsPagePhone(
-              taskId: task.taskId.toString(),
-              taskMasterId: task.taskMasterId.toString(),
-              customerId: task.customerId.toString(),
+              taskId: widget.task.taskId.toString(),
+              taskMasterId: widget.task.taskMasterId.toString(),
+              customerId: widget.task.customerId.toString(),
             ),
           ),
         );
@@ -319,7 +352,7 @@ class TaskCard extends StatelessWidget {
   Widget _buildCallButton(BuildContext context) {
     return CustomActionButton(
       onTap: () async {
-        final Uri phoneUri = Uri(scheme: 'tel', path: task.mobile);
+        final Uri phoneUri = Uri(scheme: 'tel', path: widget.task.mobile);
         if (await canLaunchUrl(phoneUri)) {
           await launchUrl(phoneUri);
         }
@@ -337,7 +370,7 @@ class TaskCard extends StatelessWidget {
       onTap: () async {
         final customerDetailsProvider =
             Provider.of<CustomerDetailsProvider>(context, listen: false);
-        customerDetailsProvider.customerId = task.customerId.toString();
+        customerDetailsProvider.customerId = widget.task.customerId.toString();
         customerDetailsProvider.clearTaskDetails();
         Navigator.push(context, MaterialPageRoute(
           builder: (context) {
@@ -360,10 +393,11 @@ class TaskCard extends StatelessWidget {
       onTap: () {
         final customerDetailsProvider =
             Provider.of<CustomerDetailsProvider>(context, listen: false);
-        customerDetailsProvider.customerId = task.customerId.toString();
+        customerDetailsProvider.customerId = widget.task.customerId.toString();
         Navigator.push(context, MaterialPageRoute(
           builder: (context) {
-            return AddDocumentPhone(customerId: task.customerId.toString());
+            return AddDocumentPhone(
+                customerId: widget.task.customerId.toString());
           },
         ));
       },
@@ -390,11 +424,11 @@ class TaskCard extends StatelessWidget {
         final leadDetailsProvider =
             Provider.of<LeadDetailsProvider>(context, listen: false);
         await leadDetailsProvider.fetchLeadDetails(
-            task.customerId.toString(), context);
+            widget.task.customerId.toString(), context);
 
         final leadsProvider =
             Provider.of<LeadsProvider>(context, listen: false);
-        leadsProvider.setCutomerId(task.customerId);
+        leadsProvider.setCutomerId(widget.task.customerId);
         final dropDownProvider =
             Provider.of<DropDownProvider>(context, listen: false);
         final leadDetails = leadDetailsProvider.leadDetails![0];
@@ -432,7 +466,7 @@ class TaskCard extends StatelessWidget {
           context,
           MaterialPageRoute(
             builder: (c) => QuotationCreationWidget(
-              customerId: task.customerId.toString(),
+              customerId: widget.task.customerId.toString(),
               quotationId: '0',
               isEdit: false,
             ),

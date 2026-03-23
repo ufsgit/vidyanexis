@@ -1371,22 +1371,14 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 onCancel: () =>
                                                                     Navigator.pop(
                                                                         context),
-                                                                onConfirm: () {
-                                                                  customerDetailsProvider
-                                                                      .deleteTask(
-                                                                          task.taskId
-                                                                              .toString(),
-                                                                          task.customerId
-                                                                              .toString(),
-                                                                          context)
-                                                                      .then(
-                                                                          (value) {
-                                                                    Navigator.pop(
-                                                                        context);
-                                                                    reportsProvider
-                                                                        .searchTaskByCustomer(
-                                                                            context);
-                                                                  });
+                                                                onConfirm:
+                                                                    () async {
+                                                                  await customerDetailsProvider.deleteTask(
+                                                                      task.taskId
+                                                                          .toString(),
+                                                                      task.customerId
+                                                                          .toString(),
+                                                                      context);
                                                                 },
                                                               );
                                                             },
