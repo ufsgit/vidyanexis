@@ -9,7 +9,6 @@ import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.da
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
-import '../../../controller/expense_provider.dart';
 import '../../../controller/models/stock_model.dart';
 import '../home/custom_button_widget.dart';
 import '../home/custom_dropdown_widget.dart';

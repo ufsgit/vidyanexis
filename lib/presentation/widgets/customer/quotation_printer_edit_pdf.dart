@@ -1,14 +1,9 @@
-import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:printing/printing.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:pdf/pdf.dart' as pw_format;
-import 'package:pdf/widgets.dart' as pw;
-import 'package:vidyanexis/controller/models/company_details_model.dart';
 import 'package:vidyanexis/controller/models/get_quotation_master_id_model.dart';
-import 'package:vidyanexis/controller/models/lead_details_model.dart';
 
 class QuotationPDFPrinterWeb {
   static Future<void> printQuotationDialog({
@@ -225,21 +220,17 @@ class QuotationPDFPrinterWeb {
     }
 
     // Add rows
-    if (quotationData.quotationDetails is List) {
-      for (var item in quotationData.quotationDetails) {
-        PdfGridRow row = grid.rows.add();
-        row.cells[0].value = item.itemName ?? '';
-        row.cells[1].value = item.quantity.toString() ?? '';
-        row.cells[2].value = item.amount.toString() ?? '';
+    for (var item in quotationData.quotationDetails) {
+      PdfGridRow row = grid.rows.add();
+      row.cells[0].value = item.itemName ?? '';
+      row.cells[1].value = item.quantity.toString() ?? '';
+      row.cells[2].value = item.amount.toString() ?? '';
 
-        double total = 0;
-        if (item.amount != null) {
-          total = (double.parse(item.quantity.toString()) * item.amount);
-        }
-        row.cells[3].value = total.toString();
-      }
+      double total = 0;
+      total = (double.parse(item.quantity.toString()) * item.amount);
+          row.cells[3].value = total.toString();
     }
-
+  
     // Draw the grid
     grid.draw(
       page: page,

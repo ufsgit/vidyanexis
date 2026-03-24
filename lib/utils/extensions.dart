@@ -15,8 +15,8 @@ extension DateStringFormatter on String {
   }
 
   String toUniversalYyyyMmDd() {
-    if (this.trim().isEmpty) return '';
-    final value = this.trim();
+    if (trim().isEmpty) return '';
+    final value = trim();
 
     // Try parsing with common formats
     final List<DateFormat> formats = [

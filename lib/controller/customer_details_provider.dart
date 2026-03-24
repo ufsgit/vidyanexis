@@ -3,7 +3,6 @@ import 'dart:math' as math;
 
 import 'package:universal_html/html.dart' as html;
 import 'package:flutter/foundation.dart';
-import 'dart:typed_data';
 import 'package:printing/printing.dart';
 
 import 'package:flutter/material.dart';
@@ -13,6 +12,7 @@ import 'package:vidyanexis/controller/models/get_refund_model.dart';
 import 'package:vidyanexis/controller/models/maintenance_model.dart';
 import 'package:vidyanexis/controller/models/quotation_type_model.dart';
 import 'package:vidyanexis/controller/models/scope_of_work_model.dart';
+import 'package:vidyanexis/controller/models/task_page_provider.dart';
 import 'package:vidyanexis/controller/models/user_location_model.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/custom_field_by_status.dart';
@@ -1921,7 +1921,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getAmc(String customerId, String amcId, BuildContext context) async {
+  Future<void> getAmc(
+      String customerId, String amcId, BuildContext context) async {
     _isAmcListLoading = true;
     notifyListeners();
 
@@ -2659,7 +2660,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getRecieptListApi(String customerId, BuildContext context) async {
+  Future<void> getRecieptListApi(
+      String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -2696,7 +2698,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveReciept(String recieptId, String customerId, BuildContext context) async {
+  Future<void> saveReciept(
+      String recieptId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -2759,7 +2762,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     paymentDescriptionController.clear();
   }
 
-  Future<void> savePayment(String recieptId, String customerId, BuildContext context) async {
+  Future<void> savePayment(
+      String recieptId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -2814,7 +2818,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveRefund(String refundId, String customerId, BuildContext context) async {
+  Future<void> saveRefund(
+      String refundId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -2909,7 +2914,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getInvoiceListApi(String customerId, BuildContext context) async {
+  Future<void> getInvoiceListApi(
+      String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -2946,7 +2952,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveInvoice(String recieptId, String customerId, BuildContext context) async {
+  Future<void> saveInvoice(
+      String recieptId, String customerId, BuildContext context) async {
     print(customerId);
     try {
       Loader.showLoader(context);
@@ -3071,6 +3078,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   Future<void> deleteTask(
       String taskId, String customerId, BuildContext context) async {
     try {
+      final reportsProvider =
+          Provider.of<TaskPageProvider>(context, listen: false);
       _isDeleteLoading = true;
       final response = await HttpRequest.httpDeleteRequest(
           endPoint: '${HttpUrls.deleteTask}/$taskId');
@@ -3078,9 +3087,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       if (response != null && response.statusCode == 200) {
         log('Task deleted successfully');
         // _leadData.removeWhere((lead) => lead.toUserId == leadId);
-
-        getTaskList(customerId, context);
-        notifyListeners();
+        await getTaskList(customerId, context);
+        await reportsProvider.searchTaskByCustomer(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to delete Task')),
@@ -3093,6 +3101,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       );
     } finally {
       _isDeleteLoading = false;
+      Navigator.pop(context);
+      notifyListeners();
     }
   }
 
@@ -3322,7 +3332,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getInvoiceRecieptTotal(String customerId, BuildContext context) async {
+  Future<void> getInvoiceRecieptTotal(
+      String customerId, BuildContext context) async {
     _isLoading = true;
     notifyListeners();
 
@@ -3821,8 +3832,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       String endpoint, String annexureName, BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: endpoint,
-          returnBytes: true);
+          endPoint: endpoint, returnBytes: true);
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -3834,7 +3844,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 html.Blob([Uint8List.fromList(data)], 'application/pdf');
             final url = html.Url.createObjectUrlFromBlob(blob);
             final anchor = html.AnchorElement(href: url)
-              ..setAttribute("download", "${annexureName}.pdf")
+              ..setAttribute("download", "$annexureName.pdf")
               ..click();
 
             // Delay cleanup to ensure download starts

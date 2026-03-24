@@ -14,7 +14,6 @@ import 'package:vidyanexis/http/cloudflare_upload.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
-import 'package:vidyanexis/main.dart';
 
 class ImageUploadProvider extends ChangeNotifier {
   ScrollController scrollController = ScrollController();

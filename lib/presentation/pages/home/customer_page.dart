@@ -20,7 +20,6 @@ import 'package:vidyanexis/presentation/widgets/customer/add_follow_up_dialog.da
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/customer/quotation_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
@@ -858,11 +857,6 @@ class _CustomerPageState extends State<CustomerPage> {
                           // Data Rows
                           Expanded(
                             child: ListView.builder(
-                              shrinkWrap:
-                                  true, // To avoid scrolling issues when inside a parent widget
-                              physics: AppStyles.isWebScreen(context)
-                                  ? const NeverScrollableScrollPhysics()
-                                  : const AlwaysScrollableScrollPhysics(),
                               itemCount: customerProvider
                                   .customerData.length, // Number of leads
                               itemBuilder: (context, index) {

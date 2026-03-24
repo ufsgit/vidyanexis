@@ -1,10 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/enums.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
-import 'package:vidyanexis/controller/models/task_customer_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -12,17 +10,14 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/field_value_model.dart';
-import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
-import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 
 class AddFollowupDialog extends StatefulWidget {

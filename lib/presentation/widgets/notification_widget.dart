@@ -1,14 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/models/notification_model.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/main.dart';
-import 'package:vidyanexis/presentation/pages/home/customer_page.dart';
-import 'package:vidyanexis/presentation/pages/home/homepage.dart';
-import 'package:vidyanexis/presentation/pages/home/lead_page.dart';
-import 'package:vidyanexis/presentation/widgets/notification_overlay.dart';
 import 'package:provider/provider.dart';
 
 class NotificationWidget extends StatefulWidget {

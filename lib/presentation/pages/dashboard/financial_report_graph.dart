@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 
 class FinancialSummaryChart extends StatelessWidget {

@@ -189,6 +189,8 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                         customerDetailsProvider.taskDetails[0].taskTypeName,
                     taskStatusName:
                         customerDetailsProvider.taskDetails[0].taskStatusName,
+                    enquiryForName:
+                        customerDetailsProvider.taskDetails[0].enquiryForName,
                     description:
                         customerDetailsProvider.taskDetails[0].description,
                     taskDate: customerDetailsProvider.taskDetails[0].taskDate

@@ -411,6 +411,29 @@ class SettingsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  int? _selectedFilterBranchId = 0;
+  int? get selectedFilterBranchId => _selectedFilterBranchId;
+
+  set selectedFilterBranchId(int? id) {
+    _selectedFilterBranchId = id ?? 0;
+    notifyListeners();
+  }
+
+  int? _selectedFilterDepartmentId = 0;
+  int? get selectedFilterDepartmentId => _selectedFilterDepartmentId;
+
+  set selectedFilterDepartmentId(int? id) {
+    _selectedFilterDepartmentId = id ?? 0;
+    notifyListeners();
+  }
+
+  void clearUserFilters() {
+    searchController.clear();
+    _selectedFilterBranchId = 0;
+    _selectedFilterDepartmentId = 0;
+    notifyListeners();
+  }
+
   // Inventory Customer search controller
   final TextEditingController searchInventoryCustomerController =
       TextEditingController();
@@ -1346,7 +1369,8 @@ class SettingsProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchUser}=$query');
+          endPoint:
+              '${HttpUrls.searchUser}?Department_Id=$selectedFilterDepartmentId&Branch_Id=$selectedFilterBranchId&user_details_Name=$query');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1594,7 +1618,7 @@ class SettingsProvider extends ChangeNotifier {
           Loader.stopLoader(context);
           alert(context, "Can not Delete User. Delete the follow up first ");
         } else {
-          searchController.clear();
+          clearUserFilters();
           getUserDetails('', context);
           notifyListeners();
 
@@ -2059,8 +2083,8 @@ class SettingsProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
 
+        clearUserFilters();
         await getUserDetails('', context);
-        searchController.clear();
 
         Navigator.pop(context);
         Loader.stopLoader(context);

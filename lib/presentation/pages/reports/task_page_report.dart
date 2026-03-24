@@ -7,13 +7,10 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/reports_provider.dart';
 import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
@@ -258,6 +255,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                 'Phone Number',
                                 'Address',
                                 'Task',
+                                'Enquiry for',
                                 'Assigned To',
                                 'Description',
                                 'Date',
@@ -270,6 +268,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                   'Address':
                                       '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
                                   'Task': task.taskTypeName,
+                                  'Enquiry for': task.enquiryForName,
                                   'Assigned To': task.toUserName,
                                   'Description': task.description,
                                   'Date': task.entryDate.isNotEmpty
@@ -394,6 +393,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                         'Phone Number',
                                         'Address',
                                         'Task',
+                                        'Enquiry for',
                                         'Assigned To',
                                         'Description',
                                         'Date',
@@ -407,6 +407,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                           'Address':
                                               '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
                                           'Task': task.taskTypeName,
+                                          'Enquiry for': task.enquiryForName,
                                           'Assigned To': task.toUserName,
                                           'Description': task.description,
                                           'Date': task.entryDate.isNotEmpty
@@ -1263,6 +1264,19 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                     vertical: 12.0,
                                                     horizontal: 8.0),
                                                 child: Text('Task',
+                                                    style: TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(
+                                                            0xFF607185))))),
+                                        SizedBox(
+                                            width: 140,
+                                            child: Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 12.0,
+                                                    horizontal: 8.0),
+                                                child: Text('Enquiry for',
                                                     style: TextStyle(
                                                         fontWeight:
                                                             FontWeight.bold,

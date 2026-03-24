@@ -3,22 +3,16 @@ import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/amc_report_model.dart';
-import 'package:vidyanexis/controller/models/amc_status_model.dart';
-import 'package:vidyanexis/controller/models/follow_up_model.dart';
 import 'package:vidyanexis/presentation/widgets/customer/custom_app_bar_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/auto_complete_textfield.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_textfield_widget_mobile.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 import '../../../constants/app_colors.dart';
 import '../../../controller/customer_details_provider.dart';
-import '../../pages/dashboard/common_widgets.dart';
 
 class AddPeriodicServiceMobile extends StatefulWidget {
   const AddPeriodicServiceMobile(
