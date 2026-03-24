@@ -857,7 +857,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                            );
                                                          },
                                                         menuChildren: [
-                                                          if (settingsProvider.menuIsSaveMap[97] == 1)
+                                                          if (settingsProvider.menuIsEditMap[3] == 1)
                                                             (onHover) => MenuItemButton(
                                                               onPressed: () =>
                                                                   _handleLeadAction(
@@ -873,11 +873,10 @@ class _LeadsPageState extends State<LeadPage> {
                                                                       width: 8),
                                                                   Text(
                                                                       'Edit Lead'),
-
                                                                 ],
                                                               ),
                                                             ),
-                                                          if (settingsProvider.menuIsEditMap[99] == 1)
+                                                          if (settingsProvider.menuIsEditMap[94] == 1)
                                                             (onHover) => MenuItemButton(
                                                               onPressed: () =>
                                                                   _handleLeadAction(
@@ -895,7 +894,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 ],
                                                               ),
                                                             ),
-                                                          if (settingsProvider.menuIsSaveMap[98] == 1)
+                                                          if (settingsProvider.menuIsSaveMap[16] == 1)
                                                             (onHover) => MenuItemButton(
                                                               onPressed: () =>
                                                                   _handleLeadAction(
@@ -916,7 +915,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 ],
                                                               ),
                                                             ),
-                                                          if (settingsProvider.menuIsSaveMap[96] == 1)
+                                                          if (settingsProvider.menuIsSaveMap[19] == 1)
                                                             (onHover) => MenuItemButton(
                                                               onPressed: () =>
                                                                   _handleLeadAction(
@@ -938,7 +937,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                               ),
                                                             ),
                                                            // Multi-level Create Task menu
-                                                          if (settingsProvider.menuIsSaveMap[95] == 1)
+                                                          if (settingsProvider.menuIsSaveMap[13] == 1)
                                                            (onHover) => MultiLevelHoverMenu(
                                                              isSubMenu: false,
                                                              title: 'Create Task',

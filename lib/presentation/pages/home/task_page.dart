@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
@@ -169,6 +170,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
     final provider = Provider.of<DropDownProvider>(context);
     final searchProvider = Provider.of<SidebarProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return Scaffold(
       backgroundColor:
@@ -1043,6 +1045,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     ),
                                                     HoverActionDropdown(
                                                       items: [
+                                                        if (settingsProvider.menuIsEditMap[13] == 1)
                                                         HoverActionItem(
                                                           title: 'Edit Task',
                                                           icon: Icons.edit,
@@ -1053,6 +1056,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
                                                           },
                                                         ),
+                                                        if (settingsProvider.menuIsEditMap[94] == 1)
                                                         HoverActionItem(
                                                           title: 'Convert',
                                                           icon: Icons.sync,
@@ -1068,6 +1072,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 task.customerId.toString());
                                                           },
                                                         ),
+                                                        if (settingsProvider.menuIsSaveMap[16] == 1)
                                                         HoverActionItem(
                                                           title: 'Quotation',
                                                           icon: Icons.request_quote,
@@ -1098,6 +1103,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             );
                                                           },
                                                         ),
+                                                         if (settingsProvider.menuIsSaveMap[19] == 1)
                                                         HoverActionItem(
                                                           title: 'Document',
                                                           icon: Icons.description,
@@ -1116,6 +1122,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                             );
                                                           },
                                                         ),
+                                                        if (settingsProvider.menuIsDeleteMap[13] == 1)
                                                         HoverActionItem(
                                                           title: 'Delete',
                                                           icon: Icons.delete,
