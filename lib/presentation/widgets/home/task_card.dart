@@ -6,6 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -53,6 +54,8 @@ class _TaskCardState extends State<TaskCard> {
 
   @override
   Widget build(BuildContext context) {
+    final settingsProvider = Provider.of<SettingsProvider>(context);
+
     Color getStatusColor(String statusName) {
       statusName = statusName.toUpperCase();
       if (statusName.contains('FOLLOW-UP')) return Colors.blue;
@@ -258,11 +261,14 @@ class _TaskCardState extends State<TaskCard> {
                   children: [
                     Row(
                       children: [
-                        Expanded(child: _buildChatButton(context)),
+                        if (settingsProvider.menuIsViewMap[91] == 1)
+                          Expanded(child: _buildChatButton(context)),
                         const SizedBox(width: 4),
-                        Expanded(child: _buildViewButton(context)),
+                        if (settingsProvider.menuIsViewMap[95] == 1)
+                          Expanded(child: _buildViewButton(context)),
                         const SizedBox(width: 4),
-                        Expanded(child: _buildCallButton(context)),
+                        if (settingsProvider.menuIsViewMap[92] == 1)
+                          Expanded(child: _buildCallButton(context)),
                         const Expanded(
                             child: SizedBox()), // Placeholder to match spacing
                         const Expanded(
@@ -272,13 +278,17 @@ class _TaskCardState extends State<TaskCard> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        Expanded(child: _buildTaskButton(context)),
+                        if (settingsProvider.menuIsSaveMap[13] == 1)
+                          Expanded(child: _buildTaskButton(context)),
                         const SizedBox(width: 4),
-                        Expanded(child: _buildDocsButton(context)),
+                        if (settingsProvider.menuIsSaveMap[19] == 1)
+                          Expanded(child: _buildDocsButton(context)),
                         const SizedBox(width: 4),
-                        Expanded(child: _buildEditButton(context)),
+                        if (settingsProvider.menuIsEditMap[13] == 1)
+                          Expanded(child: _buildEditButton(context)),
                         const SizedBox(width: 4),
-                        Expanded(child: _buildQuoteButton(context)),
+                        if (settingsProvider.menuIsSaveMap[16] == 1)
+                          Expanded(child: _buildQuoteButton(context)),
                         const Expanded(
                             child: SizedBox()), // Placeholder to match spacing
                       ],

@@ -75,10 +75,10 @@ class _InventoryPageState extends State<InventoryPage> {
                   _buildMenuItem(context, 'Unit', Icons.document_scanner),
                 if (settingsProvider.menuIsViewMap[87].toString() == '1')
                   _buildMenuItem(context, 'Sales', Icons.document_scanner),
-                if (settingsProvider.menuIsViewMap[78].toString() == '1')
-                  _buildMenuItem(context, 'Stock Use', Icons.document_scanner),
-                if (settingsProvider.menuIsViewMap[79].toString() == '1')
-                  _buildMenuItem(context, 'Stock Return', Icons.document_scanner),
+                // if (settingsProvider.menuIsViewMap[78].toString() == '1')
+                //   _buildMenuItem(context, 'Stock Use', Icons.document_scanner),
+                // if (settingsProvider.menuIsViewMap[79].toString() == '1')
+                //   _buildMenuItem(context, 'Stock Return', Icons.document_scanner),
                 _buildMenuItem(context, 'Customer', Icons.document_scanner),
               ],
             ),
