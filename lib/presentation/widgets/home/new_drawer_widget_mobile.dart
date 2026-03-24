@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -604,7 +603,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final leadProvider = Provider.of<LeadsProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final imageUploadProvider = Provider.of<ImageUploadProvider>(context);
     final displayLogo = settingsProvider.displayLogo;
@@ -671,15 +669,6 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                     ),
                   ],
                 ),
-                if (!widget.isEdit)
-                  Text(
-                    '${leadProvider.loginBranchName} | ${leadProvider.loginDepartmentName} | ${leadProvider.loginUserTypeName}',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.primaryBlue,
-                      fontSize: 10,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
               ],
             ),
             actions: [
