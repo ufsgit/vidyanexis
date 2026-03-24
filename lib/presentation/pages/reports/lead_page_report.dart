@@ -56,6 +56,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
         leadReportProvider.setFromandToDate('', '');
         leadReportProvider.setUserFilterStatus(0);
         leadReportProvider.setEnquirySourceFilter(0);
+        leadReportProvider.setFilter(false);
       }
 
       provider.getEnquirySource(context);
@@ -207,8 +208,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        if (!widget.fromDashBoard)
-                          OutlinedButton.icon(
+                        OutlinedButton.icon(
                             onPressed: () {
                               leadReportProvider.toggleFilter();
                               print(leadReportProvider.isFilter);
@@ -306,8 +306,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                     ),
                   ),
                 ),
-                if (!widget.fromDashBoard)
-                  if (leadReportProvider.isFilter)
+                if (leadReportProvider.isFilter)
                     Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16.0),
                       padding: const EdgeInsets.all(10.0),
@@ -315,7 +314,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
                       ),
-                      child: Row(
+                      child: Wrap(
+                        spacing: 12,
+                        runSpacing: 12,
+                        crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
