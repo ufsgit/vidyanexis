@@ -109,7 +109,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
 
       await customerDetailsProvider.saveTask(
         widget.task?.taskId.toString() ?? '0',
-        widget.task?.taskMasterId.toString() ?? '0',
+        widget.taskId.toString(),
         customerDetailsProvider.selectedTaskType.toString(),
         customerDetailsProvider.taskDescriptionController.text.toString(),
         customerDetailsProvider.taskChoosedateController.text.toString(),
