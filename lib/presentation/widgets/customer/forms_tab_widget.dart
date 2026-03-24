@@ -4,6 +4,7 @@ import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:intl/intl.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
 
 class FormsTabWidget extends StatefulWidget {
   final String customerId;
@@ -70,6 +71,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   }
 
   Widget _buildFormsTable(List<FormModel> forms) {
+    final settingsprovider = Provider.of<SettingsProvider>(context);
     const borderColor = Color(0xFFE9EDF1);
 
     return Expanded(
@@ -115,6 +117,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
+                              if (settingsprovider.menuIsEditMap[85] == 1)
                               IconButton(
                                 icon: const Icon(Icons.edit, size: 20, color: Colors.blue),
                                 onPressed: () => _showEditDialog(form),

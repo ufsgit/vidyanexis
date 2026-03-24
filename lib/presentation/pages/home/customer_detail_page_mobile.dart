@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/checklist_management_page.dart';
 import 'package:vidyanexis/presentation/pages/home/inovice_tab.dart';
 import 'package:vidyanexis/presentation/pages/home/reciept_phone.dart';
+import 'package:vidyanexis/presentation/widgets/customer/forms_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_schedule_tab_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/payment_tab_widget.dart';
 import 'package:provider/provider.dart';
@@ -60,6 +61,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
+      if (settingsprovider.menuIsViewMap[85] == 1) const Tab(text: "Forms"),
       if (settingsprovider.menuIsViewMap[13] == 1)
         const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "Activity"),
@@ -374,6 +376,10 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             ),
           if (settingsprovider.menuIsViewMap[19] == 1)
             DocumentsListPagePhone(
+              customerId: widget.customerId.toString(),
+            ),
+          if (settingsprovider.menuIsViewMap[85] == 1)
+            FormsTabWidget(
               customerId: widget.customerId.toString(),
             ),
           if (settingsprovider.menuIsViewMap[13] == 1)

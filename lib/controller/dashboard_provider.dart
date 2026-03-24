@@ -34,8 +34,11 @@ List<LeadCoversionChartModel> _parseLeadConversion(List<dynamic> data) {
   return data.map((item) => LeadCoversionChartModel.fromJson(item)).toList();
 }
 
-List<CountLeadCoversionChartModel> _parseLeadConversionCount(List<dynamic> data) {
-  return data.map((item) => CountLeadCoversionChartModel.fromJson(item)).toList();
+List<CountLeadCoversionChartModel> _parseLeadConversionCount(
+    List<dynamic> data) {
+  return data
+      .map((item) => CountLeadCoversionChartModel.fromJson(item))
+      .toList();
 }
 
 List<LeadProgressReportModel> _parseLeadProgress(List<dynamic> data) {
@@ -50,7 +53,8 @@ List<FollowUpSummaryModel> _parseFollowUpSummary(List<dynamic> data) {
   return data.map((item) => FollowUpSummaryModel.fromJson(item)).toList();
 }
 
-List<TaskAllocationSummaryModel> _parseTaskAllocationSummary(List<dynamic> data) {
+List<TaskAllocationSummaryModel> _parseTaskAllocationSummary(
+    List<dynamic> data) {
   return data.map((item) => TaskAllocationSummaryModel.fromJson(item)).toList();
 }
 
@@ -119,8 +123,9 @@ class DashboardProvider extends ChangeNotifier {
 
   // Pagination for Task Summary (Frontend only)
   int _taskCurrentPage = 0;
-  final int _taskItemsPerPage = 20;
+  final int _taskItemsPerPage = 50;
   int get taskCurrentPage => _taskCurrentPage;
+
   int get taskItemsPerPage => _taskItemsPerPage;
 
   // Total items = actual list length (not the backend marker)
@@ -177,7 +182,8 @@ class DashboardProvider extends ChangeNotifier {
 
       if (response.statusCode == 200) {
         // Use compute for parsing heavy JSON
-        final dashboardModel = await compute(_parseDashBoardTask, response.data as Map<String, dynamic>);
+        final dashboardModel = await compute(
+            _parseDashBoardTask, response.data as Map<String, dynamic>);
 
         if (dashboardModel.success == true) {
           _departments = dashboardModel.getDepartments();
@@ -200,7 +206,8 @@ class DashboardProvider extends ChangeNotifier {
     if (shouldNotify) notifyListeners();
   }
 
-  Future<void> getTaskInfoDashBoard(BuildContext context, {bool shouldNotify = true}) async {
+  Future<void> getTaskInfoDashBoard(BuildContext context,
+      {bool shouldNotify = true}) async {
     if (isTaskInfoLoaded) return;
     try {
       isDashBoardLoading = true;
@@ -215,14 +222,15 @@ class DashboardProvider extends ChangeNotifier {
         final data = response.data;
         if (data != null) {
           final dataitem = data['data'];
-          
+
           // Use compute for heavy JSON parsing
-          List<TaskInfoDashboardModel> tempData = await compute(_parseTaskInfo, dataitem as List<dynamic>);
+          List<TaskInfoDashboardModel> tempData =
+              await compute(_parseTaskInfo, dataitem as List<dynamic>);
 
           if (tempData.isNotEmpty) {
             tempData.removeLast();
             _taskInfoModel = tempData;
-            _taskCurrentPage = 0; 
+            _taskCurrentPage = 0;
             isTaskInfoLoaded = true;
           } else {
             _taskInfoModel = [];
@@ -249,14 +257,16 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchNextPageTasks(BuildContext context, {bool shouldNotify = true}) async {
+  Future<void> fetchNextPageTasks(BuildContext context,
+      {bool shouldNotify = true}) async {
     if ((_taskCurrentPage + 1) * _taskItemsPerPage < _taskInfoModel.length) {
       _taskCurrentPage++;
       if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> fetchPreviousPageTasks(BuildContext context, {bool shouldNotify = true}) async {
+  Future<void> fetchPreviousPageTasks(BuildContext context,
+      {bool shouldNotify = true}) async {
     if (_taskCurrentPage > 0) {
       _taskCurrentPage--;
       if (shouldNotify) notifyListeners();
@@ -313,7 +323,8 @@ class DashboardProvider extends ChangeNotifier {
           List<dynamic> countData = response.data[1];
 
           conversionData = await compute(_parseLeadConversion, chartData);
-          conversionCountData = await compute(_parseLeadConversionCount, countData);
+          conversionCountData =
+              await compute(_parseLeadConversionCount, countData);
         }
       });
     } catch (e) {
@@ -357,7 +368,8 @@ class DashboardProvider extends ChangeNotifier {
           }).then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> followUpData = response.data;
-          followUpSummaryData = await compute(_parseFollowUpSummary, followUpData);
+          followUpSummaryData =
+              await compute(_parseFollowUpSummary, followUpData);
         }
       });
     } catch (e) {
@@ -367,7 +379,10 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getTaskAllocationSummary({bool isFilter = false, String? filterValue, bool shouldNotify = true}) async {
+  Future<void> getTaskAllocationSummary(
+      {bool isFilter = false,
+      String? filterValue,
+      bool shouldNotify = true}) async {
     try {
       selectedeTaskAllocationValue = filterValue;
       late DateTime fromDate;
@@ -397,9 +412,11 @@ class DashboardProvider extends ChangeNotifier {
           List<dynamic> taskAllocationData = response.data[0];
           List<dynamic> taskAllocationSummaryStatus = response.data[1];
           taskCount = response.data[2];
-          
-          taskAllocationSummaryData = await compute(_parseTaskAllocationSummary, taskAllocationData);
-          taskAllocationSummaryDataStatus = await compute(_parseTaskAllocationStatus, taskAllocationSummaryStatus);
+
+          taskAllocationSummaryData =
+              await compute(_parseTaskAllocationSummary, taskAllocationData);
+          taskAllocationSummaryDataStatus = await compute(
+              _parseTaskAllocationStatus, taskAllocationSummaryStatus);
         }
       });
     } catch (e) {
@@ -413,7 +430,10 @@ class DashboardProvider extends ChangeNotifier {
   /// keyword parameter that will be forwarded to the server. The backend may
   /// ignore the value if it only understands lead-related keywords.
   Future<void> getDashBoardCount(
-      {bool isFilter = false, String? filterValue, String? keyword, bool shouldNotify = true}) async {
+      {bool isFilter = false,
+      String? filterValue,
+      String? keyword,
+      bool shouldNotify = true}) async {
     if (isDashboardCountLoaded && !isFilter) return;
     try {
       if (shouldNotify) notifyListeners();
@@ -459,7 +479,10 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getWorkSummary({bool isFilter = false, String? filterValue, bool shouldNotify = true}) async {
+  Future<void> getWorkSummary(
+      {bool isFilter = false,
+      String? filterValue,
+      bool shouldNotify = true}) async {
     try {
       if (shouldNotify) notifyListeners();
       selectedWorkSummaryValue = filterValue;
@@ -641,7 +664,8 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getLeadData({String? filterValue, bool shouldNotify = true}) async {
+  Future<void> getLeadData(
+      {String? filterValue, bool shouldNotify = true}) async {
     if (isLeadLoaded && filterValue == null) return;
     try {
       if (filterValue != null) {

@@ -92,6 +92,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
       await provider.getFollowUpStatusCustomer(context);
       provider.getUserDetails(context);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      settingsProvider.searchBranch(context);
+      settingsProvider.searchDepartment('', context);
       customerProvider.setFilter(false);
 
       customerProvider.scrollController.addListener(() {
@@ -178,8 +182,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                               children: [
                                 FilterChipWidget(
                                   label: 'All',
-                                  isSelected:
-                                      customerProvider.selectedStatusIds.contains(0),
+                                  isSelected: customerProvider.selectedStatusIds
+                                      .contains(0),
                                   onTap: () {
                                     customerProvider.toggleStatus(0);
                                   },
@@ -187,7 +191,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                 ...provider.followUpData.map((status) {
                                   return FilterChipWidget(
                                     label: status.statusName ?? 'Unknown',
-                                    isSelected: customerProvider.selectedStatusIds
+                                    isSelected: customerProvider
+                                        .selectedStatusIds
                                         .contains(status.statusId),
                                     onTap: () {
                                       customerProvider
@@ -277,8 +282,8 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                                 if (customerProvider.expandedIndex == index) {
                                   Provider.of<LeadCheckInProvider>(context,
                                           listen: false)
-                                      .fetchLeadCheckInReports(
-                                          context, customer.customerId.toString());
+                                      .fetchLeadCheckInReports(context,
+                                          customer.customerId.toString());
                                 }
                               },
                             ),

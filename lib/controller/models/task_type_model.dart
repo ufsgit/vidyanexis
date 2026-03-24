@@ -59,6 +59,8 @@ class TaskTypeModel {
           : List<Status>.from(json["Statuses"].map((x) => Status.fromJson(x))),
       departmentName: json["Department_Name"]);
 
+  bool get isEnabled => conversionTask == 1 && deleteStatus == 0;
+
   Map<String, dynamic> toJson() => {
         "Task_Type_Id": taskTypeId,
         "Task_Type_Name": taskTypeName,

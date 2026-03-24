@@ -7,8 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_task.dart'
-    as customer_add_task;
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
@@ -27,6 +25,8 @@ import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/hover_action_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -1041,122 +1041,120 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    PopupMenuButton<String>(
-                                                      surfaceTintColor:
-                                                          Colors.white,
-                                                      color: Colors.white,
-                                                      tooltip: 'Actions',
-                                                      icon: const Icon(
-                                                        Icons
-                                                            .keyboard_arrow_down,
-                                                        size: 20,
-                                                        color: Colors.grey,
-                                                      ),
-                                                      onSelected:
-                                                          (String value) {
-                                                        final customerDetailsProvider =
-                                                            Provider.of<
-                                                                    CustomerDetailsProvider>(
+                                                    HoverActionDropdown(
+                                                      items: [
+                                                        HoverActionItem(
+                                                          title: 'Edit Task',
+                                                          icon: Icons.edit,
+                                                          value: 'edit',
+                                                          iconColor: Colors.blue,
+                                                          onTap: () {
+                                                            context.push(
+                                                                '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Convert',
+                                                          icon: Icons.sync,
+                                                          value: 'convert',
+                                                          iconColor: Colors.green,
+                                                          onTap: () {
+                                                            final leadsProvider =
+                                                                Provider.of<LeadsProvider>(
+                                                                    context,
+                                                                    listen: false);
+                                                            leadsProvider.convertLead(
                                                                 context,
-                                                                listen: false);
-                                                        if (value == 'edit') {
-                                                          context.push(
-                                                              '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                        } else if (value ==
-                                                            'quotation') {
-                                                          customerDetailsProvider
-                                                              .clearQuotationDetails();
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
+                                                                task.customerId.toString());
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Quotation',
+                                                          icon: Icons.request_quote,
+                                                          value: 'quotation',
+                                                          iconColor: Colors.orange,
+                                                          onTap: () {
+                                                            final customerDetailsProvider =
+                                                                Provider.of<
+                                                                        CustomerDetailsProvider>(
+                                                                    context,
+                                                                    listen: false);
+                                                            customerDetailsProvider
+                                                                .clearQuotationDetails();
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (BuildContext
+                                                                        context) =>
+                                                                    QuotationCreationWidget(
+                                                                  quotationId:
+                                                                      '0',
+                                                                  isEdit: false,
+                                                                  customerId: task
+                                                                      .customerId
+                                                                      .toString(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Document',
+                                                          icon: Icons.description,
+                                                          value: 'document',
+                                                          iconColor: Colors.purple,
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  QuotationCreationWidget(
-                                                                quotationId:
-                                                                    '0',
-                                                                isEdit: false,
+                                                                  ImageUploadAlert(
                                                                 customerId: task
                                                                     .customerId
                                                                     .toString(),
                                                               ),
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'document') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                ImageUploadAlert(
-                                                              customerId: task
-                                                                  .customerId
-                                                                  .toString(),
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'task') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (_) =>
-                                                                customer_add_task
-                                                                    .TaskCreationWidget(
-                                                              isEdit: false,
-                                                              taskId: '0',
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'delete') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return ConfirmationDialog(
-                                                                title:
-                                                                    'Delete Task',
-                                                                content:
-                                                                    'Are you sure you want to delete this task?',
-                                                                onCancel: () =>
-                                                                    Navigator.pop(
-                                                                        context),
-                                                                onConfirm:
-                                                                    () async {
-                                                                  await customerDetailsProvider.deleteTask(
-                                                                      task.taskId
-                                                                          .toString(),
-                                                                      task.customerId
-                                                                          .toString(),
-                                                                      context);
-                                                                },
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-                                                      },
-                                                      itemBuilder: (BuildContext
-                                                              context) =>
-                                                          <PopupMenuEntry<
-                                                              String>>[
-                                                        _buildPopupMenuItem(
-                                                            'edit',
-                                                            Icons.edit,
-                                                            'Edit profile',
-                                                            Colors.blue),
-                                                        _buildPopupMenuItem(
-                                                            'quotation',
-                                                            Icons.request_quote,
-                                                            'Quotation',
-                                                            Colors.orange),
-                                                        _buildPopupMenuItem(
-                                                            'document',
-                                                            Icons.description,
-                                                            'Document',
-                                                            Colors.purple),
-                                                        _buildPopupMenuItem(
-                                                            'delete',
-                                                            Icons.delete,
-                                                            'Delete',
-                                                            Colors.red),
+                                                            );
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Delete',
+                                                          icon: Icons.delete,
+                                                          value: 'delete',
+                                                          iconColor: Colors.red,
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return ConfirmationDialog(
+                                                                  title:
+                                                                      'Delete Task',
+                                                                  content:
+                                                                      'Are you sure you want to delete this task?',
+                                                                  onCancel: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                  onConfirm:
+                                                                      () async {
+                                                                    final customerDetailsProvider =
+                                                                        Provider.of<
+                                                                                CustomerDetailsProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false);
+                                                                    await customerDetailsProvider.deleteTask(
+                                                                        task.taskId
+                                                                            .toString(),
+                                                                        task.customerId
+                                                                            .toString(),
+                                                                        context);
+                                                                  },
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
                                                       ],
                                                     ),
                                                   ],
@@ -3651,17 +3649,4 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 
-  PopupMenuEntry<String> _buildPopupMenuItem(
-      String value, IconData icon, String text, Color color) {
-    return PopupMenuItem<String>(
-      value: value,
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(width: 8),
-          Text(text),
-        ],
-      ),
-    );
-  }
 }
