@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
@@ -45,6 +46,9 @@ class _CustomerPageState extends State<CustomerPage> {
   Timer? _debounce;
   final sideProvider =
       Provider.of<SidebarProvider>(navigatorKey.currentState!.context);
+  int userId = 0;
+  String userName = '';
+  String userType = '';
 
   @override
   void initState() {
@@ -56,6 +60,11 @@ class _CustomerPageState extends State<CustomerPage> {
           Provider.of<CustomerProvider>(context, listen: false);
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
+      userName = preferences.getString('userName') ?? "";
+      userType = preferences.getString('userType') ?? "";
+
       customerProvider.setSearchCriteria('', '', '');
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
@@ -66,6 +75,8 @@ class _CustomerPageState extends State<CustomerPage> {
       // provider.getFollowUpStatus(context, '2');
       provider.getUserDetails(context);
       await provider.getFollowUpStatusCustomer(context);
+      provider.getEnquirySource(context);
+      provider.getEnquiryFor(context);
 
       //search
       // searchController.addListener(() {
@@ -372,369 +383,153 @@ class _CustomerPageState extends State<CustomerPage> {
                       ),
                     ),
               if (customerProvider.isFilter)
-                AppStyles.isWebScreen(context)
-                    ? Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                        padding: const EdgeInsets.all(10.0),
+                Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                  padding: const EdgeInsets.all(10.0),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 6),
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: customerProvider
+                                          .selectedStatusIds.isNotEmpty &&
+                                      customerProvider
+                                              .selectedStatusIds.first !=
+                                          0
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[300]!),
                         ),
                         child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: customerProvider
-                                                .selectedStatusIds.isNotEmpty &&
-                                            customerProvider
-                                                    .selectedStatusIds.first !=
-                                                0
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  const Text('Status: '),
-                                  DropdownButton<int>(
-                                    value: customerProvider
-                                        .selectedStatusIds.first,
-                                    hint: const Text('All'),
-                                    items: [
-                                          const DropdownMenuItem<int>(
-                                            value:
-                                                0, // Use 0 to represent "All"
+                            const Text('Status: '),
+                            DropdownButton<int>(
+                              value: customerProvider.selectedStatusIds.first,
+                              hint: const Text('All'),
+                              items: [
+                                    const DropdownMenuItem<int>(
+                                      value: 0, // Use 0 to represent "All"
+                                      child: Text(
+                                        'All',
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                    ),
+                                  ] +
+                                  provider.followUpData
+                                      .map((status) => DropdownMenuItem<int>(
+                                            value: status.statusId,
                                             child: Text(
-                                              'All',
-                                              style: TextStyle(fontSize: 14),
+                                              status.statusName ?? '',
+                                              style: const TextStyle(
+                                                  fontSize: 14),
                                             ),
-                                          ),
-                                        ] +
-                                        provider.followUpData
-                                            .map((status) =>
-                                                DropdownMenuItem<int>(
-                                                  value: status.statusId,
-                                                  child: Text(
-                                                    status.statusName ?? '',
-                                                    style: const TextStyle(
-                                                        fontSize: 14),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                    onChanged: (int? newValue) {
-                                      if (newValue != null) {
-                                        customerProvider.toggleStatus(
-                                            newValue); // Update the status in the provider
-                                      }
-                                      String fromDate =
-                                          customerProvider.formattedFromDate;
-                                      String toDate =
-                                          customerProvider.formattedToDate;
-                                      customerProvider.setSearchCriteria(
-                                          customerProvider.search,
-                                          fromDate,
-                                          toDate);
-                                      customerProvider
-                                          .getSearchCustomers(context);
-                                    },
-                                    underline: Container(),
-                                    isDense: true,
-                                    iconSize: 18,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                onClickTopButton(context);
+                                          ))
+                                      .toList(),
+                              onChanged: (int? newValue) {
+                                if (newValue != null) {
+                                  customerProvider.toggleStatus(
+                                      newValue); // Update the status in the provider
+                                }
+                                String fromDate =
+                                    customerProvider.formattedFromDate;
+                                String toDate =
+                                    customerProvider.formattedToDate;
+                                customerProvider.setSearchCriteria(
+                                    customerProvider.search, fromDate, toDate);
+                                customerProvider.getSearchCustomers(context);
                               },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 1.5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: customerProvider.fromDate !=
-                                                  null ||
-                                              customerProvider.toDate != null
-                                          ? AppColors.primaryBlue
-                                          : Colors.grey[300]!),
-                                ),
-                                child: Row(
-                                  children: [
-                                    if (customerProvider.fromDate == null &&
-                                        customerProvider.toDate == null)
-                                      const Text('Follow Up Date: All'),
-                                    if (customerProvider.fromDate != null &&
-                                        customerProvider.toDate != null)
-                                      Text(
-                                          'Date : ${customerProvider.formattedFromDate} - ${customerProvider.formattedToDate}'),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_drop_down_outlined,
-                                      color: Colors.black45,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              underline: Container(),
+                              isDense: true,
+                              iconSize: 18,
                             ),
-                            const Spacer(),
-                            // ElevatedButton(
-                            //   onPressed: () {
-                            //     // Apply the selected filters (You can use values from the provider)
-                            //     String status =
-                            //         customerProvider.selectedStatus.toString();
-                            //     String fromDate =
-                            //         customerProvider.formattedFromDate;
-                            //     String toDate = customerProvider.formattedToDate;
-                            //     print(
-                            //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                            //     customerProvider.setSearchCriteria(
-                            //       customerProvider.search,
-                            //       fromDate,
-                            //       toDate,
-                            //       status,
-                            //     );
-                            //     customerProvider.getSearchCustomers(context);
-                            //   },
-                            //   style: ElevatedButton.styleFrom(
-                            //     backgroundColor: Colors.white,
-                            //     foregroundColor: AppColors.primaryBlue,
-                            //     side: BorderSide(color: AppColors.primaryBlue),
-                            //     padding: const EdgeInsets.symmetric(
-                            //       horizontal: 16,
-                            //       vertical: 12,
-                            //     ),
-                            //   ),
-                            //   child: const Text('Apply'),
-                            // ),
-                            // const SizedBox(
-                            //   width: 10,
-                            // ),
-                            if (customerProvider.fromDate != null ||
-                                customerProvider.toDate != null ||
-                                (customerProvider
-                                        .selectedStatusIds.isNotEmpty &&
-                                    customerProvider.selectedStatusIds.first !=
-                                        0) ||
-                                customerProvider.search.isNotEmpty)
-                              ElevatedButton(
-                                onPressed: () {
-                                  customerProvider.selectDateFilterOption(null);
-                                  customerProvider.removeStatus();
-                                  searchController.clear();
-                                  customerProvider.setSearchCriteria(
-                                      '', '', '');
-                                  customerProvider.getSearchCustomers(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.textRed,
-                                  side: BorderSide(color: AppColors.textRed),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                child: const Text('Reset'),
-                              ),
-                          ],
-                        ),
-                      )
-                    //mobile design
-                    : Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                        padding: const EdgeInsets.all(10.0),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        child: Wrap(
-                          runSpacing: 10,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          children: [
-                            Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: customerProvider
-                                                .selectedStatusIds.isNotEmpty &&
-                                            customerProvider
-                                                    .selectedStatusIds.first !=
-                                                0
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Text('Status: '),
-                                  DropdownButton<int>(
-                                    value: customerProvider
-                                        .selectedStatusIds.first,
-                                    hint: const Text('All'),
-                                    items: [
-                                          const DropdownMenuItem<int>(
-                                            value:
-                                                0, // Use 0 to represent "All"
-                                            child: Text(
-                                              'All',
-                                              style: TextStyle(fontSize: 14),
-                                            ),
-                                          ),
-                                        ] +
-                                        provider.followUpData
-                                            .map((status) =>
-                                                DropdownMenuItem<int>(
-                                                  value: status.statusId,
-                                                  child: Text(
-                                                    status.statusName ?? '',
-                                                    style: const TextStyle(
-                                                        fontSize: 14),
-                                                  ),
-                                                ))
-                                            .toList(),
-                                    onChanged: (int? newValue) {
-                                      if (newValue != null) {
-                                        customerProvider.toggleStatus(
-                                            newValue); // Update the status in the provider
-                                      }
-                                      String fromDate =
-                                          customerProvider.formattedFromDate;
-                                      String toDate =
-                                          customerProvider.formattedToDate;
-                                      customerProvider.setSearchCriteria(
-                                          customerProvider.search,
-                                          fromDate,
-                                          toDate);
-                                      customerProvider
-                                          .getSearchCustomers(context);
-                                    },
-                                    underline: Container(),
-                                    isDense: true,
-                                    iconSize: 18,
-                                  ),
-                                ],
-                              ),
-                            ),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                onClickTopButton(context);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20, vertical: 1.5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                      color: customerProvider.fromDate !=
-                                                  null ||
-                                              customerProvider.toDate != null
-                                          ? AppColors.primaryBlue
-                                          : Colors.grey[300]!),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    if (customerProvider.fromDate == null &&
-                                        customerProvider.toDate == null)
-                                      const Text('Follow Up Date: All'),
-                                    if (customerProvider.fromDate != null &&
-                                        customerProvider.toDate != null)
-                                      Text(
-                                          'Date : ${customerProvider.formattedFromDate} - ${customerProvider.formattedToDate}'),
-                                    const SizedBox(
-                                      width: 10,
-                                    ),
-                                    const Icon(
-                                      Icons.arrow_drop_down_outlined,
-                                      color: Colors.black45,
-                                      size: 20,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            // ElevatedButton(
-                            //   onPressed: () {
-                            //     // Apply the selected filters (You can use values from the provider)
-                            //     String status =
-                            //         customerProvider.selectedStatus.toString();
-                            //     String fromDate =
-                            //         customerProvider.formattedFromDate;
-                            //     String toDate = customerProvider.formattedToDate;
-                            //     print(
-                            //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                            //     customerProvider.setSearchCriteria(
-                            //       customerProvider.search,
-                            //       fromDate,
-                            //       toDate,
-                            //       status,
-                            //     );
-                            //     customerProvider.getSearchCustomers(context);
-                            //   },
-                            //   style: ElevatedButton.styleFrom(
-                            //     backgroundColor: Colors.white,
-                            //     foregroundColor: AppColors.primaryBlue,
-                            //     side: BorderSide(color: AppColors.primaryBlue),
-                            //     padding: const EdgeInsets.symmetric(
-                            //       horizontal: 16,
-                            //       vertical: 12,
-                            //     ),
-                            //   ),
-                            //   child: const Text('Apply'),
-                            // ),
-                            // const SizedBox(
-                            //   width: 10,
-                            // ),
-                            if (customerProvider.fromDate != null ||
-                                customerProvider.toDate != null ||
-                                (customerProvider
-                                        .selectedStatusIds.isNotEmpty &&
-                                    customerProvider.selectedStatusIds.first !=
-                                        0) ||
-                                customerProvider.search.isNotEmpty)
-                              ElevatedButton(
-                                onPressed: () {
-                                  customerProvider.selectDateFilterOption(null);
-                                  customerProvider.removeStatus();
-                                  searchController.clear();
-                                  customerProvider.setSearchCriteria(
-                                      '', '', '');
-                                  customerProvider.getSearchCustomers(context);
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.textRed,
-                                  side: BorderSide(color: AppColors.textRed),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 0,
-                                  ),
-                                ),
-                                child: const Text('Reset'),
-                              ),
                           ],
                         ),
                       ),
+                      GestureDetector(
+                        onTap: () {
+                          onClickTopButton(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 16, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: customerProvider.fromDate != null ||
+                                        customerProvider.toDate != null
+                                    ? AppColors.primaryBlue
+                                    : Colors.grey[300]!),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (customerProvider.fromDate == null &&
+                                  customerProvider.toDate == null)
+                                const Text('Follow Up Date: All'),
+                              if (customerProvider.fromDate != null &&
+                                  customerProvider.toDate != null)
+                                Text(
+                                    'Date : ${customerProvider.formattedFromDate} - ${customerProvider.formattedToDate}'),
+                              const SizedBox(
+                                width: 10,
+                              ),
+                              const Icon(
+                                Icons.arrow_drop_down_outlined,
+                                color: Colors.black45,
+                                size: 20,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      _buildAssignedStaffFilter(customerProvider),
+                      _buildEnquiryForFilter(customerProvider),
+                      _buildEnquirySourceFilter(customerProvider),
+                      if (customerProvider.fromDate != null ||
+                          customerProvider.toDate != null ||
+                          (customerProvider.selectedStatusIds.isNotEmpty &&
+                              customerProvider.selectedStatusIds.first != 0) ||
+                          (customerProvider.selectedUser != null &&
+                              customerProvider.selectedUser != 0) ||
+                          (customerProvider.selectedEnquiryFor != null &&
+                              customerProvider.selectedEnquiryFor != 0) ||
+                          (customerProvider.selectedEnquirySource != null &&
+                              customerProvider.selectedEnquirySource != 0) ||
+                          customerProvider.search.isNotEmpty)
+                        ElevatedButton(
+                          onPressed: () {
+                            customerProvider.selectDateFilterOption(null);
+                            customerProvider.removeStatus();
+                            searchController.clear();
+                            customerProvider.setSearchCriteria('', '', '');
+                            customerProvider.getSearchCustomers(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.textRed,
+                            side: BorderSide(color: AppColors.textRed),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
+                            ),
+                          ),
+                          child: const Text('Reset'),
+                        ),
+                    ],
+                  ),
+                ),
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.symmetric(
@@ -2075,6 +1870,227 @@ class _CustomerPageState extends State<CustomerPage> {
     'This Week',
     'This Month',
   ];
+
+  Widget _buildAssignedStaffFilter(CustomerProvider customerProvider) {
+    return Consumer<DropDownProvider>(
+      builder: (context, dropDownProvider, child) {
+        bool isAdmin = userType == '1';
+
+        if (!isAdmin) {
+          return const SizedBox();
+        }
+        int dropdownValue;
+        List<DropdownMenuItem<int>> dropdownItems;
+
+        if (isAdmin) {
+          // Admin: Show all users with "All" option
+          dropdownItems = [
+                const DropdownMenuItem<int>(
+                  value: 0,
+                  child: Text(
+                    'All',
+                    style: TextStyle(fontSize: 14),
+                  ),
+                ),
+              ] +
+              dropDownProvider.searchUserDetails
+                  .map((user) => DropdownMenuItem<int>(
+                        value: user.userDetailsId,
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(maxWidth: 150),
+                          child: Text(
+                            user.userDetailsName,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(fontSize: 14),
+                          ),
+                        ),
+                      ))
+                  .toList();
+          dropdownValue = customerProvider.selectedUser ?? 0;
+        } else {
+          // Non-admin staff: Show only their own name
+          dropdownItems = [
+            DropdownMenuItem<int>(
+              value: userId, // Use userId from state
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 150),
+                child: Text(
+                  userName.isNotEmpty ? userName : 'Current User',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(fontSize: 14),
+                ),
+              ),
+            ),
+          ];
+          dropdownValue = userId;
+        }
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: (customerProvider.selectedUser != null &&
+                      customerProvider.selectedUser != 0)
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Assigned Staff: '),
+              DropdownButton<int>(
+                value: dropdownValue,
+                hint: const Text('All'),
+                items: dropdownItems,
+                onChanged: isAdmin
+                    ? (int? newValue) {
+                        if (newValue != null) {
+                          customerProvider.setUserFilterStatus(newValue);
+                        }
+                        customerProvider.getSearchCustomers(context);
+                      }
+                    : null,
+                underline: Container(),
+                isDense: true,
+                iconSize: 18,
+                disabledHint: Text(
+                  userName.isNotEmpty ? userName : 'Current User',
+                  style: const TextStyle(fontSize: 14, color: Colors.black87),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEnquiryForFilter(CustomerProvider customerProvider) {
+    return Consumer<DropDownProvider>(
+      builder: (context, dropDownProvider, child) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: (customerProvider.selectedEnquiryFor != null &&
+                      customerProvider.selectedEnquiryFor != 0)
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Enquiry For: '),
+              DropdownButton<int>(
+                value: customerProvider.selectedEnquiryFor ?? 0,
+                hint: const Text('All'),
+                items: [
+                      const DropdownMenuItem<int>(
+                        value: 0,
+                        child: Text(
+                          'All',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ] +
+                    dropDownProvider.enquiryForList
+                        .map((item) => DropdownMenuItem<int>(
+                              value: item.enquiryForId,
+                              child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 150),
+                                child: Text(
+                                  item.enquiryForName,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    customerProvider.setEnquiryForFilter(newValue);
+                  }
+                  customerProvider.getSearchCustomers(context);
+                },
+                underline: Container(),
+                isDense: true,
+                iconSize: 18,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildEnquirySourceFilter(CustomerProvider customerProvider) {
+    return Consumer<DropDownProvider>(
+      builder: (context, dropDownProvider, child) {
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+              color: (customerProvider.selectedEnquirySource != null &&
+                      customerProvider.selectedEnquirySource != 0)
+                  ? AppColors.primaryBlue
+                  : Colors.grey[300]!,
+            ),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text('Enquiry Source: '),
+              DropdownButton<int>(
+                value: customerProvider.selectedEnquirySource ?? 0,
+                hint: const Text('All'),
+                items: [
+                      const DropdownMenuItem<int>(
+                        value: 0,
+                        child: Text(
+                          'All',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
+                    ] +
+                    dropDownProvider.enquiryData
+                        .map((item) => DropdownMenuItem<int>(
+                              value: item.enquirySourceId,
+                              child: ConstrainedBox(
+                                constraints:
+                                    const BoxConstraints(maxWidth: 150),
+                                child: Text(
+                                  item.enquirySourceName,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                            ))
+                        .toList(),
+                onChanged: (int? newValue) {
+                  if (newValue != null) {
+                    customerProvider.setEnquirySourceFilter(newValue);
+                  }
+                  customerProvider.getSearchCustomers(context);
+                },
+                underline: Container(),
+                isDense: true,
+                iconSize: 18,
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   Color parseColor(String colorCode) {
     try {

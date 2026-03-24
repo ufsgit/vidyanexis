@@ -39,6 +39,33 @@ class DropDownProvider extends ChangeNotifier {
   List<DocumentTypeModel> get documentType => _documentType;
   List<AMCStatusModel> get amcStatus => _amcStatus;
   List<LocationModel> get locationList => _locationList;
+
+  String getEnquiryForNameById(int id, String fallback) {
+    if (id <= 0) return fallback;
+    try {
+      final item = _enquiryForList.firstWhere(
+        (element) => element.enquiryForId == id,
+      );
+      return item.enquiryForName.isNotEmpty ? item.enquiryForName : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  }
+
+  String getEnquirySourceNameById(int id, String fallback) {
+    if (id <= 0) return fallback;
+    try {
+      final item = _enquiryData.firstWhere(
+        (element) => element.enquirySourceId == id,
+      );
+      return item.enquirySourceName.isNotEmpty
+          ? item.enquirySourceName
+          : fallback;
+    } catch (_) {
+      return fallback;
+    }
+  }
+
   // List<Enquirysourcemodel> filteredEnquiryData = []; // New filtered list
   List<EnquiryForModel> filteredEnquiryForData = []; // New filtered list
 

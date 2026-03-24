@@ -3,15 +3,15 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/main.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
+import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class CustomerProvider extends ChangeNotifier {
   List<SearchLeadModel> _customerData = [];
-  List<SearchLeadModel> _tempData = [];
   bool _isFilter = false;
   bool _isLoading = false;
   List<int> _selectedStatusIds = [0];
@@ -21,6 +21,12 @@ class CustomerProvider extends ChangeNotifier {
   String _formattedFromDate = '';
   String _formattedToDate = '';
   int? _selectedDateFilterIndex;
+  int? _selectedUser;
+  int? _selectedEnquiryFor;
+  int? _selectedEnquirySource;
+  List<int> _selectedUserIds = [0];
+  List<int> _selectedEnquiryForIds = [0];
+  List<int> _selectedEnquirySourceIds = [0];
   int _customerId = 0;
   int _startLimit = 1;
   int _endLimit = 20;
@@ -29,6 +35,15 @@ class CustomerProvider extends ChangeNotifier {
   bool isLoadingMore = false;
   bool hasMoreData = true;
   int currentPage = 1;
+  List<MandatoryStatusModel> _statusData = [];
+  List<MandatoryStatusModel> get statusData => _statusData;
+
+  int? get selectedUser => _selectedUser;
+  int? get selectedEnquiryFor => _selectedEnquiryFor;
+  int? get selectedEnquirySource => _selectedEnquirySource;
+  List<int> get selectedUserIds => _selectedUserIds;
+  List<int> get selectedEnquiryForIds => _selectedEnquiryForIds;
+  List<int> get selectedEnquirySourceIds => _selectedEnquirySourceIds;
 
   int get startLimit => _startLimit;
   int get endLimit => _endLimit;
@@ -102,48 +117,52 @@ class CustomerProvider extends ChangeNotifier {
         _status = '0';
       }
 
-      String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-      } else {
-        isDate = "1";
-      }
+      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+
+      String toUserId = _selectedUserIds.join(',');
+      String enquiryForId = _selectedEnquiryForIds.join(',');
+      String enquirySourceId = _selectedEnquirySourceIds.join(',');
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=0&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit');
+              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$enquiryForId&Enquiry_Source_Id=$enquirySourceId');
 
       if (response.statusCode == 200) {
-        final data = response.data;
-        if (data != null) {
-          List<SearchLeadModel> nextData = (data as List<dynamic>)
-              .map((item) => SearchLeadModel.fromJson(item))
-              .toList();
+        var data = response.data;
+        if (data != null && data is List) {
+          List<SearchLeadModel> allItems =
+              data.map((item) => SearchLeadModel.fromJson(item)).toList();
 
-          _totalCount = nextData.last.customerId;
-          nextData.removeLast();
+          // Extract real data and metadata
+          List<SearchLeadModel> newItems =
+              allItems.where((item) => item.tp == 1).toList();
 
-          if (nextData.isEmpty) {
+          if (newItems.isEmpty) {
             hasMoreData = false;
           } else {
-            _customerData.addAll(nextData);
-            currentPage++;
-            hasMoreData = nextData.length >= 20;
+            _customerData.addAll(newItems);
+
+            // Find metadata safely
+            int metadataIndex = allItems.indexWhere((item) => item.tp == 2);
+            if (metadataIndex != -1) {
+              _totalCount = allItems[metadataIndex].customerId;
+            }
+
+            if (_customerData.length >= _totalCount) {
+              hasMoreData = false;
+            }
           }
         }
-      } else {
-        hasMoreData = false;
       }
     } catch (e) {
-      log("Error loading more customers: $e");
+      log('Error loading more customers: $e');
     } finally {
       isLoadingMore = false;
       notifyListeners();
     }
   }
 
-  void setSearchCriteria(
-      String search, String fromDate, String toDate) {
+  void setSearchCriteria(String search, String fromDate, String toDate) {
     _customerData.clear();
     _search = search;
     _fromDateS = fromDate;
@@ -161,6 +180,12 @@ class CustomerProvider extends ChangeNotifier {
     selectDateFilterOption(null);
     _selectedStatusIds = [0];
     _selectedStatus = 0;
+    _selectedUser = null;
+    _selectedEnquiryFor = null;
+    _selectedEnquirySource = null;
+    _selectedUserIds = [0];
+    _selectedEnquiryForIds = [0];
+    _selectedEnquirySourceIds = [0];
     notifyListeners();
   }
 
@@ -189,6 +214,27 @@ class CustomerProvider extends ChangeNotifier {
       }
     }
     _selectedStatus = _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
+    notifyListeners();
+  }
+
+  void setUserFilterStatus(int? value) {
+    _selectedUser = value;
+    _selectedUserIds = [value ?? 0];
+    _isFilter = true;
+    notifyListeners();
+  }
+
+  void setEnquiryForFilter(int? value) {
+    _selectedEnquiryFor = value;
+    _selectedEnquiryForIds = [value ?? 0];
+    _isFilter = true;
+    notifyListeners();
+  }
+
+  void setEnquirySourceFilter(int? value) {
+    _selectedEnquirySource = value;
+    _selectedEnquirySourceIds = [value ?? 0];
+    _isFilter = true;
     notifyListeners();
   }
 
@@ -300,155 +346,122 @@ class CustomerProvider extends ChangeNotifier {
   }
 
   Future<void> getSearchCustomers(BuildContext context) async {
+    _startLimit = 1;
+    _endLimit = 20;
+
     try {
-      // Loader.showLoader(context);
-      // _isLoading = true;
+      _isLoading = true;
+      // notifyListeners(); // Could clear here but replacing is smoother in UI
+
+      // Fetch statuses if missing, don't block
+      if (_statusData.isEmpty) {
+        HttpRequest.httpGetRequest(
+                endPoint:
+                    '${HttpUrls.searchStatus}?status_Name=&Page_Index=1&PageSize=1000&ViewIn_Id=2')
+            .then((response) {
+          if (response.statusCode == 200 && response.data is List) {
+            _statusData = response.data
+                .map((item) => MandatoryStatusModel.fromJson(item))
+                .toList();
+            notifyListeners();
+          }
+        }).catchError((e) => log("Error fetching statuses: $e"));
+      }
+
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
       }
 
-      String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
-      }
+      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
 
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
+      String toUserId = _selectedUserIds.join(',');
+      String enquiryForId = _selectedEnquiryForIds.join(',');
+      String enquirySourceId = _selectedEnquirySourceIds.join(',');
+
+      Loader.showLoader(context);
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=0&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit');
+              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$enquiryForId&Enquiry_Source_Id=$enquirySourceId');
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
+        if (data != null && data is List) {
+          List<SearchLeadModel> allItems =
+              data.map((item) => SearchLeadModel.fromJson(item)).toList();
 
-        if (data != null) {
-          _tempData = (data as List<dynamic>)
-              .map((item) => SearchLeadModel.fromJson(item))
-              .toList();
+          // Correct metadata handling using tp field
+          _customerData = allItems.where((item) => item.tp == 1).toList();
 
-          _totalCount = _tempData.last.customerId;
-          print("Last customer's ID: $_totalCount");
-
-          _tempData.removeLast();
-
-          if (AppStyles.isWebScreen(navigatorKey.currentState!.context)) {
-            _customerData = List.from(_tempData);
-          } else {
-            if (_search.isEmpty &&
-                _fromDateS.isEmpty &&
-                _toDateS.isEmpty &&
-                _status == "0") {
-              for (var newLead in _tempData) {
-                int index = _customerData.indexWhere(
-                    (lead) => lead.customerId == newLead.customerId);
-
-                if (index != -1) {
-                  _customerData[index] =
-                      SearchLeadModel.fromJson(newLead.toJson());
-                } else {
-                  _customerData.add(SearchLeadModel.fromJson(newLead.toJson()));
-                }
-              }
-
-              _customerData = List.from(_customerData);
-              notifyListeners();
-              log("Updated Lead Data: ${_customerData.map((e) => e.toJson()).toList()}");
-              // Create a set of existing customer IDs
-            } else {
-              _customerData.clear();
-              _customerData = List.from(_tempData);
-            }
+          int metadataIndex = allItems.indexWhere((item) => item.tp == 2);
+          if (metadataIndex != -1) {
+            _totalCount = allItems[metadataIndex].customerId;
           }
 
-          // Loader.stopLoader(context);
-          _isLoading = false;
-          hasMoreData = _tempData.length >= 20;
-          notifyListeners();
+          hasMoreData = _customerData.length < _totalCount;
+        } else {
+          log('API Error: Data is not a list or is null');
         }
       } else {
-        // Loader.stopLoader(context);
-        _isLoading = false;
+        log('API Error: Status code ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
-      // Loader.stopLoader(context);
-      print('Exception occurred: $e');
+      log('Exception in getSearchCustomers: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+      Loader.stopLoader(context);
     }
   }
 
-//no context only for back in customer detail
+  //no context only for back in customer detail
   Future<void> getSearchCustomersNoContext() async {
+    _startLimit = 1;
+    _endLimit = 20;
+
     try {
+      _isLoading = true;
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
       }
-      String isDate = "0";
-      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
-      }
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
+
+      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+
+      String toUserId = _selectedUserIds.join(',');
+      String enquiryForId = _selectedEnquiryForIds.join(',');
+      String enquirySourceId = _selectedEnquirySourceIds.join(',');
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=0&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit');
+              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$enquiryForId&Enquiry_Source_Id=$enquirySourceId');
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
+        if (data != null && data is List) {
+          List<SearchLeadModel> allItems =
+              data.map((item) => SearchLeadModel.fromJson(item)).toList();
 
-        if (data != null) {
-          // log(data.toString());
+          _customerData = allItems.where((item) => item.tp == 1).toList();
 
-          // _customerData = (data as List<dynamic>)
-          //     .map((item) => SearchLeadModel.fromJson(item))
-          //     .toList();
-          // notifyListeners();
-          if (data != null) {
-            // log(data.toString());
-
-            _tempData = (data as List<dynamic>)
-                .map((item) => SearchLeadModel.fromJson(item))
-                .toList();
-
-            // Remove the last item from _tempData and print its customerId
-
-            _totalCount = _tempData.last.customerId;
-            print("Last customer's ID: $_totalCount");
-
-            // Remove the last item from _tempData
-            _tempData.removeLast();
-
-            // Pass the remaining items in _tempData to _leadData
-            _customerData = List.from(_tempData);
-
-            notifyListeners();
+          int metadataIndex = allItems.indexWhere((item) => item.tp == 2);
+          if (metadataIndex != -1) {
+            _totalCount = allItems[metadataIndex].customerId;
           }
+
+          hasMoreData = _customerData.length < _totalCount;
         }
-      } else {}
+      }
     } catch (e) {
-      print('Exception occurred: $e');
+      log('Exception in getSearchCustomersNoContext: $e');
+    } finally {
+      _isLoading = false;
+      notifyListeners();
     }
   }
 
@@ -469,6 +482,12 @@ class CustomerProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatusIds = [0];
     _selectedStatus = 0;
+    _selectedUser = null;
+    _selectedEnquiryFor = null;
+    _selectedEnquirySource = null;
+    _selectedUserIds = [0];
+    _selectedEnquiryForIds = [0];
+    _selectedEnquirySourceIds = [0];
     notifyListeners();
   }
 
