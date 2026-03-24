@@ -90,7 +90,8 @@ class _CustomerPageState extends State<CustomerPage> {
       if (!mounted) return;
       final customerProvider =
           Provider.of<CustomerProvider>(context, listen: false);
-      customerProvider.setSearchCriteria(query, customerProvider.fromDateS, customerProvider.toDateS);
+      customerProvider.setSearchCriteria(
+          query, customerProvider.fromDateS, customerProvider.toDateS);
       customerProvider.getSearchCustomers(context);
     });
   }
@@ -388,8 +389,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                    color: customerProvider.selectedStatusIds.isNotEmpty &&
-                                            customerProvider.selectedStatusIds.first != 0
+                                    color: customerProvider
+                                                .selectedStatusIds.isNotEmpty &&
+                                            customerProvider
+                                                    .selectedStatusIds.first !=
+                                                0
                                         ? AppColors.primaryBlue
                                         : Colors.grey[300]!),
                               ),
@@ -397,7 +401,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                 children: [
                                   const Text('Status: '),
                                   DropdownButton<int>(
-                                    value: customerProvider.selectedStatusIds.first,
+                                    value: customerProvider
+                                        .selectedStatusIds.first,
                                     hint: const Text('All'),
                                     items: [
                                           const DropdownMenuItem<int>(
@@ -429,7 +434,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                           customerProvider.formattedFromDate;
                                       String toDate =
                                           customerProvider.formattedToDate;
-                                      customerProvider.setSearchCriteria(customerProvider.search, fromDate, toDate);
+                                      customerProvider.setSearchCriteria(
+                                          customerProvider.search,
+                                          fromDate,
+                                          toDate);
                                       customerProvider
                                           .getSearchCustomers(context);
                                     },
@@ -516,15 +524,18 @@ class _CustomerPageState extends State<CustomerPage> {
                             // ),
                             if (customerProvider.fromDate != null ||
                                 customerProvider.toDate != null ||
-                                (customerProvider.selectedStatusIds.isNotEmpty &&
-                                    customerProvider.selectedStatusIds.first != 0) ||
+                                (customerProvider
+                                        .selectedStatusIds.isNotEmpty &&
+                                    customerProvider.selectedStatusIds.first !=
+                                        0) ||
                                 customerProvider.search.isNotEmpty)
                               ElevatedButton(
                                 onPressed: () {
                                   customerProvider.selectDateFilterOption(null);
                                   customerProvider.removeStatus();
                                   searchController.clear();
-                                  customerProvider.setSearchCriteria('', '', '');
+                                  customerProvider.setSearchCriteria(
+                                      '', '', '');
                                   customerProvider.getSearchCustomers(context);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -560,8 +571,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                    color: customerProvider.selectedStatusIds.isNotEmpty &&
-                                            customerProvider.selectedStatusIds.first != 0
+                                    color: customerProvider
+                                                .selectedStatusIds.isNotEmpty &&
+                                            customerProvider
+                                                    .selectedStatusIds.first !=
+                                                0
                                         ? AppColors.primaryBlue
                                         : Colors.grey[300]!),
                               ),
@@ -570,7 +584,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                 children: [
                                   const Text('Status: '),
                                   DropdownButton<int>(
-                                    value: customerProvider.selectedStatusIds.first,
+                                    value: customerProvider
+                                        .selectedStatusIds.first,
                                     hint: const Text('All'),
                                     items: [
                                           const DropdownMenuItem<int>(
@@ -602,7 +617,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                           customerProvider.formattedFromDate;
                                       String toDate =
                                           customerProvider.formattedToDate;
-                                      customerProvider.setSearchCriteria(customerProvider.search, fromDate, toDate);
+                                      customerProvider.setSearchCriteria(
+                                          customerProvider.search,
+                                          fromDate,
+                                          toDate);
                                       customerProvider
                                           .getSearchCustomers(context);
                                     },
@@ -689,15 +707,18 @@ class _CustomerPageState extends State<CustomerPage> {
                             // ),
                             if (customerProvider.fromDate != null ||
                                 customerProvider.toDate != null ||
-                                (customerProvider.selectedStatusIds.isNotEmpty &&
-                                    customerProvider.selectedStatusIds.first != 0) ||
+                                (customerProvider
+                                        .selectedStatusIds.isNotEmpty &&
+                                    customerProvider.selectedStatusIds.first !=
+                                        0) ||
                                 customerProvider.search.isNotEmpty)
                               ElevatedButton(
                                 onPressed: () {
                                   customerProvider.selectDateFilterOption(null);
                                   customerProvider.removeStatus();
                                   searchController.clear();
-                                  customerProvider.setSearchCriteria('', '', '');
+                                  customerProvider.setSearchCriteria(
+                                      '', '', '');
                                   customerProvider.getSearchCustomers(context);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -1550,16 +1571,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                               controller
                                                                   .close();
                                                             } else {
-                                                              controller
-                                                                  .open();
+                                                              controller.open();
                                                             }
                                                           },
                                                           icon: const Icon(
                                                               Icons
                                                                   .keyboard_arrow_down,
                                                               size: 20,
-                                                              color: Colors
-                                                                  .grey),
+                                                              color:
+                                                                  Colors.grey),
                                                           padding:
                                                               EdgeInsets.zero,
                                                         );
@@ -2019,7 +2039,8 @@ class _CustomerPageState extends State<CustomerPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
+                builder: (context) =>
+                    AddTaskMobile(isEdit: false, taskId: '0')));
       }
     } else if (value == 'delete') {
       showConfirmationDialog(
@@ -2130,4 +2151,3 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
     );
   }
 }
-

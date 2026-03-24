@@ -82,29 +82,30 @@ class _LocationPageState extends State<LocationPage> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      CustomOutlinedSvgButton(
-                        onPressed: () async {
-                          showDialog(
-                            barrierDismissible: false,
-                            context: context,
-                            builder: (BuildContext context) {
-                              return const AddLocation(
-                                editId: '0',
-                                isEdit: false,
-                                locationName: '',
-                              );
-                            },
-                          );
-                        },
-                        svgPath: 'assets/images/Plus.svg',
-                        label: 'New Location',
-                        breakpoint: 860,
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20)),
-                        foregroundColor: Colors.white,
-                        backgroundColor: AppColors.primaryBlue,
-                        borderSide: BorderSide(color: AppColors.primaryBlue),
-                      ),
+                      if (settingsProvider.menuIsSaveMap[86] == 1)
+                        CustomOutlinedSvgButton(
+                          onPressed: () async {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AddLocation(
+                                  editId: '0',
+                                  isEdit: false,
+                                  locationName: '',
+                                );
+                              },
+                            );
+                          },
+                          svgPath: 'assets/images/Plus.svg',
+                          label: 'New Location',
+                          breakpoint: 860,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20)),
+                          foregroundColor: Colors.white,
+                          backgroundColor: AppColors.primaryBlue,
+                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                        ),
                       const SizedBox(width: 16),
                     ],
                   ),
@@ -160,77 +161,79 @@ class _LocationPageState extends State<LocationPage> {
                                     ),
                                   ),
                                   const Spacer(),
-                                  TextButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          barrierDismissible: false,
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AddLocation(
-                                              editId: settingsProvider
-                                                  .locationModelList[index]
-                                                  .locationId
-                                                  .toString(),
-                                              locationName: settingsProvider
-                                                  .locationModelList[index]
-                                                  .locationName,
-                                              isEdit: true,
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Text(
-                                        'Edit',
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.primaryBlue),
-                                      )),
-                                  TextButton(
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (BuildContext context) {
-                                            return AlertDialog(
-                                              title:
-                                                  const Text('Confirm Delete'),
-                                              content: const Text(
-                                                  'Are you sure you want to delete?'),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () =>
-                                                      Navigator.pop(context),
-                                                  child: const Text('Cancel'),
-                                                ),
-                                                TextButton(
-                                                  onPressed: () async {
-                                                    await settingsProvider
-                                                        .deleteLocation(
-                                                            context,
-                                                            settingsProvider
-                                                                .locationModelList[
-                                                                    index]
-                                                                .locationId);
-                                                    Navigator.pop(context);
-                                                  },
-                                                  child: const Text(
-                                                    'Delete',
-                                                    style: TextStyle(
-                                                        color: Colors.red),
+                                  if (settingsProvider.menuIsEditMap[86] == 1)
+                                    TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AddLocation(
+                                                editId: settingsProvider
+                                                    .locationModelList[index]
+                                                    .locationId
+                                                    .toString(),
+                                                locationName: settingsProvider
+                                                    .locationModelList[index]
+                                                    .locationName,
+                                                isEdit: true,
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Edit',
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primaryBlue),
+                                        )),
+                                  if (settingsProvider.menuIsDeleteMap[86] == 1)
+                                    TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Confirm Delete'),
+                                                content: const Text(
+                                                    'Are you sure you want to delete?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: const Text('Cancel'),
                                                   ),
-                                                ),
-                                              ],
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: Text(
-                                        'Delete',
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.textRed),
-                                      ))
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      await settingsProvider
+                                                          .deleteLocation(
+                                                              context,
+                                                              settingsProvider
+                                                                  .locationModelList[
+                                                                      index]
+                                                                  .locationId);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: const Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Delete',
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textRed),
+                                        ))
                                 ],
                               ),
                             ),
