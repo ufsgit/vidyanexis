@@ -1065,82 +1065,88 @@ class _LeadsPageState extends State<LeadPage> {
                                                            );
                                                          },
                                                         menuChildren: [
-                                                          (onHover) => MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'edit',
-                                                                    lead),
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(Icons.edit,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .blue),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Edit Lead'),
-                                                              ],
+                                                          if (settingsProvider.menuIsSaveMap[97] == 1)
+                                                            (onHover) => MenuItemButton(
+                                                              onPressed: () =>
+                                                                  _handleLeadAction(
+                                                                      'edit',
+                                                                      lead),
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(Icons.edit,
+                                                                      size: 18,
+                                                                      color: Colors
+                                                                          .blue),
+                                                                  SizedBox(
+                                                                      width: 8),
+                                                                  Text(
+                                                                      'Edit Lead'),
+
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                          (onHover) => MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'convert',
-                                                                    lead),
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(Icons.sync,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .green),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text('Convert'),
-                                                              ],
+                                                          if (settingsProvider.menuIsEditMap[99] == 1)
+                                                            (onHover) => MenuItemButton(
+                                                              onPressed: () =>
+                                                                  _handleLeadAction(
+                                                                      'convert',
+                                                                      lead),
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(Icons.sync,
+                                                                      size: 18,
+                                                                      color: Colors
+                                                                          .green),
+                                                                  SizedBox(
+                                                                      width: 8),
+                                                                  Text('Convert'),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                          (onHover) => MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'quotation',
-                                                                    lead),
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .request_quote,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .orange),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Quotation'),
-                                                              ],
+                                                          if (settingsProvider.menuIsSaveMap[98] == 1)
+                                                            (onHover) => MenuItemButton(
+                                                              onPressed: () =>
+                                                                  _handleLeadAction(
+                                                                      'quotation',
+                                                                      lead),
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .request_quote,
+                                                                      size: 18,
+                                                                      color: Colors
+                                                                          .orange),
+                                                                  SizedBox(
+                                                                      width: 8),
+                                                                  Text(
+                                                                      'Quotation'),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
-                                                          (onHover) => MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'document',
-                                                                    lead),
-                                                            child: Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .description,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .purple),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Document'),
-                                                              ],
+                                                          if (settingsProvider.menuIsSaveMap[96] == 1)
+                                                            (onHover) => MenuItemButton(
+                                                              onPressed: () =>
+                                                                  _handleLeadAction(
+                                                                      'document',
+                                                                      lead),
+                                                              child: Row(
+                                                                children: [
+                                                                  Icon(
+                                                                      Icons
+                                                                          .description,
+                                                                      size: 18,
+                                                                      color: Colors
+                                                                          .purple),
+                                                                  SizedBox(
+                                                                      width: 8),
+                                                                  Text(
+                                                                      'Document'),
+                                                                ],
+                                                              ),
                                                             ),
-                                                          ),
                                                            // Multi-level Create Task menu
+                                                          if (settingsProvider.menuIsSaveMap[95] == 1)
                                                            (onHover) => MultiLevelHoverMenu(
                                                              isSubMenu: false,
                                                              title: 'Create Task',

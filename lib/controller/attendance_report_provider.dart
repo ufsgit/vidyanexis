@@ -243,7 +243,10 @@ class AttendanceReportProvider extends ChangeNotifier {
               .map((item) => AttendanceDetails.fromJson(item))
               .toList();
 
-          Loader.stopLoader(context);
+          _hasFetched = true;
+          if (showLoading) {
+            Loader.stopLoader(context);
+          }
           notifyListeners();
         }
       } else {
@@ -255,7 +258,10 @@ class AttendanceReportProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-      Loader.stopLoader(context);
+      _hasFetched = true;
+      if (showLoading) {
+        Loader.stopLoader(context);
+      }
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
