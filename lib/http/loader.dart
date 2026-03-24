@@ -4,7 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
 class Loader {
-  static Future<void> showLoader(BuildContext context, {String message = 'Saving data...'}) async {
+  static Future<void> showLoader(BuildContext context, {String? message}) async {
     showDialog(
       barrierDismissible: false,
       barrierColor: Colors.black.withOpacity(0.1),
@@ -38,16 +38,18 @@ class Loader {
                       valueColor: AlwaysStoppedAnimation<Color>(AppColors.bluebutton),
                     ),
                   ),
-                  const SizedBox(width: 20),
-                  Text(
-                    message,
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      decoration: TextDecoration.none,
-                      color: Colors.black87,
+                  if (message != null && message.isNotEmpty) ...[
+                    const SizedBox(width: 20),
+                    Text(
+                      message,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        decoration: TextDecoration.none,
+                        color: Colors.black87,
+                      ),
                     ),
-                  ),
+                  ],
                 ],
               ),
             ),

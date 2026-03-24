@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -34,6 +35,21 @@ class LeadPagePhone extends StatefulWidget {
 
 class _LeadPagePhoneState extends State<LeadPagePhone> {
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      leadProvider.setSearchCriteria(
+        query,
+        leadProvider.fromDateS,
+        leadProvider.toDateS,
+      );
+      leadProvider.getSearchLeads(context);
+    });
+  }
   Future<void> _refreshData() async {
     final searchProvider = Provider.of<SidebarProvider>(context, listen: false);
     final settingsProvider =
@@ -188,6 +204,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   );
                   leadProvider.getSearchLeads(context);
                 },
+                onChanged: _onSearchChanged,
                 searchController: searchController,
               )
             : CustomAppBar(
@@ -221,6 +238,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   );
                   leadProvider.getSearchLeads(context);
                 },
+                onChanged: _onSearchChanged,
                 searchController: searchController,
               ),
       drawer: const SidebarDrawer(),

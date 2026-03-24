@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -26,6 +27,22 @@ class CustomerPagePhone extends StatefulWidget {
 
 class _CustomerPagePhoneState extends State<CustomerPagePhone> {
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final customerProvider =
+          Provider.of<CustomerProvider>(context, listen: false);
+      customerProvider.setSearchCriteria(
+        query,
+        customerProvider.fromDateS,
+        customerProvider.toDateS,
+      );
+      customerProvider.getSearchCustomers(context);
+    });
+  }
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   CustomerProvider? _customerProvider;
 
@@ -126,6 +143,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
           );
           customerProvider.getSearchCustomers(context);
         },
+        onChanged: _onSearchChanged,
         searchController: searchController,
       ),
       drawer: const SidebarDrawer(),

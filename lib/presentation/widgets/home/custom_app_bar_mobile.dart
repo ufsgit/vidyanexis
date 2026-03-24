@@ -25,6 +25,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 
   // Functionality
   final Function(String) onSearch;
+  final Function(String)? onChanged;
   final double height;
   final TextEditingController? searchController;
   final void Function()? onFilterTap;
@@ -48,6 +49,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.customTitle,
     this.leadingWidget,
     required this.onSearch,
+    this.onChanged,
     this.searchController,
     this.height = kToolbarHeight,
     this.onFilterTap,
@@ -85,10 +87,25 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
 }
 
 class _CustomAppBarState extends State<CustomAppBar> {
+  final FocusNode _searchFocus = FocusNode();
+
+  @override
+  void dispose() {
+    _searchFocus.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     final searchProvider = Provider.of<SidebarProvider>(context);
+
+    if (searchProvider.isSearching) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && !_searchFocus.hasFocus) {
+          _searchFocus.requestFocus();
+        }
+      });
+    }
 
     return AppBar(
       surfaceTintColor: AppColors.scaffoldColor,
@@ -142,15 +159,9 @@ class _CustomAppBarState extends State<CustomAppBar> {
   }
 
   Widget _buildSearchField(SidebarProvider searchProvider) {
-    FocusNode searchFocus = FocusNode();
-
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      searchFocus.requestFocus();
-    });
-
     return TextField(
       controller: widget.searchController,
-      focusNode: searchFocus,
+      focusNode: _searchFocus,
       autofocus: true,
       decoration: widget.searchDecoration ??
           InputDecoration(
@@ -161,7 +172,12 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ),
       style: widget.searchTextStyle ?? const TextStyle(color: Colors.black),
       textInputAction: TextInputAction.search,
-      onChanged: searchProvider.setSearchQuery,
+      onChanged: (query) {
+        searchProvider.setSearchQuery(query);
+        if (widget.onChanged != null) {
+          widget.onChanged!(query);
+        }
+      },
       onSubmitted: widget.onSearch,
     );
   }
