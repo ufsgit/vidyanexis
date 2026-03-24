@@ -3,8 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/label_value_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
+
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailsTabMobile extends StatefulWidget {
@@ -32,6 +34,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
       context,
     );
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final dropDownProvider = Provider.of<DropDownProvider>(context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -59,8 +62,10 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                         const SizedBox(height: 8),
                         LabelValueWidget(
                           label: 'Enquiry source',
-                          value: leadDetailsProvider
-                              .leadDetails![0].enquirySourceName,
+                          value: dropDownProvider.getEnquirySourceNameById(
+                              leadDetailsProvider.leadDetails![0].enquirySourceId,
+                              leadDetailsProvider
+                                  .leadDetails![0].enquirySourceName),
                         ),
                         const SizedBox(height: 8),
                         LabelValueWidget(
@@ -77,8 +82,10 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                         const SizedBox(height: 8),
                         LabelValueWidget(
                           label: 'Enquiry for',
-                          value: leadDetailsProvider
-                              .leadDetails![0].enquiryForName,
+                          value: dropDownProvider.getEnquiryForNameById(
+                              leadDetailsProvider.leadDetails![0].enquiryForId,
+                              leadDetailsProvider
+                                  .leadDetails![0].enquiryForName),
                         ),
                         const SizedBox(height: 8),
                       ],

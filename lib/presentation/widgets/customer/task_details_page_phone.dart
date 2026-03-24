@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/customer/expanded_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pop_menu_button_widget.dart';
@@ -69,6 +70,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
     final settingsprovider = Provider.of<SettingsProvider>(context);
+    final dropDownProvider = Provider.of<DropDownProvider>(context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -189,8 +191,10 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                         customerDetailsProvider.taskDetails[0].taskTypeName,
                     taskStatusName:
                         customerDetailsProvider.taskDetails[0].taskStatusName,
-                    enquiryForName:
-                        customerDetailsProvider.taskDetails[0].enquiryForName,
+                    enquiryForName: dropDownProvider.getEnquiryForNameById(
+                        customerDetailsProvider.taskDetails[0].enquiryForId ??
+                            0,
+                        customerDetailsProvider.taskDetails[0].enquiryForName),
                     description:
                         customerDetailsProvider.taskDetails[0].description,
                     taskDate: customerDetailsProvider.taskDetails[0].taskDate

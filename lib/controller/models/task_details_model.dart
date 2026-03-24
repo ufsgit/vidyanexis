@@ -12,6 +12,7 @@ class TaskDetails {
   final int createdBy;
   final int taskTypeId;
   final String taskTypeName;
+  final int enquiryForId;
   final String taskDate;
   final String taskTime;
   final String completionDate;
@@ -50,6 +51,7 @@ class TaskDetails {
     required this.deleteStatus,
     required this.customerName,
     required this.toUserName,
+    required this.enquiryForId,
     required this.enquiryForName,
     required this.taskNotes,
     required this.taskDocuments,
@@ -81,6 +83,7 @@ class TaskDetails {
       deleteStatus: json['DeleteStatus'] ?? 0,
       customerName: json['Customer_Name'] ?? '',
       toUserName: json['To_User_Name'] ?? '',
+      enquiryForId: json['Enquiry_For_Id'] ?? 0,
       enquiryForName: json['Enquiry_For_Name'] ?? '',
 
       // Null check for task_notes and task_document
