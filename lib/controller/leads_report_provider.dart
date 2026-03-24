@@ -159,6 +159,7 @@ class LeadReportProvider extends ChangeNotifier {
   int? _selectedStatus;
   int? _selectedUser;
   int? _selectedEnquiryFor;
+  int? _selectedEnquirySource;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -196,6 +197,7 @@ class LeadReportProvider extends ChangeNotifier {
   int? get selectedStatus => _selectedStatus;
   int? get selectedUser => _selectedUser;
   int? get selectedEnquiryFor => _selectedEnquiryFor;
+  int? get selectedEnquirySource => _selectedEnquirySource;
   bool get isFilter => _isFilter;
   List<SearchLeadModel> get leadData => _leadData;
   List<LeadReportModel> get leadReportData => _leadReportData;
@@ -248,20 +250,6 @@ class LeadReportProvider extends ChangeNotifier {
   int get loginUserId => _loginUserId;
   String _loginUserName = '';
   String get loginUserName => _loginUserName;
-
-  // --- NEW: Enquiry Source Filter ---
-  int? _selectedEnquirySource;
-  int? get selectedEnquirySource => _selectedEnquirySource;
-  void setEnquirySourceFilter(int? value) {
-    _selectedEnquirySource = value;
-    notifyListeners();
-  }
-
-  void setFromandToDate(String fromDate, String toDate) {
-    _fromDateS = fromDate;
-    _toDateS = toDate;
-    notifyListeners();
-  }
 
   //invertor and panel details
   final TextEditingController invertorBrandController = TextEditingController();
@@ -724,6 +712,17 @@ class LeadReportProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void setEnquirySourceFilter(int? newSource) {
+    _selectedEnquirySource = newSource;
+    notifyListeners(); // Notify listeners about the change
+  }
+
+  void setFromandToDate(String fromDate, String toDate) {
+    _fromDateS = fromDate;
+    _toDateS = toDate;
+    notifyListeners();
+  }
+
   void setPageSize(int newSize) {
     if (newSize < 1) return;
     _pageSize = newSize;
@@ -851,12 +850,18 @@ class LeadReportProvider extends ChangeNotifier {
       notifyListeners();
 
       _search = search;
-      // _fromDateS = fromDate;
-      // _toDateS = toDate;
-      // _status = status;
+      _fromDateS = fromDate;
+      _toDateS = toDate;
+      _status = status;
+
+      // Ensure _selectedStatus is synced if status is a number
+      if (status.isNotEmpty && status != 'null') {
+        _selectedStatus = int.tryParse(status) ?? _selectedStatus;
+      }
 
       if (_status.isEmpty || _status == 'null') {
         _status = '0';
+        _selectedStatus ??= 0;
       }
       if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
         _enquiryForS = '0';

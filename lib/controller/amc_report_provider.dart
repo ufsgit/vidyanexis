@@ -212,9 +212,8 @@ class AMCReportProvider extends ChangeNotifier {
           // log(data.toString());
 
           if (data is List) {
-            _amcReport = (data)
-                .map((item) => AmcReportModeld.fromJson(item))
-                .toList();
+            _amcReport =
+                (data).map((item) => AmcReportModeld.fromJson(item)).toList();
           } else {
             print('Expected List but got: $data');
             _amcReport = [];
@@ -282,7 +281,8 @@ class AMCReportProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateAmcStatusApi(int amcId, int statusId, BuildContext context) async {
+  Future<void> updateAmcStatusApi(
+      int amcId, int statusId, BuildContext context) async {
     try {
       Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();

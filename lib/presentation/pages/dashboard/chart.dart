@@ -8,6 +8,7 @@ import 'package:syncfusion_flutter_charts/charts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/leads_report_provider.dart';
+import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_page_report.dart';
 
 class LeadGraphBarChart extends StatelessWidget {
@@ -89,16 +90,42 @@ class LeadGraphBarChart extends StatelessWidget {
                       final dashBoardProvider = Provider.of<DashboardProvider>(
                           context,
                           listen: false);
+                      final dropDownProvider =
+                          Provider.of<DropDownProvider>(context, listen: false);
 
+                      int? resolvedSourceId = item.enquirySourceId;
+                      if ((resolvedSourceId == null || resolvedSourceId == 0) &&
+                          item.enquirySource != null) {
+                        final sourceStr =
+                            item.enquirySource!.trim().toLowerCase();
+                        final matches = dropDownProvider.enquiryData
+                            .where((e) =>
+                                (e.enquirySourceName ?? '')
+                                    .trim()
+                                    .toLowerCase() ==
+                                sourceStr)
+                            .toList();
+                        if (matches.isNotEmpty) {
+                          resolvedSourceId = matches.first.enquirySourceId;
+                        }
+                      }
+
+                      // leadReportProvider.setFilter(true);
                       leadReportProvider.setStatus(0);
                       leadReportProvider
-                          .setEnquirySourceFilter(item.enquirySourceId);
+                          .setEnquirySourceFilter(resolvedSourceId ?? 0);
                       leadReportProvider
                           .setUserFilterStatus(dashBoardProvider.selectedUser);
                       leadReportProvider.setEnquiryForFilter(0);
                       leadReportProvider.setFromandToDate(
                           dashBoardProvider.formattedFromDate,
                           dashBoardProvider.formattedToDate);
+                      await leadReportProvider.getSearchLeadReports(
+                          '',
+                          dashBoardProvider.formattedFromDate,
+                          dashBoardProvider.formattedToDate,
+                          '0',
+                          context);
 
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -187,16 +214,57 @@ class ConversionGraphBarChart extends StatelessWidget {
                       final dashBoardProvider = Provider.of<DashboardProvider>(
                           context,
                           listen: false);
+                      final dropDownProvider =
+                          Provider.of<DropDownProvider>(context, listen: false);
 
-                      leadReportProvider.setStatus(0);
+                      int? resolvedSourceId = item.enquirySourceId;
+                      if ((resolvedSourceId == null || resolvedSourceId == 0) &&
+                          item.enquirySource != null) {
+                        final sourceStr =
+                            item.enquirySource!.trim().toLowerCase();
+                        final matches = dropDownProvider.enquiryData
+                            .where((e) =>
+                                (e.enquirySourceName ?? '')
+                                    .trim()
+                                    .toLowerCase() ==
+                                sourceStr)
+                            .toList();
+                        if (matches.isNotEmpty) {
+                          resolvedSourceId = matches.first.enquirySourceId;
+                        }
+                      }
+
+                      // Find "Converted" or "Confirm" status ID from leadProgressReport
+                      int convertedStatusId = 0;
+                      try {
+                        convertedStatusId = dashBoardProvider.leadProgressReport
+                            .firstWhere((element) =>
+                                element.statusName?.toLowerCase() ==
+                                    "converted" ||
+                                element.statusName?.toLowerCase() == "confirm")
+                            .statusId;
+                      } catch (e) {
+                        // Fallback to 0 (All) if not found or empty
+                        convertedStatusId = 0;
+                      }
+
+                      // leadReportProvider.setFilter(true);
+                      leadReportProvider.setStatus(convertedStatusId);
                       leadReportProvider
-                          .setEnquirySourceFilter(item.enquirySourceId);
+                          .setEnquirySourceFilter(resolvedSourceId ?? 0);
                       leadReportProvider
                           .setUserFilterStatus(dashBoardProvider.selectedUser);
                       leadReportProvider.setEnquiryForFilter(0);
                       leadReportProvider.setFromandToDate(
                           dashBoardProvider.formattedFromDate,
                           dashBoardProvider.formattedToDate);
+
+                      await leadReportProvider.getSearchLeadReports(
+                          '',
+                          dashBoardProvider.formattedFromDate,
+                          dashBoardProvider.formattedToDate,
+                          convertedStatusId.toString(),
+                          context);
 
                       Navigator.of(context).push(
                         MaterialPageRoute(
@@ -267,6 +335,58 @@ class LeadDistributionPieChart extends StatelessWidget {
                       lead.leadCount ?? 0,
                   dataLabelSettings: const DataLabelSettings(isVisible: true),
                   enableTooltip: true,
+                  onPointTap: (ChartPointDetails details) async {
+                    final item = leadData[details.pointIndex!];
+                    final leadReportProvider =
+                        Provider.of<LeadReportProvider>(context, listen: false);
+                    final dashBoardProvider =
+                        Provider.of<DashboardProvider>(context, listen: false);
+                    final dropDownProvider =
+                        Provider.of<DropDownProvider>(context, listen: false);
+
+                    int? resolvedSourceId = item.enquirySourceId;
+                    if ((resolvedSourceId == null || resolvedSourceId == 0) &&
+                        item.enquirySource != null) {
+                      final sourceStr =
+                          item.enquirySource!.trim().toLowerCase();
+                      final matches = dropDownProvider.enquiryData
+                          .where((e) =>
+                              (e.enquirySourceName ?? '')
+                                  .trim()
+                                  .toLowerCase() ==
+                              sourceStr)
+                          .toList();
+                      if (matches.isNotEmpty) {
+                        resolvedSourceId = matches.first.enquirySourceId;
+                      }
+                    }
+
+                    // leadReportProvider.setFilter(true);
+                    leadReportProvider.setStatus(0);
+                    leadReportProvider
+                        .setEnquirySourceFilter(resolvedSourceId ?? 0);
+                    leadReportProvider
+                        .setUserFilterStatus(dashBoardProvider.selectedUser);
+                    leadReportProvider.setEnquiryForFilter(0);
+                    leadReportProvider.setFromandToDate(
+                        dashBoardProvider.formattedFromDate,
+                        dashBoardProvider.formattedToDate);
+
+                    await leadReportProvider.getSearchLeadReports(
+                        '',
+                        dashBoardProvider.formattedFromDate,
+                        dashBoardProvider.formattedToDate,
+                        '0',
+                        context);
+
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => LeadPageReport(
+                          fromDashBoard: true,
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
