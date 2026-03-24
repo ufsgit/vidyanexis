@@ -14,6 +14,9 @@ import 'package:vidyanexis/http/loader.dart';
 class AttendanceReportProvider extends ChangeNotifier {
   List<AttendanceDetails> _taskReport = [];
   List<AttendanceDetails> get taskReport => _taskReport;
+
+  bool _hasFetched = false;
+  bool get hasFetched => _hasFetched;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -183,6 +186,7 @@ class AttendanceReportProvider extends ChangeNotifier {
     _selectedTaskType = null;
     _fromDateS = '';
     _toDateS = '';
+    _hasFetched = false;
     notifyListeners();
   }
 
@@ -243,6 +247,7 @@ class AttendanceReportProvider extends ChangeNotifier {
               .toList();
 
           Loader.stopLoader(context);
+          _hasFetched = true;
           notifyListeners();
         }
       } else {
@@ -253,6 +258,7 @@ class AttendanceReportProvider extends ChangeNotifier {
       }
     } catch (e) {
       Loader.stopLoader(context);
+      _hasFetched = true;
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
@@ -300,6 +306,7 @@ class AttendanceReportProvider extends ChangeNotifier {
               .map((item) => AttendanceDetails.fromJson(item))
               .toList();
 
+          _hasFetched = true;
           notifyListeners();
         }
       } else {}

@@ -36,7 +36,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
       final reportsProvider =
           Provider.of<ServiceReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '');
-      reportsProvider.getSearchServiceReport(context);
+      // reportsProvider.getSearchServiceReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
@@ -910,8 +910,52 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     ),
             SizedBox(
               height: availableHeight,
-              child: AppStyles.isWebScreen(context)
-                  ? Padding(
+              child: !reportsProvider.hasFetched
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.calendar_month,
+                              size: 80, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Please select a date to view complaint reports',
+                            style: TextStyle(
+                                color: Colors.grey[600], fontSize: 16),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () => onClickTopButton(context),
+                            icon: const Icon(Icons.date_range),
+                            label: const Text('Choose Date'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : reportsProvider.serviceReport.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.search_off,
+                                  size: 80, color: Colors.grey[300]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No complaint reports found for the selected criteria',
+                                style: TextStyle(
+                                    color: Colors.grey[600], fontSize: 16),
+                              ),
+                            ],
+                          ),
+                        )
+                      : AppStyles.isWebScreen(context)
+                          ? Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Container(
                         decoration: BoxDecoration(

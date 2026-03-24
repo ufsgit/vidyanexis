@@ -29,7 +29,7 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
       final reportsProvider =
           Provider.of<QuotationReportProvider>(context, listen: false);
       reportsProvider.setQuotationSearch('', '', '', '');
-      reportsProvider.getQuotationReports(context);
+      // reportsProvider.getQuotationReports(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
@@ -357,146 +357,218 @@ class _QuotationReportMobile extends State<QuotationReportMobile> {
                 ),
               ),
             Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    ListView.separated(
-                      separatorBuilder: (context, index) {
-                        return Divider(
-                          height: 2,
-                          color: AppColors.grey,
-                        );
-                      },
-                      shrinkWrap: true,
-                      physics: const ClampingScrollPhysics(),
-                      itemCount: quotationProvider
-                          .quotationReports.length, // Number of leads
-                      itemBuilder: (context, index) {
-                        var quotation =
-                            quotationProvider.quotationReports[index];
-
-                        return InkWell(
-                          child: Container(
-                            width: MediaQuery.sizeOf(context).width,
-                            decoration:
-                                BoxDecoration(color: AppColors.whiteColor),
-                            child: Padding(
+              child: !quotationProvider.hasFetched
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.calendar_month_outlined,
+                              size: 80, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Select a date range to view reports',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () => onClickTopButton(context),
+                            icon: const Icon(Icons.date_range),
+                            label: const Text('Choose Date'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    children: [
-                                      Container(
-                                          height: 42,
-                                          width: 3,
-                                          decoration: BoxDecoration(
-                                              color: getAvatarColor(quotation
-                                                      .quotationStatusName ??
-                                                  ''),
-                                              borderRadius:
-                                                  BorderRadius.circular(16))),
-                                      const SizedBox(
-                                        width: 8,
-                                      ),
-                                      Expanded(
+                                  horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : quotationProvider.quotationReports.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.search_off_outlined,
+                                  size: 80, color: Colors.grey[300]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No reports found for the selected range',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          child: Column(
+                            children: [
+                              ListView.separated(
+                                separatorBuilder: (context, index) {
+                                  return Divider(
+                                    height: 2,
+                                    color: AppColors.grey,
+                                  );
+                                },
+                                shrinkWrap: true,
+                                physics: const ClampingScrollPhysics(),
+                                itemCount:
+                                    quotationProvider.quotationReports.length,
+                                itemBuilder: (context, index) {
+                                  var quotation =
+                                      quotationProvider.quotationReports[index];
+
+                                  return InkWell(
+                                    child: Container(
+                                      width: MediaQuery.sizeOf(context).width,
+                                      decoration: BoxDecoration(
+                                          color: AppColors.whiteColor),
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(
+                                            horizontal: 16, vertical: 12),
                                         child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              quotation.customerName ?? '',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColors.textBlack,
-                                              ),
-                                              maxLines: 1,
-                                              overflow: TextOverflow.ellipsis,
+                                            Row(
+                                              children: [
+                                                Container(
+                                                    height: 42,
+                                                    width: 3,
+                                                    decoration: BoxDecoration(
+                                                        color: getAvatarColor(
+                                                            quotation
+                                                                    .quotationStatusName ??
+                                                                ''),
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(16))),
+                                                const SizedBox(
+                                                  width: 8,
+                                                ),
+                                                Expanded(
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Text(
+                                                        quotation.customerName ??
+                                                            '',
+                                                        style: GoogleFonts
+                                                            .plusJakartaSans(
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: AppColors
+                                                              .textBlack,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                      Text(
+                                                        quotation.phoneNumber ??
+                                                            '',
+                                                        style: GoogleFonts
+                                                            .plusJakartaSans(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColors
+                                                                    .textGrey3),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                Container(
+                                                  height: 22,
+                                                  decoration: BoxDecoration(
+                                                      color: AppColors
+                                                          .scaffoldColor,
+                                                      border: Border.all(
+                                                          color:
+                                                              AppColors.grey),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6)),
+                                                  child: Padding(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                      horizontal: 6,
+                                                    ),
+                                                    child: Row(
+                                                      children: [
+                                                        Icon(
+                                                          Icons
+                                                              .calendar_month_outlined,
+                                                          size: 16,
+                                                          color: AppColors
+                                                              .textGrey3,
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 4,
+                                                        ),
+                                                        Text(
+                                                          quotation.entryDate
+                                                              .toString()
+                                                              .toFormattedDate(),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: GoogleFonts
+                                                              .plusJakartaSans(
+                                                                  fontSize: 12,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColors
+                                                                      .textGrey3),
+                                                        ),
+                                                        const SizedBox(
+                                                          width: 4,
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
-                                            Text(
-                                              quotation.phoneNumber ?? '',
-                                              style:
-                                                  GoogleFonts.plusJakartaSans(
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color:
-                                                          AppColors.textGrey3),
+                                            const SizedBox(
+                                              height: 10,
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  'Total amount - ${quotation.totalAmount}',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: AppColors
+                                                              .textBlack),
+                                                ),
+                                              ],
                                             ),
                                           ],
                                         ),
                                       ),
-                                      Container(
-                                        height: 22,
-                                        decoration: BoxDecoration(
-                                            color: AppColors.scaffoldColor,
-                                            border: Border.all(
-                                                color: AppColors.grey),
-                                            borderRadius:
-                                                BorderRadius.circular(6)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 6,
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              Icon(
-                                                Icons.calendar_month_outlined,
-                                                size: 16,
-                                                color: AppColors.textGrey3,
-                                              ),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                              Text(
-                                                quotation.entryDate
-                                                    .toString()
-                                                    .toFormattedDate(),
-                                                maxLines: 2,
-                                                overflow: TextOverflow.ellipsis,
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: AppColors
-                                                            .textGrey3),
-                                              ),
-                                              const SizedBox(
-                                                width: 4,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(
-                                    height: 10,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Text(
-                                        'Total amount - ${quotation.totalAmount}',
-                                        style: GoogleFonts.plusJakartaSans(
-                                            fontSize: 10,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.textBlack),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                            ),
+                                    ),
+                                  );
+                                },
+                              )
+                            ],
                           ),
-                        );
-                      },
-                    )
-                  ],
-                ),
-              ),
+                        ),
             ),
           ],
         ),

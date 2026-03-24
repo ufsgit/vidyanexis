@@ -9,6 +9,8 @@ import 'package:vidyanexis/http/loader.dart';
 class QuotationReportProvider extends ChangeNotifier {
   List<QuotationReportModel> _quotationReports = [];
   List<QuotationReportModel> get quotationReports => _quotationReports;
+  bool _hasFetched = false;
+  bool get hasFetched => _hasFetched;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -236,16 +238,19 @@ class QuotationReportProvider extends ChangeNotifier {
               .map((item) => QuotationReportModel.fromJson(item))
               .toList();
 
+          _hasFetched = true;
           Loader.stopLoader(context);
           notifyListeners();
         }
       } else {
+        _hasFetched = true;
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
+      _hasFetched = true;
       Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(

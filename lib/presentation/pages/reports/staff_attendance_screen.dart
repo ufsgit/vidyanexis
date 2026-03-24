@@ -28,7 +28,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
       final reportsProvider =
           Provider.of<AttendanceReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
-      reportsProvider.getSearchTaskReport(context);
+      // reportsProvider.getSearchTaskReport(context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // provider.getAMCStatus(context);
@@ -226,15 +226,9 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               data: reportsProvider.taskReport.map((task) {
                                 return {
                                   'Name': task.userDetailsName,
-                                  'Check In Date': task.checkInDate.isNotEmpty
-                                      ? DateFormat('dd MMM yyyy').format(
-                                          DateTime.parse(task.checkInDate))
-                                      : '',
+                                  'Check In Date': formatDate(task.checkInDate),
                                   'Check In Time': task.checkInTimeOnly,
-                                  'Check Out Date': task.checkOutDate.isNotEmpty
-                                      ? DateFormat('dd MMM yyyy').format(
-                                          DateTime.parse(task.checkOutDate))
-                                      : '',
+                                  'Check Out Date': formatDate(task.checkOutDate),
                                   'Check Out Time': task.checkOutTimeOnly,
                                 };
                               }).toList(),
@@ -811,417 +805,386 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       ),
                     ),
             AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
+                ? (!reportsProvider.hasFetched
+                    ? Expanded(
+                        child: Center(
                           child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                                color: Color(0xFF607185))),
-                                      ),
-                                    ),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Check In Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Check In Time',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Check Out Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Check Out Time',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 1,
-                                    //     title: 'Location',
-                                    //     color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 1,
-                                    //     title: 'View Details',
-                                    //     color: Color(0xFF607185)),
-                                  ],
+                              Icon(Icons.calendar_month_outlined,
+                                  size: 80, color: Colors.grey[300]),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Select a date range to view reports',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of tasks
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.taskReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(task.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                          fontSize: 12,
-                                                        )),
-                                              ),
-                                            ),
-                                            // TableWidget(title: task.orderNo),
-                                            TableWidget(
-                                              flex: 1,
-                                              data: GestureDetector(
-                                                onTap: () {
-                                                  // context.push(
-                                                  //     '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: Text(
-                                                    task.userDetailsName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: const TextStyle(
-                                                      color: Colors.black,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: formatDate(
-                                                    task.checkInDate)),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: formatTime(
-                                                    task.checkInTimeOnly)),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: formatDate(
-                                                    task.checkOutDate)),
-                                            TableWidget(
-                                                flex: 1,
-                                                fontSize: 12,
-                                                title: formatTime(
-                                                    task.checkOutTimeOnly)),
-                                            // TableWidget(
-                                            //     flex: 1, title: task.location),
-                                            // task.photo.isNotEmpty
-                                            //     ? TableWidget(
-                                            //         flex: 1,
-                                            //         data:
-                                            //             CustomOutlinedSvgButton(
-                                            //           showIcon: false,
-                                            //           onPressed: () async {
-                                            //             showImageDialog(
-                                            //                 context,
-                                            //                 HttpUrls.imgBaseUrl +
-                                            //                     task.photo);
-                                            //           },
-                                            //           svgPath:
-                                            //               'assets/images/Print.svg',
-                                            //           label: 'View Photo',
-                                            //           breakpoint: 860,
-                                            //           foregroundColor:
-                                            //               AppColors.primaryBlue,
-                                            //           backgroundColor:
-                                            //               Colors.white,
-                                            //           borderSide: BorderSide(
-                                            //               color: AppColors
-                                            //                   .primaryBlue),
-                                            //         ),
-                                            //       )
-                                            //     : TableWidget(
-                                            //         flex: 1,
-                                            //         data: Container(),
-                                            //       ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
+                              const SizedBox(height: 24),
+                              ElevatedButton.icon(
+                                onPressed: () => onClickTopButton(context),
+                                icon: const Icon(Icons.date_range),
+                                label: const Text('Choose Date'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
                                 ),
                               ),
                             ],
                           ),
                         ),
-                      ),
-                    ),
-                  )
-                : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: ListView.builder(
-                        physics: const BouncingScrollPhysics(),
-                        itemCount: reportsProvider.taskReport.length,
-                        itemBuilder: (context, index) {
-                          var task = reportsProvider.taskReport[index];
-                          return Container(
-                            margin: const EdgeInsets.symmetric(
-                                vertical: 8, horizontal: 12),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.05),
-                                  blurRadius: 8,
-                                  spreadRadius: 2,
-                                  offset: const Offset(2, 4),
-                                ),
-                              ],
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
+                      )
+                    : reportsProvider.taskReport.isEmpty
+                        ? Expanded(
+                            child: Center(
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  // 🏷️ Task Name with Icon
-                                  Row(
+                                  Icon(Icons.search_off_outlined,
+                                      size: 80, color: Colors.grey[300]),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'No reports found for the selected range',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          )
+                        : Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(14),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Column(
                                     children: [
-                                      const Icon(Icons.person,
-                                          color: Colors.blue, size: 20),
-                                      const SizedBox(width: 8),
+                                      // Header Row (Table Column Titles)
+                                      Container(
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFFEFF2F5),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        child: const Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            SizedBox(
+                                              width: 80,
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                    vertical: 12.0, horizontal: 25.0),
+                                                child: Text('No.',
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight.bold,
+                                                        fontSize: 14,
+                                                        color: Color(0xFF607185))),
+                                              ),
+                                            ),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: 'Name',
+                                                fontSize: 14,
+                                                color: Color(0xFF607185)),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: 'Check In Date',
+                                                fontSize: 14,
+                                                color: Color(0xFF607185)),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: 'Check In Time',
+                                                fontSize: 14,
+                                                color: Color(0xFF607185)),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: 'Check Out Date',
+                                                fontSize: 14,
+                                                color: Color(0xFF607185)),
+                                            TableWidget(
+                                                flex: 1,
+                                                title: 'Check Out Time',
+                                                fontSize: 14,
+                                                color: Color(0xFF607185)),
+                                          ],
+                                        ),
+                                      ),
+                                      // Data Rows
                                       Expanded(
-                                        child: Text(
-                                          task.userDetailsName,
-                                          style: const TextStyle(
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
+                                        child: ListView.builder(
+                                          shrinkWrap: true,
+                                          physics: const AlwaysScrollableScrollPhysics(),
+                                          itemCount: reportsProvider.taskReport.length,
+                                          itemBuilder: (context, index) {
+                                            var task = reportsProvider.taskReport[index];
+                                            return GestureDetector(
+                                              onTap: () {},
+                                              child: Container(
+                                                decoration: BoxDecoration(
+                                                  color: index % 2 == 0
+                                                      ? Colors.white
+                                                      : const Color(0xFFF6F7F9),
+                                                  borderRadius: BorderRadius.circular(8),
+                                                ),
+                                                child: Row(
+                                                  children: [
+                                                    SizedBox(
+                                                      width: 80,
+                                                      child: Padding(
+                                                        padding: const EdgeInsets.symmetric(
+                                                            vertical: 12.0,
+                                                            horizontal: 25.0),
+                                                        child: Text((index + 1).toString(),
+                                                            style: const TextStyle(
+                                                              fontWeight: FontWeight.bold,
+                                                              fontSize: 12,
+                                                            )),
+                                                      ),
+                                                    ),
+                                                    TableWidget(
+                                                      flex: 1,
+                                                      data: Container(
+                                                        padding: const EdgeInsets.symmetric(
+                                                            horizontal: 8, vertical: 4),
+                                                        decoration: BoxDecoration(
+                                                          color: const Color(0xFFE9EDF1),
+                                                          borderRadius: BorderRadius.circular(50),
+                                                        ),
+                                                        child: Text(
+                                                          task.userDetailsName,
+                                                          overflow: TextOverflow.ellipsis,
+                                                          maxLines: 1,
+                                                          style: const TextStyle(
+                                                            color: Colors.black,
+                                                            fontWeight: FontWeight.bold,
+                                                            fontSize: 12,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    TableWidget(
+                                                        flex: 1,
+                                                        fontSize: 12,
+                                                        title: formatDate(task.checkInDate)),
+                                                    TableWidget(
+                                                        flex: 1,
+                                                        fontSize: 12,
+                                                        title: formatTime(task.checkInTimeOnly)),
+                                                    TableWidget(
+                                                        flex: 1,
+                                                        fontSize: 12,
+                                                        title: formatDate(task.checkOutDate)),
+                                                    TableWidget(
+                                                        flex: 1,
+                                                        fontSize: 12,
+                                                        title: formatTime(task.checkOutTimeOnly)),
+                                                  ],
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     ],
                                   ),
-
-                                  const SizedBox(height: 12),
-
-                                  // 📅 Attendance Date & Time (With Background)
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 6, horizontal: 10),
-                                    decoration: BoxDecoration(
-                                      color: Colors.grey.shade100,
-                                      borderRadius: BorderRadius.circular(8),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text('Check In:',
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            Row(
-                                              children: [
-                                                const Icon(Icons.calendar_today,
-                                                    size: 14,
-                                                    color: Colors.grey),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  formatDate(task.checkInDate),
-                                                  style: const TextStyle(
-                                                      fontSize: 12),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                const Icon(Icons.access_time,
-                                                    size: 14,
-                                                    color: Colors.grey),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  formatTime(
-                                                      task.checkInTimeOnly),
-                                                  style: const TextStyle(
-                                                      fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(height: 4),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            const Text('Check Out:',
-                                                style: TextStyle(
-                                                    fontSize: 12,
-                                                    fontWeight:
-                                                        FontWeight.w600)),
-                                            Row(
-                                              children: [
-                                                const Icon(Icons.calendar_today,
-                                                    size: 14,
-                                                    color: Colors.grey),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  formatDate(task.checkOutDate),
-                                                  style: const TextStyle(
-                                                      fontSize: 12),
-                                                ),
-                                                const SizedBox(width: 8),
-                                                const Icon(Icons.access_time,
-                                                    size: 14,
-                                                    color: Colors.grey),
-                                                const SizedBox(width: 4),
-                                                Text(
-                                                  formatTime(
-                                                      task.checkOutTimeOnly),
-                                                  style: const TextStyle(
-                                                      fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                ),
+                              ),
+                            ),
+                          ))
+                : (!reportsProvider.hasFetched
+                    ? Expanded(
+                        child: Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.calendar_month_outlined,
+                                  size: 80, color: Colors.grey[300]),
+                              const SizedBox(height: 16),
+                              const Text(
+                                'Select a date range to view reports',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              ElevatedButton.icon(
+                                onPressed: () => onClickTopButton(context),
+                                icon: const Icon(Icons.date_range),
+                                label: const Text('Choose Date'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 24, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      )
+                    : reportsProvider.taskReport.isEmpty
+                        ? Expanded(
+                            child: Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.search_off_outlined,
+                                      size: 80, color: Colors.grey[300]),
+                                  const SizedBox(height: 16),
+                                  const Text(
+                                    'No reports found for the selected range',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.grey,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
-
-                                  const SizedBox(height: 12),
-
-                                  // 📍 Location
-                                  // Row(
-                                  //   children: [
-                                  //     const Icon(Icons.location_on,
-                                  //         color: Colors.red, size: 18),
-                                  //     const SizedBox(width: 8),
-                                  //     Expanded(
-                                  //       child: Text(
-                                  //         task.location,
-                                  //         style: TextStyle(
-                                  //             fontSize: 14,
-                                  //             color: Colors.grey.shade700),
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // ),
-
-                                  // const SizedBox(height: 12),
-
-                                  // // 📸 View Photo Button with Border
-                                  // if (task.photo.isNotEmpty)
-                                  //   Align(
-                                  //     alignment: Alignment.centerRight,
-                                  //     child: OutlinedButton.icon(
-                                  //       style: OutlinedButton.styleFrom(
-                                  //         side: BorderSide(
-                                  //             color: Colors.blue.shade300),
-                                  //         shape: RoundedRectangleBorder(
-                                  //           borderRadius:
-                                  //               BorderRadius.circular(8),
-                                  //         ),
-                                  //       ),
-                                  //       onPressed: () async {
-                                  //         showImageDialog(context,
-                                  //             HttpUrls.imgBaseUrl + task.photo);
-                                  //       },
-                                  //       icon: const Icon(Icons.image,
-                                  //           color: Colors.blue),
-                                  //       label: const Text("View Photo",
-                                  //           style:
-                                  //               TextStyle(color: Colors.blue)),
-                                  //     ),
-                                  //   ),
                                 ],
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                  )
+                          )
+                        : Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: ListView.builder(
+                                physics: const BouncingScrollPhysics(),
+                                itemCount: reportsProvider.taskReport.length,
+                                itemBuilder: (context, index) {
+                                  var task = reportsProvider.taskReport[index];
+                                  return Container(
+                                    margin: const EdgeInsets.symmetric(
+                                        vertical: 8, horizontal: 12),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      borderRadius: BorderRadius.circular(12),
+                                      boxShadow: [
+                                        BoxShadow(
+                                          color: Colors.black.withOpacity(0.05),
+                                          blurRadius: 8,
+                                          spreadRadius: 2,
+                                          offset: const Offset(2, 4),
+                                        ),
+                                      ],
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(14),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Row(
+                                            children: [
+                                              const Icon(Icons.person,
+                                                  color: Colors.blue, size: 20),
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: Text(
+                                                  task.userDetailsName,
+                                                  style: const TextStyle(
+                                                    fontSize: 18,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                  overflow: TextOverflow.ellipsis,
+                                                  maxLines: 1,
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                          const SizedBox(height: 12),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 6, horizontal: 10),
+                                            decoration: BoxDecoration(
+                                              color: Colors.grey.shade100,
+                                              borderRadius: BorderRadius.circular(8),
+                                            ),
+                                            child: Column(
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    const Text('Check In:',
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w600)),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(Icons.calendar_today,
+                                                            size: 14, color: Colors.grey),
+                                                        const SizedBox(width: 4),
+                                                        Text(formatDate(task.checkInDate),
+                                                            style: const TextStyle(
+                                                                fontSize: 12)),
+                                                        const SizedBox(width: 8),
+                                                        const Icon(Icons.access_time,
+                                                            size: 14, color: Colors.grey),
+                                                        const SizedBox(width: 4),
+                                                        Text(formatTime(task.checkInTimeOnly),
+                                                            style: const TextStyle(
+                                                                fontSize: 12)),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.spaceBetween,
+                                                  children: [
+                                                    const Text('Check Out:',
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w600)),
+                                                    Row(
+                                                      children: [
+                                                        const Icon(Icons.calendar_today,
+                                                            size: 14, color: Colors.grey),
+                                                        const SizedBox(width: 4),
+                                                        Text(formatDate(task.checkOutDate),
+                                                            style: const TextStyle(
+                                                                fontSize: 12)),
+                                                        const SizedBox(width: 8),
+                                                        const Icon(Icons.access_time,
+                                                            size: 14, color: Colors.grey),
+                                                        const SizedBox(width: 4),
+                                                        Text(formatTime(task.checkOutTimeOnly),
+                                                            style: const TextStyle(
+                                                                fontSize: 12)),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          )),
           ],
         ),
       ),
@@ -1478,10 +1441,17 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
   }
 
   String formatDate(String date) {
+    if (date.isEmpty) return '';
     try {
-      DateTime parsedDate = DateTime.parse(date);
-      return DateFormat('dd MMM yyyy')
-          .format(parsedDate); // Example: Jan 15, 2025
+      DateTime parsedDate;
+      if (date.contains('/')) {
+        // Handle dd/MM/yyyy format
+        parsedDate = DateFormat('dd/MM/yyyy').parse(date);
+      } else {
+        // Handle yyyy-MM-dd format
+        parsedDate = DateTime.parse(date);
+      }
+      return DateFormat('dd MMM yyyy').format(parsedDate);
     } catch (e) {
       return date; // In case of error, return the original string
     }

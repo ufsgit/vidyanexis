@@ -138,6 +138,8 @@ class LeadReportProvider extends ChangeNotifier {
   List<LeadReportModel> _leadReportData = [];
 
   SaveLeadDropdownModel? _leadDropdownData; // Change from List to single object
+  bool _hasFetched = false;
+  bool get hasFetched => _hasFetched;
 
   int currentPage = 1;
   bool isLoadingMore = false;
@@ -754,6 +756,7 @@ class LeadReportProvider extends ChangeNotifier {
       nextPage();
       await getSearchLeadReports(
           _search, _fromDateS, _toDateS, _status, context);
+      _hasFetched = true;
     }
   }
 
@@ -910,18 +913,22 @@ class LeadReportProvider extends ChangeNotifier {
             }
           }
           hasMoreData = _pageIndex < _totalPages;
+          _hasFetched = true;
         }
       } else {
+        _hasFetched = true;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
       _isLoading = false;
       isLoadingMore = false;
+      _hasFetched = true;
       notifyListeners();
     } catch (e) {
       _isLoading = false;
       isLoadingMore = false;
+      _hasFetched = true;
       notifyListeners();
       print('Exception occurred: $e');
     }

@@ -12,6 +12,8 @@ class CheckInOutProvider extends ChangeNotifier {
   List<AttendanceDetails> get taskReport => _taskReport;
   List<AttendanceDetails> _attendanceDetails = [];
   List<AttendanceDetails> get attendanceDetails => _attendanceDetails;
+  bool _hasFetched = false;
+  bool get hasFetched => _hasFetched;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -181,6 +183,7 @@ class CheckInOutProvider extends ChangeNotifier {
     _selectedTaskType = null;
     _fromDateS = '';
     _toDateS = '';
+    _hasFetched = false;
     notifyListeners();
   }
 
@@ -240,6 +243,7 @@ class CheckInOutProvider extends ChangeNotifier {
               .toList();
 
           Loader.stopLoader(context);
+          _hasFetched = true;
           notifyListeners();
         }
       } else {
@@ -250,6 +254,7 @@ class CheckInOutProvider extends ChangeNotifier {
       }
     } catch (e) {
       Loader.stopLoader(context);
+      _hasFetched = true;
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),

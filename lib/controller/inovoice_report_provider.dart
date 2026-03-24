@@ -28,6 +28,8 @@ class InvoiceReportProvider extends ChangeNotifier {
   String _AssignedTo = '';
   String _enquirySource = '';
   String _enquiryFor = '';
+  bool _hasFetched = false;
+  bool get hasFetched => _hasFetched;
   String get enquirySource => _enquirySource;
   String get enquiryFor => _enquiryFor;
   String get Search => _Search;
@@ -179,6 +181,7 @@ class InvoiceReportProvider extends ChangeNotifier {
     _enquirySource = "";
     _fromDateS = '';
     _toDateS = '';
+    _hasFetched = false;
     notifyListeners();
   }
 
@@ -261,15 +264,18 @@ class InvoiceReportProvider extends ChangeNotifier {
           //     .toList();
 
           Loader.stopLoader(context);
+          _hasFetched = true;
           notifyListeners();
         }
       } else {
+        _hasFetched = true;
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
+      _hasFetched = true;
       Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -339,6 +345,7 @@ class InvoiceReportProvider extends ChangeNotifier {
           //     .toList();
 
           Loader.stopLoader(context);
+          _hasFetched = true;
           notifyListeners();
         }
       } else {
@@ -348,6 +355,7 @@ class InvoiceReportProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      _hasFetched = true;
       Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -394,10 +402,16 @@ class InvoiceReportProvider extends ChangeNotifier {
               .map((item) => InvoiceReportModel.fromJson(item))
               .toList();
 
+          _hasFetched = true;
+
+          _hasFetched = true;
           notifyListeners();
         }
-      } else {}
+      } else {
+        _hasFetched = true;
+      }
     } catch (e) {
+      _hasFetched = true;
       print('Exception occurred: $e');
     }
   }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/controller/quotation_report_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -31,7 +32,7 @@ class _QuotationReport extends State<QuotationReport> {
       final reportsProvider =
           Provider.of<QuotationReportProvider>(context, listen: false);
       reportsProvider.setQuotationSearch('', '', '', '');
-      reportsProvider.getQuotationReports(context);
+      // reportsProvider.getQuotationReports(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
@@ -733,361 +734,518 @@ class _QuotationReport extends State<QuotationReport> {
                     ),
             AppStyles.isWebScreen(context)
                 ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                    child: reportsProvider.hasFetched
+                        ? reportsProvider.quotationReports.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF607185))),
+                                    Icon(Icons.search_off_outlined,
+                                        size: 80, color: Colors.grey[300]),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No reports found for the selected range',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Customer Name',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Product Name',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Phone No',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Date',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Status',
-                                        color: Color(0xFF607185)),
                                   ],
                                 ),
-                              ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider.quotationReports
-                                      .length, // Number of tasks
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.quotationReports[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(task.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        // Header Row (Table Column Titles)
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFFEFF2F5),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: const Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.start,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              SizedBox(
+                                                width: 80,
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 12.0,
+                                                      horizontal: 25.0),
+                                                  child: Text('No.',
+                                                      style: TextStyle(
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                        )),
+                                                          color: Color(
+                                                              0xFF607185))),
+                                                ),
                                               ),
-                                            ),
-                                            // TableWidget(title: task.orderNo),
-                                            TableWidget(
-                                              flex: 2,
-                                              data: InkWell(
+                                              TableWidget(
+                                                  flex: 2,
+                                                  title: 'Customer Name',
+                                                  color: Color(0xFF607185)),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: 'Product Name',
+                                                  color: Color(0xFF607185)),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: 'Phone No',
+                                                  color: Color(0xFF607185)),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: 'Date',
+                                                  color: Color(0xFF607185)),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: 'Status',
+                                                  color: Color(0xFF607185)),
+                                            ],
+                                          ),
+                                        ),
+                                        // Data Rows
+                                        Expanded(
+                                          child: ListView.builder(
+                                            shrinkWrap:
+                                                true, // To avoid scrolling issues when inside a parent widget
+                                            physics:
+                                                const AlwaysScrollableScrollPhysics(),
+                                            itemCount: reportsProvider
+                                                .quotationReports
+                                                .length, // Number of tasks
+                                            itemBuilder: (context, index) {
+                                              var task = reportsProvider
+                                                  .quotationReports[index];
+                                              return GestureDetector(
                                                 onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                  // context.go(
+                                                  //     '${CustomerDetailsScreen.route}${task.customerId.toString()}');
                                                 },
                                                 child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
                                                   decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
+                                                    color: index % 2 == 0
+                                                        ? Colors.white
+                                                        : const Color(
+                                                            0xFFF6F7F9),
                                                     borderRadius:
                                                         BorderRadius.circular(
-                                                            50),
+                                                            8),
                                                   ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Icon(
-                                                              Icons
-                                                                  .account_circle,
-                                                              size: 15,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              task.customerName!
-                                                                          .length >
-                                                                      20
-                                                                  ? '${task.customerName!.substring(0, 20)}...'
-                                                                  : task
-                                                                      .customerName!,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
+                                                  // Alternate row colors
+                                                  child: Row(
+                                                    // mainAxisAlignment: MainAxisAlignment.start,
+                                                    children: [
+                                                      // Padding(
+                                                      //   padding: const EdgeInsets.symmetric(
+                                                      //       vertical: 12.0, horizontal: 25.0),
+                                                      //   child: Text(task.customerId.toString(),
+                                                      //       style: const TextStyle(
+                                                      //         fontWeight: FontWeight.bold,
+                                                      //       )),
+                                                      // ),
+                                                      SizedBox(
+                                                        width: 80,
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  vertical:
+                                                                      12.0,
+                                                                  horizontal:
+                                                                      25.0),
+                                                          child: Text(
+                                                              (index + 1)
+                                                                  .toString(),
                                                               style:
                                                                   const TextStyle(
-                                                                color: Colors
-                                                                    .black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .bold,
-                                                                fontSize: 14,
-                                                              ),
+                                                              )),
+                                                        ),
+                                                      ),
+                                                      // TableWidget(title: task.orderNo),
+                                                      TableWidget(
+                                                        flex: 2,
+                                                        data: InkWell(
+                                                          onTap: () {
+                                                            context.push(
+                                                                '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                          },
+                                                          child: Container(
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color:
+                                                                  const Color(
+                                                                      0xFFE9EDF1),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          50),
                                                             ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                              size: 12,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          task.customerName ??
-                                                              '',
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
+                                                            child: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .width >
+                                                                    1700
+                                                                ? Row(
+                                                                    mainAxisSize:
+                                                                        MainAxisSize
+                                                                            .min, // Ensures the Row takes only as much space as needed
+                                                                    children: [
+                                                                      // Front image (before text)
+                                                                      Icon(
+                                                                        Icons
+                                                                            .account_circle,
+                                                                        size:
+                                                                            15,
+                                                                        color: Color(
+                                                                            0xFF152D70),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8), // Space between the image and text
+                                                                      Text(
+                                                                        task.customerName!
+                                                                                    .length >
+                                                                                20
+                                                                            ? '${task.customerName!.substring(0, 20)}...'
+                                                                            : task
+                                                                                .customerName!,
+                                                                        overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                        maxLines:
+                                                                            1,
+                                                                        style:
+                                                                            const TextStyle(
+                                                                          color:
+                                                                              Colors.black,
+                                                                          fontWeight:
+                                                                              FontWeight.bold,
+                                                                          fontSize:
+                                                                              14,
+                                                                        ),
+                                                                      ),
+                                                                      const SizedBox(
+                                                                          width:
+                                                                              8), // Space between the text and back image
+                                                                      // Back image (after text)
+                                                                      Icon(
+                                                                        Icons
+                                                                            .arrow_forward_ios,
+                                                                        size:
+                                                                            12,
+                                                                        color: Color(
+                                                                            0xFF152D70),
+                                                                      ),
+                                                                    ],
+                                                                  )
+                                                                : Text(
+                                                                    task.customerName ??
+                                                                        '',
+                                                                    overflow:
+                                                                        TextOverflow
+                                                                            .ellipsis,
+                                                                    maxLines: 1,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  ),
                                                           ),
                                                         ),
-                                                ),
-                                              ),
-                                            ),
+                                                      ),
 
-                                            TableWidget(
-                                                flex: 1,
-                                                title: task.productName ?? ''),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: task.phoneNumber ?? ''),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: (task
-                                                        .entryDate!.isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.entryDate ??
-                                                                ''))
-                                                    : ''),
-                                            TableWidget(
-                                                flex: 1,
-                                                title:
-                                                    task.quotationStatusName ??
-                                                        ''),
-                                          ],
+                                                      TableWidget(
+                                                          flex: 1,
+                                                          title: task.productName ??
+                                                              ''),
+                                                      TableWidget(
+                                                          flex: 1,
+                                                          title: task.phoneNumber ??
+                                                              ''),
+                                                      TableWidget(
+                                                          flex: 1,
+                                                          title: (task
+                                                                  .entryDate!
+                                                                  .isNotEmpty)
+                                                              ? DateFormat(
+                                                                      'dd MMM yyyy')
+                                                                  .format(DateTime.parse(
+                                                                      task.entryDate ??
+                                                                          ''))
+                                                              : ''),
+                                                      TableWidget(
+                                                          flex: 1,
+                                                          title: task
+                                                                  .quotationStatusName ??
+                                                              ''),
+                                                    ],
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              )
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.calendar_month_outlined,
+                                    size: 80, color: Colors.grey[300]),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Select a date range to view reports',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                ElevatedButton.icon(
+                                  onPressed: () => onClickTopButton(context),
+                                  icon: const Icon(Icons.date_range),
+                                  label: const Text('Choose Date'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryBlue,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   )
                 // mobile
                 : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider.quotationReports
-                                      .length, // Number of tasks
-                                  itemBuilder: (context, index) {
-                                    var task =
-                                        reportsProvider.quotationReports[index];
-                                    return GestureDetector(
-                                      onTap: () {},
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Wrap(
-                                          children: [
-                                            Row(
-                                              children: [
-                                                TableWidget(
-                                                  flex: 1,
-                                                  // width: 150,
-                                                  data: InkWell(
-                                                    onTap: () {
-                                                      context.push(
-                                                          '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4),
-                                                      decoration: BoxDecoration(
-                                                        color: const Color(
-                                                            0xFFE9EDF1),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(50),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 0),
-                                                        child: Text(
-                                                          task.customerName ??
-                                                              '',
-                                                          // overflow: TextOverflow
-                                                          //     .ellipsis,
-                                                          // maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
+                    child: reportsProvider.hasFetched
+                        ? reportsProvider.quotationReports.isEmpty
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Icon(Icons.search_off_outlined,
+                                        size: 80, color: Colors.grey[300]),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No reports found for the selected range',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Padding(
+                                padding: const EdgeInsets.all(16.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.circular(14),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Column(
+                                      children: [
+                                        Expanded(
+                                          child: ListView.builder(
+                                            shrinkWrap:
+                                                true, // To avoid scrolling issues when inside a parent widget
+                                            physics:
+                                                const AlwaysScrollableScrollPhysics(),
+                                            itemCount: reportsProvider
+                                                .quotationReports
+                                                .length, // Number of tasks
+                                            itemBuilder: (context, index) {
+                                              var task = reportsProvider
+                                                  .quotationReports[index];
+                                              return GestureDetector(
+                                                onTap: () {},
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                    color: index % 2 == 0
+                                                        ? Colors.white
+                                                        : const Color(
+                                                            0xFFF6F7F9),
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                  ),
+                                                  child: Wrap(
+                                                    children: [
+                                                      Row(
+                                                        children: [
+                                                          TableWidget(
+                                                            flex: 1,
+                                                            // width: 150,
+                                                            data: InkWell(
+                                                              onTap: () {
+                                                                context.push(
+                                                                    '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                              },
+                                                              child: Container(
+                                                                padding: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        8,
+                                                                    vertical:
+                                                                        4),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  color:
+                                                                      const Color(
+                                                                          0xFFE9EDF1),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              50),
+                                                                ),
+                                                                child: Padding(
+                                                                  padding: const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          8,
+                                                                      vertical:
+                                                                          0),
+                                                                  child: Text(
+                                                                    task.customerName ??
+                                                                        '',
+                                                                    // overflow: TextOverflow
+                                                                    //     .ellipsis,
+                                                                    // maxLines: 1,
+                                                                    style:
+                                                                        const TextStyle(
+                                                                      color: Colors
+                                                                          .black,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .bold,
+                                                                      fontSize:
+                                                                          14,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
                                                           ),
-                                                        ),
+                                                        ],
                                                       ),
-                                                    ),
+                                                      TableWidget(
+                                                          width: 150,
+                                                          title:
+                                                              task.customerName ??
+                                                                  ''),
+                                                      TableWidget(
+                                                          width: 150,
+                                                          title:
+                                                              task.productName ??
+                                                                  ''),
+                                                      Row(
+                                                        children: [
+                                                          TableWidget(
+                                                              flex: 1,
+                                                              // width: 150,
+                                                              title: task
+                                                                      .phoneNumber ??
+                                                                  ''),
+                                                        ],
+                                                      ),
+                                                      TableWidget(
+                                                          width: 150,
+                                                          title: (task
+                                                                  .entryDate!
+                                                                  .isNotEmpty)
+                                                              ? DateFormat(
+                                                                      'dd MMM yyyy')
+                                                                  .format(DateTime.parse(
+                                                                      task.entryDate!))
+                                                              : ''),
+                                                      TableWidget(
+                                                          width: 150,
+                                                          title: task
+                                                                  .quotationStatusName ??
+                                                              ''),
+                                                    ],
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                            TableWidget(
-                                                width: 150,
-                                                title: task.customerName ?? ''),
-                                            TableWidget(
-                                                width: 150,
-                                                title: task.productName ?? ''),
-                                            Row(
-                                              children: [
-                                                TableWidget(
-                                                    flex: 1,
-                                                    // width: 150,
-                                                    title:
-                                                        task.phoneNumber ?? ''),
-                                              ],
-                                            ),
-                                            TableWidget(
-                                                width: 150,
-                                                title: (task
-                                                        .entryDate!.isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            task.entryDate!))
-                                                    : ''),
-                                            TableWidget(
-                                                width: 150,
-                                                title:
-                                                    task.quotationStatusName ??
-                                                        ''),
-                                          ],
+                                              );
+                                            },
+                                          ),
                                         ),
-                                      ),
-                                    );
-                                  },
+                                      ],
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
+                              )
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.calendar_month_outlined,
+                                    size: 80, color: Colors.grey[300]),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'Select a date range to view reports',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                const SizedBox(height: 24),
+                                ElevatedButton.icon(
+                                  onPressed: () => onClickTopButton(context),
+                                  icon: const Icon(Icons.date_range),
+                                  label: const Text('Choose Date'),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.primaryBlue,
+                                    foregroundColor: Colors.white,
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 24, vertical: 12),
+                                    shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12)),
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
                   )
           ],
         ),

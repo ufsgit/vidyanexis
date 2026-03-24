@@ -25,6 +25,8 @@ class ServiceReportProvider extends ChangeNotifier {
   String _toDateS = '';
   String _Status = '';
   String _AssignedTo = '';
+  bool _hasFetched = false;
+  bool get hasFetched => _hasFetched;
 
   String get Search => _Search;
   String get fromDateS => _fromDateS;
@@ -164,6 +166,7 @@ class ServiceReportProvider extends ChangeNotifier {
     _selectedDateFilterIndex = null;
     _fromDateS = '';
     _toDateS = '';
+    _hasFetched = false;
     notifyListeners();
   }
 
@@ -218,16 +221,19 @@ class ServiceReportProvider extends ChangeNotifier {
               .toList();
 
           Loader.stopLoader(context);
+          _hasFetched = true;
           notifyListeners();
         }
       } else {
         Loader.stopLoader(context);
+        _hasFetched = true;
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
       Loader.stopLoader(context);
+      _hasFetched = true;
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
@@ -273,10 +279,15 @@ class ServiceReportProvider extends ChangeNotifier {
               .map((item) => ServiceReportModel.fromJson(item))
               .toList();
 
+          _hasFetched = true;
+
           notifyListeners();
         }
-      } else {}
+      } else {
+        _hasFetched = true;
+      }
     } catch (e) {
+      _hasFetched = true;
       print('Exception occurred: $e');
     }
   }

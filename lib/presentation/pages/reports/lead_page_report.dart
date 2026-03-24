@@ -65,7 +65,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       provider.getAllFollowUpStatus(context, '1');
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
-      leadReportProvider.getSearchLeadReports('', '', '', '', context);
+      // leadReportProvider.getSearchLeadReports('', '', '', '', context);
     });
   }
 
@@ -661,8 +661,71 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         ],
                       ),
                     ),
-                SizedBox(
-                  height: availableHeight,
+                Expanded(
+                  child: !leadReportProvider.hasFetched
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.calendar_month_outlined,
+                                  size: 100, color: Colors.grey[300]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Select a date range to view reports',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 18,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              ElevatedButton.icon(
+                                onPressed: () => onClickTopButton(context),
+                                icon: const Icon(Icons.date_range),
+                                label: const Text('Choose Date'),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppColors.primaryBlue,
+                                  foregroundColor: Colors.white,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 32, vertical: 16),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12)),
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : leadReportProvider.leadReportData.isEmpty
+                          ? Center(
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.search_off_outlined,
+                                      size: 100, color: Colors.grey[300]),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'No reports found for the selected range',
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 18,
+                                      color: Colors.grey[600],
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 24),
+                                  TextButton(
+                                    onPressed: () {
+                                      leadReportProvider.selectDateFilterOption(null);
+                                      leadReportProvider.removeStatus();
+                                      leadReportProvider.getSearchLeadReports(
+                                          '', '', '', '', context);
+                                    },
+                                    child: const Text('Clear All Filters'),
+                                  ),
+                                ],
+                              ),
+                            )
+                          : SizedBox(
+                              height: availableHeight,
                   child: SingleChildScrollView(
                     scrollDirection: Axis.horizontal,
                     child: Container(
@@ -1115,7 +1178,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                       ),
                     ),
                   ),
-                ), // end SizedBox
+                            ),
+                  ),
               ],
             ),
             bottomNavigationBar: _buildPaginationControls(context),

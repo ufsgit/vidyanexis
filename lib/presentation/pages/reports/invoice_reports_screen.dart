@@ -34,7 +34,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
           Provider.of<DropDownProvider>(context, listen: false);
 
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '', '');
-      reportsProvider.getSearchTaskReport(context);
+      // reportsProvider.getSearchTaskReport(context);
       dropDownProvider.getEnquirySource(context);
       dropDownProvider.getEnquiryFor(context);
 
@@ -1147,688 +1147,632 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         ],
                       ),
                     ),
-            AppStyles.isWebScreen(context)
-                ? Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xFF607185))),
-                                      ),
-                                    ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Customer Name',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Mobile',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Address',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Invoice No',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Invoice Date',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Invoice Amount',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Receipt Amount',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Balance Amount',
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Registered Date',
-                                        color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 1,
-                                    //     title: 'View Details',
-                                    //     color: Color(0xFF607185)),
-                                  ],
-                                ),
-                              ),
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of Services
-                                  itemBuilder: (context, index) {
-                                    var invoice =
-                                        reportsProvider.taskReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Row(
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(Service.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
-                                              ),
-                                            ),
-                                            // TableWidget(title: Service.orderNo),
-                                            TableWidget(
-                                              flex: 2,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${invoice.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Icon(
-                                                              Icons
-                                                                  .account_circle,
-                                                              size: 15,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              invoice.customerName
-                                                                          .length >
-                                                                      20
-                                                                  ? '${invoice.customerName.substring(0, 20)}...'
-                                                                  : invoice
-                                                                      .customerName,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                              size: 12,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          invoice.customerName,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: invoice.contactNumber),
-                                            TableWidget(
-                                                flex: 2,
-                                                title: invoice.address1),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: invoice.invoiceNo
-                                                    .toString()),
-
-                                            TableWidget(
-                                              flex: 1,
-                                              title: (invoice.invoiceDate
-                                                          .toString()
-                                                          .isNotEmpty &&
-                                                      invoice.invoiceDate
-                                                              .toString() !=
-                                                          'null')
-                                                  ? DateFormat('dd MMM yyyy')
-                                                      .format(DateTime.parse(
-                                                          invoice.invoiceDate
-                                                              .toString()))
-                                                  : '',
-                                            ),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: invoice.invoiceAmount
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: invoice.recieptAmount
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: invoice.balanceAmount
-                                                    .toString()),
-                                            TableWidget(
-                                                flex: 1,
-                                                title: (invoice.registeredDate
-                                                        .toString()
-                                                        .isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            invoice
-                                                                .registeredDate
-                                                                .toString()))
-                                                    : ''),
-
-                                            // Expanded(
-                                            //   child: CustomOutlinedSvgButton(
-                                            //     showIcon: false,
-                                            //     onPressed: () async {},
-                                            //     svgPath: 'assets/images/Print.svg',
-                                            //     label: 'View Details',
-                                            //     breakpoint: 860,
-                                            //     foregroundColor:
-                                            //         AppColors.primaryBlue,
-                                            //     backgroundColor: Colors.white,
-                                            //     borderSide: BorderSide(
-                                            //         color: AppColors.primaryBlue),
-                                            //   ),
-                                            // ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
+            if (!reportsProvider.hasFetched)
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.calendar_month,
+                          size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'Please select a date to view invoice reports',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                      ),
+                      const SizedBox(height: 24),
+                      ElevatedButton.icon(
+                        onPressed: () => onClickTopButton(context),
+                        icon: const Icon(Icons.date_range),
+                        label: const Text('Choose Date'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryBlue,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 12),
                         ),
                       ),
-                    ),
-                  )
-                //mobile
-                : Expanded(
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Data Rows
-                              Expanded(
-                                child: ListView.builder(
-                                  shrinkWrap:
-                                      true, // To avoid scrolling issues when inside a parent widget
-                                  physics:
-                                      const AlwaysScrollableScrollPhysics(),
-                                  itemCount: reportsProvider
-                                      .taskReport.length, // Number of Services
-                                  itemBuilder: (context, index) {
-                                    var invoice =
-                                        reportsProvider.taskReport[index];
-                                    return GestureDetector(
-                                      onTap: () {
-                                        // context.go(
-                                        //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                      },
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          color: index % 2 == 0
-                                              ? Colors.white
-                                              : const Color(0xFFF6F7F9),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        // Alternate row colors
-                                        child: Wrap(
-                                          crossAxisAlignment:
-                                              WrapCrossAlignment.center,
-                                          runSpacing: 10,
-                                          // mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            // Padding(
-                                            //   padding: const EdgeInsets.symmetric(
-                                            //       vertical: 12.0, horizontal: 25.0),
-                                            //   child: Text(Service.customerId.toString(),
-                                            //       style: const TextStyle(
-                                            //         fontWeight: FontWeight.bold,
-                                            //       )),
-                                            // ),
-                                            SizedBox(
-                                              width: 80,
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 12.0,
-                                                        horizontal: 25.0),
-                                                child:
-                                                    Text((index + 1).toString(),
-                                                        style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold,
-                                                        )),
-                                              ),
-                                            ),
-                                            // TableWidget(title: Service.orderNo),
-                                            TableWidget(
-                                              width: 150,
-                                              data: InkWell(
-                                                onTap: () {
-                                                  context.push(
-                                                      '${CustomerDetailsScreen.route}${invoice.customerId.toString()}/${'true'}');
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 4),
-                                                  decoration: BoxDecoration(
-                                                    color:
-                                                        const Color(0xFFE9EDF1),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            50),
-                                                  ),
-                                                  child: MediaQuery.of(context)
-                                                              .size
-                                                              .width >
-                                                          1700
-                                                      ? Row(
-                                                          mainAxisSize: MainAxisSize
-                                                              .min, // Ensures the Row takes only as much space as needed
-                                                          children: [
-                                                            // Front image (before text)
-                                                            Icon(
-                                                              Icons
-                                                                  .account_circle,
-                                                              size: 15,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the image and text
-                                                            Text(
-                                                              invoice.customerName
-                                                                          .length >
-                                                                      20
-                                                                  ? '${invoice.customerName.substring(0, 20)}...'
-                                                                  : invoice
-                                                                      .customerName,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                              maxLines: 1,
-                                                              style:
-                                                                  const TextStyle(
-                                                                color: Colors
-                                                                    .black,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .bold,
-                                                                fontSize: 14,
-                                                              ),
-                                                            ),
-                                                            const SizedBox(
-                                                                width:
-                                                                    8), // Space between the text and back image
-                                                            // Back image (after text)
-                                                            Icon(
-                                                              Icons
-                                                                  .arrow_forward_ios,
-                                                              size: 12,
-                                                              color: Color(
-                                                                  0xFF152D70),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Text(
-                                                          invoice.customerName,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                ),
-                                              ),
-                                            ),
-                                            TableWidget(
-                                                width: 150,
-                                                title: invoice.invoiceNo
-                                                    .toString()),
-
-                                            TableWidget(
-                                              width: 150,
-                                              title: (invoice.invoiceDate
-                                                          .toString()
-                                                          .isNotEmpty &&
-                                                      invoice.invoiceDate
-                                                              .toString() !=
-                                                          'null')
-                                                  ? DateFormat('dd MMM yyyy')
-                                                      .format(DateTime.parse(
-                                                          invoice.invoiceDate
-                                                              .toString()))
-                                                  : '',
-                                            ),
-                                            TableWidget(
-                                                width: 150,
-                                                title: invoice.invoiceAmount
-                                                    .toString()),
-                                            TableWidget(
-                                                width: 150,
-                                                title: invoice.recieptAmount
-                                                    .toString()),
-                                            TableWidget(
-                                                width: 150,
-                                                title: invoice.balanceAmount
-                                                    .toString()),
-                                            TableWidget(
-                                                width: 150,
-                                                title: (invoice.registeredDate
-                                                        .toString()
-                                                        .isNotEmpty)
-                                                    ? DateFormat('dd MMM yyyy')
-                                                        .format(DateTime.parse(
-                                                            invoice
-                                                                .registeredDate
-                                                                .toString()))
-                                                    : ''),
-
-                                            TableWidget(
-                                                width: 150,
-                                                title: invoice.contactNumber
-                                                    .toString()),
-
-                                            // Expanded(
-                                            //   child: CustomOutlinedSvgButton(
-                                            //     showIcon: false,
-                                            //     onPressed: () async {},
-                                            //     svgPath: 'assets/images/Print.svg',
-                                            //     label: 'View Details',
-                                            //     breakpoint: 860,
-                                            //     foregroundColor:
-                                            //         AppColors.primaryBlue,
-                                            //     backgroundColor: Colors.white,
-                                            //     borderSide: BorderSide(
-                                            //         color: AppColors.primaryBlue),
-                                            //   ),
-                                            // ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
+                    ],
                   ),
-            AppStyles.isWebScreen(context)
-                ? Container(
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEFF2F5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      children: [
-                        const Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              width: 80,
-                              child: Text(''),
-                            ),
-                            Expanded(
-                              flex: 2,
-                              child: Text(''),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(''),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(''),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 10, right: 16, left: 16),
-                                child: Text('Total Inoice Amount',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF607185))),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 10, right: 16, left: 16),
-                                child: Text('Total Reciept Amount',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF607185))),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    top: 10, right: 16, left: 16),
-                                child: Text('Total Balance Amount',
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1,
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        color: Color(0xFF607185))),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(''),
-                            ),
-                            Expanded(
-                              flex: 1,
-                              child: Text(''),
-                            ),
-                          ],
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(
-                              width: 80,
-                              child: Text(''),
-                            ),
-                            const TableWidget(
-                                flex: 2, title: '', color: Color(0xFF607185)),
-                            const TableWidget(
-                                flex: 1, title: '', color: Color(0xFF607185)),
-                            const TableWidget(
-                                flex: 1, title: '', color: Color(0xFF607185)),
-                            TableWidget(
-                                flex: 1,
-                                title: 'Rs ${reportsProvider.invoiceTotal}',
-                                color: Colors.black),
-                            TableWidget(
-                                flex: 1,
-                                title: 'Rs ${reportsProvider.recieptTotal}',
-                                color: Colors.black),
-                            TableWidget(
-                                flex: 1,
-                                title: 'Rs ${reportsProvider.balanceTotal}',
-                                color: Colors.black),
-                            const TableWidget(
-                                flex: 1, title: '', color: Color(0xFF607185)),
-                            const TableWidget(
-                                flex: 1, title: '', color: Color(0xFF607185)),
-                            // TableWidget(
-                            //     flex: 1,
-                            //     title: 'View Details',
-                            //     color: Color(0xFF607185)),
-                          ],
-                        ),
-                      ],
-                    ),
-                  )
-                //mobile
-                : Container(
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFEFF2F5),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        Text(
-                          'Total Invoice Amount: Rs ${reportsProvider.invoiceTotal}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF607185),
+                ),
+              )
+            else if (reportsProvider.taskReport.isEmpty)
+              Expanded(
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off, size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No invoice reports found for the selected criteria',
+                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ),
+              )
+            else ...[
+              AppStyles.isWebScreen(context)
+                  ? Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Total Receipt Amount: Rs ${reportsProvider.recieptTotal}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF607185),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                // Header Row (Table Column Titles)
+                                Container(
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFEFF2F5),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: const Row(
+                                    mainAxisAlignment: MainAxisAlignment.start,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      SizedBox(
+                                        width: 80,
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: 12.0, horizontal: 25.0),
+                                          child: Text('No.',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Color(0xFF607185))),
+                                        ),
+                                      ),
+                                      TableWidget(
+                                          flex: 2,
+                                          title: 'Customer Name',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Mobile',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 2,
+                                          title: 'Address',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Invoice No',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Invoice Date',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Invoice Amount',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Receipt Amount',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Balance Amount',
+                                          color: Color(0xFF607185)),
+                                      TableWidget(
+                                          flex: 1,
+                                          title: 'Registered Date',
+                                          color: Color(0xFF607185)),
+                                    ],
+                                  ),
+                                ),
+                                // Data Rows
+                                Expanded(
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    itemCount: reportsProvider.taskReport.length,
+                                    itemBuilder: (context, index) {
+                                      var invoice =
+                                          reportsProvider.taskReport[index];
+                                      return GestureDetector(
+                                        onTap: () {},
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: index % 2 == 0
+                                                ? Colors.white
+                                                : const Color(0xFFF6F7F9),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 80,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 12.0,
+                                                          horizontal: 25.0),
+                                                  child: Text(
+                                                      (index + 1).toString(),
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      )),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                flex: 2,
+                                                data: InkWell(
+                                                  onTap: () {
+                                                    context.push(
+                                                        '${CustomerDetailsScreen.route}${invoice.customerId.toString()}/${'true'}');
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xFFE9EDF1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                    ),
+                                                    child: MediaQuery.of(context)
+                                                                .size
+                                                                .width >
+                                                            1700
+                                                        ? Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize.min,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons
+                                                                    .account_circle,
+                                                                size: 15,
+                                                                color: Color(
+                                                                    0xFF152D70),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                invoice.customerName
+                                                                            .length >
+                                                                        20
+                                                                    ? '${invoice.customerName.substring(0, 20)}...'
+                                                                    : invoice
+                                                                        .customerName,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 14,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              const Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios,
+                                                                size: 12,
+                                                                color: Color(
+                                                                    0xFF152D70),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : Text(
+                                                            invoice.customerName,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                            style:
+                                                                const TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: invoice.contactNumber),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  title: invoice.address1),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: invoice.invoiceNo
+                                                      .toString()),
+                                              TableWidget(
+                                                flex: 1,
+                                                title: (invoice.invoiceDate
+                                                            .toString()
+                                                            .isNotEmpty &&
+                                                        invoice.invoiceDate
+                                                                .toString() !=
+                                                            'null')
+                                                    ? DateFormat('dd MMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            invoice.invoiceDate
+                                                                .toString()))
+                                                    : '',
+                                              ),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: invoice.invoiceAmount
+                                                      .toString()),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: invoice.recieptAmount
+                                                      .toString()),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: invoice.balanceAmount
+                                                      .toString()),
+                                              TableWidget(
+                                                  flex: 1,
+                                                  title: (invoice.registeredDate
+                                                          .toString()
+                                                          .isNotEmpty)
+                                                      ? DateFormat('dd MMM yyyy')
+                                                          .format(DateTime.parse(
+                                                              invoice
+                                                                  .registeredDate
+                                                                  .toString()))
+                                                      : ''),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                          textAlign: TextAlign.center,
                         ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Total Balance Amount: Rs ${reportsProvider.balanceTotal}',
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Color(0xFF607185),
+                      ),
+                    )
+                  : Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(14),
                           ),
-                          textAlign: TextAlign.center,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Column(
+                              children: [
+                                Expanded(
+                                  child: ListView.builder(
+                                    shrinkWrap: true,
+                                    physics:
+                                        const AlwaysScrollableScrollPhysics(),
+                                    itemCount: reportsProvider.taskReport.length,
+                                    itemBuilder: (context, index) {
+                                      var invoice =
+                                          reportsProvider.taskReport[index];
+                                      return GestureDetector(
+                                        onTap: () {},
+                                        child: Container(
+                                          decoration: BoxDecoration(
+                                            color: index % 2 == 0
+                                                ? Colors.white
+                                                : const Color(0xFFF6F7F9),
+                                            borderRadius:
+                                                BorderRadius.circular(8),
+                                          ),
+                                          child: Wrap(
+                                            crossAxisAlignment:
+                                                WrapCrossAlignment.center,
+                                            runSpacing: 10,
+                                            children: [
+                                              SizedBox(
+                                                width: 80,
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.symmetric(
+                                                          vertical: 12.0,
+                                                          horizontal: 25.0),
+                                                  child: Text(
+                                                      (index + 1).toString(),
+                                                      style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      )),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                width: 150,
+                                                data: InkWell(
+                                                  onTap: () {
+                                                    context.push(
+                                                        '${CustomerDetailsScreen.route}${invoice.customerId.toString()}/${'true'}');
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 4),
+                                                    decoration: BoxDecoration(
+                                                      color: const Color(
+                                                          0xFFE9EDF1),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              50),
+                                                    ),
+                                                    child: MediaQuery.of(context)
+                                                                .size
+                                                                .width >
+                                                            1700
+                                                        ? Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize.min,
+                                                            children: [
+                                                              const Icon(
+                                                                Icons
+                                                                    .account_circle,
+                                                                size: 15,
+                                                                color: Color(
+                                                                    0xFF152D70),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              Text(
+                                                                invoice.customerName
+                                                                            .length >
+                                                                        20
+                                                                    ? '${invoice.customerName.substring(0, 20)}...'
+                                                                    : invoice
+                                                                        .customerName,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
+                                                                maxLines: 1,
+                                                                style:
+                                                                    const TextStyle(
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .bold,
+                                                                  fontSize: 14,
+                                                                ),
+                                                              ),
+                                                              const SizedBox(
+                                                                  width: 8),
+                                                              const Icon(
+                                                                Icons
+                                                                    .arrow_forward_ios,
+                                                                size: 12,
+                                                                color: Color(
+                                                                    0xFF152D70),
+                                                              ),
+                                                            ],
+                                                          )
+                                                        : Text(
+                                                            invoice.customerName,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                            style:
+                                                                const TextStyle(
+                                                              color: Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight.bold,
+                                                              fontSize: 14,
+                                                            ),
+                                                          ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                  width: 150,
+                                                  title: invoice.invoiceNo
+                                                      .toString()),
+                                              TableWidget(
+                                                width: 150,
+                                                title: (invoice.invoiceDate
+                                                            .toString()
+                                                            .isNotEmpty &&
+                                                        invoice.invoiceDate
+                                                                .toString() !=
+                                                            'null')
+                                                    ? DateFormat('dd MMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            invoice.invoiceDate
+                                                                .toString()))
+                                                    : '',
+                                              ),
+                                              TableWidget(
+                                                  width: 150,
+                                                  title: invoice.invoiceAmount
+                                                      .toString()),
+                                              TableWidget(
+                                                  width: 150,
+                                                  title: invoice.recieptAmount
+                                                      .toString()),
+                                              TableWidget(
+                                                  width: 150,
+                                                  title: invoice.balanceAmount
+                                                      .toString()),
+                                              TableWidget(
+                                                  width: 150,
+                                                  title: (invoice.registeredDate
+                                                          .toString()
+                                                          .isNotEmpty)
+                                                      ? DateFormat('dd MMM yyyy')
+                                                          .format(DateTime.parse(
+                                                              invoice
+                                                                  .registeredDate
+                                                                  .toString()))
+                                                      : ''),
+                                              TableWidget(
+                                                  width: 150,
+                                                  title: invoice.contactNumber
+                                                      .toString()),
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
-                      ],
+                      ),
                     ),
-                  )
+              AppStyles.isWebScreen(context)
+                  ? Container(
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFF2F5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        children: [
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(width: 80, child: Text('')),
+                              Expanded(flex: 2, child: Text('')),
+                              Expanded(flex: 1, child: Text('')),
+                              Expanded(flex: 1, child: Text('')),
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10, right: 16, left: 16),
+                                  child: Text('Total Invoice Amount',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF607185))),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10, right: 16, left: 16),
+                                  child: Text('Total Receipt Amount',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF607185))),
+                                ),
+                              ),
+                              Expanded(
+                                flex: 1,
+                                child: Padding(
+                                  padding: EdgeInsets.only(
+                                      top: 10, right: 16, left: 16),
+                                  child: Text('Total Balance Amount',
+                                      overflow: TextOverflow.ellipsis,
+                                      maxLines: 1,
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.w600,
+                                          color: Color(0xFF607185))),
+                                ),
+                              ),
+                              Expanded(flex: 1, child: Text('')),
+                              Expanded(flex: 1, child: Text('')),
+                            ],
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const SizedBox(width: 80, child: Text('')),
+                              const TableWidget(
+                                  flex: 2, title: '', color: Color(0xFF607185)),
+                              const TableWidget(
+                                  flex: 1, title: '', color: Color(0xFF607185)),
+                              const TableWidget(
+                                  flex: 1, title: '', color: Color(0xFF607185)),
+                              TableWidget(
+                                  flex: 1,
+                                  title: 'Rs ${reportsProvider.invoiceTotal}',
+                                  color: Colors.black),
+                              TableWidget(
+                                  flex: 1,
+                                  title: 'Rs ${reportsProvider.recieptTotal}',
+                                  color: Colors.black),
+                              TableWidget(
+                                  flex: 1,
+                                  title: 'Rs ${reportsProvider.balanceTotal}',
+                                  color: Colors.black),
+                              const TableWidget(
+                                  flex: 1, title: '', color: Color(0xFF607185)),
+                              const TableWidget(
+                                  flex: 1, title: '', color: Color(0xFF607185)),
+                            ],
+                          ),
+                        ],
+                      ),
+                    )
+                  : Container(
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFEFF2F5),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Text(
+                            'Total Invoice Amount: Rs ${reportsProvider.invoiceTotal}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF607185),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Total Receipt Amount: Rs ${reportsProvider.recieptTotal}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF607185),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            'Total Balance Amount: Rs ${reportsProvider.balanceTotal}',
+                            style: const TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: Color(0xFF607185),
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ],
+                      ),
+                    )
+            ]
           ],
         ),
       ),

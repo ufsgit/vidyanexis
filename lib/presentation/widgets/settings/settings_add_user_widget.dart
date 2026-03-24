@@ -235,56 +235,209 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
       return true;
     }
 
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit User' : 'Add New User',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-            onPressed: () {
-              settingsProvider.resetStates();
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.close),
-          )
-        ],
-      ),
-      content: Container(
+    Widget buildContent() {
+      return Container(
         color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
         width: AppStyles.isWebScreen(context)
             ? MediaQuery.sizeOf(context).width / 2
             : MediaQuery.sizeOf(context).width,
-        // height: MediaQuery.sizeOf(context).height / 2.5,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.userNameController,
-                      hintText: 'User Name *',
-                      labelText: '',
+              const SizedBox(height: 10),
+              if (!AppStyles.isWebScreen(context)) ...[
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.userNameController,
+                  hintText: 'User Name *',
+                  labelText: '',
+                ),
+                const SizedBox(height: 16),
+                CommonDropdown<int>(
+                  hintText: 'User Type *',
+                  selectedValue:
+                      widget.isEdit ? settingsProvider.selectedUserTypeId : null,
+                  items: settingsProvider.searchUserType
+                      .map((source) => DropdownItem<int>(
+                            id: source.userTypeId,
+                            name: source.userTypeName,
+                          ))
+                      .toList(),
+                  controller: settingsProvider.userTypeController,
+                  onItemSelected: (selectedId) {
+                    settingsProvider.selectedUserTypeId = selectedId;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomPasswordWidget(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      settingsProvider.newpasswordVisible
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.textGrey3,
                     ),
+                    onPressed: () => settingsProvider.toggleNewPasswordVisibility(),
                   ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Container(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.passWordController,
+                  hintText: 'Password *',
+                  labelText: '',
+                  isObscureText: !settingsProvider.newpasswordVisible,
+                ),
+                const SizedBox(height: 16),
+                CustomPasswordWidget(
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      settingsProvider.passwordVisible
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: AppColors.textGrey3,
+                    ),
+                    onPressed: () => settingsProvider.togglePasswordVisibility(),
+                  ),
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.confirmPasswordController,
+                  hintText: 'Confirm Password *',
+                  labelText: '',
+                  isObscureText: !settingsProvider.passwordVisible,
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.mobileNoController,
+                  hintText: 'Mobile No *',
+                  labelText: '',
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.emailIdController,
+                  hintText: 'Email ID *',
+                  labelText: '',
+                ),
+                const SizedBox(height: 16),
+                CommonDropdown<int>(
+                  hintText: 'Working Status *',
+                  selectedValue: widget.isEdit
+                      ? settingsProvider.selectedWorkingStatusId
+                      : null,
+                  items: settingsProvider.searchWorkingStatus
+                      .map((source) => DropdownItem<int>(
+                            id: source.workingStatusId,
+                            name: source.workingStatusName,
+                          ))
+                      .toList(),
+                  controller: settingsProvider.workingStatusController,
+                  onItemSelected: (selectedId) {
+                    settingsProvider.selectedWorkingStatusId = selectedId;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CommonDropdown<int>(
+                  hintText: 'Department*',
+                  selectedValue:
+                      widget.isEdit ? settingsProvider.selectedDepartmentId : null,
+                  items: settingsProvider.departmentModel
+                      .map((source) => DropdownItem<int>(
+                            id: source.departmentId,
+                            name: source.departmentName,
+                          ))
+                      .toList(),
+                  controller: settingsProvider.departmentUserController,
+                  onItemSelected: (selectedId) {
+                    settingsProvider.selectedDepartmentId = selectedId;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.employeeCodeController,
+                  hintText: 'Employee Code',
+                  labelText: '',
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.designationController,
+                  hintText: 'Designation',
+                  labelText: '',
+                ),
+                const SizedBox(height: 16),
+                CommonDropdown<int>(
+                  hintText: 'Branch*',
+                  selectedValue:
+                      widget.isEdit ? settingsProvider.selectedBranchId : null,
+                  items: settingsProvider.branchModel
+                      .map((source) => DropdownItem<int>(
+                            id: source.branchId ?? 0,
+                            name: source.branchName ?? '',
+                          ))
+                      .toList(),
+                  controller: settingsProvider.branchController,
+                  onItemSelected: (selectedId) {
+                    settingsProvider.selectedBranchId = selectedId;
+                  },
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  onTap: () async {
+                    final DateTime? picked = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime.now(),
+                      firstDate: DateTime(2000),
+                      lastDate: DateTime(2101),
+                    );
+                    if (picked != null) {
+                      settingsProvider.dateOfJoinController.text =
+                          DateFormat('dd MMM yyyy').format(picked);
+                    }
+                  },
+                  readOnly: true,
+                  height: 54,
+                  controller: settingsProvider.dateOfJoinController,
+                  hintText: 'Date of Joining',
+                  suffixIcon: IconButton(
+                    icon: const Icon(Icons.calendar_today),
+                    onPressed: () async {
+                      final DateTime? picked = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime(2101),
+                      );
+                      if (picked != null) {
+                        settingsProvider.dateOfJoinController.text =
+                            DateFormat('dd MMM yyyy').format(picked);
+                      }
+                    },
+                  ),
+                  labelText: '',
+                ),
+              ] else ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.userNameController,
+                        hintText: 'User Name *',
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'User Type *',
                         selectedValue: widget.isEdit
@@ -302,84 +455,82 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                         },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomPasswordWidget(
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          settingsProvider.newpasswordVisible
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: AppColors.textGrey3,
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomPasswordWidget(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            settingsProvider.newpasswordVisible
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: AppColors.textGrey3,
+                          ),
+                          onPressed: () =>
+                              settingsProvider.toggleNewPasswordVisibility(),
                         ),
-                        onPressed: () =>
-                            settingsProvider.toggleNewPasswordVisibility(),
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.passWordController,
+                        hintText: 'Password *',
+                        labelText: '',
+                        isObscureText: !settingsProvider.newpasswordVisible,
                       ),
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.passWordController,
-                      hintText: 'Password *',
-                      labelText: '',
-                      isObscureText: !settingsProvider.newpasswordVisible,
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CustomPasswordWidget(
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          settingsProvider.passwordVisible
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: AppColors.textGrey3,
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomPasswordWidget(
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            settingsProvider.passwordVisible
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: AppColors.textGrey3,
+                          ),
+                          onPressed: () =>
+                              settingsProvider.togglePasswordVisibility(),
                         ),
-                        onPressed: () =>
-                            settingsProvider.togglePasswordVisibility(),
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.confirmPasswordController,
+                        hintText: 'Confirm Password *',
+                        labelText: '',
+                        isObscureText: !settingsProvider.passwordVisible,
                       ),
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.confirmPasswordController,
-                      hintText: 'Confirm Password *',
-                      labelText: '',
-                      isObscureText: !settingsProvider.passwordVisible,
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.mobileNoController,
-                      hintText: 'Mobile No *',
-                      labelText: '',
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.mobileNoController,
+                        hintText: 'Mobile No *',
+                        labelText: '',
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.emailIdController,
-                      hintText: 'Email ID *',
-                      labelText: '',
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.emailIdController,
+                        hintText: 'Email ID *',
+                        labelText: '',
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'Working Status *',
                         selectedValue: widget.isEdit
@@ -397,12 +548,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                         },
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: Container(
+                    const SizedBox(width: 10),
+                    Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'Department*',
                         selectedValue: widget.isEdit
@@ -420,38 +567,36 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                         },
                       ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.employeeCodeController,
-                      hintText: 'Employee Code',
-                      labelText: '',
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.employeeCodeController,
+                        hintText: 'Employee Code',
+                        labelText: '',
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.designationController,
-                      hintText: 'Designation',
-                      labelText: '',
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.designationController,
+                        hintText: 'Designation',
+                        labelText: '',
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16.0),
-              Row(
-                children: [
-                  Expanded(
-                    child: Container(
+                  ],
+                ),
+                const SizedBox(height: 16.0),
+                Row(
+                  children: [
+                    Expanded(
                       child: CommonDropdown<int>(
                         hintText: 'Branch*',
                         selectedValue: widget.isEdit
@@ -469,30 +614,10 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                         },
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: CustomTextField(
-                      onTap: () async {
-                        final DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (picked != null) {
-                          settingsProvider.dateOfJoinController.text =
-                              DateFormat('dd MMM yyyy').format(picked);
-                          // "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
-                        }
-                      },
-                      readOnly: true,
-                      height: 54,
-                      controller: settingsProvider.dateOfJoinController,
-                      hintText: 'Date of Joining',
-                      suffixIcon: IconButton(
-                        icon: const Icon(Icons.calendar_today),
-                        onPressed: () async {
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomTextField(
+                        onTap: () async {
                           final DateTime? picked = await showDatePicker(
                             context: context,
                             initialDate: DateTime.now(),
@@ -502,15 +627,33 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                           if (picked != null) {
                             settingsProvider.dateOfJoinController.text =
                                 DateFormat('dd MMM yyyy').format(picked);
-                            // "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
                           }
                         },
+                        readOnly: true,
+                        height: 54,
+                        controller: settingsProvider.dateOfJoinController,
+                        hintText: 'Date of Joining',
+                        suffixIcon: IconButton(
+                          icon: const Icon(Icons.calendar_today),
+                          onPressed: () async {
+                            final DateTime? picked = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime(2101),
+                            );
+                            if (picked != null) {
+                              settingsProvider.dateOfJoinController.text =
+                                  DateFormat('dd MMM yyyy').format(picked);
+                            }
+                          },
+                        ),
+                        labelText: '',
                       ),
-                      labelText: '',
                     ),
-                  ),
-                ],
-              ),
+                  ],
+                ),
+              ],
               const SizedBox(height: 32.0),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -568,13 +711,120 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   ),
                 ],
               ),
-              const SizedBox(
-                height: 10,
-              ),
+              const SizedBox(height: 10),
+              if (!AppStyles.isWebScreen(context)) ...[
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomElevatedButton(
+                        buttonText: 'Cancel',
+                        onPressed: () {
+                          settingsProvider.resetStates();
+                          Navigator.pop(context);
+                        },
+                        backgroundColor: AppColors.whiteColor,
+                        borderColor: AppColors.appViolet,
+                        textColor: AppColors.appViolet,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomElevatedButton(
+                        buttonText: 'Save',
+                        onPressed: () async {
+                          if (validateFields(context, settingsProvider)) {
+                            await settingsProvider.addUser(
+                                context: context,
+                                userDetailsId: widget.userId.toString(),
+                                userDetailsName: settingsProvider.userNameController.text,
+                                password: settingsProvider.passWordController.text,
+                                workingStatus:
+                                    settingsProvider.selectedWorkingStatusId.toString(),
+                                userType: settingsProvider.selectedUserTypeId.toString(),
+                                addressName1: '',
+                                addressName2: '',
+                                addressName3: '',
+                                addressName4: '',
+                                mobile: settingsProvider.mobileNoController.text,
+                                countryCodeName: '',
+                                gmail: settingsProvider.emailIdController.text,
+                                appLogin: settingsProvider.allowAppLogin ? '1' : '0',
+                                departmentId:
+                                    settingsProvider.selectedDepartmentId.toString(),
+                                departmentName:
+                                    settingsProvider.departmentUserController.text,
+                                branchId: settingsProvider.selectedBranchId.toString(),
+                                branchName: settingsProvider.branchController.text);
+
+                            settingsProvider.resetStates();
+                            Navigator.pop(context);
+                          }
+                        },
+                        backgroundColor: AppColors.appViolet,
+                        borderColor: AppColors.appViolet,
+                        textColor: AppColors.whiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
             ],
           ),
         ),
+      );
+    }
+
+    if (!AppStyles.isWebScreen(context)) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Text(
+            widget.isEdit ? 'Edit User' : 'Add New User',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBlack,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.close, color: Colors.black),
+            onPressed: () {
+              settingsProvider.resetStates();
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: buildContent(),
+      );
+    }
+
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      title: Row(
+        children: [
+          Text(
+            widget.isEdit ? 'Edit User' : 'Add New User',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBlack,
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: () {
+              settingsProvider.resetStates();
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.close),
+          )
+        ],
       ),
+      content: buildContent(),
       actions: [
         CustomElevatedButton(
           buttonText: 'Cancel',
@@ -614,6 +864,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   branchName: settingsProvider.branchController.text);
 
               settingsProvider.resetStates();
+              Navigator.pop(context);
             }
           },
           backgroundColor: AppColors.appViolet,

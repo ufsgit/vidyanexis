@@ -148,107 +148,91 @@ class _AddCustomFieldState extends State<AddCustomField> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
-    return AlertDialog(
-      backgroundColor: Colors.white,
-      title: Row(
-        children: [
-          Text(
-            widget.isEdit ? 'Edit Custom Field' : 'Add Custom Field',
-            style: GoogleFonts.plusJakartaSans(
-              fontSize: 18,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textBlack,
-            ),
-          ),
-          const Spacer(),
-          IconButton(
-            onPressed: () {
-              settingsProvider.fieldNameController.clear();
-              Navigator.pop(context);
-            },
-            icon: const Icon(Icons.close),
-          )
-        ],
-      ),
-      content: Container(
+    Widget buildContent() {
+      return Container(
         color: Colors.white,
-        width: MediaQuery.sizeOf(context).width / 2,
-        // height: MediaQuery.sizeOf(context).height /4,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        width: AppStyles.isWebScreen(context)
+            ? MediaQuery.sizeOf(context).width / 2
+            : MediaQuery.sizeOf(context).width,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: settingsProvider.fieldNameController,
-                      hintText: 'Field Name*',
-                      labelText: '',
+              const SizedBox(height: 10),
+              CustomTextField(
+                readOnly: false,
+                height: 54,
+                controller: settingsProvider.fieldNameController,
+                hintText: 'Field Name*',
+                labelText: '',
+              ),
+              const SizedBox(height: 16),
+              CommonDropdown<CustomFieldTypeModel>(
+                hintText: 'Field type*',
+                selectedValue: widget.isEdit
+                    ? settingsProvider.selectedCustomFieldType
+                    : null,
+                items: settingsProvider.customFieldTypeModelList
+                    .map(
+                      (e) => DropdownItem<CustomFieldTypeModel>(
+                          id: e, name: e.customFieldTypeName ?? ""),
+                    )
+                    .toList(),
+                controller: settingsProvider.fieldTypeController,
+                onItemSelected: (selectedId) {
+                  settingsProvider.setFieldId(selectedId);
+                },
+              ),
+              const SizedBox(height: 16),
+              if (!AppStyles.isWebScreen(context)) ...[
+                CheckboxListTile(
+                  title: const Text("Quotation Custom"),
+                  value: settingsProvider.isQuotationCustom,
+                  onChanged: (value) {
+                    settingsProvider.toggleQuotationCustom(value!);
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                ),
+                CheckboxListTile(
+                  title: const Text("View In Quotation"),
+                  value: settingsProvider.isViewInQuotation,
+                  onChanged: (value) {
+                    settingsProvider.toggleViewInQuotation(value!);
+                  },
+                  controlAffinity: ListTileControlAffinity.leading,
+                  contentPadding: EdgeInsets.zero,
+                ),
+              ] else
+                Row(
+                  children: [
+                    Expanded(
+                      child: CheckboxListTile(
+                        title: const Text("Quotation Custom"),
+                        value: settingsProvider.isQuotationCustom,
+                        onChanged: (value) {
+                          settingsProvider.toggleQuotationCustom(value!);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CommonDropdown<CustomFieldTypeModel>(
-                      hintText: 'Field type*',
-                      selectedValue: widget.isEdit
-                          ? settingsProvider.selectedCustomFieldType
-                          : null,
-                      items: settingsProvider.customFieldTypeModelList
-                          .map(
-                            (e) => DropdownItem<CustomFieldTypeModel>(
-                                id: e, name: e.customFieldTypeName ?? ""),
-                          )
-                          .toList(),
-                      controller: settingsProvider.fieldTypeController,
-                      onItemSelected: (selectedId) {
-                        settingsProvider.setFieldId(selectedId);
-                      },
+                    Expanded(
+                      child: CheckboxListTile(
+                        title: const Text("View In Quotation"),
+                        value: settingsProvider.isViewInQuotation,
+                        onChanged: (value) {
+                          settingsProvider.toggleViewInQuotation(value!);
+                        },
+                        controlAffinity: ListTileControlAffinity.leading,
+                        contentPadding: EdgeInsets.zero,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(
-                height: 10,
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: CheckboxListTile(
-                      title: const Text("Quotation Custom"),
-                      value: settingsProvider.isQuotationCustom,
-                      onChanged: (value) {
-                        settingsProvider.toggleQuotationCustom(value!);
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                  Expanded(
-                    child: CheckboxListTile(
-                      title: const Text("View In Quotation"),
-                      value: settingsProvider.isViewInQuotation,
-                      onChanged: (value) {
-                        settingsProvider.toggleViewInQuotation(value!);
-                      },
-                      controlAffinity: ListTileControlAffinity.leading,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ],
-              ),
-              SizedBox(
-                height: 16,
-              ),
+                  ],
+                ),
+              const SizedBox(height: 16),
               if ((settingsProvider.fieldNameid == 3 ||
                       settingsProvider.fieldNameid == 5) &&
                   settingsProvider.fieldTypeController.text.isNotEmpty)
@@ -332,150 +316,172 @@ class _AddCustomFieldState extends State<AddCustomField> {
                             ]),
                       ),
                       const SizedBox(height: 16),
-                      AppStyles.isWebScreen(context)
-                          ? ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: settingsProvider.fieldListItems.length,
-                              itemBuilder: (context, index) {
-                                final item =
-                                    settingsProvider.fieldListItems[index];
-                                return Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 10),
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                  ),
-                                  child: Row(
-                                    children: [
-                                      Expanded(
-                                        child: Text(
-                                          item,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(width: 5),
-                                      TextButton(
-                                        onPressed: () {
-                                          settingsProvider
-                                              .startEditingItem(index);
-                                        },
-                                        child: Text(
-                                          'Edit',
-                                          style: TextStyle(
-                                            color: Colors.blue[400],
-                                          ),
-                                        ),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          settingsProvider
-                                              .removeFieldItem(index);
-                                        },
-                                        child: Text(
-                                          'Delete',
-                                          style: TextStyle(
-                                            color: Colors.red[400],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
-                            )
-                          : ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: settingsProvider.fieldListItems.length,
-                              itemBuilder: (context, index) {
-                                final item =
-                                    settingsProvider.fieldListItems[index];
-                                return Container(
-                                  padding: const EdgeInsets.all(12),
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  decoration: BoxDecoration(
-                                    color: Colors.white,
-                                    borderRadius: BorderRadius.circular(20),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.grey.withOpacity(0.1),
-                                        spreadRadius: 1,
-                                        blurRadius: 4,
-                                        offset: const Offset(0, 2),
-                                      ),
-                                    ],
-                                  ),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              item,
-                                              style: const TextStyle(
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.end,
-                                        children: [
-                                          TextButton.icon(
-                                            onPressed: () {
-                                              settingsProvider
-                                                  .startEditingItem(index);
-                                            },
-                                            icon: Icon(Icons.edit,
-                                                size: 18,
-                                                color: Colors.blue[400]),
-                                            label: Text(
-                                              'Edit',
-                                              style: TextStyle(
-                                                color: Colors.blue[400],
-                                              ),
-                                            ),
-                                          ),
-                                          TextButton.icon(
-                                            onPressed: () {
-                                              settingsProvider
-                                                  .removeFieldItem(index);
-                                            },
-                                            icon: Icon(Icons.delete,
-                                                size: 18,
-                                                color: Colors.red[400]),
-                                            label: Text(
-                                              'Delete',
-                                              style: TextStyle(
-                                                color: Colors.red[400],
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                );
-                              },
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: settingsProvider.fieldListItems.length,
+                        itemBuilder: (context, index) {
+                          final item = settingsProvider.fieldListItems[index];
+                          return Container(
+                            padding: const EdgeInsets.all(12),
+                            margin: const EdgeInsets.only(bottom: 10),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.1),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    item,
+                                    style: const TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                IconButton(
+                                  onPressed: () {
+                                    settingsProvider.startEditingItem(index);
+                                  },
+                                  icon: Icon(Icons.edit,
+                                      size: 20, color: Colors.blue[400]),
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    settingsProvider.removeFieldItem(index);
+                                  },
+                                  icon: Icon(Icons.delete,
+                                      size: 20, color: Colors.red[400]),
+                                  visualDensity: VisualDensity.compact,
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                     ]),
+              const SizedBox(height: 24.0),
+              if (!AppStyles.isWebScreen(context)) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomElevatedButton(
+                        buttonText: 'Cancel',
+                        onPressed: () {
+                          settingsProvider.fieldNameController.clear();
+                          settingsProvider.fieldTypeController.clear();
+                          Navigator.pop(context);
+                        },
+                        backgroundColor: AppColors.whiteColor,
+                        borderColor: AppColors.appViolet,
+                        textColor: AppColors.appViolet,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomElevatedButton(
+                        buttonText: 'Save',
+                        onPressed: () async {
+                          final error =
+                              validateInputs(context, settingsProvider);
+                          if (error != null) {
+                            showErrorDialog(context, error);
+                            return;
+                          }
+
+                          CustomFieldModel customFieldTypeModel =
+                              CustomFieldModel();
+                          customFieldTypeModel.customFieldId = widget.isEdit
+                              ? widget.customFieldTypeModel!.customFieldId
+                              : 0;
+                          customFieldTypeModel.customFieldName =
+                              settingsProvider.fieldNameController.text;
+                          customFieldTypeModel.customFieldTypeId =
+                              settingsProvider.fieldNameid;
+                          customFieldTypeModel.isQuotationCustom =
+                              settingsProvider.isQuotationCustom ? 1 : 0;
+                          customFieldTypeModel.isViewInQuotation =
+                              settingsProvider.isViewInQuotation ? 1 : 0;
+
+                          settingsProvider.saveCustomField(
+                              context, customFieldTypeModel);
+                          Navigator.pop(context);
+                        },
+                        backgroundColor: AppColors.appViolet,
+                        borderColor: AppColors.appViolet,
+                        textColor: AppColors.whiteColor,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+              ],
             ],
           ),
         ),
+      );
+    }
+
+    if (!AppStyles.isWebScreen(context)) {
+      return Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          title: Text(
+            widget.isEdit ? 'Edit Custom Field' : 'Add Custom Field',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBlack,
+            ),
+          ),
+          leading: IconButton(
+            icon: const Icon(Icons.close, color: Colors.black),
+            onPressed: () {
+              settingsProvider.fieldNameController.clear();
+              Navigator.pop(context);
+            },
+          ),
+        ),
+        body: buildContent(),
+      );
+    }
+
+    return AlertDialog(
+      backgroundColor: Colors.white,
+      title: Row(
+        children: [
+          Text(
+            widget.isEdit ? 'Edit Custom Field' : 'Add Custom Field',
+            style: GoogleFonts.plusJakartaSans(
+              fontSize: 18,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textBlack,
+            ),
+          ),
+          const Spacer(),
+          IconButton(
+            onPressed: () {
+              settingsProvider.fieldNameController.clear();
+              Navigator.pop(context);
+            },
+            icon: const Icon(Icons.close),
+          )
+        ],
       ),
+      content: buildContent(),
       actions: [
         CustomElevatedButton(
           buttonText: 'Cancel',
@@ -508,9 +514,6 @@ class _AddCustomFieldState extends State<AddCustomField> {
                 settingsProvider.isQuotationCustom ? 1 : 0;
             customFieldTypeModel.isViewInQuotation =
                 settingsProvider.isViewInQuotation ? 1 : 0;
-
-            // customFieldTypeModel.dropDownValues =
-            //     settingsProvider.fieldListItems.map((e) => e).join(',');
 
             settingsProvider.saveCustomField(context, customFieldTypeModel);
             Navigator.pop(context);

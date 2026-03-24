@@ -9,6 +9,9 @@ import 'package:vidyanexis/http/loader.dart';
 class TaskReportProvider extends ChangeNotifier {
   List<TaskReportModel> _taskReport = [];
   List<TaskReportModel> get taskReport => _taskReport;
+
+  bool _hasFetched = false;
+  bool get hasFetched => _hasFetched;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -194,6 +197,7 @@ class TaskReportProvider extends ChangeNotifier {
     _TaskType = '';
     _isFilter = false;
     _pageIndex = 1;
+    _hasFetched = false;
     notifyListeners();
   }
 
@@ -282,10 +286,12 @@ class TaskReportProvider extends ChangeNotifier {
           }
 
           print("Task List Length: ${_taskReport.length}");
+          _hasFetched = true;
           if (!isLoadMore) Loader.stopLoader(context);
           notifyListeners();
           return newTasks.isEmpty;
         }
+        _hasFetched = true;
         if (!isLoadMore) Loader.stopLoader(context);
         notifyListeners();
       } else {
@@ -298,6 +304,7 @@ class TaskReportProvider extends ChangeNotifier {
       }
     } catch (e) {
       if (!isLoadMore) {
+        _hasFetched = true;
         Loader.stopLoader(context);
         print('Exception occurred: $e');
         ScaffoldMessenger.of(context).showSnackBar(
@@ -360,6 +367,7 @@ class TaskReportProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
+      _hasFetched = true;
       Loader.stopLoader(context);
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
@@ -406,6 +414,7 @@ class TaskReportProvider extends ChangeNotifier {
               .map((item) => TaskReportModel.fromJson(item))
               .toList();
 
+          _hasFetched = true;
           notifyListeners();
         }
       } else {}

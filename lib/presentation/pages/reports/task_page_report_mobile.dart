@@ -41,7 +41,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
 
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
       hasMoreData = true;
-      reportsProvider.getSearchTaskReport(context);
+      // reportsProvider.getSearchTaskReport(context);
       searchProvider.stopSearch();
       reportsProvider.setFilter(false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
@@ -920,11 +920,63 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                       ),
                     ),
             Expanded(
-              child: SingleChildScrollView(
-                controller: scrollController,
-                child: Column(
-                  children: [
-                    ListView.separated(
+              child: !reportsProvider.hasFetched
+                  ? Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.calendar_month_outlined,
+                              size: 80, color: Colors.grey[300]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Select a date range to view reports',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 16,
+                              color: Colors.grey[600],
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton.icon(
+                            onPressed: () => onClickTopButton(context),
+                            icon: const Icon(Icons.date_range),
+                            label: const Text('Choose Date'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 24, vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    )
+                  : reportsProvider.taskReport.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.search_off_outlined,
+                                  size: 80, color: Colors.grey[300]),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No reports found for the selected range',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        )
+                      : SingleChildScrollView(
+                          controller: scrollController,
+                          child: Column(
+                            children: [
+                              ListView.separated(
                       separatorBuilder: (context, index) {
                         return Divider(
                           height: 2,

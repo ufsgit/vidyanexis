@@ -2840,7 +2840,7 @@ class SettingsProvider extends ChangeNotifier {
     uploadedFilePath = path;
   }
 
-  void saveCompanyDetails({
+  Future<void> saveCompanyDetails({
     required BuildContext context,
     required String companyId,
   }) async {
