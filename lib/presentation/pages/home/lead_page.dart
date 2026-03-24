@@ -1151,51 +1151,48 @@ class _LeadsPageState extends State<LeadPage> {
                                                              leadingIcon: const Icon(
                                                                  Icons.add_task,
                                                                  size: 18,
-                                                                 color: Colors.teal),
-                                                             children: provider
-                                                                 .taskType
-                                                                 .map((taskType) {
-                                                               // Find users for this task type based on department
-                                                               final users = provider
-                                                                   .searchUserDetails
-                                                                   .where((user) {
-                                                                 return user
-                                                                         .departmentId
-                                                                         .toString() ==
-                                                                     taskType
-                                                                         .departmentIds
-                                                                         .toString();
-                                                               }).toList();
+                                                                 color: Colors.teal),                                                              children: provider
+                                                                          .getFilteredTaskTypes()
+                                                                          .isEmpty
+                                                                  ? [
+                                                                      const MenuItemButton(
+                                                                        onPressed: null,
+                                                                        child: Text(
+                                                                          'No available tasks',
+                                                                          style: TextStyle(
+                                                                              color: Colors
+                                                                                  .grey),
+                                                                        ),
+                                                                      )
+                                                                    ]
+                                                                  : provider
+                                                                      .getFilteredTaskTypes()
+                                                                      .map((taskType) {
+                                                                      // Get only active users for this task type
+                                                                      final users = provider
+                                                                          .getActiveUsersForTask(
+                                                                              taskType);
 
-                                                               if (users.isEmpty) {
-                                                                 return MenuItemButton(
-                                                                   onPressed:
-                                                                       null,
-                                                                   child: Text(
-                                                                       taskType
-                                                                           .taskTypeName),
-                                                                 );
-                                                               }
+                                                                      return MultiLevelHoverMenu(
+                                                                        title: taskType
+                                                                            .taskTypeName,
+                                                                        children: users
+                                                                            .map((user) {
+                                                                          return MenuItemButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              _openTaskDialog(
+                                                                                  lead,
+                                                                                  taskType,
+                                                                                  user);
+                                                                            },
+                                                                            child: Text(user
+                                                                                .userDetailsName),
+                                                                          );
+                                                                        }).toList(),
+                                                                      );
+                                                                    }).toList(),
 
-                                                               return MultiLevelHoverMenu(
-                                                                 title: taskType
-                                                                     .taskTypeName,
-                                                                 children: users
-                                                                     .map((user) {
-                                                                   return MenuItemButton(
-                                                                     onPressed:
-                                                                         () {
-                                                                       _openTaskDialog(
-                                                                           lead,
-                                                                           taskType,
-                                                                           user);
-                                                                     },
-                                                                     child: Text(user
-                                                                         .userDetailsName),
-                                                                   );
-                                                                 }).toList(),
-                                                               );
-                                                             }).toList(),
                                                            ),
                                                         ],
                                                       ),
