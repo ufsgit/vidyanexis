@@ -565,6 +565,7 @@ class _LeadCardState extends State<LeadCard> {
                       // Action Buttons Row 1
                       Row(
                         children: [
+                          if (settingsProvider.menuIsViewMap[90] == 1)
                           _buildActionButton(
                             onTap: () => setState(() => _isInternalMoreExpanded = !_isInternalMoreExpanded),
                             icon: Icons.note,
@@ -572,6 +573,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: Colors.red,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsViewMap[91] == 1)
                           _buildActionButton(
                             onTap: () async {
                               final url = 'https://wa.me/91${widget.lead.contactNumber}';
@@ -582,6 +584,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: Colors.blue,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsViewMap[95] == 1)
                           _buildActionButton(
                             onTap: () => Navigator.push(context, MaterialPageRoute(
                               builder: (context) => CustomerDetailPageMobile(
@@ -595,6 +598,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: AppColors.appViolet,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsViewMap[92] == 1)
                           _buildActionButton(
                             onTap: () async {
                               final url = 'tel:${widget.lead.contactNumber}';
@@ -605,6 +609,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: AppColors.bluebutton,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsViewMap[93] == 1)
                           Expanded(
                             child: Consumer<LeadCheckInProvider>(
                               builder: (context, checkInProvider, child) {
@@ -632,6 +637,7 @@ class _LeadCardState extends State<LeadCard> {
                       // Action Buttons Row 2
                       Row(
                         children: [
+                          if (settingsProvider.menuIsSaveMap[13] == 1)
                           _buildActionButton(
                             onTap: () => Navigator.push(context, MaterialPageRoute(
                               builder: (context) => AddTaskMobile(isEdit: false, taskId: '0'),
@@ -641,6 +647,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: Colors.orange,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsSaveMap[19] == 1)
                           _buildActionButton(
                             onTap: () => Navigator.push(context, MaterialPageRoute(
                               builder: (context) => AddDocumentPhone(customerId: widget.lead.customerId.toString()),
@@ -650,6 +657,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: AppColors.appViolet,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsEditMap[3] == 1)
                           _buildActionButton(
                             onTap: () async {
                               showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
@@ -670,6 +678,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: AppColors.secondaryBlue,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsSaveMap[16] == 1)
                           _buildActionButton(
                             onTap: () => Navigator.push(context, MaterialPageRoute(
                               builder: (c) => QuotationCreationWidget(
@@ -683,6 +692,7 @@ class _LeadCardState extends State<LeadCard> {
                             color: AppColors.bluebutton,
                           ),
                           const SizedBox(width: 4),
+                          if (settingsProvider.menuIsEditMap[94] == 1)
                           _buildActionButton(
                             onTap: _showConvertDialog,
                             icon: Icons.change_circle_outlined,

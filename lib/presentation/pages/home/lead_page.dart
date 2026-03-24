@@ -1084,7 +1084,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                 ],
                                                               ),
                                                             ),
-                                                          if (settingsProvider.menuIsEditMap[99] == 1)
+                                                          if (settingsProvider.menuIsEditMap[94] == 1)
                                                             (onHover) => MenuItemButton(
                                                               onPressed: () =>
                                                                   _handleLeadAction(
