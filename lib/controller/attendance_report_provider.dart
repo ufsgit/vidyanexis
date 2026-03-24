@@ -243,14 +243,7 @@ class AttendanceReportProvider extends ChangeNotifier {
               .map((item) => AttendanceDetails.fromJson(item))
               .toList();
 
-<<<<<<< HEAD
           Loader.stopLoader(context);
-          _hasFetched = true;
-=======
-          if (showLoading) {
-            Loader.stopLoader(context);
-          }
->>>>>>> f0f5c8180edb5e079fc4a4b6255236ff21928aa3
           notifyListeners();
         }
       } else {
@@ -262,14 +255,7 @@ class AttendanceReportProvider extends ChangeNotifier {
         );
       }
     } catch (e) {
-<<<<<<< HEAD
       Loader.stopLoader(context);
-      _hasFetched = true;
-=======
-      if (showLoading) {
-        Loader.stopLoader(context);
-      }
->>>>>>> f0f5c8180edb5e079fc4a4b6255236ff21928aa3
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
