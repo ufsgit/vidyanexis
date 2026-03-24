@@ -273,9 +273,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                         child: Wrap(
                           spacing: 10,
                           runSpacing: 10,
-                          children: dropDownProvider
-                                  .getFilteredTaskTypes()
-                                  .map((taskType) {
+                          children: dropDownProvider.taskType.map((taskType) {
                             bool isSelected =
                                 customerDetailsProvider.selectedTaskType ==
                                     taskType.taskTypeId;
