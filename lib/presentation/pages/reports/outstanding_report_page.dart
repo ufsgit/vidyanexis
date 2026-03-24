@@ -49,7 +49,7 @@ class _OutstandingReportPageState extends State<OutstandingReportPage> {
       provider.getOutstandingReport(context);
 
       customerProvider.setLimit();
-      customerProvider.setSearchCriteria('', '', '', '0');
+      customerProvider.setSearchCriteria('', '', '');
       customerProvider.getSearchCustomers(context);
     });
   }

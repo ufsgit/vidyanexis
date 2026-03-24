@@ -50,7 +50,6 @@ class HomePage extends StatefulWidget {
   static String route = '/home';
   const HomePage({super.key});
 
-
   @override
   State<HomePage> createState() => _HomePageState();
 }
@@ -182,6 +181,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: ExpenseReportScreen()),
         ),
+      if (settingsProvider.menuIsViewMap[7].toString() == '1')
         SidebarOption(
           title: 'Task Reports',
           iconPath: 'assets/images/Reports.svg',

@@ -67,6 +67,14 @@ class TaskPageProvider extends ChangeNotifier {
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
   int? get selectedTaskType => _selectedTaskType;
+
+  List<int> _selectedStatusIds = [0];
+  List<int> _selectedUserIds = [0];
+  List<int> _selectedTaskTypeFilterIds = [0];
+
+  List<int> get selectedStatusIds => _selectedStatusIds;
+  List<int> get selectedUserIds => _selectedUserIds;
+  List<int> get selectedTaskTypeFilterIds => _selectedTaskTypeFilterIds;
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
 
@@ -325,15 +333,78 @@ class TaskPageProvider extends ChangeNotifier {
 
   void setTaskType(int newStatus) {
     _selectedTaskType = newStatus;
+    _selectedTaskTypeFilterIds = [newStatus];
     print(_selectedTaskType.toString());
     notifyListeners(); // Notify listeners about the change
   }
 
+  void toggleStatus(int value) {
+    if (value == 0) {
+      _selectedStatusIds = [0];
+    } else {
+      _selectedStatusIds.remove(0);
+      if (_selectedStatusIds.contains(value)) {
+        _selectedStatusIds.remove(value);
+      } else {
+        _selectedStatusIds.add(value);
+      }
+      if (_selectedStatusIds.isEmpty) {
+        _selectedStatusIds = [0];
+      }
+    }
+    _selectedStatus = _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
+    notifyListeners();
+  }
+
+  void toggleUserFilter(int value) {
+    if (value == 0) {
+      _selectedUserIds = [0];
+    } else {
+      _selectedUserIds.remove(0);
+      if (_selectedUserIds.contains(value)) {
+        _selectedUserIds.remove(value);
+      } else {
+        _selectedUserIds.add(value);
+      }
+      if (_selectedUserIds.isEmpty) {
+        _selectedUserIds = [0];
+      }
+    }
+    _selectedUser = _selectedUserIds.isNotEmpty ? _selectedUserIds.first : null;
+    notifyListeners();
+  }
+
+  void toggleTaskTypeFilter(int value) {
+    if (value == 0) {
+      _selectedTaskTypeFilterIds = [0];
+    } else {
+      _selectedTaskTypeFilterIds.remove(0);
+      if (_selectedTaskTypeFilterIds.contains(value)) {
+        _selectedTaskTypeFilterIds.remove(value);
+      } else {
+        _selectedTaskTypeFilterIds.add(value);
+      }
+      if (_selectedTaskTypeFilterIds.isEmpty) {
+        _selectedTaskTypeFilterIds = [0];
+      }
+    }
+    _selectedTaskType =
+        _selectedTaskTypeFilterIds.isNotEmpty ? _selectedTaskTypeFilterIds.first : null;
+    notifyListeners();
+  }
+
   void removeStatus() {
+    clearAllFilters();
+  }
+
+  void clearAllFilters() {
     _selectedStatus = null;
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     _selectedTaskType = null;
+    _selectedStatusIds = [0];
+    _selectedUserIds = [0];
+    _selectedTaskTypeFilterIds = [0];
     _fromDate = null;
     _toDate = null;
     _formattedFromDate = '';
@@ -387,7 +458,13 @@ class TaskPageProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
 
-      String toUserId = (_selectedUser ?? 0).toString();
+      String toUserId = _selectedUserIds.join(',');
+      _Status = _selectedStatusIds.join(',');
+      _TaskType = _selectedTaskTypeFilterIds.join(',');
+
+      if (_Status.isEmpty || _Status == 'null') {
+        _Status = '0';
+      }
 
       if (_TaskType.isEmpty || _TaskType == 'null') {
         _TaskType = '0';

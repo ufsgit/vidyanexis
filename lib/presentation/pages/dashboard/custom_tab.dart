@@ -238,7 +238,38 @@ class CustomTab extends StatelessWidget {
                 children: List.generate(tabOptions.length, (index) {
                   return Expanded(
                     child: InkWell(
-                      onTap: () => _dashBoardProvider.changeTab(index),
+                      onTap: () {
+                        _dashBoardProvider.changeTab(index);
+                        // Calculate active tab ID based on permissions
+                        final allowedTabIds = [
+                          if (settingsProvider.menuIsViewMap[84].toString() !=
+                              '0')
+                            6,
+                          if (settingsProvider.menuIsViewMap[49].toString() !=
+                              '0')
+                            0,
+                          if (settingsProvider.menuIsViewMap[50].toString() !=
+                              '0')
+                            1,
+                          if (settingsProvider.menuIsViewMap[76].toString() !=
+                              '0')
+                            4,
+                          if (settingsProvider.menuIsViewMap[77].toString() !=
+                              '0')
+                            5,
+                          if (settingsProvider.menuIsViewMap[51].toString() !=
+                              '0')
+                            2,
+                          if (settingsProvider.menuIsViewMap[52].toString() !=
+                              '0')
+                            3,
+                        ];
+
+                        if (index >= 0 && index < allowedTabIds.length) {
+                          _dashBoardProvider.loadDataForTab(
+                              allowedTabIds[index], context);
+                        }
+                      },
                       borderRadius: BorderRadius.circular(15),
                       child: Container(
                         height: 36,

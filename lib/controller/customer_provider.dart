@@ -8,14 +8,14 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
-import 'package:vidyanexis/http/loader.dart';
 
 class CustomerProvider extends ChangeNotifier {
   List<SearchLeadModel> _customerData = [];
   List<SearchLeadModel> _tempData = [];
   bool _isFilter = false;
   bool _isLoading = false;
-  int? _selectedStatus;
+  List<int> _selectedStatusIds = [0];
+  int? _selectedStatus = 0;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -41,6 +41,7 @@ class CustomerProvider extends ChangeNotifier {
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+  List<int> get selectedStatusIds => _selectedStatusIds;
   int? get selectedStatus => _selectedStatus;
   bool get isFilter => _isFilter;
   List<SearchLeadModel> get customerData => _customerData;
@@ -142,12 +143,12 @@ class CustomerProvider extends ChangeNotifier {
   }
 
   void setSearchCriteria(
-      String search, String fromDate, String toDate, String status) {
+      String search, String fromDate, String toDate) {
     _customerData.clear();
     _search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
-    _status = status;
+    _status = _selectedStatusIds.join(',');
     _startLimit = 1;
     _endLimit = 20;
     currentPage = 1;
@@ -158,7 +159,8 @@ class CustomerProvider extends ChangeNotifier {
   void toggleFilter() {
     _isFilter = !_isFilter;
     selectDateFilterOption(null);
-    removeStatus();
+    _selectedStatusIds = [0];
+    _selectedStatus = 0;
     notifyListeners();
   }
 
@@ -172,10 +174,22 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setStatus(int newStatus) {
-    _selectedStatus = newStatus;
-    print(_selectedStatus.toString());
-    notifyListeners(); // Notify listeners about the change
+  void toggleStatus(int value) {
+    if (value == 0) {
+      _selectedStatusIds = [0];
+    } else {
+      _selectedStatusIds.remove(0);
+      if (_selectedStatusIds.contains(value)) {
+        _selectedStatusIds.remove(value);
+      } else {
+        _selectedStatusIds.add(value);
+      }
+      if (_selectedStatusIds.isEmpty) {
+        _selectedStatusIds = [0];
+      }
+    }
+    _selectedStatus = _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
+    notifyListeners();
   }
 
   void setLimit() {
@@ -453,7 +467,8 @@ class CustomerProvider extends ChangeNotifier {
   }
 
   void removeStatus() {
-    _selectedStatus = null;
+    _selectedStatusIds = [0];
+    _selectedStatus = 0;
     notifyListeners();
   }
 

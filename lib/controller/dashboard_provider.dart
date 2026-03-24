@@ -13,11 +13,72 @@ import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 
+import 'package:vidyanexis/controller/warrenty_report_provider.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
+
+// Top-level parsing functions for compute()
+List<TaskInfoDashboardModel> _parseTaskInfo(List<dynamic> data) {
+  return data.map((item) => TaskInfoDashboardModel.fromJson(item)).toList();
+}
+
+DashBoardTaskModel _parseDashBoardTask(Map<String, dynamic> data) {
+  return DashBoardTaskModel.fromJson(data);
+}
+
+List<DashBoardCountModel> _parseDashBoardCount(List<dynamic> data) {
+  return data.map((item) => DashBoardCountModel.fromJson(item)).toList();
+}
+
+List<LeadCoversionChartModel> _parseLeadConversion(List<dynamic> data) {
+  return data.map((item) => LeadCoversionChartModel.fromJson(item)).toList();
+}
+
+List<CountLeadCoversionChartModel> _parseLeadConversionCount(
+    List<dynamic> data) {
+  return data
+      .map((item) => CountLeadCoversionChartModel.fromJson(item))
+      .toList();
+}
+
+List<LeadProgressReportModel> _parseLeadProgress(List<dynamic> data) {
+  return data.map((item) => LeadProgressReportModel.fromJson(item)).toList();
+}
+
+List<LeadEnquiryReportModel> _parseLeadEnquiry(List<dynamic> data) {
+  return data.map((item) => LeadEnquiryReportModel.fromJson(item)).toList();
+}
+
+List<FollowUpSummaryModel> _parseFollowUpSummary(List<dynamic> data) {
+  return data.map((item) => FollowUpSummaryModel.fromJson(item)).toList();
+}
+
+List<TaskAllocationSummaryModel> _parseTaskAllocationSummary(
+    List<dynamic> data) {
+  return data.map((item) => TaskAllocationSummaryModel.fromJson(item)).toList();
+}
+
+List<TaskAllocationStatusModel> _parseTaskAllocationStatus(List<dynamic> data) {
+  return data.map((item) => TaskAllocationStatusModel.fromJson(item)).toList();
+}
+
+List<WorkSummaryReportModel> _parseWorkSummary(List<dynamic> data) {
+  return data.map((item) => WorkSummaryReportModel.fromJson(item)).toList();
+}
+
 class DashboardProvider extends ChangeNotifier {
   int _tabIndex = 0;
   int get tabIndex => _tabIndex;
   final Map<int, bool> _hoverStates = {};
   bool isDashBoardLoading = false;
+  bool isLeadLoaded = false;
+  bool isWorkLoaded = false;
+  bool isCustomerLoaded = false;
+  bool isTaskInfoLoaded = false;
+  bool isDashboardCountLoaded = false;
+  bool isTaskOverviewLoaded = false;
+  bool isAmcLoaded = false;
+  bool isPaymentLoaded = false;
 
   String? selectedeLeadConversionValue;
   String? selectedeLeadProgressValue;
@@ -62,8 +123,9 @@ class DashboardProvider extends ChangeNotifier {
 
   // Pagination for Task Summary (Frontend only)
   int _taskCurrentPage = 0;
-  final int _taskItemsPerPage = 20;
+  final int _taskItemsPerPage = 50;
   int get taskCurrentPage => _taskCurrentPage;
+
   int get taskItemsPerPage => _taskItemsPerPage;
 
   // Total items = actual list length (not the backend marker)
@@ -108,22 +170,24 @@ class DashboardProvider extends ChangeNotifier {
   String get formattedToDate => _formattedToDate;
 
   // Fetch dashboard task data
-  Future<void> fetchDashBoardTaskData() async {
+  Future<void> fetchDashBoardTaskData({bool shouldNotify = true}) async {
+    if (isTaskOverviewLoaded) return;
     _isLoading = true;
     _errorMessage = null;
-    notifyListeners();
+    if (shouldNotify) notifyListeners();
 
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.fetchDashBoardTaskData);
 
       if (response.statusCode == 200) {
-        // Parse the entire response as a DashBoardTaskModel
-        final dashboardModel = DashBoardTaskModel.fromJson(response.data);
+        // Use compute for parsing heavy JSON
+        final dashboardModel = await compute(
+            _parseDashBoardTask, response.data as Map<String, dynamic>);
 
         if (dashboardModel.success == true) {
-          // Get the list of departments
           _departments = dashboardModel.getDepartments();
+          isTaskOverviewLoaded = true;
           _errorMessage = null;
         } else {
           _errorMessage = dashboardModel.message ?? 'Unknown error occurred';
@@ -139,13 +203,15 @@ class DashboardProvider extends ChangeNotifier {
     }
 
     _isLoading = false;
-    notifyListeners();
+    if (shouldNotify) notifyListeners();
   }
 
-  Future<void> getTaskInfoDashBoard(BuildContext context) async {
+  Future<void> getTaskInfoDashBoard(BuildContext context,
+      {bool shouldNotify = true}) async {
+    if (isTaskInfoLoaded) return;
     try {
       isDashBoardLoading = true;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
       final response = await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.getTaskInfoDashBoard,
           bodyData: {
@@ -156,21 +222,20 @@ class DashboardProvider extends ChangeNotifier {
         final data = response.data;
         if (data != null) {
           final dataitem = data['data'];
-          List<TaskInfoDashboardModel> tempData = (dataitem as List<dynamic>)
-              .map((item) => TaskInfoDashboardModel.fromJson(item))
-              .toList();
+
+          // Use compute for heavy JSON parsing
+          List<TaskInfoDashboardModel> tempData =
+              await compute(_parseTaskInfo, dataitem as List<dynamic>);
 
           if (tempData.isNotEmpty) {
-            // The last item is a backend total-count marker — remove it.
-            // We use the local list length for pagination, so no need to store it.
             tempData.removeLast();
             _taskInfoModel = tempData;
-            _taskCurrentPage = 0; // Reset to first page on fresh load
+            _taskCurrentPage = 0;
+            isTaskInfoLoaded = true;
           } else {
             _taskInfoModel = [];
             _taskCurrentPage = 0;
           }
-          notifyListeners();
         }
       } else {
         WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -188,21 +253,23 @@ class DashboardProvider extends ChangeNotifier {
       });
     } finally {
       isDashBoardLoading = false;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> fetchNextPageTasks(BuildContext context) async {
+  Future<void> fetchNextPageTasks(BuildContext context,
+      {bool shouldNotify = true}) async {
     if ((_taskCurrentPage + 1) * _taskItemsPerPage < _taskInfoModel.length) {
       _taskCurrentPage++;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> fetchPreviousPageTasks(BuildContext context) async {
+  Future<void> fetchPreviousPageTasks(BuildContext context,
+      {bool shouldNotify = true}) async {
     if (_taskCurrentPage > 0) {
       _taskCurrentPage--;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
@@ -240,9 +307,9 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getLeadConversionChartData() async {
+  Future<void> getLeadConversionChartData({bool shouldNotify = true}) async {
     try {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.enquirySourceConversionReport,
           bodyData: {
@@ -250,30 +317,26 @@ class DashboardProvider extends ChangeNotifier {
             "Todate": _formattedToDate,
             "Is_Date_Check": _formattedFromDate.isNotEmpty ? "1" : "0",
             "User": _selectedUser
-          }).then((response) {
-        print(response);
+          }).then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> chartData = response.data[0];
           List<dynamic> countData = response.data[1];
 
-          conversionData = (chartData)
-              .map((item) => LeadCoversionChartModel.fromJson(item))
-              .toList();
-          conversionCountData = (countData)
-              .map((item) => CountLeadCoversionChartModel.fromJson(item))
-              .toList();
+          conversionData = await compute(_parseLeadConversion, chartData);
+          conversionCountData =
+              await compute(_parseLeadConversionCount, countData);
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> getLeadProgressionReport() async {
+  Future<void> getLeadProgressionReport({bool shouldNotify = true}) async {
     try {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
 
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.leadProgressReport,
@@ -282,53 +345,44 @@ class DashboardProvider extends ChangeNotifier {
             "Todate": _formattedToDate,
             "Is_Date_Check": _formattedFromDate.isNotEmpty ? "1" : "0",
             "User": _selectedUser
-          }).then((response) {
-        print(response);
+          }).then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> pieData = response.data;
-
-          leadProgressReport = (pieData)
-              .map((item) => LeadProgressReportModel.fromJson(item))
-              .toList();
-          // final leadProgress = Provider.of<LeadsProvider>(
-          //     navigatorKey.currentContext!,
-          //     listen: false);
-          // leadProgress.formattedFromDate = _formattedFromDate;
-          // leadProgress.formattedToDate = _formattedToDate;
+          leadProgressReport = await compute(_parseLeadProgress, pieData);
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> getFollowUpSummary() async {
+  Future<void> getFollowUpSummary({bool shouldNotify = true}) async {
     try {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.followUpSummary,
           bodyData: {
             "User": "",
-          }).then((response) {
-        print(response);
+          }).then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> followUpData = response.data;
-
-          followUpSummaryData = (followUpData)
-              .map((item) => FollowUpSummaryModel.fromJson(item))
-              .toList();
+          followUpSummaryData =
+              await compute(_parseFollowUpSummary, followUpData);
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> getTaskAllocationSummary({bool isFilter = false, String? filterValue}) async {
+  Future<void> getTaskAllocationSummary(
+      {bool isFilter = false,
+      String? filterValue,
+      bool shouldNotify = true}) async {
     try {
       selectedeTaskAllocationValue = filterValue;
       late DateTime fromDate;
@@ -346,31 +400,29 @@ class DashboardProvider extends ChangeNotifier {
         default:
           fromDate = DateTime.now();
       }
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.taskAllocationSummary,
           bodyData: {
             "Fromdate": fromDate,
             "Todate": DateTime.now(),
             "Is_Date_Check": isFilter ? "1" : "0"
-          }).then((response) {
-        print(response);
+          }).then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> taskAllocationData = response.data[0];
           List<dynamic> taskAllocationSummaryStatus = response.data[1];
           taskCount = response.data[2];
-          taskAllocationSummaryData = (taskAllocationData)
-              .map((item) => TaskAllocationSummaryModel.fromJson(item))
-              .toList();
-          taskAllocationSummaryDataStatus = (taskAllocationSummaryStatus)
-              .map((item) => TaskAllocationStatusModel.fromJson(item))
-              .toList();
+
+          taskAllocationSummaryData =
+              await compute(_parseTaskAllocationSummary, taskAllocationData);
+          taskAllocationSummaryDataStatus = await compute(
+              _parseTaskAllocationStatus, taskAllocationSummaryStatus);
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
@@ -378,9 +430,13 @@ class DashboardProvider extends ChangeNotifier {
   /// keyword parameter that will be forwarded to the server. The backend may
   /// ignore the value if it only understands lead-related keywords.
   Future<void> getDashBoardCount(
-      {bool isFilter = false, String? filterValue, String? keyword}) async {
+      {bool isFilter = false,
+      String? filterValue,
+      String? keyword,
+      bool shouldNotify = true}) async {
+    if (isDashboardCountLoaded && !isFilter) return;
     try {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
       selectedDashboardCountValue = filterValue;
       late DateTime fromDate;
 
@@ -409,25 +465,26 @@ class DashboardProvider extends ChangeNotifier {
 
       await HttpRequest.httpGetRequest(
               endPoint: HttpUrls.dashboardCount, bodyData: body)
-          .then((response) {
-        print(response);
+          .then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> data = response.data;
-
-          dashBoardCountModel =
-              (data).map((item) => DashBoardCountModel.fromJson(item)).toList();
+          dashBoardCountModel = await compute(_parseDashBoardCount, data);
+          isDashboardCountLoaded = true;
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> getWorkSummary({bool isFilter = false, String? filterValue}) async {
+  Future<void> getWorkSummary(
+      {bool isFilter = false,
+      String? filterValue,
+      bool shouldNotify = true}) async {
     try {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
       selectedWorkSummaryValue = filterValue;
       late DateTime fromDate;
 
@@ -450,27 +507,25 @@ class DashboardProvider extends ChangeNotifier {
             "Fromdate": fromDate,
             "Todate": DateTime.now(),
             "Is_Date_Check": isFilter ? "1" : "0"
-          }).then((response) {
-        print(response);
+          }).then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> data = response.data[0];
           customersCount = response.data[1];
 
-          workSummaryReportModel = (data)
-              .map((item) => WorkSummaryReportModel.fromJson(item))
-              .toList();
+          workSummaryReportModel = await compute(_parseWorkSummary, data);
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> getCustomers() async {
+  Future<void> getCustomers({bool shouldNotify = true}) async {
+    if (isCustomerLoaded) return;
     try {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
 
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.searchCustomer,
@@ -495,18 +550,49 @@ class DashboardProvider extends ChangeNotifier {
           tempData.removeLast();
 
           searchCustomer = List.from(tempData);
+          isCustomerLoaded = true;
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
   void changeTab(int index) {
     _tabIndex = index;
     notifyListeners();
+  }
+
+  Future<void> loadDataForTab(int activeTab, BuildContext context) async {
+    switch (activeTab) {
+      case 0: // Leads Overview
+        await getLeadData();
+        break;
+      case 1: // Work Overview
+        await getWorkData();
+        break;
+      case 2: // Task Overview
+        await fetchDashBoardTaskData();
+        break;
+      case 3: // Task Summary
+        await getTaskInfoDashBoard(context);
+        break;
+      case 4: // Amc Notification
+        await Provider.of<WarrentyReportProvider>(context, listen: false)
+            .getAmcNotification(context);
+        isAmcLoaded = true;
+        break;
+      case 5: // Payment Reminders
+        await Provider.of<WarrentyReportProvider>(context, listen: false)
+            .getPaymentReminders(context);
+        isPaymentLoaded = true;
+        break;
+      case 6: // Dashboard count
+        await getLeadDashboardCount();
+        break;
+    }
   }
 
   void setHover(int index, bool isHovered) {
@@ -516,10 +602,10 @@ class DashboardProvider extends ChangeNotifier {
 
   bool isHovered(int index) => _hoverStates[index] ?? false;
 
-  Future<void> getLeadEnquiryReport() async {
+  Future<void> getLeadEnquiryReport({bool shouldNotify = true}) async {
     try {
       isLeadEnquiryReportLoading = true;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
       await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.leadEnquiryReport,
           bodyData: {
@@ -527,28 +613,25 @@ class DashboardProvider extends ChangeNotifier {
             "Todate": _formattedToDate,
             "Is_Date_Check": _formattedFromDate.isNotEmpty ? "1" : "0",
             "User": _selectedUser
-          }).then((response) {
+          }).then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> pieData = response.data;
-          leadEnquiryReport = (pieData)
-              .map((item) => LeadEnquiryReportModel.fromJson(item))
-              .toList();
+          leadEnquiryReport = await compute(_parseLeadEnquiry, pieData);
         }
       });
     } catch (e) {
       print(e);
     } finally {
       isLeadEnquiryReportLoading = false;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  /// Fetch the lead-specific dashboard counts.
-  /// The backend returns an array with a single object containing all keyword counts
   /// like: [{"New_Leads": 1, "Missed_Leads": 117, ...}]
-  Future<void> getLeadDashboardCount() async {
+  Future<void> getLeadDashboardCount({bool shouldNotify = true}) async {
+    if (isDashboardCountLoaded) return;
     try {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
 
       final body = {
         "Fromdate": _formattedFromDate,
@@ -559,7 +642,7 @@ class DashboardProvider extends ChangeNotifier {
 
       await HttpRequest.httpGetRequest(
               endPoint: HttpUrls.getLeadDashboard, bodyData: body)
-          .then((response) {
+          .then((response) async {
         if (response.statusCode == 200) {
           List<dynamic> data = response.data;
           if (data.isNotEmpty && data.first is Map) {
@@ -571,45 +654,54 @@ class DashboardProvider extends ChangeNotifier {
               }
             });
           }
+          isDashboardCountLoaded = true;
         }
       });
     } catch (e) {
       print(e);
     } finally {
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> getLeadData({String? filterValue}) async {
+  Future<void> getLeadData(
+      {String? filterValue, bool shouldNotify = true}) async {
+    if (isLeadLoaded && filterValue == null) return;
     try {
       if (filterValue != null) {
         setCommonDateFilter(filterValue);
       }
       isDashBoardLoading = true;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
+      // Batch API calls and notify only once at the end
       await Future.wait<void>([
-        getLeadConversionChartData(),
-        getLeadProgressionReport(),
-        getLeadEnquiryReport(),
-        // load full list for overview
-        getLeadDashboardCount(),
+        getLeadConversionChartData(shouldNotify: false),
+        getLeadProgressionReport(shouldNotify: false),
+        getLeadEnquiryReport(shouldNotify: false),
+        getLeadDashboardCount(shouldNotify: false),
       ]);
+      isLeadLoaded = true;
     } finally {
       isDashBoardLoading = false;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 
-  Future<void> getWorkData() async {
+  Future<void> getWorkData({bool shouldNotify = true}) async {
+    if (isWorkLoaded) return;
     try {
       isDashBoardLoading = true;
-      notifyListeners();
-      getTaskAllocationSummary();
-      getDashBoardCount();
-      getWorkSummary();
+      if (shouldNotify) notifyListeners();
+      // Batch updates
+      await Future.wait([
+        getTaskAllocationSummary(shouldNotify: false),
+        getDashBoardCount(shouldNotify: false),
+        getWorkSummary(shouldNotify: false),
+      ]);
+      isWorkLoaded = true;
     } finally {
       isDashBoardLoading = false;
-      notifyListeners();
+      if (shouldNotify) notifyListeners();
     }
   }
 

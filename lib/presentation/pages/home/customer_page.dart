@@ -56,12 +56,7 @@ class _CustomerPageState extends State<CustomerPage> {
           Provider.of<CustomerProvider>(context, listen: false);
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
-      customerProvider.setSearchCriteria(
-        '',
-        '',
-        '',
-        '',
-      );
+      customerProvider.setSearchCriteria('', '', '');
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
 
@@ -96,11 +91,7 @@ class _CustomerPageState extends State<CustomerPage> {
       final customerProvider =
           Provider.of<CustomerProvider>(context, listen: false);
       customerProvider.setSearchCriteria(
-        query,
-        customerProvider.fromDateS,
-        customerProvider.toDateS,
-        customerProvider.status,
-      );
+          query, customerProvider.fromDateS, customerProvider.toDateS);
       customerProvider.getSearchCustomers(context);
     });
   }
@@ -224,7 +215,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                   query,
                                   customerProvider.fromDateS,
                                   customerProvider.toDateS,
-                                  customerProvider.status,
                                 );
                                 customerProvider.getSearchCustomers(context);
                               },
@@ -242,7 +232,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                       searchController.text,
                                       customerProvider.fromDateS,
                                       customerProvider.toDateS,
-                                      customerProvider.status,
                                     );
                                     customerProvider
                                         .getSearchCustomers(context);
@@ -324,7 +313,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                   query,
                                   customerProvider.fromDateS,
                                   customerProvider.toDateS,
-                                  customerProvider.status,
                                 );
                                 customerProvider.getSearchCustomers(context);
                               },
@@ -342,7 +330,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                       searchController.text,
                                       customerProvider.fromDateS,
                                       customerProvider.toDateS,
-                                      customerProvider.status,
                                     );
                                     customerProvider
                                         .getSearchCustomers(context);
@@ -402,9 +389,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                    color: customerProvider.selectedStatus !=
-                                                null &&
-                                            customerProvider.selectedStatus != 0
+                                    color: customerProvider
+                                                .selectedStatusIds.isNotEmpty &&
+                                            customerProvider
+                                                    .selectedStatusIds.first !=
+                                                0
                                         ? AppColors.primaryBlue
                                         : Colors.grey[300]!),
                               ),
@@ -412,12 +401,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                 children: [
                                   const Text('Status: '),
                                   DropdownButton<int>(
-                                    value: customerProvider.selectedStatus,
+                                    value: customerProvider
+                                        .selectedStatusIds.first,
                                     hint: const Text('All'),
                                     items: [
                                           const DropdownMenuItem<int>(
                                             value:
-                                                0, // Use 0 or null to represent "All"
+                                                0, // Use 0 to represent "All"
                                             child: Text(
                                               'All',
                                               style: TextStyle(fontSize: 14),
@@ -437,24 +427,17 @@ class _CustomerPageState extends State<CustomerPage> {
                                             .toList(),
                                     onChanged: (int? newValue) {
                                       if (newValue != null) {
-                                        customerProvider.setStatus(
+                                        customerProvider.toggleStatus(
                                             newValue); // Update the status in the provider
                                       }
-                                      String status = customerProvider
-                                          .selectedStatus
-                                          .toString();
                                       String fromDate =
                                           customerProvider.formattedFromDate;
                                       String toDate =
                                           customerProvider.formattedToDate;
-                                      print(
-                                          'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                                       customerProvider.setSearchCriteria(
-                                        customerProvider.search,
-                                        fromDate,
-                                        toDate,
-                                        status,
-                                      );
+                                          customerProvider.search,
+                                          fromDate,
+                                          toDate);
                                       customerProvider
                                           .getSearchCustomers(context);
                                     },
@@ -541,8 +524,10 @@ class _CustomerPageState extends State<CustomerPage> {
                             // ),
                             if (customerProvider.fromDate != null ||
                                 customerProvider.toDate != null ||
-                                (customerProvider.selectedStatus != null &&
-                                    customerProvider.selectedStatus != 0) ||
+                                (customerProvider
+                                        .selectedStatusIds.isNotEmpty &&
+                                    customerProvider.selectedStatusIds.first !=
+                                        0) ||
                                 customerProvider.search.isNotEmpty)
                               ElevatedButton(
                                 onPressed: () {
@@ -550,11 +535,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.removeStatus();
                                   searchController.clear();
                                   customerProvider.setSearchCriteria(
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                  );
+                                      '', '', '');
                                   customerProvider.getSearchCustomers(context);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -590,9 +571,11 @@ class _CustomerPageState extends State<CustomerPage> {
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                    color: customerProvider.selectedStatus !=
-                                                null &&
-                                            customerProvider.selectedStatus != 0
+                                    color: customerProvider
+                                                .selectedStatusIds.isNotEmpty &&
+                                            customerProvider
+                                                    .selectedStatusIds.first !=
+                                                0
                                         ? AppColors.primaryBlue
                                         : Colors.grey[300]!),
                               ),
@@ -601,12 +584,13 @@ class _CustomerPageState extends State<CustomerPage> {
                                 children: [
                                   const Text('Status: '),
                                   DropdownButton<int>(
-                                    value: customerProvider.selectedStatus,
+                                    value: customerProvider
+                                        .selectedStatusIds.first,
                                     hint: const Text('All'),
                                     items: [
                                           const DropdownMenuItem<int>(
                                             value:
-                                                0, // Use 0 or null to represent "All"
+                                                0, // Use 0 to represent "All"
                                             child: Text(
                                               'All',
                                               style: TextStyle(fontSize: 14),
@@ -626,24 +610,17 @@ class _CustomerPageState extends State<CustomerPage> {
                                             .toList(),
                                     onChanged: (int? newValue) {
                                       if (newValue != null) {
-                                        customerProvider.setStatus(
+                                        customerProvider.toggleStatus(
                                             newValue); // Update the status in the provider
                                       }
-                                      String status = customerProvider
-                                          .selectedStatus
-                                          .toString();
                                       String fromDate =
                                           customerProvider.formattedFromDate;
                                       String toDate =
                                           customerProvider.formattedToDate;
-                                      print(
-                                          'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                                       customerProvider.setSearchCriteria(
-                                        customerProvider.search,
-                                        fromDate,
-                                        toDate,
-                                        status,
-                                      );
+                                          customerProvider.search,
+                                          fromDate,
+                                          toDate);
                                       customerProvider
                                           .getSearchCustomers(context);
                                     },
@@ -730,8 +707,10 @@ class _CustomerPageState extends State<CustomerPage> {
                             // ),
                             if (customerProvider.fromDate != null ||
                                 customerProvider.toDate != null ||
-                                (customerProvider.selectedStatus != null &&
-                                    customerProvider.selectedStatus != 0) ||
+                                (customerProvider
+                                        .selectedStatusIds.isNotEmpty &&
+                                    customerProvider.selectedStatusIds.first !=
+                                        0) ||
                                 customerProvider.search.isNotEmpty)
                               ElevatedButton(
                                 onPressed: () {
@@ -739,11 +718,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.removeStatus();
                                   searchController.clear();
                                   customerProvider.setSearchCriteria(
-                                    '',
-                                    '',
-                                    '',
-                                    '',
-                                  );
+                                      '', '', '');
                                   customerProvider.getSearchCustomers(context);
                                 },
                                 style: ElevatedButton.styleFrom(
@@ -1596,16 +1571,15 @@ class _CustomerPageState extends State<CustomerPage> {
                                                               controller
                                                                   .close();
                                                             } else {
-                                                              controller
-                                                                  .open();
+                                                              controller.open();
                                                             }
                                                           },
                                                           icon: const Icon(
                                                               Icons
                                                                   .keyboard_arrow_down,
                                                               size: 20,
-                                                              color: Colors
-                                                                  .grey),
+                                                              color:
+                                                                  Colors.grey),
                                                           padding:
                                                               EdgeInsets.zero,
                                                         );
@@ -1930,7 +1904,6 @@ class _CustomerPageState extends State<CustomerPage> {
                             customerProvider.search,
                             fromDate,
                             toDate,
-                            status,
                           );
                           customerProvider.getSearchCustomers(context);
                         },
@@ -1965,7 +1938,6 @@ class _CustomerPageState extends State<CustomerPage> {
                             customerProvider.search,
                             fromDate,
                             toDate,
-                            status,
                           );
                           customerProvider.getSearchCustomers(context);
                         },
@@ -2067,7 +2039,8 @@ class _CustomerPageState extends State<CustomerPage> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
+                builder: (context) =>
+                    AddTaskMobile(isEdit: false, taskId: '0')));
       }
     } else if (value == 'delete') {
       showConfirmationDialog(

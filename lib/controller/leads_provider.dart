@@ -145,9 +145,15 @@ class LeadsProvider extends ChangeNotifier {
   List<SearchLeadModel> _tempData = [];
 
   bool _isFilter = false;
+  List<int> _selectedStatusIds = [0];
+  List<int> _selectedUserIds = [0];
+  List<int> _selectedEnquiryForIds = [0];
+  List<int> _selectedEnquirySourceIds = [0];
+
   int? _selectedStatus;
   int? _selectedUser;
   int? _selectedEnquiryFor;
+  int? _selectedEnquirySource;
   DateTime? _fromDate;
   DateTime? _toDate;
   String _formattedFromDate = '';
@@ -178,9 +184,14 @@ class LeadsProvider extends ChangeNotifier {
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
+  List<int> get selectedStatusIds => _selectedStatusIds;
+  List<int> get selectedUserIds => _selectedUserIds;
+  List<int> get selectedEnquiryForIds => _selectedEnquiryForIds;
+
   int? get selectedStatus => _selectedStatus;
   int? get selectedUser => _selectedUser;
   int? get selectedEnquiryFor => _selectedEnquiryFor;
+  int? get selectedEnquirySource => _selectedEnquirySource;
   bool get isFilter => _isFilter;
   List<SearchLeadModel> get leadData => _leadData;
   List<LeadReportModel> get leadReportData => _leadReportData;
@@ -230,10 +241,47 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   // --- NEW: Enquiry Source Filter ---
-  int? _selectedEnquirySource;
-  int? get selectedEnquirySource => _selectedEnquirySource;
+  List<int> get selectedEnquirySourceIds => _selectedEnquirySourceIds;
+
+  void toggleEnquirySourceFilter(int value) {
+    if (value == 0) {
+      _selectedEnquirySourceIds = [0];
+    } else {
+      _selectedEnquirySourceIds.remove(0);
+      if (_selectedEnquirySourceIds.contains(value)) {
+        _selectedEnquirySourceIds.remove(value);
+      } else {
+        _selectedEnquirySourceIds.add(value);
+      }
+      if (_selectedEnquirySourceIds.isEmpty) {
+        _selectedEnquirySourceIds = [0];
+      }
+    }
+    _selectedEnquirySource = _selectedEnquirySourceIds.isNotEmpty ? _selectedEnquirySourceIds.first : null;
+    notifyListeners();
+  }
+
+  void setStatus(int? value) {
+    _selectedStatus = value;
+    _selectedStatusIds = [value ?? 0];
+    notifyListeners();
+  }
+
+  void setUserFilterStatus(int? value) {
+    _selectedUser = value;
+    _selectedUserIds = [value ?? 0];
+    notifyListeners();
+  }
+
+  void setEnquiryForFilter(int? value) {
+    _selectedEnquiryFor = value;
+    _selectedEnquiryForIds = [value ?? 0];
+    notifyListeners();
+  }
+
   void setEnquirySourceFilter(int? value) {
     _selectedEnquirySource = value;
+    _selectedEnquirySourceIds = [value ?? 0];
     notifyListeners();
   }
 
@@ -617,16 +665,19 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSearchCriteria(String search, String fromDate, String toDate,
-      String status, String enquiryFor,
-      {int enquirySource = 0}) {
+  void setSearchCriteria(String search, String fromDate, String toDate) {
     leadData.clear();
     _search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
-    _status = status;
-    _enquiryForS = enquiryFor;
-    _selectedEnquirySource = enquirySource;
+
+    // Convert List<int> to comma separated strings
+    _status = _selectedStatusIds.join(',');
+    _enquiryForS = _selectedEnquiryForIds.join(',');
+    // _selectedUser is handled slightly differently in API call (To_User_Id), but we can also join
+    // However the API only seems to take one To_User_Id based on existing code.
+    // I'll assume it supports multi if I pass comma sep.
+
     _startLimit = 1;
     _endLimit = 20;
     currentPage = 1;
@@ -647,27 +698,64 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
-  void setStatus(int newStatus) {
-    _selectedStatus = newStatus;
-    print(_selectedStatus.toString());
-    notifyListeners(); // Notify listeners about the change
+  void toggleStatus(int value) {
+    if (value == 0) {
+      _selectedStatusIds = [0];
+    } else {
+      _selectedStatusIds.remove(0);
+      if (_selectedStatusIds.contains(value)) {
+        _selectedStatusIds.remove(value);
+      } else {
+        _selectedStatusIds.add(value);
+      }
+      if (_selectedStatusIds.isEmpty) {
+        _selectedStatusIds = [0];
+      }
+    }
+    _selectedStatus = _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
+    notifyListeners();
   }
 
-  void setUserFilterStatus(int newStatus) {
-    _selectedUser = newStatus;
-    print(_selectedUser.toString());
-    notifyListeners(); // Notify listeners about the change
+  void toggleUserFilter(int value) {
+    if (value == 0) {
+      _selectedUserIds = [0];
+    } else {
+      _selectedUserIds.remove(0);
+      if (_selectedUserIds.contains(value)) {
+        _selectedUserIds.remove(value);
+      } else {
+        _selectedUserIds.add(value);
+      }
+      if (_selectedUserIds.isEmpty) {
+        _selectedUserIds = [0];
+      }
+    }
+    _selectedUser = _selectedUserIds.isNotEmpty ? _selectedUserIds.first : null;
+    notifyListeners();
   }
 
   void clearUserFilter() {
+    _selectedUserIds = [0];
     _selectedUser = null;
     notifyListeners();
   }
 
-  void setEnquiryForFilter(int newStatus) {
-    _selectedEnquiryFor = newStatus;
-    print(_selectedEnquiryFor.toString());
-    notifyListeners(); // Notify listeners about the change
+  void toggleEnquiryForFilter(int value) {
+    if (value == 0) {
+      _selectedEnquiryForIds = [0];
+    } else {
+      _selectedEnquiryForIds.remove(0);
+      if (_selectedEnquiryForIds.contains(value)) {
+        _selectedEnquiryForIds.remove(value);
+      } else {
+        _selectedEnquiryForIds.add(value);
+      }
+      if (_selectedEnquiryForIds.isEmpty) {
+        _selectedEnquiryForIds = [0];
+      }
+    }
+    _selectedEnquiryFor = _selectedEnquiryForIds.isNotEmpty ? _selectedEnquiryForIds.first : null;
+    notifyListeners();
   }
 
   Future<void> fetchNextPage(BuildContext context) async {
@@ -809,6 +897,9 @@ class LeadsProvider extends ChangeNotifier {
     _startLimit = ((currentPage - 1) * pageSize) + 1;
     _endLimit = currentPage * pageSize;
 
+    _status = _selectedStatusIds.join(',');
+    _enquiryForS = _selectedEnquiryForIds.join(',');
+
     print('Start$_startLimit');
     print('End$_endLimit');
 
@@ -838,11 +929,12 @@ class LeadsProvider extends ChangeNotifier {
     _loginUserId = int.parse(userId);
     _loginUserName = username;
 
-    String toUserId = (_selectedUser ?? 0).toString();
+    String toUserId = _selectedUserIds.join(',');
+    String enquirySourceIds = _selectedEnquirySourceIds.join(',');
 
     final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=$enquirySourceIds');
 
     if (response.statusCode == 200) {
       final data = response.data;
@@ -968,11 +1060,11 @@ class LeadsProvider extends ChangeNotifier {
 // //no context only for back in customer detail
   Future<void> getSearchLeadsNoContext() async {
     try {
+      // Loader.showLoader(context);
+      // _isLoading = true;
+      _status = _selectedStatusIds.join(',');
       print('Start$_startLimit');
       print('End$_endLimit');
-      if (_status.isEmpty || _status == 'null') {
-        _status = '0';
-      }
       if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
         _enquiryForS = '0';
       }
@@ -1731,9 +1823,13 @@ class LeadsProvider extends ChangeNotifier {
 
   void removeStatus() {
     _selectedStatus = null;
-    // _selectedUser = null;
+    _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
+    _selectedStatusIds = [0];
+    _selectedUserIds = [0];
+    _selectedEnquiryForIds = [0];
+    _selectedEnquirySourceIds = [0];
     notifyListeners();
   }
 

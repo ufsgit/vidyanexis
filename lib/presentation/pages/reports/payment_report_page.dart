@@ -36,7 +36,7 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
 
       // Initialize customer fetch
       customerProvider.setLimit();
-      customerProvider.setSearchCriteria('', '', '', '0');
+      customerProvider.setSearchCriteria('', '', '');
       // Ensure we fetch all or enough customers for the dropdown
       // For a dropdown, ideally we want ALL, but getSearchCustomers uses pagination.
       // We might need to handle this limits or fetch more.

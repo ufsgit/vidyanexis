@@ -51,7 +51,7 @@ class _TotalOutstandingReportPageState
       provider.getTotalOutstandingReport(context);
 
       customerProvider.setLimit();
-      customerProvider.setSearchCriteria('', '', '', '0');
+      customerProvider.setSearchCriteria('', '', '');
       customerProvider.getSearchCustomers(context);
     });
   }

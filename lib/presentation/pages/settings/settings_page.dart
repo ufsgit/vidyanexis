@@ -353,11 +353,12 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
           'ExpenseType',
           Icons.category,
         ),
-      _buildMenuItem(
-        context,
-        'Location',
-        Icons.location_on,
-      ),
+      if (settingsProvider.menuIsViewMap[86].toString() == '1')
+        _buildMenuItem(
+          context,
+          'Location',
+          Icons.location_on,
+        ),
       if (settingsProvider.menuIsViewMap[85].toString() == '1')
         _buildMenuItem(
           context,

@@ -157,7 +157,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[16] == 1)
         const Tab(text: "Quotations"),
       if (settingsprovider.menuIsViewMap[19] == 1) const Tab(text: "Documents"),
-      const Tab(text: "Forms"),
+      if (settingsprovider.menuIsViewMap[85] == 1) const Tab(text: "Forms"),
       if (settingsprovider.menuIsViewMap[13] == 1)
         const Tab(text: "Task Overview"),
       if (settingsprovider.menuIsViewMap[14] == 1 &&
@@ -3080,6 +3080,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   ],
                                                 ),
                                               ),
+                                              //Forms
+                                              if (settingsprovider
+                                                    .menuIsViewMap[85] ==
+                                                1)
                                             FormsTabWidget(
                                                 customerId: widget.customerId),
 

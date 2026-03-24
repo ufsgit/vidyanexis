@@ -7,8 +7,6 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
-import 'package:vidyanexis/presentation/widgets/customer/add_task.dart'
-    as customer_add_task;
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
@@ -23,9 +21,12 @@ import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 import 'package:vidyanexis/controller/models/task_type_status_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/controller/leads_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/hover_action_dropdown.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -199,6 +200,7 @@ class _tasksPageReportState extends State<TaskPage> {
                           ),
                         );
                       },
+                      
                     ),
               onExcelTap: () {
                 exportToExcel(
@@ -252,31 +254,31 @@ class _tasksPageReportState extends State<TaskPage> {
               },
               title: 'Tasks',
               onSearch: (String query) {
-                print(query);
-                if (reportsProvider.Search.isNotEmpty) {
-                  searchController.clear();
-                  reportsProvider.setTaskSearchCriteria(
-                    '',
-                    reportsProvider.fromDateS,
-                    reportsProvider.toDateS,
-                    reportsProvider.Status,
-                    reportsProvider.AssignedTo,
-                    reportsProvider.TaskType,
-                  );
-                } else {
-                  reportsProvider.setTaskSearchCriteria(
-                    query,
-                    reportsProvider.fromDateS,
-                    reportsProvider.toDateS,
-                    reportsProvider.Status,
-                    reportsProvider.AssignedTo,
-                    reportsProvider.TaskType,
-                  );
-                }
-                reportsProvider.goToPage(1);
-                reportsProvider.searchTaskByCustomer(context);
-              },
-              searchController: searchController,
+                  print('Searching for: $query');
+                  if (AppStyles.isWebScreen(context)) {
+                    reportsProvider.setTaskSearchCriteria(
+                      query,
+                      reportsProvider.fromDateS,
+                      reportsProvider.toDateS,
+                      reportsProvider.Status,
+                      reportsProvider.AssignedTo,
+                      reportsProvider.TaskType,
+                    );
+                  } else {
+                    reportsProvider.setTaskSearchCriteria(
+                      query,
+                      reportsProvider.fromDateS,
+                      reportsProvider.toDateS,
+                      reportsProvider.Status,
+                      reportsProvider.AssignedTo,
+                      reportsProvider.TaskType,
+                    );
+                  }
+
+                  reportsProvider.searchTaskByCustomer(context);
+                },
+                onChanged: _onSearchChanged,
+                searchController: searchController,
             )
           : null,
       drawer: AppStyles.isWebScreen(context) ? null : const SidebarDrawer(),
@@ -566,440 +568,186 @@ class _tasksPageReportState extends State<TaskPage> {
                           },
                         )
                       : const SizedBox(),
-
-                  if (reportsProvider.isFilter)
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Wrap(
-                        spacing: 10,
-                        runSpacing: 10,
-                        crossAxisAlignment: WrapCrossAlignment.center,
+                ],
+              ),
+            ),
+            if (reportsProvider.isFilter && !AppStyles.isWebScreen(context))
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Status Filter (lead page order: Status first)
+                      const CustomText('Status',
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
                         children: [
-                          // Status filter
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedStatus !=
-                                              null &&
-                                          reportsProvider.selectedStatus != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Status: '),
-                                DropdownButton<int>(
-                                  value: ([
-                                                const DropdownMenuItem<int>(
-                                                  value: 0,
-                                                  child: Text(
-                                                    'All',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                ),
-                                              ] +
-                                              provider.followUpData
-                                                  .map((status) =>
-                                                      DropdownMenuItem<int>(
-                                                        value: status.statusId,
-                                                        child: ConstrainedBox(
-                                                          constraints:
-                                                              const BoxConstraints(
-                                                                  maxWidth:
-                                                                      150),
-                                                          child: Text(
-                                                            StatusUtils
-                                                                .getDisplayStatus(
-                                                                    status.statusName ??
-                                                                        ''),
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        14),
-                                                          ),
-                                                        ),
-                                                      ))
-                                                  .toList())
-                                          .any((item) =>
-                                              item.value ==
-                                              reportsProvider.selectedStatus)
-                                      ? reportsProvider.selectedStatus
-                                      : 0,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value: 0,
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.followUpData
-                                          .map(
-                                              (status) => DropdownMenuItem<int>(
-                                                    value: status.statusId,
-                                                    child: ConstrainedBox(
-                                                      constraints:
-                                                          const BoxConstraints(
-                                                              maxWidth: 150),
-                                                      child: Text(
-                                                        StatusUtils
-                                                            .getDisplayStatus(
-                                                                status.statusName ??
-                                                                    ''),
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        style: const TextStyle(
-                                                            fontSize: 14),
-                                                      ),
-                                                    ),
-                                                  ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setStatus(newValue);
-                                    }
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      reportsProvider.formattedFromDate,
-                                      reportsProvider.formattedToDate,
-                                      reportsProvider.selectedStatus.toString(),
-                                      reportsProvider.selectedUser.toString(),
-                                      reportsProvider.selectedTaskType
-                                          .toString(),
-                                    );
-                                    reportsProvider.goToPage(1);
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected:
+                                reportsProvider.selectedStatusIds.contains(0),
+                            onTap: () => reportsProvider.toggleStatus(0),
                           ),
-
-                          // Date filter
+                          ...provider.followUpData.map((status) =>
+                              FilterChipWidget(
+                                label: StatusUtils.getDisplayStatus(
+                                    status.statusName ?? ''),
+                                isSelected: reportsProvider.selectedStatusIds
+                                    .contains(status.statusId),
+                                onTap: () => reportsProvider
+                                    .toggleStatus(status.statusId!),
+                              )),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      // Date Filter button for Mobile (after Status, like lead page)
+                      Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: [
                           GestureDetector(
                             onTap: () {
                               onClickTopButton(context);
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 6),
+                              height: 32,
                               decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
+                                color: AppColors.scaffoldColor,
+                                borderRadius: BorderRadius.circular(10),
                               ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(width: 10),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-
-                          // Staff filter
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedUser != null &&
-                                          reportsProvider.selectedUser != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Staff: '),
-                                DropdownButton<int>(
-                                  value: ([
-                                                const DropdownMenuItem<int>(
-                                                  value: 0,
-                                                  child: Text(
-                                                    'All',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                ),
-                                              ] +
-                                              provider.searchUserDetails
-                                                  .map((user) =>
-                                                      DropdownMenuItem<int>(
-                                                        value:
-                                                            user.userDetailsId,
-                                                        child: ConstrainedBox(
-                                                          constraints:
-                                                              const BoxConstraints(
-                                                                  maxWidth:
-                                                                      150),
-                                                          child: Text(
-                                                            user.userDetailsName ??
-                                                                '',
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        14),
-                                                          ),
-                                                        ),
-                                                      ))
-                                                  .toList())
-                                          .any((item) =>
-                                              item.value ==
-                                              reportsProvider.selectedUser)
-                                      ? reportsProvider.selectedUser
-                                      : 0,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value: 0,
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 12),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Flexible(
+                                      child: ConstrainedBox(
+                                        constraints:
+                                            const BoxConstraints(maxWidth: 200),
+                                        child: Text(
+                                          reportsProvider.fromDate == null &&
+                                                  reportsProvider.toDate == null
+                                              ? 'Follow-Up Date: All'
+                                              : 'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
-                                      ] +
-                                      provider.searchUserDetails
-                                          .map((user) => DropdownMenuItem<int>(
-                                                value: user.userDetailsId,
-                                                child: ConstrainedBox(
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 150),
-                                                  child: Text(
-                                                    user.userDetailsName ?? '',
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 14),
-                                                  ),
-                                                ),
-                                              ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider
-                                          .setUserFilterStatus(newValue);
-                                    }
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      reportsProvider.formattedFromDate,
-                                      reportsProvider.formattedToDate,
-                                      reportsProvider.selectedStatus.toString(),
-                                      reportsProvider.selectedUser.toString(),
-                                      reportsProvider.selectedTaskType
-                                          .toString(),
-                                    );
-                                    reportsProvider.goToPage(1);
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Task Type filter
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedTaskType !=
-                                              null &&
-                                          reportsProvider.selectedTaskType != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Task Type: '),
-                                DropdownButton<int>(
-                                  value: ([
-                                                const DropdownMenuItem<int>(
-                                                  value: 0,
-                                                  child: Text(
-                                                    'All',
-                                                    style:
-                                                        TextStyle(fontSize: 14),
-                                                  ),
-                                                ),
-                                              ] +
-                                              provider.taskType
-                                                  .map((type) =>
-                                                      DropdownMenuItem<int>(
-                                                        value: type.taskTypeId,
-                                                        child: ConstrainedBox(
-                                                          constraints:
-                                                              const BoxConstraints(
-                                                                  maxWidth:
-                                                                      150),
-                                                          child: Text(
-                                                            type.taskTypeName,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
-                                                            style:
-                                                                const TextStyle(
-                                                                    fontSize:
-                                                                        14),
-                                                          ),
-                                                        ),
-                                                      ))
-                                                  .toList())
-                                          .any((item) =>
-                                              item.value ==
-                                              reportsProvider.selectedTaskType)
-                                      ? reportsProvider.selectedTaskType
-                                      : 0,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value: 0,
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      provider.taskType
-                                          .map((type) => DropdownMenuItem<int>(
-                                                value: type.taskTypeId,
-                                                child: ConstrainedBox(
-                                                  constraints:
-                                                      const BoxConstraints(
-                                                          maxWidth: 150),
-                                                  child: Text(
-                                                    type.taskTypeName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: const TextStyle(
-                                                        fontSize: 14),
-                                                  ),
-                                                ),
-                                              ))
-                                          .toList(),
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setTaskType(newValue);
-                                    }
-                                    reportsProvider.setTaskSearchCriteria(
-                                      reportsProvider.Search,
-                                      reportsProvider.formattedFromDate,
-                                      reportsProvider.formattedToDate,
-                                      reportsProvider.selectedStatus.toString(),
-                                      reportsProvider.selectedUser.toString(),
-                                      reportsProvider.selectedTaskType
-                                          .toString(),
-                                    );
-                                    reportsProvider.goToPage(1);
-                                    reportsProvider
-                                        .searchTaskByCustomer(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Reset button
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              (reportsProvider.selectedTaskType != null &&
-                                  reportsProvider.selectedTaskType != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider.goToPage(1);
-                                reportsProvider.searchTaskByCustomer(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Icon(
+                                      Icons.keyboard_arrow_down,
+                                      color: AppColors.textGrey3,
+                                      size: 18,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: const Text('Reset'),
                             ),
+                          ),
                         ],
                       ),
-                    ),
-                ],
+                      const SizedBox(height: 16),
+                      const CustomText('Assigned To',
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected:
+                                reportsProvider.selectedUserIds.contains(0),
+                            onTap: () => reportsProvider.toggleUserFilter(0),
+                          ),
+                          ...provider.searchUserDetails.map((user) =>
+                              FilterChipWidget(
+                                label: user.userDetailsName,
+                                isSelected: reportsProvider.selectedUserIds
+                                    .contains(user.userDetailsId),
+                                onTap: () => reportsProvider
+                                    .toggleUserFilter(user.userDetailsId),
+                              )),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const CustomText('Task Type',
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                      const SizedBox(height: 10),
+                      Wrap(
+                        spacing: 8,
+                        runSpacing: 8,
+                        children: [
+                          FilterChipWidget(
+                            label: 'All',
+                            isSelected: reportsProvider.selectedTaskTypeFilterIds
+                                .contains(0),
+                            onTap: () => reportsProvider.toggleTaskTypeFilter(0),
+                          ),
+                          ...provider.taskType.map((task) => FilterChipWidget(
+                                label: task.taskTypeName,
+                                isSelected: reportsProvider
+                                    .selectedTaskTypeFilterIds
+                                    .contains(task.taskTypeId),
+                                onTap: () => reportsProvider
+                                    .toggleTaskTypeFilter(task.taskTypeId),
+                              )),
+                        ],
+                      ),
+                      const SizedBox(height: 24),
+                      if (reportsProvider.fromDate != null ||
+                          reportsProvider.toDate != null ||
+                          !reportsProvider.selectedStatusIds
+                              .every((id) => id == 0) ||
+                          !reportsProvider.selectedUserIds
+                              .every((id) => id == 0) ||
+                          !reportsProvider.selectedTaskTypeFilterIds
+                              .every((id) => id == 0) ||
+                          reportsProvider.Search.isNotEmpty)
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                  '', '', '', '', '', '');
+                              reportsProvider.goToPage(1);
+                              reportsProvider.searchTaskByCustomer(context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: AppColors.textRed,
+                              side: BorderSide(color: AppColors.textRed),
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Reset All Filters'),
+                          ),
+                        ),
+                      const SizedBox(height: 80),
+                    ],
+                  ),
+                ),
               ),
-            ),
-            Expanded(
-              child: Padding(
-                padding: AppStyles.isWebScreen(context)
-                    ? const EdgeInsets.only(
-                        left: 16.0, right: 16.0, bottom: 4.0)
-                    : EdgeInsets.zero,
+            if (!reportsProvider.isFilter || AppStyles.isWebScreen(context))
+              Expanded(
+                child: Padding(
+                  padding: AppStyles.isWebScreen(context)
+                      ? const EdgeInsets.only(
+                          left: 16.0, right: 16.0, bottom: 4.0)
+                      : EdgeInsets.zero,
                 child: Container(
                   decoration: BoxDecoration(
                     color: Colors.white,
@@ -1293,122 +1041,120 @@ class _tasksPageReportState extends State<TaskPage> {
                                                         ),
                                                       ),
                                                     ),
-                                                    PopupMenuButton<String>(
-                                                      surfaceTintColor:
-                                                          Colors.white,
-                                                      color: Colors.white,
-                                                      tooltip: 'Actions',
-                                                      icon: const Icon(
-                                                        Icons
-                                                            .keyboard_arrow_down,
-                                                        size: 20,
-                                                        color: Colors.grey,
-                                                      ),
-                                                      onSelected:
-                                                          (String value) {
-                                                        final customerDetailsProvider =
-                                                            Provider.of<
-                                                                    CustomerDetailsProvider>(
+                                                    HoverActionDropdown(
+                                                      items: [
+                                                        HoverActionItem(
+                                                          title: 'Edit Task',
+                                                          icon: Icons.edit,
+                                                          value: 'edit',
+                                                          iconColor: Colors.blue,
+                                                          onTap: () {
+                                                            context.push(
+                                                                '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Convert',
+                                                          icon: Icons.sync,
+                                                          value: 'convert',
+                                                          iconColor: Colors.green,
+                                                          onTap: () {
+                                                            final leadsProvider =
+                                                                Provider.of<LeadsProvider>(
+                                                                    context,
+                                                                    listen: false);
+                                                            leadsProvider.convertLead(
                                                                 context,
-                                                                listen: false);
-                                                        if (value == 'edit') {
-                                                          context.push(
-                                                              '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                        } else if (value ==
-                                                            'quotation') {
-                                                          customerDetailsProvider
-                                                              .clearQuotationDetails();
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
+                                                                task.customerId.toString());
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Quotation',
+                                                          icon: Icons.request_quote,
+                                                          value: 'quotation',
+                                                          iconColor: Colors.orange,
+                                                          onTap: () {
+                                                            final customerDetailsProvider =
+                                                                Provider.of<
+                                                                        CustomerDetailsProvider>(
+                                                                    context,
+                                                                    listen: false);
+                                                            customerDetailsProvider
+                                                                .clearQuotationDetails();
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (BuildContext
+                                                                        context) =>
+                                                                    QuotationCreationWidget(
+                                                                  quotationId:
+                                                                      '0',
+                                                                  isEdit: false,
+                                                                  customerId: task
+                                                                      .customerId
+                                                                      .toString(),
+                                                                ),
+                                                              ),
+                                                            );
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Document',
+                                                          icon: Icons.description,
+                                                          value: 'document',
+                                                          iconColor: Colors.purple,
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
                                                               builder: (BuildContext
                                                                       context) =>
-                                                                  QuotationCreationWidget(
-                                                                quotationId:
-                                                                    '0',
-                                                                isEdit: false,
+                                                                  ImageUploadAlert(
                                                                 customerId: task
                                                                     .customerId
                                                                     .toString(),
                                                               ),
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'document') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (BuildContext
-                                                                    context) =>
-                                                                ImageUploadAlert(
-                                                              customerId: task
-                                                                  .customerId
-                                                                  .toString(),
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'task') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder: (_) =>
-                                                                customer_add_task
-                                                                    .TaskCreationWidget(
-                                                              isEdit: false,
-                                                              taskId: '0',
-                                                            ),
-                                                          );
-                                                        } else if (value ==
-                                                            'delete') {
-                                                          showDialog(
-                                                            context: context,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return ConfirmationDialog(
-                                                                title:
-                                                                    'Delete Task',
-                                                                content:
-                                                                    'Are you sure you want to delete this task?',
-                                                                onCancel: () =>
-                                                                    Navigator.pop(
-                                                                        context),
-                                                                onConfirm:
-                                                                    () async {
-                                                                  await customerDetailsProvider.deleteTask(
-                                                                      task.taskId
-                                                                          .toString(),
-                                                                      task.customerId
-                                                                          .toString(),
-                                                                      context);
-                                                                },
-                                                              );
-                                                            },
-                                                          );
-                                                        }
-                                                      },
-                                                      itemBuilder: (BuildContext
-                                                              context) =>
-                                                          <PopupMenuEntry<
-                                                              String>>[
-                                                        _buildPopupMenuItem(
-                                                            'edit',
-                                                            Icons.edit,
-                                                            'Edit profile',
-                                                            Colors.blue),
-                                                        _buildPopupMenuItem(
-                                                            'quotation',
-                                                            Icons.request_quote,
-                                                            'Quotation',
-                                                            Colors.orange),
-                                                        _buildPopupMenuItem(
-                                                            'document',
-                                                            Icons.description,
-                                                            'Document',
-                                                            Colors.purple),
-                                                        _buildPopupMenuItem(
-                                                            'delete',
-                                                            Icons.delete,
-                                                            'Delete',
-                                                            Colors.red),
+                                                            );
+                                                          },
+                                                        ),
+                                                        HoverActionItem(
+                                                          title: 'Delete',
+                                                          icon: Icons.delete,
+                                                          value: 'delete',
+                                                          iconColor: Colors.red,
+                                                          onTap: () {
+                                                            showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return ConfirmationDialog(
+                                                                  title:
+                                                                      'Delete Task',
+                                                                  content:
+                                                                      'Are you sure you want to delete this task?',
+                                                                  onCancel: () =>
+                                                                      Navigator.pop(
+                                                                          context),
+                                                                  onConfirm:
+                                                                      () async {
+                                                                    final customerDetailsProvider =
+                                                                        Provider.of<
+                                                                                CustomerDetailsProvider>(
+                                                                            context,
+                                                                            listen:
+                                                                                false);
+                                                                    await customerDetailsProvider.deleteTask(
+                                                                        task.taskId
+                                                                            .toString(),
+                                                                        task.customerId
+                                                                            .toString(),
+                                                                        context);
+                                                                  },
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                        ),
                                                       ],
                                                     ),
                                                   ],
@@ -1534,8 +1280,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     reportsProvider
                                                         .taskTypeModel
                                                         .clear();
-                                                    if (task
-                                                        .customerName.isEmpty) {
+                                                    if (task.customerName.isEmpty) {
                                                       updateStatusDialogWithoutTask(
                                                               task)
                                                           .then((value) {
@@ -1593,8 +1338,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                                                 horizontal: 10,
                                                                 vertical: 2),
                                                         child: Text(
-                                                          task.taskStatusName ??
-                                                              '',
+                                                          task.taskStatusName,
                                                           overflow: TextOverflow
                                                               .ellipsis,
                                                           maxLines: 1,
@@ -1718,6 +1462,34 @@ class _tasksPageReportState extends State<TaskPage> {
       ),
       bottomNavigationBar:
           buildResponsivePaginationControls(context, reportsProvider),
+      floatingActionButton: reportsProvider.isFilter &&
+              !AppStyles.isWebScreen(context)
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 32),
+              child: SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_task_filter_fab',
+                  backgroundColor: AppColors.darkGreen,
+                  onPressed: () {
+                    reportsProvider.setFilterState(false);
+                    reportsProvider.goToPage(1);
+                    reportsProvider.searchTaskByCustomer(context,
+                        isShowLoader: false);
+                  },
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                  label: const Text(
+                    'APPLY',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+              ),
+            )
+          : null,
     );
   }
 
@@ -1845,7 +1617,7 @@ class _tasksPageReportState extends State<TaskPage> {
         final isSmallScreen = screenSize.width < 600;
         final theme = Theme.of(context);
         final Future<List<TaskTypeStatusModel>> statusOptionsFuture =
-            getStatusType(task.taskTypeId.toString());
+            getStatusType(context, task.taskTypeId.toString());
         final reportsProvider =
             Provider.of<TaskPageProvider>(context, listen: false);
 
@@ -2411,7 +2183,7 @@ class _tasksPageReportState extends State<TaskPage> {
 
         // Create a future to fetch the status options
         final Future<List<TaskTypeStatusModel>> statusOptionsFuture =
-            getStatusType(task.taskTypeId.toString());
+            getStatusType(context, task.taskTypeId.toString());
 
         return Dialog(
           insetPadding: EdgeInsets.symmetric(
@@ -3612,8 +3384,10 @@ class _tasksPageReportState extends State<TaskPage> {
 
   // Function to fetch status options from API
 
-  Future<List<TaskTypeStatusModel>> getStatusType(String taskTypeId) async {
-    return provider.getStatusByTaskTypeId(context, taskTypeId, '3');
+  Future<List<TaskTypeStatusModel>> getStatusType(
+      BuildContext ctx, String taskTypeId) async {
+    return Provider.of<DropDownProvider>(ctx, listen: false)
+        .getStatusByTaskTypeId(ctx, taskTypeId, '3');
   }
 
   void onClickTopButton(BuildContext context) {
@@ -3875,17 +3649,4 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 
-  PopupMenuEntry<String> _buildPopupMenuItem(
-      String value, IconData icon, String text, Color color) {
-    return PopupMenuItem<String>(
-      value: value,
-      child: Row(
-        children: [
-          Icon(icon, size: 18, color: color),
-          const SizedBox(width: 8),
-          Text(text),
-        ],
-      ),
-    );
-  }
 }

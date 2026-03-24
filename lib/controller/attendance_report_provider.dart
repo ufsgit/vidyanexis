@@ -202,28 +202,25 @@ class AttendanceReportProvider extends ChangeNotifier {
   }
 
   //task report
-  Future<void> getSearchTaskReport(BuildContext context) async {
+  Future<void> getSearchTaskReport(BuildContext context,
+      {bool showLoading = true}) async {
     try {
-      Loader.showLoader(context);
+      if (showLoading) {
+        Loader.showLoader(context);
+      }
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
       print(_fromDateS);
       print(_toDateS);
-      String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
         if (_fromDateS.isEmpty) {
           _fromDateS = "";
         }
         if (_toDateS.isEmpty) {
           _toDateS = "";
         }
-      } else {
-        isDate = "1";
       }
-      // SharedPreferences preferences = await SharedPreferences.getInstance();
-      // String userId = preferences.getString('userId') ?? "";
 
       String toUserId = (_selectedUser ?? 0).toString();
 
@@ -246,23 +243,41 @@ class AttendanceReportProvider extends ChangeNotifier {
               .map((item) => AttendanceDetails.fromJson(item))
               .toList();
 
+<<<<<<< HEAD
           Loader.stopLoader(context);
           _hasFetched = true;
+=======
+          if (showLoading) {
+            Loader.stopLoader(context);
+          }
+>>>>>>> f0f5c8180edb5e079fc4a4b6255236ff21928aa3
           notifyListeners();
         }
       } else {
-        Loader.stopLoader(context);
+        if (showLoading) {
+          Loader.stopLoader(context);
+        }
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
     } catch (e) {
+<<<<<<< HEAD
       Loader.stopLoader(context);
       _hasFetched = true;
+=======
+      if (showLoading) {
+        Loader.stopLoader(context);
+      }
+>>>>>>> f0f5c8180edb5e079fc4a4b6255236ff21928aa3
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
+      if (showLoading) {
+        Loader.stopLoader(context);
+      }
     }
   }
 
@@ -271,17 +286,13 @@ class AttendanceReportProvider extends ChangeNotifier {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
         if (_fromDateS.isEmpty) {
           _fromDateS = "2024-01-01";
         }
         if (_toDateS.isEmpty) {
           _toDateS = "2024-01-01";
         }
-      } else {
-        isDate = "1";
       }
       print(_fromDateS);
       print(_toDateS);
@@ -359,7 +370,11 @@ class AttendanceReportProvider extends ChangeNotifier {
       } catch (e) {
         Loader.stopLoader(context);
         print('Error: $e');
+      } finally {
+        Loader.stopLoader(context);
       }
+    } else {
+      Loader.stopLoader(context);
     }
     // }
   }
@@ -441,7 +456,7 @@ class AttendanceReportProvider extends ChangeNotifier {
       if (response!.statusCode == 200) {
         final data = response.data;
         log('Success');
-        getSearchTaskReport(context);
+        getSearchTaskReport(context, showLoading: false);
         assignToFollowUpController.clear();
 
         // Save state locally

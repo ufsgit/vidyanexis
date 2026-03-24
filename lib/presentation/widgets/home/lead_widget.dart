@@ -214,7 +214,7 @@ class _LeadCardState extends State<LeadCard> {
                                         color: AppColors.parseColor(widget.lead.colorCode)),
                                   ),
                                   TextSpan(
-                                    text: ' , Created By ${widget.lead.createdByName}',
+                                    text: ' , Created By ${widget.lead.toUserName}',
                                     style: GoogleFonts.plusJakartaSans(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -275,6 +275,7 @@ class _LeadCardState extends State<LeadCard> {
                   child: Column(
                     children: [
                       // Toggleable Note Section
+                      if (_isInternalMoreExpanded) ...[
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -326,7 +327,7 @@ class _LeadCardState extends State<LeadCard> {
                                       ),
                                     ),
 
-                                    if (_isInternalMoreExpanded) ...[
+                                    // if (_isInternalMoreExpanded) ...[
                                       const SizedBox(height: 8),
                                       // Branch Selection Chips
                                       Column(
@@ -490,7 +491,7 @@ class _LeadCardState extends State<LeadCard> {
                                         hintText: 'Remarks',
                                         maxLines: 3,
                                       ),
-                                    ],
+                                    // ],
                                     const SizedBox(height: 16),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -559,10 +560,18 @@ class _LeadCardState extends State<LeadCard> {
                             ),
                           ],
                         ),
+                      ],
                       const SizedBox(height: 16),
                       // Action Buttons Row 1
                       Row(
                         children: [
+                          _buildActionButton(
+                            onTap: () => setState(() => _isInternalMoreExpanded = !_isInternalMoreExpanded),
+                            icon: Icons.note,
+                            text: 'Note',
+                            color: Colors.red,
+                          ),
+                          const SizedBox(width: 4),
                           _buildActionButton(
                             onTap: () async {
                               final url = 'https://wa.me/91${widget.lead.contactNumber}';

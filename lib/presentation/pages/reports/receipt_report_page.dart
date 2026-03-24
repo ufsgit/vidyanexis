@@ -35,7 +35,7 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
       provider.getReceiptReport(context);
 
       customerProvider.setLimit();
-      customerProvider.setSearchCriteria('', '', '', '0');
+      customerProvider.setSearchCriteria('', '', '');
       customerProvider.getSearchCustomers(context);
     });
   }

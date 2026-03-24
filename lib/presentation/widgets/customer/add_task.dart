@@ -49,8 +49,9 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
         setState(() {
           _filteredUsers = dropDownProvider.searchUserDetails
               .where((user) =>
+                  user.workingStatus == "1" &&
                   user.departmentId.toString() ==
-                  selectedTaskTypeModel.departmentIds.toString())
+                      selectedTaskTypeModel.departmentIds.toString())
               .toList();
         });
       } catch (e) {
@@ -272,7 +273,9 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                         child: Wrap(
                           spacing: 10,
                           runSpacing: 10,
-                          children: dropDownProvider.taskType.map((taskType) {
+                          children: dropDownProvider
+                                  .getFilteredTaskTypes()
+                                  .map((taskType) {
                             bool isSelected =
                                 customerDetailsProvider.selectedTaskType ==
                                     taskType.taskTypeId;

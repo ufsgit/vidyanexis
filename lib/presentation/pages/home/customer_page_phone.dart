@@ -1,19 +1,21 @@
 import 'dart:developer';
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
-import 'package:vidyanexis/controller/models/search_lead_status_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
-import 'package:vidyanexis/presentation/widgets/customer/status_dropdown_widget.dart';
+
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/loading_circle.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 
 class CustomerPagePhone extends StatefulWidget {
@@ -25,6 +27,22 @@ class CustomerPagePhone extends StatefulWidget {
 
 class _CustomerPagePhoneState extends State<CustomerPagePhone> {
   TextEditingController searchController = TextEditingController();
+  Timer? _debounce;
+
+  void _onSearchChanged(String query) {
+    if (_debounce?.isActive ?? false) _debounce!.cancel();
+    _debounce = Timer(const Duration(milliseconds: 500), () {
+      if (!mounted) return;
+      final customerProvider =
+          Provider.of<CustomerProvider>(context, listen: false);
+      customerProvider.setSearchCriteria(
+        query,
+        customerProvider.fromDateS,
+        customerProvider.toDateS,
+      );
+      customerProvider.getSearchCustomers(context);
+    });
+  }
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   CustomerProvider? _customerProvider;
 
@@ -50,7 +68,6 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       '',
       '',
       '',
-      '',
     );
     await customerProvider.getSearchCustomers(context);
   }
@@ -58,7 +75,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
       final searchProvider =
           Provider.of<SidebarProvider>(context, listen: false);
       searchProvider.stopSearch();
@@ -68,14 +85,17 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         '',
         '',
         '',
-        '',
       );
       customerProvider.resetExpansion();
       customerProvider.getSearchCustomers(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
-      provider.getFollowUpStatus(context, '');
+      await provider.getFollowUpStatusCustomer(context);
       provider.getUserDetails(context);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      settingsProvider.searchBranch(context);
+      settingsProvider.searchDepartment('', context);
       customerProvider.setFilter(false);
 
       customerProvider.scrollController.addListener(() {
@@ -112,7 +132,6 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
             '',
             '',
             '',
-            '',
           );
           customerProvider.getSearchCustomers(context);
         },
@@ -125,10 +144,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
             query,
             customerProvider.fromDateS,
             customerProvider.toDateS,
-            customerProvider.status,
           );
           customerProvider.getSearchCustomers(context);
         },
+        onChanged: _onSearchChanged,
         searchController: searchController,
       ),
       drawer: const SidebarDrawer(),
@@ -138,270 +157,168 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
             )
           : RefreshIndicator(
               onRefresh: _refreshData,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
+              child: CustomScrollView(
+                controller: customerProvider.scrollController,
+                slivers: [
                   if (customerProvider.isFilter)
-                    const SizedBox(
-                      height: 16,
-                    ),
-                  if (customerProvider.isFilter)
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Row(
-                        children: [
-                          StatusDropdownWidget<int>(
-                            containerWidth:
-                                MediaQuery.sizeOf(context).width / 1.1,
-                            statusName: 'Status',
-                            items: [0] +
-                                provider.followUpData
-                                    .map((status) => status.statusId ?? 0)
-                                    .toList(),
-                            initialValue: customerProvider.selectedStatus,
-                            onChanged: (int newValue) {
-                              customerProvider.setStatus(newValue);
-                              customerProvider.setSearchCriteria(
-                                customerProvider.search,
-                                customerProvider.formattedFromDate,
-                                customerProvider.formattedToDate,
-                                customerProvider.selectedStatus.toString(),
-                              );
-                              customerProvider.getSearchCustomers(context);
-                            },
-                            displayStringFor: (int statusId) {
-                              if (statusId == 0) return 'All';
-
-                              final status = provider.followUpData.firstWhere(
-                                  (status) => status.statusId == statusId,
-                                  orElse: () => SearchLeadStatusModel(
-                                      statusId: statusId,
-                                      statusName: "Unknown"));
-
-                              return status.statusName ?? 'Unknown';
-                            },
-                            areItemsEqual: (a, b) => a == b,
-                            label: 'All',
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              height: 28,
-                              decoration: BoxDecoration(
-                                color: AppColors.scaffoldColor,
-                                borderRadius: BorderRadius.circular(10),
-                              ),
-                              child: Padding(
-                                padding:
-                                    const EdgeInsets.only(left: 8, right: 8),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Flexible(
-                                      child: ConstrainedBox(
-                                        constraints:
-                                            const BoxConstraints(maxWidth: 150),
-                                        child: CustomText(
-                                          'Date',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textBlack,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
+                    SliverToBoxAdapter(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const SizedBox(height: 8),
+                            CustomText(
+                              'Status',
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.textBlack,
+                            ),
+                            const SizedBox(height: 8),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              children: [
+                                FilterChipWidget(
+                                  label: 'All',
+                                  isSelected: customerProvider.selectedStatusIds
+                                      .contains(0),
+                                  onTap: () {
+                                    customerProvider.toggleStatus(0);
+                                  },
+                                ),
+                                ...provider.followUpData.map((status) {
+                                  return FilterChipWidget(
+                                    label: status.statusName ?? 'Unknown',
+                                    isSelected: customerProvider
+                                        .selectedStatusIds
+                                        .contains(status.statusId),
+                                    onTap: () {
+                                      customerProvider
+                                          .toggleStatus(status.statusId ?? 0);
+                                    },
+                                  );
+                                }).toList(),
+                              ],
+                            ),
+                            const SizedBox(height: 16),
+                            Wrap(
+                              spacing: 8.0,
+                              runSpacing: 8.0,
+                              alignment: WrapAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () {
+                                    onClickTopButton(context);
+                                  },
+                                  child: Container(
+                                    height: 32,
+                                    decoration: BoxDecoration(
+                                      color: AppColors.scaffoldColor,
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Flexible(
+                                            child: ConstrainedBox(
+                                              constraints: const BoxConstraints(
+                                                  maxWidth: 200),
+                                              child: CustomText(
+                                                customerProvider.fromDate ==
+                                                            null &&
+                                                        customerProvider
+                                                                .toDate ==
+                                                            null
+                                                    ? 'Date'
+                                                    : 'Date : ${customerProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColors.textBlack,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Icon(
+                                            Icons.keyboard_arrow_down,
+                                            color: AppColors.textGrey3,
+                                            size: 18,
+                                          ),
+                                        ],
                                       ),
                                     ),
-                                    const SizedBox(width: 4),
-                                    Icon(
-                                      Icons.keyboard_arrow_up_rounded,
-                                      color: AppColors.textGrey3,
-                                      size: 18,
-                                    ),
-                                  ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 24),
+                            const SizedBox(height: 16),
+                          ],
+                        ),
                       ),
                     ),
-                  if (customerProvider.isFilter)
-                    const SizedBox(
-                      height: 16,
-                    ),
-                  // if (customerProvider.isFilter)
-                  //   Container(
-                  //     margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                  //     padding: const EdgeInsets.all(10.0),
-                  //     decoration: BoxDecoration(
-                  //       color: Colors.white,
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: Wrap(
-                  //       runSpacing: 10,
-                  //       crossAxisAlignment: WrapCrossAlignment.center,
-                  //       children: [
-                  //         Container(
-                  //           padding: const EdgeInsets.symmetric(horizontal: 20),
-                  //           decoration: BoxDecoration(
-                  //             color: Colors.white,
-                  //             borderRadius: BorderRadius.circular(20),
-                  //             border: Border.all(
-                  //                 color: customerProvider.selectedStatus != null &&
-                  //                         customerProvider.selectedStatus != 0
-                  //                     ? AppColors.primaryBlue
-                  //                     : Colors.grey[300]!),
-                  //           ),
-                  //           child: Row(
-                  //             mainAxisSize: MainAxisSize.min,
-                  //             children: [
-                  //               const Text('Status: '),
-                  //               DropdownButton<int>(
-                  //                 value: customerProvider.selectedStatus,
-                  //                 hint: const Text('All'),
-                  //                 items: [
-                  //                       const DropdownMenuItem<int>(
-                  //                         value: 0,
-                  //                         child: Text(
-                  //                           'All',
-                  //                           style: TextStyle(fontSize: 14),
-                  //                         ),
-                  //                       ),
-                  //                     ] +
-                  //                     provider.followUpData
-                  //                         .map((status) => DropdownMenuItem<int>(
-                  //                               value: status.statusId,
-                  //                               child: Text(
-                  //                                 status.statusName ?? '',
-                  //                                 style:
-                  //                                     const TextStyle(fontSize: 14),
-                  //                               ),
-                  //                             ))
-                  //                         .toList(),
-                  //                 onChanged: (int? newValue) {
-                  //                   if (newValue != null) {
-                  //                     customerProvider.setStatus(newValue);
-                  //                   }
-                  //                   customerProvider.setSearchCriteria(
-                  //                     customerProvider.search,
-                  //                     customerProvider.formattedFromDate,
-                  //                     customerProvider.formattedToDate,
-                  //                     customerProvider.selectedStatus.toString(),
-                  //                   );
-                  //                   customerProvider.getSearchCustomers(context);
-                  //                 },
-                  //                 underline: Container(),
-                  //                 isDense: true,
-                  //                 iconSize: 18,
-                  //               ),
-                  //             ],
-                  //           ),
-                  //         ),
-                  //         const SizedBox(width: 10),
-                  //         GestureDetector(
-                  //           onTap: () {
-                  //             onClickTopButton(context);
-                  //           },
-                  //           child: Container(
-                  //             padding: const EdgeInsets.symmetric(
-                  //                 horizontal: 20, vertical: 1.5),
-                  //             decoration: BoxDecoration(
-                  //               color: Colors.white,
-                  //               borderRadius: BorderRadius.circular(20),
-                  //               border: Border.all(
-                  //                   color: customerProvider.fromDate != null ||
-                  //                           customerProvider.toDate != null
-                  //                       ? AppColors.primaryBlue
-                  //                       : Colors.grey[300]!),
-                  //             ),
-                  //             child: Row(
-                  //               mainAxisSize: MainAxisSize.min,
-                  //               children: [
-                  //                 if (customerProvider.fromDate == null &&
-                  //                     customerProvider.toDate == null)
-                  //                   const Text('Follow Up Date: All'),
-                  //                 if (customerProvider.fromDate != null &&
-                  //                     customerProvider.toDate != null)
-                  //                   Text(
-                  //                       'Date : ${customerProvider.formattedFromDate} - ${customerProvider.formattedToDate}'),
-                  //                 const SizedBox(width: 10),
-                  //                 const Icon(
-                  //                   Icons.arrow_drop_down_outlined,
-                  //                   color: Colors.black45,
-                  //                   size: 20,
-                  //                 ),
-                  //               ],
-                  //             ),
-                  //           ),
-                  //         ),
-                  //         if (customerProvider.fromDate != null ||
-                  //             customerProvider.toDate != null ||
-                  //             (customerProvider.selectedStatus != null &&
-                  //                 customerProvider.selectedStatus != 0) ||
-                  //             customerProvider.search.isNotEmpty)
-                  //           ElevatedButton(
-                  //             onPressed: () {
-                  //               customerProvider.selectDateFilterOption(null);
-                  //               customerProvider.removeStatus();
-                  //               searchController.clear();
-                  //               customerProvider.setSearchCriteria('', '', '', '');
-                  //               customerProvider.getSearchCustomers(context);
-                  //             },
-                  //             style: ElevatedButton.styleFrom(
-                  //               backgroundColor: Colors.white,
-                  //               foregroundColor: AppColors.textRed,
-                  //               side: BorderSide(color: AppColors.textRed),
-                  //               padding: const EdgeInsets.symmetric(
-                  //                 horizontal: 16,
-                  //                 vertical: 0,
-                  //               ),
-                  //             ),
-                  //             child: const Text('Reset'),
-                  //           ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  Expanded(
-                    child: ListView.builder(
-                      controller: customerProvider.scrollController,
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      itemCount: customerProvider.customerData.length,
-                      itemBuilder: (context, index) {
-                        var customerData = customerProvider.customerData[index];
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        var customer = customerProvider.customerData[index];
                         return Column(
                           children: [
                             Divider(
-                              height: 2,
+                              height: 1,
                               color: AppColors.grey,
                             ),
                             LeadCard(
                               isLead: false,
-                              lead: customerData,
+                              lead: customer,
                               isExpanded:
                                   customerProvider.expandedIndex == index,
                               onTap: () {
                                 customerProvider.toggleExpansion(index);
                                 if (customerProvider.expandedIndex == index) {
-                                  // Fetch check-in history when expanding to show correct status
                                   Provider.of<LeadCheckInProvider>(context,
                                           listen: false)
                                       .fetchLeadCheckInReports(context,
-                                          customerData.customerId.toString());
+                                          customer.customerId.toString());
                                 }
                               },
                             ),
                           ],
                         );
                       },
+                      childCount: customerProvider.customerData.length,
                     ),
                   ),
                 ],
               ),
             ),
+      floatingActionButton: customerProvider.isFilter
+          ? Padding(
+              padding: const EdgeInsets.only(bottom: 32),
+              child: SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_customer_filter_fab',
+                  onPressed: () {
+                    customerProvider.getSearchCustomers(context);
+                    customerProvider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              ),
+            )
+          : null,
     );
   }
 
@@ -527,8 +444,6 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                             leadProvider.search,
                             fromDate,
                             toDate,
-                            status,
-                            // enquiryFor,
                           );
                           leadProvider.getSearchCustomers(context);
                         },
@@ -565,8 +480,6 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                             leadProvider.search,
                             fromDate,
                             toDate,
-                            status,
-                            // enquiryFor,
                           );
                           leadProvider.getSearchCustomers(context);
                         },

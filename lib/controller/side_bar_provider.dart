@@ -293,7 +293,7 @@ class SidebarProvider extends ChangeNotifier {
 
   void setSearchQuery(String query) {
     _searchQuery = query;
-    // notifyListeners();
+    notifyListeners();
   }
 
   // void setSelectedIndexMobile(int index) {

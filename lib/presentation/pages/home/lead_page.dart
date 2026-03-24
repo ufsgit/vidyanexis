@@ -146,13 +146,7 @@ class _LeadsPageState extends State<LeadPage> {
       provider.getUserDetails(context);
       provider.getTaskType(context);
       provider.getFollowUpStatus(context, "1");
-      leadProvider.setSearchCriteria(
-        '',
-        '',
-        '',
-        '',
-        '',
-      );
+      leadProvider.setSearchCriteria('', '', '');
       leadProvider.getSearchLeads(context);
 
       //search
@@ -174,13 +168,7 @@ class _LeadsPageState extends State<LeadPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
-      leadProvider.setSearchCriteria(
-        query,
-        leadProvider.fromDateS,
-        leadProvider.toDateS,
-        leadProvider.status,
-        leadProvider.enquiryForS,
-      );
+      leadProvider.setSearchCriteria(query, leadProvider.fromDateS, leadProvider.toDateS);
       leadProvider.getSearchLeads(context);
     });
   }
@@ -335,13 +323,7 @@ class _LeadsPageState extends State<LeadPage> {
                       onChanged: _onSearchChanged,
                       onSubmitted: (query) {
                         if (_debounce?.isActive ?? false) _debounce!.cancel();
-                        leadProvider.setSearchCriteria(
-                          query,
-                          leadProvider.fromDateS,
-                          leadProvider.toDateS,
-                          leadProvider.status,
-                          leadProvider.enquiryForS,
-                        );
+                        leadProvider.setSearchCriteria(query, leadProvider.fromDateS, leadProvider.toDateS);
                         leadProvider.getSearchLeads(context);
                       },
                       decoration: InputDecoration(
@@ -355,13 +337,7 @@ class _LeadsPageState extends State<LeadPage> {
                             if (_debounce?.isActive ?? false) {
                               _debounce!.cancel();
                             }
-                            leadProvider.setSearchCriteria(
-                              searchController.text,
-                              leadProvider.fromDateS,
-                              leadProvider.toDateS,
-                              leadProvider.status,
-                              leadProvider.enquiryForS,
-                            );
+                            leadProvider.setSearchCriteria(searchController.text, leadProvider.fromDateS, leadProvider.toDateS);
                             leadProvider.getSearchLeads(context);
                           },
                           child: const Icon(Icons.search, color: Colors.black),
@@ -505,13 +481,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   leadProvider.selectedEnquiryFor.toString();
                               print(
                                   'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                              );
+                              leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
                               leadProvider.getSearchLeads(context);
                             },
                             underline: Container(),
@@ -620,13 +590,7 @@ class _LeadsPageState extends State<LeadPage> {
                     //                     .toString();
                     //                 print(
                     //                     'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                    //                 leadProvider.setSearchCriteria(
-                    //                   leadProvider.search,
-                    //                   fromDate,
-                    //                   toDate,
-                    //                   status,
-                    //                   enquiryFor,
-                    //                 );
+                    //                 leadProvider.setSearchCriteria(//                   leadProvider.search, //                   fromDate, //                   toDate);
                     //                 leadProvider.getSearchLeads(context);
                     //               }
                     //             : null,
@@ -697,13 +661,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   leadProvider.selectedEnquiryFor.toString();
                               print(
                                   'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                              );
+                              leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
                               leadProvider.getSearchLeads(context);
                             },
                             underline: Container(),
@@ -772,14 +730,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   leadProvider.selectedEnquirySource ?? 0;
                               print(
                                   'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                              leadProvider.setSearchCriteria(
-                                leadProvider.search,
-                                fromDate,
-                                toDate,
-                                status,
-                                enquiryFor,
-                                enquirySource: enquirySource,
-                              );
+                              leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
                               leadProvider.getSearchLeads(context);
                             },
                             underline: Container(),
@@ -806,13 +757,7 @@ class _LeadsPageState extends State<LeadPage> {
                           leadProvider.selectDateFilterOption(null);
                           leadProvider.removeStatus();
                           searchController.clear();
-                          leadProvider.setSearchCriteria(
-                            '',
-                            '',
-                            '',
-                            '',
-                            '',
-                          );
+                          leadProvider.setSearchCriteria('', '', '');
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1206,51 +1151,48 @@ class _LeadsPageState extends State<LeadPage> {
                                                              leadingIcon: const Icon(
                                                                  Icons.add_task,
                                                                  size: 18,
-                                                                 color: Colors.teal),
-                                                             children: provider
-                                                                 .taskType
-                                                                 .map((taskType) {
-                                                               // Find users for this task type based on department
-                                                               final users = provider
-                                                                   .searchUserDetails
-                                                                   .where((user) {
-                                                                 return user
-                                                                         .departmentId
-                                                                         .toString() ==
-                                                                     taskType
-                                                                         .departmentIds
-                                                                         .toString();
-                                                               }).toList();
+                                                                 color: Colors.teal),                                                              children: provider
+                                                                          .getFilteredTaskTypes()
+                                                                          .isEmpty
+                                                                  ? [
+                                                                      const MenuItemButton(
+                                                                        onPressed: null,
+                                                                        child: Text(
+                                                                          'No available tasks',
+                                                                          style: TextStyle(
+                                                                              color: Colors
+                                                                                  .grey),
+                                                                        ),
+                                                                      )
+                                                                    ]
+                                                                  : provider
+                                                                      .getFilteredTaskTypes()
+                                                                      .map((taskType) {
+                                                                      // Get only active users for this task type
+                                                                      final users = provider
+                                                                          .getActiveUsersForTask(
+                                                                              taskType);
 
-                                                               if (users.isEmpty) {
-                                                                 return MenuItemButton(
-                                                                   onPressed:
-                                                                       null,
-                                                                   child: Text(
-                                                                       taskType
-                                                                           .taskTypeName),
-                                                                 );
-                                                               }
+                                                                      return MultiLevelHoverMenu(
+                                                                        title: taskType
+                                                                            .taskTypeName,
+                                                                        children: users
+                                                                            .map((user) {
+                                                                          return MenuItemButton(
+                                                                            onPressed:
+                                                                                () {
+                                                                              _openTaskDialog(
+                                                                                  lead,
+                                                                                  taskType,
+                                                                                  user);
+                                                                            },
+                                                                            child: Text(user
+                                                                                .userDetailsName),
+                                                                          );
+                                                                        }).toList(),
+                                                                      );
+                                                                    }).toList(),
 
-                                                               return MultiLevelHoverMenu(
-                                                                 title: taskType
-                                                                     .taskTypeName,
-                                                                 children: users
-                                                                     .map((user) {
-                                                                   return MenuItemButton(
-                                                                     onPressed:
-                                                                         () {
-                                                                       _openTaskDialog(
-                                                                           lead,
-                                                                           taskType,
-                                                                           user);
-                                                                     },
-                                                                     child: Text(user
-                                                                         .userDetailsName),
-                                                                   );
-                                                                 }).toList(),
-                                                               );
-                                                             }).toList(),
                                                            ),
                                                         ],
                                                       ),
@@ -1850,13 +1792,7 @@ class _LeadsPageState extends State<LeadPage> {
                               leadProvider.selectedEnquiryFor.toString();
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                          leadProvider.setSearchCriteria(
-                            leadProvider.search,
-                            fromDate,
-                            toDate,
-                            status,
-                            enquiryFor,
-                          );
+                          leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1888,13 +1824,7 @@ class _LeadsPageState extends State<LeadPage> {
                               leadProvider.selectedEnquiryFor.toString();
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                          leadProvider.setSearchCriteria(
-                            leadProvider.search,
-                            fromDate,
-                            toDate,
-                            status,
-                            enquiryFor,
-                          );
+                          leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -2098,13 +2028,7 @@ class _LeadsPageState extends State<LeadPage> {
                             leadProvider.selectedEnquiryFor.toString();
                         print(
                             'Selected Status: $status, Selected From Date: $fromDate, Selected To Date: $toDate, Selected Enquiry For: $enquiryFor');
-                        leadProvider.setSearchCriteria(
-                          leadProvider.search,
-                          fromDate,
-                          toDate,
-                          status,
-                          enquiryFor,
-                        );
+                        leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
                         leadProvider.getSearchLeads(context);
                       }
                     : null,
@@ -2330,3 +2254,4 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
     );
   }
 }
+

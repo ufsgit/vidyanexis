@@ -33,7 +33,6 @@ class _StockScreenState extends State<StockScreen> {
         '',
         '',
         '',
-        '',
       );
       customerProvider.getSearchCustomers(context);
       final expenseProvider =
