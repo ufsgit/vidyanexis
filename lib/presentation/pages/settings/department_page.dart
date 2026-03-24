@@ -28,165 +28,151 @@ class _DepartmentPageState extends State<DepartmentPage> {
   @override
   Widget build(BuildContext context) {
     final isWeb = AppStyles.isWebScreen(context);
-    final isMobile = MediaQuery.of(context).size.width < 800;
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          scrollDirection: isWeb ? Axis.horizontal : Axis.vertical,
           child: SizedBox(
             width: isWeb
                 ? (constraints.maxWidth < minContentWidth
                     ? minContentWidth
                     : constraints.maxWidth)
                 : constraints.maxWidth,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header section
-                  SizedBox(
-                    width: double.infinity,
-                    child: Wrap(
-                      alignment: WrapAlignment.spaceBetween,
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 8,
-                      runSpacing: 12,
-                      children: [
-                        Text(
-                          'Department',
-                          style: GoogleFonts.plusJakartaSans(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.textBlue800),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 8),
+                Text(
+                  'Department',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textBlue800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.grey[200]!),
                         ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
+                        child: TextField(
+                          controller: settingsProvider.searchDepartmentController,
+                          onChanged: (query) {
+                            settingsProvider.searchDepartment(query, context);
+                          },
+                          decoration: InputDecoration(
+                            hintText: 'Search...',
+                            hintStyle: GoogleFonts.plusJakartaSans(
+                              color: Colors.grey[400],
+                              fontSize: 14,
+                            ),
+                            prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey[500]),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    if (settingsProvider.menuIsSaveMap[42] == 1)
+                      SizedBox(
+                        height: 48,
+                        child: CustomOutlinedSvgButton(
+                          onPressed: () async {
+                            showDialog(
+                              barrierDismissible: false,
+                              context: context,
+                              builder: (BuildContext context) {
+                                return const AddDepartment(
+                                  editId: '0',
+                                  isEdit: false,
+                                  department: '',
+                                );
+                              },
+                            );
+                          },
+                          svgPath: 'assets/images/Plus.svg',
+                          label: 'New',
+                          breakpoint: 400,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                          ),
+                          foregroundColor: Colors.white,
+                          backgroundColor: AppColors.primaryBlue,
+                          borderSide: BorderSide(color: AppColors.primaryBlue),
+                        ),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: settingsProvider.departmentModel.length,
+                    separatorBuilder: (context, index) => Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Colors.grey[50]!,
+                    ),
+                    itemBuilder: (context, index) {
+                      final dept = settingsProvider.departmentModel[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: isMobile
-                                  ? MediaQuery.of(context).size.width * 0.4
-                                  : 200,
-                              height: 40,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: Colors.grey[300]!),
-                              ),
-                              child: TextField(
-                                controller: settingsProvider.searchDepartmentController,
-                                onChanged: (query) {
-                                  settingsProvider.searchDepartment(query, context);
-                                },
-                                decoration: const InputDecoration(
-                                  hintText: 'Search...',
-                                  prefixIcon: Icon(Icons.search, size: 20),
-                                  border: InputBorder.none,
-                                  isDense: true,
-                                  contentPadding: EdgeInsets.symmetric(
-                                    horizontal: 12,
-                                    vertical: 10,
-                                  ),
+                            Expanded(
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                decoration: BoxDecoration(
+                                    color: AppColors.surfaceGrey,
+                                    borderRadius: BorderRadius.circular(12)),
+                                child: Text(
+                                  dept.departmentName,
+                                  style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w500,
+                                      color: Colors.black),
                                 ),
                               ),
                             ),
-                            const SizedBox(width: 8),
-                            if (settingsProvider.menuIsSaveMap[42] == 1)
-                              SizedBox(
-                                height: 40,
-                                child: CustomOutlinedSvgButton(
-                                  onPressed: () async {
-                                    showDialog(
-                                      barrierDismissible: false,
-                                      context: context,
-                                      builder: (BuildContext context) {
-                                        return const AddDepartment(
-                                          editId: '0',
-                                          isEdit: false,
-                                          department: '',
-                                        );
-                                      },
-                                    );
-                                  },
-                                  svgPath: 'assets/images/Plus.svg',
-                                  label: 'New',
-                                  breakpoint: 400,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(20)),
-                                  foregroundColor: Colors.white,
-                                  backgroundColor: AppColors.primaryBlue,
-                                  borderSide: BorderSide(color: AppColors.primaryBlue),
-                                ),
-                              ),
+                            _buildActionButtons(context, settingsProvider, index),
                           ],
                         ),
-                      ],
-                    ),
+                      );
+                    },
                   ),
-                  const SizedBox(height: 24),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceGrey.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: ListView.separated(
-                      separatorBuilder: (context, index) => const Divider(
-                        height: 1,
-                        indent: 16,
-                        endIndent: 16,
-                        color: Color(0xFFEEEEEE),
-                      ),
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: settingsProvider.departmentModel.length,
-                      itemBuilder: (context, index) {
-                        return Container(
-                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: index == 0
-                                ? const BorderRadius.vertical(top: Radius.circular(12))
-                                : index == settingsProvider.departmentModel.length - 1
-                                    ? const BorderRadius.vertical(bottom: Radius.circular(12))
-                                    : null,
-                          ),
-                          child: Row(
-                            children: [
-                              Expanded(
-                                child: Align(
-                                  alignment: Alignment.centerLeft,
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                    decoration: BoxDecoration(
-                                        color: AppColors.surfaceGrey,
-                                        borderRadius: BorderRadius.circular(12)),
-                                    child: Text(
-                                      settingsProvider.departmentModel[index].departmentName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              _buildActionButtons(context, settingsProvider, index),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                const SizedBox(height: 20),
+              ],
             ),
           ),
         );
       },
     );
+
   }
 
   Widget _buildActionButtons(BuildContext context, SettingsProvider settingsProvider, int index) {
