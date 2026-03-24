@@ -30,62 +30,68 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
 
   @override
   Widget build(BuildContext context) {
+    final isWeb = AppStyles.isWebScreen(context);
     const double minContentWidth = 800.0;
     final settingsProvider = Provider.of<SettingsProvider>(context);
+
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
           child: SizedBox(
-            width: AppStyles.isWebScreen(context)
-                ? constraints.maxWidth < minContentWidth
+            width: isWeb
+                ? (constraints.maxWidth < minContentWidth
                     ? minContentWidth
-                    : constraints.maxWidth
-                : MediaQuery.of(context).size.width - 30,
+                    : constraints.maxWidth)
+                : constraints.maxWidth,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header section
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Task Type',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      const Spacer(),
-                      Container(
-                        width: MediaQuery.of(context).size.width / 3.5,
-                        height: 40,
+                const SizedBox(height: 8),
+                // Page Title
+                Text(
+                  'Task Type',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textBlue800,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                
+                // Search and New Button
+                Row(
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 48,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: Colors.grey[300]!),
+                          borderRadius: BorderRadius.circular(24),
+                          border: Border.all(color: Colors.grey[200]!),
                         ),
                         child: TextField(
                           controller: settingsProvider.searchTaskTypeController,
                           onChanged: (query) {
-                            print(query);
                             settingsProvider.searchTaskType(query, context);
                           },
-                          decoration: const InputDecoration(
-                            hintText: 'Search here....',
-                            prefixIcon: Icon(Icons.search),
-                            border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 4,
+                          decoration: InputDecoration(
+                            hintText: 'Search...',
+                            hintStyle: GoogleFonts.plusJakartaSans(
+                              color: Colors.grey[400],
+                              fontSize: 14,
                             ),
+                            prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey[500]),
+                            border: InputBorder.none,
+                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
                           ),
                         ),
                       ),
-                      const SizedBox(width: 16),
-                      if (settingsProvider.menuIsSaveMap[41] == 1)
-                        CustomOutlinedSvgButton(
+                    ),
+                    const SizedBox(width: 12),
+                    if (settingsProvider.menuIsSaveMap[41] == 1)
+                      SizedBox(
+                        height: 48,
+                        child: CustomOutlinedSvgButton(
                           onPressed: () async {
                             showDialog(
                               barrierDismissible: false,
@@ -100,197 +106,174 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                             );
                           },
                           svgPath: 'assets/images/Plus.svg',
-                          label: 'New Task Type',
-                          breakpoint: 860,
+                          label: 'New',
+                          breakpoint: 400,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
+                            borderRadius: BorderRadius.circular(24),
+                          ),
                           foregroundColor: Colors.white,
                           backgroundColor: AppColors.primaryBlue,
                           borderSide: BorderSide(color: AppColors.primaryBlue),
                         ),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
+                      ),
+                  ],
                 ),
                 const SizedBox(height: 24),
+
+                // The List
                 Container(
+                  width: double.infinity,
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(8),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.03),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
                   ),
-                  child: Column(
-                    children: [
-                      ListView.separated(
-                        separatorBuilder: (context, index) {
-                          return const SizedBox(
-                            height: 12,
-                          );
-                        },
-                        shrinkWrap: true,
-                        physics: const ClampingScrollPhysics(),
-                        itemCount: settingsProvider.taskType.length,
-                        itemBuilder: (context, index) {
-                          return Container(
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: AppColors.whiteColor,
-                            ),
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: settingsProvider.taskType.length,
+                    separatorBuilder: (context, index) => Divider(
+                      height: 1,
+                      thickness: 1,
+                      color: Colors.grey[50]!,
+                    ),
+                    itemBuilder: (context, index) {
+                      final task = settingsProvider.taskType[index];
+                      return Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
-                                    width: 300,
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Container(
-                                        height: 22,
-                                        decoration: BoxDecoration(
-                                            color: AppColors.surfaceGrey,
-                                            borderRadius:
-                                                BorderRadius.circular(12)),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10),
-                                          child: Text(
-                                            settingsProvider
-                                                .taskType[index].taskTypeName,
-                                            style: GoogleFonts.plusJakartaSans(
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.black),
-                                          ),
+                                  _buildTaskTypeBadge(task.taskTypeName),
+                                  if (task.departmentName != null && task.departmentName!.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 8, left: 4),
+                                      child: Text(
+                                        task.departmentName!,
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey[500],
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      settingsProvider
-                                              .taskType[index].departmentName ??
-                                          '',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black),
-                                    ),
-                                  ),
-
-                                  // ActionChip(
-                                  //     shape: RoundedRectangleBorder(
-                                  //         borderRadius: BorderRadius.only(
-                                  //           bottomLeft: Radius.circular(15),
-                                  //           topRight: Radius.circular(15),
-                                  //         ),
-                                  //         side: BorderSide(
-                                  //             color: Colors.transparent)),
-                                  //     color: WidgetStateProperty.all(
-                                  //         Colors.blue[50]),
-                                  //     onPressed: () => assignStatusDialog(
-                                  //           context,
-                                  //         ),
-                                  //     avatar: CircleAvatar(
-                                  //       radius: 16,
-                                  //       child: Icon(Icons.person_add_outlined,
-                                  //           size: 12, color: Colors.grey),
-                                  //     ),
-                                  //     label: Text(
-                                  //       'Manage Status',
-                                  //       style: GoogleFonts.plusJakartaSans(
-                                  //           fontWeight: FontWeight.w400),
-                                  //     )),
-                                  SizedBox(
-                                    width: 16,
-                                  ),
-                                  if (settingsProvider.menuIsEditMap[41] == 1)
-                                    TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            barrierDismissible: false,
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AddTaskType(
-                                                  editId: settingsProvider
-                                                      .taskType[index]
-                                                      .taskTypeId
-                                                      .toString(),
-                                                  status: settingsProvider
-                                                      .taskType[index]
-                                                      .taskTypeName,
-                                                  isEdit: true,
-                                                  taskType: settingsProvider
-                                                      .taskType[index]);
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Edit',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.primaryBlue),
-                                        )),
-                                  if (settingsProvider.menuIsDeleteMap[41] == 1)
-                                    TextButton(
-                                        onPressed: () {
-                                          showDialog(
-                                            context: context,
-                                            builder: (BuildContext context) {
-                                              return AlertDialog(
-                                                title: const Text(
-                                                    'Confirm Delete'),
-                                                content: const Text(
-                                                    'Are you sure you want to delete?'),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () =>
-                                                        Navigator.pop(context),
-                                                    child: const Text('Cancel'),
-                                                  ),
-                                                  TextButton(
-                                                    onPressed: () async {
-                                                      settingsProvider
-                                                          .deleteTaskType(
-                                                              context,
-                                                              settingsProvider
-                                                                  .taskType[
-                                                                      index]
-                                                                  .taskTypeId);
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: const Text(
-                                                      'Delete',
-                                                      style: TextStyle(
-                                                          color: Colors.red),
-                                                    ),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        },
-                                        child: Text(
-                                          'Delete',
-                                          style: GoogleFonts.plusJakartaSans(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColors.textRed),
-                                        ))
                                 ],
                               ),
                             ),
-                          );
-                        },
-                      )
-                    ],
+                            _buildActionButtons(context, settingsProvider, index),
+                          ],
+                        ),
+                      );
+                    },
                   ),
                 ),
+                const SizedBox(height: 20),
               ],
             ),
           ),
         );
       },
+    );
+
+
+
+  }
+
+  Widget _buildTaskTypeBadge(String name) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.surfaceGrey,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Text(
+        name,
+        style: GoogleFonts.plusJakartaSans(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: Colors.black,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, SettingsProvider settingsProvider, int index) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (settingsProvider.menuIsEditMap[41] == 1)
+          IconButton(
+            onPressed: () {
+              showDialog(
+                barrierDismissible: false,
+                context: context,
+                builder: (BuildContext context) {
+                  return AddTaskType(
+                    editId: settingsProvider.taskType[index].taskTypeId.toString(),
+                    status: settingsProvider.taskType[index].taskTypeName,
+                    isEdit: true,
+                    taskType: settingsProvider.taskType[index],
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.edit_outlined, color: AppColors.primaryBlue, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Edit',
+          ),
+        const SizedBox(width: 8),
+        if (settingsProvider.menuIsDeleteMap[41] == 1)
+          IconButton(
+            onPressed: () {
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text('Confirm Delete'),
+                    content: const Text('Are you sure you want to delete?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          settingsProvider.deleteTaskType(
+                            context,
+                            settingsProvider.taskType[index].taskTypeId,
+                          );
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          'Delete',
+                          style: TextStyle(color: Colors.red),
+                        ),
+                      ),
+                    ],
+                  );
+                },
+              );
+            },
+            icon: Icon(Icons.delete_outline, color: AppColors.textRed, size: 20),
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+            visualDensity: VisualDensity.compact,
+            tooltip: 'Delete',
+          ),
+      ],
     );
   }
 
