@@ -92,6 +92,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       // sidebarProvider.setSelectedIndex(1);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
+      customerDetailsProvider.setCustomerId(int.tryParse(widget.customerId)??0);
       customerDetailsProvider.getTaskList(widget.customerId, context);
       customerDetailsProvider
           .fetchLeadDetails(widget.customerId, context)

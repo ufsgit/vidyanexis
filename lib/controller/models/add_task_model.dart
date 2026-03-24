@@ -12,6 +12,7 @@ AddTaskModel addTaskModelFromJson(String str) =>
 String addTaskModelToJson(AddTaskModel data) => json.encode(data.toJson());
 
 class AddTaskModel {
+  int? taskId;
   int? taskMasterId;
   int? taskStatusId;
   String? taskStatusName;
@@ -29,6 +30,7 @@ class AddTaskModel {
   String? completionTime;
 
   AddTaskModel({
+    this.taskId,
     this.taskMasterId,
     this.taskStatusId,
     this.taskStatusName,
@@ -46,6 +48,7 @@ class AddTaskModel {
   });
 
   AddTaskModel copyWith({
+    int? taskId,
     int? taskMasterId,
     int? taskStatusId,
     String? taskStatusName,
@@ -62,6 +65,7 @@ class AddTaskModel {
     List<TaskFile>? taskFiles, // Add this field
   }) =>
       AddTaskModel(
+        taskId: taskId ?? this.taskId,
         taskMasterId: taskMasterId ?? this.taskMasterId,
         taskStatusId: taskStatusId ?? this.taskStatusId,
         taskStatusName: taskStatusName ?? this.taskStatusName,
@@ -79,6 +83,7 @@ class AddTaskModel {
       );
 
   factory AddTaskModel.fromJson(Map<String, dynamic> json) => AddTaskModel(
+        taskId: json["Task_Id"],
         taskMasterId: json["Task_Master_Id"],
         taskStatusId: json["Task_Status_Id"],
         taskStatusName: json["Task_Status_Name"],
@@ -96,6 +101,7 @@ class AddTaskModel {
       );
 
   Map<String, dynamic> toJson() => {
+        "Task_Id": taskId,
         "Task_Master_Id": taskMasterId,
         "Task_Status_Id": taskStatusId,
         "Task_Status_Name": taskStatusName,

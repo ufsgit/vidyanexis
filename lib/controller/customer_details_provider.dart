@@ -98,7 +98,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isLoadingQuotationCustomFields => _isLoadingQuotationCustomFields;
   List<CustomFieldByStatusId> _customFieldQuotation = [];
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
-  String customerId = '';
+  String customerId = '0';
   String _selectedTaskTypeName = '';
 
   List<LeadDetails> _leadDetails = [];
@@ -1646,6 +1646,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   Future<void> saveTask(
     String taskId,
+    String taskMasterId,
     String taskType,
     String description,
     String date,
@@ -1687,7 +1688,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 ))
             .toList();
       }
-      addTaskModel.taskMasterId = int.tryParse(taskId) ?? 0;
+      addTaskModel.taskMasterId = int.tryParse(taskMasterId) ?? 0;
+      addTaskModel.taskId = int.tryParse(taskId) ?? 0;
       addTaskModel.taskStatusId = _selectedAMCStatus ?? 1;
       addTaskModel.taskStatusName =
           (_selectedAMCStatusName != null && _selectedAMCStatusName!.isNotEmpty)
@@ -1739,7 +1741,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
         Loader.stopLoader(context);
         getTaskList(customerId, context);
         if (isEdit) {
-          getTaskDetails(taskId, context);
+          getTaskDetails(taskMasterId, context);
         }
         print(data);
       } else {
