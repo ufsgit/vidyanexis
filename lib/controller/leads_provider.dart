@@ -2220,20 +2220,27 @@ class LeadsProvider extends ChangeNotifier {
         }
       }
 
-      // High precision settings
-      LocationSettings locationSettings = AndroidSettings(
-        accuracy: LocationAccuracy.best,
-        forceLocationManager: true,
+      // High precision settings - Optimized for speed
+      LocationSettings locationSettings = const LocationSettings(
+        accuracy: LocationAccuracy.high, // High is much faster than best
+        distanceFilter: 10,
       );
 
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: locationSettings,
-      );
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
+      } catch (e) {
+        log('Error getting current position: $e');
+        // Try getting last known position as fallback
+        position = await Geolocator.getLastKnownPosition();
+      }
 
-      double lat = position.latitude;
-      double lon = position.longitude;
+      if (position != null && position.latitude != 0.0 && position.longitude != 0.0) {
+        double lat = position.latitude;
+        double lon = position.longitude;
 
-      if (lat != 0.0 && lon != 0.0) {
         // Set latitude and longitude
         latitudeController.text = lat.toString();
         longitudeController.text = lon.toString();
@@ -2258,7 +2265,7 @@ class LeadsProvider extends ChangeNotifier {
       final List<Placemark> placemarks = await placemarkFromCoordinates(
         latitude,
         longitude,
-      );
+      ).timeout(const Duration(seconds: 5)); // Don't block too long for address
 
       if (placemarks.isNotEmpty) {
         final Placemark place = placemarks.first;

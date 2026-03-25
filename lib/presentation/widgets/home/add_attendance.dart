@@ -184,24 +184,15 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final attendanceProvider =
           Provider.of<AttendanceReportProvider>(context, listen: false);
-
-      // attendanceProvider.assignToFollowUpController.clear();
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
 
       attendanceProvider.assignToFollowUpController.clear();
-
-      // Fetch user details first to ensure we have the list for matching if needed
       dropDownProvider.getUserDetails(context);
-      //  if (widget.isEdit) {
-      //   attendanceProvider.assignToFollowUpController.text = widget.user;
-      //   dropDownProvider.setSelectedUserId(widget.userId);
-      // }
-      // SharedPreferences preferences = await SharedPreferences.getInstance();
-      // userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
-      // userName = preferences.getString('userName') ?? "";
-      // dropDownProvider.setSelectedUserId(userId);
-      // attendanceProvider.assignToFollowUpController.text = userName;
+      
+      // Start location capture in background
+      attendanceProvider.getLocation(context: context, showLoading: false);
+      
       await _initUserData();
     });
   }
@@ -408,7 +399,9 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
                 }
               } catch (_) {}
 
-              await attendanceProvider.getLocation(context: context);
+              if (attendanceProvider.latitude.isEmpty || attendanceProvider.longitude.isEmpty) {
+                await attendanceProvider.getLocation(context: context);
+              }
 
               bool success = false;
               if (isCheckedIn) {

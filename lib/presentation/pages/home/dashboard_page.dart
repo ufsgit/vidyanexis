@@ -476,8 +476,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
                           dashBoardProvider.formatDate();
 
-                          dashBoardProvider.getLeadData();
-                          dashBoardProvider.getWorkData();
+                          dashBoardProvider.getLeadData(forceRefresh: true);
+                          dashBoardProvider.getWorkData(forceRefresh: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -500,8 +500,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                         onPressed: () {
                           Navigator.pop(context);
                           dashBoardProvider.selectDateFilterOption(null);
-                          dashBoardProvider.getLeadData();
-                          dashBoardProvider.getWorkData();
+                          dashBoardProvider.getLeadData(forceRefresh: true);
+                          dashBoardProvider.getWorkData(forceRefresh: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
@@ -610,7 +610,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                     ? (int? newValue) {
                         if (newValue != null) {
                           dashBoardProvider.setUserFilterStatus(newValue);
-                          dashBoardProvider.getLeadData();
+                          dashBoardProvider.getLeadData(forceRefresh: true);
+                          dashBoardProvider.getWorkData(forceRefresh: true);
                         }
                       }
                     : null,
@@ -698,7 +699,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
                 } else {
                   dashBoardProvider.setUserFilterStatus(0);
                 }
-                dashBoardProvider.getLeadData();
+                dashBoardProvider.getLeadData(forceRefresh: true);
+                dashBoardProvider.getWorkData(forceRefresh: true);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.white,

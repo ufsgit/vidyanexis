@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -318,9 +319,11 @@ class AttendanceReportProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getLocation({required BuildContext context}) async {
+  Future<void> getLocation({required BuildContext context, bool showLoading = true}) async {
     // if (!kIsWeb) {
-    Loader.showLoader(context);
+    if (showLoading) {
+      Loader.showLoader(context);
+    }
     PermissionStatus locationStatus = await Permission.location.status;
 
     print(locationStatus.isPermanentlyDenied);
@@ -336,20 +339,27 @@ class AttendanceReportProvider extends ChangeNotifier {
 
     if (!locationStatus.isDenied) {
       try {
-        // High precision settings
-        LocationSettings locationSettings = AndroidSettings(
-          accuracy: LocationAccuracy.best,
-          forceLocationManager: true,
+        // High precision settings - Optimized for speed
+        LocationSettings locationSettings = const LocationSettings(
+          accuracy: LocationAccuracy.high, // High is much faster than best
+          distanceFilter: 10,
         );
 
-        Position position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        );
+        Position? position;
+        try {
+          position = await Geolocator.getCurrentPosition(
+            locationSettings: locationSettings,
+          ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
+        } catch (e) {
+          log('Error getting current position: $e');
+          // Try getting last known position as fallback
+          position = await Geolocator.getLastKnownPosition();
+        }
 
-        double latVal = position.latitude;
-        double lonVal = position.longitude;
+        if (position != null && position.latitude != 0.0 && position.longitude != 0.0) {
+          double latVal = position.latitude;
+          double lonVal = position.longitude;
 
-        if (latVal != 0.0 && lonVal != 0.0) {
           print('current');
           latitude = latVal.toString();
           longitude = lonVal.toString();
@@ -378,8 +388,9 @@ class AttendanceReportProvider extends ChangeNotifier {
       final geocoding = GeocodingPlatform.instance;
       if (geocoding != null) {
         // Get the list of placemarks based on latitude and longitude
-        List<Placemark> placemarks =
-            await geocoding.placemarkFromCoordinates(latitude, longitude);
+        List<Placemark> placemarks = await geocoding
+            .placemarkFromCoordinates(latitude, longitude)
+            .timeout(const Duration(seconds: 5)); // Don't block too long for address
 
         // If the list is not empty, return the first result
         if (placemarks.isNotEmpty) {
@@ -468,32 +479,27 @@ class AttendanceReportProvider extends ChangeNotifier {
             _isCompletedToday = false;
             notifyListeners();
 
-            // We don't have the ID yet, so we must fetch it.
-            // Add delay to allow server validation/indexing.
-            await Future.delayed(const Duration(milliseconds: 500));
-            bool foundOnServer =
-                await checkIsCheckedIn(selectedUserId, forceApi: true);
-
-            if (!foundOnServer) {
-              // If server doesn't show it yet, FORCE local state to true so UI doesn't revert.
-              await prefs.setBool('is_checked_in_$selectedUserId', true);
-              await prefs.setString('check_in_date_$selectedUserId', todayStr);
-              await prefs.setBool('is_completed_today_$selectedUserId', false);
-              // Ensure time is preserved
-              if (_currentCheckInTime.isEmpty) {
-                _currentCheckInTime = checkInTime;
-                await prefs.setString(
-                    'check_in_time_$selectedUserId', checkInTime);
+            // Background sync (Non-blocking)
+            checkIsCheckedIn(selectedUserId, forceApi: true).then((foundOnServer) async {
+              if (!foundOnServer) {
+                // Keep local state if server is lagging
+                final prefs = await SharedPreferences.getInstance();
+                await prefs.setBool('is_checked_in_$selectedUserId', true);
+                await prefs.setString('check_in_date_$selectedUserId', todayStr);
+                await prefs.setBool('is_completed_today_$selectedUserId', false);
+                if (_currentCheckInTime.isEmpty) {
+                  _currentCheckInTime = checkInTime;
+                  await prefs.setString('check_in_time_$selectedUserId', checkInTime);
+                }
               }
-            }
+            });
           } else if (checkOutTime != null) {
             // User Checked Out
             await prefs.setBool('is_checked_in_$selectedUserId', false);
             await prefs.setString('check_in_date_$selectedUserId', todayStr);
             await prefs.remove('attendance_id_$selectedUserId');
             await prefs.remove('check_in_time_$selectedUserId');
-            await prefs.setString(
-                'check_out_time_$selectedUserId', checkOutTime);
+            await prefs.setString('check_out_time_$selectedUserId', checkOutTime);
             await prefs.setBool('is_completed_today_$selectedUserId', true);
             _currentCheckInTime = '';
             _currentCheckOutTime = checkOutTime;
@@ -502,7 +508,7 @@ class AttendanceReportProvider extends ChangeNotifier {
             notifyListeners();
           }
         } catch (e) {
-          print('Error saving local state: $e');
+          log('Error saving local state: $e');
         }
 
         // Stop loader first
@@ -514,7 +520,13 @@ class AttendanceReportProvider extends ChangeNotifier {
         }
 
         if (context.mounted) {
-          _showSuccessDialog(context, checkInTime != null);
+          Fluttertoast.showToast(
+            msg: checkInTime != null ? "Check-in Successful" : "Check-out Successful",
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.green,
+            textColor: Colors.white,
+          );
         }
         print(data);
         return true;

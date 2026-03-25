@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
@@ -52,6 +53,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
   List<SearchLeadModel> _filteredLeads = [];
   String? _errorMessage;
   final TextEditingController _searchController = TextEditingController();
+  Timer? _searchDebounce;
 
   final _horizontalScrollController = ScrollController();
   late final ScrollController _fixedVerticalController;
@@ -137,30 +139,17 @@ class _LeadDataPageState extends State<LeadDataPage> {
   }
 
   void _onSearchChanged(String query) {
-    if (query.isEmpty) {
-      setState(() {
-        _filteredLeads = List.from(_leads);
-        _expandedIndex = null;
-      });
-    } else {
-      setState(() {
-        _expandedIndex = null;
-        _filteredLeads = _leads.where((lead) {
-          final lowercaseQuery = query.toLowerCase();
-          return lead.customerName.toLowerCase().contains(lowercaseQuery) ||
-              lead.contactNumber.toLowerCase().contains(lowercaseQuery) ||
-              lead.enquiryFor.toLowerCase().contains(lowercaseQuery) ||
-              lead.branchName.toLowerCase().contains(lowercaseQuery) ||
-              lead.statusName.toLowerCase().contains(lowercaseQuery) ||
-              lead.toUserName.toLowerCase().contains(lowercaseQuery) ||
-              lead.customerId.toString().contains(lowercaseQuery);
-        }).toList();
-      });
-    }
+    if (_searchDebounce?.isActive ?? false) _searchDebounce!.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 500), () {
+      if (mounted) {
+        _fetchLeads();
+      }
+    });
   }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     _horizontalScrollController.dispose();
     _fixedVerticalController.dispose();
@@ -264,7 +253,7 @@ class _LeadDataPageState extends State<LeadDataPage> {
       final response = await HttpRequest.httpGetRequest(
         endPoint: HttpUrls.searchLeadDashboard,
         bodyData: {
-          "lead_Name": "",
+          "lead_Name": _searchController.text,
           "Is_Date": widget.fromDate.isNotEmpty ? "1" : "0",
           "Fromdate": widget.fromDate,
           "Todate": widget.toDate,

@@ -170,8 +170,9 @@ class DashboardProvider extends ChangeNotifier {
   String get formattedToDate => _formattedToDate;
 
   // Fetch dashboard task data
-  Future<void> fetchDashBoardTaskData({bool shouldNotify = true}) async {
-    if (isTaskOverviewLoaded) return;
+  Future<void> fetchDashBoardTaskData(
+      {bool shouldNotify = true, bool forceRefresh = false}) async {
+    if (isTaskOverviewLoaded && !forceRefresh) return;
     _isLoading = true;
     _errorMessage = null;
     if (shouldNotify) notifyListeners();
@@ -207,8 +208,8 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   Future<void> getTaskInfoDashBoard(BuildContext context,
-      {bool shouldNotify = true}) async {
-    if (isTaskInfoLoaded) return;
+      {bool shouldNotify = true, bool forceRefresh = false}) async {
+    if (isTaskInfoLoaded && !forceRefresh) return;
     try {
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
@@ -304,6 +305,12 @@ class DashboardProvider extends ChangeNotifier {
       _toDate = DateTime.now();
       formatDate();
     }
+    // Clear loaded flags and data when filter changes
+    isLeadLoaded = false;
+    isWorkLoaded = false;
+    isDashboardCountLoaded = false;
+    leadCountMap.clear();
+    dashBoardCountModel.clear();
     notifyListeners();
   }
 
@@ -433,8 +440,9 @@ class DashboardProvider extends ChangeNotifier {
       {bool isFilter = false,
       String? filterValue,
       String? keyword,
-      bool shouldNotify = true}) async {
-    if (isDashboardCountLoaded && !isFilter) return;
+      bool shouldNotify = true,
+      bool forceRefresh = false}) async {
+    if (isDashboardCountLoaded && !isFilter && !forceRefresh) return;
     try {
       if (shouldNotify) notifyListeners();
       selectedDashboardCountValue = filterValue;
@@ -455,9 +463,19 @@ class DashboardProvider extends ChangeNotifier {
       }
 
       final body = {
-        "Fromdate": fromDate,
-        "Todate": DateTime.now(),
-        "Is_Date": isFilter ? "1" : "0"
+        "Fromdate": isFilter
+            ? fromDate
+            : (_formattedFromDate.isNotEmpty
+                ? _formattedFromDate
+                : "2000-01-01"),
+        "Todate": isFilter
+            ? DateTime.now()
+            : (_formattedToDate.isNotEmpty
+                ? _formattedToDate
+                : DateFormat('yyyy-MM-dd').format(DateTime.now())),
+        "Is_Date": (isFilter || _formattedFromDate.isNotEmpty) ? "1" : "0",
+        "To_User_Id": _selectedUser,
+        "User": _selectedUser,
       };
       if (keyword != null && keyword.isNotEmpty) {
         body["Keyword"] = keyword;
@@ -467,9 +485,13 @@ class DashboardProvider extends ChangeNotifier {
               endPoint: HttpUrls.dashboardCount, bodyData: body)
           .then((response) async {
         if (response.statusCode == 200) {
-          List<dynamic> data = response.data;
-          dashBoardCountModel = await compute(_parseDashBoardCount, data);
-          isDashboardCountLoaded = true;
+          final resData = response.data;
+          if (resData is List) {
+            dashBoardCountModel = await compute(_parseDashBoardCount, resData);
+            isDashboardCountLoaded = true;
+          } else {
+            dashBoardCountModel = [];
+          }
         }
       });
     } catch (e) {
@@ -565,19 +587,20 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> loadDataForTab(int activeTab, BuildContext context) async {
+  Future<void> loadDataForTab(int activeTab, BuildContext context,
+      {bool forceRefresh = false}) async {
     switch (activeTab) {
       case 0: // Leads Overview
-        await getLeadData();
+        await getLeadData(forceRefresh: forceRefresh);
         break;
       case 1: // Work Overview
-        await getWorkData();
+        await getWorkData(forceRefresh: forceRefresh);
         break;
       case 2: // Task Overview
-        await fetchDashBoardTaskData();
+        await fetchDashBoardTaskData(forceRefresh: forceRefresh);
         break;
       case 3: // Task Summary
-        await getTaskInfoDashBoard(context);
+        await getTaskInfoDashBoard(context, forceRefresh: forceRefresh);
         break;
       case 4: // Amc Notification
         await Provider.of<WarrentyReportProvider>(context, listen: false)
@@ -628,33 +651,33 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   /// like: [{"New_Leads": 1, "Missed_Leads": 117, ...}]
-  Future<void> getLeadDashboardCount({bool shouldNotify = true}) async {
-    if (isDashboardCountLoaded) return;
+  Future<void> getLeadDashboardCount(
+      {bool shouldNotify = true, bool forceRefresh = false}) async {
+    if (isDashboardCountLoaded && !forceRefresh) return;
     try {
       if (shouldNotify) notifyListeners();
 
       final body = {
-        "Fromdate": _formattedFromDate,
-        "Todate": _formattedToDate,
+        "Fromdate": _formattedFromDate.isNotEmpty
+            ? _formattedFromDate
+            : "2000-01-01",
+        "Todate": _formattedToDate.isNotEmpty
+            ? _formattedToDate
+            : DateFormat('yyyy-MM-dd').format(DateTime.now()),
         "Is_Date": _formattedFromDate.isNotEmpty ? "1" : "0",
-        "User": _selectedUser
+        "User": _selectedUser,
+        "To_User_Id": _selectedUser,
       };
 
       await HttpRequest.httpGetRequest(
-              endPoint: HttpUrls.getLeadDashboard, bodyData: body)
+              endPoint: HttpUrls.dashboardCount, bodyData: body)
           .then((response) async {
         if (response.statusCode == 200) {
-          List<dynamic> data = response.data;
-          if (data.isNotEmpty && data.first is Map) {
-            Map<String, dynamic> counts = data.first;
-            leadCountMap.clear();
-            counts.forEach((key, value) {
-              if (value is int) {
-                leadCountMap[key] = value;
-              }
-            });
+          final resData = response.data;
+          if (resData is List) {
+            dashBoardCountModel = await compute(_parseDashBoardCount, resData);
+            isDashboardCountLoaded = true;
           }
-          isDashboardCountLoaded = true;
         }
       });
     } catch (e) {
@@ -665,8 +688,10 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   Future<void> getLeadData(
-      {String? filterValue, bool shouldNotify = true}) async {
-    if (isLeadLoaded && filterValue == null) return;
+      {String? filterValue,
+      bool shouldNotify = true,
+      bool forceRefresh = false}) async {
+    if (isLeadLoaded && filterValue == null && !forceRefresh) return;
     try {
       if (filterValue != null) {
         setCommonDateFilter(filterValue);
@@ -678,7 +703,7 @@ class DashboardProvider extends ChangeNotifier {
         getLeadConversionChartData(shouldNotify: false),
         getLeadProgressionReport(shouldNotify: false),
         getLeadEnquiryReport(shouldNotify: false),
-        getLeadDashboardCount(shouldNotify: false),
+        getLeadDashboardCount(shouldNotify: false, forceRefresh: forceRefresh),
       ]);
       isLeadLoaded = true;
     } finally {
@@ -687,15 +712,16 @@ class DashboardProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getWorkData({bool shouldNotify = true}) async {
-    if (isWorkLoaded) return;
+  Future<void> getWorkData(
+      {bool shouldNotify = true, bool forceRefresh = false}) async {
+    if (isWorkLoaded && !forceRefresh) return;
     try {
       isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
       // Batch updates
       await Future.wait([
         getTaskAllocationSummary(shouldNotify: false),
-        getDashBoardCount(shouldNotify: false),
+        getDashBoardCount(shouldNotify: false, forceRefresh: forceRefresh),
         getWorkSummary(shouldNotify: false),
       ]);
       isWorkLoaded = true;
