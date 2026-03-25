@@ -575,6 +575,238 @@ class _tasksPageReportState extends State<TaskPage> {
                 ],
               ),
             ),
+            if (reportsProvider.isFilter && AppStyles.isWebScreen(context))
+              Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                padding: const EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Wrap(
+                  spacing: 12,
+                  runSpacing: 10,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    // Status Filter
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: reportsProvider.selectedStatus != null &&
+                                    reportsProvider.selectedStatus != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Status: ', style: TextStyle(fontSize: 14)),
+                          DropdownButton<int>(
+                            value: reportsProvider.selectedStatus,
+                            hint: const Text('All', style: TextStyle(fontSize: 14)),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value: 0,
+                                    child: Text('All', style: TextStyle(fontSize: 14)),
+                                  ),
+                                ] +
+                                provider.followUpData
+                                    .map((status) => DropdownMenuItem<int>(
+                                          value: status.statusId,
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(maxWidth: 150),
+                                            child: Text(
+                                              StatusUtils.getDisplayStatus(status.statusName ?? ''),
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(fontSize: 14),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                reportsProvider.setStatus(newValue);
+                                reportsProvider.goToPage(1);
+                                reportsProvider.searchTaskByCustomer(context);
+                              }
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Date Filter
+                    GestureDetector(
+                      onTap: () {
+                        onClickTopButton(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: reportsProvider.fromDate != null ||
+                                      reportsProvider.toDate != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              reportsProvider.fromDate == null && reportsProvider.toDate == null
+                                  ? 'Follow-Up Date: All'
+                                  : 'Date: ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}',
+                              style: const TextStyle(fontSize: 14),
+                            ),
+                            const SizedBox(width: 8),
+                            const Icon(Icons.arrow_drop_down, color: Colors.black45, size: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    // Assigned To Filter
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: reportsProvider.selectedUser != null &&
+                                    reportsProvider.selectedUser != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Assigned To: ', style: TextStyle(fontSize: 14)),
+                          DropdownButton<int>(
+                            value: reportsProvider.selectedUser,
+                            hint: const Text('All', style: TextStyle(fontSize: 14)),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value: 0,
+                                    child: Text('All', style: TextStyle(fontSize: 14)),
+                                  ),
+                                ] +
+                                provider.searchUserDetails
+                                    .map((user) => DropdownMenuItem<int>(
+                                          value: user.userDetailsId,
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(maxWidth: 150),
+                                            child: Text(
+                                              user.userDetailsName,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(fontSize: 14),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                reportsProvider.setUserFilterStatus(newValue);
+                                reportsProvider.goToPage(1);
+                                reportsProvider.searchTaskByCustomer(context);
+                              }
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Task Type Filter
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: reportsProvider.selectedTaskType != null &&
+                                    reportsProvider.selectedTaskType != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Task Type: ', style: TextStyle(fontSize: 14)),
+                          DropdownButton<int>(
+                            value: reportsProvider.selectedTaskType,
+                            hint: const Text('All', style: TextStyle(fontSize: 14)),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value: 0,
+                                    child: Text('All', style: TextStyle(fontSize: 14)),
+                                  ),
+                                ] +
+                                provider.taskType
+                                    .map((task) => DropdownMenuItem<int>(
+                                          value: task.taskTypeId,
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(maxWidth: 150),
+                                            child: Text(
+                                              task.taskTypeName,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(fontSize: 14),
+                                            ),
+                                          ),
+                                        ))
+                                    .toList(),
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                reportsProvider.setTaskType(newValue);
+                                reportsProvider.goToPage(1);
+                                reportsProvider.searchTaskByCustomer(context);
+                              }
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    // Reset Button
+                    if (reportsProvider.fromDate != null ||
+                        reportsProvider.toDate != null ||
+                        (reportsProvider.selectedStatus != null && reportsProvider.selectedStatus != 0) ||
+                        (reportsProvider.selectedUser != null && reportsProvider.selectedUser != 0) ||
+                        (reportsProvider.selectedTaskType != null && reportsProvider.selectedTaskType != 0) ||
+                        reportsProvider.Search.isNotEmpty)
+                      ElevatedButton(
+                        onPressed: () {
+                          reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.removeStatus();
+                          searchController.clear();
+                          reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
+                          reportsProvider.goToPage(1);
+                          reportsProvider.searchTaskByCustomer(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                        ),
+                        child: const Text('Reset'),
+                      ),
+                  ],
+                ),
+              ),
             if (reportsProvider.isFilter && !AppStyles.isWebScreen(context))
               Expanded(
                 child: SingleChildScrollView(
