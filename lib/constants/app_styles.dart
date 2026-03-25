@@ -4,7 +4,7 @@ import 'package:vidyanexis/http/http_urls.dart';
 
 class AppStyles {
   static String logo() {
-    String logo = 'assets/images/logo_2.png';
+    String logo = 'assets/images/Icon-512.png';
     // String logo = 'assets/images/app_logo.png';
     // String logo = 'assets/images/solaris_logo.png';
     return logo;
