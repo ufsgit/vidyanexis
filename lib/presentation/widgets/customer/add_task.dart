@@ -108,7 +108,12 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
       }
 
       await customerDetailsProvider.saveTask(
-        widget.taskId.toString(),
+        widget.task?.taskId.toString() ??
+            widget.taskDetails?.taskId.first.toString() ??
+            '0',
+        widget.task?.taskMasterId.toString() ??
+            widget.taskDetails?.taskMasterId.toString() ??
+            '0',
         customerDetailsProvider.selectedTaskType.toString(),
         customerDetailsProvider.taskDescriptionController.text.toString(),
         customerDetailsProvider.taskChoosedateController.text.toString(),
@@ -117,26 +122,6 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
         context,
         widget.isEdit,
         [],
-      );
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Row(
-            children: [
-              const Icon(Icons.check_circle, color: Colors.white),
-              const SizedBox(width: 10),
-              Text(widget.isEdit
-                  ? 'Task edited successfully!'
-                  : 'Task added successfully!'),
-            ],
-          ),
-          duration: const Duration(seconds: 3),
-          behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-          margin: const EdgeInsets.all(10),
-        ),
       );
     } else {
       showDialog(
@@ -273,9 +258,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                         child: Wrap(
                           spacing: 10,
                           runSpacing: 10,
-                          children: dropDownProvider
-                                  .getFilteredTaskTypes()
-                                  .map((taskType) {
+                          children: dropDownProvider.taskType.map((taskType) {
                             bool isSelected =
                                 customerDetailsProvider.selectedTaskType ==
                                     taskType.taskTypeId;
@@ -323,6 +306,71 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                             );
                           }).toList(),
                         ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'DESCRIPTION',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.grey[400],
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    TextField(
+                      controller:
+                          customerDetailsProvider.taskDescriptionController,
+                      maxLines: 3,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF1E232C),
+                      ),
+                      decoration: InputDecoration(
+                        hintText: 'Enter task description...',
+                        hintStyle: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          color: Colors.grey[400],
+                        ),
+                        filled: true,
+                        fillColor: const Color(0xFFF7F8F9),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide(
+                              color: AppColors.bluebutton.withOpacity(0.5)),
+                        ),
+                        contentPadding: const EdgeInsets.all(12),
                       ),
                     ),
                   ],

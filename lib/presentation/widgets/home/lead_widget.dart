@@ -11,6 +11,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
+import 'package:vidyanexis/utils/chat_launcher.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:vidyanexis/controller/lead_check_in_provider.dart';
@@ -144,7 +145,7 @@ class _LeadCardState extends State<LeadCard> {
       children: [
         Container(
           width: MediaQuery.sizeOf(context).width,
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           decoration: BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.circular(12),
@@ -162,7 +163,7 @@ class _LeadCardState extends State<LeadCard> {
               GestureDetector(
                 onTap: widget.onTap,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -271,7 +272,7 @@ class _LeadCardState extends State<LeadCard> {
               // Expanded Content
               if (widget.isExpanded)
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
                   child: Column(
                     children: [
                       // Toggleable Note Section
@@ -574,15 +575,59 @@ class _LeadCardState extends State<LeadCard> {
                           ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsViewMap[91] == 1)
-                          _buildActionButton(
-                            onTap: () async {
-                              final url = 'https://wa.me/91${widget.lead.contactNumber}';
-                              if (await canLaunchUrl(Uri.parse(url))) await launchUrl(Uri.parse(url));
-                            },
-                            icon: Icons.chat_bubble_outline,
-                            text: 'Chat',
-                            color: Colors.blue,
-                          ),
+                            _buildActionButton(
+                              onTap: () async {
+                                // final url = 'https://wa.me/91${widget.lead.contactNumber}';
+                                // if (await canLaunchUrl(Uri.parse(url))) await launchUrl(Uri.parse(url));
+                                String phone = widget.lead.contactNumber;
+
+                                if (phone.isEmpty) {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (context) => const Center(
+                                      child: CircularProgressIndicator(),
+                                    ),
+                                  );
+
+                                  try {
+                                    final leadDetailsProvider =
+                                        Provider.of<LeadDetailsProvider>(
+                                            context,
+                                            listen: false);
+                                    await leadDetailsProvider
+                                        .fetchLeadDetailsNoContext(
+                                            widget.lead.customerId.toString());
+
+                                    if (leadDetailsProvider.leadDetails !=
+                                            null &&
+                                        leadDetailsProvider
+                                            .leadDetails!.isNotEmpty) {
+                                      phone = leadDetailsProvider
+                                          .leadDetails![0].contactNumber;
+                                    }
+                                  } catch (e) {
+                                    print("Error fetching fallback phone: $e");
+                                  } finally {
+                                    if (context.mounted) {
+                                      Navigator.pop(context);
+                                    }
+                                  }
+                                }
+                                if (phone.isNotEmpty) {
+                                  ChatLauncher.handleChat(context, phone);
+                                } else {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Mobile number not found for this customer')),
+                                  );
+                                }
+                              },
+                              icon: Icons.chat_bubble_outline,
+                              text: 'Chat',
+                              color: Colors.blue,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsViewMap[95] == 1)
                           _buildActionButton(

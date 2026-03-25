@@ -168,7 +168,8 @@ class _LeadsPageState extends State<LeadPage> {
     _debounce = Timer(const Duration(milliseconds: 500), () {
       if (!mounted) return;
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
-      leadProvider.setSearchCriteria(query, leadProvider.fromDateS, leadProvider.toDateS);
+      leadProvider.setSearchCriteria(
+          query, leadProvider.fromDateS, leadProvider.toDateS);
       leadProvider.getSearchLeads(context);
     });
   }
@@ -323,7 +324,8 @@ class _LeadsPageState extends State<LeadPage> {
                       onChanged: _onSearchChanged,
                       onSubmitted: (query) {
                         if (_debounce?.isActive ?? false) _debounce!.cancel();
-                        leadProvider.setSearchCriteria(query, leadProvider.fromDateS, leadProvider.toDateS);
+                        leadProvider.setSearchCriteria(query,
+                            leadProvider.fromDateS, leadProvider.toDateS);
                         leadProvider.getSearchLeads(context);
                       },
                       decoration: InputDecoration(
@@ -337,7 +339,10 @@ class _LeadsPageState extends State<LeadPage> {
                             if (_debounce?.isActive ?? false) {
                               _debounce!.cancel();
                             }
-                            leadProvider.setSearchCriteria(searchController.text, leadProvider.fromDateS, leadProvider.toDateS);
+                            leadProvider.setSearchCriteria(
+                                searchController.text,
+                                leadProvider.fromDateS,
+                                leadProvider.toDateS);
                             leadProvider.getSearchLeads(context);
                           },
                           child: const Icon(Icons.search, color: Colors.black),
@@ -476,6 +481,12 @@ class _LeadsPageState extends State<LeadPage> {
                               }
                               String fromDate = leadProvider.formattedFromDate;
                               String toDate = leadProvider.formattedToDate;
+                              String status =
+                                  leadProvider.selectedStatus.toString();
+                              String enquiryFor =
+                                  leadProvider.selectedEnquiryFor.toString();
+                              print(
+                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
                               leadProvider.setSearchCriteria(
                                   leadProvider.search, fromDate, toDate);
                               leadProvider.getSearchLeads(context);
@@ -487,7 +498,6 @@ class _LeadsPageState extends State<LeadPage> {
                         ],
                       ),
                     ),
-
                     GestureDetector(
                       onTap: () {
                         onClickTopButton(context);
@@ -526,13 +536,11 @@ class _LeadsPageState extends State<LeadPage> {
                         ),
                       ),
                     ),
-
                     if (userType == '1') ...[
                       _buildAssignedStaffFilter(leadProvider),
                     ],
                     _buildEnquiryForFilter(leadProvider),
                     _buildEnquirySourceFilter(leadProvider),
-
                     if (leadProvider.fromDate != null ||
                         leadProvider.toDate != null ||
                         (leadProvider.selectedStatus != null &&
@@ -831,166 +839,211 @@ class _LeadsPageState extends State<LeadPage> {
                                                         ),
                                                       ),
                                                       _HoverMenuAnchor(
-                                                         builder: (context,
-                                                             controller,
-                                                             onHoverNotify,
-                                                             child) {
-                                                           return IconButton(
-                                                             onPressed: () {
-                                                               if (controller
-                                                                   .isOpen) {
-                                                                 controller
-                                                                     .close();
-                                                               } else {
-                                                                 controller
-                                                                     .open();
-                                                               }
-                                                             },
-                                                             icon: const Icon(
-                                                                 Icons
-                                                                     .keyboard_arrow_down,
-                                                                 size: 20,
-                                                                 color: Colors
-                                                                     .grey),
-                                                             padding:
-                                                                 EdgeInsets.zero,
-                                                           );
-                                                         },
+                                                        builder: (context,
+                                                            controller,
+                                                            onHoverNotify,
+                                                            child) {
+                                                          return IconButton(
+                                                            onPressed: () {
+                                                              if (controller
+                                                                  .isOpen) {
+                                                                controller
+                                                                    .close();
+                                                              } else {
+                                                                controller
+                                                                    .open();
+                                                              }
+                                                            },
+                                                            icon: const Icon(
+                                                                Icons
+                                                                    .keyboard_arrow_down,
+                                                                size: 20,
+                                                                color: Colors
+                                                                    .grey),
+                                                            padding:
+                                                                EdgeInsets.zero,
+                                                          );
+                                                        },
                                                         menuChildren: [
-                                                          if (settingsProvider.menuIsEditMap[3] == 1)
-                                                            (onHover) => MenuItemButton(
-                                                              onPressed: () =>
-                                                                  _handleLeadAction(
-                                                                      'edit',
-                                                                      lead),
-                                                              child: Row(
-                                                                children: [
-                                                                  Icon(Icons.edit,
-                                                                      size: 18,
-                                                                      color: Colors
-                                                                          .blue),
-                                                                  SizedBox(
-                                                                      width: 8),
-                                                                  Text(
-                                                                      'Edit Lead'),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          if (settingsProvider.menuIsEditMap[94] == 1)
-                                                            (onHover) => MenuItemButton(
-                                                              onPressed: () =>
-                                                                  _handleLeadAction(
-                                                                      'convert',
-                                                                      lead),
-                                                              child: Row(
-                                                                children: [
-                                                                  Icon(Icons.sync,
-                                                                      size: 18,
-                                                                      color: Colors
-                                                                          .green),
-                                                                  SizedBox(
-                                                                      width: 8),
-                                                                  Text('Convert'),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          if (settingsProvider.menuIsSaveMap[16] == 1)
-                                                            (onHover) => MenuItemButton(
-                                                              onPressed: () =>
-                                                                  _handleLeadAction(
-                                                                      'quotation',
-                                                                      lead),
-                                                              child: Row(
-                                                                children: [
-                                                                  Icon(
+                                                          if (settingsProvider
+                                                                      .menuIsEditMap[
+                                                                  3] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'edit',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .edit,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.blue),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      Text(
+                                                                          'Edit Lead'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsEditMap[
+                                                                  94] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'convert',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .sync,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.green),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      Text(
+                                                                          'Convert'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsSaveMap[
+                                                                  16] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'quotation',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .request_quote,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.orange),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      Text(
+                                                                          'Quotation'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          if (settingsProvider
+                                                                      .menuIsSaveMap[
+                                                                  19] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'document',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .description,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.purple),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      Text(
+                                                                          'Document'),
+                                                                    ],
+                                                                  ),
+                                                                ),
+                                                          // Multi-level Create Task menu
+                                                          if (settingsProvider
+                                                                      .menuIsSaveMap[
+                                                                  13] ==
+                                                              1)
+                                                            (onHover) =>
+                                                                MultiLevelHoverMenu(
+                                                                  isSubMenu:
+                                                                      false,
+                                                                  title:
+                                                                      'Create Task',
+                                                                  onHoverChange:
+                                                                      (hovering) {
+                                                                    // This is the logic for _HoverMenuAnchor that we will expose
+                                                                    onHover(
+                                                                        hovering);
+                                                                  },
+                                                                  leadingIcon: const Icon(
                                                                       Icons
-                                                                          .request_quote,
+                                                                          .add_task,
                                                                       size: 18,
                                                                       color: Colors
-                                                                          .orange),
-                                                                  SizedBox(
-                                                                      width: 8),
-                                                                  Text(
-                                                                      'Quotation'),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                          if (settingsProvider.menuIsSaveMap[19] == 1)
-                                                            (onHover) => MenuItemButton(
-                                                              onPressed: () =>
-                                                                  _handleLeadAction(
-                                                                      'document',
-                                                                      lead),
-                                                              child: Row(
-                                                                children: [
-                                                                  Icon(
-                                                                      Icons
-                                                                          .description,
-                                                                      size: 18,
-                                                                      color: Colors
-                                                                          .purple),
-                                                                  SizedBox(
-                                                                      width: 8),
-                                                                  Text(
-                                                                      'Document'),
-                                                                ],
-                                                              ),
-                                                            ),
-                                                           // Multi-level Create Task menu
-                                                          if (settingsProvider.menuIsSaveMap[13] == 1)
-                                                           (onHover) => MultiLevelHoverMenu(
-                                                             isSubMenu: false,
-                                                             title: 'Create Task',
-                                                             onHoverChange: (hovering) {
-                                                               // This is the logic for _HoverMenuAnchor that we will expose
-                                                               onHover(hovering);
-                                                             },
-                                                             leadingIcon: const Icon(
-                                                                 Icons.add_task,
-                                                                 size: 18,
-                                                                 color: Colors.teal),                                                              children: provider
-                                                                          .getFilteredTaskTypes()
-                                                                          .isEmpty
-                                                                  ? [
-                                                                      const MenuItemButton(
-                                                                        onPressed: null,
+                                                                          .teal),
+                                                                  children: provider
+                                                                      .taskType
+                                                                      .map(
+                                                                          (taskType) {
+                                                                    // Find users for this task type based on department
+                                                                    final users = provider
+                                                                        .searchUserDetails
+                                                                        .where(
+                                                                            (user) {
+                                                                      return user
+                                                                              .departmentId
+                                                                              .toString() ==
+                                                                          taskType
+                                                                              .departmentIds
+                                                                              .toString();
+                                                                    }).toList();
+
+                                                                    if (users
+                                                                        .isEmpty) {
+                                                                      return MenuItemButton(
+                                                                        onPressed:
+                                                                            null,
                                                                         child: Text(
-                                                                          'No available tasks',
-                                                                          style: TextStyle(
-                                                                              color: Colors
-                                                                                  .grey),
-                                                                        ),
-                                                                      )
-                                                                    ]
-                                                                  : provider
-                                                                      .getFilteredTaskTypes()
-                                                                      .map((taskType) {
-                                                                      // Get only active users for this task type
-                                                                      final users = provider
-                                                                          .getActiveUsersForTask(
-                                                                              taskType);
-
-                                                                      return MultiLevelHoverMenu(
-                                                                        title: taskType
-                                                                            .taskTypeName,
-                                                                        children: users
-                                                                            .map((user) {
-                                                                          return MenuItemButton(
-                                                                            onPressed:
-                                                                                () {
-                                                                              _openTaskDialog(
-                                                                                  lead,
-                                                                                  taskType,
-                                                                                  user);
-                                                                            },
-                                                                            child: Text(user
-                                                                                .userDetailsName),
-                                                                          );
-                                                                        }).toList(),
+                                                                            taskType.taskTypeName),
                                                                       );
-                                                                    }).toList(),
+                                                                    }
 
-                                                           ),
+                                                                    return MultiLevelHoverMenu(
+                                                                      title: taskType
+                                                                          .taskTypeName,
+                                                                      children:
+                                                                          users.map(
+                                                                              (user) {
+                                                                        return MenuItemButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            _openTaskDialog(
+                                                                                lead,
+                                                                                taskType,
+                                                                                user);
+                                                                          },
+                                                                          child:
+                                                                              Text(user.userDetailsName),
+                                                                        );
+                                                                      }).toList(),
+                                                                    );
+                                                                  }).toList(),
+                                                                ),
                                                         ],
                                                       ),
                                                     ],
@@ -1220,11 +1273,11 @@ class _LeadsPageState extends State<LeadPage> {
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   data: Text(
-                                                     dropDownProvider
-                                                         .getEnquiryForNameById(
-                                                             lead.enquiryForId,
-                                                             lead.enquiryFor),
-                                                     maxLines: 1,
+                                                    dropDownProvider
+                                                        .getEnquiryForNameById(
+                                                            lead.enquiryForId,
+                                                            lead.enquiryFor),
+                                                    maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: const TextStyle(
@@ -1401,8 +1454,8 @@ class _LeadsPageState extends State<LeadPage> {
                                                       vertical: 4.0,
                                                       horizontal: 12.0),
                                                   data: Text(
-                                                     '${dropDownProvider.getEnquirySourceNameById(lead.enquirySourceId, lead.enquirySourceName)}${lead.referenceName.isNotEmpty ? ' - ${lead.referenceName}' : ''}',
-                                                     maxLines: 1,
+                                                    '${dropDownProvider.getEnquirySourceNameById(lead.enquirySourceId, lead.enquirySourceName)}${lead.referenceName.isNotEmpty ? ' - ${lead.referenceName}' : ''}',
+                                                    maxLines: 1,
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: const TextStyle(
@@ -1596,7 +1649,8 @@ class _LeadsPageState extends State<LeadPage> {
                               leadProvider.selectedEnquiryFor.toString();
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                          leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
+                          leadProvider.setSearchCriteria(
+                              leadProvider.search, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1628,7 +1682,8 @@ class _LeadsPageState extends State<LeadPage> {
                               leadProvider.selectedEnquiryFor.toString();
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                          leadProvider.setSearchCriteria(leadProvider.search, fromDate, toDate);
+                          leadProvider.setSearchCriteria(
+                              leadProvider.search, fromDate, toDate);
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -2191,4 +2246,3 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
     );
   }
 }
-

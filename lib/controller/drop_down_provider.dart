@@ -69,30 +69,30 @@ class DropDownProvider extends ChangeNotifier {
   // List<Enquirysourcemodel> filteredEnquiryData = []; // New filtered list
   List<EnquiryForModel> filteredEnquiryForData = []; // New filtered list
 
-  // Optimized Task Filtering logic (Requirement 1, 2, 5)
-  List<TaskTypeModel> getFilteredTaskTypes() {
-    return _taskType.where((taskType) {
-      // 1. Check if the task type itself is enabled
-      if (!taskType.isEnabled) return false;
+  // // Optimized Task Filtering logic (Requirement 1, 2, 5)
+  // List<TaskTypeModel> getFilteredTaskTypes() {
+  //   return _taskType.where((taskType) {
+  //     // 1. Check if the task type itself is enabled
+  //     if (!taskType.isEnabled) return false;
 
-      // 2. Check if there are active users for this task type's department
-      // Requirement 2: Remove parent if all children (users) are disabled/missing
-      final hasActiveUsers = _searchUserDetails.any((user) =>
-          user.workingStatus == "1" &&
-          user.departmentId.toString() == taskType.departmentIds.toString());
+  //     // 2. Check if there are active users for this task type's department
+  //     // Requirement 2: Remove parent if all children (users) are disabled/missing
+  //     final hasActiveUsers = _searchUserDetails.any((user) =>
+  //         user.workingStatus == "1" &&
+  //         user.departmentId.toString() == taskType.departmentIds.toString());
 
-      return hasActiveUsers;
-    }).toList();
-  }
+  //     return hasActiveUsers;
+  //   }).toList();
+  // }
 
-  // Get filtered users for a task type (Requirement 2)
-  List<SearchUserDetails> getActiveUsersForTask(TaskTypeModel taskType) {
-    return _searchUserDetails
-        .where((user) =>
-            user.workingStatus == "1" &&
-            user.departmentId.toString() == taskType.departmentIds.toString())
-        .toList();
-  }
+  // // Get filtered users for a task type (Requirement 2)
+  // List<SearchUserDetails> getActiveUsersForTask(TaskTypeModel taskType) {
+  //   return _searchUserDetails
+  //       .where((user) =>
+  //           user.workingStatus == "1" &&
+  //           user.departmentId.toString() == taskType.departmentIds.toString())
+  //       .toList();
+  // }
 
   int? selectedSourceId;
   int? selectedEnquirySourceId;
@@ -807,7 +807,8 @@ class DropDownProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchTaskType}?Task_Type_Name');
+          endPoint: HttpUrls.searchTaskType,
+          bodyData: {'Task_Type_Name': ''});
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -837,7 +838,8 @@ class DropDownProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.searchAMCStatus}?amc_status_Name');
+          endPoint: HttpUrls.searchAMCStatus,
+          bodyData: {'amc_status_Name': ''});
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -899,8 +901,8 @@ class DropDownProvider extends ChangeNotifier {
       String userId = preferences.getString('userId') ?? "";
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchDocumentType}?Document_Type_Name=$searchQuery');
+          endPoint: HttpUrls.searchDocumentType,
+          bodyData: {'Document_Type_Name': searchQuery});
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -927,7 +929,8 @@ class DropDownProvider extends ChangeNotifier {
   void getLocations(BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
-          endPoint: '${HttpUrls.getLocation}?Location_Name=');
+          endPoint: HttpUrls.getLocation,
+          bodyData: {'Location_Name': ''});
 
       if (response.statusCode == 200) {
         final data = response.data;

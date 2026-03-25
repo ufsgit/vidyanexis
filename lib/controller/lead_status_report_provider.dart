@@ -8,10 +8,10 @@ class LeadStatusReportProvider extends ChangeNotifier {
   List<LeadStatusReportModel> _reportData = [];
   List<LeadStatusReportModel> get reportData => _reportData;
 
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   int? _selectedDateFilterIndex;
 
   DateTime? get fromDate => _fromDate;
@@ -33,11 +33,10 @@ class LeadStatusReportProvider extends ChangeNotifier {
 
   void selectDateFilterOption(int? index) {
     if (index == null) {
-      _selectedDateFilterIndex = null;
-      _fromDate = null;
-      _toDate = null;
-      _formattedFromDate = '';
-      _formattedToDate = '';
+      _selectedDateFilterIndex = 1; // Default to Today
+      _fromDate = DateTime.now();
+      _toDate = DateTime.now();
+      formatDate();
     } else {
       _selectedDateFilterIndex = index;
       formatDate();
@@ -132,11 +131,10 @@ class LeadStatusReportProvider extends ChangeNotifier {
   }
 
   void removeStatus() {
-    _fromDate = null;
-    _toDate = null;
-    _formattedFromDate = '';
-    _formattedToDate = '';
-    _selectedDateFilterIndex = null;
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
+    _selectedDateFilterIndex = 1; // Default to Today
     notifyListeners();
   }
 
@@ -147,11 +145,10 @@ class LeadStatusReportProvider extends ChangeNotifier {
 
       formatDate();
 
-      String isDate = "0";
+      String isDate = "1";
       if (_formattedFromDate.isEmpty && _formattedToDate.isEmpty) {
-        isDate = "0";
-      } else {
-        isDate = "1";
+        _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
 
       final response = await HttpRequest.httpGetRequest(

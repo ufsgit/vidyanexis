@@ -10,10 +10,8 @@ import 'package:vidyanexis/controller/lead_check_in_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 
-
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
-
 
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/lead_widget.dart';
@@ -22,7 +20,6 @@ import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget_mobile.da
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
-
 
 class LeadPagePhone extends StatefulWidget {
   final bool fromDashBoard;
@@ -50,6 +47,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
       leadProvider.getSearchLeads(context);
     });
   }
+
   Future<void> _refreshData() async {
     final searchProvider = Provider.of<SidebarProvider>(context, listen: false);
     final settingsProvider =
@@ -168,79 +166,79 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
       appBar: widget.fromDashBoard
-            ? CustomAppBar(
-                leadingWidget: InkWell(
-                    onTap: () {
-                      Navigator.pop(context);
-                    },
-                    child: Icon(Icons.arrow_back)),
-                onSearchTap: () {
-                  searchProvider.startSearch();
-                  leadProvider.toggleFilter();
-                },
-                onFilterTap: () {
-                  log('sdf');
-                  leadProvider.toggleFilter();
-                },
-                onClearTap: () {
-                  searchProvider.stopSearch();
-                  leadProvider.toggleFilter();
+          ? CustomAppBar(
+              leadingWidget: InkWell(
+                  onTap: () {
+                    Navigator.pop(context);
+                  },
+                  child: Icon(Icons.arrow_back)),
+              onSearchTap: () {
+                searchProvider.startSearch();
+                leadProvider.toggleFilter();
+              },
+              onFilterTap: () {
+                log('sdf');
+                leadProvider.toggleFilter();
+              },
+              onClearTap: () {
+                searchProvider.stopSearch();
+                leadProvider.toggleFilter();
 
-                  leadProvider.selectDateFilterOption(null);
-                  leadProvider.removeStatus();
-                  searchController.clear();
-                  leadProvider.setSearchCriteria('', '', '');
-                  leadProvider.getSearchLeads(context);
-                },
-                title: "Leads",
-                showLogo: false,
-                showUserName: false,
-                showFilterIcon: false,
-                onSearch: (String query) {
-                  leadProvider.setSearchCriteria(
-                    query,
-                    leadProvider.fromDateS,
-                    leadProvider.toDateS,
-                  );
-                  leadProvider.getSearchLeads(context);
-                },
-                onChanged: _onSearchChanged,
-                searchController: searchController,
-              )
-            : CustomAppBar(
-                onSearchTap: () {
-                  searchProvider.startSearch();
-                  leadProvider.toggleFilter();
-                },
-                onFilterTap: () {
-                  log('sdf');
-                  leadProvider.toggleFilter();
-                },
-                onClearTap: () {
-                  searchProvider.stopSearch();
-                  leadProvider.toggleFilter();
+                leadProvider.selectDateFilterOption(null);
+                leadProvider.removeStatus();
+                searchController.clear();
+                leadProvider.setSearchCriteria('', '', '');
+                leadProvider.getSearchLeads(context);
+              },
+              title: "Leads",
+              showLogo: false,
+              showUserName: false,
+              showFilterIcon: false,
+              onSearch: (String query) {
+                leadProvider.setSearchCriteria(
+                  query,
+                  leadProvider.fromDateS,
+                  leadProvider.toDateS,
+                );
+                leadProvider.getSearchLeads(context);
+              },
+              onChanged: _onSearchChanged,
+              searchController: searchController,
+            )
+          : CustomAppBar(
+              onSearchTap: () {
+                searchProvider.startSearch();
+                leadProvider.toggleFilter();
+              },
+              onFilterTap: () {
+                log('sdf');
+                leadProvider.toggleFilter();
+              },
+              onClearTap: () {
+                searchProvider.stopSearch();
+                leadProvider.toggleFilter();
 
-                  leadProvider.selectDateFilterOption(null);
-                  leadProvider.removeStatus();
-                  searchController.clear();
-                  leadProvider.setSearchCriteria('', '', '');
-                  leadProvider.getSearchLeads(context);
-                },
-                title: "Leads",
-                showLogo: false,
-                showUserName: false,
-                showFilterIcon: false,
-                onSearch: (String query) {
-                  leadProvider.setSearchCriteria(
-                    query,
-                    leadProvider.fromDateS,
-                    leadProvider.toDateS,
-                  );
-                  leadProvider.getSearchLeads(context);
-                },
-                onChanged: _onSearchChanged,
-                searchController: searchController,
-              ),
+                leadProvider.selectDateFilterOption(null);
+                leadProvider.removeStatus();
+                searchController.clear();
+                leadProvider.setSearchCriteria('', '', '');
+                leadProvider.getSearchLeads(context);
+              },
+              title: "Leads",
+              showLogo: false,
+              showUserName: false,
+              showFilterIcon: false,
+              onSearch: (String query) {
+                leadProvider.setSearchCriteria(
+                  query,
+                  leadProvider.fromDateS,
+                  leadProvider.toDateS,
+                );
+                leadProvider.getSearchLeads(context);
+              },
+              onChanged: _onSearchChanged,
+              searchController: searchController,
+            ),
       drawer: const SidebarDrawer(),
       body: leadProvider.isLoading
           ? const Center(
@@ -255,7 +253,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                            horizontal: 8, vertical: 8),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -273,8 +271,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               children: [
                                 FilterChipWidget(
                                   label: 'All',
-                                  isSelected:
-                                      leadProvider.selectedStatusIds.contains(0),
+                                  isSelected: leadProvider.selectedStatusIds
+                                      .contains(0),
                                   onTap: () {
                                     leadProvider.toggleStatus(0);
                                   },
@@ -359,8 +357,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                 children: [
                                   FilterChipWidget(
                                     label: 'All',
-                                    isSelected:
-                                        leadProvider.selectedUserIds.contains(0),
+                                    isSelected: leadProvider.selectedUserIds
+                                        .contains(0),
                                     onTap: () {
                                       leadProvider.toggleUserFilter(0);
                                     },
@@ -751,5 +749,3 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
     'This Month',
   ];
 }
-
-

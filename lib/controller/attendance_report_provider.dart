@@ -30,8 +30,8 @@ class AttendanceReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   String _AssignedTo = '';
   String _TaskType = '';
@@ -183,10 +183,12 @@ class AttendanceReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
-    _selectedDateFilterIndex = null;
     _selectedTaskType = null;
-    _fromDateS = '';
-    _toDateS = '';
+    _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
     _hasFetched = false;
     notifyListeners();
   }
@@ -215,12 +217,8 @@ class AttendanceReportProvider extends ChangeNotifier {
       print(_fromDateS);
       print(_toDateS);
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
+        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
 
       String toUserId = (_selectedUser ?? 0).toString();

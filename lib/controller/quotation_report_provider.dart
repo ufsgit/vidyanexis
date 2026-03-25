@@ -11,10 +11,10 @@ class QuotationReportProvider extends ChangeNotifier {
   List<QuotationReportModel> get quotationReports => _quotationReports;
   bool _hasFetched = false;
   bool get hasFetched => _hasFetched;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
   DateTime? get fromDate => _fromDate;
@@ -23,8 +23,8 @@ class QuotationReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   final String _AssignedTo = '';
   String _TaskType = '';
@@ -59,11 +59,10 @@ class QuotationReportProvider extends ChangeNotifier {
   void selectDateFilterOption(int? index) {
     if (index == null) {
       // If the index is null, we are clearing the filter
-      _selectedDateFilterIndex = null; // Reset to the default "no filter" state
-      _fromDate = null;
-      _toDate = null;
-      _formattedFromDate = '';
-      _formattedToDate = '';
+      _selectedDateFilterIndex = 1; // Default to Today
+      _fromDate = DateTime.now();
+      _toDate = DateTime.now();
+      formatDate();
     } else {
       _selectedDateFilterIndex = index; // Set the new selected filter index
       formatDate();
@@ -173,10 +172,13 @@ class QuotationReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
-    _selectedDateFilterIndex = null;
+    _selectedDateFilterIndex = 1; // Default to Today
     _selectedTaskType = null;
-    _fromDateS = '';
-    _toDateS = '';
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
     notifyListeners();
   }
 
@@ -203,17 +205,10 @@ class QuotationReportProvider extends ChangeNotifier {
       }
       print(_fromDateS);
       print(_toDateS);
-      String isDate = "0";
+      String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
+        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -226,7 +221,7 @@ class QuotationReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchQuotationReports}?Product_Name=$_Search&Is_Date=$isDate&Fromdate=$fromDate&Todate=$toDate&To_User_Id=$toUserId&Quotation_Status_Id=$_Status');
+              '${HttpUrls.searchQuotationReports}?Product_Name=$_Search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Quotation_Status_Id=$_Status');
 
       if (response.statusCode == 200) {
         final data = response.data;

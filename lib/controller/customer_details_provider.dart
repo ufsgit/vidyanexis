@@ -98,7 +98,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   bool get isLoadingQuotationCustomFields => _isLoadingQuotationCustomFields;
   List<CustomFieldByStatusId> _customFieldQuotation = [];
   List<CustomFieldByStatusId> get customFieldQuotation => _customFieldQuotation;
-  String customerId = '';
+  String customerId = '0';
   String _selectedTaskTypeName = '';
 
   List<LeadDetails> _leadDetails = [];
@@ -1646,6 +1646,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
 
   Future<void> saveTask(
     String taskId,
+    String taskMasterId,
     String taskType,
     String description,
     String date,
@@ -1655,12 +1656,6 @@ class CustomerDetailsProvider extends ChangeNotifier {
     bool isEdit,
     List<Map<String, String>>? audioFiles, // Add this parameter
   ) async {
-    print(taskType);
-    print(description);
-    print(date);
-    print(time);
-    print(assignedWorker);
-    print(customerId);
     try {
       if (date.isNotEmpty) {
         DateTime parsedDate;
@@ -1673,11 +1668,11 @@ class CustomerDetailsProvider extends ChangeNotifier {
       } else {
         date = '';
       }
-      Loader.showLoader(context);
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
       String userName = preferences.getString('userName') ?? "";
-      // Add this before setting addTaskModel properties:
+
       if (audioFiles != null && audioFiles.isNotEmpty) {
         addTaskModel.taskFiles = audioFiles
             .map((file) => TaskFile(
@@ -1687,7 +1682,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
                 ))
             .toList();
       }
-      addTaskModel.taskMasterId = int.tryParse(taskId) ?? 0;
+      addTaskModel.taskMasterId = int.tryParse(taskMasterId) ?? 0;
+      addTaskModel.taskId = int.tryParse(taskId) ?? 0;
       addTaskModel.taskStatusId = _selectedAMCStatus ?? 1;
       addTaskModel.taskStatusName =
           (_selectedAMCStatusName != null && _selectedAMCStatusName!.isNotEmpty)
@@ -1704,56 +1700,51 @@ class CustomerDetailsProvider extends ChangeNotifier {
       addTaskModel.completionTime = "";
 
       final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.saveTask, bodyData: addTaskModel.toJson()
-          // {
-          //   "Task_Id": taskId,
-          //   "Task_Status_Id": _selectedAMCStatus ?? 1,
-          //   "Task_Status_Name": _selectedAMCStatusName ?? 'Not Started',
-          //   // "To_User_Id": assignedWorker,
-          //   "Task_user": addTaskModel.taskUser,
-          //   "Customer_Id": customerId,
-          //   "Created_By": userId,
-          //   "Task_Date": date,
-          //   "Task_Type_Id": taskType,
-          //   "Task_Type_Name": _selectedTaskTypeName.toString(),
-          //   "Description": description,
-          //   "Task_Time": time,
-          //   "Completion_Date": "",
-          //   "Completion_Time": ""
-          // },
-          );
+          endPoint: HttpUrls.saveTask, bodyData: addTaskModel.toJson());
 
       if (response!.statusCode == 200) {
-        final data = response.data;
-        print('Success');
-
-        // _selectedTaskType = null;
-        // _selectedAssignWorker = null;
-        // _selectedAssignWorkerName = '';
-        // taskDescriptionController.clear();
-        // taskChoosedateController.clear();
-        // taskChoosetimeController.clear();
         clearTaskDetails();
-
-        Navigator.pop(context);
-        Loader.stopLoader(context);
         getTaskList(customerId, context);
         if (isEdit) {
-          getTaskDetails(taskId, context);
+          getTaskDetails(taskMasterId, context);
         }
-        print(data);
+
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  const Icon(Icons.check_circle, color: Colors.white),
+                  const SizedBox(width: 10),
+                  Text(isEdit
+                      ? 'Task edited successfully!'
+                      : 'Task added successfully!'),
+                ],
+              ),
+              duration: const Duration(seconds: 3),
+              behavior: SnackBarBehavior.floating,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+              margin: const EdgeInsets.all(10),
+            ),
+          );
+          Navigator.pop(context);
+        }
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-        Loader.stopLoader(context);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to save task. Server Error.')),
+          );
+        }
       }
     } catch (e) {
       print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
-      Loader.stopLoader(context);
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred while saving task')),
+        );
+      }
     }
   }
 

@@ -10,10 +10,10 @@ class InvoiceReportProvider extends ChangeNotifier {
   List<InvoiceReportModel> _taskReport = [];
   List<InvoiceReportModel> get taskReport => _taskReport;
   List<InvoiceReportModel> _tempData = [];
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
   DateTime? get fromDate => _fromDate;
@@ -22,8 +22,8 @@ class InvoiceReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   String _AssignedTo = '';
   String _enquirySource = '';
@@ -68,11 +68,10 @@ class InvoiceReportProvider extends ChangeNotifier {
   void selectDateFilterOption(int? index) {
     if (index == null) {
       // If the index is null, we are clearing the filter
-      _selectedDateFilterIndex = null; // Reset to the default "no filter" state
-      _fromDate = null;
-      _toDate = null;
-      _formattedFromDate = '';
-      _formattedToDate = '';
+      _selectedDateFilterIndex = 1; // Default to Today
+      _fromDate = DateTime.now();
+      _toDate = DateTime.now();
+      formatDate();
     } else {
       _selectedDateFilterIndex = index; // Set the new selected filter index
       formatDate();
@@ -176,11 +175,14 @@ class InvoiceReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
-    _selectedDateFilterIndex = null;
+    _selectedDateFilterIndex = 1; // Default to Today
     _enquiryFor = '';
     _enquirySource = "";
-    _fromDateS = '';
-    _toDateS = '';
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
     _hasFetched = false;
     notifyListeners();
   }
@@ -212,17 +214,10 @@ class InvoiceReportProvider extends ChangeNotifier {
       }
       print(_fromDateS);
       print(_toDateS);
-      String isDate = "0";
+      String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
+        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -293,17 +288,10 @@ class InvoiceReportProvider extends ChangeNotifier {
       }
       print(_fromDateS);
       print(_toDateS);
-      String isDate = "0";
+      String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
+        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -369,17 +357,10 @@ class InvoiceReportProvider extends ChangeNotifier {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      String isDate = "0";
+      String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "2024-01-01";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "2024-01-01";
-        }
-      } else {
-        isDate = "1";
+        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       print(_fromDateS);
       print(_toDateS);

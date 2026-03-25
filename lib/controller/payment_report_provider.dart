@@ -22,8 +22,8 @@ class PaymentReportProvider with ChangeNotifier {
   String searchText = '';
 
   // Filters
-  DateTime? fromDate;
-  DateTime? toDate;
+  DateTime? fromDate = DateTime.now();
+  DateTime? toDate = DateTime.now();
   int? selectedCustomerId;
   String? selectedCustomerName;
   bool isFilter = false;
@@ -41,7 +41,6 @@ class PaymentReportProvider with ChangeNotifier {
       fromDate = DateTime(now.year, now.month, 1);
       toDate = DateTime(now.year, now.month + 1, 0);
     }
-    formatDate();
 
     final url = Uri.parse(
         '${HttpUrls.baseUrl}${HttpUrls.getPaymentReport}?From_Date=$formattedFromDate&To_Date=$formattedToDate&Is_Date_Check=1&Customer_Name=$searchText');
@@ -166,9 +165,8 @@ class PaymentReportProvider with ChangeNotifier {
     isUpcomingLoading = true;
     notifyListeners();
 
-    String isDate = fromDate == null ? "0" : "1";
+    String isDate = "1";
 
-    formatDate();
 
     try {
       final response = await HttpRequest.httpGetRequest(
@@ -217,7 +215,6 @@ class PaymentReportProvider with ChangeNotifier {
       fromDate = DateTime(now.year, now.month, 1);
       toDate = DateTime(now.year, now.month + 1, 0);
     }
-    formatDate();
 
     String isDate = "1";
 
@@ -269,7 +266,6 @@ class PaymentReportProvider with ChangeNotifier {
       fromDate = DateTime(now.year, now.month, 1);
       toDate = DateTime(now.year, now.month + 1, 0);
     }
-    formatDate();
 
     String isDate = "1";
 
@@ -332,16 +328,12 @@ class PaymentReportProvider with ChangeNotifier {
   }
 
   int? selectedDateFilterIndex;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
 
-  String get formattedFromDate => _formattedFromDate.isNotEmpty
-      ? _formattedFromDate
-      : (fromDate != null ? DateFormat('yyyy-MM-dd').format(fromDate!) : '');
+  String get formattedFromDate =>
+      fromDate != null ? DateFormat('yyyy-MM-dd').format(fromDate!) : '';
 
-  String get formattedToDate => _formattedToDate.isNotEmpty
-      ? _formattedToDate
-      : (toDate != null ? DateFormat('yyyy-MM-dd').format(toDate!) : '');
+  String get formattedToDate =>
+      toDate != null ? DateFormat('yyyy-MM-dd').format(toDate!) : '';
 
   Future<void> selectDate(BuildContext context, bool isFromDate) async {
     final DateTime? picked = await showDatePicker(
@@ -358,37 +350,20 @@ class PaymentReportProvider with ChangeNotifier {
       } else {
         toDate = picked;
       }
-      formatDate();
-      notifyListeners();
+        notifyListeners();
     }
   }
 
   void selectDateFilterOption(int? index) {
     selectedDateFilterIndex = index;
     if (index == null) {
-      fromDate = null;
-      toDate = null;
-      _formattedFromDate = '';
-      _formattedToDate = '';
-    } else {
-      formatDate();
+      selectedDateFilterIndex = 1; // Default to Today
+      fromDate = DateTime.now();
+      toDate = DateTime.now();
     }
     notifyListeners();
   }
 
-  void formatDate() {
-    if (fromDate != null) {
-      _formattedFromDate = DateFormat('yyyy-MM-dd').format(fromDate!);
-    } else {
-      _formattedFromDate = '';
-    }
-
-    if (toDate != null) {
-      _formattedToDate = DateFormat('yyyy-MM-dd').format(toDate!);
-    } else {
-      _formattedToDate = '';
-    }
-  }
 
   void setDateFilter(String title) {
     final now = DateTime.now();
@@ -417,7 +392,6 @@ class PaymentReportProvider with ChangeNotifier {
         fromDate = null;
         toDate = null;
     }
-    formatDate();
     notifyListeners();
   }
 }

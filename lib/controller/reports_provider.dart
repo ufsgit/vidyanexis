@@ -25,11 +25,11 @@ class ReportsProvider extends ChangeNotifier {
   int? _selectedStatus;
   int? _selectedAMCStatus;
   int? _selectedUser;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
-  int? _selectedDateFilterIndex;
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  int? _selectedDateFilterIndex = 1; // Default to Today
 
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
@@ -202,12 +202,20 @@ class ReportsProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
+    _selectedDateFilterIndex = 1; // Default to Today
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
     notifyListeners();
   }
 
   void removeAMCStatus() {
     _selectedAMCStatus = null;
     _selectedUser = null;
+    _selectedDateFilterIndex = 1; // Default to Today
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
     notifyListeners();
   }
 
@@ -219,17 +227,10 @@ class ReportsProvider extends ChangeNotifier {
       if (status.isEmpty || status == 'null') {
         status = '0';
       }
-      String isDate = "0";
+      String isDate = "1";
       if (fromDate.isEmpty && toDate.isEmpty) {
-        isDate = "0";
-        if (fromDate.isEmpty) {
-          fromDate = "2024-11-27";
-        }
-        if (toDate.isEmpty) {
-          toDate = "2024-11-27";
-        }
-      } else {
-        isDate = "1";
+        fromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        toDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";

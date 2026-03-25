@@ -612,10 +612,12 @@ class LeadsProvider extends ChangeNotifier {
 
     notifyListeners();
 
-    await getSearchLeads(context, isPagination: true);
-
-    isLoadingMore = false;
-    notifyListeners();
+    try {
+      await getSearchLeads(context, isPagination: true);
+    } finally {
+      isLoadingMore = false;
+      notifyListeners();
+    }
   }
 
 //........................................................................
@@ -759,47 +761,18 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchNextPage(BuildContext context) async {
-    print(
-        "Next Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
-
     if (_endLimit >= _totalCount) return;
-
-    _startLimit = _endLimit + 1;
-
-    int limitPerPage = 20;
-
-    _endLimit = _startLimit + limitPerPage - 1;
-
-    if (_endLimit > _totalCount) {
-      _endLimit = _totalCount;
-    }
-
-    print(
-        "After Next computation → new start: $_startLimit new end: $_endLimit");
-    await getSearchLeads(context);
-
+    currentPage++;
+    await getSearchLeads(context, isPagination: true);
     notifyListeners();
   }
 
   // Fetch previous page data
   Future<void> fetchPreviousPage(BuildContext context) async {
-    print(
-        "Previous Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
-
-    if (_startLimit <= 1) return;
-
-    int limitPerPage = 20;
-
-    _startLimit = _startLimit - limitPerPage;
-
-    if (_startLimit < 1) _startLimit = 1;
-
-    _endLimit = _startLimit + limitPerPage - 1;
-
-    print(
-        "After Previous computation → new start: $_startLimit new end: $_endLimit");
-    await getSearchLeads(context);
-
+    if (currentPage > 1) {
+      currentPage--;
+      await getSearchLeads(context, isPagination: true);
+    }
     notifyListeners();
   }
 
@@ -887,6 +860,7 @@ class LeadsProvider extends ChangeNotifier {
 
   Future<void> getSearchLeads(BuildContext context,
       {bool isPagination = false}) async {
+    final bool isWeb = AppStyles.isWebScreen(context);
     if (!isPagination) {
       currentPage = 1;
       hasMoreData = true;
@@ -948,6 +922,9 @@ class LeadsProvider extends ChangeNotifier {
           _tempData.removeLast();
 
           if (_tempData.isNotEmpty) {
+            if (isWeb) {
+              _leadData.clear();
+            }
             _leadData.addAll(_tempData);
           } else {
             hasMoreData = false;
@@ -961,9 +938,11 @@ class LeadsProvider extends ChangeNotifier {
       }
     } else {
       _isLoading = false;
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Server Error')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
+      }
     }
   }
 
@@ -1434,6 +1413,7 @@ class LeadsProvider extends ChangeNotifier {
     required String departmentName,
     List<Map<String, String>>? audioFiles, // Add this parameter
   }) async {
+    final bool isWeb = AppStyles.isWebScreen(context);
     try {
       if (followUpDate.isNotEmpty) {
         DateTime parsedDate;
@@ -1483,7 +1463,7 @@ class LeadsProvider extends ChangeNotifier {
         final data = response.data;
         log('Success');
 
-        if (!AppStyles.isWebScreen(context)) {
+        if (!isWeb) {
           customerProvider.setLimit();
           _startLimit = 1;
           _endLimit = 10;
@@ -1544,7 +1524,7 @@ class LeadsProvider extends ChangeNotifier {
       {required int statusId, required int leadId}) async {
     try {
       // Loader.showLoader(context);
-      _isLoadingCustomFields = true;
+      // _isLoadingCustomFields = true;
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.getCustomFieldByStatusId}?status_id=$statusId&lead_id=$leadId');
@@ -1625,7 +1605,7 @@ class LeadsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     } finally {
-      _isLoadingCustomFields = false;
+      // _isLoadingCustomFields = false;
       notifyListeners();
     }
   }
@@ -1910,16 +1890,18 @@ class LeadsProvider extends ChangeNotifier {
         }
       } else {
         Loader.stopLoader(context);
+      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
+      }
     } catch (e) {
-      print('Exception occurred: $e');
-      Loader.stopLoader(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred')),
+        );
+      }
     }
   }
 

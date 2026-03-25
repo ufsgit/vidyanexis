@@ -41,9 +41,9 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         setState(() {
           _filteredUsers = dropDownProvider.searchUserDetails
               .where((user) =>
-                  user.workingStatus == "1" &&
+                  // user.workingStatus == "1" &&
                   user.departmentId.toString() ==
-                      selectedTaskTypeModel.departmentIds.toString())
+                  selectedTaskTypeModel.departmentIds.toString())
               .toList();
         });
       } catch (e) {
@@ -100,7 +100,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
       }
 
       await customerDetailsProvider.saveTask(
-        widget.taskId.toString(),
+        widget.task?.taskId.first.toString() ?? '0',  //taking first item from list
+        widget.task?.taskMasterId.toString() ?? '0',
         customerDetailsProvider.selectedTaskType.toString(),
         customerDetailsProvider.taskDescriptionController.text.toString(),
         customerDetailsProvider.taskChoosedateController.text.toString(),
@@ -247,59 +248,58 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                             child: Wrap(
                               spacing: 10,
                               runSpacing: 10,
-                               children: dropDownProvider
-                                    .getFilteredTaskTypes()
-                                    .map((taskType) {
-                                  bool isSelected =
-                                      customerDetailsProvider.selectedTaskType ==
-                                          taskType.taskTypeId;
-                                  return InkWell(
-                                    onTap: () {
-                                      if (customerDetailsProvider
-                                              .addTaskModel.taskUser !=
-                                          null) {
-                                        customerDetailsProvider
-                                            .addTaskModel.taskUser!
-                                            .clear();
-                                      }
-                                      customerDetailsProvider.updateTaskType(
-                                          taskType.taskTypeId,
-                                          taskType.taskTypeName);
+                              children:
+                                  dropDownProvider.taskType.map((taskType) {
+                                bool isSelected =
+                                    customerDetailsProvider.selectedTaskType ==
+                                        taskType.taskTypeId;
+                                return InkWell(
+                                  onTap: () {
+                                    if (customerDetailsProvider
+                                            .addTaskModel.taskUser !=
+                                        null) {
+                                      customerDetailsProvider
+                                          .addTaskModel.taskUser!
+                                          .clear();
+                                    }
+                                    customerDetailsProvider.updateTaskType(
+                                        taskType.taskTypeId,
+                                        taskType.taskTypeName);
 
-                                      final defaultStatusId =
-                                          taskType.defaultStatusId;
-                                      customerDetailsProvider.updateAMCStatus(
-                                          defaultStatusId != 0
-                                              ? defaultStatusId
-                                              : 1,
-                                          '');
+                                    final defaultStatusId =
+                                        taskType.defaultStatusId;
+                                    customerDetailsProvider.updateAMCStatus(
+                                        defaultStatusId != 0
+                                            ? defaultStatusId
+                                            : 1,
+                                        '');
 
-                                      _updateFilteredUsers();
-                                    },
-                                    child: Container(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 10, vertical: 6),
-                                      decoration: BoxDecoration(
+                                    _updateFilteredUsers();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 6),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? AppColors.bluebutton
+                                          : const Color(0xFFF3F5F7),
+                                      borderRadius: BorderRadius.circular(10),
+                                    ),
+                                    child: Text(
+                                      taskType.taskTypeName ?? '',
+                                      style: GoogleFonts.plusJakartaSans(
+                                        fontSize: 11,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
                                         color: isSelected
-                                            ? AppColors.bluebutton
-                                            : const Color(0xFFF3F5F7),
-                                        borderRadius: BorderRadius.circular(10),
-                                      ),
-                                      child: Text(
-                                        taskType.taskTypeName ?? '',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 11,
-                                          fontWeight: isSelected
-                                              ? FontWeight.w700
-                                              : FontWeight.w600,
-                                          color: isSelected
-                                              ? Colors.white
-                                              : Colors.grey[600],
-                                        ),
+                                            ? Colors.white
+                                            : Colors.grey[600],
                                       ),
                                     ),
-                                  );
-                                }).toList(),
+                                  ),
+                                );
+                              }).toList(),
                             ),
                           ),
                         ),

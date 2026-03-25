@@ -32,13 +32,22 @@ class LeadCoversionChartModel {
     this.totalConvertedCount,
   });
 
-  factory LeadCoversionChartModel.fromJson(Map<String, dynamic> json) =>
-      LeadCoversionChartModel(
-        enquirySource: json["Enquiry_Source"],
-        enquirySourceId: json["Enquiry_Source_Id"],
-        leadCount: json["leadCount"],
-        convertedCount: json["convertedCount"],
-      );
+  factory LeadCoversionChartModel.fromJson(Map<String, dynamic> json) {
+    int? parseId(dynamic value) {
+      if (value == null) return null;
+      if (value is int) return value;
+      if (value is String) return int.tryParse(value);
+      return null;
+    }
+
+    return LeadCoversionChartModel(
+      enquirySource: json["Enquiry_Source"],
+      enquirySourceId: parseId(json["Enquiry_Source_Id"]) ??
+          parseId(json["enquirySourceId"]),
+      leadCount: parseId(json["leadCount"]) ?? parseId(json["LeadCount"]),
+      convertedCount: json["convertedCount"]?.toString(),
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "Enquiry_Source": enquirySource,
