@@ -149,6 +149,7 @@ class _TaskDetailsPagePhoneState extends State<TaskDetailsPagePhone> {
                         taskId: customerDetailsProvider
                             .taskDetails[0].taskMasterId
                             .toString(),
+                        task: customerDetailsProvider.taskDetails[0],
                       );
                     },
                   ));

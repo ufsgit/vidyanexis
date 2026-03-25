@@ -3962,6 +3962,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         isEdit: true,
                                                         taskId: task.taskId
                                                             .toString(),
+                                                        task: task,
                                                       );
                                                     },
                                                   );

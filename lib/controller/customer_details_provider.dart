@@ -1729,6 +1729,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
               margin: const EdgeInsets.all(10),
             ),
           );
+          Navigator.pop(context);
         }
       } else {
         if (context.mounted) {
