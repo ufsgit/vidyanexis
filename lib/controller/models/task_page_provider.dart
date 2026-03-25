@@ -340,12 +340,14 @@ class TaskPageProvider extends ChangeNotifier {
 
   void setStatus(int newStatus) {
     _selectedStatus = newStatus;
+    _selectedStatusIds = [newStatus];
     print(_selectedStatus.toString());
     notifyListeners(); // Notify listeners about the change
   }
 
   void setUserFilterStatus(int newStatus) {
     _selectedUser = newStatus;
+    _selectedUserIds = [newStatus];
     print(_selectedUser.toString());
     notifyListeners(); // Notify listeners about the change
   }
