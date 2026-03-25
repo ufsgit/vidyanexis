@@ -14,8 +14,8 @@ class LeadCheckInReportProvider extends ChangeNotifier {
   bool _isLoading = false;
   bool get isLoading => _isLoading;
 
-  DateTime? _fromDate;
-  DateTime? _toDate;
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
   int? _selectedUserId;
   String? _selectedUserName;
   String? _userType;
@@ -65,7 +65,13 @@ class LeadCheckInReportProvider extends ChangeNotifier {
   }
 
   void selectDateFilterOption(int? index) {
-    _selectedDateFilterIndex = index;
+    if (index == null) {
+      _selectedDateFilterIndex = 1; // Default to Today
+      _fromDate = DateTime.now();
+      _toDate = DateTime.now();
+    } else {
+      _selectedDateFilterIndex = index;
+    }
     notifyListeners();
   }
 
@@ -160,6 +166,9 @@ class LeadCheckInReportProvider extends ChangeNotifier {
   int? get TaskType => 0; // Not used
 
   void removeStatus() {
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    _selectedDateFilterIndex = 1; // Default to Today
     notifyListeners();
   }
 
@@ -251,12 +260,12 @@ class LeadCheckInReportProvider extends ChangeNotifier {
   }
 
   void clearFilters() {
-    _fromDate = null;
-    _toDate = null;
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
     _selectedUserId = null;
     _selectedUserName = null;
     _leadSearch = '';
-    _selectedDateFilterIndex = null;
+    _selectedDateFilterIndex = 1; // Default to Today
     _reports = [];
     notifyListeners();
   }

@@ -9,8 +9,8 @@ import 'package:vidyanexis/http/loader.dart';
 class EnquiryReportProvider extends ChangeNotifier {
   List<WorkReportModel> _taskReport = [];
   List<WorkReportModel> get taskReport => _taskReport;
-  DateTime? _fromDate;
-  DateTime? _toDate;
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
   String _formattedFromDate = '';
   String _formattedToDate = '';
   String get formattedFromDate => _formattedFromDate;
@@ -21,8 +21,8 @@ class EnquiryReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   String _AssignedTo = '';
 
@@ -48,11 +48,10 @@ class EnquiryReportProvider extends ChangeNotifier {
   void selectDateFilterOption(int? index) {
     if (index == null) {
       // If the index is null, we are clearing the filter
-      _selectedDateFilterIndex = null; // Reset to the default "no filter" state
-      _fromDate = null;
-      _toDate = null;
-      _formattedFromDate = '';
-      _formattedToDate = '';
+      _selectedDateFilterIndex = 1; // Default to Today
+      _fromDate = DateTime.now();
+      _toDate = DateTime.now();
+      formatDate();
     } else {
       _selectedDateFilterIndex = index; // Set the new selected filter index
       formatDate();
@@ -156,9 +155,12 @@ class EnquiryReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
-    _selectedDateFilterIndex = null;
-    _fromDateS = '';
-    _toDateS = '';
+    _selectedDateFilterIndex = 1; // Default to Today
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
     notifyListeners();
   }
 
@@ -181,17 +183,10 @@ class EnquiryReportProvider extends ChangeNotifier {
       }
       print(_fromDateS);
       print(_toDateS);
-      String isDate = "0";
+      String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
+        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -235,17 +230,10 @@ class EnquiryReportProvider extends ChangeNotifier {
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      String isDate = "0";
+      String isDate = "1";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
-      } else {
-        isDate = "1";
+        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
       }
       print(_fromDateS);
       print(_toDateS);

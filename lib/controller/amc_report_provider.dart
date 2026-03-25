@@ -9,20 +9,20 @@ import 'package:vidyanexis/http/loader.dart';
 class AMCReportProvider extends ChangeNotifier {
   List<AmcReportModeld> _amcReport = [];
   List<AmcReportModeld> get amcReport => _amcReport;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
   DateTime? get fromDate => _fromDate;
   DateTime? get toDate => _toDate;
 
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   String _AssignedTo = '';
 
@@ -161,9 +161,12 @@ class AMCReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
-    _selectedDateFilterIndex = null;
-    _fromDateS = '';
-    _toDateS = '';
+    _selectedDateFilterIndex = 1; // Default to Today
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
     notifyListeners();
   }
 

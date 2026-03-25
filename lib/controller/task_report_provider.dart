@@ -24,8 +24,8 @@ class TaskReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   String _AssignedTo = '';
   String _TaskType = '';
@@ -209,9 +209,12 @@ class TaskReportProvider extends ChangeNotifier {
     _toDate = null;
     _formattedFromDate = '';
     _formattedToDate = '';
-    _fromDateS = '';
-    _toDateS = '';
-    _Search = '';
+    _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    _formattedFromDate = _fromDateS;
+    _formattedToDate = _toDateS;
     _Status = '';
     _AssignedTo = '';
     _TaskType = '';
@@ -294,7 +297,7 @@ class TaskReportProvider extends ChangeNotifier {
           final dataMap = data is Map ? data['data'] ?? data : data;
           
           if (dataMap is List) {
-            final allTasks = (dataMap as List<dynamic>)
+            final allTasks = dataMap
                 .map((item) => TaskReportModel.fromJson(item))
                 .toList();
 

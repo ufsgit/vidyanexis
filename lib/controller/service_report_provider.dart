@@ -9,10 +9,10 @@ import 'package:vidyanexis/http/loader.dart';
 class ServiceReportProvider extends ChangeNotifier {
   List<ServiceReportModel> _serviceReport = [];
   List<ServiceReportModel> get serviceReport => _serviceReport;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
   DateTime? get fromDate => _fromDate;
@@ -21,8 +21,8 @@ class ServiceReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   String _AssignedTo = '';
   bool _hasFetched = false;
@@ -163,9 +163,12 @@ class ServiceReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
-    _selectedDateFilterIndex = null;
-    _fromDateS = '';
-    _toDateS = '';
+    _selectedDateFilterIndex = 1; // Default to Today
+    _fromDate = DateTime.now();
+    _toDate = DateTime.now();
+    formatDate();
+    _fromDateS = _formattedFromDate;
+    _toDateS = _formattedToDate;
     _hasFetched = false;
     notifyListeners();
   }
