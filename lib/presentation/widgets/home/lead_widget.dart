@@ -144,7 +144,7 @@ class _LeadCardState extends State<LeadCard> {
       children: [
         Container(
           width: MediaQuery.sizeOf(context).width,
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
           decoration: BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.circular(12),
@@ -162,7 +162,7 @@ class _LeadCardState extends State<LeadCard> {
               GestureDetector(
                 onTap: widget.onTap,
                 child: Padding(
-                  padding: const EdgeInsets.all(16),
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -271,7 +271,7 @@ class _LeadCardState extends State<LeadCard> {
               // Expanded Content
               if (widget.isExpanded)
                 Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 16),
+                  padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
                   child: Column(
                     children: [
                       // Toggleable Note Section
