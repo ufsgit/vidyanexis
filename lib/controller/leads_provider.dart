@@ -1544,7 +1544,7 @@ class LeadsProvider extends ChangeNotifier {
       {required int statusId, required int leadId}) async {
     try {
       // Loader.showLoader(context);
-      _isLoadingCustomFields = true;
+      // _isLoadingCustomFields = true;
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.getCustomFieldByStatusId}?status_id=$statusId&lead_id=$leadId');
@@ -1625,7 +1625,7 @@ class LeadsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     } finally {
-      _isLoadingCustomFields = false;
+      // _isLoadingCustomFields = false;
       notifyListeners();
     }
   }
