@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
@@ -62,6 +61,9 @@ import 'package:vidyanexis/utils/file_share_function.dart';
 import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
 import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
+import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
+import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
+import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 
 class CustomerDetailsScreen extends StatefulWidget {
   static const String route = '/customerDetails/';
@@ -92,7 +94,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       // sidebarProvider.setSelectedIndex(1);
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
-      customerDetailsProvider.setCustomerId(int.tryParse(widget.customerId)??0);
+      customerDetailsProvider
+          .setCustomerId(int.tryParse(widget.customerId) ?? 0);
       customerDetailsProvider.getTaskList(widget.customerId, context);
       customerDetailsProvider
           .fetchLeadDetails(widget.customerId, context)
@@ -861,8 +864,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       customerDetailsProvider.customerId =
                                           widget.customerId;
                                       customerDetailsProvider
-                                          .qsubsidyAmountController
-                                          .text = '0';
+                                          .qsubsidyAmountController.text = '0';
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -1959,10 +1961,73 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         textColor:
                                                                             AppColors.bluebutton,
                                                                         buttonText:
+                                                                            'KSEB',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await ksebPdf(
+                                                                              customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                              context: context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[63] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Vendor Agreement',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await vendorAgreementPdf(
+                                                                              customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                              context: context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[62] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Vendor Feasibility',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await rtsFeasibilityReportPdf(
+                                                                              customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                              context: context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[61] ==
+                                                                            1 &&
+                                                                        sideprovider.name !=
+                                                                            'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
                                                                             'Annexture1',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure1}${widget.customerId}', 'Annexture1', context);
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
+                                                                              'Annexture1',
+                                                                              context);
                                                                         },
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[63] ==
@@ -1980,7 +2045,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Annexture2',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure2}${widget.customerId}', 'Annexture2', context);
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
+                                                                              'Annexture2',
+                                                                              context);
                                                                         },
                                                                       ),
                                                                     if (settingsprovider.menuIsViewMap[62] ==
@@ -1998,7 +2066,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             'Annexture3',
                                                                         onPressed:
                                                                             () async {
-                                                                          await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure3}${widget.customerId}', 'Annexture3', context);
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
+                                                                              'Annexture3',
+                                                                              context);
                                                                         },
                                                                       ),
                                                                   ],
@@ -2451,10 +2522,100 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       AppColors
                                                                           .bluebutton,
                                                                   buttonText:
+                                                                      'KSEB',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await ksebPdf(
+                                                                        customerDetails: leadDetailsProvider
+                                                                            .leadDetails!
+                                                                            .first,
+                                                                        context:
+                                                                            context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          63] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Vendor Agreement',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await vendorAgreementPdf(
+                                                                        customerDetails: leadDetailsProvider
+                                                                            .leadDetails!
+                                                                            .first,
+                                                                        context:
+                                                                            context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          62] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
+                                                                      'Vendor Feasibility',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await rtsFeasibilityReportPdf(
+                                                                        customerDetails: leadDetailsProvider
+                                                                            .leadDetails!
+                                                                            .first,
+                                                                        context:
+                                                                            context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider
+                                                                              .menuIsViewMap[
+                                                                          61] ==
+                                                                      1 &&
+                                                                  sideprovider
+                                                                          .name !=
+                                                                      'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors
+                                                                          .whiteColor,
+                                                                  borderColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  textColor:
+                                                                      AppColors
+                                                                          .bluebutton,
+                                                                  buttonText:
                                                                       'Annexture1',
                                                                   onPressed:
                                                                       () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure1}${widget.customerId}', 'Annexture1', context);
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfAnnexure1}${widget.customerId}',
+                                                                        'Annexture1',
+                                                                        context);
                                                                   },
                                                                 ),
                                                               if (settingsprovider
@@ -2478,7 +2639,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       'Annexture2',
                                                                   onPressed:
                                                                       () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure2}${widget.customerId}', 'Annexture2', context);
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfAnnexure2}${widget.customerId}',
+                                                                        'Annexture2',
+                                                                        context);
                                                                   },
                                                                 ),
                                                               if (settingsprovider
@@ -2502,7 +2666,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       'Annexture3',
                                                                   onPressed:
                                                                       () async {
-                                                                    await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure3}${widget.customerId}', 'Annexture3', context);
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
+                                                                        'Annexture3',
+                                                                        context);
                                                                   },
                                                                 ),
                                                             ],
@@ -2806,11 +2973,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                             Navigator.push(
                                                               context,
                                                               MaterialPageRoute(
-                                                                builder: (BuildContext
-                                                                    context) {
+                                                                builder:
+                                                                    (BuildContext
+                                                                        context) {
                                                                   return QuotationDetailsWidget(
-                                                                    customerId: widget
-                                                                        .customerId,
+                                                                    customerId:
+                                                                        widget
+                                                                            .customerId,
                                                                     serviceId:
                                                                         quatationId
                                                                             .toString(),
@@ -2818,7 +2987,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                 },
                                                               ),
                                                             );
-
                                                           },
                                                           quatationId:
                                                               selectedQuotationStatusId,
@@ -2870,7 +3038,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           var userData =
                                                               customerDetailsProvider
                                                                       .documentList[
-                                                                   index];
+                                                                  index];
                                                           userData.userName;
                                                           List<ImageDetail>
                                                               images = userData
@@ -3081,12 +3249,13 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   ],
                                                 ),
                                               ),
-                                              //Forms
-                                              if (settingsprovider
+                                            //Forms
+                                            if (settingsprovider
                                                     .menuIsViewMap[85] ==
                                                 1)
-                                            FormsTabWidget(
-                                                customerId: widget.customerId),
+                                              FormsTabWidget(
+                                                  customerId:
+                                                      widget.customerId),
 
                                             // Task Overview Tab
                                             if (settingsprovider
@@ -3399,7 +3568,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         ));
   }
 
-
   Widget _buildFilteredServiceList(
       {int? serviceId, void Function(int)? onTap}) {
     final customerDetailsProvider =
@@ -3629,24 +3797,24 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                         amc.serviceName,
                                                     fromDateController:
                                                         DateFormat('dd-MM-yyyy')
-                                                            .format(
-                                                                DateTime.parse(amc
-                                                                    .fromDate
+                                                            .format(DateTime.parse(
+                                                                amc.fromDate
                                                                     .toString())),
-                                                    toDateController:
-                                                        DateFormat('dd-MM-yyyy')
-                                                            .format(
-                                                                DateTime.parse(amc
-                                                                    .toDate
-                                                                    .toString())),
-                                                    customerId: widget.customerId,
+                                                    toDateController: DateFormat(
+                                                            'dd-MM-yyyy')
+                                                        .format(DateTime.parse(
+                                                            amc.toDate
+                                                                .toString())),
+                                                    customerId:
+                                                        widget.customerId,
                                                     amc: amc,
                                                     isEdit: true);
                                               },
                                             );
                                           },
                                         ),
-                                      if (settingsprovider.menuIsDeleteMap[15] ==
+                                      if (settingsprovider
+                                              .menuIsDeleteMap[15] ==
                                           1)
                                         IconButton(
                                           tooltip: 'Delete',
@@ -3662,12 +3830,14 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   content:
                                                       'Are you sure you want to delete this service?',
                                                   onCancel: () =>
-                                                      Navigator.of(context).pop(),
+                                                      Navigator.of(context)
+                                                          .pop(),
                                                   onConfirm: () {
                                                     Navigator.of(context).pop();
                                                     customerDetailsProvider
                                                         .deleteAMC(
-                                                            amc.amcId.toString(),
+                                                            amc.amcId
+                                                                .toString(),
                                                             widget.customerId,
                                                             context);
                                                   },
@@ -3691,7 +3861,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
             ),
           );
   }
-
 
 // Method to build filtered task list based on task type ID
   Widget _buildFilteredTaskList({int? taskTypeId, void Function(int)? onTap}) {
@@ -3903,7 +4072,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                         mainAxisAlignment:
                                             MainAxisAlignment.center,
                                         children: [
-                                          if (settingsprovider.menuIsEditMap[13] ==
+                                          if (settingsprovider
+                                                  .menuIsEditMap[13] ==
                                               1)
                                             IconButton(
                                               icon: const Icon(Icons.edit,
@@ -3922,7 +4092,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                   customerDetailsProvider
                                                           .taskDescriptionController
                                                           .text =
-                                                      task.description.toString();
+                                                      task.description
+                                                          .toString();
                                                   customerDetailsProvider
                                                       .taskChoosedateController
                                                       .text = task.taskDate
@@ -3931,9 +4102,11 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                           task.taskDate
                                                               .toString()
                                                               .isNotEmpty
-                                                      ? DateFormat('dd MMM yyyy')
-                                                          .format(DateTime.parse(
-                                                              task.taskDate
+                                                      ? DateFormat(
+                                                              'dd MMM yyyy')
+                                                          .format(DateTime
+                                                              .parse(task
+                                                                  .taskDate
                                                                   .toString()))
                                                       : '';
                                                   customerDetailsProvider
@@ -3969,7 +4142,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                 }
                                               },
                                             ),
-                                          if (settingsprovider.menuIsDeleteMap[13] ==
+                                          if (settingsprovider
+                                                  .menuIsDeleteMap[13] ==
                                               1)
                                             IconButton(
                                               icon: const Icon(Icons.delete,
@@ -3993,7 +4167,8 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                             .deleteTask(
                                                                 task.taskId
                                                                     .toString(),
-                                                                widget.customerId,
+                                                                widget
+                                                                    .customerId,
                                                                 context);
                                                       },
                                                     );
@@ -4102,7 +4277,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       ),
     );
   }
-
 
   Widget _buildFilteredQuatationList(
       {int? quatationId, void Function(int)? onTap}) {
@@ -4533,7 +4707,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
         },
       ),
     );
-
   }
 
   Future<void> _openMaps(String location) async {
