@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
@@ -25,6 +26,7 @@ import 'package:vidyanexis/controller/models/task_type_status_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/new_drawer_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_drawer_mobile.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/hover_action_dropdown.dart';
@@ -1044,18 +1046,102 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       ),
                                                     ),
                                                     HoverActionDropdown(
-                                                      items: [
-                                                        if (settingsProvider.menuIsEditMap[13] == 1)
-                                                        HoverActionItem(
-                                                          title: 'Edit Task',
-                                                          icon: Icons.edit,
-                                                          value: 'edit',
-                                                          iconColor: Colors.blue,
-                                                          onTap: () {
-                                                            context.push(
-                                                                '${CustomerDetailsScreen.route}${task.customerId.toString()}/${'true'}');
-                                                          },
-                                                        ),
+                                                        items: [
+                                                          if (settingsProvider
+                                                                      .menuIsEditMap[
+                                                                  13] ==
+                                                              1)
+                                                            HoverActionItem(
+                                                              title:
+                                                                  'Edit',
+                                                              icon: Icons.edit,
+                                                              value: 'edit',
+                                                              iconColor:
+                                                                  Colors.blue,
+                                                              onTap: () async {
+                                                                
+                                                                showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  barrierDismissible:
+                                                                      false,
+                                                                  builder:
+                                                                      (BuildContext
+                                                                          context) {
+                                                                    return const Center(
+                                                                      child:
+                                                                          CircularProgressIndicator(),
+                                                                    );
+                                                                  },
+                                                                );
+
+                                                                final leadDetailsProvider =
+                                                                    Provider.of<
+                                                                            LeadDetailsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                await leadDetailsProvider
+                                                                    .fetchLeadDetails(
+                                                                        task.customerId
+                                                                            .toString(),
+                                                                        context);
+
+                                                                final leadsProvider =
+                                                                    Provider.of<
+                                                                            LeadsProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                leadsProvider
+                                                                    .setCutomerId(
+                                                                        task.customerId);
+                                                                final dropDownProvider =
+                                                                    Provider.of<
+                                                                            DropDownProvider>(
+                                                                        context,
+                                                                        listen:
+                                                                            false);
+                                                                final leadDetails =
+                                                                    leadDetailsProvider
+                                                                        .leadDetails![0];
+                                                                leadsProvider
+                                                                        .enquirySourceController
+                                                                        .text =
+                                                                    leadDetails
+                                                                        .enquirySourceName
+                                                                        .toString();
+
+                                                                dropDownProvider
+                                                                        .selectedEnquirySourceId =
+                                                                    leadDetails
+                                                                        .enquirySourceId;
+                                                                await leadsProvider
+                                                                    .getLeadDropdowns(
+                                                                        context);
+                                                                if (context
+                                                                    .mounted) {
+                                                                  Navigator.pop(
+                                                                      context); // Close loading dialog
+                                                                }
+
+                                                                if (context
+                                                                    .mounted) {
+                                                                  showDialog(
+                                                                    context:
+                                                                        context,
+                                                                    builder:
+                                                                        (BuildContext
+                                                                            context) {
+                                                                      return const NewLeadDrawerWidget(
+                                                                        isEdit:
+                                                                            true,
+                                                                      );
+                                                                    },
+                                                                  );
+                                                                }
+                                                              },
+                                                            ),
                                                         if (settingsProvider.menuIsEditMap[94] == 1)
                                                         HoverActionItem(
                                                           title: 'Convert',
