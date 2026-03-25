@@ -1610,96 +1610,96 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                   ],
                                                                 ),
                                                                 // More Info
-                                                                CustomerCard(
-                                                                  title:
-                                                                      "More Info",
-                                                                  content: [
-                                                                    Column(
-                                                                      crossAxisAlignment:
-                                                                          CrossAxisAlignment
-                                                                              .start,
-                                                                      children: [
-                                                                        DetailRow(
-                                                                            label:
-                                                                                "Address",
-                                                                            value:
-                                                                                customerDetailsProvider.leadDetails![0].address ?? ''),
-                                                                        const SizedBox(
-                                                                            height:
-                                                                                2),
-                                                                        DetailRow(
-                                                                            label:
-                                                                                "Enquiry For",
-                                                                            value:
-                                                                                customerDetailsProvider.leadDetails![0].enquiryForName ?? ''),
-                                                                        const SizedBox(
-                                                                            height:
-                                                                                2),
-                                                                        DetailRow(
-                                                                            label:
-                                                                                "Enquiry Source",
-                                                                            value:
-                                                                                customerDetailsProvider.leadDetails![0].enquirySourceName ?? ''),
-                                                                        const SizedBox(
-                                                                            height:
-                                                                                2),
-                                                                        DetailRow(
-                                                                            label:
-                                                                                "Consumer Number",
-                                                                            value:
-                                                                                customerDetailsProvider.leadDetails![0].consumerNumber ?? ''),
-                                                                        const SizedBox(
-                                                                          height:
-                                                                              2,
-                                                                        ),
-                                                                        const Text(
-                                                                          "Location: ",
-                                                                          style:
-                                                                              TextStyle(color: Color(0xFF8E97A3)),
-                                                                        ),
-                                                                        Row(
-                                                                          children: [
-                                                                            Expanded(
-                                                                              child: InkWell(
-                                                                                onTap: () {
-                                                                                  String locationData = customerDetailsProvider.leadDetails![0].location.toString();
+                                                                // CustomerCard(
+                                                                //   title:
+                                                                //       "More Info",
+                                                                //   content: [
+                                                                //     Column(
+                                                                //       crossAxisAlignment:
+                                                                //           CrossAxisAlignment
+                                                                //               .start,
+                                                                //       children: [
+                                                                //         DetailRow(
+                                                                //             label:
+                                                                //                 "Address",
+                                                                //             value:
+                                                                //                 customerDetailsProvider.leadDetails![0].address ?? ''),
+                                                                //         const SizedBox(
+                                                                //             height:
+                                                                //                 2),
+                                                                //         DetailRow(
+                                                                //             label:
+                                                                //                 "Enquiry For",
+                                                                //             value:
+                                                                //                 customerDetailsProvider.leadDetails![0].enquiryForName ?? ''),
+                                                                //         const SizedBox(
+                                                                //             height:
+                                                                //                 2),
+                                                                //         DetailRow(
+                                                                //             label:
+                                                                //                 "Enquiry Source",
+                                                                //             value:
+                                                                //                 customerDetailsProvider.leadDetails![0].enquirySourceName ?? ''),
+                                                                //         const SizedBox(
+                                                                //             height:
+                                                                //                 2),
+                                                                //         DetailRow(
+                                                                //             label:
+                                                                //                 "Consumer Number",
+                                                                //             value:
+                                                                //                 customerDetailsProvider.leadDetails![0].consumerNumber ?? ''),
+                                                                //         const SizedBox(
+                                                                //           height:
+                                                                //               2,
+                                                                //         ),
+                                                                //         const Text(
+                                                                //           "Location: ",
+                                                                //           style:
+                                                                //               TextStyle(color: Color(0xFF8E97A3)),
+                                                                //         ),
+                                                                //         Row(
+                                                                //           children: [
+                                                                //             Expanded(
+                                                                //               child: InkWell(
+                                                                //                 onTap: () {
+                                                                //                   String locationData = customerDetailsProvider.leadDetails![0].location.toString();
 
-                                                                                  print('DEBUG: Raw location data: "$locationData"');
-                                                                                  print('DEBUG: Location length: ${locationData.length}');
-                                                                                  print('DEBUG: Location characters: ${locationData.codeUnits}');
+                                                                //                   print('DEBUG: Raw location data: "$locationData"');
+                                                                //                   print('DEBUG: Location length: ${locationData.length}');
+                                                                //                   print('DEBUG: Location characters: ${locationData.codeUnits}');
 
-                                                                                  _openMaps(locationData);
-                                                                                },
-                                                                                child: Text(
-                                                                                  customerDetailsProvider.leadDetails![0].location.toString(),
-                                                                                  style: const TextStyle(color: Colors.blue),
-                                                                                  overflow: TextOverflow.ellipsis,
-                                                                                  maxLines: 1,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                            IconButton(
-                                                                              color: Colors.grey,
-                                                                              onPressed: () {
-                                                                                Clipboard.setData(
-                                                                                  ClipboardData(
-                                                                                    text: customerDetailsProvider.leadDetails![0].location.toString(),
-                                                                                  ),
-                                                                                );
-                                                                                ScaffoldMessenger.of(context).showSnackBar(
-                                                                                  const SnackBar(
-                                                                                    content: Text('Link copied to clipboard!'),
-                                                                                  ),
-                                                                                );
-                                                                              },
-                                                                              icon: const Icon(Icons.copy),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
+                                                                //                   _openMaps(locationData);
+                                                                //                 },
+                                                                //                 child: Text(
+                                                                //                   customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                //                   style: const TextStyle(color: Colors.blue),
+                                                                //                   overflow: TextOverflow.ellipsis,
+                                                                //                   maxLines: 1,
+                                                                //                 ),
+                                                                //               ),
+                                                                //             ),
+                                                                //             IconButton(
+                                                                //               color: Colors.grey,
+                                                                //               onPressed: () {
+                                                                //                 Clipboard.setData(
+                                                                //                   ClipboardData(
+                                                                //                     text: customerDetailsProvider.leadDetails![0].location.toString(),
+                                                                //                   ),
+                                                                //                 );
+                                                                //                 ScaffoldMessenger.of(context).showSnackBar(
+                                                                //                   const SnackBar(
+                                                                //                     content: Text('Link copied to clipboard!'),
+                                                                //                   ),
+                                                                //                 );
+                                                                //               },
+                                                                //               icon: const Icon(Icons.copy),
+                                                                //             ),
+                                                                //           ],
+                                                                //         ),
+                                                                //       ],
+                                                                //     ),
+                                                                //   ],
+                                                                // ),
                                                                 // Basic Information
                                                                 CustomerCard(
                                                                   title:
@@ -1818,16 +1818,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         value: customerDetailsProvider.leadDetails![0].districtName ??
                                                                             ''),
 
-                                                                    // Firestation
+                                                                    // Consumer Number
                                                                     const SizedBox(
                                                                         height:
                                                                             2),
                                                                     DetailRow(
                                                                         label:
-                                                                            "Firestation",
+                                                                            "Consumer Number",
                                                                         value: customerDetailsProvider
                                                                             .leadDetails![0]
-                                                                            .firestationName
+                                                                            .consumerNumber
                                                                             .toString()),
                                                                     const SizedBox(
                                                                         height:
@@ -2068,112 +2068,112 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                       .toString()),
                                                             ],
                                                           ),
-                                                          // More Info
-                                                          CustomerCard(
-                                                            title: "More Info",
-                                                            content: [
-                                                              Column(
-                                                                crossAxisAlignment:
-                                                                    CrossAxisAlignment
-                                                                        .start,
-                                                                children: [
-                                                                  DetailRow(
-                                                                      label:
-                                                                          "Address",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .address ??
-                                                                          ''),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          2),
-                                                                  DetailRow(
-                                                                      label:
-                                                                          "Enquiry For",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .enquiryForName ??
-                                                                          ''),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          2),
-                                                                  DetailRow(
-                                                                      label:
-                                                                          "Enquiry Source",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .enquirySourceName ??
-                                                                          ''),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          2),
-                                                                  DetailRow(
-                                                                      label:
-                                                                          "Consumer Number",
-                                                                      value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .consumerNumber ??
-                                                                          ''),
-                                                                  const SizedBox(
-                                                                      height:
-                                                                          2),
-                                                                  const Text(
-                                                                    "Location: ",
-                                                                    style: TextStyle(
-                                                                        color: Color(
-                                                                            0xFF8E97A3)),
-                                                                  ),
-                                                                  Row(
-                                                                    children: [
-                                                                      Expanded(
-                                                                        child:
-                                                                            InkWell(
-                                                                          onTap:
-                                                                              () {
-                                                                            String
-                                                                                locationData =
-                                                                                customerDetailsProvider.leadDetails![0].location.toString();
-                                                                            _openMaps(locationData);
-                                                                          },
-                                                                          child:
-                                                                              Text(
-                                                                            customerDetailsProvider.leadDetails![0].location.toString(),
-                                                                            style:
-                                                                                const TextStyle(color: Colors.blue),
-                                                                            overflow:
-                                                                                TextOverflow.ellipsis,
-                                                                            maxLines:
-                                                                                1,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      IconButton(
-                                                                        color: Colors
-                                                                            .grey,
-                                                                        onPressed:
-                                                                            () {
-                                                                          Clipboard
-                                                                              .setData(
-                                                                            ClipboardData(
-                                                                              text: customerDetailsProvider.leadDetails![0].location.toString(),
-                                                                            ),
-                                                                          );
-                                                                          ScaffoldMessenger.of(context)
-                                                                              .showSnackBar(
-                                                                            const SnackBar(
-                                                                              content: Text('Link copied to clipboard!'),
-                                                                            ),
-                                                                          );
-                                                                        },
-                                                                        icon: const Icon(
-                                                                            Icons.copy),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ],
-                                                          ),
+                                                          // // More Info
+                                                          // CustomerCard(
+                                                          //   title: "More Info",
+                                                          //   content: [
+                                                          //     Column(
+                                                          //       crossAxisAlignment:
+                                                          //           CrossAxisAlignment
+                                                          //               .start,
+                                                          //       children: [
+                                                          //         DetailRow(
+                                                          //             label:
+                                                          //                 "Address",
+                                                          //             value: customerDetailsProvider
+                                                          //                     .leadDetails![0]
+                                                          //                     .address ??
+                                                          //                 ''),
+                                                          //         const SizedBox(
+                                                          //             height:
+                                                          //                 2),
+                                                          //         DetailRow(
+                                                          //             label:
+                                                          //                 "Enquiry For",
+                                                          //             value: customerDetailsProvider
+                                                          //                     .leadDetails![0]
+                                                          //                     .enquiryForName ??
+                                                          //                 ''),
+                                                          //         const SizedBox(
+                                                          //             height:
+                                                          //                 2),
+                                                          //         DetailRow(
+                                                          //             label:
+                                                          //                 "Enquiry Source",
+                                                          //             value: customerDetailsProvider
+                                                          //                     .leadDetails![0]
+                                                          //                     .enquirySourceName ??
+                                                          //                 ''),
+                                                          //         const SizedBox(
+                                                          //             height:
+                                                          //                 2),
+                                                          //         DetailRow(
+                                                          //             label:
+                                                          //                 "Consumer Number",
+                                                          //             value: customerDetailsProvider
+                                                          //                     .leadDetails![0]
+                                                          //                     .consumerNumber ??
+                                                          //                 ''),
+                                                          //         const SizedBox(
+                                                          //             height:
+                                                          //                 2),
+                                                          //         const Text(
+                                                          //           "Location: ",
+                                                          //           style: TextStyle(
+                                                          //               color: Color(
+                                                          //                   0xFF8E97A3)),
+                                                          //         ),
+                                                          //         Row(
+                                                          //           children: [
+                                                          //             Expanded(
+                                                          //               child:
+                                                          //                   InkWell(
+                                                          //                 onTap:
+                                                          //                     () {
+                                                          //                   String
+                                                          //                       locationData =
+                                                          //                       customerDetailsProvider.leadDetails![0].location.toString();
+                                                          //                   _openMaps(locationData);
+                                                          //                 },
+                                                          //                 child:
+                                                          //                     Text(
+                                                          //                   customerDetailsProvider.leadDetails![0].location.toString(),
+                                                          //                   style:
+                                                          //                       const TextStyle(color: Colors.blue),
+                                                          //                   overflow:
+                                                          //                       TextOverflow.ellipsis,
+                                                          //                   maxLines:
+                                                          //                       1,
+                                                          //                 ),
+                                                          //               ),
+                                                          //             ),
+                                                          //             IconButton(
+                                                          //               color: Colors
+                                                          //                   .grey,
+                                                          //               onPressed:
+                                                          //                   () {
+                                                          //                 Clipboard
+                                                          //                     .setData(
+                                                          //                   ClipboardData(
+                                                          //                     text: customerDetailsProvider.leadDetails![0].location.toString(),
+                                                          //                   ),
+                                                          //                 );
+                                                          //                 ScaffoldMessenger.of(context)
+                                                          //                     .showSnackBar(
+                                                          //                   const SnackBar(
+                                                          //                     content: Text('Link copied to clipboard!'),
+                                                          //                   ),
+                                                          //                 );
+                                                          //               },
+                                                          //               icon: const Icon(
+                                                          //                   Icons.copy),
+                                                          //             ),
+                                                          //           ],
+                                                          //         ),
+                                                          //       ],
+                                                          //     ),
+                                                          //   ],
+                                                          // ),
                                                           // Basic Information
                                                           CustomerCard(
                                                             title: "Basic",
@@ -2295,16 +2295,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .districtName ??
                                                                       ''),
 
-                                                              // Firestation
+                                                              // Consumer Number
                                                               const SizedBox(
                                                                   height: 2),
                                                               DetailRow(
                                                                   label:
-                                                                      "Firestation",
+                                                                      "Consumer Number",
                                                                   value: customerDetailsProvider
                                                                       .leadDetails![
                                                                           0]
-                                                                      .firestationName
+                                                                      .consumerNumber
                                                                       .toString()),
                                                               const SizedBox(
                                                                   height: 2),
