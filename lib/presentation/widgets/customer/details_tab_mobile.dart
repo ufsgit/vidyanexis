@@ -8,6 +8,12 @@ import 'package:vidyanexis/presentation/widgets/customer/label_value_widget.dart
 import 'package:vidyanexis/presentation/widgets/customer/tile_widget.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/pages/home/kseb_print_pdf.dart';
+import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
+import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
+import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/controller/customer_details_provider.dart';
 
 class DetailsTabMobile extends StatefulWidget {
   final String customerId;
@@ -35,6 +41,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
     );
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
+    final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -49,6 +56,75 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 12.0),
+                      child: Wrap(
+                        spacing: 8.0,
+                        runSpacing: 8.0,
+                        children: [
+                          if (settingsProvider.menuIsViewMap[61] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'KSEB',
+                              onPressed: () async {
+                                await ksebPdf(customerDetails: leadDetailsProvider.leadDetails!.first, context: context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[63] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Vendor Agreement',
+                              onPressed: () async {
+                                await vendorAgreementPdf(customerDetails: leadDetailsProvider.leadDetails!.first, context: context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[62] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Vendor Feasibility',
+                              onPressed: () async {
+                                await rtsFeasibilityReportPdf(customerDetails: leadDetailsProvider.leadDetails!.first, context: context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[61] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Annexture1',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure1}${widget.customerId}', 'Annexture1', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[63] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Annexture2',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure2}${widget.customerId}', 'Annexture2', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[62] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Annexture3',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure3}${widget.customerId}', 'Annexture3', context);
+                              },
+                            ),
+                        ],
+                      ),
+                    ),
                     TileWidget(
                       initiallyExpanded: true,
                       title: 'Basic details',

@@ -54,7 +54,11 @@ class AppStyles {
   }
 
   static bool isWebScreen(BuildContext context) {
-    return MediaQuery.of(context).size.width > 1300;
+    try {
+      return MediaQuery.sizeOf(context).width > 1300;
+    } catch (_) {
+      return false; // Default for mobile or safely handle
+    }
   }
 
   static TextStyle getBodyTextStyle({

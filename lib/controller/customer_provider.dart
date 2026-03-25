@@ -246,20 +246,24 @@ class CustomerProvider extends ChangeNotifier {
 
   Future<void> fetchNextPage(BuildContext context) async {
     if (_endLimit < _totalCount) {
-      loadMoreCustomers(context);
+      if (AppStyles.isWebScreen(context)) {
+        _startLimit += _limit;
+        _endLimit += _limit;
+        await getSearchCustomers(context);
+      } else {
+        loadMoreCustomers(context);
+      }
     }
     notifyListeners();
   }
 
   // Fetch previous page data
   Future<void> fetchPreviousPage(BuildContext context) async {
-    if (_startLimit > 0) {
-      _startLimit -= 20;
-      _endLimit -= 20;
-      getSearchCustomers(context);
+    if (_startLimit > 1) {
+      _startLimit -= _limit;
+      _endLimit -= _limit;
+      await getSearchCustomers(context);
     }
-    // print('Start' + _startLimit.toString());
-    // print('End' + _endLimit.toString());
     notifyListeners();
   }
 
@@ -346,9 +350,6 @@ class CustomerProvider extends ChangeNotifier {
   }
 
   Future<void> getSearchCustomers(BuildContext context) async {
-    _startLimit = 1;
-    _endLimit = 20;
-
     try {
       _isLoading = true;
       // notifyListeners(); // Could clear here but replacing is smoother in UI

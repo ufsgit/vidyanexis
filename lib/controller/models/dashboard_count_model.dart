@@ -20,9 +20,9 @@ class DashBoardCountModel {
     });
 
     factory DashBoardCountModel.fromJson(Map<String, dynamic> json) => DashBoardCountModel(
-        tp: json["tp"],
-        title: json["title"],
-        dataCount: json["Data_Count"],
+        tp: int.tryParse(json["tp"]?.toString() ?? "0") ?? 0,
+        title: json["title"]?.toString() ?? "",
+        dataCount: int.tryParse(json["Data_Count"]?.toString() ?? "0") ?? 0,
     );
 
     Map<String, dynamic> toJson() => {

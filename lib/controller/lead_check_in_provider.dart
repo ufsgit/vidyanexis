@@ -150,20 +150,24 @@ class LeadCheckInProvider extends ChangeNotifier {
         }
       }
 
-      // High precision settings
-      LocationSettings locationSettings = AndroidSettings(
-        accuracy: LocationAccuracy.best,
-        forceLocationManager: true,
+      // High precision settings - Optimized for speed
+      LocationSettings locationSettings = const LocationSettings(
+        accuracy: LocationAccuracy.high, // High is much faster than best
+        distanceFilter: 10,
       );
 
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: locationSettings,
-      );
+      Position? position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
+      } catch (e) {
+        log('Error getting current position: $e');
+        // Try getting last known position as fallback
+        position = await Geolocator.getLastKnownPosition();
+      }
 
-      double lat = position.latitude;
-      double lon = position.longitude;
-
-      if (lat == 0.0 || lon == 0.0) {
+      if (position == null || (position.latitude == 0.0 && position.longitude == 0.0)) {
         Loader.stopLoader(context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Could not capture location')),
@@ -171,9 +175,13 @@ class LeadCheckInProvider extends ChangeNotifier {
         return;
       }
 
+      double lat = position.latitude;
+      double lon = position.longitude;
+
       String address = "Lat: $lat, Long: $lon";
       try {
-        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lon);
+        List<Placemark> placemarks = await placemarkFromCoordinates(lat, lon)
+            .timeout(const Duration(seconds: 5)); // Don't block too long for address
         if (placemarks.isNotEmpty) {
           final Placemark place = placemarks.first;
           address = [
@@ -186,7 +194,8 @@ class LeadCheckInProvider extends ChangeNotifier {
           ].where((e) => e != null && e.isNotEmpty).join(', ');
         }
       } catch (e) {
-        log('Error fetching address: $e');
+        log('Error fetching address or timeout: $e');
+        // Continue without full address, lat/long is already present
       }
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
