@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/models/payment_reminder_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/utils/extensions.dart';
 
 // Top-level parsing functions for compute()
 List<AmcNotificationModel> _parseAmcNotification(List<dynamic> data) {
@@ -321,11 +322,30 @@ class WarrentyReportProvider extends ChangeNotifier {
           } else {
             final newData = data['data'];
             if (newData != null) {
-              _outOfWarrentyReport = await compute(_parseWarrenty, newData as List<dynamic>);
+              _outOfWarrentyReport =
+                  await compute(_parseWarrenty, newData as List<dynamic>);
             } else {
               _outOfWarrentyReport = [];
             }
           }
+
+          // Filter only expired warranty records (expiryDate < current_date)
+          final today = DateTime.now();
+          final currentDate = DateTime(today.year, today.month, today.day);
+
+          _outOfWarrentyReport = _outOfWarrentyReport.where((item) {
+            final universalDate = item.expiryDate.toUniversalYyyyMmDd();
+            if (universalDate.isEmpty) return false;
+            try {
+              final expiry = DateTime.parse(universalDate);
+              final expiryDateOnly =
+                  DateTime(expiry.year, expiry.month, expiry.day);
+              // Included ONLY IF: warranty_end_date < current_date
+              return expiryDateOnly.isBefore(currentDate);
+            } catch (e) {
+              return false;
+            }
+          }).toList();
 
           Loader.stopLoader(context);
           notifyListeners();
