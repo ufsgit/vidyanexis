@@ -732,7 +732,7 @@ class ExpenseProvider extends ChangeNotifier {
           final purchaseMasterList = rawDataList[0];
           if (purchaseMasterList != null && purchaseMasterList.isNotEmpty) {
             final purchaseMaster = purchaseMasterList[0];
-            final dataitem = purchaseMaster['purchase_details'] ?? [];
+            final dataitem = purchaseMaster['item_details'] ?? [];
 
             print('-------- $dataitem');
 
