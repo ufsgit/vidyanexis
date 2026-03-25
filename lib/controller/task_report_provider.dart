@@ -49,11 +49,31 @@ class TaskReportProvider extends ChangeNotifier {
 
   int _pageIndex = 1;
   final int _pageSize = 20;
+  int _totalSize = 0;
+  int _totalPages = 1;
 
   int get pageIndex => _pageIndex;
+  int get pageSize => _pageSize;
+  int get totalSize => _totalSize;
+  int get totalPages => _totalPages;
 
   void nextPage() {
     _pageIndex++;
+    notifyListeners();
+  }
+
+  void previousPage() {
+    if (_pageIndex > 1) {
+      _pageIndex--;
+      notifyListeners();
+    }
+  }
+
+  void goToPage(int page) {
+    if (page >= 1 && page <= _totalPages) {
+      _pageIndex = page;
+      notifyListeners();
+    }
   }
 
   void toggleFilter() {
@@ -214,33 +234,33 @@ class TaskReportProvider extends ChangeNotifier {
 
   //task report
   Future<bool> getSearchTaskReport(BuildContext context,
-      {bool isLoadMore = false}) async {
+      {bool isLoadMore = false, bool resetPage = false}) async {
+    bool result = false;
     try {
-      if (!isLoadMore) {
-        Loader.showLoader(context);
+      print("DEBUG: getSearchTaskReport started. resetPage: $resetPage");
+      if (resetPage) {
         _pageIndex = 1;
+      }
+      if (!isLoadMore && _pageIndex == 1 && !resetPage) {
         _taskReport = [];
+      }
+      if (!isLoadMore) {
+        print("DEBUG: showing loader");
+        Loader.showLoader(context);
+        if (resetPage) {
+          _taskReport = [];
+        }
       }
 
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
       }
-      print(_fromDateS);
-      print(_toDateS);
       String isDate = "0";
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
         isDate = "0";
-        if (_fromDateS.isEmpty) {
-          _fromDateS = "";
-        }
-        if (_toDateS.isEmpty) {
-          _toDateS = "";
-        }
       } else {
         isDate = "1";
       }
-      SharedPreferences preferences = await SharedPreferences.getInstance();
-      String userId = preferences.getString('userId') ?? "";
 
       String toUserId = (_selectedUser ?? 0).toString();
 
@@ -248,71 +268,123 @@ class TaskReportProvider extends ChangeNotifier {
         _TaskType = '0';
       }
 
+      int startLimit = (_pageIndex - 1) * _pageSize + 1;
+      int endLimit = _pageIndex * _pageSize;
+
+      print("DEBUG: calling API with Page_Index1: $startLimit, Page_Index2: $endLimit");
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchTaskReport}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Page_Index=$_pageIndex&PageSize=$_pageSize');
+          endPoint: HttpUrls.searchTaskReport,
+          bodyData: {
+            'Customer_Name': _Search,
+            'Task_Status_Id': _Status,
+            'To_User': toUserId,
+            'Is_Date': isDate,
+            'Fromdate': _fromDateS,
+            'Todate': _toDateS,
+            'Task_Type_Id': _TaskType,
+            'Page_Index': _pageIndex,
+            'PageSize': _pageSize,
+          });
 
       if (response.statusCode == 200) {
         final data = response.data;
+        print("DEBUG: API success, status 200");
 
         if (data != null) {
-          if (data is List && data.isEmpty) {
-            if (!isLoadMore) Loader.stopLoader(context);
-            notifyListeners();
-            return true;
-          }
-
           final dataMap = data is Map ? data['data'] ?? data : data;
-          if (dataMap is List && dataMap.isEmpty) {
-            if (!isLoadMore) Loader.stopLoader(context);
-            notifyListeners();
-            return true;
-          }
+          
+          if (dataMap is List) {
+            final allTasks = (dataMap as List<dynamic>)
+                .map((item) => TaskReportModel.fromJson(item))
+                .toList();
 
-          if (dataMap.isNotEmpty) {
-            print("================ DEBUG TASK JSON ================");
-            print(dataMap[0]);
-            print("=================================================");
-          }
+            print("DEBUG: Total items received from API: ${allTasks.length}");
 
-          final newTasks = (dataMap as List<dynamic>)
-              .map((item) => TaskReportModel.fromJson(item))
-              .toList();
+            if (allTasks.isNotEmpty) {
+              // Check if the last item is a metadata row (pattern in Leads/Customer Reports)
+              bool likelyMetadataRow = allTasks.length > 1 && 
+                                     allTasks.last.taskId == 0 && 
+                                     allTasks.last.customerId > 0;
+              
+              if (likelyMetadataRow) {
+                _totalSize = allTasks.last.customerId;
+                allTasks.removeLast();
+              }
 
-          if (isLoadMore) {
-            _taskReport.addAll(newTasks);
+              // Fallback: If server returns more than pageSize (e.g. 100 instead of 20),
+              // perform client-side slicing to ensure the user sees exactly what they asked for.
+              if (allTasks.length > _pageSize) {
+                print("DEBUG: Server returned unpaginated list. Slicing for page $_pageIndex.");
+                int start = (_pageIndex - 1) * _pageSize;
+                int end = _pageIndex * _pageSize;
+                
+                if (start < allTasks.length) {
+                  _taskReport = allTasks.sublist(
+                    start, 
+                    end > allTasks.length ? allTasks.length : end
+                  );
+                } else {
+                  _taskReport = [];
+                }
+                
+                if (!likelyMetadataRow) {
+                  _totalSize = allTasks.length;
+                }
+              } else {
+                // Server seems to have paginated the results
+                _taskReport = allTasks;
+                
+                if (!likelyMetadataRow) {
+                  if (allTasks.length == _pageSize) {
+                    _totalSize = _pageIndex * _pageSize + 1; // Assume more pages
+                  } else {
+                    _totalSize = (_pageIndex - 1) * _pageSize + allTasks.length;
+                  }
+                }
+              }
+            } else {
+              _taskReport = [];
+              _totalSize = 0;
+            }
+
+            _totalPages = (_totalSize / _pageSize).ceil();
+            if (_totalPages == 0) _totalPages = 1;
+            
+            print("DEBUG: Final taskReport count: ${_taskReport.length}, Total Size: $_totalSize, Total Pages: $_totalPages");
+            _hasFetched = true;
+            result = true;
           } else {
-            _taskReport = newTasks;
+            print("DEBUG: dataMap is not a List: $dataMap");
+            _hasFetched = true;
           }
-
-          print("Task List Length: ${_taskReport.length}");
+        } else {
+          print("DEBUG: response data is null");
           _hasFetched = true;
-          if (!isLoadMore) Loader.stopLoader(context);
-          notifyListeners();
-          return newTasks.isEmpty;
         }
-        _hasFetched = true;
-        if (!isLoadMore) Loader.stopLoader(context);
-        notifyListeners();
       } else {
+        print("DEBUG: API error, status: ${response.statusCode}");
         if (!isLoadMore) {
-          Loader.stopLoader(context);
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Server Error')),
           );
         }
       }
     } catch (e) {
+      print('DEBUG: Exception in getSearchTaskReport: $e');
       if (!isLoadMore) {
         _hasFetched = true;
-        Loader.stopLoader(context);
-        print('Exception occurred: $e');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('An error occurred')),
         );
       }
+    } finally {
+      if (!isLoadMore) {
+        print("DEBUG: stopping loader");
+        Loader.stopLoader(context);
+      }
+      notifyListeners();
     }
-    return false;
+    return result;
   }
 
   Future<void> getFollowupReports(BuildContext context) async {
@@ -345,8 +417,16 @@ class TaskReportProvider extends ChangeNotifier {
       }
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchFollowupReports}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType');
+          endPoint: HttpUrls.searchFollowupReports,
+          bodyData: {
+            'Customer_Name': _Search,
+            'Task_Status_Id': _Status,
+            'To_User': toUserId,
+            'Is_Date': isDate,
+            'Fromdate': _fromDateS,
+            'Todate': _toDateS,
+            'Task_Type_Id': _TaskType,
+          });
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -401,8 +481,16 @@ class TaskReportProvider extends ChangeNotifier {
       String toUserId = (_selectedUser ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
-          endPoint:
-              '${HttpUrls.searchTaskReport}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType');
+          endPoint: HttpUrls.searchTaskReport,
+          bodyData: {
+            'Customer_Name': _Search,
+            'Task_Status_Id': _Status,
+            'To_User': toUserId,
+            'Is_Date': isDate,
+            'Fromdate': _fromDateS,
+            'Todate': _toDateS,
+            'Task_Type_Id': _TaskType,
+          });
 
       if (response.statusCode == 200) {
         final data = response.data;

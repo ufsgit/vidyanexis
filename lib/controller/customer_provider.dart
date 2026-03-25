@@ -30,7 +30,7 @@ class CustomerProvider extends ChangeNotifier {
   int _customerId = 0;
   int _startLimit = 1;
   int _endLimit = 20;
-  final int _limit = 10;
+  final int _limit = 20;
   int _totalCount = 0;
   bool isLoadingMore = false;
   bool hasMoreData = true;
