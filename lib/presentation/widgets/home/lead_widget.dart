@@ -42,6 +42,7 @@ class LeadCard extends StatefulWidget {
 
 class _LeadCardState extends State<LeadCard> {
   bool _isInternalMoreExpanded = false;
+  bool _isNoteClicked = false;
 
   @override
   void didUpdateWidget(covariant LeadCard oldWidget) {
@@ -50,6 +51,7 @@ class _LeadCardState extends State<LeadCard> {
       if (mounted) {
         setState(() {
           _isInternalMoreExpanded = false;
+          _isNoteClicked = false;
         });
       }
     } else if (widget.isExpanded && !oldWidget.isExpanded) {
@@ -276,7 +278,7 @@ class _LeadCardState extends State<LeadCard> {
                   child: Column(
                     children: [
                       // Toggleable Note Section
-                      if (_isInternalMoreExpanded) ...[
+                      if (_isNoteClicked) ...[
                       Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
@@ -328,13 +330,19 @@ class _LeadCardState extends State<LeadCard> {
                                       ),
                                     ),
 
-                                    // if (_isInternalMoreExpanded) ...[
+                                    if (_isInternalMoreExpanded) ...[
                                       const SizedBox(height: 8),
                                       // Branch Selection Chips
                                       Column(
                                         crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          Text('Branch*', style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w700)),
+                                          Row(
+                                            children: [
+                                              Text('Branch*', style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w700)),
+                                              const SizedBox(width: 8),
+                                              const Expanded(child: Divider(thickness: 1, color: Color(0xFFEEEEEE))),
+                                            ],
+                                          ),
                                           const SizedBox(height: 8),
                                           Wrap(
                                             spacing: 8,
@@ -492,7 +500,7 @@ class _LeadCardState extends State<LeadCard> {
                                         hintText: 'Remarks',
                                         maxLines: 3,
                                       ),
-                                    // ],
+                                    ],
                                     const SizedBox(height: 16),
                                     Row(
                                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -568,7 +576,7 @@ class _LeadCardState extends State<LeadCard> {
                         children: [
                           if (settingsProvider.menuIsViewMap[90] == 1)
                           _buildActionButton(
-                            onTap: () => setState(() => _isInternalMoreExpanded = !_isInternalMoreExpanded),
+                            onTap: () => setState(() => _isNoteClicked = !_isNoteClicked),
                             icon: Icons.note,
                             text: 'Note',
                             color: Colors.red,
