@@ -283,6 +283,27 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
       } else {
         leadProvider.clearAllLeadControllers(context);
 
+        // Set default follow-up status to 11 if available
+        final followUpStatus = dropDownProvider.followUpData.firstWhere(
+          (s) => s.statusId == 11,
+          orElse: () => SearchLeadStatusModel(statusId: 0),
+        );
+        if (followUpStatus.statusId == 11) {
+          dropDownProvider.setSelectedFollowUPId(11);
+          leadProvider.followUpStatusController.text =
+              followUpStatus.statusName ?? '';
+
+          // Also trigger custom fields for this status if needed
+          leadProvider.getCustomFieldsByStatusId(
+            context,
+            leadId: 0,
+            statusId: 11,
+          );
+        } else {
+          dropDownProvider.setSelectedFollowUPId(0);
+          leadProvider.followUpStatusController.clear();
+        }
+
         // Populate defaults from login
         leadProvider.branchController.text = leadProvider.loginBranchName;
         leadProvider.departmentController.text =

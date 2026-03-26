@@ -354,7 +354,7 @@ class SettingsProvider extends ChangeNotifier {
     return AppStyles.logo();
   }
 
-  String get displayTitle => title.isNotEmpty ? title : 'Vidya Nexis';
+  String get displayTitle => title.isNotEmpty ? title : AppStyles.name();
 
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -2804,12 +2804,18 @@ class SettingsProvider extends ChangeNotifier {
         final data = response.data;
 
         if (data != null && data is List && data.isNotEmpty) {
-          _companyDetails = data
-              .map((item) => Company.fromJson(item))
-              .toList();
+          // If the API returns the classic Company format, still initialize it for other pages
+          try {
+            _companyDetails = data
+                .map((item) => Company.fromJson(item))
+                .toList();
+          } catch (e) {
+            print('SettingsProvider.getCompanyDetails: Failed to parse Company format - $e');
+          }
           
-          String newLogo = _companyDetails[0].logo;
-          String newTitle = _companyDetails[0].companyName ?? '';
+          final item = data[0];
+          String newLogo = item['company_logo'] ?? item['Logo'] ?? '';
+          String newTitle = item['company_name'] ?? item['Company_Name'] ?? '';
           
           if (newLogo != logo || newTitle != title) {
             logo = newLogo;
@@ -2819,6 +2825,20 @@ class SettingsProvider extends ChangeNotifier {
             await preferences.setString('cached_company_logo', logo);
             await preferences.setString('cached_company_title', title);
             print('Branding updated from API and cached: $title');
+          }
+        } else if (data != null && data is Map<String, dynamic>) {
+          // In case the endpoint actually returns a direct map { "company_name": "...", "company_logo": "..." }
+          String newLogo = data['company_logo'] ?? data['Logo'] ?? '';
+          String newTitle = data['company_name'] ?? data['Company_Name'] ?? '';
+
+          if (newLogo != logo || newTitle != title) {
+            logo = newLogo;
+            title = newTitle;
+            
+            SharedPreferences preferences = await SharedPreferences.getInstance();
+            await preferences.setString('cached_company_logo', logo);
+            await preferences.setString('cached_company_title', title);
+            print('Branding updated from API MAP and cached: $title');
           }
         } else {
           print('getCompanyDetails: No company data found in response');

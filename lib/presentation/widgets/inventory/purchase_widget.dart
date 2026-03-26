@@ -978,7 +978,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
               }
 
               var data = {
-                "Purchase_Master_Id": widget.editId,
+                "purchase_id": widget.editId,
                 "purchase_Date": expenseProvider
                     .invoiceDatePurchaseController.text
                     .toyyyymmdd(),
@@ -996,7 +996,7 @@ class _PurchaseWidgetState extends State<PurchaseWidget> {
                 "NetTotal": expenseProvider.finalGrandTotal.toStringAsFixed(2),
                 "Description":
                     expenseProvider.descriptionPurchaseController.text,
-                "purchase_details": expenseProvider.purchaseItems
+                "item_details": expenseProvider.purchaseItems
                     .map((item) => item.toJson())
                     .toList(),
               };
