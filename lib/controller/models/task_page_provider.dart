@@ -149,34 +149,15 @@ class TaskPageProvider extends ChangeNotifier {
       }
 
       print("Getting current position...");
-      LocationSettings locationSettings = const LocationSettings(
-        accuracy: LocationAccuracy.high, // High is much faster than best
-        distanceFilter: 10,
-      );
-
-      Position? position;
-      try {
-        position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
-      } catch (e) {
-        print("Error getting current position: $e");
-        // Try getting last known position as fallback
-        position = await Geolocator.getLastKnownPosition();
-      }
-
-      if (position == null || (position.latitude == 0.0 && position.longitude == 0.0)) {
-        print("Could not obtain valid position");
-        return {};
-      }
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
       print("Position obtained: ${position.latitude}, ${position.longitude}");
       String address = "";
 
       try {
         List<Placemark> placemarks = await placemarkFromCoordinates(
-                position.latitude, position.longitude)
-            .timeout(const Duration(seconds: 5)); // Don't block too long for address
+            position.latitude, position.longitude);
 
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks.first;
@@ -682,14 +663,16 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchTaskHistory(int userDetailsId) async {
+  Future<void> fetchTaskHistory(int userDetailsId,int taskId) async {
     try {
       _isHistoryLoading = true;
       notifyListeners();
 
+      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+
       final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.getTaskHistory}?User_Details_Id=$userDetailsId&Is_Date=0&Fromdate=&Todate=',
+            '${HttpUrls.getTaskHistory}?User_Details_Id=$userDetailsId&Task_Id=$taskId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS',
       );
 
       if (response.statusCode == 200) {

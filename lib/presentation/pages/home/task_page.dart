@@ -3249,7 +3249,8 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       context,
                                                       listen: false);
                                               await provider.fetchTaskHistory(
-                                                  task.userDetailsId ?? 0);
+                                                  task.userDetailsId ?? 0,
+                                                  task.taskId ?? 0);
                                               showDialog(
                                                 context: context,
                                                 builder: (_) {
