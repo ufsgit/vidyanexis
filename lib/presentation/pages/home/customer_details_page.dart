@@ -1965,7 +1965,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         onPressed:
                                                                             () async {
                                                                           await ksebPdf(
-                                                                              customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                              customerDetails: customerDetailsProvider.leadDetails!.first,
                                                                               context: context);
                                                                         },
                                                                       ),
@@ -1985,7 +1985,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         onPressed:
                                                                             () async {
                                                                           await vendorAgreementPdf(
-                                                                              customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                              customerDetails: customerDetailsProvider.leadDetails!.first,
                                                                               context: context);
                                                                         },
                                                                       ),
@@ -2005,7 +2005,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                         onPressed:
                                                                             () async {
                                                                           await rtsFeasibilityReportPdf(
-                                                                              customerDetails: leadDetailsProvider.leadDetails!.first,
+                                                                              customerDetails: customerDetailsProvider.leadDetails!.first,
                                                                               context: context);
                                                                         },
                                                                       ),
