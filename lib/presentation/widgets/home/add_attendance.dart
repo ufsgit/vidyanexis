@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 
@@ -385,57 +386,78 @@ class _AddAttendanceWidgetState extends State<AddAttendanceWidget> {
           CustomElevatedButton(
             buttonText: isCheckedIn ? 'Check Out' : 'Check In',
             onPressed: () async {
-              final validationErrorBeforeRetry =
-                  validateInputs(context, attendanceProvider);
-              if (validationErrorBeforeRetry != null) {
-                dev.log('First validation failed, retrying user detection...',
-                    name: 'AddAttendance');
-                await _initUserData();
-                final validationErrorAfterRetry =
-                    validateInputs(context, attendanceProvider);
-                if (validationErrorAfterRetry != null) {
-                  showErrorDialog(context, validationErrorAfterRetry);
-                  return;
-                }
-              }
-              String employeeCode = "";
+              bool loaderShown = false;
               try {
-                if (dropDownProvider.selectedUserId != null) {
-                  final user = dropDownProvider.searchUserDetails.firstWhere(
-                    (u) => u.userDetailsId == dropDownProvider.selectedUserId,
+                Loader.showLoader(context);
+                loaderShown = true;
+                final validationErrorBeforeRetry =
+                    validateInputs(context, attendanceProvider);
+                if (validationErrorBeforeRetry != null) {
+                  dev.log('First validation failed, retrying user detection...',
+                      name: 'AddAttendance');
+                  await _initUserData();
+                  final validationErrorAfterRetry =
+                      validateInputs(context, attendanceProvider);
+                  if (validationErrorAfterRetry != null) {
+                    Loader.stopLoader(context);
+                    showErrorDialog(context, validationErrorAfterRetry);
+                    return;
+                  }
+                }
+                String employeeCode = "";
+                try {
+                  if (dropDownProvider.selectedUserId != null) {
+                    final user = dropDownProvider.searchUserDetails.firstWhere(
+                      (u) => u.userDetailsId == dropDownProvider.selectedUserId,
+                    );
+                    employeeCode = user.empCode ?? "";
+                  }
+                } catch (_) {}
+
+                await attendanceProvider.getLocation(
+                    context: context, showLoading: false);
+
+                bool success = false;
+                if (isCheckedIn) {
+                  success = await attendanceProvider.saveAttendance(
+                    dropDownProvider.selectedUserId ?? 0,
+                    context,
+                    checkOutTime: DateTime.now().toString(),
+                    employeeCode: employeeCode,
+                    closeOnSuccess: true,
+                    showLoading: false,
                   );
-                  employeeCode = user.empCode ?? "";
+                  if (success) {
+                    setState(() {
+                      isCheckedIn = false;
+                    });
+                    Loader.stopLoader(context);
+                    loaderShown = false;
+                    attendanceProvider.showSuccessDialog(context, false);
+                  }
+                } else {
+                  success = await attendanceProvider.saveAttendance(
+                    dropDownProvider.selectedUserId ?? 0,
+                    context,
+                    checkInTime: DateTime.now().toString(),
+                    employeeCode: employeeCode,
+                    closeOnSuccess: false,
+                    showLoading: false,
+                  );
+                  if (success) {
+                    setState(() {
+                      isCheckedIn = true;
+                    });
+                    Loader.stopLoader(context);
+                    loaderShown = false;
+                    attendanceProvider.showSuccessDialog(context, true);
+                  }
                 }
-              } catch (_) {}
-
-              await attendanceProvider.getLocation(context: context);
-
-              bool success = false;
-              if (isCheckedIn) {
-                success = await attendanceProvider.saveAttendance(
-                  dropDownProvider.selectedUserId ?? 0,
-                  context,
-                  checkOutTime: DateTime.now().toString(),
-                  employeeCode: employeeCode,
-                  closeOnSuccess: true,
-                );
-                if (success) {
-                  setState(() {
-                    isCheckedIn = false;
-                  });
-                }
-              } else {
-                success = await attendanceProvider.saveAttendance(
-                  dropDownProvider.selectedUserId ?? 0,
-                  context,
-                  checkInTime: DateTime.now().toString(),
-                  employeeCode: employeeCode,
-                  closeOnSuccess: false,
-                );
-                if (success) {
-                  setState(() {
-                    isCheckedIn = true;
-                  });
+              } catch (e) {
+                dev.log('Error in mark attendance: $e', name: 'AddAttendance');
+              } finally {
+                if (loaderShown) {
+                  Loader.stopLoader(context);
                 }
               }
             },

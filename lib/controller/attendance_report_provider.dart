@@ -318,9 +318,12 @@ class AttendanceReportProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getLocation({required BuildContext context}) async {
+  Future<void> getLocation(
+      {required BuildContext context, bool showLoading = true}) async {
     // if (!kIsWeb) {
-    Loader.showLoader(context);
+    if (showLoading) {
+      Loader.showLoader(context);
+    }
     PermissionStatus locationStatus = await Permission.location.status;
 
     print(locationStatus.isPermanentlyDenied);
@@ -337,14 +340,23 @@ class AttendanceReportProvider extends ChangeNotifier {
     if (!locationStatus.isDenied) {
       try {
         // High precision settings
-        LocationSettings locationSettings = AndroidSettings(
-          accuracy: LocationAccuracy.best,
-          forceLocationManager: true,
+        // Optimized location settings
+        LocationSettings locationSettings = LocationSettings(
+          accuracy: LocationAccuracy.high,
+          distanceFilter: 10,
         );
 
-        Position position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        );
+        Position position;
+        try {
+          position = await Geolocator.getCurrentPosition(
+            locationSettings: locationSettings,
+          ).timeout(const Duration(seconds: 10));
+        } catch (e) {
+          log('Timeout or error getting current position: $e');
+          // Fallback to last known position
+          position = await Geolocator.getLastKnownPosition() ?? 
+                    Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0);
+        }
 
         double latVal = position.latitude;
         double lonVal = position.longitude;
@@ -360,13 +372,19 @@ class AttendanceReportProvider extends ChangeNotifier {
         print(longitude);
         Loader.stopLoader(context);
       } catch (e) {
-        Loader.stopLoader(context);
+        if (showLoading) {
+          Loader.stopLoader(context);
+        }
         print('Error: $e');
       } finally {
-        Loader.stopLoader(context);
+        if (showLoading) {
+          Loader.stopLoader(context);
+        }
       }
     } else {
-      Loader.stopLoader(context);
+      if (showLoading) {
+        Loader.stopLoader(context);
+      }
     }
     // }
   }
@@ -408,12 +426,15 @@ class AttendanceReportProvider extends ChangeNotifier {
       {String? checkInTime,
       String? checkOutTime,
       String? employeeCode,
-      bool closeOnSuccess = true}) async {
+      bool closeOnSuccess = true,
+      bool showLoading = true}) async {
     print(selectedUserId);
     print(assignToFollowUpController.text.toString());
     bool isLoaderStopped = false;
     try {
-      Loader.showLoader(context);
+      if (showLoading) {
+        Loader.showLoader(context);
+      }
 
       final Map<String, dynamic> bodyData = {
         "User_Details_Id": selectedUserId,
@@ -451,6 +472,12 @@ class AttendanceReportProvider extends ChangeNotifier {
         getSearchTaskReport(context, showLoading: false);
         assignToFollowUpController.clear();
 
+        // Stop loader immediately to make UI responsive
+        if (showLoading) {
+          Loader.stopLoader(context);
+        }
+        isLoaderStopped = true;
+
         // Save state locally
         try {
           final prefs = await SharedPreferences.getInstance();
@@ -468,24 +495,10 @@ class AttendanceReportProvider extends ChangeNotifier {
             _isCompletedToday = false;
             notifyListeners();
 
-            // We don't have the ID yet, so we must fetch it.
-            // Add delay to allow server validation/indexing.
-            await Future.delayed(const Duration(milliseconds: 500));
-            bool foundOnServer =
-                await checkIsCheckedIn(selectedUserId, forceApi: true);
-
-            if (!foundOnServer) {
-              // If server doesn't show it yet, FORCE local state to true so UI doesn't revert.
-              await prefs.setBool('is_checked_in_$selectedUserId', true);
-              await prefs.setString('check_in_date_$selectedUserId', todayStr);
-              await prefs.setBool('is_completed_today_$selectedUserId', false);
-              // Ensure time is preserved
-              if (_currentCheckInTime.isEmpty) {
-                _currentCheckInTime = checkInTime;
-                await prefs.setString(
-                    'check_in_time_$selectedUserId', checkInTime);
-              }
-            }
+            // Perform sync in background so we don't block the UI
+            Future.delayed(const Duration(milliseconds: 800), () {
+              checkIsCheckedIn(selectedUserId, forceApi: true);
+            });
           } else if (checkOutTime != null) {
             // User Checked Out
             await prefs.setBool('is_checked_in_$selectedUserId', false);
@@ -505,16 +518,12 @@ class AttendanceReportProvider extends ChangeNotifier {
           print('Error saving local state: $e');
         }
 
-        // Stop loader first
-        Loader.stopLoader(context);
-        isLoaderStopped = true;
-
         if (closeOnSuccess) {
           Navigator.pop(context);
         }
 
-        if (context.mounted) {
-          _showSuccessDialog(context, checkInTime != null);
+        if (showLoading && context.mounted) {
+          showSuccessDialog(context, checkInTime != null);
         }
         print(data);
         return true;
@@ -522,7 +531,9 @@ class AttendanceReportProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
-        Loader.stopLoader(context);
+        if (showLoading) {
+          Loader.stopLoader(context);
+        }
         isLoaderStopped = true;
         return false;
       }
@@ -531,17 +542,19 @@ class AttendanceReportProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
-      Loader.stopLoader(context);
+      if (showLoading) {
+        Loader.stopLoader(context);
+      }
       isLoaderStopped = true;
       return false;
     } finally {
-      if (!isLoaderStopped) {
+      if (!isLoaderStopped && showLoading) {
         Loader.stopLoader(context);
       }
     }
   }
 
-  void _showSuccessDialog(BuildContext context, bool isCheckIn) {
+  void showSuccessDialog(BuildContext context, bool isCheckIn) {
     showDialog(
       context: context,
       barrierDismissible: false,

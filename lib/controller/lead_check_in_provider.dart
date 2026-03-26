@@ -150,15 +150,23 @@ class LeadCheckInProvider extends ChangeNotifier {
         }
       }
 
-      // High precision settings
-      LocationSettings locationSettings = AndroidSettings(
-        accuracy: LocationAccuracy.best,
-        forceLocationManager: true,
+      // High accuracy (but not 'best' to save time)
+      LocationSettings locationSettings = LocationSettings(
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10,
       );
 
-      Position position = await Geolocator.getCurrentPosition(
-        locationSettings: locationSettings,
-      );
+      Position position;
+      try {
+        position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        ).timeout(const Duration(seconds: 10));
+      } catch (e) {
+        log('Timeout or error getting current position: $e');
+        // Fallback to last known position
+        position = await Geolocator.getLastKnownPosition() ?? 
+                  Position(longitude: 0, latitude: 0, timestamp: DateTime.now(), accuracy: 0, altitude: 0, heading: 0, speed: 0, speedAccuracy: 0, altitudeAccuracy: 0, headingAccuracy: 0);
+      }
 
       double lat = position.latitude;
       double lon = position.longitude;
