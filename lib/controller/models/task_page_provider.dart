@@ -663,14 +663,16 @@ class TaskPageProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> fetchTaskHistory(int userDetailsId) async {
+  Future<void> fetchTaskHistory(int userDetailsId,int taskId) async {
     try {
       _isHistoryLoading = true;
       notifyListeners();
 
+      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+
       final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.getTaskHistory}?User_Details_Id=$userDetailsId&Is_Date=0&Fromdate=&Todate=',
+            '${HttpUrls.getTaskHistory}?User_Details_Id=$userDetailsId&Task_Id=$taskId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS',
       );
 
       if (response.statusCode == 200) {
