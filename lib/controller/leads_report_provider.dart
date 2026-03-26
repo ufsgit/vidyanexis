@@ -160,10 +160,10 @@ class LeadReportProvider extends ChangeNotifier {
   int? _selectedUser;
   int? _selectedEnquiryFor;
   int? _selectedEnquirySource;
-  DateTime? _fromDate = DateTime.now();
-  DateTime? _toDate = DateTime.now();
-  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  DateTime? _fromDate;
+  DateTime? _toDate;
+  String _formattedFromDate = '';
+  String _formattedToDate = '';
   int? _selectedDateFilterIndex;
   int _customerId = 0;
 
@@ -236,8 +236,8 @@ class LeadReportProvider extends ChangeNotifier {
   SaveLeadDropdownModel? get leadDropdownData => _leadDropdownData;
 
   String _search = '';
-  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _fromDateS = '';
+  String _toDateS = '';
   String _status = '';
   String _enquiryForS = '';
 
@@ -1830,11 +1830,6 @@ class LeadReportProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
-    _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    _fromDate = DateTime.now();
-    _toDate = DateTime.now();
-    _selectedDateFilterIndex = 1; // Default to Today
     notifyListeners();
   }
 
@@ -2162,28 +2157,9 @@ class LeadReportProvider extends ChangeNotifier {
         }
       }
 
-      // Get current position - Optimized for speed
-      print("Getting current position...");
-      LocationSettings locationSettings = const LocationSettings(
-        accuracy: LocationAccuracy.high, // High is much faster than best
-        distanceFilter: 10,
-      );
-
-      Position? position;
-      try {
-        position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
-      } catch (e) {
-        print("Error getting current position: $e");
-        // Try getting last known position as fallback
-        position = await Geolocator.getLastKnownPosition();
-      }
-
-      if (position == null || (position.latitude == 0.0 && position.longitude == 0.0)) {
-        print("Could not obtain valid position");
-        return;
-      }
+      // Get current position
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
       // Set latitude and longitude
       latitudeController.text = position.latitude.toString();
@@ -2209,7 +2185,7 @@ class LeadReportProvider extends ChangeNotifier {
       final List<Placemark> placemarks = await placemarkFromCoordinates(
         latitude,
         longitude,
-      ).timeout(const Duration(seconds: 5)); // Don't block too long for address
+      );
 
       if (placemarks.isNotEmpty) {
         final Placemark place = placemarks.first;
