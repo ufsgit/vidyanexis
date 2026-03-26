@@ -612,12 +612,10 @@ class LeadsProvider extends ChangeNotifier {
 
     notifyListeners();
 
-    try {
-      await getSearchLeads(context, isPagination: true);
-    } finally {
-      isLoadingMore = false;
-      notifyListeners();
-    }
+    await getSearchLeads(context, isPagination: true);
+
+    isLoadingMore = false;
+    notifyListeners();
   }
 
 //........................................................................
@@ -761,18 +759,47 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchNextPage(BuildContext context) async {
+    print(
+        "Next Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
+
     if (_endLimit >= _totalCount) return;
-    currentPage++;
-    await getSearchLeads(context, isPagination: true);
+
+    _startLimit = _endLimit + 1;
+
+    int limitPerPage = 20;
+
+    _endLimit = _startLimit + limitPerPage - 1;
+
+    if (_endLimit > _totalCount) {
+      _endLimit = _totalCount;
+    }
+
+    print(
+        "After Next computation → new start: $_startLimit new end: $_endLimit");
+    await getSearchLeads(context);
+
     notifyListeners();
   }
 
   // Fetch previous page data
   Future<void> fetchPreviousPage(BuildContext context) async {
-    if (currentPage > 1) {
-      currentPage--;
-      await getSearchLeads(context, isPagination: true);
-    }
+    print(
+        "Previous Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
+
+    if (_startLimit <= 1) return;
+
+    int limitPerPage = 20;
+
+    _startLimit = _startLimit - limitPerPage;
+
+    if (_startLimit < 1) _startLimit = 1;
+
+    _endLimit = _startLimit + limitPerPage - 1;
+
+    print(
+        "After Previous computation → new start: $_startLimit new end: $_endLimit");
+    await getSearchLeads(context);
+
     notifyListeners();
   }
 
@@ -860,7 +887,6 @@ class LeadsProvider extends ChangeNotifier {
 
   Future<void> getSearchLeads(BuildContext context,
       {bool isPagination = false}) async {
-    final bool isWeb = AppStyles.isWebScreen(context);
     if (!isPagination) {
       currentPage = 1;
       hasMoreData = true;
@@ -922,9 +948,6 @@ class LeadsProvider extends ChangeNotifier {
           _tempData.removeLast();
 
           if (_tempData.isNotEmpty) {
-            if (isWeb) {
-              _leadData.clear();
-            }
             _leadData.addAll(_tempData);
           } else {
             hasMoreData = false;
@@ -938,11 +961,9 @@ class LeadsProvider extends ChangeNotifier {
       }
     } else {
       _isLoading = false;
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Server Error')),
-        );
-      }
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Server Error')),
+      );
     }
   }
 
@@ -1413,7 +1434,6 @@ class LeadsProvider extends ChangeNotifier {
     required String departmentName,
     List<Map<String, String>>? audioFiles, // Add this parameter
   }) async {
-    final bool isWeb = AppStyles.isWebScreen(context);
     try {
       if (followUpDate.isNotEmpty) {
         DateTime parsedDate;
@@ -1463,7 +1483,7 @@ class LeadsProvider extends ChangeNotifier {
         final data = response.data;
         log('Success');
 
-        if (!isWeb) {
+        if (!AppStyles.isWebScreen(context)) {
           customerProvider.setLimit();
           _startLimit = 1;
           _endLimit = 10;
@@ -1524,7 +1544,7 @@ class LeadsProvider extends ChangeNotifier {
       {required int statusId, required int leadId}) async {
     try {
       // Loader.showLoader(context);
-      // _isLoadingCustomFields = true;
+      _isLoadingCustomFields = true;
       final response = await HttpRequest.httpGetRequest(
           endPoint:
               '${HttpUrls.getCustomFieldByStatusId}?status_id=$statusId&lead_id=$leadId');
@@ -1605,7 +1625,7 @@ class LeadsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
     } finally {
-      // _isLoadingCustomFields = false;
+      _isLoadingCustomFields = false;
       notifyListeners();
     }
   }
@@ -1890,18 +1910,16 @@ class LeadsProvider extends ChangeNotifier {
         }
       } else {
         Loader.stopLoader(context);
-      if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
       }
-      }
     } catch (e) {
-      if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('An error occurred')),
-        );
-      }
+      print('Exception occurred: $e');
+      Loader.stopLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred')),
+      );
     }
   }
 
@@ -2202,27 +2220,20 @@ class LeadsProvider extends ChangeNotifier {
         }
       }
 
-      // High precision settings - Optimized for speed
-      LocationSettings locationSettings = const LocationSettings(
-        accuracy: LocationAccuracy.high, // High is much faster than best
-        distanceFilter: 10,
+      // High precision settings
+      LocationSettings locationSettings = AndroidSettings(
+        accuracy: LocationAccuracy.best,
+        forceLocationManager: true,
       );
 
-      Position? position;
-      try {
-        position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
-      } catch (e) {
-        log('Error getting current position: $e');
-        // Try getting last known position as fallback
-        position = await Geolocator.getLastKnownPosition();
-      }
+      Position position = await Geolocator.getCurrentPosition(
+        locationSettings: locationSettings,
+      );
 
-      if (position != null && position.latitude != 0.0 && position.longitude != 0.0) {
-        double lat = position.latitude;
-        double lon = position.longitude;
+      double lat = position.latitude;
+      double lon = position.longitude;
 
+      if (lat != 0.0 && lon != 0.0) {
         // Set latitude and longitude
         latitudeController.text = lat.toString();
         longitudeController.text = lon.toString();
@@ -2247,7 +2258,7 @@ class LeadsProvider extends ChangeNotifier {
       final List<Placemark> placemarks = await placemarkFromCoordinates(
         latitude,
         longitude,
-      ).timeout(const Duration(seconds: 5)); // Don't block too long for address
+      );
 
       if (placemarks.isNotEmpty) {
         final Placemark place = placemarks.first;

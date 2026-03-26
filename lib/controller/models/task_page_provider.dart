@@ -149,34 +149,15 @@ class TaskPageProvider extends ChangeNotifier {
       }
 
       print("Getting current position...");
-      LocationSettings locationSettings = const LocationSettings(
-        accuracy: LocationAccuracy.high, // High is much faster than best
-        distanceFilter: 10,
-      );
-
-      Position? position;
-      try {
-        position = await Geolocator.getCurrentPosition(
-          locationSettings: locationSettings,
-        ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
-      } catch (e) {
-        print("Error getting current position: $e");
-        // Try getting last known position as fallback
-        position = await Geolocator.getLastKnownPosition();
-      }
-
-      if (position == null || (position.latitude == 0.0 && position.longitude == 0.0)) {
-        print("Could not obtain valid position");
-        return {};
-      }
+      Position position = await Geolocator.getCurrentPosition(
+          desiredAccuracy: LocationAccuracy.high);
 
       print("Position obtained: ${position.latitude}, ${position.longitude}");
       String address = "";
 
       try {
         List<Placemark> placemarks = await placemarkFromCoordinates(
-                position.latitude, position.longitude)
-            .timeout(const Duration(seconds: 5)); // Don't block too long for address
+            position.latitude, position.longitude);
 
         if (placemarks.isNotEmpty) {
           Placemark place = placemarks.first;

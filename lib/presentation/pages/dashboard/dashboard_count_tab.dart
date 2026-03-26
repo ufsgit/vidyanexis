@@ -12,24 +12,22 @@ class DashboardCountTab extends StatelessWidget {
 
   Color _colorForTitle(String title) {
     final t = title.toLowerCase();
-    if (t.contains('lead')) return const Color(0xFFBAC5D0);
+    if (t.contains('new_leads')) return const Color(0xFFBAC5D0);
     if (t.contains('followup')) return const Color(0xFF90A1D6);
-    if (t.contains('conversion')) return const Color(0xFF9CC9BF);
-    if (t.contains('task')) return const Color(0xFF8699C9);
-    if (t.contains('quotation')) return const Color(0xFF9ABDE2);
-    if (t.contains('complaint')) return const Color(0xFFDEB0B9);
-    if (t.contains('service')) return const Color(0xFFDEB0B9);
+    if (t.contains('closed')) return const Color(0xFF9CC9BF);
+    if (t.contains('called')) return const Color(0xFF8699C9);
+    if (t.contains('transferred')) return const Color(0xFF9ABDE2);
+    if (t.contains('missed')) return const Color(0xFFDEB0B9);
     return Colors.grey.shade300;
   }
 
   @override
   Widget build(BuildContext context) {
-    if (dashBoardProvider.isDashBoardLoading &&
-        dashBoardProvider.dashBoardCountModel.isEmpty) {
+    if (dashBoardProvider.isDashBoardLoading && dashBoardProvider.leadCountMap.isEmpty) {
       return _buildSkeleton(context);
     }
 
-    if (dashBoardProvider.dashBoardCountModel.isEmpty) {
+    if (dashBoardProvider.leadCountMap.isEmpty) {
       return const SizedBox(
         height: 300,
         child: Center(
@@ -38,7 +36,16 @@ class DashboardCountTab extends StatelessWidget {
       );
     }
 
-    final items = dashBoardProvider.dashBoardCountModel;
+    // Only render the required keys if they exist in the map
+    final allowedKeys = [
+      'New_Leads',
+      'Missed_Leads',
+      'Pending_Followups',
+      'Transferred_Leads'
+    ];
+    final items = dashBoardProvider.leadCountMap.entries
+        .where((e) => allowedKeys.contains(e.key))
+        .toList();
 
     return Container(
       decoration: BoxDecoration(
@@ -75,18 +82,23 @@ class DashboardCountTab extends StatelessWidget {
             ),
             itemBuilder: (context, index) {
               final item = items[index];
-              final String title = item.title;
-              final int count = item.dataCount;
-              final color = _colorForTitle(title);
+              final String keyword = item.key;
+              final int count = item.value;
+              final color = _colorForTitle(keyword);
 
-              String apiKeyword = title.toLowerCase().replaceAll(' ', '_');
-              // Map some common titles to the keywords expected by LeadDataPage if possible
-              if (title.contains('Total Lead')) {
-                apiKeyword = 'new_leads';
-              } else if (title.contains('Pending Followup')) {
+              final displayTitle = keyword
+                  .replaceAll('_', ' ')
+                  .split(' ')
+                  .map((w) =>
+                      w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w)
+                  .join(' ');
+
+              String apiKeyword = keyword.toLowerCase();
+              if (keyword == 'Pending_Followups') {
                 apiKeyword = 'pending_followup';
+              } else if (keyword == 'Transferred_Leads') {
+                apiKeyword = 'transffered_leads';
               }
-              final displayTitle = title;
 
               return GestureDetector(
                 onTap: () {

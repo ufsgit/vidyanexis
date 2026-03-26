@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
@@ -30,8 +29,8 @@ class AttendanceReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _fromDateS = '';
+  String _toDateS = '';
   String _Status = '';
   String _AssignedTo = '';
   String _TaskType = '';
@@ -183,12 +182,10 @@ class AttendanceReportProvider extends ChangeNotifier {
   void removeStatus() {
     _selectedStatus = null;
     _selectedUser = null;
+    _selectedDateFilterIndex = null;
     _selectedTaskType = null;
-    _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-    _fromDate = DateTime.now();
-    _toDate = DateTime.now();
-    formatDate();
+    _fromDateS = '';
+    _toDateS = '';
     _hasFetched = false;
     notifyListeners();
   }
@@ -217,8 +214,12 @@ class AttendanceReportProvider extends ChangeNotifier {
       print(_fromDateS);
       print(_toDateS);
       if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-        _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
-        _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+        if (_fromDateS.isEmpty) {
+          _fromDateS = "";
+        }
+        if (_toDateS.isEmpty) {
+          _toDateS = "";
+        }
       }
 
       String toUserId = (_selectedUser ?? 0).toString();
@@ -317,11 +318,9 @@ class AttendanceReportProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getLocation({required BuildContext context, bool showLoading = true}) async {
+  Future<void> getLocation({required BuildContext context}) async {
     // if (!kIsWeb) {
-    if (showLoading) {
-      Loader.showLoader(context);
-    }
+    Loader.showLoader(context);
     PermissionStatus locationStatus = await Permission.location.status;
 
     print(locationStatus.isPermanentlyDenied);
@@ -337,27 +336,20 @@ class AttendanceReportProvider extends ChangeNotifier {
 
     if (!locationStatus.isDenied) {
       try {
-        // High precision settings - Optimized for speed
-        LocationSettings locationSettings = const LocationSettings(
-          accuracy: LocationAccuracy.high, // High is much faster than best
-          distanceFilter: 10,
+        // High precision settings
+        LocationSettings locationSettings = AndroidSettings(
+          accuracy: LocationAccuracy.best,
+          forceLocationManager: true,
         );
 
-        Position? position;
-        try {
-          position = await Geolocator.getCurrentPosition(
-            locationSettings: locationSettings,
-          ).timeout(const Duration(seconds: 10)); // Prevent indefinite waiting
-        } catch (e) {
-          log('Error getting current position: $e');
-          // Try getting last known position as fallback
-          position = await Geolocator.getLastKnownPosition();
-        }
+        Position position = await Geolocator.getCurrentPosition(
+          locationSettings: locationSettings,
+        );
 
-        if (position != null && position.latitude != 0.0 && position.longitude != 0.0) {
-          double latVal = position.latitude;
-          double lonVal = position.longitude;
+        double latVal = position.latitude;
+        double lonVal = position.longitude;
 
+        if (latVal != 0.0 && lonVal != 0.0) {
           print('current');
           latitude = latVal.toString();
           longitude = lonVal.toString();
@@ -386,9 +378,8 @@ class AttendanceReportProvider extends ChangeNotifier {
       final geocoding = GeocodingPlatform.instance;
       if (geocoding != null) {
         // Get the list of placemarks based on latitude and longitude
-        List<Placemark> placemarks = await geocoding
-            .placemarkFromCoordinates(latitude, longitude)
-            .timeout(const Duration(seconds: 5)); // Don't block too long for address
+        List<Placemark> placemarks =
+            await geocoding.placemarkFromCoordinates(latitude, longitude);
 
         // If the list is not empty, return the first result
         if (placemarks.isNotEmpty) {
@@ -477,27 +468,32 @@ class AttendanceReportProvider extends ChangeNotifier {
             _isCompletedToday = false;
             notifyListeners();
 
-            // Background sync (Non-blocking)
-            checkIsCheckedIn(selectedUserId, forceApi: true).then((foundOnServer) async {
-              if (!foundOnServer) {
-                // Keep local state if server is lagging
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setBool('is_checked_in_$selectedUserId', true);
-                await prefs.setString('check_in_date_$selectedUserId', todayStr);
-                await prefs.setBool('is_completed_today_$selectedUserId', false);
-                if (_currentCheckInTime.isEmpty) {
-                  _currentCheckInTime = checkInTime;
-                  await prefs.setString('check_in_time_$selectedUserId', checkInTime);
-                }
+            // We don't have the ID yet, so we must fetch it.
+            // Add delay to allow server validation/indexing.
+            await Future.delayed(const Duration(milliseconds: 500));
+            bool foundOnServer =
+                await checkIsCheckedIn(selectedUserId, forceApi: true);
+
+            if (!foundOnServer) {
+              // If server doesn't show it yet, FORCE local state to true so UI doesn't revert.
+              await prefs.setBool('is_checked_in_$selectedUserId', true);
+              await prefs.setString('check_in_date_$selectedUserId', todayStr);
+              await prefs.setBool('is_completed_today_$selectedUserId', false);
+              // Ensure time is preserved
+              if (_currentCheckInTime.isEmpty) {
+                _currentCheckInTime = checkInTime;
+                await prefs.setString(
+                    'check_in_time_$selectedUserId', checkInTime);
               }
-            });
+            }
           } else if (checkOutTime != null) {
             // User Checked Out
             await prefs.setBool('is_checked_in_$selectedUserId', false);
             await prefs.setString('check_in_date_$selectedUserId', todayStr);
             await prefs.remove('attendance_id_$selectedUserId');
             await prefs.remove('check_in_time_$selectedUserId');
-            await prefs.setString('check_out_time_$selectedUserId', checkOutTime);
+            await prefs.setString(
+                'check_out_time_$selectedUserId', checkOutTime);
             await prefs.setBool('is_completed_today_$selectedUserId', true);
             _currentCheckInTime = '';
             _currentCheckOutTime = checkOutTime;
@@ -506,7 +502,7 @@ class AttendanceReportProvider extends ChangeNotifier {
             notifyListeners();
           }
         } catch (e) {
-          log('Error saving local state: $e');
+          print('Error saving local state: $e');
         }
 
         // Stop loader first
@@ -518,13 +514,7 @@ class AttendanceReportProvider extends ChangeNotifier {
         }
 
         if (context.mounted) {
-          Fluttertoast.showToast(
-            msg: checkInTime != null ? "Check-in Successful" : "Check-out Successful",
-            toastLength: Toast.LENGTH_SHORT,
-            gravity: ToastGravity.BOTTOM,
-            backgroundColor: Colors.green,
-            textColor: Colors.white,
-          );
+          _showSuccessDialog(context, checkInTime != null);
         }
         print(data);
         return true;
