@@ -32,6 +32,7 @@ class FormModel {
   final int? instanceId;
   final String? createdUser;
   final String? createdDate;
+  final int? taskId;
 
   FormModel({
     required this.id,
@@ -45,5 +46,6 @@ class FormModel {
     this.instanceId,
     this.createdUser,
     this.createdDate,
+    this.taskId,
   });
 }

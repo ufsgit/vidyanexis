@@ -2265,8 +2265,8 @@ class _tasksPageReportState extends State<TaskPage> {
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setState) {
-            final isSmallScreen = MediaQuery.of(context).size.width < 600;
+          builder: (dialogContext, setState) {
+            final isSmallScreen = MediaQuery.of(dialogContext).size.width < 600;
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
@@ -2469,15 +2469,56 @@ class _tasksPageReportState extends State<TaskPage> {
                                 });
                               }
 
-                              Provider.of<FormProvider>(context, listen: false)
+                              final formProvider = Provider.of<FormProvider>(
+                                  context, // outer context
+                                  listen: false);
+
+                              formProvider
                                   .saveTaskFormData(
-                                context: context,
+                                context: context, // outer context
                                 taskId: task.taskId,
                                 formId: int.parse(form.id),
                                 customerId: task.customerId,
                                 taskTypeId: task.taskTypeId.toString(),
                                 customFields: customFieldsPayload,
-                              );
+                              )
+                                  .then((resultId) {
+                                if (resultId != null) {
+                                  if (mounted) {
+                                    Navigator.pop(dialogContext); // Close form
+                                  }
+                                  showDialog(
+                                    context: context, // outer context
+                                    builder: (confirmContext) => AlertDialog(
+                                      title: const Text("Print Form"),
+                                      content: const Text(
+                                          "Do you want to print form?"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(confirmContext);
+                                          },
+                                          child: const Text("No"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(confirmContext);
+                                            formProvider.fetchAndPrintFormPdf(
+                                              context:
+                                                  context, // outer TaskPage context
+                                              customerId:
+                                                  task.customerId.toString(),
+                                              formDataDetailsId: resultId,
+                                              taskId: task.taskId,
+                                            );
+                                          },
+                                          child: const Text("Yes"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              });
                             },
                             child: const Text(
                               'Save',

@@ -71,6 +71,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   }
 
   Widget _buildFormsTable(List<FormModel> forms) {
+    final formProvider = Provider.of<FormProvider>(context);
     final settingsprovider = Provider.of<SettingsProvider>(context);
     const borderColor = Color(0xFFE9EDF1);
 
@@ -117,11 +118,41 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              if (settingsprovider.menuIsEditMap[85] == 1)
-                              IconButton(
-                                icon: const Icon(Icons.edit, size: 20, color: Colors.blue),
-                                onPressed: () => _showEditDialog(form),
-                              ),
+                                if (settingsprovider.menuIsEditMap[85] == 1)
+                                  IconButton(
+                                    icon: const Icon(Icons.edit,
+                                        size: 20, color: Colors.blue),
+                                    onPressed: () => _showEditDialog(form),
+                                  ),
+                                IconButton(
+                                  icon: formProvider.isPrinting
+                                      ? const SizedBox(
+                                          width: 20,
+                                          height: 20,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            color: Colors.orange,
+                                          ),
+                                        )
+                                      : const Icon(Icons.print,
+                                          size: 20, color: Colors.orange),
+                                  onPressed: () {
+                                    if (form.instanceId != null) {
+                                      formProvider.fetchAndPrintFormPdf(
+                                        context: context,
+                                        customerId: widget.customerId,
+                                        formDataDetailsId: form.instanceId!,
+                                        taskId: form.taskId,
+                                      );
+                                    } else {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'No print data available for this form')),
+                                      );
+                                    }
+                                  },
+                                ),
                             ],
                           ),
                         ),

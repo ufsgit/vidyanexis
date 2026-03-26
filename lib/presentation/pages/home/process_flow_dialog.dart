@@ -795,14 +795,14 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       context: context,
       builder: (context) {
         return StatefulBuilder(
-          builder: (context, setState) {
+          builder: (dialogContext, setState) {
             return Dialog(
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Container(
                 padding: const EdgeInsets.all(24),
-                width: MediaQuery.of(context).size.width * 0.9,
+                width: MediaQuery.of(dialogContext).size.width * 0.9,
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -996,7 +996,11 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 });
                               }
 
-                              Provider.of<FormProvider>(context, listen: false)
+                              final formProvider = Provider.of<FormProvider>(
+                                  context, // ProcessFlowDialog context
+                                  listen: false);
+
+                              formProvider
                                   .saveTaskFormData(
                                 context: context,
                                 taskId: widget.task.taskId,
@@ -1006,7 +1010,44 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 taskTypeId: widget.task.taskTypeId.toString(),
                                 enquiryForId: widget.task.enquiryForId,
                                 customFields: customFieldsPayload,
-                              );
+                              )
+                                  .then((resultId) {
+                                if (resultId != null) {
+                                  if (mounted) {
+                                    Navigator.pop(
+                                        dialogContext); // Close form dialog
+                                  }
+                                  showDialog(
+                                    context: context,
+                                    builder: (confirmContext) => AlertDialog(
+                                      title: const Text("Print Form"),
+                                      content: const Text(
+                                          "Do you want to print form?"),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(confirmContext);
+                                          },
+                                          child: const Text("No"),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            Navigator.pop(confirmContext);
+                                            formProvider.fetchAndPrintFormPdf(
+                                              context: context,
+                                              customerId: widget.task.customerId
+                                                  .toString(),
+                                              formDataDetailsId: resultId,
+                                              taskId: widget.task.taskId,
+                                            );
+                                          },
+                                          child: const Text("Yes"),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                }
+                              });
                             },
                             child: Text(
                               'Save',
