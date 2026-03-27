@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/controller/models/dashboard_info_model.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
@@ -78,30 +79,32 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
           );
         }
 
-        return Column(
-          children: [
-            Container(
-              width: double.infinity,
-              constraints: const BoxConstraints(
-                minHeight: 300,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(0.0),
-                child: Column(
-                  children: taskInfoList.asMap().entries.map((entry) {
-                    final index = entry.key;
-                    final taskInfo = entry.value;
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      child: _buildCustomerRow(taskInfo, index),
-                    );
-                  }).toList(),
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            _buildPaginationControls(context),
-          ],
+        // Calculate a safe height to avoid layout issues inside the parent ListView
+        // This is necessary to make the nested Scaffold and its bottomNavigationBar work.
+        final double screenHeight = MediaQuery.of(context).size.height;
+        final double headerOffset = 220;
+        final double taskSectionHeight =
+            (screenHeight - headerOffset).clamp(300.0, screenHeight);
+
+        return SizedBox(
+          height: taskSectionHeight,
+          child: Scaffold(
+            backgroundColor: Colors.transparent,
+            body: taskInfoList.isEmpty
+                ? const Center(child: Text("No tasks found"))
+                : ListView.builder(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    itemCount: taskInfoList.length,
+                    itemBuilder: (context, index) {
+                      final taskInfo = taskInfoList[index];
+                      return Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        child: _buildCustomerRow(taskInfo, index),
+                      );
+                    },
+                  ),
+            bottomNavigationBar: _buildPaginationControls(context),
+          ),
         );
       },
     );
@@ -273,7 +276,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
             icon: const Icon(Icons.arrow_forward),
             onPressed: (dashBoardProvider.taskCurrentPage + 1) *
                         dashBoardProvider.taskItemsPerPage <
-                    dashBoardProvider.taskInfoModel.length
+                    dashBoardProvider.taskTotalCount
                 ? () {
                     dashBoardProvider.fetchNextPageTasks(context);
                   }

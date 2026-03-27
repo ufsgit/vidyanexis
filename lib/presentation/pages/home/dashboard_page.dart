@@ -199,8 +199,8 @@ class _DashBoardPageState extends State<DashBoardPage> {
             ),
           const SizedBox(height: 10),
           CustomTab(dashBoardProvider: dashBoardProvider),
-          const SizedBox(height: 10),
-          const SizedBox(height: 20),
+          // const SizedBox(height: 10),
+          // const SizedBox(height: 20),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [

@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/models/work_report_summary_model.dart';
 import 'package:vidyanexis/controller/models/lead_enquiry_report_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 import 'package:vidyanexis/controller/warrenty_report_provider.dart';
 import 'package:provider/provider.dart';
@@ -121,15 +122,16 @@ class DashboardProvider extends ChangeNotifier {
   int _selectedUser = 0;
   int get selectedUser => _selectedUser;
 
-  // Pagination for Task Summary (Frontend only)
+  // Pagination for Task Summary
   int _taskCurrentPage = 0;
-  final int _taskItemsPerPage = 50;
+  int _taskItemsPerPage = 10;
+  int _taskTotalCount = 0;
   int get taskCurrentPage => _taskCurrentPage;
 
   int get taskItemsPerPage => _taskItemsPerPage;
 
-  // Total items = actual list length (not the backend marker)
-  int get taskTotalCount => _taskInfoModel.length;
+  // Total items from backend metadata
+  int get taskTotalCount => _taskTotalCount;
 
   int get taskStartLimit {
     if (_taskInfoModel.isEmpty) return 0;
@@ -138,22 +140,11 @@ class DashboardProvider extends ChangeNotifier {
 
   int get taskEndLimit {
     int end = (_taskCurrentPage + 1) * _taskItemsPerPage;
-    return end > _taskInfoModel.length ? _taskInfoModel.length : end;
+    return end > _taskTotalCount ? _taskTotalCount : end;
   }
 
   List<TaskInfoDashboardModel> get pagedTaskInfoModel {
-    if (_taskInfoModel.isEmpty) return [];
-    int start = _taskCurrentPage * _taskItemsPerPage;
-    int end = start + _taskItemsPerPage;
-    if (start >= _taskInfoModel.length) {
-      // Page out of range, reset to last valid page
-      _taskCurrentPage =
-          ((_taskInfoModel.length - 1) / _taskItemsPerPage).floor();
-      start = _taskCurrentPage * _taskItemsPerPage;
-      end = start + _taskItemsPerPage;
-    }
-    return _taskInfoModel.sublist(
-        start, end > _taskInfoModel.length ? _taskInfoModel.length : end);
+    return _taskInfoModel;
   }
 
   // Date filter properties
@@ -207,16 +198,22 @@ class DashboardProvider extends ChangeNotifier {
   }
 
   Future<void> getTaskInfoDashBoard(BuildContext context,
-      {bool shouldNotify = true}) async {
-    if (isTaskInfoLoaded) return;
+      {bool shouldNotify = true, bool isPagination = false}) async {
+    if (isTaskInfoLoaded && !isPagination) return;
     try {
-      isDashBoardLoading = true;
+      // isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
+
+      int pageIndex1 = (_taskCurrentPage * _taskItemsPerPage) + 1;
+      int pageIndex2 = (_taskCurrentPage + 1) * _taskItemsPerPage;
+
+      Loader.showLoader(context);
+
       final response = await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.getTaskInfoDashBoard,
           bodyData: {
-            "Page_Index1": 1,
-            "Page_Index2": 1000,
+            "Page_Index1": pageIndex1,
+            "Page_Index2": pageIndex2,
           });
       if (response.statusCode == 200) {
         final data = response.data;
@@ -228,13 +225,19 @@ class DashboardProvider extends ChangeNotifier {
               await compute(_parseTaskInfo, dataitem as List<dynamic>);
 
           if (tempData.isNotEmpty) {
-            tempData.removeLast();
+            // Check if last item is metadata (tp=2) to extract total count
+            final lastRaw = dataitem.last;
+            if (lastRaw is Map && lastRaw['tp'] == 2) {
+              _taskTotalCount = lastRaw['Customer_Id'] ?? 0;
+              tempData.removeLast();
+            } else {
+              // Current logic removes last item regardless
+              tempData.removeLast();
+            }
             _taskInfoModel = tempData;
-            _taskCurrentPage = 0;
             isTaskInfoLoaded = true;
           } else {
             _taskInfoModel = [];
-            _taskCurrentPage = 0;
           }
         }
       } else {
@@ -252,16 +255,18 @@ class DashboardProvider extends ChangeNotifier {
         );
       });
     } finally {
-      isDashBoardLoading = false;
+      // isDashBoardLoading = false;
       if (shouldNotify) notifyListeners();
+      Loader.stopLoader(context);
     }
   }
 
   Future<void> fetchNextPageTasks(BuildContext context,
       {bool shouldNotify = true}) async {
-    if ((_taskCurrentPage + 1) * _taskItemsPerPage < _taskInfoModel.length) {
+    if ((_taskCurrentPage + 1) * _taskItemsPerPage < _taskTotalCount) {
       _taskCurrentPage++;
-      if (shouldNotify) notifyListeners();
+      await getTaskInfoDashBoard(context,
+          shouldNotify: shouldNotify, isPagination: true);
     }
   }
 
@@ -269,7 +274,8 @@ class DashboardProvider extends ChangeNotifier {
       {bool shouldNotify = true}) async {
     if (_taskCurrentPage > 0) {
       _taskCurrentPage--;
-      if (shouldNotify) notifyListeners();
+      await getTaskInfoDashBoard(context,
+          shouldNotify: shouldNotify, isPagination: true);
     }
   }
 

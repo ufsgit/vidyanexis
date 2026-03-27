@@ -698,6 +698,29 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void clearAllFilters() {
+    _selectedStatus = null;
+    _selectedUser = null;
+    _selectedEnquiryFor = null;
+    _selectedEnquirySource = null;
+    _selectedStatusIds = [0];
+    _selectedUserIds = [0];
+    _selectedEnquiryForIds = [0];
+    _selectedEnquirySourceIds = [0];
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
+    _fromDateS = '';
+    _toDateS = '';
+    _search = '';
+    _status = '';
+    _enquiryForS = '';
+    _isFilter = false;
+    _selectedDateFilterIndex = null;
+    notifyListeners();
+  }
+
   void toggleStatus(int value) {
     if (value == 0) {
       _selectedStatusIds = [0];
