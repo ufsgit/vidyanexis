@@ -7,7 +7,6 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/lead_status_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_status_report_model.dart';
 
-
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
@@ -29,7 +28,7 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<LeadStatusReportProvider>(context, listen: false);
-      
+
       provider.fetchReportData(context);
     });
   }
@@ -53,12 +52,14 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[50],
-      appBar: AppStyles.isWebScreen(context) ? null : AppBar(
-        title: const Text('Lead Status Report'),
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.black,
-        elevation: 0,
-      ),
+      appBar: AppStyles.isWebScreen(context)
+          ? null
+          : AppBar(
+              title: const Text('Lead Status Report'),
+              backgroundColor: Colors.white,
+              foregroundColor: Colors.black,
+              elevation: 0,
+            ),
       body: Consumer<LeadStatusReportProvider>(
         builder: (context, provider, child) {
           return SingleChildScrollView(
@@ -80,7 +81,8 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
     );
   }
 
-  Widget _buildContentBody(BuildContext context, LeadStatusReportProvider provider) {
+  Widget _buildContentBody(
+      BuildContext context, LeadStatusReportProvider provider) {
     if (provider.reportData.isEmpty) {
       return Container(
         width: double.infinity,
@@ -304,8 +306,8 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children:
-                          List<Widget>.generate(dateButtonTitles.length, (index) {
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
                         String title = dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
@@ -530,16 +532,25 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: DataTable(
-              headingRowColor: WidgetStateProperty.resolveWith((states) => Colors.grey[100]),
+              headingRowColor:
+                  WidgetStateProperty.resolveWith((states) => Colors.grey[100]),
               columns: const [
-                DataColumn(label: Text('Status ID', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Status Name', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Lead Count', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(
+                    label: Text('Status ID',
+                        style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(
+                    label: Text('Status Name',
+                        style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(
+                    label: Text('Lead Count',
+                        style: TextStyle(fontWeight: FontWeight.bold))),
               ],
               rows: data.map((item) {
                 return DataRow(

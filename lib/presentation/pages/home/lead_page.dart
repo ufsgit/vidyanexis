@@ -2399,7 +2399,9 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                               name,
                               style: TextStyle(
                                 fontSize: 14,
-                                color: isSelected ? Colors.black : Colors.grey[700],
+                                color: isSelected
+                                    ? Colors.black
+                                    : Colors.grey[700],
                               ),
                             ),
                           ),
@@ -2419,8 +2421,8 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child:
-                        const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                    child: const Text('Cancel',
+                        style: TextStyle(color: Colors.grey)),
                   ),
                   const SizedBox(width: 8),
                   ElevatedButton(

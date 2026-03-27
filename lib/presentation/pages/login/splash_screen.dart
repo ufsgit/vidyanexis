@@ -83,13 +83,13 @@ class _SplashScreenState extends State<SplashScreen> {
                           displayLogo,
                           height: 150,
                           width: 150,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
                             return Image.asset(
                               AppStyles.logo(),
                               height: 150,
                               width: 150,
-                              fit: BoxFit.cover,
+                              fit: BoxFit.contain,
                             );
                           },
                         )
@@ -97,7 +97,7 @@ class _SplashScreenState extends State<SplashScreen> {
                           displayLogo,
                           height: 150,
                           width: 150,
-                          fit: BoxFit.cover,
+                          fit: BoxFit.contain,
                           errorBuilder: (context, error, stackTrace) {
                             return Container();
                           },
