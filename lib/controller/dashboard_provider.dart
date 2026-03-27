@@ -713,6 +713,9 @@ class DashboardProvider extends ChangeNotifier {
 
   void setUserFilterStatus(int newStatus) {
     _selectedUser = newStatus;
+    isLeadLoaded = false;
+    isWorkLoaded = false;
+    isDashboardCountLoaded = false;
     print(_selectedUser.toString());
     notifyListeners(); // Notify listeners about the change
   }
@@ -764,6 +767,9 @@ class DashboardProvider extends ChangeNotifier {
         break;
     }
 
+    isLeadLoaded = false;
+    isWorkLoaded = false;
+    isDashboardCountLoaded = false;
     notifyListeners(); // Notify listeners to rebuild the UI
   }
 

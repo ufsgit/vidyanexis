@@ -41,7 +41,9 @@ class DashboardCountTab extends StatelessWidget {
       'New_Leads',
       'Missed_Leads',
       'Pending_Followups',
-      'Transferred_Leads'
+      'Transferred_Leads',
+      'Closed_Leads',
+      'Total_Called'
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
@@ -98,6 +100,10 @@ class DashboardCountTab extends StatelessWidget {
                 apiKeyword = 'pending_followup';
               } else if (keyword == 'Transferred_Leads') {
                 apiKeyword = 'transffered_leads';
+              } else if (keyword == 'Closed_Leads') {
+                apiKeyword = 'Closed_Leads';
+              } else if (keyword == 'Total_Called') {
+                apiKeyword = 'Total_Called';
               }
 
               return GestureDetector(
@@ -212,7 +218,7 @@ class DashboardCountTab extends StatelessWidget {
       child: GridView.builder(
         shrinkWrap: true,
         physics: const NeverScrollableScrollPhysics(),
-        itemCount: 4,
+        itemCount: 6,
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           crossAxisSpacing: 16,
