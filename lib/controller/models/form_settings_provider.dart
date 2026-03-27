@@ -589,12 +589,25 @@ class FormProvider extends ChangeNotifier {
         if (response.data is Map) {
           debugPrint("DEBUG: Save status 200, response data: ${response.data}");
           
-          Object? rawId = response.data['Form_Data_Details_Id'] ??
-                         response.data['itemID'] ??
-                         response.data['item_id'];
+          final dataMap = response.data as Map;
           
-          if (rawId != null) {
-            resultId = int.tryParse(rawId.toString());
+          int? findIdFromMap(Map map) {
+            Object? id = map['Form_Data_Details_Id'] ??
+                         map['itemID'] ??
+                         map['item_id'] ??
+                         map['Form_Data_Details_ID'] ??
+                         map['Form_data_details_id'];
+            return id != null ? int.tryParse(id.toString()) : null;
+          }
+
+          resultId = findIdFromMap(dataMap);
+          
+          // Check for nested data fields if not found at top level
+          if (resultId == null) {
+            Object? nestedData = dataMap['data'] ?? dataMap['Data'];
+            if (nestedData is Map) {
+              resultId = findIdFromMap(nestedData);
+            }
           }
         }
 

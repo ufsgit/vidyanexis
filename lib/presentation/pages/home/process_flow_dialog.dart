@@ -7,11 +7,11 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'package:vidyanexis/controller/image_upload_provider.dart';
 
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 
+import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:intl/intl.dart';
 
 class ProcessFlowDialog extends StatefulWidget {
@@ -521,30 +521,15 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           return _buildDocumentTile(
                                             title: doc.documentTypeName,
                                             onTap: () async {
-                                              final imageProvider = Provider.of<
-                                                      ImageUploadProvider>(
-                                                  context,
-                                                  listen: false);
-                                              imageProvider.clearFiles();
-                                              imageProvider.setCutomerId(widget
-                                                  .task.customerId
-                                                  .toString());
-                                              imageProvider.updateDocumentType(
-                                                  doc.documentTypeId,
-                                                  doc.documentTypeName);
-
-                                              await imageProvider
-                                                  .addMultipleFile();
-
-                                              if (imageProvider
-                                                      .images.isNotEmpty ||
-                                                  imageProvider
-                                                      .pdfs.isNotEmpty) {
-                                                await imageProvider
-                                                    .uploadAllFiles(context,
-                                                        shouldPop: false);
-                                                _refreshData();
-                                              }
+                                              await showDialog(
+                                                context: context,
+                                                builder: (context) => ImageUploadAlert(
+                                                  customerId: widget.task.customerId.toString(),
+                                                  initialDocumentTypeId: doc.documentTypeId,
+                                                  initialDocumentTypeName: doc.documentTypeName,
+                                                ),
+                                              );
+                                              _refreshData();
                                             },
                                           );
                                         },
