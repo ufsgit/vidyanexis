@@ -430,74 +430,7 @@ class _LeadsPageState extends State<LeadPage> {
                   runSpacing: 10,
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: leadProvider.selectedStatus != null &&
-                                    leadProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: leadProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ] +
-                                provider.followUpData
-                                    .map((status) => DropdownMenuItem<int>(
-                                          value: status.statusId,
-                                          child: ConstrainedBox(
-                                            constraints: const BoxConstraints(
-                                                maxWidth: 150),
-                                            child: Text(
-                                              status.statusName ?? '',
-                                              overflow: TextOverflow.ellipsis,
-                                              style:
-                                                  const TextStyle(fontSize: 14),
-                                            ),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                leadProvider.setStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String fromDate = leadProvider.formattedFromDate;
-                              String toDate = leadProvider.formattedToDate;
-                              String status =
-                                  leadProvider.selectedStatus.toString();
-                              String enquiryFor =
-                                  leadProvider.selectedEnquiryFor.toString();
-                              print(
-                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate,Selected Enquiry For : $enquiryFor');
-                              leadProvider.setSearchCriteria(
-                                  leadProvider.search, fromDate, toDate);
-                              leadProvider.getSearchLeads(context);
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildStatusFilter(leadProvider, provider),
                     GestureDetector(
                       onTap: () {
                         onClickTopButton(context);
@@ -555,7 +488,7 @@ class _LeadsPageState extends State<LeadPage> {
                       ElevatedButton(
                         onPressed: () {
                           leadProvider.selectDateFilterOption(null);
-                          leadProvider.removeStatus();
+                          leadProvider.toggleStatus(0); // Reset status to [0]
                           searchController.clear();
                           leadProvider.setSearchCriteria('', '', '');
                           leadProvider.getSearchLeads(context);
@@ -2164,6 +2097,114 @@ class _LeadsPageState extends State<LeadPage> {
               builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
     }
   }
+
+  Widget _buildStatusFilter(
+      LeadsProvider leadsProvider, DropDownProvider dropDownProvider) {
+    final bool hasSelection = leadsProvider.selectedStatusIds.isNotEmpty &&
+        leadsProvider.selectedStatusIds.first != 0;
+
+    // Build label text from selected statuses
+    String labelText = 'All';
+    if (hasSelection) {
+      final selectedNames = dropDownProvider.followUpData
+          .where((s) => leadsProvider.selectedStatusIds.contains(s.statusId))
+          .map((s) => s.statusName ?? '')
+          .toList();
+      labelText = selectedNames.join(', ');
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () async {
+              // Use a bottom sheet / dialog for multi-select
+              await showDialog(
+                context: context,
+                barrierColor: Colors.transparent,
+                builder: (ctx) {
+                  return _StatusMultiSelectDialog(
+                    allStatuses: dropDownProvider.followUpData,
+                    selectedIds:
+                        List<int>.from(leadsProvider.selectedStatusIds),
+                    onApply: (selectedIds) {
+                      if (selectedIds.isEmpty || selectedIds.contains(0)) {
+                        leadsProvider.toggleStatus(0);
+                      } else {
+                        // Reset first to clear [0] or others if needed
+                        leadsProvider.toggleStatus(0); // This resets to [0]
+                        for (final id in selectedIds) {
+                          leadsProvider.toggleStatus(id);
+                        }
+                      }
+                      leadsProvider.setSearchCriteria(
+                        leadsProvider.search,
+                        leadsProvider.fromDateS,
+                        leadsProvider.toDateS,
+                      );
+                      leadsProvider.getSearchLeads(context);
+                    },
+                  );
+                },
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.2),
+                  child: Text(
+                    'Status: $labelText',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color:
+                          hasSelection ? AppColors.primaryBlue : Colors.black87,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_drop_down,
+                  size: 18,
+                  color: hasSelection ? AppColors.primaryBlue : Colors.black45,
+                ),
+              ],
+            ),
+          ),
+          if (hasSelection) ...[
+            const SizedBox(width: 4),
+            GestureDetector(
+              onTap: () {
+                leadsProvider.toggleStatus(0); // Reset to All
+                leadsProvider.setSearchCriteria(
+                  leadsProvider.search,
+                  leadsProvider.fromDateS,
+                  leadsProvider.toDateS,
+                );
+                leadsProvider.getSearchLeads(context);
+              },
+              child: Icon(
+                Icons.close,
+                size: 16,
+                color: AppColors.primaryBlue,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
 }
 
 class _HoverMenuAnchor extends StatefulWidget {
@@ -2242,6 +2283,165 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
             child: child,
           );
         }).toList(),
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Multi-select Status dialog
+// ---------------------------------------------------------------------------
+class _StatusMultiSelectDialog extends StatefulWidget {
+  final List allStatuses; // List<MandatoryStatusModel>
+  final List<int> selectedIds;
+  final void Function(List<int>) onApply;
+
+  const _StatusMultiSelectDialog({
+    required this.allStatuses,
+    required this.selectedIds,
+    required this.onApply,
+  });
+
+  @override
+  State<_StatusMultiSelectDialog> createState() =>
+      _StatusMultiSelectDialogState();
+}
+
+class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
+  late List<int> _tempSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    // Clone so we don't mutate the original list
+    _tempSelected = List<int>.from(widget.selectedIds);
+    // Remove the placeholder 0 so the UI starts clean
+    _tempSelected.remove(0);
+  }
+
+  void _toggle(int id) {
+    setState(() {
+      if (_tempSelected.contains(id)) {
+        _tempSelected.remove(id);
+      } else {
+        _tempSelected.add(id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+          maxWidth: 360,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Title bar
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Select Status',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            // Scrollable list
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.allStatuses.length,
+                itemBuilder: (ctx, idx) {
+                  final status = widget.allStatuses[idx];
+                  final id = status.statusId;
+                  final name = status.statusName ?? '';
+                  final isSelected = _tempSelected.contains(id);
+
+                  return InkWell(
+                    onTap: () => _toggle(id),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Row(
+                        children: [
+                          Icon(
+                            isSelected
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: isSelected
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              name,
+                              style: TextStyle(
+                                fontSize: 14,
+                                color: isSelected
+                                    ? Colors.black
+                                    : Colors.grey[700],
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const Divider(height: 1),
+            // Actions
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel',
+                        style: TextStyle(color: Colors.grey)),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      widget.onApply(_tempSelected);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                      minimumSize: const Size(80, 40),
+                    ),
+                    child: const Text('Apply'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

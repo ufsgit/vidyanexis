@@ -64,52 +64,30 @@ class _LoginPageMobileState extends State<LoginPageMobile> {
                                 ),
                               ),
                             )
-                          : Container(
-                              padding: const EdgeInsets.all(4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                shape: BoxShape.circle,
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.black.withOpacity(0.1),
-                                    blurRadius: 10,
-                                    offset: const Offset(0, 4),
-                                  ),
-                                ],
-                              ),
-                              child: CircleAvatar(
-                                radius: 40,
-                                backgroundColor: Colors.transparent,
-                                child: ClipOval(
-                                  child: displayLogo.startsWith('http')
-                                      ? Image.network(
-                                          displayLogo,
-                                          height: 80,
-                                          width: 80,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Image.asset(
-                                              AppStyles.logo(),
-                                              height: 80,
-                                              width: 80,
-                                              fit: BoxFit.cover,
-                                            );
-                                          },
-                                        )
-                                      : Image.asset(
-                                          displayLogo,
-                                          height: 80,
-                                          width: 80,
-                                          fit: BoxFit.cover,
-                                          errorBuilder:
-                                              (context, error, stackTrace) {
-                                            return Container();
-                                          },
-                                        ),
+                          : displayLogo.startsWith('http')
+                              ? Image.network(
+                                  displayLogo,
+                                  height: 100,
+                                  width: 140,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Image.asset(
+                                      AppStyles.logo(),
+                                      height: 100,
+                                      width: 140,
+                                      fit: BoxFit.contain,
+                                    );
+                                  },
+                                )
+                              : Image.asset(
+                                  displayLogo,
+                                  height: 100,
+                                  width: 140,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container();
+                                  },
                                 ),
-                              ),
-                            ),
                     ),
                     const SizedBox(height: 8),
 

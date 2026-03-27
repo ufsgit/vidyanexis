@@ -47,6 +47,29 @@ class TaskReportProvider extends ChangeNotifier {
   int? get selectedUser => _selectedUser;
   int? get selectedTaskType => _selectedTaskType;
 
+  List<int> _selectedStatusIds = [0];
+  List<int> get selectedStatusIds => _selectedStatusIds;
+
+  void toggleStatus(int value) {
+    if (value == 0) {
+      _selectedStatusIds = [0];
+    } else {
+      if (_selectedStatusIds.contains(0)) {
+        _selectedStatusIds.remove(0);
+      }
+      if (_selectedStatusIds.contains(value)) {
+        _selectedStatusIds.remove(value);
+        if (_selectedStatusIds.isEmpty) {
+          _selectedStatusIds = [0];
+        }
+      } else {
+        _selectedStatusIds.add(value);
+      }
+    }
+    _Status = _selectedStatusIds.join(',');
+    notifyListeners();
+  }
+
   int _pageIndex = 1;
   final int _pageSize = 20;
   int _totalSize = 0;
@@ -184,6 +207,8 @@ class TaskReportProvider extends ChangeNotifier {
 
   void setStatus(int newStatus) {
     _selectedStatus = newStatus;
+    toggleStatus(
+        newStatus); // Use toggleStatus for consistency or update directly
     print(_selectedStatus.toString());
     notifyListeners(); // Notify listeners about the change
   }
@@ -202,6 +227,7 @@ class TaskReportProvider extends ChangeNotifier {
 
   void removeStatus() {
     _selectedStatus = null;
+    _selectedStatusIds = [0]; // Reset multi-select status
     _selectedUser = null;
     _selectedDateFilterIndex = null;
     _selectedTaskType = null;
@@ -215,7 +241,7 @@ class TaskReportProvider extends ChangeNotifier {
     _toDate = DateTime.now();
     _formattedFromDate = _fromDateS;
     _formattedToDate = _toDateS;
-    _Status = '';
+    _Status = '0'; // Default to "All"
     _AssignedTo = '';
     _TaskType = '';
     _isFilter = false;
@@ -274,7 +300,8 @@ class TaskReportProvider extends ChangeNotifier {
       int startLimit = (_pageIndex - 1) * _pageSize + 1;
       int endLimit = _pageIndex * _pageSize;
 
-      print("DEBUG: calling API with Page_Index1: $startLimit, Page_Index2: $endLimit");
+      print(
+          "DEBUG: calling API with Page_Index1: $startLimit, Page_Index2: $endLimit");
       final response = await HttpRequest.httpGetRequest(
           endPoint: HttpUrls.searchTaskReport,
           bodyData: {
@@ -295,20 +322,19 @@ class TaskReportProvider extends ChangeNotifier {
 
         if (data != null) {
           final dataMap = data is Map ? data['data'] ?? data : data;
-          
+
           if (dataMap is List) {
-            final allTasks = dataMap
-                .map((item) => TaskReportModel.fromJson(item))
-                .toList();
+            final allTasks =
+                dataMap.map((item) => TaskReportModel.fromJson(item)).toList();
 
             print("DEBUG: Total items received from API: ${allTasks.length}");
 
             if (allTasks.isNotEmpty) {
               // Check if the last item is a metadata row (pattern in Leads/Customer Reports)
-              bool likelyMetadataRow = allTasks.length > 1 && 
-                                     allTasks.last.taskId == 0 && 
-                                     allTasks.last.customerId > 0;
-              
+              bool likelyMetadataRow = allTasks.length > 1 &&
+                  allTasks.last.taskId == 0 &&
+                  allTasks.last.customerId > 0;
+
               if (likelyMetadataRow) {
                 _totalSize = allTasks.last.customerId;
                 allTasks.removeLast();
@@ -317,29 +343,29 @@ class TaskReportProvider extends ChangeNotifier {
               // Fallback: If server returns more than pageSize (e.g. 100 instead of 20),
               // perform client-side slicing to ensure the user sees exactly what they asked for.
               if (allTasks.length > _pageSize) {
-                print("DEBUG: Server returned unpaginated list. Slicing for page $_pageIndex.");
+                print(
+                    "DEBUG: Server returned unpaginated list. Slicing for page $_pageIndex.");
                 int start = (_pageIndex - 1) * _pageSize;
                 int end = _pageIndex * _pageSize;
-                
+
                 if (start < allTasks.length) {
                   _taskReport = allTasks.sublist(
-                    start, 
-                    end > allTasks.length ? allTasks.length : end
-                  );
+                      start, end > allTasks.length ? allTasks.length : end);
                 } else {
                   _taskReport = [];
                 }
-                
+
                 if (!likelyMetadataRow) {
                   _totalSize = allTasks.length;
                 }
               } else {
                 // Server seems to have paginated the results
                 _taskReport = allTasks;
-                
+
                 if (!likelyMetadataRow) {
                   if (allTasks.length == _pageSize) {
-                    _totalSize = _pageIndex * _pageSize + 1; // Assume more pages
+                    _totalSize =
+                        _pageIndex * _pageSize + 1; // Assume more pages
                   } else {
                     _totalSize = (_pageIndex - 1) * _pageSize + allTasks.length;
                   }
@@ -352,8 +378,9 @@ class TaskReportProvider extends ChangeNotifier {
 
             _totalPages = (_totalSize / _pageSize).ceil();
             if (_totalPages == 0) _totalPages = 1;
-            
-            print("DEBUG: Final taskReport count: ${_taskReport.length}, Total Size: $_totalSize, Total Pages: $_totalPages");
+
+            print(
+                "DEBUG: Final taskReport count: ${_taskReport.length}, Total Size: $_totalSize, Total Pages: $_totalPages");
             _hasFetched = true;
             result = true;
           } else {

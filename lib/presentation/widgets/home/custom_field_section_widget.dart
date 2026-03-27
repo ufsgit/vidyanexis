@@ -11,6 +11,7 @@ import 'package:url_launcher/url_launcher.dart' as launcher;
 // io-only in FileDownloader
 import 'package:flutter/foundation.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 
 // Global keys for specific instances
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldLeadStatusKey =
@@ -585,38 +586,73 @@ class CustomFieldWidgetBuilder {
                 GestureDetector(
                   onTap: enabled ? pickFile : null,
                   child: Container(
-                    height: 120,
+                    height: 100,
+                    width: double.infinity,
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.blue, width: 2),
-                      borderRadius: BorderRadius.circular(8),
-                      color: Colors.blue.withOpacity(0.05),
-                    ),
-                    child: const Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.upload_file, size: 36, color: Colors.blue),
-                          SizedBox(height: 8),
-                          Text('Tap to select file',
-                              style: TextStyle(
-                                  fontSize: 14, color: Colors.black87)),
-                        ],
+                      border: Border.all(
+                        color: AppColors.bluebutton.withOpacity(0.3),
+                        width: 1.5,
+                        style: BorderStyle.solid, // Note: standard border, dashed is hard with core BoxDecoration
                       ),
+                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.bluebutton.withOpacity(0.02),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppColors.bluebutton.withOpacity(0.1),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.cloud_upload_outlined,
+                            size: 24,
+                            color: AppColors.bluebutton,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Upload $fieldName',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.bluebutton,
+                          ),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          'PDF, JPG, PNG allowed',
+                          style: TextStyle(
+                            fontSize: 10,
+                            color: AppColors.textGrey3,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
                 if (hasPending ||
                     (uploadedUrl != null && uploadedUrl!.isNotEmpty)) ...[
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 12),
                   Container(
-                    padding: const EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                      borderRadius: BorderRadius.circular(8),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: Colors.grey.shade200),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        // Preview / Icon
                         if (hasPending)
                           Builder(builder: (_) {
                             final contentType =
@@ -647,24 +683,26 @@ class CustomFieldWidgetBuilder {
                                     }
                                   : null,
                               child: Container(
-                                width: 60,
-                                height: 60,
+                                width: 48,
+                                height: 48,
                                 decoration: BoxDecoration(
-                                  color: Colors.grey.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(6),
+                                  color: AppColors.bluebutton.withOpacity(0.05),
+                                  borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: isImage && bytes != null
                                     ? ClipRRect(
-                                        borderRadius: BorderRadius.circular(6),
+                                        borderRadius: BorderRadius.circular(8),
                                         child: Image.memory(
                                           bytes,
                                           fit: BoxFit.cover,
                                         ),
                                       )
-                                    : const Icon(
-                                        Icons.insert_drive_file,
-                                        size: 28,
-                                        color: Colors.blueGrey,
+                                    : Icon(
+                                        contentType.contains('pdf')
+                                            ? Icons.picture_as_pdf_outlined
+                                            : Icons.insert_drive_file_outlined,
+                                        size: 24,
+                                        color: AppColors.bluebutton,
                                       ),
                               ),
                             );
@@ -692,19 +730,16 @@ class CustomFieldWidgetBuilder {
                                               child: Image.network(
                                                 uploadedUrl!,
                                                 fit: BoxFit.contain,
-                                                errorBuilder: (c, e, s) {
-                                                  return const SizedBox(
-                                                    width: 300,
-                                                    height: 300,
-                                                    child: Center(
+                                                errorBuilder: (c, e, s) =>
+                                                    const SizedBox(
+                                                  width: 300,
+                                                  height: 300,
+                                                  child: Center(
                                                       child: Icon(
-                                                        Icons.broken_image,
-                                                        size: 64,
-                                                        color: Colors.grey,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
+                                                          Icons.broken_image,
+                                                          size: 48,
+                                                          color: Colors.grey)),
+                                                ),
                                               ),
                                             ),
                                           );
@@ -713,20 +748,29 @@ class CustomFieldWidgetBuilder {
                                     }
                                   }
                                 : null,
-                            child: Builder(builder: (_) {
-                              final lower = (uploadedUrl ?? '').toLowerCase();
-                              final isPdf = lower.endsWith('.pdf');
-                              return Icon(
-                                isPdf
-                                    ? Icons.picture_as_pdf
-                                    : Icons.insert_drive_file,
-                                size: 28,
-                                color:
-                                    isPdf ? Colors.redAccent : Colors.blueGrey,
-                              );
-                            }),
+                            child: Container(
+                              width: 48,
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: AppColors.bluebutton.withOpacity(0.05),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Builder(builder: (_) {
+                                final lower = (uploadedUrl ?? '').toLowerCase();
+                                final isPdf = lower.endsWith('.pdf');
+                                return Icon(
+                                  isPdf
+                                      ? Icons.picture_as_pdf_outlined
+                                      : Icons.insert_drive_file_outlined,
+                                  size: 24,
+                                  color: isPdf
+                                      ? Colors.redAccent
+                                      : AppColors.bluebutton,
+                                );
+                              }),
+                            ),
                           ),
-                        const SizedBox(width: 10),
+                        const SizedBox(width: 12),
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -738,44 +782,73 @@ class CustomFieldWidgetBuilder {
                                                 ?.toLowerCase()
                                                 .contains('pdf') ==
                                             true)
-                                        ? 'PDF selected'
-                                        : 'File selected')
-                                    : (uploadedUrl ?? ''),
+                                        ? 'PDF Document'
+                                        : 'Image File')
+                                    : (uploadedUrl?.split('/').last ??
+                                        'Uploaded File'),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
-                                style: const TextStyle(fontSize: 13),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlack,
+                                ),
                               ),
+                              if (!hasPending &&
+                                  uploadedUrl != null &&
+                                  uploadedUrl!.isNotEmpty)
+                                Text(
+                                  'Ready to download',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.textGrey3,
+                                  ),
+                                )
+                              else
+                                Text(
+                                  'Pending save',
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: AppColors.bluebutton.withOpacity(0.7),
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
                             ],
                           ),
                         ),
+                        const SizedBox(width: 4),
                         if (!hasPending &&
                             uploadedUrl != null &&
                             uploadedUrl!.isNotEmpty)
                           IconButton(
                             tooltip: 'Download',
-                            icon: const Icon(Icons.download,
-                                size: 20, color: Colors.blue),
+                            icon: const Icon(Icons.download_rounded,
+                                size: 22, color: AppColors.bluebutton),
                             onPressed: () async {
                               try {
                                 final saved = await FileDownloader.download(
                                   uploadedUrl!,
                                 );
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text('Saved to $saved')),
-                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(content: Text('Saved to $saved')),
+                                  );
+                                }
                               } catch (e) {
-                                ScaffoldMessenger.of(context).showSnackBar(
-                                  const SnackBar(
-                                      content: Text('Download failed')),
-                                );
+                                if (context.mounted) {
+                                  ScaffoldMessenger.of(context).showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Download failed')),
+                                  );
+                                }
                               }
                             },
                           ),
                         if (enabled)
                           IconButton(
                             tooltip: 'Remove',
-                            icon: const Icon(Icons.delete,
-                                size: 20, color: Colors.redAccent),
+                            icon: const Icon(Icons.delete_outline_rounded,
+                                size: 22, color: Colors.redAccent),
                             onPressed: () {
                               _setFieldValue(field.customFieldId!, "");
                               _pendingFileBytes.remove(field.customFieldId!);

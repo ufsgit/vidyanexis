@@ -121,8 +121,7 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
 
       if (settingsProvider.menuIsViewMap[26].toString() == '1')
         {'title': 'Attendance Reports', 'page': const CheckInOutScreen()},
-      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
-          settingsProvider.menuIsViewMap[56].toString() == '1')
+      if (settingsProvider.menuIsViewMap[96].toString() == '1')
         {'title': 'Check-in Reports', 'page': const LeadCheckInReportScreen()},
       // if (settingsProvider.menuIsViewMap[40].toString() == '1')
       //   {
@@ -133,11 +132,11 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Followup Reports', 'page': const FollowupReportMobile()},
       if (settingsProvider.menuIsViewMap[55].toString() == '1')
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
-      if (settingsProvider.menuIsViewMap[56].toString() == '1')
-        {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
-      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+      if (settingsProvider.menuIsViewMap[97].toString() == '1')
+        {'title': 'Solar Lead Reports', 'page': const LeadReportMobile(false)},
+      if (settingsProvider.menuIsViewMap[98].toString() == '1')
         {'title': 'Sales Pipeline', 'page': const LeadStatusReportScreen()},
-      if (settingsProvider.menuIsViewMap[65].toString() == '1')
+      if (settingsProvider.menuIsViewMap[99].toString() == '1')
         {'title': 'Balance Reports', 'page': const BalanceReportPage()},
       if (settingsProvider.menuIsViewMap[72].toString() == '1')
         {'title': 'Payment Reports', 'page': const PaymentReportPage()},
@@ -175,25 +174,30 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   height: 48,
                 ),
                 Center(
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.transparent,
-                    child: ClipOval(
-                      child: displayLogo.startsWith('http')
-                          ? Image.network(
-                              displayLogo,
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
+                  child: displayLogo.startsWith('http')
+                      ? Image.network(
+                          displayLogo,
+                          height: 80,
+                          width: 100,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
                               AppStyles.logo(),
                               height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                  ),
+                              width: 100,
+                              fit: BoxFit.contain,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          displayLogo,
+                          height: 80,
+                          width: 100,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container();
+                          },
+                        ),
                 ),
                 const SizedBox(
                   height: 24,

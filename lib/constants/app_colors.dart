@@ -1,50 +1,50 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  static Color scaffoldColor = const Color(0xFFF6F7F9);
-  static Color whiteColor = const Color(0xFFFFFFFF);
+  static const Color scaffoldColor = Color(0xFFF6F7F9);
+  static const Color whiteColor = Color(0xFFFFFFFF);
 
-  static Color statusColor = const Color.fromARGB(255, 241, 212, 205);
+  static const Color statusColor = Color.fromARGB(255, 241, 212, 205);
 
-  static Color lightBlueColor = const Color(0xFFE5F0FF);
-  static Color lightBlueColor2 = const Color(0xFFE8F4FF);
-  static Color darkGrey = const Color(0xFF8E97A3);
-  static Color textBlue800 = const Color(0xFF152D70);
-  static Color textBlack = const Color(0xFF172230);
-  static Color primaryViolet = const Color(0xFF152D70);
-  static Color primaryBlue = const Color(0xFFEFB60A);
+  static const Color lightBlueColor = Color(0xFFE5F0FF);
+  static const Color lightBlueColor2 = Color(0xFFE8F4FF);
+  static const Color darkGrey = Color(0xFF8E97A3);
+  static const Color textBlue800 = Color(0xFF152D70);
+  static const Color textBlack = Color(0xFF172230);
+  static const Color primaryViolet = Color(0xFF152D70);
+  static const Color primaryBlue = Color(0xFFEFB60A);
 
-  static Color violet = const Color(0xFF6A0DAD);
-  static Color buttonBackgroundColor = const Color(0xFFA2C6EB);
+  static const Color violet = Color(0xFF6A0DAD);
+  static const Color buttonBackgroundColor = Color(0xFFA2C6EB);
 
-  static Color secondaryBlue = const Color(0xFF5499D9);
-  static Color appViolet = const Color(0xFFEFB60A);
-  static Color lightGreen = const Color(0xFFD9FAD9);
-  static Color surfaceGrey = const Color(0xFFF4F7FA);
-  static Color techityfyGrey = Color.fromARGB(255, 0, 90, 69);
-  static Color darkGreen = const Color(0xFF27A127);
-  static Color textGrey1 = const Color.fromARGB(255, 141, 141, 141);
-  static Color textGrey2 = const Color(0xFFC2C9D0);
-  static Color textGrey3 = const Color(0xFF607085);
-  static Color textGrey4 = const Color(0xFF7D8B9B);
-  static Color grey300 = const Color(0xFFEFF2F5);
+  static const Color secondaryBlue = Color(0xFF5499D9);
+  static const Color appViolet = Color(0xFFEFB60A);
+  static const Color lightGreen = Color(0xFFD9FAD9);
+  static const Color surfaceGrey = Color(0xFFF4F7FA);
+  static const Color techityfyGrey = Color.fromARGB(255, 0, 90, 69);
+  static const Color darkGreen = Color(0xFF27A127);
+  static const Color textGrey1 = Color.fromARGB(255, 141, 141, 141);
+  static const Color textGrey2 = Color(0xFFC2C9D0);
+  static const Color textGrey3 = Color(0xFF607085);
+  static const Color textGrey4 = Color(0xFF7D8B9B);
+  static const Color grey300 = Color(0xFFEFF2F5);
 
-  static Color grey = const Color(0xFFE9EDF1);
-  static Color textRed = const Color(0xFFFF3B30);
-  static Color btnRed = Color(0xFFAE392D);
-  static Color darkBlue = const Color(0xFF5497E3);
-  static Color textYellow = const Color(0xFFFF9500);
-  static Color textGreen = const Color(0xFF34C759);
-  static Color statusGreen = const Color(0xFF407537);
+  static const Color grey = Color(0xFFE9EDF1);
+  static const Color textRed = Color(0xFFFF3B30);
+  static const Color btnRed = Color(0xFFAE392D);
+  static const Color darkBlue = Color(0xFF5497E3);
+  static const Color textYellow = Color(0xFFFF9500);
+  static const Color textGreen = Color(0xFF34C759);
+  static const Color statusGreen = Color(0xFF407537);
   static const Color bluebutton = Color(0xFF1A7AE8);
 
-  static Color green = const Color(0xFFACD5A5);
+  static const Color green = Color(0xFFACD5A5);
 
   //common colors
-  static Color commonBackgroundColor = const Color(0xFFE9EDF1);
-  static Color commonTextColor = const Color(0xFF000000);
-  static Color commonTextBoxColor = const Color(0xFFFFFFFF);
-  static Color commonBorderColor = const Color(0xFFFFFFFF);
+  static const Color commonBackgroundColor = Color(0xFFE9EDF1);
+  static const Color commonTextColor = Color(0xFF000000);
+  static const Color commonTextBoxColor = Color(0xFFFFFFFF);
+  static const Color commonBorderColor = Color(0xFFFFFFFF);
 
   static Color parseColor(String colorCode) {
     try {

@@ -4,6 +4,8 @@ import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
+import 'dart:typed_data';
+import 'package:printing/printing.dart';
 
 class FormProvider extends ChangeNotifier {
   List<FormModel> _forms = [];
@@ -257,6 +259,7 @@ class FormProvider extends ChangeNotifier {
               taskTypeId: item['Task_Type_Id'],
               customerId: item['Customer_Id'],
               fields: parsedFields,
+              taskId: item['Task_Id'] ?? item['task_id'],
             );
           }).toList();
           notifyListeners();
@@ -546,8 +549,8 @@ class FormProvider extends ChangeNotifier {
           fields: parsedFields,
           instanceId:
               item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
-          createdUser: item['Created_User'] ?? item['created_user'],
           createdDate: item['Created_Date'] ?? item['created_date'],
+          taskId: item['Task_Id'] ?? item['task_id'],
         );
       }).toList();
 
@@ -560,7 +563,7 @@ class FormProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> saveTaskFormData({
+  Future<int?> saveTaskFormData({
     required BuildContext context,
     required int taskId,
     required int formId,
@@ -582,7 +585,32 @@ class FormProvider extends ChangeNotifier {
           });
 
       if (response != null && response.statusCode == 200) {
-        Navigator.pop(context); // Close the form fields dialog
+        int? resultId;
+        if (response.data is Map) {
+          debugPrint("DEBUG: Save status 200, response data: ${response.data}");
+          
+          final dataMap = response.data as Map;
+          
+          int? findIdFromMap(Map map) {
+            Object? id = map['Form_Data_Details_Id'] ??
+                         map['itemID'] ??
+                         map['item_id'] ??
+                         map['Form_Data_Details_ID'] ??
+                         map['Form_data_details_id'];
+            return id != null ? int.tryParse(id.toString()) : null;
+          }
+
+          resultId = findIdFromMap(dataMap);
+          
+          // Check for nested data fields if not found at top level
+          if (resultId == null) {
+            Object? nestedData = dataMap['data'] ?? dataMap['Data'];
+            if (nestedData is Map) {
+              resultId = findIdFromMap(nestedData);
+            }
+          }
+        }
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Form data saved successfully')),
         );
@@ -590,16 +618,83 @@ class FormProvider extends ChangeNotifier {
             taskTypeId: taskTypeId,
             enquiryForId: enquiryForId?.toString(),
             taskId: taskId.toString());
+        
+        debugPrint("DEBUG: Determined resultId: $resultId (Original formDataDetailsId: $formDataDetailsId)");
+        return resultId ?? (formDataDetailsId != 0 ? formDataDetailsId : null);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to save form data')),
         );
+        return null;
       }
     } catch (e) {
       debugPrint('Exception occurred in saveTaskFormData: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  bool isPrinting = false;
+  Future<void> fetchAndPrintFormPdf({
+    required BuildContext context,
+    required String customerId,
+    required int formDataDetailsId,
+    int? taskId,
+  }) async {
+    debugPrint("DEBUG: fetchAndPrintFormPdf called for customer: $customerId, FormDataDetailsId: $formDataDetailsId, taskId: $taskId");
+    isPrinting = true;
+    notifyListeners();
+    try {
+      final response = await HttpRequest.httpGetRequest(
+        endPoint: HttpUrls.getFormPrintPdf,
+        bodyData: {
+          "customerId": customerId,
+          "Form_Data_Details_Id": formDataDetailsId,
+        },
+        returnBytes: true,
+      );
+
+      debugPrint("DEBUG: fetchAndPrintFormPdf response status: ${response.statusCode}");
+      debugPrint("DEBUG: fetchAndPrintFormPdf data type: ${response.data.runtimeType}");
+
+      if (response.statusCode == 200) {
+        final Uint8List pdfBytes = response.data is Uint8List 
+            ? response.data 
+            : Uint8List.fromList(response.data.toString().codeUnits);
+        debugPrint("DEBUG: fetchAndPrintFormPdf got ${pdfBytes.length} bytes");
+        
+        if (pdfBytes.isEmpty) {
+          debugPrint("DEBUG: PDF bytes are empty!");
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Received empty PDF from server')),
+            );
+          }
+          return;
+        }
+
+        await Printing.layoutPdf(
+          onLayout: (format) async => pdfBytes,
+          name: 'Form_$formDataDetailsId.pdf',
+        );
+      } else {
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to fetch PDF')),
+          );
+        }
+      }
+    } catch (e) {
+      debugPrint("Error in fetchAndPrintFormPdf: $e");
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred while printing')),
+        );
+      }
+    } finally {
+      isPrinting = false;
+      notifyListeners();
     }
   }
 }

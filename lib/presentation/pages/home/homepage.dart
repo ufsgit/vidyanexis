@@ -263,8 +263,7 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: CheckInOutScreen()),
         ),
-      if (settingsProvider.menuIsViewMap[26].toString() == '1' ||
-          settingsProvider.menuIsViewMap[56].toString() == '1')
+      if (settingsProvider.menuIsViewMap[96].toString() == '1')
         SidebarOption(
           title: 'Check-in Reports',
           iconPath: 'assets/images/Reports.svg',
@@ -288,19 +287,19 @@ class _HomePageState extends State<HomePage> {
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadPageReport()),
         ),
-      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+      if (settingsProvider.menuIsViewMap[97].toString() == '1')
         SidebarOption(
           title: 'Solar Lead Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: SolarLeadReportPage()),
         ),
-      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+      if (settingsProvider.menuIsViewMap[98].toString() == '1')
         SidebarOption(
           title: 'Sales Pipeline',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadStatusReportScreen()),
         ),
-      if (settingsProvider.menuIsViewMap[65].toString() == '1')
+      if (settingsProvider.menuIsViewMap[99].toString() == '1')
         SidebarOption(
           title: 'Balance Reports',
           iconPath: 'assets/images/Reports.svg',

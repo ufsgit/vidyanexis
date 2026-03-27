@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 
 class ImageUploadAlert extends StatefulWidget {
   final String customerId;
@@ -28,369 +29,341 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
   @override
   void initState() {
     super.initState();
-    final dropDownProvider =
-        Provider.of<DropDownProvider>(context, listen: false);
-    final imageProvider =
-        Provider.of<ImageUploadProvider>(context, listen: false);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      final imageProvider =
+          Provider.of<ImageUploadProvider>(context, listen: false);
 
-    dropDownProvider.getDocumentType(context);
+      dropDownProvider.getDocumentType(context);
+      imageProvider.clearFiles();
 
-    if (widget.initialDocumentTypeId != null) {
-      imageProvider.updateDocumentType(
-          widget.initialDocumentTypeId!, widget.initialDocumentTypeName ?? "");
-    }
+      if (widget.initialDocumentTypeId != null) {
+        imageProvider.updateDocumentType(
+            widget.initialDocumentTypeId!, widget.initialDocumentTypeName ?? "");
+      }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ImageUploadProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
-    return AlertDialog(
-      scrollable: true,
-      title: const Text("Add Documents"),
-      content: SizedBox(
+
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Container(
+        padding: const EdgeInsets.all(24),
         width: AppStyles.isWebScreen(context)
-            ? MediaQuery.of(context).size.width / 4
-            : MediaQuery.of(context).size.width,
+            ? MediaQuery.of(context).size.width / 2.5
+            : MediaQuery.of(context).size.width * 0.9,
         child: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (widget.initialDocumentTypeId == null)
-              DropdownButtonFormField<int>(
-                initialValue: provider.selectedDocumentType,
-                items: dropDownProvider.documentType
-                    .map((status) => DropdownMenuItem<int>(
-                          value: status.documentTypeId,
-                          child: Text(
-                            status.documentTypeName,
-                            style: const TextStyle(fontSize: 14),
-                          ),
-                        ))
-                    .toList(),
-                onChanged: (int? newValue) {
-                  if (newValue != null) {
-                    final selectedTaskType = dropDownProvider.documentType
-                        .firstWhere((task) => task.documentTypeId == newValue);
-                    provider.updateDocumentType(
-                        newValue, selectedTaskType.documentTypeName);
-                  }
-                },
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CustomText(
+                  "Add Documents",
+                  fontSize: 18,
+                  fontWeight: FontWeight.w700,
                   color: AppColors.textBlack,
                 ),
-                decoration: InputDecoration(
-                  label: RichText(
-                    text: TextSpan(
-                      text: 'Choose Document Type',
-                      style: GoogleFonts.plusJakartaSans(
+                IconButton(
+                  onPressed: () {
+                    provider.clearFiles();
+                    Navigator.pop(context);
+                  },
+                  icon: const Icon(Icons.close, size: 20),
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                )
+              ],
+            ),
+            const SizedBox(height: 24),
+            ConstrainedBox(
+              constraints: BoxConstraints(
+                maxHeight: MediaQuery.of(context).size.height * 0.6,
+              ),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    if (widget.initialDocumentTypeId == null) ...[
+                      CustomText(
+                        "Select Document Type",
                         fontSize: 14,
-                        fontWeight: FontWeight.w500,
+                        fontWeight: FontWeight.w600,
                         color: AppColors.textGrey3,
                       ),
-                      children: const <TextSpan>[
-                        TextSpan(
-                          text: ' *',
-                          style: TextStyle(color: Colors.red),
-                        ),
-                      ],
-                    ),
-                  ),
-                  floatingLabelBehavior: FloatingLabelBehavior.auto,
-                  floatingLabelStyle: GoogleFonts.plusJakartaSans(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textGrey1,
-                  ),
-                  labelStyle: GoogleFonts.plusJakartaSans(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.textGrey3,
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: AppColors.textGrey2,
-                      width: 1,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: AppColors.textGrey2,
-                      width: 1,
-                    ),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                    borderSide: BorderSide(
-                      color: AppColors.textGrey2,
-                      width: 1,
-                    ),
-                  ),
-                  contentPadding:
-                      const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
-                ),
-                isDense: true,
-                iconSize: 18,
-              )
-            else
-              Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF1F5F9),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFE2E8F0)),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(Icons.description_outlined,
-                        color: Color(0xFF64748B), size: 20),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            'Uploading For',
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 11,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF94A3B8),
-                              letterSpacing: 0.5,
+                      const SizedBox(height: 12),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: dropDownProvider.documentType.length,
+                        itemBuilder: (context, index) {
+                          final docType = dropDownProvider.documentType[index];
+                          final selectedCount = provider.fileInfoList
+                              .where((e) =>
+                                  e['docTypeId'] == docType.documentTypeId)
+                              .length;
+
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 12),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: selectedCount > 0
+                                    ? AppColors.appViolet.withOpacity(0.5)
+                                    : AppColors.textGrey2.withOpacity(0.2),
+                                width: selectedCount > 0 ? 1.5 : 1,
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.02),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
                             ),
-                          ),
-                          Text(
-                            widget.initialDocumentTypeName ?? "Document",
-                            style: GoogleFonts.plusJakartaSans(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: const Color(0xFF1E293B),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomText(
+                                        docType.documentTypeName ?? '',
+                                        fontSize: 14,
+                                        fontWeight: selectedCount > 0
+                                            ? FontWeight.w600
+                                            : FontWeight.w500,
+                                        color: AppColors.textBlack,
+                                      ),
+                                      if (selectedCount > 0)
+                                        Padding(
+                                          padding: const EdgeInsets.only(top: 4),
+                                          child: CustomText(
+                                            '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
+                                            fontSize: 12,
+                                            color: AppColors.appViolet,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                InkWell(
+                                  onTap: () async {
+                                    provider.updateDocumentType(
+                                        docType.documentTypeId,
+                                        docType.documentTypeName);
+                                    await provider.addFileMobile();
+                                  },
+                                  child: Container(
+                                    padding: const EdgeInsets.all(8),
+                                    decoration: BoxDecoration(
+                                      color: selectedCount > 0
+                                          ? AppColors.appViolet
+                                          : AppColors.appViolet
+                                              .withOpacity(0.1),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Icon(
+                                      selectedCount > 0
+                                          ? Icons.add
+                                          : Icons.upload_sharp,
+                                      color: selectedCount > 0
+                                          ? Colors.white
+                                          : AppColors.appViolet,
+                                      size: 20,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                        ],
+                          );
+                        },
                       ),
-                    ),
-                  ],
-                ),
-              ),
-            // Button to trigger file upload
-            const SizedBox(
-              height: 10,
-            ),
-            GestureDetector(
-              onTap: () => provider.addMultipleFile(),
-              child: Container(
-                width: double.infinity,
-                height: MediaQuery.of(context).size.height / 4,
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.blue, width: 2),
-                  borderRadius: BorderRadius.circular(8),
-                  color: Colors.blue.withOpacity(0.05),
-                ),
-                child: const Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.image, size: 50, color: Colors.blue),
-                    SizedBox(height: 10),
-                    Text(
-                      'Upload Documents',
-                      style: TextStyle(fontSize: 16, color: Colors.black87),
-                    ),
-                    SizedBox(height: 5),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 10),
-            // Display the total number of uploaded images and PDFs
-            Text(
-              'You have uploaded ${provider.images.length + provider.pdfs.length} documents',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-
-            // Display images if uploaded
-            provider.images.isEmpty && provider.pdfs.isEmpty
-                ? const Text(
-                    'No documents uploaded yet.') // Common message for both
-                : Column(
-                    children: [
-                      // Display images if uploaded
-                      provider.images.isNotEmpty
-                          ? MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: SizedBox(
-                                height: 100,
-                                child: Scrollbar(
-                                  controller: provider.scrollController,
-                                  thumbVisibility: true,
-                                  child: ListView.separated(
-                                    controller: provider.scrollController,
-                                    scrollDirection: Axis.horizontal,
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(width: 8),
-                                    physics: const ClampingScrollPhysics(),
-                                    itemCount: provider.images.length,
-                                    itemBuilder: (context, index) {
-                                      final image = provider.images[index];
-                                      return Stack(
-                                        children: [
-                                          Center(
-                                            child: InkWell(
-                                              onTap: () {
-                                                // Implement full-screen image view here
-                                              },
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                child: Image.memory(
-                                                  image,
-                                                  width: 100,
-                                                  height: 100,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 5,
-                                            right: 5,
-                                            child: GestureDetector(
-                                              onTap: () =>
-                                                  provider.removeImage(image),
-                                              child: const CircleAvatar(
-                                                radius: 15,
-                                                backgroundColor: Colors.grey,
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  size: 18,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                    ] else ...[
+                      // Initial document type view
+                      Container(
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: AppColors.appViolet.withOpacity(0.05),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(
+                              color: AppColors.appViolet.withOpacity(0.2)),
+                        ),
+                        child: Row(
+                          children: [
+                            const Icon(Icons.description_outlined,
+                                color: AppColors.appViolet),
+                            const SizedBox(width: 12),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  CustomText(
+                                    "Document Type",
+                                    fontSize: 12,
+                                    color: AppColors.textGrey3,
                                   ),
-                                ),
-                              ),
-                            )
-                          : Container(),
-
-                      // Display PDFs if uploaded
-                      provider.pdfs.isNotEmpty
-                          ? MouseRegion(
-                              cursor: SystemMouseCursors.click,
-                              child: SizedBox(
-                                height: 100,
-                                child: Scrollbar(
-                                  controller: provider.scrollController,
-                                  thumbVisibility: true,
-                                  child: ListView.separated(
-                                    controller: provider.scrollController,
-                                    scrollDirection: Axis.horizontal,
-                                    separatorBuilder: (context, index) =>
-                                        const SizedBox(width: 8),
-                                    physics: const ClampingScrollPhysics(),
-                                    itemCount: provider.pdfs.length,
-                                    itemBuilder: (context, index) {
-                                      final pdf = provider.pdfs[index];
-                                      return Stack(
-                                        children: [
-                                          Center(
-                                            child: InkWell(
-                                              onTap: () {
-                                                // Implement PDF view here (if needed)
-                                              },
-                                              child: Container(
-                                                width: 100,
-                                                height: 100,
-                                                color: Colors.grey
-                                                    .withOpacity(0.2),
-                                                child: const Icon(
-                                                  Icons.picture_as_pdf,
-                                                  size: 50,
-                                                  color: Colors.red,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Positioned(
-                                            top: 5,
-                                            right: 5,
-                                            child: GestureDetector(
-                                              onTap: () =>
-                                                  provider.removePdf(pdf),
-                                              child: const CircleAvatar(
-                                                radius: 15,
-                                                backgroundColor: Colors.grey,
-                                                child: Icon(
-                                                  Icons.delete,
-                                                  size: 18,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                                  CustomText(
+                                    widget.initialDocumentTypeName ?? "",
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColors.textBlack,
                                   ),
-                                ),
+                                ],
                               ),
-                            )
-                          : Container(),
+                            ),
+                            CustomElevatedButton(
+                              buttonText: "Pick Files",
+                              onPressed: () => provider.addFileMobile(),
+                              backgroundColor: AppColors.appViolet,
+                              borderColor: AppColors.appViolet,
+                              textColor: Colors.white,
+                              radius: 8,
+                              textSize: 12,
+                            ),
+                          ],
+                        ),
+                      ),
                     ],
-                  ),
+                    const SizedBox(height: 24),
+                    if (provider.fileInfoList.isNotEmpty) ...[
+                      CustomText(
+                        "Selected Documents",
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textGrey3,
+                      ),
+                      const SizedBox(height: 12),
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: provider.fileInfoList.length,
+                        itemBuilder: (context, index) {
+                          final fileInfo = provider.fileInfoList[index];
+                          return Container(
+                            margin: const EdgeInsets.only(bottom: 8),
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                  color: AppColors.textGrey2.withOpacity(0.3)),
+                            ),
+                            child: Row(
+                              children: [
+                                SvgPicture.asset(
+                                  fileInfo['type'] == 'pdf'
+                                      ? "assets/icons/pdf_icon.svg"
+                                      : "assets/icons/document_icon.svg",
+                                  height: 32,
+                                  width: 32,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      CustomText(
+                                        fileInfo['name'] ?? 'Unknown file',
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w500,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      if (fileInfo['docTypeName'] != null)
+                                        CustomText(
+                                          'Type: ${fileInfo['docTypeName']}',
+                                          fontSize: 11,
+                                          color: AppColors.textGrey4,
+                                        ),
+                                    ],
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    provider.fileInfoList.removeAt(index);
+                                    provider.notifyListeners();
+                                  },
+                                  icon: const Icon(Icons.delete_outline,
+                                      color: Colors.red, size: 20),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ] else
+                      Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(32.0),
+                          child: Column(
+                            children: [
+                              Icon(Icons.cloud_upload_outlined,
+                                  size: 48,
+                                  color: AppColors.textGrey2.withOpacity(0.5)),
+                              const SizedBox(height: 12),
+                              CustomText(
+                                "No documents selected yet",
+                                fontSize: 14,
+                                color: AppColors.textGrey3,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                CustomElevatedButton(
+                  onPressed: () {
+                    provider.clearFiles();
+                    Navigator.pop(context);
+                  },
+                  buttonText: 'Cancel',
+                  backgroundColor: Colors.white,
+                  borderColor: AppColors.textGrey2,
+                  textColor: AppColors.textBlack,
+                  radius: 12,
+                ),
+                const SizedBox(width: 12),
+                CustomElevatedButton(
+                  onPressed: () async {
+                    provider.setCutomerId(widget.customerId);
+                    if (provider.fileInfoList.isNotEmpty) {
+                      await provider.uploadAllDocumentsGrouped(context);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Pick at least one document')),
+                      );
+                    }
+                  },
+                  buttonText: 'Upload Documents',
+                  backgroundColor: AppColors.appViolet,
+                  borderColor: AppColors.appViolet,
+                  textColor: Colors.white,
+                  radius: 12,
+                ),
+              ],
+            ),
           ],
         ),
       ),
-      actions: [
-        // Cancel button to clear the files and close the dialog
-        CustomElevatedButton(
-          onPressed: () {
-            provider.clearFiles();
-            Navigator.of(context).pop(); // Close the dialog
-          },
-          buttonText: 'Cancel',
-          backgroundColor: AppColors.whiteColor,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.appViolet,
-        ),
-        // Upload button to upload selected files
-        CustomElevatedButton(
-          onPressed: () async {
-            provider.setCutomerId(widget.customerId);
-            if (provider.selectedDocumentType != null) {
-              SharedPreferences preferences =
-                  await SharedPreferences.getInstance();
-              String userId = preferences.getString('userId') ?? "0";
-              if (provider.images.isNotEmpty) {
-                await provider.uploadImagesToAws(userId, context);
-              } else if (provider.pdfs.isNotEmpty) {
-                await provider.uploadPdfsToAws(userId, context);
-              } else {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Pick Documents')),
-                );
-              }
-            } else {
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Choose Document Type')),
-              );
-            }
-          },
-          buttonText: 'Upload Documents',
-          backgroundColor: AppColors.appViolet,
-          borderColor: AppColors.appViolet,
-          textColor: AppColors.whiteColor,
-        ),
-      ],
     );
   }
 }

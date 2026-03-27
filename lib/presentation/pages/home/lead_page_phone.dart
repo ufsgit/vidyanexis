@@ -208,20 +208,14 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
           : CustomAppBar(
               onSearchTap: () {
                 searchProvider.startSearch();
-                leadProvider.toggleFilter();
+                leadProvider.setFilter(true);
               },
               onFilterTap: () {
-                log('sdf');
                 leadProvider.toggleFilter();
               },
               onClearTap: () {
                 searchProvider.stopSearch();
-                leadProvider.toggleFilter();
-
-                leadProvider.selectDateFilterOption(null);
-                leadProvider.removeStatus();
-                searchController.clear();
-                leadProvider.setSearchCriteria('', '', '');
+                leadProvider.clearAllFilters();
                 leadProvider.getSearchLeads(context);
               },
               title: "Leads",
@@ -244,142 +238,104 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
           ? const Center(
               child: LoadingCircle(),
             )
-          : RefreshIndicator(
-              onRefresh: _refreshData,
-              child: CustomScrollView(
-                controller: leadProvider.scrollController,
-                slivers: [
-                  if (leadProvider.isFilter)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            CustomText(
-                              'Status',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textBlack,
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              children: [
-                                FilterChipWidget(
-                                  label: 'All',
+          : Column(
+              children: [
+                if (leadProvider.isFilter)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          CustomText(
+                            'Status',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              FilterChipWidget(
+                                label: 'All',
+                                isSelected: leadProvider.selectedStatusIds
+                                    .contains(0),
+                                onTap: () {
+                                  leadProvider.toggleStatus(0);
+                                },
+                              ),
+                              ...provider.followUpData.map((status) {
+                                return FilterChipWidget(
+                                  label: status.statusName ?? 'Unknown',
                                   isSelected: leadProvider.selectedStatusIds
-                                      .contains(0),
+                                      .contains(status.statusId),
                                   onTap: () {
-                                    leadProvider.toggleStatus(0);
+                                    leadProvider
+                                        .toggleStatus(status.statusId ?? 0);
                                   },
-                                ),
-                                ...provider.followUpData.map((status) {
-                                  return FilterChipWidget(
-                                    label: status.statusName ?? 'Unknown',
-                                    isSelected: leadProvider.selectedStatusIds
-                                        .contains(status.statusId),
-                                    onTap: () {
-                                      leadProvider
-                                          .toggleStatus(status.statusId ?? 0);
-                                    },
-                                  );
-                                }).toList(),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Wrap(
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              alignment: WrapAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    onClickTopButton(context);
-                                  },
-                                  child: Container(
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.scaffoldColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: ConstrainedBox(
-                                              constraints: const BoxConstraints(
-                                                  maxWidth: 200),
-                                              child: CustomText(
-                                                leadProvider.fromDate == null &&
-                                                        leadProvider.toDate ==
-                                                            null
-                                                    ? 'Date'
-                                                    : 'Date : ${leadProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${leadProvider.formattedToDate.toString().toDayMonthYearFormat()}',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.textBlack,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            alignment: WrapAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  onClickTopButton(context);
+                                },
+                                child: Container(
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.scaffoldColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 200),
+                                            child: CustomText(
+                                              leadProvider.fromDate == null &&
+                                                      leadProvider.toDate ==
+                                                          null
+                                                  ? 'Date'
+                                                  : 'Date : ${leadProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${leadProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textBlack,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          const SizedBox(width: 4),
-                                          Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: AppColors.textGrey3,
-                                            size: 18,
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: AppColors.textGrey3,
+                                          size: 18,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
-                            ),
-                            if (userId == 1) ...[
-                              const SizedBox(height: 16),
-                              CustomText(
-                                'Assigned Staff',
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.textBlack,
-                              ),
-                              const SizedBox(height: 8),
-                              Wrap(
-                                spacing: 8.0,
-                                runSpacing: 8.0,
-                                children: [
-                                  FilterChipWidget(
-                                    label: 'All',
-                                    isSelected: leadProvider.selectedUserIds
-                                        .contains(0),
-                                    onTap: () {
-                                      leadProvider.toggleUserFilter(0);
-                                    },
-                                  ),
-                                  ...provider.searchUserDetails.map((staff) {
-                                    return FilterChipWidget(
-                                      label: staff.userDetailsName,
-                                      isSelected: leadProvider.selectedUserIds
-                                          .contains(staff.userDetailsId),
-                                      onTap: () {
-                                        leadProvider.toggleUserFilter(
-                                            staff.userDetailsId ?? 0);
-                                      },
-                                    );
-                                  }).toList(),
-                                ],
                               ),
                             ],
+                          ),
+                          if (userId == 1) ...[
                             const SizedBox(height: 16),
                             CustomText(
-                              'Enquiry For',
+                              'Assigned Staff',
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: AppColors.textBlack,
@@ -391,109 +347,187 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               children: [
                                 FilterChipWidget(
                                   label: 'All',
-                                  isSelected: leadProvider.selectedEnquiryForIds
+                                  isSelected: leadProvider.selectedUserIds
                                       .contains(0),
                                   onTap: () {
-                                    leadProvider.toggleEnquiryForFilter(0);
+                                    leadProvider.toggleUserFilter(0);
                                   },
                                 ),
-                                ...provider.enquiryForList.map((enquiry) {
+                                ...provider.searchUserDetails.map((staff) {
                                   return FilterChipWidget(
-                                    label: enquiry.enquiryForName,
-                                    isSelected: leadProvider
-                                        .selectedEnquiryForIds
-                                        .contains(enquiry.enquiryForId),
+                                    label: staff.userDetailsName,
+                                    isSelected: leadProvider.selectedUserIds
+                                        .contains(staff.userDetailsId),
                                     onTap: () {
-                                      leadProvider.toggleEnquiryForFilter(
-                                          enquiry.enquiryForId ?? 0);
+                                      leadProvider.toggleUserFilter(
+                                          staff.userDetailsId ?? 0);
                                     },
                                   );
                                 }).toList(),
                               ],
                             ),
-                            const SizedBox(height: 16),
-                            CustomText(
-                              'Enquiry Source',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textBlack,
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              children: [
-                                FilterChipWidget(
-                                  label: 'All',
+                          ],
+                          const SizedBox(height: 16),
+                          CustomText(
+                            'Enquiry For',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              FilterChipWidget(
+                                label: 'All',
+                                isSelected: leadProvider.selectedEnquiryForIds
+                                    .contains(0),
+                                onTap: () {
+                                  leadProvider.toggleEnquiryForFilter(0);
+                                },
+                              ),
+                              ...provider.enquiryForList.map((enquiry) {
+                                return FilterChipWidget(
+                                  label: enquiry.enquiryForName,
+                                  isSelected: leadProvider
+                                      .selectedEnquiryForIds
+                                      .contains(enquiry.enquiryForId),
+                                  onTap: () {
+                                    leadProvider.toggleEnquiryForFilter(
+                                        enquiry.enquiryForId ?? 0);
+                                  },
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          CustomText(
+                            'Enquiry Source',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              FilterChipWidget(
+                                label: 'All',
+                                isSelected: leadProvider
+                                    .selectedEnquirySourceIds
+                                    .contains(0),
+                                onTap: () {
+                                  leadProvider.toggleEnquirySourceFilter(0);
+                                },
+                              ),
+                              ...provider.enquiryData.map((source) {
+                                return FilterChipWidget(
+                                  label: source.enquirySourceName,
                                   isSelected: leadProvider
                                       .selectedEnquirySourceIds
-                                      .contains(0),
+                                      .contains(source.enquirySourceId),
                                   onTap: () {
-                                    leadProvider.toggleEnquirySourceFilter(0);
+                                    leadProvider.toggleEnquirySourceFilter(
+                                        source.enquirySourceId ?? 0);
                                   },
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          if (leadProvider.fromDate != null ||
+                              leadProvider.toDate != null ||
+                              !leadProvider.selectedStatusIds
+                                  .every((id) => id == 0) ||
+                              !leadProvider.selectedUserIds
+                                  .every((id) => id == 0) ||
+                              !leadProvider.selectedEnquiryForIds
+                                  .every((id) => id == 0) ||
+                              !leadProvider.selectedEnquirySourceIds
+                                  .every((id) => id == 0) ||
+                              leadProvider.search.isNotEmpty)
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  leadProvider.clearAllFilters();
+                                  searchController.clear();
+                                  leadProvider.getSearchLeads(context);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppColors.textRed,
+                                  side: BorderSide(color: AppColors.textRed),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
                                 ),
-                                ...provider.enquiryData.map((source) {
-                                  return FilterChipWidget(
-                                    label: source.enquirySourceName,
-                                    isSelected: leadProvider
-                                        .selectedEnquirySourceIds
-                                        .contains(source.enquirySourceId),
-                                    onTap: () {
-                                      leadProvider.toggleEnquirySourceFilter(
-                                          source.enquirySourceId ?? 0);
-                                    },
-                                  );
-                                }).toList(),
-                              ],
+                                child: const Text('Reset All Filters'),
+                              ),
                             ),
-                            const SizedBox(height: 24),
-                            const SizedBox(height: 16),
-                          ],
-                        ),
+                          const SizedBox(height: 80),
+                        ],
                       ),
                     ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        if (index == leadProvider.leadData.length) {
-                          return leadProvider.isLoadingMore
-                              ? const Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                )
-                              : const SizedBox.shrink();
-                        }
-                        var lead = leadProvider.leadData[index];
-                        return Column(
-                          children: [
-                            Divider(
-                              height: 1,
-                              color: AppColors.grey,
-                            ),
-                            LeadCard(
-                              isLead: true,
-                              lead: lead,
-                              isExpanded: leadProvider.expandedIndex == index,
-                              onTap: () {
-                                leadProvider.toggleExpansion(index);
-                                if (leadProvider.expandedIndex == index) {
-                                  Provider.of<LeadCheckInProvider>(context,
-                                          listen: false)
-                                      .fetchLeadCheckInReports(
-                                          context, lead.customerId.toString());
+                  ),
+                if (!leadProvider.isFilter)
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: _refreshData,
+                      child: CustomScrollView(
+                        controller: leadProvider.scrollController,
+                        slivers: [
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                if (index == leadProvider.leadData.length) {
+                                  return leadProvider.isLoadingMore
+                                      ? const Padding(
+                                          padding: EdgeInsets.all(16),
+                                          child: Center(
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        )
+                                      : const SizedBox.shrink();
                                 }
+                                var lead = leadProvider.leadData[index];
+                                return Column(
+                                  children: [
+                                    Divider(
+                                      height: 1,
+                                      color: AppColors.grey,
+                                    ),
+                                    LeadCard(
+                                      isLead: true,
+                                      lead: lead,
+                                      isExpanded:
+                                          leadProvider.expandedIndex == index,
+                                      onTap: () {
+                                        leadProvider.toggleExpansion(index);
+                                        if (leadProvider.expandedIndex ==
+                                            index) {
+                                          Provider.of<LeadCheckInProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .fetchLeadCheckInReports(context,
+                                                  lead.customerId.toString());
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
                               },
+                              childCount: leadProvider.leadData.length + 1,
                             ),
-                          ],
-                        );
-                      },
-                      childCount: leadProvider.leadData.length + 1,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
       floatingActionButton: Padding(
         padding: const EdgeInsets.only(bottom: 32),
@@ -503,8 +537,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 child: FloatingActionButton.extended(
                   heroTag: 'apply_filter_fab',
                   onPressed: () {
+                    leadProvider.setFilter(false);
                     leadProvider.getSearchLeads(context);
-                    leadProvider.toggleFilter();
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

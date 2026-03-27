@@ -64,7 +64,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
       if (settingsprovider.menuIsViewMap[85] == 1) const Tab(text: "Forms"),
       if (settingsprovider.menuIsViewMap[13] == 1)
         const Tab(text: "Task Overview"),
-      if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "Activity"),
+      if (settingsprovider.menuIsViewMap[100] == 1) const Tab(text: "Activity"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[14] == 1)
         const Tab(text: "Complaints"),
       if (!widget.fromLead && settingsprovider.menuIsViewMap[15] == 1)
@@ -386,7 +386,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             CustomerTaskOverviewTab(
               customerId: widget.customerId.toString(),
             ),
-          if (settingsprovider.menuIsViewMap[73] == 1)
+          if (settingsprovider.menuIsViewMap[100] == 1)
             ActivityTabPage(
               lead: widget.lead,
               customerId: widget.customerId,

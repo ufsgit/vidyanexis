@@ -151,6 +151,9 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         searchController: searchController,
       ),
       drawer: const SidebarDrawer(),
+      floatingActionButtonLocation: customerProvider.isFilter
+          ? FloatingActionButtonLocation.centerFloat
+          : null,
       body: customerProvider.isLoading
           ? const Center(
               child: LoadingCircle(),
@@ -298,24 +301,55 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
             ),
       floatingActionButton: customerProvider.isFilter
           ? Padding(
-              padding: const EdgeInsets.only(bottom: 32),
-              child: SizedBox(
-                height: 40,
-                child: FloatingActionButton.extended(
-                  heroTag: 'apply_customer_filter_fab',
-                  onPressed: () {
-                    customerProvider.getSearchCustomers(context);
-                    customerProvider.toggleFilter();
-                  },
-                  backgroundColor: AppColors.darkGreen,
-                  label: const CustomText(
-                    'APPLY',
-                    fontSize: 12,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
+              padding: const EdgeInsets.only(bottom: 32, left: 32),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 40,
+                    child: FloatingActionButton.extended(
+                      heroTag: 'reset_customer_filter_fab',
+                      onPressed: () {
+                        customerProvider.clearAllFilters();
+                        customerProvider.getSearchCustomers(context);
+                      },
+                      backgroundColor: AppColors.textRed.withOpacity(0.8),
+                      label: const CustomText(
+                        'RESET',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      icon: const Icon(Icons.refresh,
+                          color: Colors.white, size: 18),
+                    ),
                   ),
-                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
-                ),
+                  const SizedBox(width: 16),
+                  SizedBox(
+                    height: 40,
+                    child: FloatingActionButton.extended(
+                      heroTag: 'apply_customer_filter_fab',
+                      onPressed: () {
+                        customerProvider.setSearchCriteria(
+                          customerProvider.search,
+                          customerProvider.fromDateS,
+                          customerProvider.toDateS,
+                        );
+                        customerProvider.getSearchCustomers(context);
+                        customerProvider.toggleFilter();
+                      },
+                      backgroundColor: AppColors.darkGreen,
+                      label: const CustomText(
+                        'APPLY',
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                      icon: const Icon(Icons.check,
+                          color: Colors.white, size: 18),
+                    ),
+                  ),
+                ],
               ),
             )
           : null,
