@@ -124,7 +124,7 @@ class DashboardProvider extends ChangeNotifier {
 
   // Pagination for Task Summary
   int _taskCurrentPage = 0;
-  int _taskItemsPerPage = 25;
+  int _taskItemsPerPage = 10;
   int _taskTotalCount = 0;
   int get taskCurrentPage => _taskCurrentPage;
 
@@ -201,7 +201,7 @@ class DashboardProvider extends ChangeNotifier {
       {bool shouldNotify = true, bool isPagination = false}) async {
     if (isTaskInfoLoaded && !isPagination) return;
     try {
-      isDashBoardLoading = true;
+      // isDashBoardLoading = true;
       if (shouldNotify) notifyListeners();
 
       int pageIndex1 = (_taskCurrentPage * _taskItemsPerPage) + 1;
@@ -255,7 +255,7 @@ class DashboardProvider extends ChangeNotifier {
         );
       });
     } finally {
-      isDashBoardLoading = false;
+      // isDashBoardLoading = false;
       if (shouldNotify) notifyListeners();
       Loader.stopLoader(context);
     }
