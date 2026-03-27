@@ -3,6 +3,7 @@ import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/controller/models/document_type_model.dart';
 import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
@@ -50,6 +51,7 @@ class TaskPageProvider extends ChangeNotifier {
   String _Status = '';
   String _AssignedTo = '';
   String _TaskType = '';
+  String _enquiryForS = '';
 
   String get Search => _Search;
   String get fromDateS => _fromDateS;
@@ -57,24 +59,29 @@ class TaskPageProvider extends ChangeNotifier {
   String get Status => _Status;
   String get AssignedTo => _AssignedTo;
   String get TaskType => _TaskType;
+  String get enquiryForS => _enquiryForS;
   int? _selectedStatus;
   int? _selectedAMCStatus;
   int? _selectedUser;
   int? _selectedTaskType;
+  int? _selectedEnquiryFor;
   int? _selectedDateFilterIndex;
   int? get selectedDateFilterIndex => _selectedDateFilterIndex;
   int? get selectedStatus => _selectedStatus;
   int? get selectedAMCStatus => _selectedAMCStatus;
   int? get selectedUser => _selectedUser;
   int? get selectedTaskType => _selectedTaskType;
+  int? get selectedEnquiryFor => _selectedEnquiryFor;
 
   List<int> _selectedStatusIds = [0];
   List<int> _selectedUserIds = [0];
   List<int> _selectedTaskTypeFilterIds = [0];
+  List<int> _selectedEnquiryForIds = [0];
 
   List<int> get selectedStatusIds => _selectedStatusIds;
   List<int> get selectedUserIds => _selectedUserIds;
   List<int> get selectedTaskTypeFilterIds => _selectedTaskTypeFilterIds;
+  List<int> get selectedEnquiryForIds => _selectedEnquiryForIds;
   int? _expandedIndex;
   int? get expandedIndex => _expandedIndex;
 
@@ -340,6 +347,13 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void setEnquiryFor(int newId) {
+    _selectedEnquiryFor = newId;
+    _selectedEnquiryForIds = [newId];
+    print(_selectedEnquiryFor.toString());
+    notifyListeners();
+  }
+
   void toggleStatus(int value) {
     if (value == 0) {
       _selectedStatusIds = [0];
@@ -395,18 +409,36 @@ class TaskPageProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void toggleEnquiryForFilter(int value) {
+    if (value == 0) {
+      _selectedEnquiryForIds = [0];
+    } else {
+      _selectedEnquiryForIds.remove(0);
+      if (_selectedEnquiryForIds.contains(value)) {
+        _selectedEnquiryForIds.remove(value);
+      } else {
+        _selectedEnquiryForIds.add(value);
+      }
+      if (_selectedEnquiryForIds.isEmpty) {
+        _selectedEnquiryForIds = [0];
+      }
+    }
+    _selectedEnquiryFor =
+        _selectedEnquiryForIds.isNotEmpty ? _selectedEnquiryForIds.first : null;
+    notifyListeners();
+  }
+
   void removeStatus() {
     clearAllFilters();
   }
 
   void clearAllFilters() {
-    _selectedStatus = null;
-    _selectedUser = null;
-    _selectedDateFilterIndex = null;
     _selectedTaskType = null;
+    _selectedEnquiryFor = null;
     _selectedStatusIds = [0];
     _selectedUserIds = [0];
     _selectedTaskTypeFilterIds = [0];
+    _selectedEnquiryForIds = [0];
     _fromDate = null;
     _toDate = null;
     _formattedFromDate = '';
@@ -417,19 +449,21 @@ class TaskPageProvider extends ChangeNotifier {
     _Status = '';
     _AssignedTo = '';
     _TaskType = '';
+    _enquiryForS = '';
     _isFilter = false;
     _pageIndex = 1;
     notifyListeners();
   }
 
   void setTaskSearchCriteria(String search, String fromDate, String toDate,
-      String status, String assignedTo, String taskType) {
+      String status, String assignedTo, String taskType, String enquiryFor) {
     _Search = search;
     _fromDateS = fromDate;
     _toDateS = toDate;
     _Status = status;
     _AssignedTo = assignedTo;
     _TaskType = taskType;
+    _enquiryForS = enquiryFor;
     _pageIndex = 1;
     _pageSize = 20;
     notifyListeners(); // Notify listeners so that UI can rebuild
@@ -463,6 +497,7 @@ class TaskPageProvider extends ChangeNotifier {
       String toUserId = _selectedUserIds.join(',');
       _Status = _selectedStatusIds.join(',');
       _TaskType = _selectedTaskTypeFilterIds.join(',');
+      _enquiryForS = _selectedEnquiryForIds.join(',');
 
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
@@ -472,9 +507,13 @@ class TaskPageProvider extends ChangeNotifier {
         _TaskType = '0';
       }
 
+      if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
+        _enquiryForS = '0';
+      }
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Page_Index=$_pageIndex&PageSize=$_pageSize');
+              '${HttpUrls.searchTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS&Page_Index=$_pageIndex&PageSize=$_pageSize');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -521,6 +560,57 @@ class TaskPageProvider extends ChangeNotifier {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
+      );
+    }
+  }
+
+  Future<void> fetchTasksForExport(BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      
+      if (_Status.isEmpty || _Status == 'null') _Status = '0';
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+      } else {
+        isDate = "1";
+      }
+      
+      String toUserId = _selectedUserIds.join(',');
+      _Status = _selectedStatusIds.join(',');
+      _TaskType = _selectedTaskTypeFilterIds.join(',');
+      _enquiryForS = _selectedEnquiryForIds.join(',');
+
+      if (_Status.isEmpty || _Status == 'null') _Status = '0';
+      if (_TaskType.isEmpty || _TaskType == 'null') _TaskType = '0';
+      if (_enquiryForS.isEmpty || _enquiryForS == 'null') _enquiryForS = '0';
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.exportTaskByCustomer}?Customer_Name=$_Search&Task_Status_Id=$_Status&To_User=$toUserId&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&Task_Type_Id=$_TaskType&Enquiry_For_Id=$_enquiryForS',
+          returnBytes: true);
+
+      Loader.stopLoader(context);
+      
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List<int>) {
+          await saveBytesAsExcel(bytes: data, fileName: 'Task');
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to load format or empty bytes')),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to load export data')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      print('Exception occurred during export: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('An error occurred during export')),
       );
     }
   }

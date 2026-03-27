@@ -8,11 +8,11 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/models/task_report_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_action_widget.dart';
-import 'package:vidyanexis/presentation/widgets/customer/task_details_page_phone.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/chat_launcher.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/leads_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_task_mobile.dart';
@@ -55,6 +55,8 @@ class _TaskCardState extends State<TaskCard> {
   @override
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
+    final dropDownProvider = Provider.of<DropDownProvider>(context);
+    final mappedEnquiryForName = dropDownProvider.getEnquiryForNameById(widget.task.enquiryForId, widget.task.enquiryForName);
 
     Color getStatusColor(String statusName) {
       statusName = statusName.toUpperCase();
@@ -81,9 +83,10 @@ class _TaskCardState extends State<TaskCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // FIRST LINE
+                // FIRST LINE: Customer Name and Date
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Expanded(
                       child: Text(
@@ -98,37 +101,20 @@ class _TaskCardState extends State<TaskCard> {
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Row(
-                      children: [
-                        Text(
-                          widget.task.taskDate.toFormattedDate(),
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w400,
-                            color: AppColors.textGrey3,
-                          ),
-                        ),
-                        const SizedBox(width: 4),
-                        IconButton(
-                          onPressed: () {
-                            widget.onTap();
-                          },
-                          icon: Icon(
-                            widget.isExpanded
-                                ? Icons.keyboard_arrow_up
-                                : Icons.keyboard_arrow_down,
-                            size: 18,
-                            color: AppColors.textGrey3,
-                          ),
-                        ),
-                      ],
+                    Text(
+                      widget.task.taskDate.toFormattedDate(),
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textGrey3,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
-                // SECOND LINE
+                const SizedBox(height: 4),
+
+                // SECOND LINE: Task Type
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Expanded(
                       child: Text(
@@ -142,40 +128,49 @@ class _TaskCardState extends State<TaskCard> {
                         ),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    // STATUS BADGE
-                    GestureDetector(
-                      onTap: () =>
-                          widget.showStatusUpdate(context, widget.task),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 12,
-                          vertical: 5,
-                        ),
-                        decoration: BoxDecoration(
-                          color: statusColor.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Text(
-                          widget.task.taskStatusName.toUpperCase(),
-                          style: GoogleFonts.plusJakartaSans(
-                            fontSize: 11,
-                            fontWeight: FontWeight.w600,
-                            color: statusColor,
-                          ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+
+                // THIRD LINE: Status and Dropdown Arrow
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      widget.task.taskStatusName,
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        color: statusColor,
+                      ),
+                    ),
+                    InkWell(
+                      onTap: () => widget.onTap(),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
+                        child: Icon(
+                          widget.isExpanded
+                              ? Icons.keyboard_arrow_up
+                              : Icons.keyboard_arrow_down,
+                          size: 20,
+                          color: AppColors.textGrey3,
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 6),
+                
+                // FOURTH LINE: Assigned To (If Admin)
                 if (userType == "1")
-                  Text(
-                    'Assigned To: ${widget.task.toUserName}',
-                    style: GoogleFonts.plusJakartaSans(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w400,
-                      color: AppColors.textBlack,
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2.0),
+                    child: Text(
+                      'Assigned To: ${widget.task.toUserName}',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 11,
+                        fontWeight: FontWeight.w400,
+                        color: AppColors.textBlack,
+                      ),
                     ),
                   ),
               ],
@@ -188,7 +183,7 @@ class _TaskCardState extends State<TaskCard> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                if (widget.task.enquiryForName.isNotEmpty) ...[
+                if (mappedEnquiryForName.isNotEmpty) ...[
                   Row(
                     children: [
                       Text(
@@ -201,7 +196,7 @@ class _TaskCardState extends State<TaskCard> {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        widget.task.enquiryForName,
+                        mappedEnquiryForName,
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 12,
                           fontWeight: FontWeight.w400,
@@ -357,10 +352,9 @@ class _TaskCardState extends State<TaskCard> {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => TaskDetailsPagePhone(
-              taskId: widget.task.taskId.toString(),
-              taskMasterId: widget.task.taskMasterId.toString(),
-              customerId: widget.task.customerId.toString(),
+            builder: (context) => CustomerDetailPageMobile(
+              customerId: widget.task.customerId,
+              fromLead: true,
             ),
           ),
         );

@@ -218,3 +218,49 @@ Future<void> exportToExcel({
     rethrow;
   }
 }
+
+Future<void> saveBytesAsExcel({
+  required List<int> bytes,
+  required String fileName,
+}) async {
+  try {
+    final safeFileName =
+        fileName.endsWith('.xlsx') ? fileName : '$fileName.xlsx';
+
+    if (kIsWeb) {
+      final base64 = base64Encode(bytes);
+      final dataUri =
+          'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,$base64';
+
+      final anchor = html.AnchorElement(href: dataUri)
+        ..setAttribute('download', safeFileName)
+        ..setAttribute('style', 'display: none');
+
+      html.document.body?.append(anchor);
+      anchor.click();
+      anchor.remove();
+
+      print('Excel file download initiated in web browser (data URI method)');
+      return;
+    }
+
+    Directory? directory;
+    if (Platform.isAndroid) {
+      directory = await getExternalStorageDirectory();
+      directory ??= Directory('/storage/emulated/0/Download');
+    } else if (Platform.isIOS) {
+      directory = await getApplicationDocumentsDirectory();
+    } else {
+      throw 'Platform not supported';
+    }
+
+    final filePath = '${directory.path}/$safeFileName';
+    final file = File(filePath);
+    await file.writeAsBytes(bytes);
+
+    print('Excel file saved successfully: $filePath');
+  } catch (e) {
+    print('Error saving raw Excel bytes: $e');
+    rethrow;
+  }
+}
