@@ -26,16 +26,9 @@ class _CheckInOutScreenState extends State<CheckInOutScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<CheckInOutProvider>(context, listen: false);
-      DateTime now = DateTime.now();
-      DateTime fromDate = DateTime(now.year, now.month, 1);
-      DateTime toDate = DateTime(now.year, now.month + 1, 0);
-      reportsProvider.setFromDate(fromDate);
-      reportsProvider.setToDate(toDate);
-      String fromDateString = reportsProvider.formattedFromDate;
-      String toDateString = reportsProvider.formattedToDate;
       reportsProvider.setTaskSearchCriteria(
-          '', fromDateString, toDateString, '', '', '');
-      // reportsProvider.getSearchTaskReport(context);
+          '', '', '', '', '', '');
+      reportsProvider.getSearchTaskReport(context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // provider.getAMCStatus(context);

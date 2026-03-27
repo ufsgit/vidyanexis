@@ -278,75 +278,7 @@ class _tasksPageReportState extends State<TaskPageReport> {
                 ),
                 child: Row(
                   children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ] +
-                                provider.followUpData
-                                    .map((status) => DropdownMenuItem<int>(
-                                          value: status.statusId,
-                                          child: Text(
-                                            status.statusName ?? '',
-                                            style:
-                                                const TextStyle(fontSize: 14),
-                                          ),
-                                        ))
-                                    .toList(),
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  reportsProvider.selectedStatus.toString();
-                              String assignedTo =
-                                  reportsProvider.selectedUser.toString();
-                              String fromDate =
-                                  reportsProvider.formattedFromDate;
-                              String toDate = reportsProvider.formattedToDate;
-                              String taskType =
-                                  reportsProvider.selectedTaskType.toString();
-                              reportsProvider.setTaskSearchCriteria(
-                                reportsProvider.Search,
-                                fromDate,
-                                toDate,
-                                status,
-                                assignedTo,
-                                taskType,
-                              );
-                              reportsProvider.getSearchTaskReport(context,
-                                  resetPage: true);
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
-                    ),
+                    _buildStatusFilter(reportsProvider, provider),
                     const SizedBox(
                       width: 10,
                     ),
@@ -556,13 +488,13 @@ class _tasksPageReportState extends State<TaskPageReport> {
                       ElevatedButton(
                         onPressed: () {
                           reportsProvider.selectDateFilterOption(null);
-                          reportsProvider.removeStatus();
+                          reportsProvider.toggleStatus(0); // Reset to All
                           searchController.clear();
                           reportsProvider.setTaskSearchCriteria(
                             '',
                             '',
                             '',
-                            '',
+                            '0',
                             '',
                             '',
                           );
@@ -1238,6 +1170,259 @@ class _tasksPageReportState extends State<TaskPageReport> {
           ),
         );
       },
+    );
+  }
+
+  Widget _buildStatusFilter(
+      TaskReportProvider reportsProvider, DropDownProvider dropDownProvider) {
+    final bool hasSelection = reportsProvider.selectedStatusIds.isNotEmpty &&
+        reportsProvider.selectedStatusIds.first != 0;
+
+    // Build label text from selected statuses
+    String labelText = 'All';
+    if (hasSelection) {
+      final selectedNames = dropDownProvider.followUpData
+          .where((s) => reportsProvider.selectedStatusIds.contains(s.statusId))
+          .map((s) => s.statusName ?? '')
+          .toList();
+      labelText = selectedNames.join(', ');
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () async {
+              await showDialog(
+                context: context,
+                barrierColor: Colors.transparent,
+                builder: (ctx) {
+                  return _StatusMultiSelectDialog(
+                    allStatuses: dropDownProvider.followUpData,
+                    selectedIds:
+                        List<int>.from(reportsProvider.selectedStatusIds),
+                    onApply: (selectedIds) {
+                      if (selectedIds.isEmpty || selectedIds.contains(0)) {
+                        reportsProvider.toggleStatus(0);
+                      } else {
+                        reportsProvider.toggleStatus(0); // Reset first
+                        for (final id in selectedIds) {
+                          reportsProvider.toggleStatus(id);
+                        }
+                      }
+                      reportsProvider.setTaskSearchCriteria(
+                        reportsProvider.Search,
+                        reportsProvider.fromDateS,
+                        reportsProvider.toDateS,
+                        reportsProvider.Status,
+                        reportsProvider.AssignedTo,
+                        reportsProvider.TaskType,
+                      );
+                      reportsProvider.getSearchTaskReport(context,
+                          resetPage: true);
+                    },
+                  );
+                },
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.15),
+                  child: Text(
+                    'Status: $labelText',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color:
+                          hasSelection ? AppColors.primaryBlue : Colors.black87,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_drop_down,
+                  size: 18,
+                  color: hasSelection ? AppColors.primaryBlue : Colors.black45,
+                ),
+              ],
+            ),
+          ),
+          if (hasSelection) ...[
+            const SizedBox(width: 4),
+            GestureDetector(
+              onTap: () {
+                reportsProvider.toggleStatus(0); // Reset to All
+                reportsProvider.setTaskSearchCriteria(
+                  reportsProvider.Search,
+                  reportsProvider.fromDateS,
+                  reportsProvider.toDateS,
+                  reportsProvider.Status,
+                  reportsProvider.AssignedTo,
+                  reportsProvider.TaskType,
+                );
+                reportsProvider.getSearchTaskReport(context, resetPage: true);
+              },
+              child: Icon(
+                Icons.close,
+                size: 16,
+                color: AppColors.primaryBlue,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Multi-select Status dialog (Adapted for Task Report)
+// ---------------------------------------------------------------------------
+class _StatusMultiSelectDialog extends StatefulWidget {
+  final List allStatuses;
+  final List<int> selectedIds;
+  final void Function(List<int>) onApply;
+
+  const _StatusMultiSelectDialog({
+    required this.allStatuses,
+    required this.selectedIds,
+    required this.onApply,
+  });
+
+  @override
+  State<_StatusMultiSelectDialog> createState() =>
+      _StatusMultiSelectDialogState();
+}
+
+class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
+  late List<int> _tempSelected;
+
+  @override
+  void initState() {
+    super.initState();
+    _tempSelected = List<int>.from(widget.selectedIds);
+    _tempSelected.remove(0);
+  }
+
+  void _toggle(int id) {
+    setState(() {
+      if (_tempSelected.contains(id)) {
+        _tempSelected.remove(id);
+      } else {
+        _tempSelected.add(id);
+      }
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: ConstrainedBox(
+        constraints: BoxConstraints(
+          maxHeight: MediaQuery.of(context).size.height * 0.6,
+          maxWidth: 360,
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              child: Row(
+                children: [
+                  const Expanded(
+                    child: Text(
+                      'Select Status',
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.close, size: 20),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            ),
+            const Divider(height: 1),
+            Flexible(
+              child: ListView.builder(
+                shrinkWrap: true,
+                itemCount: widget.allStatuses.length,
+                itemBuilder: (ctx, idx) {
+                  final status = widget.allStatuses[idx];
+                  final id = status.statusId;
+                  final name = status.statusName ?? '';
+                  final isSelected = _tempSelected.contains(id);
+
+                  return InkWell(
+                    onTap: () => _toggle(id),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 12),
+                      child: Row(
+                        children: [
+                          Icon(
+                            isSelected
+                                ? Icons.check_box
+                                : Icons.check_box_outline_blank,
+                            color: isSelected
+                                ? AppColors.primaryBlue
+                                : Colors.grey,
+                            size: 20,
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                              child: Text(name,
+                                  style: const TextStyle(fontSize: 14))),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const Divider(height: 1),
+            Padding(
+              padding: const EdgeInsets.all(12),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () => Navigator.pop(context),
+                    child: const Text('Cancel'),
+                  ),
+                  const SizedBox(width: 8),
+                  ElevatedButton(
+                    onPressed: () {
+                      widget.onApply(_tempSelected);
+                      Navigator.pop(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primaryBlue,
+                      foregroundColor: Colors.white,
+                    ),
+                    child: const Text('Apply'),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
