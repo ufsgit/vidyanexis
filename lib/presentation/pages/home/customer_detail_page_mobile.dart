@@ -386,7 +386,7 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
             CustomerTaskOverviewTab(
               customerId: widget.customerId.toString(),
             ),
-          if (settingsprovider.menuIsViewMap[73] == 1)
+          if (settingsprovider.menuIsViewMap[100] == 1)
             ActivityTabPage(
               lead: widget.lead,
               customerId: widget.customerId,
