@@ -11,7 +11,7 @@ class AppStyles {
   }
 
   static String name() {
-    const String fallback = 'Solaris';
+    const String fallback = 'TrackboxDevelopment';
     try {
       final String url = HttpUrls.baseUrl;
       // Find the part after 'https://' (or 'http://')
