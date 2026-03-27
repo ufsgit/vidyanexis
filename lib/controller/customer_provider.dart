@@ -107,6 +107,7 @@ class CustomerProvider extends ChangeNotifier {
     }
 
     isLoadingMore = true;
+    _status = _selectedStatusIds.join(',');
     notifyListeners();
 
     try {
@@ -117,7 +118,8 @@ class CustomerProvider extends ChangeNotifier {
         _status = '0';
       }
 
-      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isDate =
+          (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
 
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');
@@ -194,6 +196,28 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void clearAllFilters() {
+    _selectedStatus = null;
+    _selectedUser = null;
+    _selectedEnquiryFor = null;
+    _selectedEnquirySource = null;
+    _selectedStatusIds = [0];
+    _selectedUserIds = [0];
+    _selectedEnquiryForIds = [0];
+    _selectedEnquirySourceIds = [0];
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
+    _fromDateS = '';
+    _toDateS = '';
+    _search = '';
+    _status = '0';
+    _selectedDateFilterIndex = null;
+    _isFilter = false;
+    notifyListeners();
+  }
+
   void resetExpansion() {
     expandedIndex = null;
     notifyListeners();
@@ -213,7 +237,8 @@ class CustomerProvider extends ChangeNotifier {
         _selectedStatusIds = [0];
       }
     }
-    _selectedStatus = _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
+    _selectedStatus =
+        _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
     notifyListeners();
   }
 
@@ -352,6 +377,7 @@ class CustomerProvider extends ChangeNotifier {
   Future<void> getSearchCustomers(BuildContext context) async {
     try {
       _isLoading = true;
+      _status = _selectedStatusIds.join(',');
       // notifyListeners(); // Could clear here but replacing is smoother in UI
 
       // Fetch statuses if missing, don't block
@@ -373,7 +399,8 @@ class CustomerProvider extends ChangeNotifier {
         _status = '0';
       }
 
-      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isDate =
+          (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
 
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');
@@ -432,7 +459,8 @@ class CustomerProvider extends ChangeNotifier {
         _status = '0';
       }
 
-      String isDate = (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
+      String isDate =
+          (_fromDateS.isNotEmpty || _toDateS.isNotEmpty) ? "1" : "0";
 
       String toUserId = _selectedUserIds.join(',');
       String enquiryForId = _selectedEnquiryForIds.join(',');

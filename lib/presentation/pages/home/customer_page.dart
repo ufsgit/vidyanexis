@@ -165,6 +165,7 @@ class _CustomerPageState extends State<CustomerPage> {
     final customerProvider = Provider.of<CustomerProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
     final leadsProvider = Provider.of<LeadsProvider>(context);
+    final settingsProvider = Provider.of<SettingsProvider>(context);
 
     // Calculate dynamic heights for table
     final screenHeight = MediaQuery.of(context).size.height;
@@ -952,85 +953,107 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     );
                                                   },
                                                   menuChildren: [
-                                                    MenuItemButton(
-                                                      onPressed: () =>
-                                                          _handleLeadAction(
-                                                              'edit', lead),
-                                                      child: const Row(
-                                                        children: [
-                                                          Icon(Icons.edit,
-                                                              size: 18,
-                                                              color:
-                                                                  Colors.blue),
-                                                          SizedBox(width: 8),
-                                                          Text('Edit Customer'),
-                                                        ],
+                                                    if (settingsProvider
+                                                            .menuIsEditMap[4] ==
+                                                        1)
+                                                      MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'edit', lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(Icons.edit,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .blue),
+                                                            SizedBox(width: 8),
+                                                            Text(
+                                                                'Edit Customer'),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    MenuItemButton(
-                                                      onPressed: () =>
-                                                          _handleLeadAction(
-                                                              'quotation',
-                                                              lead),
-                                                      child: const Row(
-                                                        children: [
-                                                          Icon(
-                                                              Icons
-                                                                  .request_quote,
-                                                              size: 18,
-                                                              color: Colors
-                                                                  .orange),
-                                                          SizedBox(width: 8),
-                                                          Text('Quotation'),
-                                                        ],
+                                                    if (settingsProvider
+                                                                .menuIsSaveMap[
+                                                            16] ==
+                                                        1)
+                                                      MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'quotation',
+                                                                lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(
+                                                                Icons
+                                                                    .request_quote,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .orange),
+                                                            SizedBox(width: 8),
+                                                            Text('Quotation'),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    MenuItemButton(
-                                                      onPressed: () =>
-                                                          _handleLeadAction(
-                                                              'document', lead),
-                                                      child: const Row(
-                                                        children: [
-                                                          Icon(
-                                                              Icons.description,
-                                                              size: 18,
-                                                              color: Colors
-                                                                  .purple),
-                                                          SizedBox(width: 8),
-                                                          Text('Document'),
-                                                        ],
+                                                    if (settingsProvider
+                                                                .menuIsSaveMap[
+                                                            19] ==
+                                                        1)
+                                                      MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'document',
+                                                                lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(
+                                                                Icons
+                                                                    .description,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .purple),
+                                                            SizedBox(width: 8),
+                                                            Text('Document'),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    MenuItemButton(
-                                                      onPressed: () =>
-                                                          _handleLeadAction(
-                                                              'task', lead),
-                                                      child: const Row(
-                                                        children: [
-                                                          Icon(Icons.add_task,
-                                                              size: 18,
-                                                              color:
-                                                                  Colors.teal),
-                                                          SizedBox(width: 8),
-                                                          Text('Task'),
-                                                        ],
+                                                    if (settingsProvider
+                                                                .menuIsSaveMap[
+                                                            13] ==
+                                                        1)
+                                                      MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'task', lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(Icons.add_task,
+                                                                size: 18,
+                                                                color: Colors
+                                                                    .teal),
+                                                            SizedBox(width: 8),
+                                                            Text('Task'),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
-                                                    MenuItemButton(
-                                                      onPressed: () =>
-                                                          _handleLeadAction(
-                                                              'delete', lead),
-                                                      child: const Row(
-                                                        children: [
-                                                          Icon(Icons.delete,
-                                                              size: 18,
-                                                              color:
-                                                                  Colors.red),
-                                                          SizedBox(width: 8),
-                                                          Text('Delete'),
-                                                        ],
+                                                    if (settingsProvider
+                                                                .menuIsDeleteMap[
+                                                            4] ==
+                                                        1)
+                                                      MenuItemButton(
+                                                        onPressed: () =>
+                                                            _handleLeadAction(
+                                                                'delete', lead),
+                                                        child: const Row(
+                                                          children: [
+                                                            Icon(Icons.delete,
+                                                                size: 18,
+                                                                color:
+                                                                    Colors.red),
+                                                            SizedBox(width: 8),
+                                                            Text('Delete'),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    ),
                                                   ],
                                                 ),
                                               ),
@@ -1320,96 +1343,122 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         );
                                                       },
                                                       menuChildren: [
-                                                        MenuItemButton(
-                                                          onPressed: () =>
-                                                              _handleLeadAction(
-                                                                  'edit', lead),
-                                                          child: const Row(
-                                                            children: [
-                                                              Icon(Icons.edit,
-                                                                  size: 18,
-                                                                  color: Colors
-                                                                      .blue),
-                                                              SizedBox(
-                                                                  width: 8),
-                                                              Text(
-                                                                  'Edit Customer'),
-                                                            ],
+                                                        if (settingsProvider
+                                                                    .menuIsEditMap[
+                                                                4] ==
+                                                            1)
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'edit',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(Icons.edit,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .blue),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text(
+                                                                    'Edit Customer'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                        MenuItemButton(
-                                                          onPressed: () =>
-                                                              _handleLeadAction(
-                                                                  'quotation',
-                                                                  lead),
-                                                          child: const Row(
-                                                            children: [
-                                                              Icon(
-                                                                  Icons
-                                                                      .request_quote,
-                                                                  size: 18,
-                                                                  color: Colors
-                                                                      .orange),
-                                                              SizedBox(
-                                                                  width: 8),
-                                                              Text('Quotation'),
-                                                            ],
+                                                        if (settingsProvider
+                                                                    .menuIsSaveMap[
+                                                                16] ==
+                                                            1)
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'quotation',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .request_quote,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .orange),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text(
+                                                                    'Quotation'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                        MenuItemButton(
-                                                          onPressed: () =>
-                                                              _handleLeadAction(
-                                                                  'document',
-                                                                  lead),
-                                                          child: const Row(
-                                                            children: [
-                                                              Icon(
-                                                                  Icons
-                                                                      .description,
-                                                                  size: 18,
-                                                                  color: Colors
-                                                                      .purple),
-                                                              SizedBox(
-                                                                  width: 8),
-                                                              Text('Document'),
-                                                            ],
+                                                        if (settingsProvider
+                                                                    .menuIsSaveMap[
+                                                                19] ==
+                                                            1)
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'document',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .description,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .purple),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text(
+                                                                    'Document'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                        MenuItemButton(
-                                                          onPressed: () =>
-                                                              _handleLeadAction(
-                                                                  'task', lead),
-                                                          child: const Row(
-                                                            children: [
-                                                              Icon(
-                                                                  Icons
-                                                                      .add_task,
-                                                                  size: 18,
-                                                                  color: Colors
-                                                                      .teal),
-                                                              SizedBox(
-                                                                  width: 8),
-                                                              Text('Task'),
-                                                            ],
+                                                        if (settingsProvider
+                                                                    .menuIsSaveMap[
+                                                                13] ==
+                                                            1)
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'task',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .add_task,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .teal),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Task'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
-                                                        MenuItemButton(
-                                                          onPressed: () =>
-                                                              _handleLeadAction(
-                                                                  'delete',
-                                                                  lead),
-                                                          child: const Row(
-                                                            children: [
-                                                              Icon(Icons.delete,
-                                                                  size: 18,
-                                                                  color: Colors
-                                                                      .red),
-                                                              SizedBox(
-                                                                  width: 8),
-                                                              Text('Delete'),
-                                                            ],
+                                                        if (settingsProvider
+                                                                    .menuIsDeleteMap[
+                                                                4] ==
+                                                            1)
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'delete',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .delete,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .red),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Delete'),
+                                                              ],
+                                                            ),
                                                           ),
-                                                        ),
                                                       ],
                                                     ),
                                                     const Spacer(),
@@ -2271,8 +2320,7 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
           children: [
             // Title bar
             Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   const Expanded(
@@ -2340,7 +2388,9 @@ class _StatusMultiSelectDialogState extends State<_StatusMultiSelectDialog> {
                       ),
                       onPressed: () {
                         widget.onApply(
-                          _tempSelected.isEmpty ? [0] : List<int>.from(_tempSelected),
+                          _tempSelected.isEmpty
+                              ? [0]
+                              : List<int>.from(_tempSelected),
                         );
                         Navigator.pop(context);
                       },
