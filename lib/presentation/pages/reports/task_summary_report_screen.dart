@@ -12,7 +12,8 @@ class TaskSummaryReportScreen extends StatefulWidget {
   const TaskSummaryReportScreen({super.key});
 
   @override
-  State<TaskSummaryReportScreen> createState() => _TaskSummaryReportScreenState();
+  State<TaskSummaryReportScreen> createState() =>
+      _TaskSummaryReportScreenState();
 }
 
 class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
@@ -20,7 +21,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<TaskSummaryProvider>(context, listen: false).getTaskSummary(context);
+      Provider.of<TaskSummaryProvider>(context, listen: false)
+          .getTaskSummary(context);
     });
   }
 
@@ -57,7 +59,12 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
                   CustomElevatedButton(
                     onPressed: () {
                       exportToExcel(
-                        headers: ['User Name', 'Total Task', 'Pending', 'Completed'],
+                        headers: [
+                          'User Name',
+                          'Total Task',
+                          'Pending',
+                          'Completed'
+                        ],
                         data: provider.taskSummaries.map((task) {
                           return {
                             'User Name': task.userName,
@@ -119,7 +126,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
     );
   }
 
-  Widget _buildFilterSection(BuildContext context, TaskSummaryProvider provider) {
+  Widget _buildFilterSection(
+      BuildContext context, TaskSummaryProvider provider) {
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
@@ -162,7 +170,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
               backgroundColor: AppColors.primaryBlue,
               foregroundColor: Colors.white,
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
             ),
             child: const Text('Search'),
           ),
@@ -178,7 +187,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
     );
   }
 
-  Widget _buildDateField(BuildContext context, String label, DateTime? date, Function(DateTime) onSelect) {
+  Widget _buildDateField(BuildContext context, String label, DateTime? date,
+      Function(DateTime) onSelect) {
     return InkWell(
       onTap: () async {
         final pickedDate = await showDatePicker(
@@ -202,7 +212,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
             const SizedBox(width: 8),
             Text(
               date != null ? DateFormat('yyyy-MM-dd').format(date) : label,
-              style: TextStyle(color: date != null ? Colors.black : Colors.grey[600]),
+              style: TextStyle(
+                  color: date != null ? Colors.black : Colors.grey[600]),
             ),
           ],
         ),
@@ -217,9 +228,18 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
       child: Row(
         children: const [
           Expanded(flex: 3, child: CustomTableHeaderCell(label: 'User Name')),
-          Expanded(flex: 2, child: CustomTableHeaderCell(label: 'Total Tasks', textAlign: TextAlign.center)),
-          Expanded(flex: 2, child: CustomTableHeaderCell(label: 'Pending', textAlign: TextAlign.center)),
-          Expanded(flex: 2, child: CustomTableHeaderCell(label: 'Completed', textAlign: TextAlign.center)),
+          Expanded(
+              flex: 2,
+              child: CustomTableHeaderCell(
+                  label: 'Total Tasks', textAlign: TextAlign.center)),
+          Expanded(
+              flex: 2,
+              child: CustomTableHeaderCell(
+                  label: 'Pending', textAlign: TextAlign.center)),
+          Expanded(
+              flex: 2,
+              child: CustomTableHeaderCell(
+                  label: 'Completed', textAlign: TextAlign.center)),
         ],
       ),
     );
@@ -237,7 +257,8 @@ class _TaskSummaryReportScreenState extends State<TaskSummaryReportScreen> {
             flex: 3,
             child: Text(
               task.userName,
-              style: GoogleFonts.plusJakartaSans(fontWeight: FontWeight.w600, fontSize: 14),
+              style: GoogleFonts.plusJakartaSans(
+                  fontWeight: FontWeight.w600, fontSize: 14),
             ),
           ),
           Expanded(
