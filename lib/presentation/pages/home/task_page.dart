@@ -2050,58 +2050,64 @@ class _tasksPageReportState extends State<TaskPage> {
                               ),
                             ),
                             const SizedBox(height: 12),
-                            Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(8),
-                                border: Border.all(color: theme.dividerColor),
-                                color: theme.cardColor,
-                              ),
-                              child:
-                                  ValueListenableBuilder<TaskTypeStatusModel>(
-                                valueListenable: selectedStatus,
-                                builder: (ctx, value, child) {
-                                  return DropdownButtonFormField<
-                                      TaskTypeStatusModel>(
-                                    initialValue: value,
-                                    isExpanded: true,
-                                    icon: Icon(Icons.arrow_drop_down,
-                                        color: theme.primaryColor),
-                                    dropdownColor: theme.cardColor,
-                                    decoration: const InputDecoration(
-                                      contentPadding: EdgeInsets.symmetric(
-                                          horizontal: 16, vertical: 2),
-                                      border: InputBorder.none,
-                                    ),
-                                    onChanged: (TaskTypeStatusModel? newValue) {
-                                      if (newValue != null) {
-                                        selectedStatus.value = newValue;
-                                      }
-                                    },
-                                    items: statusOptions.map((status) {
-                                      Color statusColor =
-                                          status.colorCode ?? Colors.black;
-                                      return DropdownMenuItem(
-                                        value: status,
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: 12,
-                                              height: 12,
-                                              margin: const EdgeInsets.only(
-                                                  right: 12),
-                                              decoration: BoxDecoration(
-                                                color: statusColor,
-                                                shape: BoxShape.circle,
-                                              ),
-                                            ),
-                                            Text(status.statusName ?? ''),
-                                          ],
+                            // Status Selection (Chips)
+                            ValueListenableBuilder<TaskTypeStatusModel>(
+                              valueListenable: selectedStatus,
+                              builder: (ctx, value, child) {
+                                return Wrap(
+                                  spacing: 12,
+                                  runSpacing: 12,
+                                  children: statusOptions.map((status) {
+                                    bool isSelected =
+                                        value.statusId == status.statusId;
+                                    Color statusColor =
+                                        status.colorCode ?? Colors.black;
+                                    return ChoiceChip(
+                                      label: Text(status.statusName ?? ''),
+                                      selected: isSelected,
+                                      onSelected: (bool selected) {
+                                        if (selected) {
+                                          selectedStatus.value = status;
+                                        }
+                                      },
+                                      labelStyle: TextStyle(
+                                        color: isSelected
+                                            ? Colors.white
+                                            : const Color(0xFF1E293B),
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w500,
+                                        fontSize: 13,
+                                      ),
+                                      avatar: Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: BoxDecoration(
+                                          color: isSelected
+                                              ? Colors.white
+                                              : statusColor,
+                                          shape: BoxShape.circle,
                                         ),
-                                      );
-                                    }).toList(),
-                                  );
-                                },
-                              ),
+                                      ),
+                                      selectedColor: statusColor,
+                                      backgroundColor: Colors.white,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 8),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                      side: BorderSide(
+                                        color: isSelected
+                                            ? statusColor
+                                            : Colors.grey.shade300,
+                                        width: 1,
+                                      ),
+                                      showCheckmark: false,
+                                      elevation: isSelected ? 2 : 0,
+                                    );
+                                  }).toList(),
+                                );
+                              },
                             ),
                             ValueListenableBuilder<TaskTypeStatusModel>(
                               valueListenable: selectedStatus,
@@ -2725,69 +2731,87 @@ class _tasksPageReportState extends State<TaskPage> {
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               // Row 1: Current Status Dropdown
-                              Container(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 16),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(8),
-                                  border:
-                                      Border.all(color: Colors.grey.shade300),
-                                ),
-                                child:
+                              // Row 1: Current Status Chips Selection
+                              Padding(
+                                padding: const EdgeInsets.only(bottom: 12),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    const Text('Select Status',
+                                        style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w600,
+                                            color: Color(0xFF64748B))),
+                                    const SizedBox(height: 12),
                                     ValueListenableBuilder<TaskTypeStatusModel>(
-                                  valueListenable: selectedStatus,
-                                  builder: (context, value, _) {
-                                    return DropdownButtonFormField<
-                                        TaskTypeStatusModel>(
-                                      decoration: const InputDecoration(
-                                        border: InputBorder.none,
-                                        isDense: true,
-                                        contentPadding:
-                                            EdgeInsets.symmetric(vertical: 12),
-                                      ),
-                                      initialValue: value,
-                                      isExpanded: true,
-                                      icon: const Icon(Icons.arrow_drop_down),
-                                      onChanged: (TaskTypeStatusModel?
-                                          newValue) async {
-                                        if (newValue != null) {
-                                          selectedStatus.value = newValue;
-                                          int sId = newValue.statusId ?? 0;
-                                          int tId = newValue.taskTypeId ?? 0;
-                                          await reportsProvider.fetchTaskTypes(
-                                              tId,
-                                              sId,
-                                              customerId,
-                                              enquiryForId,
-                                              context);
-                                        }
-                                      },
-                                      items: statusOptions.map((status) {
-                                        return DropdownMenuItem(
-                                          value: status,
-                                          child: Row(
-                                            children: [
-                                              Container(
+                                      valueListenable: selectedStatus,
+                                      builder: (context, value, _) {
+                                        return Wrap(
+                                          spacing: 12,
+                                          runSpacing: 12,
+                                          children: statusOptions.map((status) {
+                                            bool isSelected =
+                                                value.statusId == status.statusId;
+                                            Color statusColor =
+                                                status.colorCode ?? Colors.black;
+                                            return ChoiceChip(
+                                              label: Text(status.statusName ?? ''),
+                                              selected: isSelected,
+                                              onSelected: (bool selected) async {
+                                                if (selected) {
+                                                  selectedStatus.value = status;
+                                                  int sId = status.statusId ?? 0;
+                                                  int tId = status.taskTypeId ?? 0;
+                                                  await reportsProvider
+                                                      .fetchTaskTypes(
+                                                          tId,
+                                                          sId,
+                                                          customerId,
+                                                          enquiryForId,
+                                                          context);
+                                                }
+                                              },
+                                              labelStyle: TextStyle(
+                                                color: isSelected
+                                                    ? Colors.white
+                                                    : const Color(0xFF1E293B),
+                                                fontWeight: isSelected
+                                                    ? FontWeight.w700
+                                                    : FontWeight.w500,
+                                                fontSize: 13,
+                                              ),
+                                              avatar: Container(
                                                 width: 10,
                                                 height: 10,
-                                                margin: const EdgeInsets.only(
-                                                    right: 10),
                                                 decoration: BoxDecoration(
-                                                  color: status.colorCode ??
-                                                      Colors.black,
+                                                  color: isSelected
+                                                      ? Colors.white
+                                                      : statusColor,
                                                   shape: BoxShape.circle,
                                                 ),
                                               ),
-                                              Text(status.statusName ?? '',
-                                                  style: const TextStyle(
-                                                      fontSize: 14)),
-                                            ],
-                                          ),
+                                              selectedColor: statusColor,
+                                              backgroundColor: Colors.white,
+                                              padding: const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 8),
+                                              shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                              ),
+                                              side: BorderSide(
+                                                color: isSelected
+                                                    ? statusColor
+                                                    : Colors.grey.shade300,
+                                                width: 1,
+                                              ),
+                                              showCheckmark: false,
+                                              elevation: isSelected ? 2 : 0,
+                                            );
+                                          }).toList(),
                                         );
-                                      }).toList(),
-                                    );
-                                  },
+                                      },
+                                    ),
+                                  ],
                                 ),
                               ),
                               const SizedBox(height: 10),
@@ -2957,21 +2981,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                           hasDocs || hasMandatory;
 
                                       Widget leftSide = showDate
-                                          ? Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text('Follow-up Date',
-                                                    style: TextStyle(
-                                                        fontSize: 13,
-                                                        color: Colors
-                                                            .grey.shade600,
-                                                        fontWeight:
-                                                            FontWeight.w500)),
-                                                const SizedBox(height: 4),
-                                                dateFollowUpWidget(),
-                                              ],
-                                            )
+                                          ? dateFollowUpWidget()
                                           : const SizedBox.shrink();
 
                                       Widget rightSide = showRightList
@@ -3975,12 +3985,12 @@ class _tasksPageReportState extends State<TaskPage> {
         Text(
           'Follow-up Date',
           style: TextStyle(
-            fontSize: 15,
+            fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: theme.textTheme.bodyLarge?.color,
+            color: Colors.grey.shade600,
           ),
         ),
-        const SizedBox(height: 12),
+        const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(8),
