@@ -273,7 +273,7 @@ class _TaskSummaryPageState extends State<TaskSummaryPage> {
             icon: const Icon(Icons.arrow_forward),
             onPressed: (dashBoardProvider.taskCurrentPage + 1) *
                         dashBoardProvider.taskItemsPerPage <
-                    dashBoardProvider.taskInfoModel.length
+                    dashBoardProvider.taskTotalCount
                 ? () {
                     dashBoardProvider.fetchNextPageTasks(context);
                   }

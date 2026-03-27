@@ -1823,35 +1823,82 @@ class _CustomerPageState extends State<CustomerPage> {
           .where((s) => customerProvider.selectedStatusIds.contains(s.statusId))
           .map((s) => s.statusName ?? '')
           .toList();
-      if (selectedNames.length == 1) {
-        labelText = selectedNames.first;
-      } else if (selectedNames.length > 1) {
-        labelText = '${selectedNames.length} selected';
-      }
+      labelText = selectedNames.join(', ');
     }
 
-    return GestureDetector(
-      onTap: () async {
-        // Use a bottom sheet / dialog for multi-select
-        await showDialog(
-          context: context,
-          barrierColor: Colors.transparent,
-          builder: (ctx) {
-            return _StatusMultiSelectDialog(
-              allStatuses: dropDownProvider.followUpData,
-              selectedIds: List<int>.from(customerProvider.selectedStatusIds),
-              onApply: (selectedIds) {
-                // Apply each selection via toggleStatus reset then apply
-                // Reset first
-                if (selectedIds.isEmpty || selectedIds.contains(0)) {
-                  customerProvider.toggleStatus(0);
-                } else {
-                  // Reset to empty list, then add all selected
-                  customerProvider.toggleStatus(0); // resets to [0]
-                  for (final id in selectedIds) {
-                    customerProvider.toggleStatus(id);
-                  }
-                }
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
+        ),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          GestureDetector(
+            onTap: () async {
+              // Use a bottom sheet / dialog for multi-select
+              await showDialog(
+                context: context,
+                barrierColor: Colors.transparent,
+                builder: (ctx) {
+                  return _StatusMultiSelectDialog(
+                    allStatuses: dropDownProvider.followUpData,
+                    selectedIds:
+                        List<int>.from(customerProvider.selectedStatusIds),
+                    onApply: (selectedIds) {
+                      if (selectedIds.isEmpty || selectedIds.contains(0)) {
+                        customerProvider.toggleStatus(0);
+                      } else {
+                        customerProvider.toggleStatus(0); // resets to [0]
+                        for (final id in selectedIds) {
+                          customerProvider.toggleStatus(id);
+                        }
+                      }
+                      customerProvider.setSearchCriteria(
+                        customerProvider.search,
+                        customerProvider.formattedFromDate,
+                        customerProvider.formattedToDate,
+                      );
+                      customerProvider.getSearchCustomers(context);
+                    },
+                  );
+                },
+              );
+            },
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ConstrainedBox(
+                  constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.2),
+                  child: Text(
+                    'Status: $labelText',
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      color:
+                          hasSelection ? AppColors.primaryBlue : Colors.black87,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 4),
+                Icon(
+                  Icons.arrow_drop_down,
+                  size: 18,
+                  color: hasSelection ? AppColors.primaryBlue : Colors.black45,
+                ),
+              ],
+            ),
+          ),
+          if (hasSelection) ...[
+            const SizedBox(width: 4),
+            GestureDetector(
+              onTap: () {
+                customerProvider.toggleStatus(0); // Reset to All
                 customerProvider.setSearchCriteria(
                   customerProvider.search,
                   customerProvider.formattedFromDate,
@@ -1859,37 +1906,14 @@ class _CustomerPageState extends State<CustomerPage> {
                 );
                 customerProvider.getSearchCustomers(context);
               },
-            );
-          },
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-            color: hasSelection ? AppColors.primaryBlue : Colors.grey[300]!,
-          ),
-        ),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Status: $labelText',
-              style: TextStyle(
-                color: hasSelection ? AppColors.primaryBlue : Colors.black87,
-                fontSize: 14,
+              child: Icon(
+                Icons.close,
+                size: 16,
+                color: AppColors.primaryBlue,
               ),
             ),
-            const SizedBox(width: 4),
-            Icon(
-              Icons.arrow_drop_down,
-              size: 18,
-              color: hasSelection ? AppColors.primaryBlue : Colors.black45,
-            ),
           ],
-        ),
+        ],
       ),
     );
   }

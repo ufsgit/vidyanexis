@@ -44,6 +44,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
   Widget build(BuildContext context) {
     final providerTimeTrack = Provider.of<TimeTrackReportProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
+    // ↑ listen:true only for filter row (lightweight) — chart uses its own Consumer below
 
     return Scaffold(
       backgroundColor: Colors.grey[50], // Match background style
@@ -58,77 +59,80 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
           ),
         ),
       ),
-      body: providerTimeTrack.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Filter Section (At the top)
-                    _buildFilterSection(
-                        context, providerTimeTrack, dropDownProvider),
-                    const SizedBox(height: 16),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Filter Section (At the top)
+              _buildFilterSection(context, providerTimeTrack, dropDownProvider),
+              const SizedBox(height: 16),
 
-                    // Chart Section (Below filters)
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(10),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.withOpacity(0.2),
-                            spreadRadius: 2,
-                            blurRadius: 5,
-                            offset: const Offset(0, 3),
-                          ),
-                        ],
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                'Time Tracking Summary',
+              // Chart Section — scoped Consumer avoids full-page reload
+              Consumer<TimeTrackReportProvider>(
+                builder: (context, chartProvider, _) {
+                  return Container(
+                    padding: const EdgeInsets.all(16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.grey.withOpacity(0.2),
+                          spreadRadius: 2,
+                          blurRadius: 5,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            const Text(
+                              'Time Tracking Summary',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                                color: Color(0xFF505050),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(4),
+                                border: Border.all(color: Colors.grey.shade300),
+                              ),
+                              child: Text(
+                                (chartProvider.fromDate != null &&
+                                        chartProvider.toDate != null)
+                                    ? '${chartProvider.formattedFromDate} - ${chartProvider.formattedToDate}'
+                                    : DateTime.now().year.toString(),
                                 style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  color: Color(0xFF505050),
+                                  fontSize: 14,
+                                  color: Colors.grey.shade700,
                                 ),
                               ),
-                              // Date/Year indicator (using from/to date if selected, else Year)
-                              Container(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(4),
-                                  border:
-                                      Border.all(color: Colors.grey.shade300),
-                                ),
-                                child: Text(
-                                  (providerTimeTrack.fromDate != null &&
-                                          providerTimeTrack.toDate != null)
-                                      ? '${providerTimeTrack.formattedFromDate} - ${providerTimeTrack.formattedToDate}'
-                                      : DateTime.now().year.toString(),
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    color: Colors.grey.shade700,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 20),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20),
+                        // FIX: show inline loader — no blank full-screen
+                        if (chartProvider.isLoading)
+                          const SizedBox(
+                            height: 300,
+                            child: Center(child: CircularProgressIndicator()),
+                          )
+                        else
                           SizedBox(
                             height: 300,
                             child: SfCartesianChart(
                               margin: const EdgeInsets.all(0),
-                              isTransposed:
-                                  false, // Normal orientation: X-axis (Time) is horizontal, Y-axis (Count) is vertical
+                              isTransposed: false,
                               primaryXAxis: CategoryAxis(
                                 title: AxisTitle(text: 'Time'),
                                 majorGridLines: const MajorGridLines(width: 0),
@@ -140,8 +144,10 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                               primaryYAxis: NumericAxis(
                                 title: AxisTitle(text: 'Count'),
                                 minimum: 0,
-                                // maximum: 100, // Remove fixed maximum to allow auto-scaling
-                                interval: 1, // Adjusted interval for count
+                                // FIX: removed interval:1 — it caused thousands
+                                // of tick renders when count values are large
+                                // (e.g. 0,1,2,...7423 = 7423 render ops).
+                                // Auto-interval now picks ~5-8 readable ticks.
                                 majorGridLines: MajorGridLines(
                                   width: 1,
                                   color: Colors.grey.shade200,
@@ -175,7 +181,7 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                                         Container(
                                           height: 10,
                                           width: 10,
-                                          decoration: BoxDecoration(
+                                          decoration: const BoxDecoration(
                                             color: Colors.blue,
                                             shape: BoxShape.circle,
                                           ),
@@ -197,8 +203,8 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                                   String>>[
                                 SplineSeries<TimeTrackChartData, String>(
                                   name: 'Follow Up',
-                                  dataSource: List<TimeTrackChartData>.from(
-                                      providerTimeTrack.chartData),
+                                  // FIX: direct reference — no List.from() copy
+                                  dataSource: chartProvider.chartData,
                                   xValueMapper: (TimeTrackChartData data, _) =>
                                       data.x,
                                   yValueMapper: (TimeTrackChartData data, _) =>
@@ -211,14 +217,15 @@ class _TimeTrackReportPageState extends State<TimeTrackReportPage> {
                               ],
                             ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
-                    // No list items section below
-                  ],
-                ),
+                  );
+                },
               ),
-            ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 

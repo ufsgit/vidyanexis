@@ -5,6 +5,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/side_bar_model.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
@@ -73,43 +74,30 @@ class _CustomSidebarState extends State<CustomSidebar> {
                     height: 30,
                     child: Row(
                       children: [
-                        CircleAvatar(
-                          radius: 15,
-                          backgroundColor: Colors.transparent,
-                          child: ClipOval(
-                            child: widget.logo.startsWith('assets/')
-                                ? Image.asset(
-                                    widget.logo,
-                                    height: 30,
-                                    width: 30,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        height: 30,
-                                        width: 30,
-                                        color: Colors.grey[200],
-                                        child: const Icon(Icons.broken_image,
-                                            size: 20, color: Colors.grey),
-                                      );
-                                    },
-                                  )
-                                : Image.network(
-                                    widget.logo,
-                                    height: 30,
-                                    width: 30,
-                                    fit: BoxFit.cover,
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Container(
-                                        height: 30,
-                                        width: 30,
-                                        color: Colors.grey[200],
-                                        child: const Icon(Icons.broken_image,
-                                            size: 20, color: Colors.grey),
-                                      );
-                                    },
-                                  ),
-                          ),
-                        ),
+                        widget.logo.startsWith('assets/')
+                            ? Image.asset(
+                                widget.logo,
+                                height: 80,
+                                width: 80,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Container();
+                                },
+                              )
+                            : Image.network(
+                                widget.logo,
+                                height: 80,
+                                width: 80,
+                                fit: BoxFit.contain,
+                                errorBuilder: (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AppStyles.logo(),
+                                    height: 80,
+                                    width: 80,
+                                    fit: BoxFit.contain,
+                                  );
+                                },
+                              ),
                       ],
                     ),
                   ),
