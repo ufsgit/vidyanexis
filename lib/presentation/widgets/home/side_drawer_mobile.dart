@@ -175,25 +175,30 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
                   height: 48,
                 ),
                 Center(
-                  child: CircleAvatar(
-                    radius: 40,
-                    backgroundColor: Colors.transparent,
-                    child: ClipOval(
-                      child: displayLogo.startsWith('http')
-                          ? Image.network(
-                              displayLogo,
-                              height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            )
-                          : Image.asset(
+                  child: displayLogo.startsWith('http')
+                      ? Image.network(
+                          displayLogo,
+                          height: 80,
+                          width: 100,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Image.asset(
                               AppStyles.logo(),
                               height: 80,
-                              width: 80,
-                              fit: BoxFit.cover,
-                            ),
-                    ),
-                  ),
+                              width: 100,
+                              fit: BoxFit.contain,
+                            );
+                          },
+                        )
+                      : Image.asset(
+                          displayLogo,
+                          height: 80,
+                          width: 100,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return Container();
+                          },
+                        ),
                 ),
                 const SizedBox(
                   height: 24,
