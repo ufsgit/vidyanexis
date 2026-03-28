@@ -34,6 +34,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider = Provider.of<DropDownProvider>(context, listen: false);
+      final leadReportProvider =
+          Provider.of<LeadReportProvider>(context, listen: false);
       final reportsProvider =
           Provider.of<TaskReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
@@ -43,7 +45,7 @@ class _leadReportMobile extends State<LeadReportMobile> {
       provider.getUserDetails(context);
       provider.getFollowUpStatus(context, '1');
       provider.getAllFollowUpStatus(context, '1');
-      // leadReportProvider.getSearchLeadReports('', '', '', '', context);
+      leadReportProvider.getSearchLeadReports('', '', '', '', context);
     });
   }
 

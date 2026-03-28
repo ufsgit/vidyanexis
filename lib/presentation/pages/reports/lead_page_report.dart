@@ -66,7 +66,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
       provider.getAllFollowUpStatus(context, '1');
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
-      // leadReportProvider.getSearchLeadReports('', '', '', '', context);
+      leadReportProvider.getSearchLeadReports('', '', '', '', context);
     });
   }
 
