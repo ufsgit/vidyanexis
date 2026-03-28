@@ -537,7 +537,7 @@ class _LeadsPageState extends State<LeadPage> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 TableWidget(
-                                  width: 80,
+                                  width: 60,
                                   padding: EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.center,
@@ -550,7 +550,7 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                                 TableWidget(
-                                  width: 60,
+                                  width: 80,
                                   padding: EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.center,
@@ -643,7 +643,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   CrossAxisAlignment.center,
                                               children: [
                                                 TableWidget(
-                                                  width: 80,
+                                                  width: 60,
                                                   alignment: Alignment.center,
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 4.0,
@@ -679,7 +679,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  width: 60,
+                                                  width: 80,
                                                   alignment: Alignment.center,
                                                   padding: EdgeInsets.symmetric(
                                                       vertical: 4.0,

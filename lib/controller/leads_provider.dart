@@ -776,48 +776,22 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   Future<void> fetchNextPage(BuildContext context) async {
-    print(
-        "Next Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
+    print("Next Clicked → current page: $currentPage total: $_totalCount");
 
     if (_endLimit >= _totalCount) return;
 
-    _startLimit = _endLimit + 1;
-
-    int limitPerPage = 20;
-
-    _endLimit = _startLimit + limitPerPage - 1;
-
-    if (_endLimit > _totalCount) {
-      _endLimit = _totalCount;
-    }
-
-    print(
-        "After Next computation → new start: $_startLimit new end: $_endLimit");
-    await getSearchLeads(context);
-
-    notifyListeners();
+    currentPage++;
+    await getSearchLeads(context, isWebPagination: true);
   }
 
   // Fetch previous page data
   Future<void> fetchPreviousPage(BuildContext context) async {
-    print(
-        "Previous Clicked → start: $_startLimit end: $_endLimit total: $_totalCount");
+    print("Previous Clicked → current page: $currentPage total: $_totalCount");
 
-    if (_startLimit <= 1) return;
+    if (currentPage <= 1) return;
 
-    int limitPerPage = 20;
-
-    _startLimit = _startLimit - limitPerPage;
-
-    if (_startLimit < 1) _startLimit = 1;
-
-    _endLimit = _startLimit + limitPerPage - 1;
-
-    print(
-        "After Previous computation → new start: $_startLimit new end: $_endLimit");
-    await getSearchLeads(context);
-
-    notifyListeners();
+    currentPage--;
+    await getSearchLeads(context, isWebPagination: true);
   }
 
   void selectDateFilterOption(int? index) {
@@ -903,12 +877,16 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   Future<void> getSearchLeads(BuildContext context,
-      {bool isPagination = false}) async {
-    if (!isPagination) {
+      {bool isPagination = false, bool isWebPagination = false}) async {
+    if (!isPagination && !isWebPagination) {
       currentPage = 1;
       hasMoreData = true;
       _leadData.clear();
       notifyListeners();
+    }
+
+    if (isWebPagination) {
+      _leadData.clear();
     }
 
     _startLimit = ((currentPage - 1) * pageSize) + 1;
