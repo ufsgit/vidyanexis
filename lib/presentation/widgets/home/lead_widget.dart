@@ -371,6 +371,34 @@ class _LeadCardState extends State<LeadCard> {
                                         }).toList(),
                                       ),
                                     ),
+                                    const SizedBox(height: 12),
+                                    CustomTextField(
+                                      readOnly: true,
+                                      controller: leadsProvider
+                                          .nextFollowUpDateController,
+                                      hintText: 'Next Follow-up Date*',
+                                      onTap: () async {
+                                        final date = await showDatePicker(
+                                            context: context,
+                                            initialDate: DateTime.now(),
+                                            firstDate: DateTime.now(),
+                                            lastDate: DateTime(2100));
+                                        if (date != null) {
+                                          leadsProvider
+                                                  .nextFollowUpDateController
+                                                  .text =
+                                              DateFormat('yyyy-MM-dd')
+                                                  .format(date);
+                                        }
+                                      },
+                                    ),
+                                    const SizedBox(height: 12),
+                                    CustomTextField(
+                                      controller:
+                                          leadsProvider.messageController,
+                                      hintText: 'Remarks',
+                                      maxLines: 3,
+                                    ),
 
                                     if (_isInternalMoreExpanded) ...[
                                       const SizedBox(height: 8),
@@ -649,34 +677,6 @@ class _LeadCardState extends State<LeadCard> {
                                             }).toList(),
                                           ),
                                         ],
-                                      ),
-                                      const SizedBox(height: 12),
-                                      CustomTextField(
-                                        readOnly: true,
-                                        controller: leadsProvider
-                                            .nextFollowUpDateController,
-                                        hintText: 'Next Follow-up Date*',
-                                        onTap: () async {
-                                          final date = await showDatePicker(
-                                              context: context,
-                                              initialDate: DateTime.now(),
-                                              firstDate: DateTime.now(),
-                                              lastDate: DateTime(2100));
-                                          if (date != null) {
-                                            leadsProvider
-                                                    .nextFollowUpDateController
-                                                    .text =
-                                                DateFormat('yyyy-MM-dd')
-                                                    .format(date);
-                                          }
-                                        },
-                                      ),
-                                      const SizedBox(height: 12),
-                                      CustomTextField(
-                                        controller:
-                                            leadsProvider.messageController,
-                                        hintText: 'Remarks',
-                                        maxLines: 3,
                                       ),
                                     ],
                                     const SizedBox(height: 16),
