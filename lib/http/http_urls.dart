@@ -12,7 +12,7 @@ class HttpUrls {
   // static String baseUrl = 'https://ecoamicaapi.trackbox.net.in/';
   // static String baseUrl = 'https://solarisadmin.trackbox.net.in/';
   // static String baseUrl = 'https://papscoapi.trackbox.net.in/';
-  // static String baseUrl = 'https://demo3api.trackbox.net.in/';
+  static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://demo3api.trackbox.net.in/';
   // static String baseUrl = 'https://ckredencesoesyapi.trackbox.net.in/';
   // static String baseUrl = 'https://glpowerapi.trackbox.net.in/';
@@ -23,7 +23,7 @@ class HttpUrls {
   // static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
 
 //dev
-  static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
+  // static String baseUrl = 'https://3pm19pm4-3512.inc1.devtunnels.ms/';
   // static String baseUrl = 'https://2jw4dwnj-3512.inc1.devtunnels.ms/';
 
   static String imgBaseUrl =
@@ -78,6 +78,7 @@ class HttpUrls {
   static String amcDuration = "amc_duration/Search_amc_duration";
   static String amcInterval = "amc_interval/Search_amc_intervals";
   static String searchTaskReport = "task/Search_task_Report";
+  static String exportTaskByCustomer = "task/Export_Task_By_Customer";
   static String searchFollowupReports = "lead/Search_Pending_Followup_Report";
   static String searchQuotationReports =
       "quotation_master/Search_Quotaion_Report";

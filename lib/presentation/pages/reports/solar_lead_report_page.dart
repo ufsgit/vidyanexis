@@ -24,7 +24,7 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final provider =
           Provider.of<SolarLeadReportProvider>(context, listen: false);
-      
+
       provider.selectDateFilterOption(null);
       provider.getSolarLeadReport(
         context,
@@ -34,8 +34,9 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
         provider.Status,
         provider.AssignedTo,
       );
-      
-      final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
       dropDownProvider.getUserDetails(context);
       dropDownProvider.getFollowUpStatus(context, '0');
     });
@@ -65,7 +66,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(context, provider, dropDownProvider),
-                  if (provider.isFilter) _buildFilterContainer(context, provider, dropDownProvider),
+                  if (provider.isFilter)
+                    _buildFilterContainer(context, provider, dropDownProvider),
                   Expanded(
                     child: SingleChildScrollView(
                       padding: const EdgeInsets.all(16.0),
@@ -103,7 +105,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, SolarLeadReportProvider provider, DropDownProvider dropDownProvider) {
+  Widget _buildHeader(BuildContext context, SolarLeadReportProvider provider,
+      DropDownProvider dropDownProvider) {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -118,7 +121,9 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
             ),
           const Spacer(),
           Container(
-            width: MediaQuery.of(context).size.width / 4,
+            width: AppStyles.isWebScreen(context)
+                ? MediaQuery.of(context).size.width / 4
+                : MediaQuery.of(context).size.width / 1.5,
             height: 40,
             decoration: BoxDecoration(
               color: Colors.white,
@@ -179,7 +184,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                         vertical: 12,
                       ),
                     ),
-                    child: Text(provider.Search.isNotEmpty ? 'Cancel' : 'Search'),
+                    child:
+                        Text(provider.Search.isNotEmpty ? 'Cancel' : 'Search'),
                   ),
                 ),
               ),
@@ -191,11 +197,17 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
               provider.toggleFilter();
             },
             icon: const Icon(Icons.filter_list),
-            label: Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
+            label:
+                Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
             style: OutlinedButton.styleFrom(
-              foregroundColor: provider.isFilter ? Colors.white : AppColors.primaryBlue,
-              backgroundColor: provider.isFilter ? const Color(0xFF5499D9) : Colors.white,
-              side: BorderSide(color: provider.isFilter ? const Color(0xFF5499D9) : AppColors.primaryBlue),
+              foregroundColor:
+                  provider.isFilter ? Colors.white : AppColors.primaryBlue,
+              backgroundColor:
+                  provider.isFilter ? const Color(0xFF5499D9) : Colors.white,
+              side: BorderSide(
+                  color: provider.isFilter
+                      ? const Color(0xFF5499D9)
+                      : AppColors.primaryBlue),
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
@@ -207,7 +219,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
     );
   }
 
-  Widget _buildFilterContainer(BuildContext context, SolarLeadReportProvider provider, DropDownProvider dropDownProvider) {
+  Widget _buildFilterContainer(BuildContext context,
+      SolarLeadReportProvider provider, DropDownProvider dropDownProvider) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16.0),
       padding: const EdgeInsets.all(10.0),
@@ -243,7 +256,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                       dropDownProvider.followUpData
                           .map((status) => DropdownMenuItem<int>(
                                 value: status.statusId,
-                                child: Text(status.statusName ?? '', style: const TextStyle(fontSize: 14)),
+                                child: Text(status.statusName ?? '',
+                                    style: const TextStyle(fontSize: 14)),
                               ))
                           .toList(),
                   onChanged: (int? newValue) {
@@ -272,7 +286,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
               onClickTopButton(context);
             },
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 1.5),
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 1.5),
               decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
@@ -287,7 +302,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                   if (provider.fromDate == null && provider.toDate == null)
                     const Text('Entry Date: All'),
                   if (provider.fromDate != null && provider.toDate != null)
-                    Text('Date : ${provider.formattedFromDate} - ${provider.formattedToDate}'),
+                    Text(
+                        'Date : ${provider.formattedFromDate} - ${provider.formattedToDate}'),
                   const SizedBox(width: 10),
                   const Icon(
                     Icons.arrow_drop_down_outlined,
@@ -326,7 +342,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                           .map((user) => DropdownMenuItem<int>(
                                 value: user.userDetailsId,
                                 child: ConstrainedBox(
-                                  constraints: const BoxConstraints(maxWidth: 150),
+                                  constraints:
+                                      const BoxConstraints(maxWidth: 150),
                                   child: Text(
                                     user.userDetailsName,
                                     overflow: TextOverflow.ellipsis,
@@ -404,14 +421,16 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                     const Center(
                       child: Text(
                         'Choose Date',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w700),
                       ),
                     ),
                     const SizedBox(height: 15),
                     Wrap(
                       spacing: 12,
                       runSpacing: 12,
-                      children: List<Widget>.generate(dateButtonTitles.length, (index) {
+                      children: List<Widget>.generate(dateButtonTitles.length,
+                          (index) {
                         String title = dateButtonTitles[index];
                         return ActionChip(
                           onPressed: () {
@@ -422,11 +441,15 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                             borderRadius: BorderRadius.circular(20),
                           ),
                           label: Text(title),
-                          backgroundColor: reportsProvider.selectedDateFilterIndex == index
-                              ? AppColors.primaryBlue
-                              : Colors.white,
+                          backgroundColor:
+                              reportsProvider.selectedDateFilterIndex == index
+                                  ? AppColors.primaryBlue
+                                  : Colors.white,
                           labelStyle: TextStyle(
-                            color: reportsProvider.selectedDateFilterIndex == index ? Colors.white : Colors.black,
+                            color:
+                                reportsProvider.selectedDateFilterIndex == index
+                                    ? Colors.white
+                                    : Colors.black,
                           ),
                         );
                       }),
@@ -434,7 +457,8 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                     const SizedBox(height: 15),
                     const Text(
                       'Pick a date',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
                     ),
                     const SizedBox(height: 15),
                     Row(
@@ -442,13 +466,15 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => reportsProvider.selectDate(context, true),
+                            onTap: () =>
+                                reportsProvider.selectDate(context, true),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               hintText: reportsProvider.fromDate != null
-                                  ? '${reportsProvider.fromDate?.toLocal()}'.split(' ')[0]
+                                  ? '${reportsProvider.fromDate?.toLocal()}'
+                                      .split(' ')[0]
                                   : 'From Date',
                               suffixIcon: const Icon(Icons.calendar_month),
                             ),
@@ -458,13 +484,15 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                         Expanded(
                           child: TextField(
                             readOnly: true,
-                            onTap: () => reportsProvider.selectDate(context, false),
+                            onTap: () =>
+                                reportsProvider.selectDate(context, false),
                             decoration: InputDecoration(
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               hintText: reportsProvider.toDate != null
-                                  ? '${reportsProvider.toDate?.toLocal()}'.split(' ')[0]
+                                  ? '${reportsProvider.toDate?.toLocal()}'
+                                      .split(' ')[0]
                                   : 'To Date',
                               suffixIcon: const Icon(Icons.calendar_month),
                             ),
@@ -546,7 +574,6 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
     'This Month',
   ];
 
-
   Widget _buildChartCard({
     required String title,
     required List<ChartData> data,
@@ -572,12 +599,14 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(title,
+                style:
+                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Center(
               child: Text(
-                title.contains('Conversion') 
-                    ? 'No converted leads found for the selected period' 
+                title.contains('Conversion')
+                    ? 'No converted leads found for the selected period'
                     : title.contains('Cost')
                         ? 'No project cost data available for converted leads'
                         : 'No data available',
@@ -608,7 +637,9 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(title, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+          Text(title,
+              style:
+                  const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
           const SizedBox(height: 16),
           SizedBox(
             height: 300,
@@ -621,8 +652,9 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
               ),
               primaryYAxis: NumericAxis(
                 title: AxisTitle(text: yAxisTitle),
-                numberFormat: isCurrency 
-                    ? NumberFormat.compactCurrency(symbol: '₹', decimalDigits: 0) 
+                numberFormat: isCurrency
+                    ? NumberFormat.compactCurrency(
+                        symbol: '₹', decimalDigits: 0)
                     : NumberFormat.compact(),
                 axisLine: const AxisLine(width: 0),
                 majorTickLines: const MajorTickLines(size: 0),

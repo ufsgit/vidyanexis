@@ -37,6 +37,7 @@ import 'package:vidyanexis/presentation/pages/reports/total_outstanding_report_p
 import 'package:vidyanexis/presentation/pages/reports/outstanding_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/invoice_reports_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/solar_lead_report_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 
@@ -132,8 +133,10 @@ class _SidebarDrawerState extends State<SidebarDrawer> {
         {'title': 'Followup Reports', 'page': const FollowupReportMobile()},
       if (settingsProvider.menuIsViewMap[55].toString() == '1')
         {'title': 'Quotation Reports', 'page': const QuotationReportMobile()},
+      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+        {'title': 'Lead Reports', 'page': const LeadReportMobile(false)},
       if (settingsProvider.menuIsViewMap[97].toString() == '1')
-        {'title': 'Solar Lead Reports', 'page': const LeadReportMobile(false)},
+        {'title': 'Solar Lead Reports', 'page': const SolarLeadReportPage()},
       if (settingsProvider.menuIsViewMap[98].toString() == '1')
         {'title': 'Sales Pipeline', 'page': const LeadStatusReportScreen()},
       if (settingsProvider.menuIsViewMap[99].toString() == '1')
