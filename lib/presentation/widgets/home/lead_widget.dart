@@ -60,19 +60,27 @@ class _LeadCardState extends State<LeadCard> {
   }
 
   void _initializeNoteData() {
-    final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(context, listen: false);
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
     try {
-      dropDownProvider.selectedStatusId = int.parse(widget.lead.statusId.toString());
+      dropDownProvider.selectedStatusId =
+          int.parse(widget.lead.statusId.toString());
       leadsProvider.statusController.text = widget.lead.statusName;
-      dropDownProvider.selectedUserId = int.parse(widget.lead.toUserId.toString());
+      dropDownProvider.selectedUserId =
+          int.parse(widget.lead.toUserId.toString());
       leadsProvider.searchUserController.text = widget.lead.toUserName;
       leadsProvider.branchController.text = widget.lead.branchName;
       settingsProvider.selectedBranchId = widget.lead.branchId;
       leadsProvider.departmentController.text = widget.lead.departmentName;
-      settingsProvider.selectedDepartmentId = int.tryParse(widget.lead.departmentId.toString()) ?? 0;
-      leadsProvider.nextFollowUpDateController.text = widget.lead.nextFollowUpDate.isNotEmpty ? _formatDateSafely(widget.lead.nextFollowUpDate) : '';
+      settingsProvider.selectedDepartmentId =
+          int.tryParse(widget.lead.departmentId.toString()) ?? 0;
+      leadsProvider.nextFollowUpDateController.text =
+          widget.lead.nextFollowUpDate.isNotEmpty
+              ? _formatDateSafely(widget.lead.nextFollowUpDate)
+              : '';
       leadsProvider.messageController.clear();
       dropDownProvider.filterStaffByBranchAndDepartment(
         branchId: widget.lead.branchId,
@@ -124,7 +132,8 @@ class _LeadCardState extends State<LeadCard> {
   @override
   Widget build(BuildContext context) {
     final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-    final settingsProvider = Provider.of<SettingsProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
 
     Color getAvatarColor(String name) {
       final colors = [
@@ -164,8 +173,10 @@ class _LeadCardState extends State<LeadCard> {
               // Header Section
               GestureDetector(
                 onTap: widget.onTap,
+                behavior: HitTestBehavior.opaque,
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -174,7 +185,8 @@ class _LeadCardState extends State<LeadCard> {
                         width: 3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
-                          color: getAvatarColor(widget.lead.customerName).withOpacity(.4),
+                          color: getAvatarColor(widget.lead.customerName)
+                              .withOpacity(.4),
                         ),
                       ),
                       const SizedBox(width: 12),
@@ -214,10 +226,12 @@ class _LeadCardState extends State<LeadCard> {
                                     style: GoogleFonts.plusJakartaSans(
                                         fontSize: 14,
                                         fontWeight: FontWeight.w500,
-                                        color: AppColors.parseColor(widget.lead.colorCode)),
+                                        color: AppColors.parseColor(
+                                            widget.lead.colorCode)),
                                   ),
                                   TextSpan(
-                                    text: ' , Created By ${widget.lead.toUserName}',
+                                    text:
+                                        ' , Created By ${widget.lead.toUserName}',
                                     style: GoogleFonts.plusJakartaSans(
                                         fontSize: 12,
                                         fontWeight: FontWeight.w500,
@@ -279,7 +293,7 @@ class _LeadCardState extends State<LeadCard> {
                     children: [
                       // Toggleable Note Section
                       if (_isNoteClicked) ...[
-                      Column(
+                        Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 8),
@@ -292,36 +306,64 @@ class _LeadCardState extends State<LeadCard> {
                                       padding: const EdgeInsets.all(12),
                                       width: double.infinity,
                                       decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.grey[300]!),
+                                        border: Border.all(
+                                            color: Colors.grey[300]!),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: Wrap(
                                         spacing: 8,
                                         runSpacing: 8,
-                                        children: dropDownProvider.followUpData.map((status) {
-                                          final isSelected = dropDownProvider.selectedStatusId == status.statusId;
+                                        children: dropDownProvider.followUpData
+                                            .map((status) {
+                                          final isSelected = dropDownProvider
+                                                  .selectedStatusId ==
+                                              status.statusId;
                                           return GestureDetector(
                                             onTap: () {
-                                              dropDownProvider.setSelectedStatusId(status.statusId ?? 0);
-                                              leadsProvider.getCustomFieldsByStatusId(
-                                                  context,
-                                                  leadId: leadsProvider.customerId,
-                                                  statusId: status.statusId ?? 0);
-                                              leadsProvider.statusController.text = status.statusName ?? '';
+                                              dropDownProvider
+                                                  .setSelectedStatusId(
+                                                      status.statusId ?? 0);
+                                              leadsProvider
+                                                  .getCustomFieldsByStatusId(
+                                                      context,
+                                                      leadId: leadsProvider
+                                                          .customerId,
+                                                      statusId:
+                                                          status.statusId ?? 0);
+                                              leadsProvider
+                                                      .statusController.text =
+                                                  status.statusName ?? '';
                                             },
                                             child: Container(
-                                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 12,
+                                                      vertical: 8),
                                               decoration: BoxDecoration(
-                                                color: isSelected ? AppColors.bluebutton.withOpacity(0.1) : Colors.grey[100],
-                                                borderRadius: BorderRadius.circular(10),
-                                                border: Border.all(color: isSelected ? AppColors.bluebutton : Colors.transparent),
+                                                color: isSelected
+                                                    ? AppColors.bluebutton
+                                                        .withOpacity(0.1)
+                                                    : Colors.grey[100],
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                border: Border.all(
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                        : Colors.transparent),
                                               ),
                                               child: Text(
-                                                status.statusName?.toUpperCase() ?? '',
-                                                style: GoogleFonts.plusJakartaSans(
+                                                status.statusName
+                                                        ?.toUpperCase() ??
+                                                    '',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
                                                   fontSize: 11,
-                                                  fontWeight: isSelected ? FontWeight.w700 : FontWeight.w600,
-                                                  color: isSelected ? AppColors.bluebutton : Colors.grey[600],
+                                                  fontWeight: isSelected
+                                                      ? FontWeight.w700
+                                                      : FontWeight.w600,
+                                                  color: isSelected
+                                                      ? AppColors.bluebutton
+                                                      : Colors.grey[600],
                                                 ),
                                               ),
                                             ),
@@ -334,47 +376,94 @@ class _LeadCardState extends State<LeadCard> {
                                       const SizedBox(height: 8),
                                       // Branch Selection Chips
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
-                                              Text('Branch*', style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.w700)),
+                                              Text('Branch*',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w700)),
                                               const SizedBox(width: 8),
-                                              const Expanded(child: Divider(thickness: 1, color: Color(0xFFEEEEEE))),
+                                              const Expanded(
+                                                  child: Divider(
+                                                      thickness: 1,
+                                                      color:
+                                                          Color(0xFFEEEEEE))),
                                             ],
                                           ),
                                           const SizedBox(height: 8),
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 8,
-                                            children: settingsProvider.branchModel.map((branch) {
-                                              final isSelected = settingsProvider.selectedBranchId == branch.branchId;
+                                            children: settingsProvider
+                                                .branchModel
+                                                .map((branch) {
+                                              final isSelected =
+                                                  settingsProvider
+                                                          .selectedBranchId ==
+                                                      branch.branchId;
                                               return GestureDetector(
                                                 onTap: () {
-                                                  settingsProvider.selectedBranchId = branch.branchId;
-                                                  leadsProvider.branchController.text = branch.branchName ?? '';
-                                                  settingsProvider.setSelectedDepartmentId(0);
-                                                  leadsProvider.departmentController.clear();
-                                                  dropDownProvider.setSelectedUserId(0);
-                                                  leadsProvider.searchUserController.clear();
-                                                  dropDownProvider.filterStaffByBranchAndDepartment(
+                                                  settingsProvider
+                                                          .selectedBranchId =
+                                                      branch.branchId;
+                                                  leadsProvider.branchController
+                                                          .text =
+                                                      branch.branchName ?? '';
+                                                  settingsProvider
+                                                      .setSelectedDepartmentId(
+                                                          0);
+                                                  leadsProvider
+                                                      .departmentController
+                                                      .clear();
+                                                  dropDownProvider
+                                                      .setSelectedUserId(0);
+                                                  leadsProvider
+                                                      .searchUserController
+                                                      .clear();
+                                                  dropDownProvider
+                                                      .filterStaffByBranchAndDepartment(
                                                     branchId: branch.branchId,
                                                     departmentId: null,
                                                   );
                                                 },
                                                 child: Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 6),
                                                   decoration: BoxDecoration(
-                                                    color: isSelected ? AppColors.bluebutton.withOpacity(0.1) : Colors.grey[100],
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    border: Border.all(color: isSelected ? AppColors.bluebutton : Colors.transparent),
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                            .withOpacity(0.1)
+                                                        : Colors.grey[100],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    border: Border.all(
+                                                        color: isSelected
+                                                            ? AppColors
+                                                                .bluebutton
+                                                            : Colors
+                                                                .transparent),
                                                   ),
                                                   child: Text(
-                                                    branch.branchName?.toUpperCase() ?? '',
-                                                    style: GoogleFonts.plusJakartaSans(
+                                                    branch.branchName
+                                                            ?.toUpperCase() ??
+                                                        '',
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
                                                       fontSize: 11,
-                                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                                      color: isSelected ? AppColors.bluebutton : Colors.black87,
+                                                      fontWeight: isSelected
+                                                          ? FontWeight.bold
+                                                          : FontWeight.normal,
+                                                      color: isSelected
+                                                          ? AppColors.bluebutton
+                                                          : Colors.black87,
                                                     ),
                                                   ),
                                                 ),
@@ -386,45 +475,89 @@ class _LeadCardState extends State<LeadCard> {
                                       const SizedBox(height: 12),
                                       // Department Selection Chips
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
-                                              Text('Department', style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.bold)),
+                                              Text('Department',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
                                               const SizedBox(width: 8),
-                                              const Expanded(child: Divider(thickness: 1, color: Color(0xFFEEEEEE))),
+                                              const Expanded(
+                                                  child: Divider(
+                                                      thickness: 1,
+                                                      color:
+                                                          Color(0xFFEEEEEE))),
                                             ],
                                           ),
                                           const SizedBox(height: 8),
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 8,
-                                            children: settingsProvider.departmentModel.map((dept) {
-                                              final isSelected = settingsProvider.selectedDepartmentId == dept.departmentId;
+                                            children: settingsProvider
+                                                .departmentModel
+                                                .map((dept) {
+                                              final isSelected = settingsProvider
+                                                      .selectedDepartmentId ==
+                                                  dept.departmentId;
                                               return GestureDetector(
                                                 onTap: () {
-                                                  settingsProvider.setSelectedDepartmentId(dept.departmentId);
-                                                  leadsProvider.departmentController.text = dept.departmentName;
-                                                  dropDownProvider.setSelectedUserId(0);
-                                                  leadsProvider.searchUserController.clear();
-                                                  dropDownProvider.filterStaffByBranchAndDepartment(
-                                                    branchId: settingsProvider.selectedBranchId,
-                                                    departmentId: dept.departmentId,
+                                                  settingsProvider
+                                                      .setSelectedDepartmentId(
+                                                          dept.departmentId);
+                                                  leadsProvider
+                                                          .departmentController
+                                                          .text =
+                                                      dept.departmentName;
+                                                  dropDownProvider
+                                                      .setSelectedUserId(0);
+                                                  leadsProvider
+                                                      .searchUserController
+                                                      .clear();
+                                                  dropDownProvider
+                                                      .filterStaffByBranchAndDepartment(
+                                                    branchId: settingsProvider
+                                                        .selectedBranchId,
+                                                    departmentId:
+                                                        dept.departmentId,
                                                   );
                                                 },
                                                 child: Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 6),
                                                   decoration: BoxDecoration(
-                                                    color: isSelected ? AppColors.bluebutton.withOpacity(0.1) : Colors.grey[100],
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    border: Border.all(color: isSelected ? AppColors.bluebutton : Colors.transparent),
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                            .withOpacity(0.1)
+                                                        : Colors.grey[100],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    border: Border.all(
+                                                        color: isSelected
+                                                            ? AppColors
+                                                                .bluebutton
+                                                            : Colors
+                                                                .transparent),
                                                   ),
                                                   child: Text(
-                                                    dept.departmentName.toUpperCase(),
-                                                    style: GoogleFonts.plusJakartaSans(
+                                                    dept.departmentName
+                                                        .toUpperCase(),
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
                                                       fontSize: 11,
-                                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                                      color: isSelected ? AppColors.bluebutton : Colors.black87,
+                                                      fontWeight: isSelected
+                                                          ? FontWeight.bold
+                                                          : FontWeight.normal,
+                                                      color: isSelected
+                                                          ? AppColors.bluebutton
+                                                          : Colors.black87,
                                                     ),
                                                   ),
                                                 ),
@@ -436,39 +569,79 @@ class _LeadCardState extends State<LeadCard> {
                                       const SizedBox(height: 12),
                                       // Staff Selection Chips
                                       Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
-                                              Text('Assigned Staff*', style: GoogleFonts.plusJakartaSans(fontSize: 12, fontWeight: FontWeight.bold)),
+                                              Text('Assigned Staff*',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.bold)),
                                               const SizedBox(width: 8),
-                                              const Expanded(child: Divider(thickness: 1, color: Color(0xFFEEEEEE))),
+                                              const Expanded(
+                                                  child: Divider(
+                                                      thickness: 1,
+                                                      color:
+                                                          Color(0xFFEEEEEE))),
                                             ],
                                           ),
                                           const SizedBox(height: 8),
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 8,
-                                            children: dropDownProvider.filteredStaffData.map((user) {
-                                              final isSelected = dropDownProvider.selectedUserId == user.userDetailsId;
+                                            children: dropDownProvider
+                                                .filteredStaffData
+                                                .map((user) {
+                                              final isSelected =
+                                                  dropDownProvider
+                                                          .selectedUserId ==
+                                                      user.userDetailsId;
                                               return GestureDetector(
                                                 onTap: () {
-                                                  dropDownProvider.setSelectedUserId(user.userDetailsId);
-                                                  leadsProvider.searchUserController.text = user.userDetailsName;
+                                                  dropDownProvider
+                                                      .setSelectedUserId(
+                                                          user.userDetailsId);
+                                                  leadsProvider
+                                                          .searchUserController
+                                                          .text =
+                                                      user.userDetailsName;
                                                 },
                                                 child: Container(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 6),
                                                   decoration: BoxDecoration(
-                                                    color: isSelected ? AppColors.bluebutton.withOpacity(0.1) : Colors.grey[100],
-                                                    borderRadius: BorderRadius.circular(8),
-                                                    border: Border.all(color: isSelected ? AppColors.bluebutton : Colors.transparent),
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                            .withOpacity(0.1)
+                                                        : Colors.grey[100],
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            8),
+                                                    border: Border.all(
+                                                        color: isSelected
+                                                            ? AppColors
+                                                                .bluebutton
+                                                            : Colors
+                                                                .transparent),
                                                   ),
                                                   child: Text(
-                                                    user.userDetailsName?.toUpperCase() ?? '',
-                                                    style: GoogleFonts.plusJakartaSans(
+                                                    user.userDetailsName
+                                                            ?.toUpperCase() ??
+                                                        '',
+                                                    style: GoogleFonts
+                                                        .plusJakartaSans(
                                                       fontSize: 11,
-                                                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                                                      color: isSelected ? AppColors.bluebutton : Colors.black87,
+                                                      fontWeight: isSelected
+                                                          ? FontWeight.bold
+                                                          : FontWeight.normal,
+                                                      color: isSelected
+                                                          ? AppColors.bluebutton
+                                                          : Colors.black87,
                                                     ),
                                                   ),
                                                 ),
@@ -480,7 +653,8 @@ class _LeadCardState extends State<LeadCard> {
                                       const SizedBox(height: 12),
                                       CustomTextField(
                                         readOnly: true,
-                                        controller: leadsProvider.nextFollowUpDateController,
+                                        controller: leadsProvider
+                                            .nextFollowUpDateController,
                                         hintText: 'Next Follow-up Date*',
                                         onTap: () async {
                                           final date = await showDatePicker(
@@ -489,30 +663,40 @@ class _LeadCardState extends State<LeadCard> {
                                               firstDate: DateTime.now(),
                                               lastDate: DateTime(2100));
                                           if (date != null) {
-                                            leadsProvider.nextFollowUpDateController.text =
-                                                DateFormat('yyyy-MM-dd').format(date);
+                                            leadsProvider
+                                                    .nextFollowUpDateController
+                                                    .text =
+                                                DateFormat('yyyy-MM-dd')
+                                                    .format(date);
                                           }
                                         },
                                       ),
                                       const SizedBox(height: 12),
                                       CustomTextField(
-                                        controller: leadsProvider.messageController,
+                                        controller:
+                                            leadsProvider.messageController,
                                         hintText: 'Remarks',
                                         maxLines: 3,
                                       ),
                                     ],
                                     const SizedBox(height: 16),
                                     Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
                                       children: [
                                         GestureDetector(
-                                          onTap: () => setState(() => _isInternalMoreExpanded = !_isInternalMoreExpanded),
+                                          onTap: () => setState(() =>
+                                              _isInternalMoreExpanded =
+                                                  !_isInternalMoreExpanded),
                                           child: Row(
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Text(
-                                                _isInternalMoreExpanded ? 'Less' : 'More',
-                                                style: GoogleFonts.plusJakartaSans(
+                                                _isInternalMoreExpanded
+                                                    ? 'Less'
+                                                    : 'More',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
                                                   fontSize: 12,
                                                   fontWeight: FontWeight.w700,
                                                   color: AppColors.bluebutton,
@@ -520,8 +704,10 @@ class _LeadCardState extends State<LeadCard> {
                                               ),
                                               Icon(
                                                 _isInternalMoreExpanded
-                                                    ? Icons.keyboard_arrow_up_outlined
-                                                    : Icons.keyboard_arrow_down_outlined,
+                                                    ? Icons
+                                                        .keyboard_arrow_up_outlined
+                                                    : Icons
+                                                        .keyboard_arrow_down_outlined,
                                                 color: AppColors.bluebutton,
                                                 size: 20,
                                               ),
@@ -533,37 +719,76 @@ class _LeadCardState extends State<LeadCard> {
                                           height: 32,
                                           child: ElevatedButton(
                                             onPressed: () async {
-                                              final selectedUser = dropDownProvider.filteredStaffData.firstWhere(
-                                                (u) => u.userDetailsId == dropDownProvider.selectedUserId,
-                                                orElse: () => SearchUserDetails(userDetailsId: 0, userDetailsName: ''),
+                                              final selectedUser =
+                                                  dropDownProvider
+                                                      .filteredStaffData
+                                                      .firstWhere(
+                                                (u) =>
+                                                    u.userDetailsId ==
+                                                    dropDownProvider
+                                                        .selectedUserId,
+                                                orElse: () => SearchUserDetails(
+                                                    userDetailsId: 0,
+                                                    userDetailsName: ''),
                                               );
                                               await leadsProvider.saveFollowUp(
-                                                statusId: dropDownProvider.selectedStatusId ?? 0,
-                                                statusName: leadsProvider.statusController.text,
-                                                branchId: settingsProvider.selectedBranchId ?? 0,
-                                                branchName: leadsProvider.branchController.text,
-                                                departmentId: settingsProvider.selectedDepartmentId,
-                                                departmentName: leadsProvider.departmentController.text,
+                                                statusId: dropDownProvider
+                                                        .selectedStatusId ??
+                                                    0,
+                                                statusName: leadsProvider
+                                                    .statusController.text,
+                                                branchId: settingsProvider
+                                                        .selectedBranchId ??
+                                                    0,
+                                                branchName: leadsProvider
+                                                    .branchController.text,
+                                                departmentId: settingsProvider
+                                                    .selectedDepartmentId,
+                                                departmentName: leadsProvider
+                                                    .departmentController.text,
                                                 context: context,
-                                                toUserId: dropDownProvider.selectedUserId ?? 0,
-                                                toUserName: selectedUser.userDetailsName,
-                                                followUpDate: leadsProvider.nextFollowUpDateController.text,
-                                                custId: int.parse(widget.lead.customerId.toString()),
-                                                followUp: leadsProvider.nextFollowUpDateController.text.isNotEmpty ? 1 : 0,
-                                                message: leadsProvider.messageController.text,
+                                                toUserId: dropDownProvider
+                                                        .selectedUserId ??
+                                                    0,
+                                                toUserName: selectedUser
+                                                    .userDetailsName,
+                                                followUpDate: leadsProvider
+                                                    .nextFollowUpDateController
+                                                    .text,
+                                                custId: int.parse(widget
+                                                    .lead.customerId
+                                                    .toString()),
+                                                followUp: leadsProvider
+                                                        .nextFollowUpDateController
+                                                        .text
+                                                        .isNotEmpty
+                                                    ? 1
+                                                    : 0,
+                                                message: leadsProvider
+                                                    .messageController.text,
                                                 audioFiles: [],
                                               );
                                             },
                                             style: ElevatedButton.styleFrom(
-                                              backgroundColor: AppColors.bluebutton,
-                                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                                              backgroundColor:
+                                                  AppColors.bluebutton,
+                                              shape: RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          10)),
                                             ),
-                                            child: Text('Save', style: GoogleFonts.plusJakartaSans(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600)),
+                                            child: Text('Save',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                        color: Colors.white,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w600)),
                                           ),
                                         ),
                                       ],
                                     ),
-                                ],
+                                  ],
                                 );
                               },
                             ),
@@ -575,12 +800,13 @@ class _LeadCardState extends State<LeadCard> {
                       Row(
                         children: [
                           if (settingsProvider.menuIsViewMap[90] == 1)
-                          _buildActionButton(
-                            onTap: () => setState(() => _isNoteClicked = !_isNoteClicked),
-                            icon: Icons.note,
-                            text: 'Note',
-                            color: Colors.red,
-                          ),
+                            _buildActionButton(
+                              onTap: () => setState(
+                                  () => _isNoteClicked = !_isNoteClicked),
+                              icon: Icons.note,
+                              text: 'Note',
+                              color: Colors.red,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsViewMap[91] == 1)
                             _buildActionButton(
@@ -638,52 +864,60 @@ class _LeadCardState extends State<LeadCard> {
                             ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsViewMap[95] == 1)
-                          _buildActionButton(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => CustomerDetailPageMobile(
-                                fromLead: widget.isLead,
-                                customerId: widget.lead.customerId,
-                                lead: widget.lead,
-                              ),
-                            )),
-                            icon: Icons.visibility_outlined,
-                            text: 'View',
-                            color: AppColors.appViolet,
-                          ),
+                            _buildActionButton(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        CustomerDetailPageMobile(
+                                      fromLead: widget.isLead,
+                                      customerId: widget.lead.customerId,
+                                      lead: widget.lead,
+                                    ),
+                                  )),
+                              icon: Icons.visibility_outlined,
+                              text: 'View',
+                              color: AppColors.appViolet,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsViewMap[92] == 1)
-                          _buildActionButton(
-                            onTap: () async {
-                              final url = 'tel:${widget.lead.contactNumber}';
-                              if (await canLaunchUrl(Uri.parse(url))) await launchUrl(Uri.parse(url));
-                            },
-                            icon: Icons.call,
-                            text: 'Call',
-                            color: AppColors.bluebutton,
-                          ),
+                            _buildActionButton(
+                              onTap: () async {
+                                final url = 'tel:${widget.lead.contactNumber}';
+                                if (await canLaunchUrl(Uri.parse(url)))
+                                  await launchUrl(Uri.parse(url));
+                              },
+                              icon: Icons.call,
+                              text: 'Call',
+                              color: AppColors.bluebutton,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsViewMap[93] == 1)
-                          Expanded(
-                            child: Consumer<LeadCheckInProvider>(
-                              builder: (context, checkInProvider, child) {
-                                final isCheckedIn = checkInProvider.isCheckedIn(widget.lead.customerId);
-                                return CustomActionButton(
-                                  onTap: () {
-                                    checkInProvider.saveLeadCheckIn(
-                                      context: context,
-                                      customerId: widget.lead.customerId,
-                                      isCheckIn: !isCheckedIn,
-                                      leadName: widget.lead.customerName,
-                                    );
-                                  },
-                                  icon: isCheckedIn ? Icons.location_off_outlined : Icons.location_on_outlined,
-                                  text: 'In/Out',
-                                  imageColor: isCheckedIn ? Colors.red : Colors.green,
-                                  height: 38,
-                                );
-                              },
+                            Expanded(
+                              child: Consumer<LeadCheckInProvider>(
+                                builder: (context, checkInProvider, child) {
+                                  final isCheckedIn = checkInProvider
+                                      .isCheckedIn(widget.lead.customerId);
+                                  return CustomActionButton(
+                                    onTap: () {
+                                      checkInProvider.saveLeadCheckIn(
+                                        context: context,
+                                        customerId: widget.lead.customerId,
+                                        isCheckIn: !isCheckedIn,
+                                        leadName: widget.lead.customerName,
+                                      );
+                                    },
+                                    icon: isCheckedIn
+                                        ? Icons.location_off_outlined
+                                        : Icons.location_on_outlined,
+                                    text: 'In/Out',
+                                    imageColor:
+                                        isCheckedIn ? Colors.red : Colors.green,
+                                    height: 38,
+                                  );
+                                },
+                              ),
                             ),
-                          ),
                         ],
                       ),
                       const SizedBox(height: 4),
@@ -691,67 +925,96 @@ class _LeadCardState extends State<LeadCard> {
                       Row(
                         children: [
                           if (settingsProvider.menuIsSaveMap[13] == 1)
-                          _buildActionButton(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => AddTaskMobile(isEdit: false, taskId: '0'),
-                            )),
-                            icon: Icons.task,
-                            text: 'Task',
-                            color: Colors.orange,
-                          ),
+                            _buildActionButton(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddTaskMobile(
+                                        isEdit: false, taskId: '0'),
+                                  )),
+                              icon: Icons.task,
+                              text: 'Task',
+                              color: Colors.orange,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsSaveMap[19] == 1)
-                          _buildActionButton(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(
-                              builder: (context) => AddDocumentPhone(customerId: widget.lead.customerId.toString()),
-                            )),
-                            icon: Icons.upload_file,
-                            text: 'Docs',
-                            color: AppColors.appViolet,
-                          ),
+                            _buildActionButton(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddDocumentPhone(
+                                        customerId:
+                                            widget.lead.customerId.toString()),
+                                  )),
+                              icon: Icons.upload_file,
+                              text: 'Docs',
+                              color: AppColors.appViolet,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsEditMap[3] == 1)
-                          _buildActionButton(
-                            onTap: () async {
-                              showDialog(context: context, barrierDismissible: false, builder: (_) => const Center(child: CircularProgressIndicator()));
-                              final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context, listen: false);
-                              await leadDetailsProvider.fetchLeadDetails(widget.lead.customerId.toString(), context);
-                              final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
-                              leadsProvider.setCutomerId(int.tryParse(widget.lead.customerId.toString()) ?? 0);
-                              final dropDownProvider = Provider.of<DropDownProvider>(context, listen: false);
-                              final leadDetails = leadDetailsProvider.leadDetails![0];
-                              leadsProvider.enquirySourceController.text = leadDetails.enquirySourceName.toString();
-                              dropDownProvider.selectedEnquirySourceId = leadDetails.enquirySourceId;
-                              await leadsProvider.getLeadDropdowns(context);
-                              Navigator.pop(context);
-                              showDialog(context: context, builder: (_) => const NewLeadDrawerWidget(isEdit: true));
-                            },
-                            icon: Icons.edit_outlined,
-                            text: 'Edit',
-                            color: AppColors.secondaryBlue,
-                          ),
+                            _buildActionButton(
+                              onTap: () async {
+                                showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (_) => const Center(
+                                        child: CircularProgressIndicator()));
+                                final leadDetailsProvider =
+                                    Provider.of<LeadDetailsProvider>(context,
+                                        listen: false);
+                                await leadDetailsProvider.fetchLeadDetails(
+                                    widget.lead.customerId.toString(), context);
+                                final leadsProvider =
+                                    Provider.of<LeadsProvider>(context,
+                                        listen: false);
+                                leadsProvider.setCutomerId(int.tryParse(
+                                        widget.lead.customerId.toString()) ??
+                                    0);
+                                final dropDownProvider =
+                                    Provider.of<DropDownProvider>(context,
+                                        listen: false);
+                                final leadDetails =
+                                    leadDetailsProvider.leadDetails![0];
+                                leadsProvider.enquirySourceController.text =
+                                    leadDetails.enquirySourceName.toString();
+                                dropDownProvider.selectedEnquirySourceId =
+                                    leadDetails.enquirySourceId;
+                                await leadsProvider.getLeadDropdowns(context);
+                                Navigator.pop(context);
+                                showDialog(
+                                    context: context,
+                                    builder: (_) => const NewLeadDrawerWidget(
+                                        isEdit: true));
+                              },
+                              icon: Icons.edit_outlined,
+                              text: 'Edit',
+                              color: AppColors.secondaryBlue,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsSaveMap[16] == 1)
-                          _buildActionButton(
-                            onTap: () => Navigator.push(context, MaterialPageRoute(
-                              builder: (c) => QuotationCreationWidget(
-                                customerId: widget.lead.customerId.toString(),
-                                quotationId: '0',
-                                isEdit: false,
-                              ),
-                            )),
-                            icon: Icons.request_quote_outlined,
-                            text: 'Quote',
-                            color: AppColors.bluebutton,
-                          ),
+                            _buildActionButton(
+                              onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (c) => QuotationCreationWidget(
+                                      customerId:
+                                          widget.lead.customerId.toString(),
+                                      quotationId: '0',
+                                      isEdit: false,
+                                    ),
+                                  )),
+                              icon: Icons.request_quote_outlined,
+                              text: 'Quote',
+                              color: AppColors.bluebutton,
+                            ),
                           const SizedBox(width: 4),
                           if (settingsProvider.menuIsEditMap[94] == 1)
-                          _buildActionButton(
-                            onTap: _showConvertDialog,
-                            icon: Icons.change_circle_outlined,
-                            text: 'Convert',
-                            color: Colors.green,
-                          ),
+                            _buildActionButton(
+                              onTap: _showConvertDialog,
+                              icon: Icons.change_circle_outlined,
+                              text: 'Convert',
+                              color: Colors.green,
+                            ),
                         ],
                       ),
                     ],
@@ -765,7 +1028,11 @@ class _LeadCardState extends State<LeadCard> {
     );
   }
 
-  Widget _buildActionButton({required VoidCallback onTap, required IconData icon, required String text, required Color color}) {
+  Widget _buildActionButton(
+      {required VoidCallback onTap,
+      required IconData icon,
+      required String text,
+      required Color color}) {
     return Expanded(
       child: CustomActionButton(
         onTap: onTap,
