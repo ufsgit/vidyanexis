@@ -247,17 +247,16 @@ class LeadsProvider extends ChangeNotifier {
     if (value == 0) {
       _selectedEnquirySourceIds = [0];
     } else {
-      _selectedEnquirySourceIds.remove(0);
-      if (_selectedEnquirySourceIds.contains(value)) {
-        _selectedEnquirySourceIds.remove(value);
-      } else {
-        _selectedEnquirySourceIds.add(value);
-      }
-      if (_selectedEnquirySourceIds.isEmpty) {
+      if (_selectedEnquirySourceIds.contains(value) &&
+          _selectedEnquirySourceIds.length == 1) {
         _selectedEnquirySourceIds = [0];
+      } else {
+        _selectedEnquirySourceIds = [value];
       }
     }
-    _selectedEnquirySource = _selectedEnquirySourceIds.isNotEmpty ? _selectedEnquirySourceIds.first : null;
+    _selectedEnquirySource = _selectedEnquirySourceIds.isNotEmpty
+        ? _selectedEnquirySourceIds.first
+        : null;
     notifyListeners();
   }
 
@@ -735,7 +734,8 @@ class LeadsProvider extends ChangeNotifier {
         _selectedStatusIds = [0];
       }
     }
-    _selectedStatus = _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
+    _selectedStatus =
+        _selectedStatusIds.isNotEmpty ? _selectedStatusIds.first : null;
     notifyListeners();
   }
 
@@ -743,14 +743,10 @@ class LeadsProvider extends ChangeNotifier {
     if (value == 0) {
       _selectedUserIds = [0];
     } else {
-      _selectedUserIds.remove(0);
-      if (_selectedUserIds.contains(value)) {
-        _selectedUserIds.remove(value);
-      } else {
-        _selectedUserIds.add(value);
-      }
-      if (_selectedUserIds.isEmpty) {
+      if (_selectedUserIds.contains(value) && _selectedUserIds.length == 1) {
         _selectedUserIds = [0];
+      } else {
+        _selectedUserIds = [value];
       }
     }
     _selectedUser = _selectedUserIds.isNotEmpty ? _selectedUserIds.first : null;
@@ -767,17 +763,15 @@ class LeadsProvider extends ChangeNotifier {
     if (value == 0) {
       _selectedEnquiryForIds = [0];
     } else {
-      _selectedEnquiryForIds.remove(0);
-      if (_selectedEnquiryForIds.contains(value)) {
-        _selectedEnquiryForIds.remove(value);
-      } else {
-        _selectedEnquiryForIds.add(value);
-      }
-      if (_selectedEnquiryForIds.isEmpty) {
+      if (_selectedEnquiryForIds.contains(value) &&
+          _selectedEnquiryForIds.length == 1) {
         _selectedEnquiryForIds = [0];
+      } else {
+        _selectedEnquiryForIds = [value];
       }
     }
-    _selectedEnquiryFor = _selectedEnquiryForIds.isNotEmpty ? _selectedEnquiryForIds.first : null;
+    _selectedEnquiryFor =
+        _selectedEnquiryForIds.isNotEmpty ? _selectedEnquiryForIds.first : null;
     notifyListeners();
   }
 
@@ -1294,7 +1288,9 @@ class LeadsProvider extends ChangeNotifier {
           bodyData: {
             "lead": {
               "Customer_Id": custId,
-              "Customer_Name": leadNameController.text.isEmpty ? 'Null' : leadNameController.text,
+              "Customer_Name": leadNameController.text.isEmpty
+                  ? 'Null'
+                  : leadNameController.text,
               "Address": addressController.text,
               "City": cityController.text,
               "State": stateController.text,
@@ -1501,8 +1497,10 @@ class LeadsProvider extends ChangeNotifier {
 
       if (response != null && response.statusCode == 200) {
         Loader.stopLoader(context);
-        final customerProvider = Provider.of<CustomerProvider>(context, listen: false);
-        final leadDetailsProvider = Provider.of<LeadDetailsProvider>(context, listen: false);
+        final customerProvider =
+            Provider.of<CustomerProvider>(context, listen: false);
+        final leadDetailsProvider =
+            Provider.of<LeadDetailsProvider>(context, listen: false);
         final data = response.data;
         log('Success');
 
@@ -1887,8 +1885,8 @@ class LeadsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getSearchLeadReports(String search, String fromDate, String toDate,
-      String status, BuildContext context) async {
+  Future<void> getSearchLeadReports(String search, String fromDate,
+      String toDate, String status, BuildContext context) async {
     try {
       Loader.showLoader(context);
       print('Start$_startLimit');
