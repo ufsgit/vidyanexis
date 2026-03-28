@@ -324,19 +324,21 @@ class _LeadCardState extends State<LeadCard> {
                                               status.statusId;
                                           return GestureDetector(
                                             onTap: () {
-                                              dropDownProvider
-                                                  .setSelectedStatusId(
-                                                      status.statusId ?? 0);
-                                              leadsProvider
-                                                  .getCustomFieldsByStatusId(
-                                                      context,
-                                                      leadId: leadsProvider
-                                                          .customerId,
-                                                      statusId:
-                                                          status.statusId ?? 0);
-                                              leadsProvider
-                                                      .statusController.text =
-                                                  status.statusName ?? '';
+                                              setState(() {
+                                                dropDownProvider
+                                                    .setSelectedStatusId(
+                                                        status.statusId ?? 0);
+                                                leadsProvider
+                                                    .getCustomFieldsByStatusId(
+                                                        context,
+                                                        leadId: leadsProvider
+                                                            .customerId,
+                                                        statusId:
+                                                            status.statusId ?? 0);
+                                                leadsProvider
+                                                        .statusController.text =
+                                                    status.statusName ?? '';
+                                              });
                                             },
                                             child: Container(
                                               padding:
@@ -440,28 +442,31 @@ class _LeadCardState extends State<LeadCard> {
                                                       branch.branchId;
                                               return GestureDetector(
                                                 onTap: () {
-                                                  settingsProvider
-                                                          .selectedBranchId =
-                                                      branch.branchId;
-                                                  leadsProvider.branchController
-                                                          .text =
-                                                      branch.branchName ?? '';
-                                                  settingsProvider
-                                                      .setSelectedDepartmentId(
-                                                          0);
-                                                  leadsProvider
-                                                      .departmentController
-                                                      .clear();
-                                                  dropDownProvider
-                                                      .setSelectedUserId(0);
-                                                  leadsProvider
-                                                      .searchUserController
-                                                      .clear();
-                                                  dropDownProvider
-                                                      .filterStaffByBranchAndDepartment(
-                                                    branchId: branch.branchId,
-                                                    departmentId: null,
-                                                  );
+                                                  setState(() {
+                                                    settingsProvider
+                                                            .selectedBranchId =
+                                                        branch.branchId;
+                                                    leadsProvider
+                                                            .branchController
+                                                            .text =
+                                                        branch.branchName ?? '';
+                                                    settingsProvider
+                                                        .setSelectedDepartmentId(
+                                                            0);
+                                                    leadsProvider
+                                                        .departmentController
+                                                        .clear();
+                                                    dropDownProvider
+                                                        .setSelectedUserId(0);
+                                                    leadsProvider
+                                                        .searchUserController
+                                                        .clear();
+                                                    dropDownProvider
+                                                        .filterStaffByBranchAndDepartment(
+                                                      branchId: branch.branchId,
+                                                      departmentId: null,
+                                                    );
+                                                  });
                                                 },
                                                 child: Container(
                                                   padding: const EdgeInsets
@@ -538,25 +543,27 @@ class _LeadCardState extends State<LeadCard> {
                                                   dept.departmentId;
                                               return GestureDetector(
                                                 onTap: () {
-                                                  settingsProvider
-                                                      .setSelectedDepartmentId(
-                                                          dept.departmentId);
-                                                  leadsProvider
-                                                          .departmentController
-                                                          .text =
-                                                      dept.departmentName;
-                                                  dropDownProvider
-                                                      .setSelectedUserId(0);
-                                                  leadsProvider
-                                                      .searchUserController
-                                                      .clear();
-                                                  dropDownProvider
-                                                      .filterStaffByBranchAndDepartment(
-                                                    branchId: settingsProvider
-                                                        .selectedBranchId,
-                                                    departmentId:
-                                                        dept.departmentId,
-                                                  );
+                                                  setState(() {
+                                                    settingsProvider
+                                                        .setSelectedDepartmentId(
+                                                            dept.departmentId);
+                                                    leadsProvider
+                                                            .departmentController
+                                                            .text =
+                                                        dept.departmentName;
+                                                    dropDownProvider
+                                                        .setSelectedUserId(0);
+                                                    leadsProvider
+                                                        .searchUserController
+                                                        .clear();
+                                                    dropDownProvider
+                                                        .filterStaffByBranchAndDepartment(
+                                                      branchId: settingsProvider
+                                                          .selectedBranchId,
+                                                      departmentId:
+                                                          dept.departmentId,
+                                                    );
+                                                  });
                                                 },
                                                 child: Container(
                                                   padding: const EdgeInsets
@@ -661,13 +668,15 @@ class _LeadCardState extends State<LeadCard> {
                                                       user.userDetailsId;
                                               return GestureDetector(
                                                 onTap: () {
-                                                  dropDownProvider
-                                                      .setSelectedUserId(
-                                                          user.userDetailsId);
-                                                  leadsProvider
-                                                          .searchUserController
-                                                          .text =
-                                                      user.userDetailsName;
+                                                  setState(() {
+                                                    dropDownProvider
+                                                        .setSelectedUserId(
+                                                            user.userDetailsId);
+                                                    leadsProvider
+                                                            .searchUserController
+                                                            .text =
+                                                        user.userDetailsName;
+                                                  });
                                                 },
                                                 child: Container(
                                                   padding: const EdgeInsets

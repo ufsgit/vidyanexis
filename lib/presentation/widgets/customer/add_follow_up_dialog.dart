@@ -358,15 +358,17 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 .toList(),
             controller: leadProvider.statusController,
             onItemSelected: (selectedId) {
-              dropDownProvider.setSelectedStatusId(selectedId);
-              final selectedItem = dropDownProvider.followUpData.firstWhere(
-                (status) => status.statusId == selectedId,
-              );
-              leadProvider.customFieldList.clear();
-              leadProvider.getCustomFieldsByStatusId(context,
-                  leadId: leadProvider.customerId, statusId: selectedId);
-              leadProvider.statusController.text =
-                  selectedItem.statusName ?? '';
+              setState(() {
+                dropDownProvider.setSelectedStatusId(selectedId);
+                final selectedItem = dropDownProvider.followUpData.firstWhere(
+                  (status) => status.statusId == selectedId,
+                );
+                leadProvider.customFieldList.clear();
+                leadProvider.getCustomFieldsByStatusId(context,
+                    leadId: leadProvider.customerId, statusId: selectedId);
+                leadProvider.statusController.text =
+                    selectedItem.statusName ?? '';
+              });
             },
             selectedValue: dropDownProvider.selectedStatusId,
           ),
@@ -384,21 +386,23 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 .toList(),
             controller: leadProvider.branchController,
             onItemSelected: (selectedId) {
-              settingsProvider.selectedBranchId = selectedId;
-              final selectedBranch = settingsProvider.branchModel
-                  .firstWhere((branch) => branch.branchId == selectedId);
-              leadProvider.branchController.text =
-                  selectedBranch.branchName ?? '';
+              setState(() {
+                settingsProvider.selectedBranchId = selectedId;
+                final selectedBranch = settingsProvider.branchModel
+                    .firstWhere((branch) => branch.branchId == selectedId);
+                leadProvider.branchController.text =
+                    selectedBranch.branchName ?? '';
 
-              settingsProvider.setSelectedDepartmentId(0);
-              leadProvider.departmentController.clear();
-              dropDownProvider.setSelectedUserId(0);
-              leadProvider.searchUserController.clear();
+                settingsProvider.setSelectedDepartmentId(0);
+                leadProvider.departmentController.clear();
+                dropDownProvider.setSelectedUserId(0);
+                leadProvider.searchUserController.clear();
 
-              dropDownProvider.filterStaffByBranchAndDepartment(
-                branchId: selectedId,
-                departmentId: null,
-              );
+                dropDownProvider.filterStaffByBranchAndDepartment(
+                  branchId: selectedId,
+                  departmentId: null,
+                );
+              });
             },
           ),
 
@@ -416,19 +420,21 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 .toList(),
             controller: leadProvider.departmentController,
             onItemSelected: (selectedId) {
-              settingsProvider.selectedDepartmentId = selectedId;
-              final selectedDepartment = settingsProvider.departmentModel
-                  .firstWhere((dept) => dept.departmentId == selectedId);
-              leadProvider.departmentController.text =
-                  selectedDepartment.departmentName ?? '';
+              setState(() {
+                settingsProvider.selectedDepartmentId = selectedId;
+                final selectedDepartment = settingsProvider.departmentModel
+                    .firstWhere((dept) => dept.departmentId == selectedId);
+                leadProvider.departmentController.text =
+                    selectedDepartment.departmentName ?? '';
 
-              dropDownProvider.setSelectedUserId(0);
-              leadProvider.searchUserController.clear();
+                dropDownProvider.setSelectedUserId(0);
+                leadProvider.searchUserController.clear();
 
-              dropDownProvider.filterStaffByBranchAndDepartment(
-                branchId: settingsProvider.selectedBranchId,
-                departmentId: selectedId,
-              );
+                dropDownProvider.filterStaffByBranchAndDepartment(
+                  branchId: settingsProvider.selectedBranchId,
+                  departmentId: selectedId,
+                );
+              });
             },
           ),
 
@@ -444,11 +450,13 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
                 .toList(),
             controller: leadProvider.searchUserController,
             onItemSelected: (selectedId) {
-              dropDownProvider.setSelectedUserId(selectedId);
-              final selectedStaff = dropDownProvider.filteredStaffData
-                  .firstWhere((staff) => staff.userDetailsId == selectedId);
-              leadProvider.searchUserController.text =
-                  selectedStaff.userDetailsName;
+              setState(() {
+                dropDownProvider.setSelectedUserId(selectedId);
+                final selectedStaff = dropDownProvider.filteredStaffData
+                    .firstWhere((staff) => staff.userDetailsId == selectedId);
+                leadProvider.searchUserController.text =
+                    selectedStaff.userDetailsName;
+              });
             },
             selectedValue: dropDownProvider.selectedUserId,
             enabled: settingsProvider.selectedBranchId != null,
