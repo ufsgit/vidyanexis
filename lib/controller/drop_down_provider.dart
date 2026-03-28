@@ -345,7 +345,7 @@ class DropDownProvider extends ChangeNotifier {
     if (_selectedStatusId != value) {
       _selectedStatusId = value;
       // Optionally, trigger a state change, call a method, or notify listeners if using providers
-      // Example: notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -354,7 +354,7 @@ class DropDownProvider extends ChangeNotifier {
     if (_selectedUserId != value) {
       _selectedUserId = value;
       // Optionally, trigger a state change, call a method, or notify listeners if using providers
-      // Example: notifyListeners();
+      notifyListeners();
     }
   }
 
@@ -445,7 +445,7 @@ class DropDownProvider extends ChangeNotifier {
         assignTo.isNotEmpty;
   }
 
-  void setSelectedUserId(int id) {
+  void setSelectedUserId(int? id) {
     _selectedUserId = id;
     notifyListeners();
   }
@@ -465,12 +465,12 @@ class DropDownProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSelectedStatusId(int id) {
+  void setSelectedStatusId(int? id) {
     _selectedStatusId = id;
     notifyListeners();
   }
 
-  void setSelectedFollowUPId(int id) {
+  void setSelectedFollowUPId(int? id) {
     _selectedFollowUpId = id;
     notifyListeners();
   }
