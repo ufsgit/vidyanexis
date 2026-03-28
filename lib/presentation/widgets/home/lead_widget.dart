@@ -620,8 +620,36 @@ class _LeadCardState extends State<LeadCard> {
                                           Wrap(
                                             spacing: 8,
                                             runSpacing: 8,
-                                            children: dropDownProvider
-                                                .filteredStaffData
+                                            children: (() {
+                                              final staffList =
+                                                  List<SearchUserDetails>.from(
+                                                      dropDownProvider
+                                                          .filteredStaffData);
+                                              final selectedId =
+                                                  dropDownProvider
+                                                          .selectedUserId ??
+                                                      0;
+                                              if (selectedId != 0 &&
+                                                  leadsProvider
+                                                      .searchUserController
+                                                      .text
+                                                      .isNotEmpty) {
+                                                if (!staffList.any((u) =>
+                                                    u.userDetailsId ==
+                                                    selectedId)) {
+                                                  staffList.insert(
+                                                      0,
+                                                      SearchUserDetails(
+                                                          userDetailsId:
+                                                              selectedId,
+                                                          userDetailsName:
+                                                              leadsProvider
+                                                                  .searchUserController
+                                                                  .text));
+                                                }
+                                              }
+                                              return staffList;
+                                            })()
                                                 .map((user) {
                                               final isSelected =
                                                   dropDownProvider
