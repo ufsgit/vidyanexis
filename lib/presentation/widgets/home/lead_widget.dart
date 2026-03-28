@@ -92,6 +92,9 @@ class _LeadCardState extends State<LeadCard> {
   @override
   void initState() {
     super.initState();
+    if (widget.isExpanded) {
+      _initializeNoteData();
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<LeadCheckInProvider>(context, listen: false)
           .initLocalStatus(widget.lead.customerId);
@@ -297,8 +300,9 @@ class _LeadCardState extends State<LeadCard> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             const SizedBox(height: 8),
-                            Consumer<DropDownProvider>(
-                              builder: (context, dropDownProvider, child) {
+                            Consumer2<DropDownProvider, SettingsProvider>(
+                              builder: (context, dropDownProvider,
+                                  settingsProvider, child) {
                                 return Column(
                                   children: [
                                     // Status Selection Chips
