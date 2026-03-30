@@ -1780,27 +1780,43 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         SizedBox(
           height: 8,
         ),
-        CustomAutocomplete<CostInclude>(
-          focusNode: costIncludesNode,
-          showOptionsOnTap: true,
-          optionsViewOpenDirection: OptionsViewOpenDirection.down,
-          items: leadProvider.leadDropdownData!.costIncludes,
-          displayStringFunction: (model) => model.costIncludesName ?? '',
-          defaultText: leadProvider.costIncludesController.text ?? '',
-          labelText: 'Cost Includes',
-          controller: leadProvider.costIncludesController,
-          onSelected: (CostInclude selectedTaskType) {
-            leadProvider.setCostIncId(selectedTaskType.costIncludesId);
+        Row(
+          children: [
+            Expanded(
+              child: CustomAutocomplete<CostInclude>(
+                focusNode: costIncludesNode,
+                showOptionsOnTap: true,
+                optionsViewOpenDirection: OptionsViewOpenDirection.down,
+                items: leadProvider.leadDropdownData!.costIncludes,
+                displayStringFunction: (model) => model.costIncludesName ?? '',
+                defaultText: leadProvider.costIncludesController.text ?? '',
+                labelText: 'Cost Includes',
+                controller: leadProvider.costIncludesController,
+                onSelected: (CostInclude selectedTaskType) {
+                  leadProvider.setCostIncId(selectedTaskType.costIncludesId);
 
-            final selectedItem =
-                leadProvider.leadDropdownData!.costIncludes.firstWhere(
-              (status) =>
-                  status.costIncludesId == selectedTaskType.costIncludesId,
-            );
-            leadProvider.costIncludesController.text =
-                selectedItem.costIncludesName;
-          },
-          onChanged: (value) {},
+                  final selectedItem =
+                      leadProvider.leadDropdownData!.costIncludes.firstWhere(
+                    (status) =>
+                        status.costIncludesId == selectedTaskType.costIncludesId,
+                  );
+                  leadProvider.costIncludesController.text =
+                      selectedItem.costIncludesName;
+                },
+                onChanged: (value) {},
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: CustomTextfieldWidgetMobile(
+                readOnly: false,
+                controller: leadProvider.commissionController,
+                labelText: 'Commission',
+                keyBoardType: TextInputType.number,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              ),
+            ),
+          ],
         ),
         SizedBox(
           height: 8,
@@ -2340,6 +2356,16 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
           focusNode: FocusNode(),
           controller: leadProvider.referenceNameController,
           labelText: 'Sub Source',
+        ),
+        const SizedBox(
+          height: 10,
+        ),
+        CustomTextfieldWidgetMobile(
+          focusNode: FocusNode(),
+          controller: leadProvider.commissionController,
+          labelText: 'Commission',
+          keyBoardType: TextInputType.number,
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
         ),
         const SizedBox(
           height: 10,

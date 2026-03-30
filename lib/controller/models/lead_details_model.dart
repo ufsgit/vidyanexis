@@ -103,6 +103,7 @@ class LeadDetails {
   final String panelBrandName;
   final String noOfPanels;
   final String Efficiency;
+  final double commission;
 
   // New Additional Fields
   final int age;
@@ -239,6 +240,7 @@ class LeadDetails {
     required this.engineerDistrict,
     required this.firestationName,
     this.locationId, // Added locationId
+    required this.commission,
   });
 
   factory LeadDetails.fromJson(Map<String, dynamic> json) {
@@ -296,31 +298,31 @@ class LeadDetails {
       colorCode: parseString(json['Color_Code']),
       deleteStatus: parseInt(json['DeleteStatus']),
       leadDetailsId: parseInt(json['Lead_Details_Id']),
-      consumerNumber: parseString(json['consumer_number']),
-      electricalSection: parseString(json['electrical_section']),
-      inverterCapacity: parseDouble(json['inverter_capacity']),
-      inverterTypeId: parseInt(json['inverter_type_id']),
+      consumerNumber: parseString(json['Consumer_Number']),
+      electricalSection: parseString(json['Electrical_Section']),
+      inverterCapacity: parseDouble(json['Inverter_Capacity']),
+      inverterTypeId: parseInt(json['Inverter_Type_Id']),
       inverterTypeName: parseString(json['inverter_type_name']),
-      panelCapacity: parseDouble(json['panel_capacity']),
-      panelTypeId: parseInt(json['panel_type_id']),
+      panelCapacity: parseDouble(json['Panel_Capacity']),
+      panelTypeId: parseInt(json['Panel_Type_Id']),
       panelTypeName: parseString(json['panel_type_name']),
-      phaseId: parseInt(json['phase_id']),
+      phaseId: parseInt(json['Phase_Id']),
       phaseName: parseString(json['phase_name']),
-      roofTypeId: parseInt(json['roof_type_id']),
+      roofTypeId: parseInt(json['Roof_Type_Id']),
       roofTypeName: parseString(json['roof_type_name']),
-      projectCost: parseDouble(json['project_cost']),
-      additionalCost: parseDouble(json['additional_cost']),
-      advanceAmount: parseDouble(json['advance_amount']),
-      amountPaidThroughId: parseInt(json['amount_paid_through_id']),
+      projectCost: parseDouble(json['Project_Cost']),
+      additionalCost: parseDouble(json['Additional_Cost']),
+      advanceAmount: parseDouble(json['Advance_Amount']),
+      amountPaidThroughId: parseInt(json['Amount_Paid_Through_Id']),
       amountPaidThroughName: parseString(json['amount_paid_through_name']),
-      upiTransferPhoto: parseString(json['upi_transfer_photo']),
-      costIncludesId: parseInt(json['cost_includes_id']),
+      upiTransferPhoto: parseString(json['UPI_Transfer_Photo']),
+      costIncludesId: parseInt(json['Cost_Includes_Id']),
       costIncName: parseString(json['cost_includes_name']),
-      electricityBillPhoto: parseString(json['electricity_bill_photo']),
-      cancelledChequePassbook: parseString(json['cancelled_cheque_passbook']),
-      adhaarCardBack: parseString(json['adhaar_card_back']),
-      passportSizePhoto: parseString(json['passport_size_photo']),
-      connectedLoad: parseDouble(json['connected_load']),
+      electricityBillPhoto: parseString(json['Electricity_Bill_Photo']),
+      cancelledChequePassbook: parseString(json['Cancelled_Cheque_Passbook']),
+      adhaarCardBack: parseString(json['Adhaar_Card_Back']),
+      passportSizePhoto: parseString(json['Passport_Size_Photo']),
+      connectedLoad: parseDouble(json['Connected_Load']),
       rep: parseString(json['rep']),
       leadBy: parseString(json['lead_by']),
       workTypeId: parseInt(json['work_type_id']),
@@ -379,6 +381,7 @@ class LeadDetails {
               .map((item) => AudioFileLead.fromJson(item))
               .toList()
           : [],
+      commission: parseDouble(json['Commission']),
     );
   }
 
@@ -500,6 +503,7 @@ class LeadDetails {
       'Engineer_District': engineerDistrict,
       'Firestation': firestationName,
       'Location_Id': locationId, // Added locationId
+      'commission': commission,
     };
   }
 
@@ -610,6 +614,7 @@ class LeadDetails {
     String? engineerDistrict,
     int? firestationName,
     int? locationId, // Added locationId
+    double? commission,
     List<AudioFileLead>? audioFiles,
   }) {
     return LeadDetails(
@@ -734,6 +739,7 @@ class LeadDetails {
       engineerCity: engineerCity ?? this.engineerCity,
       engineerDistrict: engineerDistrict ?? this.engineerDistrict,
       firestationName: firestationName ?? this.firestationName,
+      commission: commission ?? this.commission,
     );
   }
 

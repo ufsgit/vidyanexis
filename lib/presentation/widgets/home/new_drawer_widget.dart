@@ -834,7 +834,23 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                   ),
                                 ),
                               ),
-                              const Spacer(),
+                              Expanded(
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 4.0),
+                                  child: CustomTextField(
+                                    height: 54,
+                                    controller:
+                                        leadProvider.commissionController,
+                                    hintText: 'Commission',
+                                    labelText: '',
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                  ),
+                                ),
+                              ),
                               const Spacer(),
                             ],
                           ),

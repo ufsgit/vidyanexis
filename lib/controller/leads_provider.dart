@@ -133,6 +133,7 @@ class LeadsProvider extends ChangeNotifier {
   final TextEditingController projectCostController = TextEditingController();
   final TextEditingController additionalCostControler = TextEditingController();
   final TextEditingController advanceAmountController = TextEditingController();
+  final TextEditingController commissionController = TextEditingController();
   //invoice
   final TextEditingController invoiceNoController = TextEditingController();
   final TextEditingController invoiceDateController = TextEditingController();
@@ -351,48 +352,56 @@ class LeadsProvider extends ChangeNotifier {
   set selectedPanelId(int? value) {
     if (_selectedPanelId != value) {
       _selectedPanelId = value;
+      notifyListeners();
     }
   }
 
   set selectedRoofId(int? value) {
     if (_selectedRoofId != value) {
       _selectedRoofId = value;
+      notifyListeners();
     }
   }
 
   set selectedSubsidyId(int? value) {
     if (_selectedSubsidyId != value) {
       _selectedSubsidyId = value;
+      notifyListeners();
     }
   }
 
   set selectedCostIncId(int? value) {
     if (_selectedCostIncId != value) {
       _selectedCostIncId = value;
+      notifyListeners();
     }
   }
 
   set selectedAmountPaidId(int? value) {
     if (_selectedAmountPaidId != value) {
       _selectedAmountPaidId = value;
+      notifyListeners();
     }
   }
 
   set selectedPhaseId(int? value) {
     if (_selectedPhaseId != value) {
       _selectedPhaseId = value;
+      notifyListeners();
     }
   }
 
   set selectedWorkTypeId(int? value) {
     if (_selectedWorkTypeId != value) {
       _selectedWorkTypeId = value;
+      notifyListeners();
     }
   }
 
   set selectedInverterId(int? value) {
     if (_selectedInverterId != value) {
       _selectedInverterId = value;
+      notifyListeners();
     }
   }
 
@@ -539,6 +548,7 @@ class LeadsProvider extends ChangeNotifier {
     projectCostController.clear();
     additionalCostControler.clear();
     advanceAmountController.clear();
+    commissionController.clear();
     connectedLoadController.clear();
     repController.clear();
     roofTypeController.clear();
@@ -1281,15 +1291,11 @@ class LeadsProvider extends ChangeNotifier {
               "Location": mapLinkController.text,
               "Consumer_Number": consumerNoController.text,
               "Electrical_Section": electricalSectionController.text,
-              "Inverter_Capacity": invertorCapacityController.text.isNotEmpty
-                  ? invertorCapacityController.text
-                  : 0,
+              "Inverter_Capacity": double.tryParse(invertorCapacityController.text) ?? 0,
               "Inverter_Type_Id": selectedInverterId,
               "inverter_type_name": inverterTypeController.text,
               "panel_type_name": panelBrandController.text,
-              "Panel_Capacity": panelCapacityController.text.isNotEmpty
-                  ? panelCapacityController.text
-                  : 0,
+              "Panel_Capacity": double.tryParse(panelCapacityController.text) ?? 0,
               "Panel_Type_Id": selectedPanelId,
               "Phase_Id": selectedPhaseId,
               "phase_name": panelPhaseController.text,
@@ -1299,15 +1305,10 @@ class LeadsProvider extends ChangeNotifier {
               "Enquiry_Source_Name": enquirySourceName,
               "Enquiry_For_Id": enquiryForId,
               "Enquiry_For_Name": enquiryForName,
-              "Project_Cost": projectCostController.text.isNotEmpty
-                  ? projectCostController.text
-                  : 0,
-              "Additional_Cost": additionalCostControler.text.isNotEmpty
-                  ? additionalCostControler.text
-                  : 0,
-              "Advance_Amount": advanceAmountController.text.isNotEmpty
-                  ? advanceAmountController.text
-                  : 0,
+              "Project_Cost": double.tryParse(projectCostController.text) ?? 0,
+              "Additional_Cost": double.tryParse(additionalCostControler.text) ?? 0,
+              "Advance_Amount": double.tryParse(advanceAmountController.text) ?? 0,
+              "Commission": double.tryParse(commissionController.text) ?? 0,
               "Amount_Paid_Through_Id": selectedAmountPaidId,
               "amount_paid_through_name": amountPaidController.text,
               "UPI_Transfer_Photo": upiImage,
@@ -1317,9 +1318,7 @@ class LeadsProvider extends ChangeNotifier {
               "Cancelled_Cheque_Passbook": cancelledPassBookImage,
               "Adhaar_Card_Back": aadharImage,
               "Passport_Size_Photo": passportImage,
-              "Connected_Load": connectedLoadController.text.isNotEmpty
-                  ? connectedLoadController.text
-                  : 0,
+              "Connected_Load": double.tryParse(connectedLoadController.text) ?? 0,
               "Rep": repController.text,
               "Lead_By": leadByController.text,
               "Work_Type_Id": selectedWorkTypeId,
@@ -1334,8 +1333,13 @@ class LeadsProvider extends ChangeNotifier {
               "District": districtName,
               "Source_Category_Id": sourceId,
               "Source_Category_Name": sourceName,
-              "customFields":
-                  customFieldLeadStatusKey.currentState?.getFieldValuesAsJson(),
+              "customFields": (customFieldLeadStatusKey.currentState
+                              ?.getFilledFieldValues()
+                              .isNotEmpty ??
+                          false)
+                      ? customFieldLeadStatusKey.currentState
+                          ?.getFieldValuesAsJson()
+                      : null,
               "enquiryForCustomFields": customFieldEnquirySourceKey.currentState
                   ?.getFieldValuesAsJson(),
               "Age": age,

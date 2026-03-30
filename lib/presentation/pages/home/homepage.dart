@@ -45,6 +45,7 @@ import 'package:vidyanexis/presentation/pages/settings/settings_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/task_summary_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/side_bar_widget.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
+import 'package:vidyanexis/presentation/pages/reports/commission_report_page.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -286,6 +287,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Lead Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: LeadPageReport()),
+        ),
+      if (settingsProvider.menuIsViewMap[56].toString() == '1')
+        SidebarOption(
+          title: 'Commission Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: CommissionReportPage()),
         ),
       if (settingsProvider.menuIsViewMap[97].toString() == '1')
         SidebarOption(

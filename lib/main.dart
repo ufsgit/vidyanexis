@@ -57,6 +57,7 @@ import 'package:vidyanexis/firebase_options.dart';
 import 'package:vidyanexis/routes/routes.dart';
 import 'package:vidyanexis/controller/receipt_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
+import 'package:vidyanexis/controller/commission_report_provider.dart';
 import 'package:vidyanexis/utils/firebase_notification_service.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
@@ -140,6 +141,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
             create: (context) => LeadCheckInReportProvider()),
         ChangeNotifierProvider(create: (context) => TaskSummaryProvider()),
+        ChangeNotifierProvider(create: (context) => CommissionReportProvider()),
         ChangeNotifierProvider(
           create: (_) => SidebarProvider(),
         ),
