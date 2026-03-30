@@ -1,3 +1,5 @@
+import 'package:vidyanexis/controller/models/department_model.dart';
+
 class GetUserModel {
   int userDetailsId;
   String userDetailsName;
@@ -23,6 +25,7 @@ class GetUserModel {
   String empCode;
   String designation;
   String doj;
+  List<DepartmentModel>? transferDepartments;
 
   GetUserModel(
       {required this.userDetailsId,
@@ -48,6 +51,7 @@ class GetUserModel {
       required this.empCode,
       required this.designation,
       required this.doj,
+      this.transferDepartments,
       required this.allowAppLogin});
 
   factory GetUserModel.fromJson(Map<String, dynamic> json) => GetUserModel(
@@ -74,7 +78,11 @@ class GetUserModel {
       branchId: json["Branch_Id"]?.toString() ?? '0',
       branchName: json["Branch_Name"] ?? '',
       departmentId: json["Department_Id"]?.toString() ?? '0',
-      departmentName: json["Department_Name"]?.toString() ?? '');
+      departmentName: json["Department_Name"]?.toString() ?? '',
+      transferDepartments: json["Transfer_Departments"] != null
+          ? List<DepartmentModel>.from(json["Transfer_Departments"]
+              .map((x) => DepartmentModel.fromJson(x)))
+          : null);
 
   Map<String, dynamic> toJson() => {
         "User_Details_Id": userDetailsId,

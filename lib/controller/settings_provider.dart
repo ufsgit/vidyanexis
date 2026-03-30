@@ -405,6 +405,32 @@ class SettingsProvider extends ChangeNotifier {
   int get isFeedbackChecked => _isFeedbackChecked;
   int? get selectedStatusId => _selectedStatusId;
 
+  List<DepartmentModel> _selectedTransferDepartments = [];
+  List<DepartmentModel> get selectedTransferDepartments =>
+      _selectedTransferDepartments;
+
+  void toggleTransferDepartment(DepartmentModel department) {
+    bool exists = _selectedTransferDepartments
+        .any((element) => element.departmentId == department.departmentId);
+    if (exists) {
+      _selectedTransferDepartments.removeWhere(
+          (element) => element.departmentId == department.departmentId);
+    } else {
+      _selectedTransferDepartments.add(department);
+    }
+    notifyListeners();
+  }
+
+  void clearTransferDepartments() {
+    _selectedTransferDepartments.clear();
+    notifyListeners();
+  }
+
+  void setTransferDepartments(List<DepartmentModel> departments) {
+    _selectedTransferDepartments = List.from(departments);
+    notifyListeners();
+  }
+
   List<ProjectTypeModel> _projectTypeList = [];
   List<ProjectTypeModel> get projectTypeList => _projectTypeList;
   List<ProjectModel> _projectList = [];
@@ -2086,6 +2112,8 @@ class SettingsProvider extends ChangeNotifier {
             "Employee_Code": employeeCodeController.text,
             "Designation": designationController.text,
             "DOJ": dateOfJoinController.text.toyyyymmdd(),
+            "Transfer_Departments":
+                _selectedTransferDepartments.map((e) => e.toJson()).toList(),
           });
 
       if (response!.statusCode == 200) {
@@ -2112,6 +2140,7 @@ class SettingsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
       Loader.stopLoader(context);
+      _selectedTransferDepartments.clear();
       _isAddingUser = false;
       notifyListeners();
     }
@@ -2673,6 +2702,7 @@ class SettingsProvider extends ChangeNotifier {
     _selectedDepartmentId = -1;
     _selectedDefaultStatusId = -1;
     _selectedBranchId = -1;
+    _selectedTransferDepartments.clear();
 
     userNameController.clear();
     userTypeController.clear();
