@@ -974,23 +974,30 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
             if (dropDownProvider.selectedFollowUpId != null &&
                 dropDownProvider.selectedFollowUpId != 0)
               // customFieldSection(),
-              if (leadProvider.isLoadingCustomFields)
-                const Center(child: CircularProgressIndicator())
-              else if (leadProvider.customFieldList.isNotEmpty)
-                CustomFieldSectionWidget(
-                  controllerKey: CustomFieldControllerkey.leadStatus.value,
-                  key: customFieldLeadStatusKey,
-                  onFieldValuesChanged: (p0) {
-                    print("kikisdhuqe $p0");
-                    var f = [];
-                    for (var element in p0) {
-                      f.add(element.toJson());
-                    }
-                    print("kikisdhuqe de $f");
-                  },
-                  customFields: leadProvider.customFieldList,
-                  initialValues: {},
-                ),
+              Consumer<LeadsProvider>(
+                builder: (context, leadProvider, child) {
+                  if (leadProvider.isLoadingCustomFields) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (leadProvider.customFieldList.isNotEmpty) {
+                    return CustomFieldSectionWidget(
+                      controllerKey: CustomFieldControllerkey.leadStatus.value,
+                      key: customFieldLeadStatusKey,
+                      onFieldValuesChanged: (p0) {
+                        print("kikisdhuqe $p0");
+                        var f = [];
+                        for (var element in p0) {
+                          f.add(element.toJson());
+                        }
+                        print("kikisdhuqe de $f");
+                      },
+                      customFields: leadProvider.customFieldList,
+                      initialValues: {},
+                    );
+                  } else {
+                    return const SizedBox.shrink();
+                  }
+                },
+              ),
 
             const SizedBox(height: 10),
             CustomTextField(
@@ -2359,12 +2366,12 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         //     ),
         if (dropDownProvider.selectedEnquiryForId != null &&
             dropDownProvider.selectedEnquiryForId != 0)
-          if (leadProvider.isLoadingEnquiryCustomFields)
-            const Center(child: CircularProgressIndicator())
-          else if (leadProvider.customFieldEnquiryFor.isNotEmpty)
-            // Use Consumer to rebuild only when custom field values change
-            Consumer<LeadsProvider>(
-              builder: (context, provider, child) {
+          Consumer<LeadsProvider>(
+            builder: (context, leadProvider, child) {
+              if (leadProvider.isLoadingEnquiryCustomFields) {
+                return const Center(child: CircularProgressIndicator());
+              } else if (leadProvider.customFieldEnquiryFor.isNotEmpty) {
+                // Use Consumer to rebuild only when custom field values change
                 return CustomFieldSectionWidget(
                   controllerKey: CustomFieldControllerkey.enquirySource.value,
                   key: customFieldEnquirySourceKey,
@@ -2377,13 +2384,13 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                       : leadProvider.customFieldEnquiryFor
                           .map((e) => FieldValueModel(
                               customFieldId: e.customFieldId,
-                              value: provider
+                              value: leadProvider
                                   .getCustomFieldValue(e.customFieldId ?? 0)))
                           .toList(),
                   onFieldValuesChanged: (fieldValues) {
                     if (!widget.isEdit) {
                       for (var fieldValue in fieldValues) {
-                        provider.updateCustomFieldValue(
+                        leadProvider.updateCustomFieldValue(
                             fieldValue.customFieldId ?? 0,
                             fieldValue.value ?? '');
                       }
@@ -2392,8 +2399,11 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
                   customFields: leadProvider.customFieldEnquiryFor,
                   initialValues: const {},
                 );
-              },
-            ),
+              } else {
+                return const SizedBox.shrink();
+              }
+            },
+          ),
         // CustomAutocomplete<UserStatusType>(
         //   focusNode: leadTypeNode,
         //   showOptionsOnTap: true,
