@@ -124,6 +124,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
       settingsProvider.selectedDefaultStatus = 0;
       settingsProvider.departmentUserController.clear();
       settingsProvider.durationController.clear();
+      settingsProvider.taskTypeDescriptionController.clear();
 
       settingsProvider.defaultStatusController.clear();
       _selectedStatuses.clear();
@@ -146,6 +147,10 @@ class _AddTaskTypeState extends State<AddTaskType> {
 
         settingsProvider.toggleConversionCheckbox(isActive);
         settingsProvider.toggleLocation(isLocationTracking);
+
+        // Prefill description
+        settingsProvider.taskTypeDescriptionController.text =
+            widget.taskType?.description ?? '';
 
         // Handle department ID if available
         if (widget.taskType?.departmentIds != null &&
@@ -323,6 +328,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.durationController.clear();
                         settingsProvider.departmentTaskController.clear();
                         settingsProvider.defaultStatusController.clear();
+                        settingsProvider.taskTypeDescriptionController.clear();
                         Navigator.pop(context);
                       },
                     ),
@@ -463,6 +469,28 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                         controlAffinity:
                                             ListTileControlAffinity.leading,
                                         contentPadding: EdgeInsets.zero,
+                                      ),
+                                      const SizedBox(height: 20),
+                                      // Description field
+                                      SizedBox(
+                                        width: double.infinity,
+                                        child: TextField(
+                                          controller: settingsProvider
+                                              .taskTypeDescriptionController,
+                                          maxLines: 3,
+                                          decoration: InputDecoration(
+                                            hintText: 'Description',
+                                            labelText: 'Description',
+                                            border: OutlineInputBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            contentPadding:
+                                                const EdgeInsets.symmetric(
+                                                    horizontal: 12,
+                                                    vertical: 10),
+                                          ),
+                                        ),
                                       ),
                                       const SizedBox(height: 20),
                                     ],
@@ -738,6 +766,28 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       controlAffinity:
                                           ListTileControlAffinity.leading,
                                       contentPadding: EdgeInsets.zero),
+                                  const SizedBox(height: 20),
+                                  // Description field
+                                  SizedBox(
+                                    width: double.infinity,
+                                    child: TextField(
+                                      controller: settingsProvider
+                                          .taskTypeDescriptionController,
+                                      maxLines: 3,
+                                      decoration: InputDecoration(
+                                        hintText: 'Description',
+                                        labelText: 'Description',
+                                        border: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        contentPadding:
+                                            const EdgeInsets.symmetric(
+                                                horizontal: 12,
+                                                vertical: 10),
+                                      ),
+                                    ),
+                                  ),
                                   const SizedBox(height: 30),
                                 ],
                               ),
@@ -932,6 +982,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                       buttonText: 'Cancel',
                       onPressed: () {
                         settingsProvider.taskTypeController.clear();
+                        settingsProvider.taskTypeDescriptionController.clear();
                         Navigator.pop(context);
                       },
                       backgroundColor: Colors.white,
@@ -970,6 +1021,8 @@ class _AddTaskTypeState extends State<AddTaskType> {
                           "Duration": int.tryParse(
                                   settingsProvider.durationController.text) ??
                               0,
+                          "Description": settingsProvider
+                              .taskTypeDescriptionController.text,
                           "task_type_status": taskTypeStatus,
                           "Is_Active":
                               settingsProvider.isConversionChecked ? 1 : 0,

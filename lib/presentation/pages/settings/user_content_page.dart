@@ -527,6 +527,7 @@ class _UsersContentState extends State<UsersContent> {
                                                           empCode: settingsProvider.searchUserDetails[index].empCode,
                                                           designation: settingsProvider.searchUserDetails[index].designation,
                                                           doj: settingsProvider.searchUserDetails[index].doj,
+                                                          transferDepartments: settingsProvider.searchUserDetails[index].transferDepartments,
                                                           isEdit: true);
                                                     },
                                                   );
@@ -654,7 +655,7 @@ class _UsersContentState extends State<UsersContent> {
                                             decoration: BoxDecoration(
                                               color: settingsProvider
                                                           .searchUserDetails[
-                                                               index]
+                                                              index]
                                                           .workingStatus ==
                                                       '1'
                                                   ? Colors.green.shade50
@@ -665,7 +666,7 @@ class _UsersContentState extends State<UsersContent> {
                                             child: Text(
                                               settingsProvider
                                                           .searchUserDetails[
-                                                               index]
+                                                              index]
                                                           .workingStatus ==
                                                       '1'
                                                   ? 'Active'
@@ -797,10 +798,7 @@ class _UsersContentState extends State<UsersContent> {
                                                     ),
                                                   ),
                                                   Text(
-                                                    "Department : ${settingsProvider
-                                                            .searchUserDetails[
-                                                                index]
-                                                            .departmentName}",
+                                                    "Department : ${settingsProvider.searchUserDetails[index].departmentName}",
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: GoogleFonts
@@ -813,10 +811,7 @@ class _UsersContentState extends State<UsersContent> {
                                                   ),
                                                   const SizedBox(width: 8),
                                                   Text(
-                                                    "Branch : ${settingsProvider
-                                                            .searchUserDetails[
-                                                                index]
-                                                            .branchName}",
+                                                    "Branch : ${settingsProvider.searchUserDetails[index].branchName}",
                                                     overflow:
                                                         TextOverflow.ellipsis,
                                                     style: GoogleFonts
@@ -906,16 +901,16 @@ class _UsersContentState extends State<UsersContent> {
                                                                   .searchUserDetails[
                                                                       index]
                                                                   .departmentId),
-                                                          userStatusId:
+                                                          branchId: int.parse(
                                                               settingsProvider
                                                                   .searchUserDetails[
                                                                       index]
-                                                                  .workingStatus
-                                                                  .toString(),
-                                                          userId: settingsProvider
+                                                                  .branchId),
+                                                          userStatusId: settingsProvider
                                                               .searchUserDetails[index]
-                                                              .userDetailsId
+                                                              .workingStatus
                                                               .toString(),
+                                                          userId: settingsProvider.searchUserDetails[index].userDetailsId.toString(),
                                                           email: settingsProvider.searchUserDetails[index].email,
                                                           userName: settingsProvider.searchUserDetails[index].userDetailsName,
                                                           password: settingsProvider.searchUserDetails[index].password,
@@ -924,6 +919,7 @@ class _UsersContentState extends State<UsersContent> {
                                                           empCode: settingsProvider.searchUserDetails[index].empCode,
                                                           designation: settingsProvider.searchUserDetails[index].designation,
                                                           doj: settingsProvider.searchUserDetails[index].doj,
+                                                          transferDepartments: settingsProvider.searchUserDetails[index].transferDepartments,
                                                           isEdit: true);
                                                     },
                                                   );
@@ -1088,7 +1084,8 @@ class _UsersContentState extends State<UsersContent> {
     );
   }
 
-  Future<dynamic> assignTeamDialogue(BuildContext context, GetUserModel searchUserDetail) {
+  Future<dynamic> assignTeamDialogue(
+      BuildContext context, GetUserModel searchUserDetail) {
     return showDialog(
       barrierDismissible: false,
       context: context,

@@ -5,7 +5,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 class CustomElevatedButton extends StatelessWidget {
   final String buttonText;
   final bool isLoading;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final Color backgroundColor;
   final Color borderColor;
   final Color textColor;
@@ -19,7 +19,7 @@ class CustomElevatedButton extends StatelessWidget {
   const CustomElevatedButton({
     super.key,
     required this.buttonText,
-    required this.onPressed,
+    this.onPressed,
     required this.backgroundColor,
     required this.borderColor,
     required this.textColor,

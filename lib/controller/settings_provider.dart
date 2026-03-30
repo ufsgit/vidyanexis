@@ -98,6 +98,8 @@ class SettingsProvider extends ChangeNotifier {
   bool _allowAppLogin = false;
 
   bool _isSavingTeam = false;
+  bool _isAddingUser = false;
+  bool get isAddingUser => _isAddingUser;
   String _selectedMenu = 'Users';
 
   String get selectedMenu => _selectedMenu;
@@ -190,6 +192,8 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController departmentTaskController =
       TextEditingController();
   final TextEditingController statusTaskController = TextEditingController();
+  final TextEditingController taskTypeDescriptionController =
+      TextEditingController();
 
 //status
   final TextEditingController statusPageSearchController =
@@ -400,6 +404,32 @@ class SettingsProvider extends ChangeNotifier {
   int _isFeedbackChecked = 0;
   int get isFeedbackChecked => _isFeedbackChecked;
   int? get selectedStatusId => _selectedStatusId;
+
+  List<DepartmentModel> _selectedTransferDepartments = [];
+  List<DepartmentModel> get selectedTransferDepartments =>
+      _selectedTransferDepartments;
+
+  void toggleTransferDepartment(DepartmentModel department) {
+    bool exists = _selectedTransferDepartments
+        .any((element) => element.departmentId == department.departmentId);
+    if (exists) {
+      _selectedTransferDepartments.removeWhere(
+          (element) => element.departmentId == department.departmentId);
+    } else {
+      _selectedTransferDepartments.add(department);
+    }
+    notifyListeners();
+  }
+
+  void clearTransferDepartments() {
+    _selectedTransferDepartments.clear();
+    notifyListeners();
+  }
+
+  void setTransferDepartments(List<DepartmentModel> departments) {
+    _selectedTransferDepartments = List.from(departments);
+    notifyListeners();
+  }
 
   List<ProjectTypeModel> _projectTypeList = [];
   List<ProjectTypeModel> get projectTypeList => _projectTypeList;
@@ -2049,6 +2079,10 @@ class SettingsProvider extends ChangeNotifier {
     required String branchName,
     required String appLogin,
   }) async {
+    if (_isAddingUser) return;
+    _isAddingUser = true;
+    notifyListeners();
+
     try {
       Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -2078,6 +2112,8 @@ class SettingsProvider extends ChangeNotifier {
             "Employee_Code": employeeCodeController.text,
             "Designation": designationController.text,
             "DOJ": dateOfJoinController.text.toyyyymmdd(),
+            "Transfer_Departments":
+                _selectedTransferDepartments.map((e) => e.toJson()).toList(),
           });
 
       if (response!.statusCode == 200) {
@@ -2086,14 +2122,17 @@ class SettingsProvider extends ChangeNotifier {
         clearUserFilters();
         await getUserDetails('', context);
 
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        _isAddingUser = false;
+        notifyListeners();
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
         Loader.stopLoader(context);
+        _isAddingUser = false;
+        notifyListeners();
       }
     } catch (e) {
       print('Exception occurred: $e');
@@ -2101,6 +2140,9 @@ class SettingsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
       Loader.stopLoader(context);
+      _selectedTransferDepartments.clear();
+      _isAddingUser = false;
+      notifyListeners();
     }
   }
 
@@ -2180,8 +2222,8 @@ class SettingsProvider extends ChangeNotifier {
         // but we don't clear form fields here to prevent flicker/reset before pop.
         getSearchLeadStatus(
             searchStatusController.text, viewInId.toString(), context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
@@ -2222,8 +2264,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchEnquiryStatusData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
 
         print(data);
       } else {
@@ -2258,8 +2300,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchStageData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         searchStageController.clear();
         print(data);
       } else {
@@ -2297,8 +2339,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchsourceCategoryData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         searchSourceCategoryController.clear();
         print(data);
       } else {
@@ -2344,8 +2386,8 @@ class SettingsProvider extends ChangeNotifier {
         setSourceId(0);
         final data = response.data;
         searchEnquiryForData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2447,8 +2489,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchDepartment('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2660,6 +2702,7 @@ class SettingsProvider extends ChangeNotifier {
     _selectedDepartmentId = -1;
     _selectedDefaultStatusId = -1;
     _selectedBranchId = -1;
+    _selectedTransferDepartments.clear();
 
     userNameController.clear();
     userTypeController.clear();
@@ -3554,6 +3597,7 @@ class SettingsProvider extends ChangeNotifier {
         searchTaskTypeController.clear();
         defaultStatusController.clear();
         durationController.clear();
+        taskTypeDescriptionController.clear();
         _selectedDefaultStatusId = -1;
         _selectedDepartmentId = -1;
         final data = response.data;

@@ -45,6 +45,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
 
+    leadProvider.messageController.clear(); // Clear remarks textfield by default
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _leadNameFocusNode.requestFocus();
       leadProvider.getCustomFieldsByStatusId(

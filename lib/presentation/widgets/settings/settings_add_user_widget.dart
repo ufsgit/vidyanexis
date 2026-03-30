@@ -32,6 +32,7 @@ class SettingsAddUserWidget extends StatefulWidget {
   final String? designation;
   final String? doj;
   final int? branchId;
+  final List<DepartmentModel>? transferDepartments;
 
   SettingsAddUserWidget(
       {super.key,
@@ -49,7 +50,8 @@ class SettingsAddUserWidget extends StatefulWidget {
       this.empCode,
       this.designation,
       this.doj,
-      this.branchId});
+      this.branchId,
+      this.transferDepartments});
 
   @override
   State<SettingsAddUserWidget> createState() => _SettingsAddUserWidgetState();
@@ -125,8 +127,124 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
           settingsProvider.selectedUserTypeId = userType.userTypeId;
           settingsProvider.userTypeController.text = userType.userTypeName;
         }
+
+        if (widget.transferDepartments != null) {
+          settingsProvider.setTransferDepartments(widget.transferDepartments!);
+        }
       });
     }
+  }
+
+  void _showTransferDepartmentDialog(
+      BuildContext context, SettingsProvider settingsProvider) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setDialogState) {
+          return AlertDialog(
+            title: Text(
+              'Select Transfer Departments',
+              style: GoogleFonts.plusJakartaSans(
+                fontWeight: FontWeight.bold,
+                color: AppColors.appViolet,
+              ),
+            ),
+            content: SizedBox(
+              width: double.maxFinite,
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: settingsProvider.departmentModel.map((dept) {
+                    bool isSelected = settingsProvider.selectedTransferDepartments
+                        .any((element) => element.departmentId == dept.departmentId);
+                    return CheckboxListTile(
+                      title: Text(dept.departmentName),
+                      value: isSelected,
+                      activeColor: AppColors.appViolet,
+                      onChanged: (bool? value) {
+                        settingsProvider.toggleTransferDepartment(dept);
+                        setDialogState(() {});
+                      },
+                    );
+                  }).toList(),
+                ),
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'Done',
+                  style: TextStyle(
+                    color: AppColors.appViolet,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  Widget _buildTransferDepartmentField(
+      BuildContext context, SettingsProvider settingsProvider) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        InkWell(
+          onTap: () => _showTransferDepartmentDialog(context, settingsProvider),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 15),
+            decoration: BoxDecoration(
+              border: Border.all(color: AppColors.textGrey2, width: 1),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  'Transfer Departments',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey3,
+                  ),
+                ),
+                Icon(Icons.add_circle_outline, color: AppColors.appViolet, size: 20),
+              ],
+            ),
+          ),
+        ),
+        if (settingsProvider.selectedTransferDepartments.isNotEmpty) ...[
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: settingsProvider.selectedTransferDepartments.map((dept) {
+              return Chip(
+                label: Text(
+                  dept.departmentName,
+                  style: TextStyle(fontSize: 12, color: Colors.white),
+                ),
+                backgroundColor: AppColors.appViolet,
+                deleteIcon: Icon(Icons.close, size: 14, color: Colors.white),
+                onDeleted: () {
+                  settingsProvider.toggleTransferDepartment(dept);
+                },
+                padding: EdgeInsets.zero,
+                labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  side: BorderSide(color: AppColors.appViolet),
+                ),
+              );
+            }).toList(),
+          ),
+        ],
+      ],
+    );
   }
 
   @override
@@ -358,6 +476,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   },
                 ),
                 const SizedBox(height: 16),
+                _buildTransferDepartmentField(context, settingsProvider),
+                const SizedBox(height: 16),
                 CustomTextField(
                   readOnly: false,
                   height: 54,
@@ -570,6 +690,8 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                   ],
                 ),
                 const SizedBox(height: 16.0),
+                _buildTransferDepartmentField(context, settingsProvider),
+                const SizedBox(height: 16.0),
                 Row(
                   children: [
                     Expanded(
@@ -731,36 +853,52 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: CustomElevatedButton(
-                        buttonText: 'Save',
-                        onPressed: () async {
-                          if (validateFields(context, settingsProvider)) {
-                            await settingsProvider.addUser(
-                                context: context,
-                                userDetailsId: widget.userId.toString(),
-                                userDetailsName: settingsProvider.userNameController.text,
-                                password: settingsProvider.passWordController.text,
-                                workingStatus:
-                                    settingsProvider.selectedWorkingStatusId.toString(),
-                                userType: settingsProvider.selectedUserTypeId.toString(),
-                                addressName1: '',
-                                addressName2: '',
-                                addressName3: '',
-                                addressName4: '',
-                                mobile: settingsProvider.mobileNoController.text,
-                                countryCodeName: '',
-                                gmail: settingsProvider.emailIdController.text,
-                                appLogin: settingsProvider.allowAppLogin ? '1' : '0',
-                                departmentId:
-                                    settingsProvider.selectedDepartmentId.toString(),
-                                departmentName:
-                                    settingsProvider.departmentUserController.text,
-                                branchId: settingsProvider.selectedBranchId.toString(),
-                                branchName: settingsProvider.branchController.text);
+                        buttonText:
+                            settingsProvider.isAddingUser ? 'Saving...' : 'Save',
+                        onPressed: settingsProvider.isAddingUser
+                            ? null
+                            : () async {
+                                if (validateFields(context, settingsProvider)) {
+                                  await settingsProvider.addUser(
+                                      context: context,
+                                      userDetailsId: widget.userId.toString(),
+                                      userDetailsName: settingsProvider
+                                          .userNameController.text,
+                                      password: settingsProvider
+                                          .passWordController.text,
+                                      workingStatus: settingsProvider
+                                          .selectedWorkingStatusId
+                                          .toString(),
+                                      userType: settingsProvider
+                                          .selectedUserTypeId
+                                          .toString(),
+                                      addressName1: '',
+                                      addressName2: '',
+                                      addressName3: '',
+                                      addressName4: '',
+                                      mobile: settingsProvider
+                                          .mobileNoController.text,
+                                      countryCodeName: '',
+                                      gmail: settingsProvider
+                                          .emailIdController.text,
+                                      appLogin: settingsProvider.allowAppLogin
+                                          ? '1'
+                                          : '0',
+                                      departmentId: settingsProvider
+                                          .selectedDepartmentId
+                                          .toString(),
+                                      departmentName: settingsProvider
+                                          .departmentUserController.text,
+                                      branchId: settingsProvider
+                                          .selectedBranchId
+                                          .toString(),
+                                      branchName:
+                                          settingsProvider.branchController.text);
 
-                            settingsProvider.resetStates();
-                            Navigator.pop(context);
-                          }
-                        },
+                                  settingsProvider.resetStates();
+                                  Navigator.pop(context);
+                                }
+                              },
                         backgroundColor: AppColors.appViolet,
                         borderColor: AppColors.appViolet,
                         textColor: AppColors.whiteColor,
@@ -837,36 +975,38 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
           textColor: AppColors.appViolet,
         ),
         CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            if (validateFields(context, settingsProvider)) {
-              await settingsProvider.addUser(
-                  context: context,
-                  userDetailsId: widget.userId.toString(),
-                  userDetailsName: settingsProvider.userNameController.text,
-                  password: settingsProvider.passWordController.text,
-                  workingStatus:
-                      settingsProvider.selectedWorkingStatusId.toString(),
-                  userType: settingsProvider.selectedUserTypeId.toString(),
-                  addressName1: '',
-                  addressName2: '',
-                  addressName3: '',
-                  addressName4: '',
-                  mobile: settingsProvider.mobileNoController.text,
-                  countryCodeName: '',
-                  gmail: settingsProvider.emailIdController.text,
-                  appLogin: settingsProvider.allowAppLogin ? '1' : '0',
-                  departmentId:
-                      settingsProvider.selectedDepartmentId.toString(),
-                  departmentName:
-                      settingsProvider.departmentUserController.text,
-                  branchId: settingsProvider.selectedBranchId.toString(),
-                  branchName: settingsProvider.branchController.text);
+          buttonText: settingsProvider.isAddingUser ? 'Saving...' : 'Save',
+          onPressed: settingsProvider.isAddingUser
+              ? null
+              : () async {
+                  if (validateFields(context, settingsProvider)) {
+                    await settingsProvider.addUser(
+                        context: context,
+                        userDetailsId: widget.userId.toString(),
+                        userDetailsName: settingsProvider.userNameController.text,
+                        password: settingsProvider.passWordController.text,
+                        workingStatus:
+                            settingsProvider.selectedWorkingStatusId.toString(),
+                        userType: settingsProvider.selectedUserTypeId.toString(),
+                        addressName1: '',
+                        addressName2: '',
+                        addressName3: '',
+                        addressName4: '',
+                        mobile: settingsProvider.mobileNoController.text,
+                        countryCodeName: '',
+                        gmail: settingsProvider.emailIdController.text,
+                        appLogin: settingsProvider.allowAppLogin ? '1' : '0',
+                        departmentId:
+                            settingsProvider.selectedDepartmentId.toString(),
+                        departmentName:
+                            settingsProvider.departmentUserController.text,
+                        branchId: settingsProvider.selectedBranchId.toString(),
+                        branchName: settingsProvider.branchController.text);
 
-              settingsProvider.resetStates();
-              Navigator.pop(context);
-            }
-          },
+                    settingsProvider.resetStates();
+                    Navigator.pop(context);
+                  }
+                },
           backgroundColor: AppColors.appViolet,
           borderColor: AppColors.appViolet,
           textColor: AppColors.whiteColor,
