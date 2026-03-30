@@ -73,6 +73,7 @@ dependencies:
   flutter_local_notifications: ^21.0.0
   android_intent_plus: ^6.0.0
   font_awesome_flutter: ^11.0.0
+  signature: ^6.3.0
 dependency_overrides:
   record_linux: 
     git:
