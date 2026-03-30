@@ -1868,17 +1868,22 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           color:
                                                                               Colors.grey,
                                                                           onPressed:
-                                                                              () {
-                                                                            Clipboard.setData(
-                                                                              ClipboardData(
-                                                                                text: customerDetailsProvider.leadDetails![0].location.toString(),
-                                                                              ),
-                                                                            );
-                                                                            ScaffoldMessenger.of(context).showSnackBar(
-                                                                              const SnackBar(
-                                                                                content: Text('Link copied to clipboard!'),
-                                                                              ),
-                                                                            );
+                                                                              () async {
+                                                                            final locStr =
+                                                                                customerDetailsProvider.leadDetails![0].location?.toString() ?? '';
+                                                                            if (locStr == 'null' ||
+                                                                                locStr.trim().isEmpty) {
+                                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                                const SnackBar(content: Text('No location available to copy')),
+                                                                              );
+                                                                              return;
+                                                                            }
+                                                                            await Clipboard.setData(ClipboardData(text: locStr));
+                                                                            if (context.mounted) {
+                                                                              ScaffoldMessenger.of(context).showSnackBar(
+                                                                                const SnackBar(content: Text('Link copied to clipboard!')),
+                                                                              );
+                                                                            }
                                                                           },
                                                                           icon:
                                                                               const Icon(Icons.copy),
@@ -2419,24 +2424,33 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     color: Colors
                                                                         .grey,
                                                                     onPressed:
-                                                                        () {
-                                                                      Clipboard
-                                                                          .setData(
-                                                                        ClipboardData(
-                                                                          text: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .location
-                                                                              .toString(),
-                                                                        ),
-                                                                      );
-                                                                      ScaffoldMessenger.of(
-                                                                              context)
-                                                                          .showSnackBar(
-                                                                        const SnackBar(
-                                                                          content:
-                                                                              Text('Link copied to clipboard!'),
-                                                                        ),
-                                                                      );
+                                                                        () async {
+                                                                      final locStr =
+                                                                          customerDetailsProvider.leadDetails![0].location?.toString() ??
+                                                                              '';
+                                                                      if (locStr ==
+                                                                              'null' ||
+                                                                          locStr
+                                                                              .trim()
+                                                                              .isEmpty) {
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(
+                                                                          const SnackBar(
+                                                                              content: Text('No location available to copy')),
+                                                                        );
+                                                                        return;
+                                                                      }
+                                                                      await Clipboard.setData(
+                                                                          ClipboardData(
+                                                                              text: locStr));
+                                                                      if (context
+                                                                          .mounted) {
+                                                                        ScaffoldMessenger.of(context)
+                                                                            .showSnackBar(
+                                                                          const SnackBar(
+                                                                              content: Text('Link copied to clipboard!')),
+                                                                        );
+                                                                      }
                                                                     },
                                                                     icon: const Icon(
                                                                         Icons
