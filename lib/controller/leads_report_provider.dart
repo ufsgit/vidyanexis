@@ -1830,6 +1830,15 @@ class LeadReportProvider extends ChangeNotifier {
     _selectedUser = null;
     _selectedEnquiryFor = null;
     _selectedEnquirySource = null;
+    _fromDate = null;
+    _toDate = null;
+    _formattedFromDate = '';
+    _formattedToDate = '';
+    _selectedDateFilterIndex = null;
+    _fromDateS = '';
+    _toDateS = '';
+    _status = '';
+    _enquiryForS = '';
     notifyListeners();
   }
 
