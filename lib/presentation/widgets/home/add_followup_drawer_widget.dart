@@ -39,6 +39,8 @@ class _AddFollowupDrawerWidgetState extends State<AddFollowupDrawerWidget> {
     final settingsProvider =
         Provider.of<SettingsProvider>(context, listen: false);
 
+    leadProvider.messageController.clear(); // Clear remarks textfield by default
+
     _leadNameFocusNode = FocusNode();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _leadNameFocusNode.requestFocus();
