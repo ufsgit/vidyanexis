@@ -20,6 +20,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class LeadPageReport extends StatefulWidget {
@@ -156,10 +157,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                             controller: searchController,
                             style: const TextStyle(fontSize: 14),
                             onSubmitted: (query) {
-                              leadReportProvider.selectDateFilterOption(null);
-                              leadReportProvider.removeStatus();
                               leadReportProvider.getSearchLeadReports(
-                                  query, '', '', '', context);
+                                  query,
+                                  '',
+                                  '',
+                                  (leadReportProvider.selectedStatus ?? 0)
+                                      .toString(),
+                                  context);
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here....',
@@ -179,11 +183,13 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                 child: ElevatedButton(
                                   onPressed: () {
                                     String query = searchController.text;
-                                    leadReportProvider
-                                        .selectDateFilterOption(null);
-                                    leadReportProvider.removeStatus();
                                     leadReportProvider.getSearchLeadReports(
-                                        query, '', '', '', context);
+                                        query,
+                                        '',
+                                        '',
+                                        (leadReportProvider.selectedStatus ?? 0)
+                                            .toString(),
+                                        context);
                                   },
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.primaryBlue,
@@ -209,31 +215,31 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         ),
                         const SizedBox(width: 16),
                         OutlinedButton.icon(
-                            onPressed: () {
-                              leadReportProvider.toggleFilter();
-                              print(leadReportProvider.isFilter);
-                            },
-                            icon: const Icon(Icons.filter_list),
-                            label: Text(MediaQuery.of(context).size.width > 860
-                                ? 'Filter'
-                                : ''),
-                            style: OutlinedButton.styleFrom(
-                              foregroundColor: leadReportProvider.isFilter
-                                  ? Colors.white
-                                  : AppColors.primaryBlue,
-                              backgroundColor: leadReportProvider.isFilter
-                                  ? const Color(0xFF5499D9)
-                                  : Colors.white,
-                              side: BorderSide(
-                                  color: leadReportProvider.isFilter
-                                      ? const Color(0xFF5499D9)
-                                      : AppColors.primaryBlue),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
+                          onPressed: () {
+                            leadReportProvider.toggleFilter();
+                            print(leadReportProvider.isFilter);
+                          },
+                          icon: const Icon(Icons.filter_list),
+                          label: Text(MediaQuery.of(context).size.width > 860
+                              ? 'Filter'
+                              : ''),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: leadReportProvider.isFilter
+                                ? Colors.white
+                                : AppColors.primaryBlue,
+                            backgroundColor: leadReportProvider.isFilter
+                                ? const Color(0xFF5499D9)
+                                : Colors.white,
+                            side: BorderSide(
+                                color: leadReportProvider.isFilter
+                                    ? const Color(0xFF5499D9)
+                                    : AppColors.primaryBlue),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 12,
                             ),
                           ),
+                        ),
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
                           onPressed: () {
@@ -307,362 +313,395 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                   ),
                 ),
                 if (leadReportProvider.isFilter)
-                    Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Wrap(
-                        spacing: 12,
-                        runSpacing: 12,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: leadReportProvider.selectedStatus !=
-                                              null &&
-                                          leadReportProvider.selectedStatus != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Status: '),
-                                DropdownButton<int?>(
-                                  value: leadReportProvider.selectedStatus,
-                                  hint: const Text('All'),
-                                  items: [
-                                    const DropdownMenuItem<int?>(
-                                      value: 0,
-                                      child: Text(
-                                        'All',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                    ...provider.followUpData
-                                        .map((status) => DropdownMenuItem<int?>(
-                                              value: status.statusId,
-                                              child: Text(
-                                                status.statusName ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ))
-                                        ,
-                                  ],
-                                  onChanged: (int? newValue) {
-                                    leadReportProvider.setStatus(newValue ??
-                                        0); // Update the status in the provider
-                                    if (newValue == null) {
-                                      leadReportProvider.getSearchLeadReports(
-                                          '', '', '', '', context);
-                                    }
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
+                  Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.all(16.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.05),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        
+                        const SizedBox(height: 16),
+                        Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          children: [
+                            // Status Dropdown
+                            Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
+                                  horizontal: 16, vertical: 6),
                               decoration: BoxDecoration(
                                 color: Colors.white,
                                 borderRadius: BorderRadius.circular(20),
                                 border: Border.all(
-                                    color: leadReportProvider.fromDate !=
-                                                null ||
-                                            leadReportProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
+                                  color: (leadReportProvider.selectedStatus !=
+                                              null &&
+                                          leadReportProvider.selectedStatus !=
+                                              0)
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!,
+                                ),
                               ),
                               child: Row(
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  if (leadReportProvider.fromDate == null &&
-                                      leadReportProvider.toDate == null)
-                                    const Text('Next Follow-Up Date: All'),
-                                  if (leadReportProvider.fromDate != null &&
-                                      leadReportProvider.toDate != null)
-                                    Text(
-                                        'Date : ${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
+                                  const Text('Status: '),
+                                  DropdownButton<int>(
+                                    value:
+                                        leadReportProvider.selectedStatus ?? 0,
+                                    hint: const Text('All'),
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text('All',
+                                                style: TextStyle(fontSize: 14)),
+                                          ),
+                                        ] +
+                                        provider.followUpData
+                                            .map((status) =>
+                                                DropdownMenuItem<int>(
+                                                  value: status.statusId ?? 0,
+                                                  child: ConstrainedBox(
+                                                    constraints:
+                                                        const BoxConstraints(
+                                                            maxWidth: 150),
+                                                    child: Text(
+                                                      status.statusName ?? '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider.setStatus(newValue);
+                                      }
+                                      leadReportProvider.getSearchLeadReports(
+                                          leadReportProvider.search,
+                                          leadReportProvider.fromDateS,
+                                          leadReportProvider.toDateS,
+                                          (newValue ?? 0).toString(),
+                                          context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
                                   ),
                                 ],
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: leadReportProvider.selectedUser != null &&
-                                          leadReportProvider.selectedUser != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Assigned Staff: '),
-                                DropdownButton<int?>(
-                                  value: provider.searchUserDetails.any(
-                                          (element) =>
-                                              element.userDetailsId ==
-                                              leadReportProvider.selectedUser)
-                                      ? leadReportProvider.selectedUser
-                                      : null,
-                                  hint: const Text('All'),
-                                  items: [
-                                    const DropdownMenuItem<int?>(
-                                      value: 0,
-                                      child: Text(
-                                        'All',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                    ...provider.searchUserDetails
-                                        .map((user) => DropdownMenuItem<int?>(
-                                              value: user.userDetailsId,
-                                              child: Text(
-                                                user.userDetailsName ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ))
-                                        ,
-                                  ],
-                                  onChanged: (int? newValue) {
-                                    leadReportProvider
-                                        .setUserFilterStatus(newValue ?? 0);
-                                    if (newValue == null) {
-                                      leadReportProvider.getSearchLeadReports(
-                                          '', '', '', '', context);
-                                    }
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color:
-                                      leadReportProvider.selectedEnquiryFor !=
-                                              null &&
-                                          leadReportProvider
-                                                  .selectedEnquiryFor !=
-                                              0
-                                          ? AppColors.primaryBlue
-                                          : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Enquiry For: '),
-                                DropdownButton<int?>(
-                                  value: provider.enquiryForList.any(
-                                          (element) =>
-                                              element.enquiryForId ==
-                                              leadReportProvider
-                                                  .selectedEnquiryFor)
-                                      ? leadReportProvider.selectedEnquiryFor
-                                      : null,
-                                  hint: const Text('All'),
-                                  items: [
-                                    const DropdownMenuItem<int?>(
-                                      value: 0,
-                                      child: Text(
-                                        'All',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                    ...provider.enquiryForList
-                                        .map((enquiry) =>
-                                            DropdownMenuItem<int?>(
-                                              value: enquiry.enquiryForId,
-                                              child: Text(
-                                                enquiry.enquiryForName ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ))
-                                        ,
-                                  ],
-                                  onChanged: (int? newValue) {
-                                    leadReportProvider
-                                        .setEnquiryForFilter(newValue ?? 0);
-                                    leadReportProvider.getSearchLeadReports(
-                                        leadReportProvider.search,
-                                        leadReportProvider.fromDateS,
-                                        leadReportProvider.toDateS,
-                                        leadReportProvider.status,
-                                        context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: leadReportProvider
-                                                  .selectedEnquirySource !=
-                                              null &&
-                                          leadReportProvider
-                                                  .selectedEnquirySource !=
-                                              0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Enquiry Source: '),
-                                DropdownButton<int?>(
-                                  value: provider.enquiryData.any((element) =>
-                                          element.enquirySourceId ==
-                                          leadReportProvider
-                                              .selectedEnquirySource)
-                                      ? leadReportProvider.selectedEnquirySource
-                                      : null,
-                                  hint: const Text('All'),
-                                  items: [
-                                    const DropdownMenuItem<int?>(
-                                      value: 0,
-                                      child: Text(
-                                        'All',
-                                        style: TextStyle(fontSize: 14),
-                                      ),
-                                    ),
-                                    ...provider.enquiryData
-                                        .map((source) => DropdownMenuItem<int?>(
-                                              value: source.enquirySourceId,
-                                              child: Text(
-                                                source.enquirySourceName ?? '',
-                                                style: const TextStyle(
-                                                    fontSize: 14),
-                                              ),
-                                            ))
-                                        ,
-                                  ],
-                                  onChanged: (int? newValue) {
-                                    leadReportProvider
-                                        .setEnquirySourceFilter(newValue ?? 0);
-                                    leadReportProvider.getSearchLeadReports(
-                                        leadReportProvider.search,
-                                        leadReportProvider.fromDateS,
-                                        leadReportProvider.toDateS,
-                                        leadReportProvider.status,
-                                        context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const Spacer(),
-                          ElevatedButton(
-                            onPressed: () {
-                              // Apply the selected filters (You can use values from the provider)
-                              String status =
-                                  leadReportProvider.selectedStatus.toString();
-                              String fromDate =
-                                  leadReportProvider.formattedFromDate;
-                              String toDate =
-                                  leadReportProvider.formattedToDate;
-                              print(
-                                  'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                              leadReportProvider.getSearchLeadReports(
-                                  '', fromDate, toDate, status, context);
-                            },
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.white,
-                              foregroundColor: AppColors.primaryBlue,
-                              side: BorderSide(color: AppColors.primaryBlue),
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 12,
-                              ),
-                            ),
-                            child: const Text('Apply'),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          if (leadReportProvider.fromDate != null ||
-                              leadReportProvider.toDate != null ||
-                              (leadReportProvider.selectedStatus != null &&
-                                  leadReportProvider.selectedStatus != 0) ||
-                              (leadReportProvider.selectedUser != null &&
-                                  leadReportProvider.selectedUser != 0) ||
-                              (leadReportProvider.selectedEnquiryFor != null &&
-                                  leadReportProvider.selectedEnquiryFor != 0) ||
-                              (leadReportProvider.selectedEnquirySource != null &&
-                                  leadReportProvider.selectedEnquirySource != 0))
-                            ElevatedButton(
-                              onPressed: () {
-                                leadReportProvider.selectDateFilterOption(null);
-                                leadReportProvider.removeStatus();
-                                leadReportProvider.getSearchLeadReports(
-                                    '', '', '', '', context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
+
+                            // Date Picker
+                            GestureDetector(
+                              onTap: () => onClickTopButton(context),
+                              child: Container(
                                 padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                    horizontal: 16, vertical: 6),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: leadReportProvider.fromDate !=
+                                                null ||
+                                            leadReportProvider.toDate != null
+                                        ? AppColors.primaryBlue
+                                        : Colors.grey[300]!,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    if (leadReportProvider.fromDate == null &&
+                                        leadReportProvider.toDate == null)
+                                      const Text('Follow-Up Date: All'),
+                                    if (leadReportProvider.fromDate != null &&
+                                        leadReportProvider.toDate != null)
+                                      Text(
+                                          'Date : ${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}'),
+                                    const SizedBox(width: 10),
+                                    const Icon(
+                                      Icons.arrow_drop_down_outlined,
+                                      color: Colors.black45,
+                                      size: 20,
+                                    ),
+                                  ],
                                 ),
                               ),
-                              child: const Text('Reset'),
                             ),
-                        ],
-                      ),
+
+                            // Assigned Staff Dropdown
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: (leadReportProvider.selectedUser !=
+                                              null &&
+                                          leadReportProvider.selectedUser != 0)
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('Assigned Staff: '),
+                                  DropdownButton<int>(
+                                    value: leadReportProvider.selectedUser ?? 0,
+                                    hint: const Text('All'),
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text('All',
+                                                style: TextStyle(fontSize: 14)),
+                                          ),
+                                        ] +
+                                        provider.searchUserDetails
+                                            .map((user) =>
+                                                DropdownMenuItem<int>(
+                                                  value:
+                                                      user.userDetailsId ?? 0,
+                                                  child: ConstrainedBox(
+                                                    constraints:
+                                                        const BoxConstraints(
+                                                            maxWidth: 150),
+                                                    child: Text(
+                                                      user.userDetailsName ??
+                                                          '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider
+                                            .setUserFilterStatus(newValue);
+                                      }
+                                      leadReportProvider.getSearchLeadReports(
+                                          leadReportProvider.search,
+                                          leadReportProvider.fromDateS,
+                                          leadReportProvider.toDateS,
+                                          (leadReportProvider.selectedStatus ??
+                                                  0)
+                                              .toString(),
+                                          context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Enquiry For Dropdown
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color:
+                                      (leadReportProvider.selectedEnquiryFor !=
+                                                  null &&
+                                              leadReportProvider
+                                                      .selectedEnquiryFor !=
+                                                  0)
+                                          ? AppColors.primaryBlue
+                                          : Colors.grey[300]!,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('Enquiry For: '),
+                                  DropdownButton<int>(
+                                    value:
+                                        leadReportProvider.selectedEnquiryFor ??
+                                            0,
+                                    hint: const Text('All'),
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text('All',
+                                                style: TextStyle(fontSize: 14)),
+                                          ),
+                                        ] +
+                                        provider.enquiryForList
+                                            .map((enquiry) =>
+                                                DropdownMenuItem<int>(
+                                                  value:
+                                                      enquiry.enquiryForId ?? 0,
+                                                  child: ConstrainedBox(
+                                                    constraints:
+                                                        const BoxConstraints(
+                                                            maxWidth: 150),
+                                                    child: Text(
+                                                      enquiry.enquiryForName ??
+                                                          '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider
+                                            .setEnquiryForFilter(newValue);
+                                      }
+                                      leadReportProvider.getSearchLeadReports(
+                                          leadReportProvider.search,
+                                          leadReportProvider.fromDateS,
+                                          leadReportProvider.toDateS,
+                                          (leadReportProvider.selectedStatus ??
+                                                  0)
+                                              .toString(),
+                                          context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+
+                            // Enquiry Source Dropdown
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(20),
+                                border: Border.all(
+                                  color: (leadReportProvider
+                                                  .selectedEnquirySource !=
+                                              null &&
+                                          leadReportProvider
+                                                  .selectedEnquirySource !=
+                                              0)
+                                      ? AppColors.primaryBlue
+                                      : Colors.grey[300]!,
+                                ),
+                              ),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  const Text('Enquiry Source: '),
+                                  DropdownButton<int>(
+                                    value: leadReportProvider
+                                            .selectedEnquirySource ??
+                                        0,
+                                    hint: const Text('All'),
+                                    items: [
+                                          const DropdownMenuItem<int>(
+                                            value: 0,
+                                            child: Text('All',
+                                                style: TextStyle(fontSize: 14)),
+                                          ),
+                                        ] +
+                                        provider.enquiryData
+                                            .map((source) =>
+                                                DropdownMenuItem<int>(
+                                                  value:
+                                                      source.enquirySourceId ??
+                                                          0,
+                                                  child: ConstrainedBox(
+                                                    constraints:
+                                                        const BoxConstraints(
+                                                            maxWidth: 150),
+                                                    child: Text(
+                                                      source.enquirySourceName ??
+                                                          '',
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 14),
+                                                    ),
+                                                  ),
+                                                ))
+                                            .toList(),
+                                    onChanged: (int? newValue) {
+                                      if (newValue != null) {
+                                        leadReportProvider
+                                            .setEnquirySourceFilter(newValue);
+                                      }
+                                      leadReportProvider.getSearchLeadReports(
+                                          leadReportProvider.search,
+                                          leadReportProvider.fromDateS,
+                                          leadReportProvider.toDateS,
+                                          (leadReportProvider.selectedStatus ??
+                                                  0)
+                                              .toString(),
+                                          context);
+                                    },
+                                    underline: Container(),
+                                    isDense: true,
+                                    iconSize: 18,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          
+                          if (leadReportProvider.fromDate != null ||
+                                leadReportProvider.toDate != null ||
+                                (leadReportProvider.selectedStatus != null &&
+                                    leadReportProvider.selectedStatus != 0) ||
+                                (leadReportProvider.selectedUser != null &&
+                                    leadReportProvider.selectedUser != 0) ||
+                                (leadReportProvider.selectedEnquiryFor !=
+                                        null &&
+                                    leadReportProvider.selectedEnquiryFor !=
+                                        0) ||
+                                (leadReportProvider.selectedEnquirySource !=
+                                        null &&
+                                    leadReportProvider.selectedEnquirySource !=
+                                        0))
+                              TextButton.icon(
+                                onPressed: () {
+                                  leadReportProvider
+                                      .selectDateFilterOption(null);
+                                  leadReportProvider.removeStatus();
+                                  leadReportProvider.getSearchLeadReports(
+                                      '', '', '', '', context);
+                                },
+                                icon: const Icon(Icons.refresh,
+                                    size: 18, color: AppColors.textRed),
+                                label: const CustomText(
+                                  'Reset All',
+                                  color: AppColors.textRed,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                          ],
+                        ),
+                      ],
                     ),
+                  ),
                 Expanded(
                   child: !leadReportProvider.hasFetched
                       ? Center(
@@ -1196,6 +1235,10 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                           viewFollowUp = false;
                         });
 
+                        Provider.of<LeadsProvider>(context, listen: false)
+                            .setCutomerId(int.parse(
+                                leadReportProvider.customerId.toString()));
+
                         _scaffoldKey.currentState?.openEndDrawer();
                       });
                     },
@@ -1323,30 +1366,59 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                       ],
                     ),
                     const SizedBox(height: 15),
-                    SizedBox(
-                      width: double.infinity,
-                      height: 40,
-                      child: TextButton(
-                        onPressed: () {
-                          Navigator.pop(context);
-
-                          leadReportProvider.formatDate();
-
-                          print(leadReportProvider.formattedFromDate);
-                          print(leadReportProvider.formattedToDate);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            onPressed: () {
+                              leadReportProvider.setFromandToDate('', '');
+                              leadReportProvider.selectDateFilterOption(null);
+                              Navigator.pop(context);
+                              leadReportProvider.getSearchLeadReports(
+                                  leadReportProvider.search,
+                                  '',
+                                  '',
+                                  (leadReportProvider.selectedStatus ?? 0)
+                                      .toString(),
+                                  context);
+                            },
+                            style: OutlinedButton.styleFrom(
+                              side: const BorderSide(color: AppColors.textRed),
+                              foregroundColor: AppColors.textRed,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Clear'),
                           ),
                         ),
-                        child: const Text(
-                          'Apply',
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: ElevatedButton(
+                            onPressed: () {
+                              leadReportProvider.formatDate();
+                              Navigator.pop(context);
+                              leadReportProvider.getSearchLeadReports(
+                                  leadReportProvider.search,
+                                  leadReportProvider.formattedFromDate,
+                                  leadReportProvider.formattedToDate,
+                                  (leadReportProvider.selectedStatus ?? 0)
+                                      .toString(),
+                                  context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.primaryBlue,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            child: const Text('Apply'),
+                          ),
                         ),
-                      ),
+                      ],
                     ),
                   ],
                 ),
