@@ -11,6 +11,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 
+import 'package:vidyanexis/controller/image_upload_provider.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:intl/intl.dart';
 
@@ -49,6 +50,9 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       final formProvider = Provider.of<FormProvider>(context, listen: false);
 
       reportsProvider.descriptionController.clear();
+      final imageProvider =
+          Provider.of<ImageUploadProvider>(context, listen: false);
+      imageProvider.clearFiles();
 
       if (widget.task.nextFollowupDate != null &&
           widget.task.nextFollowupDate!.isNotEmpty) {
@@ -521,15 +525,17 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           return _buildDocumentTile(
                                             title: doc.documentTypeName,
                                             onTap: () async {
-                                              await showDialog(
-                                                context: context,
-                                                builder: (context) => ImageUploadAlert(
-                                                  customerId: widget.task.customerId.toString(),
-                                                  initialDocumentTypeId: doc.documentTypeId,
-                                                  initialDocumentTypeName: doc.documentTypeName,
-                                                ),
-                                              );
-                                              _refreshData();
+                                              final imageProvider = Provider.of<ImageUploadProvider>(context, listen: false);
+                                              imageProvider.clearFiles();
+                                              imageProvider.setCutomerId(widget.task.customerId.toString());
+                                              imageProvider.updateDocumentType(doc.documentTypeId, doc.documentTypeName);
+                                              
+                                              await _showPickOptions(context, imageProvider);
+                                              
+                                              if (imageProvider.fileInfoList.isNotEmpty) {
+                                                await imageProvider.uploadAllDocumentsGrouped(context, shouldPop: false);
+                                                _refreshData();
+                                              }
                                             },
                                           );
                                         },
@@ -1290,6 +1296,46 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
           suffixIcon: icon != null
               ? Icon(icon, size: 18, color: const Color(0xFF94A3B8))
               : null,
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showPickOptions(BuildContext context, ImageUploadProvider provider) async {
+    await showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.camera_alt, color: Color(0xFF1A7AE8)),
+              title: const Text('Take Photo'),
+              onTap: () async {
+                await provider.addPhotoMobile(allowCamera: true);
+                if (context.mounted) Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
+              title: const Text('Pick from Gallery'),
+              onTap: () async {
+                await provider.addPhotoMobile(allowCamera: false);
+                if (context.mounted) Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.description, color: Color(0xFF1A7AE8)),
+              title: const Text('Upload Document (PDF/Image)'),
+              onTap: () async {
+                await provider.addFileMobile();
+                if (context.mounted) Navigator.pop(context);
+              },
+            ),
+          ],
         ),
       ),
     );

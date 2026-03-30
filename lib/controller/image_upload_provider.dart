@@ -480,7 +480,7 @@ class ImageUploadProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> uploadAllDocumentsGrouped(BuildContext context) async {
+  Future<void> uploadAllDocumentsGrouped(BuildContext context, {bool shouldPop = true}) async {
     try {
       if (_fileInfoList.isEmpty) return;
 
@@ -540,7 +540,9 @@ class ImageUploadProvider extends ChangeNotifier {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Documents uploaded successfully')),
         );
-        Navigator.pop(context);
+        if (shouldPop) {
+          Navigator.pop(context);
+        }
         clearFiles();
         final customerDetailsProvider =
             Provider.of<CustomerDetailsProvider>(context, listen: false);
