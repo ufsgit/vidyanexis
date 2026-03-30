@@ -826,7 +826,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                                   ),
                                                                 ),
                                                           if (settingsProvider
-                                                                      .menuIsEditMap[
+                                                                      .menuIsViewMap[
                                                                   94] ==
                                                               1)
                                                             (onHover) =>

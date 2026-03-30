@@ -159,7 +159,7 @@ class _LeadCardState extends State<LeadCard> {
       children: [
         Container(
           width: MediaQuery.sizeOf(context).width,
-          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           decoration: BoxDecoration(
             color: AppColors.whiteColor,
             borderRadius: BorderRadius.circular(12),
@@ -334,7 +334,8 @@ class _LeadCardState extends State<LeadCard> {
                                                         leadId: leadsProvider
                                                             .customerId,
                                                         statusId:
-                                                            status.statusId ?? 0);
+                                                            status.statusId ??
+                                                                0);
                                                 leadsProvider
                                                         .statusController.text =
                                                     status.statusName ?? '';
@@ -1049,7 +1050,7 @@ class _LeadCardState extends State<LeadCard> {
                               color: AppColors.bluebutton,
                             ),
                           const SizedBox(width: 4),
-                          if (settingsProvider.menuIsEditMap[94] == 1)
+                          if (settingsProvider.menuIsViewMap[94] == 1)
                             _buildActionButton(
                               onTap: _showConvertDialog,
                               icon: Icons.change_circle_outlined,
