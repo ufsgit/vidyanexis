@@ -98,6 +98,8 @@ class SettingsProvider extends ChangeNotifier {
   bool _allowAppLogin = false;
 
   bool _isSavingTeam = false;
+  bool _isAddingUser = false;
+  bool get isAddingUser => _isAddingUser;
   String _selectedMenu = 'Users';
 
   String get selectedMenu => _selectedMenu;
@@ -2051,6 +2053,10 @@ class SettingsProvider extends ChangeNotifier {
     required String branchName,
     required String appLogin,
   }) async {
+    if (_isAddingUser) return;
+    _isAddingUser = true;
+    notifyListeners();
+
     try {
       Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -2088,14 +2094,17 @@ class SettingsProvider extends ChangeNotifier {
         clearUserFilters();
         await getUserDetails('', context);
 
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        _isAddingUser = false;
+        notifyListeners();
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
         );
         Loader.stopLoader(context);
+        _isAddingUser = false;
+        notifyListeners();
       }
     } catch (e) {
       print('Exception occurred: $e');
@@ -2103,6 +2112,8 @@ class SettingsProvider extends ChangeNotifier {
         const SnackBar(content: Text('An error occurred')),
       );
       Loader.stopLoader(context);
+      _isAddingUser = false;
+      notifyListeners();
     }
   }
 
@@ -2182,8 +2193,8 @@ class SettingsProvider extends ChangeNotifier {
         // but we don't clear form fields here to prevent flicker/reset before pop.
         getSearchLeadStatus(
             searchStatusController.text, viewInId.toString(), context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Server Error')),
@@ -2224,8 +2235,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchEnquiryStatusData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
 
         print(data);
       } else {
@@ -2260,8 +2271,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchStageData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         searchStageController.clear();
         print(data);
       } else {
@@ -2299,8 +2310,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchsourceCategoryData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         searchSourceCategoryController.clear();
         print(data);
       } else {
@@ -2346,8 +2357,8 @@ class SettingsProvider extends ChangeNotifier {
         setSourceId(0);
         final data = response.data;
         searchEnquiryForData('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -2449,8 +2460,8 @@ class SettingsProvider extends ChangeNotifier {
 
         final data = response.data;
         searchDepartment('', context);
-        Navigator.pop(context);
         Loader.stopLoader(context);
+        Navigator.pop(context);
         print(data);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

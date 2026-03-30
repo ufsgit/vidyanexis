@@ -731,36 +731,52 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                     const SizedBox(width: 10),
                     Expanded(
                       child: CustomElevatedButton(
-                        buttonText: 'Save',
-                        onPressed: () async {
-                          if (validateFields(context, settingsProvider)) {
-                            await settingsProvider.addUser(
-                                context: context,
-                                userDetailsId: widget.userId.toString(),
-                                userDetailsName: settingsProvider.userNameController.text,
-                                password: settingsProvider.passWordController.text,
-                                workingStatus:
-                                    settingsProvider.selectedWorkingStatusId.toString(),
-                                userType: settingsProvider.selectedUserTypeId.toString(),
-                                addressName1: '',
-                                addressName2: '',
-                                addressName3: '',
-                                addressName4: '',
-                                mobile: settingsProvider.mobileNoController.text,
-                                countryCodeName: '',
-                                gmail: settingsProvider.emailIdController.text,
-                                appLogin: settingsProvider.allowAppLogin ? '1' : '0',
-                                departmentId:
-                                    settingsProvider.selectedDepartmentId.toString(),
-                                departmentName:
-                                    settingsProvider.departmentUserController.text,
-                                branchId: settingsProvider.selectedBranchId.toString(),
-                                branchName: settingsProvider.branchController.text);
+                        buttonText:
+                            settingsProvider.isAddingUser ? 'Saving...' : 'Save',
+                        onPressed: settingsProvider.isAddingUser
+                            ? null
+                            : () async {
+                                if (validateFields(context, settingsProvider)) {
+                                  await settingsProvider.addUser(
+                                      context: context,
+                                      userDetailsId: widget.userId.toString(),
+                                      userDetailsName: settingsProvider
+                                          .userNameController.text,
+                                      password: settingsProvider
+                                          .passWordController.text,
+                                      workingStatus: settingsProvider
+                                          .selectedWorkingStatusId
+                                          .toString(),
+                                      userType: settingsProvider
+                                          .selectedUserTypeId
+                                          .toString(),
+                                      addressName1: '',
+                                      addressName2: '',
+                                      addressName3: '',
+                                      addressName4: '',
+                                      mobile: settingsProvider
+                                          .mobileNoController.text,
+                                      countryCodeName: '',
+                                      gmail: settingsProvider
+                                          .emailIdController.text,
+                                      appLogin: settingsProvider.allowAppLogin
+                                          ? '1'
+                                          : '0',
+                                      departmentId: settingsProvider
+                                          .selectedDepartmentId
+                                          .toString(),
+                                      departmentName: settingsProvider
+                                          .departmentUserController.text,
+                                      branchId: settingsProvider
+                                          .selectedBranchId
+                                          .toString(),
+                                      branchName:
+                                          settingsProvider.branchController.text);
 
-                            settingsProvider.resetStates();
-                            Navigator.pop(context);
-                          }
-                        },
+                                  settingsProvider.resetStates();
+                                  Navigator.pop(context);
+                                }
+                              },
                         backgroundColor: AppColors.appViolet,
                         borderColor: AppColors.appViolet,
                         textColor: AppColors.whiteColor,
@@ -837,36 +853,38 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
           textColor: AppColors.appViolet,
         ),
         CustomElevatedButton(
-          buttonText: 'Save',
-          onPressed: () async {
-            if (validateFields(context, settingsProvider)) {
-              await settingsProvider.addUser(
-                  context: context,
-                  userDetailsId: widget.userId.toString(),
-                  userDetailsName: settingsProvider.userNameController.text,
-                  password: settingsProvider.passWordController.text,
-                  workingStatus:
-                      settingsProvider.selectedWorkingStatusId.toString(),
-                  userType: settingsProvider.selectedUserTypeId.toString(),
-                  addressName1: '',
-                  addressName2: '',
-                  addressName3: '',
-                  addressName4: '',
-                  mobile: settingsProvider.mobileNoController.text,
-                  countryCodeName: '',
-                  gmail: settingsProvider.emailIdController.text,
-                  appLogin: settingsProvider.allowAppLogin ? '1' : '0',
-                  departmentId:
-                      settingsProvider.selectedDepartmentId.toString(),
-                  departmentName:
-                      settingsProvider.departmentUserController.text,
-                  branchId: settingsProvider.selectedBranchId.toString(),
-                  branchName: settingsProvider.branchController.text);
+          buttonText: settingsProvider.isAddingUser ? 'Saving...' : 'Save',
+          onPressed: settingsProvider.isAddingUser
+              ? null
+              : () async {
+                  if (validateFields(context, settingsProvider)) {
+                    await settingsProvider.addUser(
+                        context: context,
+                        userDetailsId: widget.userId.toString(),
+                        userDetailsName: settingsProvider.userNameController.text,
+                        password: settingsProvider.passWordController.text,
+                        workingStatus:
+                            settingsProvider.selectedWorkingStatusId.toString(),
+                        userType: settingsProvider.selectedUserTypeId.toString(),
+                        addressName1: '',
+                        addressName2: '',
+                        addressName3: '',
+                        addressName4: '',
+                        mobile: settingsProvider.mobileNoController.text,
+                        countryCodeName: '',
+                        gmail: settingsProvider.emailIdController.text,
+                        appLogin: settingsProvider.allowAppLogin ? '1' : '0',
+                        departmentId:
+                            settingsProvider.selectedDepartmentId.toString(),
+                        departmentName:
+                            settingsProvider.departmentUserController.text,
+                        branchId: settingsProvider.selectedBranchId.toString(),
+                        branchName: settingsProvider.branchController.text);
 
-              settingsProvider.resetStates();
-              Navigator.pop(context);
-            }
-          },
+                    settingsProvider.resetStates();
+                    Navigator.pop(context);
+                  }
+                },
           backgroundColor: AppColors.appViolet,
           borderColor: AppColors.appViolet,
           textColor: AppColors.whiteColor,
