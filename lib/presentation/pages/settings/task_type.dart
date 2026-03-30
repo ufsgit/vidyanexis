@@ -57,32 +57,33 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
+
                 // Search and New Button
                 Row(
                   children: [
                     Expanded(
                       child: Container(
-                        height: 48,
+                        width: MediaQuery.of(context).size.width / 3.5,
+                        height: 40,
                         decoration: BoxDecoration(
                           color: Colors.white,
-                          borderRadius: BorderRadius.circular(24),
-                          border: Border.all(color: Colors.grey[200]!),
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.grey[300]!),
                         ),
                         child: TextField(
-                          controller: settingsProvider.searchTaskTypeController,
+                          controller:
+                              settingsProvider.statusPageSearchController,
                           onChanged: (query) {
                             settingsProvider.searchTaskType(query, context);
                           },
-                          decoration: InputDecoration(
-                            hintText: 'Search...',
-                            hintStyle: GoogleFonts.plusJakartaSans(
-                              color: Colors.grey[400],
-                              fontSize: 14,
-                            ),
-                            prefixIcon: Icon(Icons.search, size: 20, color: Colors.grey[500]),
+                          decoration: const InputDecoration(
+                            hintText: 'Search here....',
+                            prefixIcon: Icon(Icons.search),
                             border: InputBorder.none,
-                            contentPadding: const EdgeInsets.symmetric(vertical: 0),
+                            contentPadding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 4,
+                            ),
                           ),
                         ),
                       ),
@@ -156,9 +157,11 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   _buildTaskTypeBadge(task.taskTypeName),
-                                  if (task.departmentName != null && task.departmentName!.isNotEmpty)
+                                  if (task.departmentName != null &&
+                                      task.departmentName!.isNotEmpty)
                                     Padding(
-                                      padding: const EdgeInsets.only(top: 8, left: 4),
+                                      padding: const EdgeInsets.only(
+                                          top: 8, left: 4),
                                       child: Text(
                                         task.departmentName!,
                                         style: GoogleFonts.plusJakartaSans(
@@ -168,10 +171,27 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                                         ),
                                       ),
                                     ),
+                                  if (task.description != null &&
+                                      task.description!.isNotEmpty)
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 4, left: 4),
+                                      child: Text(
+                                        "Description: ${task.description}",
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.grey[600],
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
                                 ],
                               ),
                             ),
-                            _buildActionButtons(context, settingsProvider, index),
+                            _buildActionButtons(
+                                context, settingsProvider, index),
                           ],
                         ),
                       );
@@ -185,9 +205,6 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
         );
       },
     );
-
-
-
   }
 
   Widget _buildTaskTypeBadge(String name) {
@@ -208,7 +225,8 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, SettingsProvider settingsProvider, int index) {
+  Widget _buildActionButtons(
+      BuildContext context, SettingsProvider settingsProvider, int index) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -220,7 +238,8 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                 context: context,
                 builder: (BuildContext context) {
                   return AddTaskType(
-                    editId: settingsProvider.taskType[index].taskTypeId.toString(),
+                    editId:
+                        settingsProvider.taskType[index].taskTypeId.toString(),
                     status: settingsProvider.taskType[index].taskTypeName,
                     isEdit: true,
                     taskType: settingsProvider.taskType[index],
@@ -228,7 +247,8 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                 },
               );
             },
-            icon: Icon(Icons.edit_outlined, color: AppColors.primaryBlue, size: 20),
+            icon: Icon(Icons.edit_outlined,
+                color: AppColors.primaryBlue, size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             visualDensity: VisualDensity.compact,
@@ -267,7 +287,8 @@ class _TaskTypeContentState extends State<TaskTypeContent> {
                 },
               );
             },
-            icon: Icon(Icons.delete_outline, color: AppColors.textRed, size: 20),
+            icon:
+                Icon(Icons.delete_outline, color: AppColors.textRed, size: 20),
             padding: EdgeInsets.zero,
             constraints: const BoxConstraints(),
             visualDensity: VisualDensity.compact,

@@ -190,6 +190,8 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController departmentTaskController =
       TextEditingController();
   final TextEditingController statusTaskController = TextEditingController();
+  final TextEditingController taskTypeDescriptionController =
+      TextEditingController();
 
 //status
   final TextEditingController statusPageSearchController =
@@ -3554,6 +3556,7 @@ class SettingsProvider extends ChangeNotifier {
         searchTaskTypeController.clear();
         defaultStatusController.clear();
         durationController.clear();
+        taskTypeDescriptionController.clear();
         _selectedDefaultStatusId = -1;
         _selectedDepartmentId = -1;
         final data = response.data;

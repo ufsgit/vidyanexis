@@ -23,6 +23,7 @@ class TaskTypeModel {
   int duration;
   int conversionTask;
   int locationTracking;
+  String? description;
 
   String? departmentName;
   List<Status> statuses;
@@ -40,7 +41,8 @@ class TaskTypeModel {
       required this.conversionTask,
       required this.locationTracking,
       required this.statuses,
-      required this.departmentName});
+      required this.departmentName,
+      this.description});
 
   factory TaskTypeModel.fromJson(Map<String, dynamic> json) => TaskTypeModel(
       taskTypeId: json["Task_Type_Id"] ?? 0,
@@ -57,7 +59,8 @@ class TaskTypeModel {
       statuses: json["Statuses"] == null
           ? []
           : List<Status>.from(json["Statuses"].map((x) => Status.fromJson(x))),
-      departmentName: json["Department_Name"]);
+      departmentName: json["Department_Name"],
+      description: json["Description"]?.toString());
 
   bool get isEnabled => conversionTask == 1 && deleteStatus == 0;
 
