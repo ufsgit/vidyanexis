@@ -714,7 +714,8 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchPurchaseDetails(String purchaseMasterId, BuildContext context) async {
+  Future<void> searchPurchaseDetails(
+      String purchaseMasterId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1989,7 +1990,13 @@ class ExpenseProvider extends ChangeNotifier {
     notifyListeners();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String userId = preferences.getString('userId') ?? "";
-    String assignedTo = selectedUser == null ? userId : selectedUser.toString();
+    String userType = preferences.getString('userType') ?? "";
+    String assignedTo = "0";
+    if (userType == "1") {
+      assignedTo = selectedUser == null ? "0" : selectedUser.toString();
+    } else {
+      assignedTo = selectedUser == null ? userId : selectedUser.toString();
+    }
 
     //Client filter
     String clientId = selectedClient == null ? "0" : selectedClient.toString();
@@ -2319,7 +2326,8 @@ class ExpenseProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchSalesDetails(String salesMasterId, BuildContext context) async {
+  Future<void> searchSalesDetails(
+      String salesMasterId, BuildContext context) async {
     try {
       final response = await HttpRequest.httpGetRequest(
           endPoint: "${HttpUrls.getSalesDataDetails}/$salesMasterId");
