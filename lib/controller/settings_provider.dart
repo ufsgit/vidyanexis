@@ -2739,6 +2739,10 @@ class SettingsProvider extends ChangeNotifier {
 
   bool get isLocationTracking => _isLocationTracking;
 
+  bool _isCommissionChecked = false;
+
+  bool get isCommissionChecked => _isCommissionChecked;
+
   bool _isQuotationCustom = false;
   bool get isQuotationCustom => _isQuotationCustom;
 
@@ -2757,6 +2761,11 @@ class SettingsProvider extends ChangeNotifier {
 
   void toggleLocation(bool value) {
     _isLocationTracking = value;
+    notifyListeners();
+  }
+
+  void toggleCommission(bool value) {
+    _isCommissionChecked = value;
     notifyListeners();
   }
 

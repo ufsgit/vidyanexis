@@ -28,6 +28,7 @@ class AddTaskModel {
   List<TaskFile>? taskFiles; // Add this field
 
   String? completionTime;
+  int? commissionNumber;
 
   AddTaskModel({
     this.taskId,
@@ -44,7 +45,8 @@ class AddTaskModel {
     this.taskTime,
     this.completionDate,
     this.completionTime,
-    this.taskFiles, // Add this to constructor
+    this.taskFiles,
+    this.commissionNumber,
   });
 
   AddTaskModel copyWith({
@@ -62,7 +64,8 @@ class AddTaskModel {
     String? taskTime,
     String? completionDate,
     String? completionTime,
-    List<TaskFile>? taskFiles, // Add this field
+    List<TaskFile>? taskFiles,
+    int? commissionNumber,
   }) =>
       AddTaskModel(
         taskId: taskId ?? this.taskId,
@@ -80,6 +83,7 @@ class AddTaskModel {
         completionDate: completionDate ?? this.completionDate,
         completionTime: completionTime ?? this.completionTime,
         taskFiles: taskFiles ?? this.taskFiles,
+        commissionNumber: commissionNumber ?? this.commissionNumber,
       );
 
   factory AddTaskModel.fromJson(Map<String, dynamic> json) => AddTaskModel(
@@ -91,13 +95,15 @@ class AddTaskModel {
             json["Task_user"].map((x) => UserInTaskModel.fromJson(x))),
         customerId: json["Customer_Id"],
         createdBy: json["Created_By"],
-        taskDate: DateTime.parse(json["Task_Date"]),
+        taskDate: DateTime.tryParse(json["Task_Date"] ?? '') ?? DateTime.now(),
         taskTypeId: json["Task_Type_Id"],
         taskTypeName: json["Task_Type_Name"],
         description: json["Description"],
         taskTime: json["Task_Time"],
         completionDate: json["Completion_Date"],
         completionTime: json["Completion_Time"],
+        commissionNumber:
+            int.tryParse(json["Commission_Number"]?.toString() ?? '0') ?? 0,
       );
 
   Map<String, dynamic> toJson() => {
@@ -116,6 +122,7 @@ class AddTaskModel {
         "Task_Time": taskTime,
         "Completion_Date": completionDate,
         "Completion_Time": completionTime,
+        "Commission_Number": commissionNumber,
         "Task_Files": taskFiles != null
             ? List<dynamic>.from(taskFiles!.map((x) => x.toJson()))
             : [], // Add this to JSON
