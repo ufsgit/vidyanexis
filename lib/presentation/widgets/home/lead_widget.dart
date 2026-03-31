@@ -41,7 +41,6 @@ class LeadCard extends StatefulWidget {
 }
 
 class _LeadCardState extends State<LeadCard> {
-  bool _isInternalMoreExpanded = false;
   bool _isNoteClicked = false;
 
   @override
@@ -50,7 +49,6 @@ class _LeadCardState extends State<LeadCard> {
     if (!widget.isExpanded && oldWidget.isExpanded) {
       if (mounted) {
         setState(() {
-          _isInternalMoreExpanded = false;
           _isNoteClicked = false;
         });
       }
@@ -294,12 +292,11 @@ class _LeadCardState extends State<LeadCard> {
                   padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
                   child: Column(
                     children: [
-                      // Toggleable Note Section
-                      if (_isNoteClicked) ...[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
+                      // Follow-up section (Always visible when expanded)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
                             Consumer2<DropDownProvider, SettingsProvider>(
                               builder: (context, dropDownProvider,
                                   settingsProvider, child) {
@@ -407,7 +404,7 @@ class _LeadCardState extends State<LeadCard> {
                                       maxLines: 3,
                                     ),
 
-                                    if (_isInternalMoreExpanded) ...[
+                                    if (_isNoteClicked) ...[
                                       const SizedBox(height: 8),
                                       // Branch Selection Chips
                                       Column(
@@ -724,38 +721,8 @@ class _LeadCardState extends State<LeadCard> {
                                     const SizedBox(height: 16),
                                     Row(
                                       mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.end,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () => setState(() =>
-                                              _isInternalMoreExpanded =
-                                                  !_isInternalMoreExpanded),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                _isInternalMoreExpanded
-                                                    ? 'Less'
-                                                    : 'More',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: AppColors.bluebutton,
-                                                ),
-                                              ),
-                                              Icon(
-                                                _isInternalMoreExpanded
-                                                    ? Icons
-                                                        .keyboard_arrow_up_outlined
-                                                    : Icons
-                                                        .keyboard_arrow_down_outlined,
-                                                color: AppColors.bluebutton,
-                                                size: 20,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
                                         SizedBox(
                                           width: 90,
                                           height: 32,
@@ -834,9 +801,8 @@ class _LeadCardState extends State<LeadCard> {
                                 );
                               },
                             ),
-                          ],
-                        ),
-                      ],
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       // Action Buttons Row 1
                       Row(
