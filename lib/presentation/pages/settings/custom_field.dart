@@ -18,6 +18,15 @@ class CustomField extends StatefulWidget {
 
 class _CustomFieldState extends State<CustomField> {
   Future<List<CustomFieldModel>>? customfieldListFuture;
+  TextEditingController _searchController = TextEditingController();
+  String _searchQuery = '';
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
+  }
+
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
@@ -35,7 +44,6 @@ class _CustomFieldState extends State<CustomField> {
   @override
   Widget build(BuildContext context) {
     const double minContentWidth = 800.0;
-    final settingsProvider = Provider.of<SettingsProvider>(context);
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
@@ -46,178 +54,220 @@ class _CustomFieldState extends State<CustomField> {
                     ? minContentWidth
                     : constraints.maxWidth
                 : MediaQuery.of(context).size.width - 30,
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header section
-                SizedBox(
-                  width: double.infinity,
-                  child: Row(
-                    children: [
-                      Text(
-                        'Custom Field',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.textBlue800),
-                      ),
-                      Spacer(),
-                      if (settingsProvider.menuIsSaveMap[60] == 1)
-                        CustomOutlinedSvgButton(
-                          onPressed: () async {
-                            showDialog(
-                              barrierDismissible: false,
-                              context: context,
-                              builder: (BuildContext context) {
-                                return const AddCustomField(
-                                  editId: '0',
-                                  isEdit: false,
-                                  status: '',
+            child: Consumer<SettingsProvider>(
+              builder: (context, settingsProvider, child) {
+                final filteredList = settingsProvider.customFieldModelList
+                    .where((field) => (field.customFieldName ?? "")
+                        .toString()
+                        .toLowerCase()
+                        .contains(_searchQuery.toLowerCase()))
+                    .toList();
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header section with Title, Search, and Add Button
+
+                    SizedBox(
+                      width: double.infinity,
+                      child: Row(
+                        children: [
+                          Text(
+                            'Custom Field',
+                            style: GoogleFonts.plusJakartaSans(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textBlue800),
+                          ),
+                          const Spacer(),
+                          Container(
+                            width: MediaQuery.of(context).size.width / 3.5,
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: Colors.grey[300]!),
+                            ),
+                            child: TextField(
+                              controller: _searchController,
+                              textAlignVertical: TextAlignVertical.center,
+                              onChanged: (value) {
+                                setState(() {
+                                  _searchQuery = value;
+                                });
+                              },
+                              decoration: const InputDecoration(
+                                hintText: 'Search...',
+                                isDense: true,
+                                prefixIcon: Icon(Icons.search,
+                                    color: Colors.grey, size: 18),
+                                border: InputBorder.none,
+                                contentPadding: EdgeInsets.zero,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          if (settingsProvider.menuIsSaveMap[60] == 1)
+                            CustomOutlinedSvgButton(
+                              onPressed: () async {
+                                showDialog(
+                                  barrierDismissible: false,
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return const AddCustomField(
+                                      editId: '0',
+                                      isEdit: false,
+                                      status: '',
+                                    );
+                                  },
                                 );
                               },
-                            );
-                          },
-                          svgPath: 'assets/images/Plus.svg',
-                          label: 'New Custom Field',
-                          breakpoint: 860,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20)),
-                          foregroundColor: Colors.white,
-                          backgroundColor: AppColors.primaryBlue,
-                          borderSide: BorderSide(color: AppColors.primaryBlue),
-                        ),
-                      const SizedBox(width: 16),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 24),
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceGrey,
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: ListView.separated(
-                    separatorBuilder: (context, index) {
-                      return const SizedBox(
-                        height: 12,
-                      );
-                    },
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: settingsProvider.customFieldModelList.length,
-                    itemBuilder: (context, index) {
-                      CustomFieldModel fieldModel =
-                          settingsProvider.customFieldModelList[index];
-                      return Container(
-                        height: 40,
-                        decoration: BoxDecoration(
-                          color: AppColors.whiteColor,
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 16),
-                          child: Row(
-                            children: [
-                              Container(
-                                height: 22,
-                                decoration: BoxDecoration(
-                                    color: AppColors.surfaceGrey,
-                                    borderRadius: BorderRadius.circular(12)),
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.only(
-                                        left: 8, right: 8),
-                                    child: Text(
-                                      fieldModel.customFieldName.toString(),
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.black),
+                              svgPath: 'assets/images/Plus.svg',
+                              label: 'New',
+                              breakpoint: 450,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20)),
+                              foregroundColor: Colors.white,
+                              backgroundColor: AppColors.primaryBlue,
+                              borderSide:
+                                  BorderSide(color: AppColors.primaryBlue),
+                            ),
+                          const SizedBox(width: 8),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceGrey,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: ListView.separated(
+                        separatorBuilder: (context, index) {
+                          return const SizedBox(
+                            height: 12,
+                          );
+                        },
+                        shrinkWrap: true,
+                        physics: const ClampingScrollPhysics(),
+                        itemCount: filteredList.length,
+                        itemBuilder: (context, index) {
+                          CustomFieldModel fieldModel = filteredList[index];
+                          return Container(
+                            height: 40,
+                            decoration: BoxDecoration(
+                              color: AppColors.whiteColor,
+                            ),
+                            child: Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Container(
+                                    height: 22,
+                                    decoration: BoxDecoration(
+                                        color: AppColors.surfaceGrey,
+                                        borderRadius:
+                                            BorderRadius.circular(12)),
+                                    child: Center(
+                                      child: Padding(
+                                        padding: const EdgeInsets.only(
+                                            left: 8, right: 8),
+                                        child: Text(
+                                          fieldModel.customFieldName.toString(),
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.black),
+                                        ),
+                                      ),
                                     ),
                                   ),
-                                ),
+                                  const Spacer(),
+                                  if (settingsProvider.menuIsEditMap[60] == 1)
+                                    TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            barrierDismissible: false,
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AddCustomField(
+                                                editId: '0',
+                                                isEdit: true,
+                                                status: '',
+                                                customFieldTypeModel:
+                                                    fieldModel,
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Edit',
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.primaryBlue),
+                                        )),
+                                  if (settingsProvider.menuIsDeleteMap[60] == 1)
+                                    TextButton(
+                                        onPressed: () {
+                                          showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                title: const Text(
+                                                    'Confirm Delete'),
+                                                content: const Text(
+                                                    'Are you sure you want to delete?'),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(context),
+                                                    child: const Text('Cancel'),
+                                                  ),
+                                                  TextButton(
+                                                    onPressed: () async {
+                                                      settingsProvider
+                                                          .deleteCustomField(
+                                                              context,
+                                                              fieldModel
+                                                                  .customFieldId
+                                                                  .toString())
+                                                          .then((value) {
+                                                        if (null != value &&
+                                                            value) {
+                                                          getData();
+                                                        }
+                                                      });
+                                                      // Navigator.pop(context);
+                                                    },
+                                                    child: const Text(
+                                                      'Delete',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ),
+                                                ],
+                                              );
+                                            },
+                                          );
+                                        },
+                                        child: Text(
+                                          'Delete',
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textRed),
+                                        ))
+                                ],
                               ),
-                              const Spacer(),
-                              if (settingsProvider.menuIsEditMap[60] == 1)
-                                TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        barrierDismissible: false,
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AddCustomField(
-                                            editId: '0',
-                                            isEdit: true,
-                                            status: '',
-                                            customFieldTypeModel: fieldModel,
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      'Edit',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.primaryBlue),
-                                    )),
-                              if (settingsProvider.menuIsDeleteMap[60] == 1)
-                                TextButton(
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (BuildContext context) {
-                                          return AlertDialog(
-                                            title: const Text('Confirm Delete'),
-                                            content: const Text(
-                                                'Are you sure you want to delete?'),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(context),
-                                                child: const Text('Cancel'),
-                                              ),
-                                              TextButton(
-                                                onPressed: () async {
-                                                  settingsProvider
-                                                      .deleteCustomField(
-                                                          context,
-                                                          fieldModel
-                                                              .customFieldId
-                                                              .toString())
-                                                      .then((value) {
-                                                    if (null != value &&
-                                                        value) {
-                                                      getData();
-                                                    }
-                                                  });
-                                                  // Navigator.pop(context);
-                                                },
-                                                child: const Text(
-                                                  'Delete',
-                                                  style: TextStyle(
-                                                      color: Colors.red),
-                                                ),
-                                              ),
-                                            ],
-                                          );
-                                        },
-                                      );
-                                    },
-                                    child: Text(
-                                      'Delete',
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textRed),
-                                    ))
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         );
