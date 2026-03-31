@@ -80,6 +80,11 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
         });
         _updateFilteredUsers();
       }
+
+      if (widget.isEdit) {
+        customerDetailsProvider.commissionController.text =
+            widget.task?.commissionNumber.toString() ?? '';
+      }
     });
   }
 
@@ -306,6 +311,72 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                       ],
                     ),
                   ),
+                  if (customerDetailsProvider.selectedTaskType != null &&
+                      dropDownProvider.taskType.any((element) =>
+                          element.taskTypeId ==
+                              customerDetailsProvider.selectedTaskType &&
+                          element.commissionNumber == 1))
+                    const SizedBox(height: 12),
+                  if (customerDetailsProvider.selectedTaskType != null &&
+                      dropDownProvider.taskType.any((element) =>
+                          element.taskTypeId ==
+                              customerDetailsProvider.selectedTaskType &&
+                          element.commissionNumber == 1))
+                    Container(
+                      width: double.infinity,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 14, vertical: 16),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.04),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'COMMISSION',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w800,
+                              color: Colors.grey[400],
+                              letterSpacing: 1.2,
+                            ),
+                          ),
+                          const SizedBox(height: 12),
+                          TextField(
+                            controller:
+                                customerDetailsProvider.commissionController,
+                            keyboardType: TextInputType.number,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF1E232C),
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Enter commission...',
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                color: Colors.grey[400],
+                              ),
+                              filled: true,
+                              fillColor: const Color(0xFFF7F8F9),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                                borderSide: BorderSide.none,
+                              ),
+                              contentPadding: const EdgeInsets.all(12),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   const SizedBox(height: 12),
                   Container(
                     width: double.infinity,

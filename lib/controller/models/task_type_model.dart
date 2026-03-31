@@ -23,6 +23,7 @@ class TaskTypeModel {
   int duration;
   int conversionTask;
   int locationTracking;
+  int commissionNumber;
   String? description;
 
   String? departmentName;
@@ -40,6 +41,7 @@ class TaskTypeModel {
       required this.duration,
       required this.conversionTask,
       required this.locationTracking,
+      required this.commissionNumber,
       required this.statuses,
       required this.departmentName,
       this.description});
@@ -54,8 +56,19 @@ class TaskTypeModel {
       branchIds: json["Branch_Ids"] ?? '',
       defaultStatusId: json["default_status_id"] ?? 0,
       duration: json["Duration"] ?? 0,
-      conversionTask: json["Is_Active"] ?? 0,
-      locationTracking: json["Location_Tracking"] ?? 0,
+      conversionTask: json["Is_Active"] is bool ? (json["Is_Active"] as bool ? 1 : 0) : 
+                        int.tryParse(json["Is_Active"]?.toString() ??
+                        json["is_active"]?.toString() ?? '0') ?? 0,
+      locationTracking: json["Location_Tracking"] is bool ? (json["Location_Tracking"] as bool ? 1 : 0) : 
+                        int.tryParse(json["Location_Tracking"]?.toString() ??
+                        json["location_tracking"]?.toString() ?? '0') ?? 0,
+      commissionNumber: json["Commission_Number"] is bool ? (json["Commission_Number"] as bool ? 1 : 0) : 
+                        json["CommissionNumber"] is bool ? (json["CommissionNumber"] as bool ? 1 : 0) : 
+                        int.tryParse(json["Commission_Number"]?.toString() ?? 
+                        json["CommissionNumber"]?.toString() ?? 
+                        json["commission_number"]?.toString() ?? 
+                        json["commision_number"]?.toString() ?? 
+                        json["Commision_Number"]?.toString() ?? '0') ?? 0,
       statuses: json["Statuses"] == null
           ? []
           : List<Status>.from(json["Statuses"].map((x) => Status.fromJson(x))),
@@ -74,8 +87,12 @@ class TaskTypeModel {
         "Branch_Ids": branchIds,
         "default_status_id": defaultStatusId,
         "Duration": duration,
+        "Is_Active": conversionTask,
+        "Location_Tracking": locationTracking,
+        "Commission_Number": commissionNumber,
         "Statuses": List<dynamic>.from(statuses.map((x) => x.toJson())),
         "Department_Name": departmentName,
+        "Description": description,
       };
 }
 

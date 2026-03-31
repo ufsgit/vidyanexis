@@ -18,6 +18,7 @@ class TaskCustomerModel {
   final int deleteStatus;
   final List<TaskUser> taskUser;
   final List<TaskFile> taskFiles;
+  final int commissionNumber;
 
   TaskCustomerModel({
     required this.taskId,
@@ -38,6 +39,7 @@ class TaskCustomerModel {
     required this.deleteStatus,
     required this.taskUser,
     required this.taskFiles,
+    required this.commissionNumber,
   });
 
   // Factory constructor to create an instance of TaskCustomerModel from JSON
@@ -46,9 +48,8 @@ class TaskCustomerModel {
       taskId: json['Task_Id'] ?? 0, // default value 0 if null
       taskMasterId: json['Task_Master_Id'] ?? 0, // default value 0 if null
       description: json['Description'] ?? '', // default value '' if null
-      entryDate: json['Entry_Date'] != null
-          ? DateTime.tryParse(json['Entry_Date']) // null check for date
-          : null,
+      entryDate:
+          json['Entry_Date'] != null ? DateTime.tryParse(json['Entry_Date']) : null,
       taskStatusId: json['Task_Status_Id'] ?? 0,
       taskStatusName: json['Task_Status_Name'] ?? '',
       toUsername: json['To_User_Name'] ?? '',
@@ -59,8 +60,9 @@ class TaskCustomerModel {
       taskTypeId: json['Task_Type_Id'] ?? 0,
       taskTypeName: json['Task_Type_Name'] ?? '',
       taskTime: json['Task_Time'] ?? '',
-      taskDate: DateTime.tryParse(json['Task_Date']) ?? DateTime.now(),
+      taskDate: DateTime.tryParse(json['Task_Date'] ?? '') ?? DateTime.now(),
       deleteStatus: json['DeleteStatus'] ?? 0,
+      commissionNumber: int.tryParse(json['Commission_Number']?.toString() ?? '0') ?? 0,
       taskUser: (json['Task_user'] as List<dynamic>?)
               ?.map((item) => TaskUser.fromJson(item))
               .toList() ??
@@ -91,6 +93,7 @@ class TaskCustomerModel {
       'Task_Time': taskTime,
       'Task_Date': taskDate.toIso8601String(),
       'DeleteStatus': deleteStatus,
+      'Commission_Number': commissionNumber,
     };
   }
 }
@@ -127,7 +130,7 @@ class TaskFile {
   // Factory constructor with null checks
   factory TaskFile.fromJson(Map<String, dynamic> json) {
     return TaskFile(
-      filePath: json['File_Path'] ?? 0,
+      filePath: json['File_Path'] ?? '',
       fileName: json['File_Name'] ?? '',
       fileType: json['File_Type'] ?? '',
     );

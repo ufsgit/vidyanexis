@@ -130,6 +130,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
       _selectedStatuses.clear();
       settingsProvider.toggleConversionCheckbox(false);
       settingsProvider.toggleLocation(false);
+      settingsProvider.toggleCommission(false);
 
       settingsProvider.getSearchLeadStatus('', "3", context);
 
@@ -141,12 +142,13 @@ class _AddTaskTypeState extends State<AddTaskType> {
         } else {
           settingsProvider.durationController.clear();
         }
-        bool isActive = widget.taskType?.conversionTask == 1 ? true : false;
-        bool isLocationTracking =
-            widget.taskType?.locationTracking == 1 ? true : false;
+        bool isActive = widget.taskType?.conversionTask != 0;
+        bool isLocationTracking = widget.taskType?.locationTracking != 0;
+        bool isCommissionNumber = widget.taskType?.commissionNumber != 0;
 
         settingsProvider.toggleConversionCheckbox(isActive);
         settingsProvider.toggleLocation(isLocationTracking);
+        settingsProvider.toggleCommission(isCommissionNumber);
 
         // Prefill description
         settingsProvider.taskTypeDescriptionController.text =
@@ -329,6 +331,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                         settingsProvider.departmentTaskController.clear();
                         settingsProvider.defaultStatusController.clear();
                         settingsProvider.taskTypeDescriptionController.clear();
+                        settingsProvider.toggleCommission(false);
                         Navigator.pop(context);
                       },
                     ),
@@ -465,6 +468,22 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                         onChanged: (value) {
                                           settingsProvider
                                               .toggleLocation(value!);
+                                        },
+                                        controlAffinity:
+                                            ListTileControlAffinity.leading,
+                                        contentPadding: EdgeInsets.zero,
+                                      ),
+                                      const SizedBox(height: 10),
+                                      CheckboxListTile(
+                                        title: const Text(
+                                          "Commission Number",
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                        value:
+                                            settingsProvider.isCommissionChecked,
+                                        onChanged: (value) {
+                                          settingsProvider
+                                              .toggleCommission(value!);
                                         },
                                         controlAffinity:
                                             ListTileControlAffinity.leading,
@@ -766,6 +785,20 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       controlAffinity:
                                           ListTileControlAffinity.leading,
                                       contentPadding: EdgeInsets.zero),
+                                  const SizedBox(height: 10),
+                                  CheckboxListTile(
+                                      title: const Text(
+                                        "Commission Number",
+                                        style: TextStyle(fontSize: 14),
+                                      ),
+                                      value:
+                                          settingsProvider.isCommissionChecked,
+                                      onChanged: (value) {
+                                        settingsProvider.toggleCommission(value!);
+                                      },
+                                      controlAffinity:
+                                          ListTileControlAffinity.leading,
+                                      contentPadding: EdgeInsets.zero),
                                   const SizedBox(height: 20),
                                   // Description field
                                   SizedBox(
@@ -1027,7 +1060,9 @@ class _AddTaskTypeState extends State<AddTaskType> {
                           "Is_Active":
                               settingsProvider.isConversionChecked ? 1 : 0,
                           "Location_Tracking":
-                              settingsProvider.isLocationTracking ? 1 : 0
+                              settingsProvider.isLocationTracking ? 1 : 0,
+                          "Commission_Number":
+                              settingsProvider.isCommissionChecked ? 1 : 0
                         };
 
                         settingsProvider.addTaskType(

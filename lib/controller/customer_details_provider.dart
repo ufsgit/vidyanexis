@@ -318,6 +318,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController taskTypeController = TextEditingController();
   final TextEditingController amcStatusNameController = TextEditingController();
+  final TextEditingController commissionController = TextEditingController();
 
   //service
   final TextEditingController serviceTypeController = TextEditingController();
@@ -680,6 +681,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
                   deleteStatus: 0,
                   taskUser: [],
                   taskFiles: [],
+                  commissionNumber: 0,
                 ));
               }
             }
@@ -1698,6 +1700,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
       addTaskModel.taskTime = DateFormat('HH:mm').format(DateTime.now());
       addTaskModel.completionDate = "";
       addTaskModel.completionTime = "";
+      addTaskModel.commissionNumber =
+          int.tryParse(commissionController.text) ?? 0;
 
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveTask, bodyData: addTaskModel.toJson());
@@ -2285,6 +2289,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     _selectedAssignWorkerName = '';
     _selectedAMCStatusName = null;
     _selectedAMCStatus = null;
+    commissionController.clear();
     addTaskModel.taskUser = [];
   }
 
