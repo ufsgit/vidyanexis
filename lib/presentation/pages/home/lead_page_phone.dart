@@ -548,33 +548,35 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   icon: const Icon(Icons.check, color: Colors.white, size: 18),
                 ),
               )
-            : FloatingActionButton(
-                heroTag: 'add_lead_fab',
-                shape: const CircleBorder(),
-                elevation: 0,
-                backgroundColor: AppColors.bluebutton,
-                onPressed: () async {
-                  final dropDownProvider =
-                      Provider.of<DropDownProvider>(context, listen: false);
-                  dropDownProvider.updateEnquiryForName(null, '');
-                  dropDownProvider.updateDistrict(null, '');
+            : leadProvider.expandedIndex != null
+                ? null
+                : FloatingActionButton(
+                    heroTag: 'add_lead_fab',
+                    shape: const CircleBorder(),
+                    elevation: 0,
+                    backgroundColor: AppColors.bluebutton,
+                    onPressed: () async {
+                      final dropDownProvider =
+                          Provider.of<DropDownProvider>(context, listen: false);
+                      dropDownProvider.updateEnquiryForName(null, '');
+                      dropDownProvider.updateDistrict(null, '');
 
-                  await leadProvider.getLeadDropdowns(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NewLeadDrawerMobileWidget(
-                        isEdit: false,
-                        customerId: '0',
-                      ),
+                      await leadProvider.getLeadDropdowns(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NewLeadDrawerMobileWidget(
+                            isEdit: false,
+                            customerId: '0',
+                          ),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.add,
+                      color: AppColors.whiteColor,
                     ),
-                  );
-                },
-                child: Icon(
-                  Icons.add,
-                  color: AppColors.whiteColor,
-                ),
-              ),
+                  ),
       ),
     );
   }
