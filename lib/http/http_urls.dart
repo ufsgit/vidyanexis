@@ -346,4 +346,5 @@ class HttpUrls {
   static String getPdfAnnexure2 = "lead/get_pdf_annexure2/";
   static String getPdfAnnexure3 = "lead/get_pdf_annexure3/";
   static String getCommissionReport = "lead/Get_Commission_Report";
+  static String subContractsReport = "task/Sub_contracts_report";
 }
