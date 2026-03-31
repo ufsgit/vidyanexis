@@ -113,10 +113,9 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
             iconSize: 24,
           ),
         ),
-
-        title: widget.userName,
+        title: 'Work report of ${widget.userName}',
         titleStyle: GoogleFonts.plusJakartaSans(
-            fontSize: 20,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
             color: AppColors.textBlack),
         searchHintText: 'Search Reports...',
@@ -140,7 +139,6 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
           );
           reportsProvider.getSearchTaskReport(widget.userId, context);
         },
-        // showFilterIcon: false,
         onSearch: (query) {
           reportsProvider.setTaskSearchCriteria(
             query,
@@ -356,8 +354,8 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
             child: ListView.separated(
               separatorBuilder: (context, index) {
                 return Divider(
-                  height: 2,
-                  color: AppColors.grey,
+                  height: 1,
+                  color: AppColors.grey.withAlpha(50),
                 );
               },
               itemCount: reportsProvider.taskReport.length,
@@ -371,154 +369,116 @@ class _WorkReportPhoneState extends State<WorkReportPhone> {
                     : service.statusName == "In Progress"
                         ? Colors.orange
                         : Colors.red;
-                return Container(
-                  width: MediaQuery.sizeOf(context).width,
-                  decoration: BoxDecoration(color: AppColors.whiteColor),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: Column(
-                      children: [
-                        Row(
-                          children: [
-                            Container(
-                                height: 34,
-                                width: 3,
-                                decoration: BoxDecoration(
-                                    color: statusColor,
-                                    borderRadius: BorderRadius.circular(16))),
-                            const SizedBox(
-                              width: 8,
-                            ),
-                            const SizedBox(
-                              width: 4,
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  service.statusName,
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => CustomerDetailPageMobile(
+                          customerId: service.customerId,
+                          fromLead: false,
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: MediaQuery.sizeOf(context).width,
+                    decoration: BoxDecoration(color: AppColors.whiteColor),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Container(
+                                  height: 16,
+                                  width: 3,
+                                  decoration: BoxDecoration(
+                                      color: statusColor,
+                                      borderRadius: BorderRadius.circular(16))),
+                              const SizedBox(
+                                width: 8,
+                              ),
+                              Expanded(
+                                child: Text(
+                                  '${service.customer} , ${service.statusName}',
                                   style: GoogleFonts.plusJakartaSans(
                                       fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textBlack),
-                                ),
-                                InkWell(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            CustomerDetailPageMobile(
-                                          customerId: service.customerId,
-                                          fromLead: false,
-                                        ),
-                                      ),
-                                    );
-                                  },
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Text(
-                                        service.customer,
-                                        style: GoogleFonts.plusJakartaSans(
-                                            decoration:
-                                                TextDecoration.underline,
-                                            decorationColor:
-                                                AppColors.bluebutton,
-                                            decorationThickness: 1.5,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w600,
-                                            color: AppColors.bluebutton),
-                                      ),
-                                      Icon(
-                                        Icons.keyboard_arrow_right_rounded,
-                                        color: AppColors.bluebutton,
-                                        size: 18,
-                                      )
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-                            const Spacer(),
-                            Container(
-                                height: 22,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(30),
-                                  color: statusColor.withAlpha(26),
-                                ),
-                                child: Center(
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 2),
-                                    child: Text(
-                                      service.statusName,
-                                      style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w500,
-                                          color: statusColor),
-                                    ),
-                                  ),
-                                )),
-                          ],
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        Align(
-                          alignment: Alignment.topLeft,
-                          child: Text(
-                            service.remark,
-                            maxLines: 2,
-                            overflow: TextOverflow.ellipsis,
-                            style: GoogleFonts.plusJakartaSans(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: AppColors.textGrey3),
-                          ),
-                        ),
-                        const SizedBox(
-                          height: 12,
-                        ),
-                        Row(
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColors.textBlack.withAlpha(102),
-                                ),
-                                children: [
-                                  const TextSpan(text: 'To  '),
-                                  TextSpan(
-                                    text: service.assignedTo,
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColors.textGrey4,
-                                    ),
-                                  ),
-                                  const TextSpan(text: '  on  '),
-                                  TextSpan(
-                                    text: service.entryDate
-                                        .toDayMonthYearFormat(),
-                                    style: GoogleFonts.plusJakartaSans(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColors.textGrey4,
-                                    ),
-                                  ),
-                                ],
+                                      color: AppColors.bluebutton),
+                                  overflow: TextOverflow.ellipsis,
+                                ),
                               ),
-                            )
-                          ],
-                        ),
-                      ],
+                              const SizedBox(
+                                width: 4,
+                              ),
+                              Container(
+                                  height: 18,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(30),
+                                    color: statusColor.withAlpha(26),
+                                  ),
+                                  child: Center(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8, vertical: 0),
+                                      child: Text(
+                                        service.statusName,
+                                        style: GoogleFonts.plusJakartaSans(
+                                            fontSize: 10,
+                                            fontWeight: FontWeight.w500,
+                                            color: statusColor),
+                                      ),
+                                    ),
+                                  )),
+                            ],
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              const SizedBox(width: 11), // Bar width + SizedBox
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    RichText(
+                                      text: TextSpan(
+                                        style: GoogleFonts.plusJakartaSans(
+                                          fontSize: 12,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColors.textBlack
+                                              .withAlpha(150),
+                                        ),
+                                        children: [
+                                          const TextSpan(text: 'To '),
+                                          TextSpan(
+                                            text: service.assignedTo,
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          const TextSpan(text: ' on '),
+                                          TextSpan(
+                                            text: service.entryDate
+                                                .toDayMonthYearFormat(),
+                                            style: const TextStyle(
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          if (service.remark.isNotEmpty) ...[
+                                            const TextSpan(text: ' , '),
+                                            TextSpan(text: service.remark),
+                                          ],
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
