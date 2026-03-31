@@ -43,6 +43,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
       customerProvider.getSearchCustomers(context);
     });
   }
+
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   CustomerProvider? _customerProvider;
 
@@ -167,11 +168,10 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                     SliverToBoxAdapter(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 8),
+                            horizontal: 16, vertical: 0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const SizedBox(height: 8),
                             CustomText(
                               'Status',
                               fontSize: 16,

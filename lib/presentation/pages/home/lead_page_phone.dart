@@ -243,11 +243,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 if (leadProvider.isFilter)
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 8),
                           CustomText(
                             'Status',
                             fontSize: 16,
@@ -261,8 +260,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             children: [
                               FilterChipWidget(
                                 label: 'All',
-                                isSelected: leadProvider.selectedStatusIds
-                                    .contains(0),
+                                isSelected:
+                                    leadProvider.selectedStatusIds.contains(0),
                                 onTap: () {
                                   leadProvider.toggleStatus(0);
                                 },
@@ -347,8 +346,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               children: [
                                 FilterChipWidget(
                                   label: 'All',
-                                  isSelected: leadProvider.selectedUserIds
-                                      .contains(0),
+                                  isSelected:
+                                      leadProvider.selectedUserIds.contains(0),
                                   onTap: () {
                                     leadProvider.toggleUserFilter(0);
                                   },
@@ -390,8 +389,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               ...provider.enquiryForList.map((enquiry) {
                                 return FilterChipWidget(
                                   label: enquiry.enquiryForName,
-                                  isSelected: leadProvider
-                                      .selectedEnquiryForIds
+                                  isSelected: leadProvider.selectedEnquiryForIds
                                       .contains(enquiry.enquiryForId),
                                   onTap: () {
                                     leadProvider.toggleEnquiryForFilter(
