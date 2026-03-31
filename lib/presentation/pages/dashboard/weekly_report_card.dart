@@ -150,28 +150,43 @@ class WeeklyReportCard extends StatelessWidget {
                   height: 350,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10),
-                    color: Colors.grey.shade200,
+                    color: Colors.white,
                   ),
-                  child: ListView(
-                      shrinkWrap: true,
-                      // mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: dashBoardProvider.dashBoardCountModel
-                          .asMap()
-                          .entries
-                          .map(
-                            (e) => Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 12.0),
-                              child: CommonReportWidget(
-                                  index: e.key,
-                                  image: 'assets/images/service.png',
-                                  count: e.value.dataCount.toString(),
-                                  label: e.value.title,
-                                  title: e.value.title,
-                                  id: e.value.tp),
-                            ),
-                          )
-                          .toList()),
+                  child: dashBoardProvider.dashBoardCountModel.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.assignment_outlined,
+                                  size: 40, color: Colors.grey.shade300),
+                              const SizedBox(height: 10),
+                              Text(
+                                'No records found',
+                                style: TextStyle(
+                                    color: Colors.grey.shade400, fontSize: 14),
+                              ),
+                            ],
+                          ),
+                        )
+                      : ListView(
+                          shrinkWrap: true,
+                          children: dashBoardProvider.dashBoardCountModel
+                              .asMap()
+                              .entries
+                              .map(
+                                (e) => Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 12.0),
+                                  child: CommonReportWidget(
+                                      index: e.key,
+                                      image: 'assets/images/service.png',
+                                      count: e.value.dataCount.toString(),
+                                      label: e.value.title,
+                                      title: e.value.title,
+                                      id: e.value.tp),
+                                ),
+                              )
+                              .toList()),
                 ),
         ],
       ),

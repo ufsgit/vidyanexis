@@ -146,6 +146,13 @@ class LeadsProvider extends ChangeNotifier {
   List<SearchLeadModel> _tempData = [];
 
   bool _isFilter = false;
+  bool _isImporting = false;
+  double _importProgress = 0.0;
+  String _importStatusText = '';
+
+  bool get isImporting => _isImporting;
+  double get importProgress => _importProgress;
+  String get importStatusText => _importStatusText;
   List<int> _selectedStatusIds = [0];
   List<int> _selectedUserIds = [0];
   List<int> _selectedEnquiryForIds = [0];
@@ -1271,103 +1278,102 @@ class LeadsProvider extends ChangeNotifier {
         }
       }
 
-      final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.saveLead,
-          bodyData: {
-            "lead": {
-              "Customer_Id": custId,
-              "Customer_Name": leadNameController.text.isEmpty
-                  ? 'Null'
-                  : leadNameController.text,
-              "Address": addressController.text,
-              "City": cityController.text,
-              "State": stateController.text,
-              "Latitude": latitudeController.text,
-              "Longitude": longitudeController.text,
-              "Pincode": pincodeController.text,
-              "Email_Address": emailIdController.text,
-              "Phone_Number": contactNoController.text,
-              "Reference_Name": referenceNameController.text,
-              "Location": mapLinkController.text,
-              "Consumer_Number": consumerNoController.text,
-              "Electrical_Section": electricalSectionController.text,
-              "Inverter_Capacity": double.tryParse(invertorCapacityController.text) ?? 0,
-              "Inverter_Type_Id": selectedInverterId,
-              "inverter_type_name": inverterTypeController.text,
-              "panel_type_name": panelBrandController.text,
-              "Panel_Capacity": double.tryParse(panelCapacityController.text) ?? 0,
-              "Panel_Type_Id": selectedPanelId,
-              "Phase_Id": selectedPhaseId,
-              "phase_name": panelPhaseController.text,
-              "Roof_Type_Id": selectedRoofId,
-              "roof_type_name": roofTypeController.text,
-              "Enquiry_Source_Id": enquirySourceId,
-              "Enquiry_Source_Name": enquirySourceName,
-              "Enquiry_For_Id": enquiryForId,
-              "Enquiry_For_Name": enquiryForName,
-              "Project_Cost": double.tryParse(projectCostController.text) ?? 0,
-              "Additional_Cost": double.tryParse(additionalCostControler.text) ?? 0,
-              "Advance_Amount": double.tryParse(advanceAmountController.text) ?? 0,
-              "Commission": double.tryParse(commissionController.text) ?? 0,
-              "Amount_Paid_Through_Id": selectedAmountPaidId,
-              "amount_paid_through_name": amountPaidController.text,
-              "UPI_Transfer_Photo": upiImage,
-              "Cost_Includes_Id": selectedCostIncId,
-              "cost_includes_name": costIncludesController.text,
-              "Electricity_Bill_Photo": electricityBillImage,
-              "Cancelled_Cheque_Passbook": cancelledPassBookImage,
-              "Adhaar_Card_Back": aadharImage,
-              "Passport_Size_Photo": passportImage,
-              "Connected_Load": double.tryParse(connectedLoadController.text) ?? 0,
-              "Rep": repController.text,
-              "Lead_By": leadByController.text,
-              "Work_Type_Id": selectedWorkTypeId,
-              "work_type_name": workTypeController.text,
-              "Subsidy_Type_Id": selectedSubsidyId,
-              "subsidy_type_name": '',
-              "Additional_Comments": additionalCommentscONTROLLER.text,
-              "Total_Task": 0,
-              "Completed_Task": 0,
-              "FollowUp_Value": followUp,
-              "District_Id": districtId,
-              "District": districtName,
-              "Source_Category_Id": sourceId,
-              "Source_Category_Name": sourceName,
-              "customFields": (customFieldLeadStatusKey.currentState
-                              ?.getFilledFieldValues()
-                              .isNotEmpty ??
-                          false)
-                      ? customFieldLeadStatusKey.currentState
-                          ?.getFieldValuesAsJson()
-                      : null,
-              "enquiryForCustomFields": customFieldEnquirySourceKey.currentState
-                  ?.getFieldValuesAsJson(),
-              "Age": age,
-              "PE_Id": peId,
-              "PE_Name": peName,
-              "CRE_Id": creId,
-              "CRE_Name": creName,
-              "Lead_Type_Id": leadtypeId,
-              "Lead_Type_Name": leadtypeName,
-              "Location_Id": locationId,
-            },
-            "followup": {
-              "Next_FollowUp_date": nextFollowUpDate,
-              "Status_Id": statusId,
-              "Status_Name": statusName,
-              "Branch_Id": branchId,
-              "Branch_Name": branchName,
-              "Department_Id": departmentId,
-              "Department_Name": departmentName,
-              "By_User_Id": byUserIdInt,
-              "By_User_Name": userName,
-              "To_User_Id": toUserId,
-              "To_User_Name": toUserName,
+      final response = await HttpRequest
+          .httpPostRequest(endPoint: HttpUrls.saveLead, bodyData: {
+        "lead": {
+          "Customer_Id": custId,
+          "Customer_Name": leadNameController.text.isEmpty
+              ? 'Null'
+              : leadNameController.text,
+          "Address": addressController.text,
+          "City": cityController.text,
+          "State": stateController.text,
+          "Latitude": latitudeController.text,
+          "Longitude": longitudeController.text,
+          "Pincode": pincodeController.text,
+          "Email_Address": emailIdController.text,
+          "Phone_Number": contactNoController.text,
+          "Reference_Name": referenceNameController.text,
+          "Location": mapLinkController.text,
+          "Consumer_Number": consumerNoController.text,
+          "Electrical_Section": electricalSectionController.text,
+          "Inverter_Capacity":
+              double.tryParse(invertorCapacityController.text) ?? 0,
+          "Inverter_Type_Id": selectedInverterId,
+          "inverter_type_name": inverterTypeController.text,
+          "panel_type_name": panelBrandController.text,
+          "Panel_Capacity": double.tryParse(panelCapacityController.text) ?? 0,
+          "Panel_Type_Id": selectedPanelId,
+          "Phase_Id": selectedPhaseId,
+          "phase_name": panelPhaseController.text,
+          "Roof_Type_Id": selectedRoofId,
+          "roof_type_name": roofTypeController.text,
+          "Enquiry_Source_Id": enquirySourceId,
+          "Enquiry_Source_Name": enquirySourceName,
+          "Enquiry_For_Id": enquiryForId,
+          "Enquiry_For_Name": enquiryForName,
+          "Project_Cost": double.tryParse(projectCostController.text) ?? 0,
+          "Additional_Cost": double.tryParse(additionalCostControler.text) ?? 0,
+          "Advance_Amount": double.tryParse(advanceAmountController.text) ?? 0,
+          "Commission": double.tryParse(commissionController.text) ?? 0,
+          "Amount_Paid_Through_Id": selectedAmountPaidId,
+          "amount_paid_through_name": amountPaidController.text,
+          "UPI_Transfer_Photo": upiImage,
+          "Cost_Includes_Id": selectedCostIncId,
+          "cost_includes_name": costIncludesController.text,
+          "Electricity_Bill_Photo": electricityBillImage,
+          "Cancelled_Cheque_Passbook": cancelledPassBookImage,
+          "Adhaar_Card_Back": aadharImage,
+          "Passport_Size_Photo": passportImage,
+          "Connected_Load": double.tryParse(connectedLoadController.text) ?? 0,
+          "Rep": repController.text,
+          "Lead_By": leadByController.text,
+          "Work_Type_Id": selectedWorkTypeId,
+          "work_type_name": workTypeController.text,
+          "Subsidy_Type_Id": selectedSubsidyId,
+          "subsidy_type_name": '',
+          "Additional_Comments": additionalCommentscONTROLLER.text,
+          "Total_Task": 0,
+          "Completed_Task": 0,
+          "FollowUp_Value": followUp,
+          "District_Id": districtId,
+          "District": districtName,
+          "Source_Category_Id": sourceId,
+          "Source_Category_Name": sourceName,
+          "customFields": (customFieldLeadStatusKey.currentState
+                      ?.getFilledFieldValues()
+                      .isNotEmpty ??
+                  false)
+              ? customFieldLeadStatusKey.currentState?.getFieldValuesAsJson()
+              : null,
+          "enquiryForCustomFields":
+              customFieldEnquirySourceKey.currentState?.getFieldValuesAsJson(),
+          "Age": age,
+          "PE_Id": peId,
+          "PE_Name": peName,
+          "CRE_Id": creId,
+          "CRE_Name": creName,
+          "Lead_Type_Id": leadtypeId,
+          "Lead_Type_Name": leadtypeName,
+          "Location_Id": locationId,
+        },
+        "followup": {
+          "Next_FollowUp_date": nextFollowUpDate,
+          "Status_Id": statusId,
+          "Status_Name": statusName,
+          "Branch_Id": branchId,
+          "Branch_Name": branchName,
+          "Department_Id": departmentId,
+          "Department_Name": departmentName,
+          "By_User_Id": byUserIdInt,
+          "By_User_Name": userName,
+          "To_User_Id": toUserId,
+          "To_User_Name": toUserName,
 
-              // "FollowUp": followUp,
-              "Remark": remark,
-            }
-          });
+          // "FollowUp": followUp,
+          "Remark": remark,
+        }
+      });
 
       if (response!.statusCode == 200) {
         final data = response.data;
@@ -1968,23 +1974,28 @@ class LeadsProvider extends ChangeNotifier {
     );
   }
 
-  Future<void> saveBulkImport(
-      {required List data,
-      required BuildContext context,
-      required int statusId,
-      required String statusName,
-      required String followUpDate,
-      required int toUserId,
-      required String toUserName,
-      required int followUp,
-      required String message,
-      required int custId,
-      required int enquiryForId,
-      required String enquiryForName,
-      required int enquirySourceId,
-      required String enquirySourceName}) async {
-    print(data);
+  Future<void> saveBulkImport({
+    required List data,
+    required BuildContext context,
+    required int statusId,
+    required String statusName,
+    required String followUpDate,
+    required int toUserId,
+    required String toUserName,
+    required int followUp,
+    required String message,
+    required int custId,
+    required int enquiryForId,
+    required String enquiryForName,
+    required int enquirySourceId,
+    required String enquirySourceName,
+  }) async {
     try {
+      _isImporting = true;
+      _importProgress = 0.0;
+      _importStatusText = 'Preparing import...';
+      notifyListeners();
+
       if (followUpDate.isNotEmpty) {
         DateTime parsedDate;
         try {
@@ -1996,144 +2007,108 @@ class LeadsProvider extends ChangeNotifier {
       } else {
         followUpDate = '';
       }
-      print('date$followUpDate');
-      print('followUp$followUp');
-      Loader.showLoader(context);
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
       String userName = preferences.getString('userName') ?? "";
 
-      final response = await HttpRequest.httpPostRequest(
-          endPoint: HttpUrls.bulkImport,
-          bodyData: {
-            "Lead_Details": data,
-            "By_User_Id": userId,
-            "By_User_Name": userName,
-            "Status": statusId,
-            "Status_Name": statusName,
-            "To_User": toUserId,
-            "To_User_Name": toUserName,
-            "Enquiry_Source": enquirySourceId,
-            "Enquiry_Source_Name": enquirySourceName,
-            "Next_FollowUp_Date": followUpDate,
-            "Status_FollowUp": followUp,
-            "Remark": '',
-            "Enquiry_For_Id": enquiryForId,
-            "Enquiry_For_Name": enquiryForName
-          });
+      int totalRecords = data.length;
+      int batchSize = 100;
+      int processedCount = 0;
 
-      if (response!.statusCode == 200) {
-        final data = response.data;
-        log('Success');
+      for (int i = 0; i < totalRecords; i += batchSize) {
+        int end = (i + batchSize < totalRecords) ? i + batchSize : totalRecords;
+        List batch = data.sublist(i, end);
 
-        // Handle both Map and List response formats
-        if (data is Map) {
-          // Response is a Map like {success: true}
-          if (data['success'] == true) {
-            Fluttertoast.showToast(
-              msg: "Success",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              webPosition: "bottom",
-              webBgColor: "black",
-              backgroundColor: Colors.black,
-              textColor: Colors.white,
-            );
-          } else {
-            Fluttertoast.showToast(
-              msg: "Duplicate Entries Found",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              webPosition: "bottom",
-              webBgColor: "black",
-              backgroundColor: Colors.black,
-              textColor: Colors.white,
-            );
-          }
-        } else if (data is List && data.isNotEmpty) {
-          // Response is a List (old format)
+        bool batchSuccess = false;
+        int retryCount = 0;
+        int maxRetries = 3;
+
+        while (!batchSuccess && retryCount < maxRetries) {
           try {
-            if (data[0] is List && data[0].isNotEmpty && data[0][0] is Map) {
-              print(data[0][0]['import_master_id']);
-              var importMasterId = data[0][0]['import_master_id'];
-              if (importMasterId == 1) {
-                Fluttertoast.showToast(
-                  msg: "Success",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  webPosition: "bottom",
-                  webBgColor: "black",
-                  backgroundColor: Colors.black,
-                  textColor: Colors.white,
-                );
-              } else {
-                Fluttertoast.showToast(
-                  msg: "Duplicate Entries Found",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  webPosition: "bottom",
-                  webBgColor: "black",
-                  backgroundColor: Colors.black,
-                  textColor: Colors.white,
-                );
+            _importStatusText = retryCount == 0
+                ? 'Importing ${i + 1} to $end of $totalRecords...'
+                : 'Retrying batch ${i + 1}-$end (Attempt ${retryCount + 1}/$maxRetries)...';
+            notifyListeners();
+
+            final response = await HttpRequest.httpPostRequest(
+              endPoint: HttpUrls.bulkImport,
+              bodyData: {
+                "Lead_Details": batch,
+                "By_User_Id": userId,
+                "By_User_Name": userName,
+                "Status": statusId,
+                "Status_Name": statusName,
+                "To_User": toUserId,
+                "To_User_Name": toUserName,
+                "Enquiry_Source": enquirySourceId,
+                "Enquiry_Source_Name": enquirySourceName,
+                "Next_FollowUp_Date": followUpDate,
+                "Status_FollowUp": followUp,
+                "Remark": '',
+                "Enquiry_For_Id": enquiryForId,
+                "Enquiry_For_Name": enquiryForName
+              },
+            );
+
+            if (response != null && response.statusCode == 200) {
+              processedCount += batch.length;
+              _importProgress = processedCount / totalRecords;
+              batchSuccess = true;
+              notifyListeners();
+            } else {
+              retryCount++;
+              if (retryCount >= maxRetries) {
+                throw Exception(
+                    "Batch import failed at record ${i + 1} after $maxRetries attempts.");
               }
+              await Future.delayed(const Duration(seconds: 2));
             }
           } catch (e) {
-            print('Error parsing response data: $e');
-            // If parsing fails but success is true, still show success
-            Fluttertoast.showToast(
-              msg: "Success",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              webPosition: "bottom",
-              webBgColor: "black",
-              backgroundColor: Colors.black,
-              textColor: Colors.white,
-            );
+            log('Batch Error (Attempt ${retryCount + 1}): $e');
+            retryCount++;
+            if (retryCount >= maxRetries) {
+              rethrow; // Rethrow to be caught by the outer catch
+            }
+            _importStatusText = 'Connection reset. Retrying in 2 seconds...';
+            notifyListeners();
+            await Future.delayed(const Duration(seconds: 2));
           }
         }
-        Loader.stopLoader(context);
-        // Extract the list of students and check for duplicate entries
-        // List duplicateEntries = data[1];
-
-        // if (duplicateEntries.isNotEmpty) {
-        //   Fluttertoast.showToast(
-        //     msg: "Duplicate Entries Found",
-        //     toastLength: Toast.LENGTH_SHORT,
-        //     gravity: ToastGravity.BOTTOM,
-        //     webPosition: "bottom",
-        //     webBgColor: "black",
-        //     backgroundColor: Colors.black,
-        //     textColor: Colors.white,
-        //   );
-        //   Loader.stopLoader(context);
-        // }
-        // await getSearchLeads(context);
-        // messageController.clear();
-        // statusController.clear();
-        // assignToFollowUpController.clear();
-        // nextFollowUpDateController.clear();
-        // enquirySourceController.clear();
-        // sourceCategoryController.clear();
-        // Loader.stopLoader(context);
-        // final provider = Provider.of<SidebarProvider>(context, listen: false);
-        // provider.setMenuId(1, 0);
-        // context.go(HomePage.route);
-        // Loader.stopLoader(context);
-        // print(data);
       }
-    } catch (e) {
-      print('Exception occurred: $e');
+
+      _importStatusText = 'Import Complete!';
+      _importProgress = 1.0;
+      notifyListeners();
+
       Fluttertoast.showToast(
-        msg: "",
+        msg: "Success! $totalRecords leads imported.",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.BOTTOM,
-        webPosition: "bottom",
-        webBgColor: "black",
         backgroundColor: Colors.black,
         textColor: Colors.white,
       );
-      Loader.stopLoader(context);
+    } catch (e) {
+      log('Import Exception: $e');
+      _importStatusText = 'Import failed. Process stopped.';
+      notifyListeners();
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Import Error'),
+          content: Text('The import stopped due to an error: ${e.toString()}'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('OK'),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      _isImporting = false;
+      notifyListeners();
     }
   }
 

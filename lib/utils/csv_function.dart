@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:excel/excel.dart';
@@ -20,24 +19,35 @@ Future<List<Map<String, dynamic>>> pickAndLoadExcelFile() async {
 
   if (result != null) {
     var file = result.files.single;
-    var bytes = file.bytes; // Use `bytes` directly
+    Uint8List? bytes = file.bytes;
+
+    // Use `bytes` directly, but if null (common on mobile), read from path
+    if (bytes == null && file.path != null && !kIsWeb) {
+      final File localFile = File(file.path!);
+      bytes = await localFile.readAsBytes();
+    }
 
     if (bytes != null) {
-      var excel = Excel.decodeBytes(bytes);
-
-      // If a valid sheet exists
-      log("xcl ite : ${excel.sheets.values.first}");
-
-      if (excel.sheets.isNotEmpty) {
-        var sheet = excel
-            .sheets.values.first; // Get the first sheet (adjust as necessary)
-
-        // Process the rows and headers
-        var items = processSheet(sheet);
-        log("xcl ite : $items");
-        return items;
+      // Use compute to run decoding and processing in a separate isolate on mobile
+      // On Web, compute is usually synchronous unless web workers are set up
+      if (kIsWeb) {
+        return _decodeAndProcessExcel(bytes);
+      } else {
+        return await compute(_decodeAndProcessExcel, bytes);
       }
     }
+  }
+  return [];
+}
+
+// Top-level function for compute
+List<Map<String, dynamic>> _decodeAndProcessExcel(Uint8List bytes) {
+  var excel = Excel.decodeBytes(bytes);
+
+  // If a valid sheet exists
+  if (excel.sheets.isNotEmpty) {
+    var sheet = excel.sheets.values.first; // Get the first sheet
+    return processSheet(sheet);
   }
   return [];
 }
@@ -45,6 +55,7 @@ Future<List<Map<String, dynamic>>> pickAndLoadExcelFile() async {
 // Process the sheet rows
 List<Map<String, dynamic>> processSheet(Sheet sheet) {
   List<Map<String, dynamic>> data = [];
+  if (sheet.rows.isEmpty) return data;
   var headerRow = sheet.rows[0]; // First row as headers
 
   // Define the custom key mapping
@@ -53,15 +64,20 @@ List<Map<String, dynamic>> processSheet(Sheet sheet) {
     'Mobile': 'Mobile',
   };
 
+  // Cache the rows list to avoid re-evaluating it in every iteration
+  var rows = sheet.rows;
+  if (rows.length <= 1) return data;
+
   // Iterate through rows starting from the second row (skip header row)
-  for (var i = 1; i < sheet.rows.length; i++) {
-    var row = sheet.rows[i];
+  for (var i = 1; i < rows.length; i++) {
+    var row = rows[i];
     Map<String, dynamic> rowData = {};
 
     bool isEmptyRow = true;
 
     // Iterate through the columns in the row
     for (var j = 0; j < headerRow.length; j++) {
+      if (j >= row.length) break; // Safety check
       var header = cleanHeader(headerRow[j]?.value?.toString() ?? "");
       var value = row[j]?.value;
 
@@ -84,11 +100,9 @@ List<Map<String, dynamic>> processSheet(Sheet sheet) {
   }
 
   // Update the state with the processed data
-  // setState(() {
   jsonData = data;
-  print(jsonEncode(jsonData)); // Print the result in JSON format
+  // print(jsonEncode(jsonData)); // Print the result in JSON format (Disabled for performance)
   return jsonData;
-  // Optionally, print the result or do anything with jsonData
 }
 
 // Helper function to clean headers by trimming and removing unwanted characters
@@ -145,9 +159,10 @@ Future<void> exportToExcel({
       for (int colIndex = 0; colIndex < headers.length; colIndex++) {
         final header = headers[colIndex];
         final cellValue = rowData[header]?.toString() ?? '';
-        sheet.cell(CellIndex.indexByColumnRow(
-            columnIndex: colIndex, rowIndex: rowIndex + 1))
-          .value = TextCellValue(cellValue);
+        sheet
+            .cell(CellIndex.indexByColumnRow(
+                columnIndex: colIndex, rowIndex: rowIndex + 1))
+            .value = TextCellValue(cellValue);
       }
     }
 
