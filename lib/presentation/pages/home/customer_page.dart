@@ -497,19 +497,12 @@ class _CustomerPageState extends State<CustomerPage> {
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  SizedBox(
+                                  TableWidget(
                                     width: 80,
-                                    child: Padding(
-                                      padding: EdgeInsets.symmetric(
-                                          vertical:
-                                              6.0, // Match data row padding
-                                          horizontal:
-                                              12.0), // Compact horizontal
-                                      child: Text('No.',
-                                          style: TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFFFFFFFF))),
-                                    ),
+                                    title: 'Sl No.',
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 6.0, horizontal: 12.0),
+                                    color: Color(0xFFFFFFFF),
                                   ),
                                   // TableWidget(
                                   //     title: 'Order no',
@@ -602,26 +595,18 @@ class _CustomerPageState extends State<CustomerPage> {
                                               //         fontWeight: FontWeight.bold,
                                               //       )),
                                               // ),
-                                              SizedBox(
+                                              TableWidget(
                                                 width: 80,
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical:
-                                                          6.0, // Compact vertical
-                                                      horizontal: 12.0),
-                                                  child: Text(
-                                                      ((index + 1) +
-                                                              customerProvider
-                                                                  .startLimit -
-                                                              1)
-                                                          .toString(),
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 12,
-                                                      )),
-                                                ),
+                                                fontSize: 12,
+                                                padding: const EdgeInsets
+                                                    .symmetric(
+                                                    vertical: 6.0,
+                                                    horizontal: 12.0),
+                                                title: ((index + 1) +
+                                                        customerProvider
+                                                            .startLimit -
+                                                        1)
+                                                    .toString(),
                                               ),
                                               // TableWidget(title: lead.orderNo),
                                               TableWidget(
