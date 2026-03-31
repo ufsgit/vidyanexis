@@ -491,7 +491,9 @@ class _tasksPageReportState extends State<TaskPage> {
                                                     screenWidth > 400)
                                                   CustomElevatedButton(
                                                     onPressed: () async {
-                                                      await reportsProvider.fetchTasksForExport(context);
+                                                      await reportsProvider
+                                                          .fetchTasksForExport(
+                                                              context);
                                                     },
                                                     buttonText:
                                                         screenWidth > 600
@@ -1611,10 +1613,15 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       vertical: 6.0,
                                                       horizontal: 8.0),
                                                   data: Tooltip(
-                                                    message:
-                                                        provider.getEnquiryForNameById(task.enquiryForId, task.enquiryForName),
+                                                    message: provider
+                                                        .getEnquiryForNameById(
+                                                            task.enquiryForId,
+                                                            task.enquiryForName),
                                                     child: Text(
-                                                      provider.getEnquiryForNameById(task.enquiryForId, task.enquiryForName),
+                                                      provider
+                                                          .getEnquiryForNameById(
+                                                              task.enquiryForId,
+                                                              task.enquiryForName),
                                                       overflow:
                                                           TextOverflow.ellipsis,
                                                       maxLines: 1,
@@ -2671,8 +2678,10 @@ class _tasksPageReportState extends State<TaskPage> {
           ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: 720,
+              maxWidth: 900,
               maxHeight: 700,
+              minHeight: 700,
+              minWidth: 900,
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -2856,18 +2865,23 @@ class _tasksPageReportState extends State<TaskPage> {
                                           spacing: 12,
                                           runSpacing: 12,
                                           children: statusOptions.map((status) {
-                                            bool isSelected =
-                                                value.statusId == status.statusId;
+                                            bool isSelected = value.statusId ==
+                                                status.statusId;
                                             Color statusColor =
-                                                status.colorCode ?? Colors.black;
+                                                status.colorCode ??
+                                                    Colors.black;
                                             return ChoiceChip(
-                                              label: Text(status.statusName ?? ''),
+                                              label:
+                                                  Text(status.statusName ?? ''),
                                               selected: isSelected,
-                                              onSelected: (bool selected) async {
+                                              onSelected:
+                                                  (bool selected) async {
                                                 if (selected) {
                                                   selectedStatus.value = status;
-                                                  int sId = status.statusId ?? 0;
-                                                  int tId = status.taskTypeId ?? 0;
+                                                  int sId =
+                                                      status.statusId ?? 0;
+                                                  int tId =
+                                                      status.taskTypeId ?? 0;
                                                   await reportsProvider
                                                       .fetchTaskTypes(
                                                           tId,
@@ -2898,8 +2912,10 @@ class _tasksPageReportState extends State<TaskPage> {
                                               ),
                                               selectedColor: statusColor,
                                               backgroundColor: Colors.white,
-                                              padding: const EdgeInsets.symmetric(
-                                                  horizontal: 8, vertical: 8),
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8,
+                                                      vertical: 8),
                                               shape: RoundedRectangleBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(30),
@@ -3124,19 +3140,58 @@ class _tasksPageReportState extends State<TaskPage> {
                                                       if (hasDocs)
                                                         ...reportsProvider
                                                             .documentTypeModel
-                                                            .asMap()
-                                                            .entries
-                                                            .map((e) => Padding(
-                                                                  padding: const EdgeInsets
-                                                                      .symmetric(
-                                                                      vertical:
-                                                                          4),
-                                                                  child: Text(
-                                                                      '${e.key + 1}. ${e.value.documentTypeName}',
-                                                                      style: const TextStyle(
-                                                                          fontSize:
-                                                                              13)),
-                                                                )),
+                                                            .map(
+                                                                (doc) =>
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          vertical:
+                                                                              4),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceBetween,
+                                                                        children: [
+                                                                          Expanded(
+                                                                            child:
+                                                                                Text(doc.documentTypeName ?? '', style: const TextStyle(fontSize: 13)),
+                                                                          ),
+                                                                          InkWell(
+                                                                            onTap:
+                                                                                () async {
+                                                                              await showDialog(
+                                                                                barrierDismissible: false,
+                                                                                context: context,
+                                                                                builder: (context) => ImageUploadAlert(
+                                                                                  customerId: task.customerId.toString(),
+                                                                                  initialDocumentTypeId: doc.documentTypeId,
+                                                                                  initialDocumentTypeName: doc.documentTypeName,
+                                                                                ),
+                                                                              );
+                                                                              // Refresh data after upload
+                                                                              int sId = selectedStatus.value.statusId ?? 0;
+                                                                              int tId = selectedStatus.value.taskTypeId ?? 0;
+                                                                              int cId = task.customerId ?? 0;
+                                                                              int eId = task.enquiryForId ?? 0;
+                                                                              reportsProvider.fetchTaskTypes(tId, sId, cId, eId, context);
+                                                                            },
+                                                                            child:
+                                                                                Container(
+                                                                              padding: const EdgeInsets.all(4),
+                                                                              decoration: BoxDecoration(
+                                                                                color: AppColors.darkGreen.withOpacity(0.1),
+                                                                                borderRadius: BorderRadius.circular(4),
+                                                                              ),
+                                                                              child: Icon(
+                                                                                Icons.upload_rounded,
+                                                                                size: 16,
+                                                                                color: AppColors.darkGreen,
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                        ],
+                                                                      ),
+                                                                    )),
                                                       if (hasMandatory)
                                                         ...reportsProvider
                                                             .statusData
@@ -3479,48 +3534,48 @@ class _tasksPageReportState extends State<TaskPage> {
                                               );
                                             },
                                           ),
-                                          OutlinedButton(
-                                            onPressed: () async {
-                                              int statusId = selectedStatus
-                                                      .value.statusId ??
-                                                  0;
-                                              int tasktypeId = selectedStatus
-                                                      .value.taskTypeId ??
-                                                  0;
-                                              int customerId =
-                                                  task.customerId ?? 0;
-                                              int enquiryForId =
-                                                  task.enquiryForId ?? 0;
-                                              await showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder: (context) =>
-                                                    ImageUploadAlert(
-                                                        customerId: customerId
-                                                            .toString()),
-                                              );
-                                              WidgetsBinding.instance
-                                                  .addPostFrameCallback((_) {
-                                                Provider.of<TaskPageProvider>(
-                                                        context,
-                                                        listen: false)
-                                                    .fetchTaskTypes(
-                                                        tasktypeId,
-                                                        statusId,
-                                                        customerId,
-                                                        enquiryForId,
-                                                        context);
-                                              });
-                                            },
-                                            style: OutlinedButton.styleFrom(
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          20)),
-                                            ),
-                                            child:
-                                                const Text("Upload Documents"),
-                                          ),
+                                          // OutlinedButton(
+                                          //   onPressed: () async {
+                                          //     int statusId = selectedStatus
+                                          //             .value.statusId ??
+                                          //         0;
+                                          //     int tasktypeId = selectedStatus
+                                          //             .value.taskTypeId ??
+                                          //         0;
+                                          //     int customerId =
+                                          //         task.customerId ?? 0;
+                                          //     int enquiryForId =
+                                          //         task.enquiryForId ?? 0;
+                                          //     await showDialog(
+                                          //       barrierDismissible: false,
+                                          //       context: context,
+                                          //       builder: (context) =>
+                                          //           ImageUploadAlert(
+                                          //               customerId: customerId
+                                          //                   .toString()),
+                                          //     );
+                                          //     WidgetsBinding.instance
+                                          //         .addPostFrameCallback((_) {
+                                          //       Provider.of<TaskPageProvider>(
+                                          //               context,
+                                          //               listen: false)
+                                          //           .fetchTaskTypes(
+                                          //               tasktypeId,
+                                          //               statusId,
+                                          //               customerId,
+                                          //               enquiryForId,
+                                          //               context);
+                                          //     });
+                                          //   },
+                                          //   style: OutlinedButton.styleFrom(
+                                          //     shape: RoundedRectangleBorder(
+                                          //         borderRadius:
+                                          //             BorderRadius.circular(
+                                          //                 20)),
+                                          //   ),
+                                          //   child:
+                                          //       const Text("Upload Documents"),
+                                          // ),
                                           OutlinedButton(
                                             onPressed: saving
                                                 ? null
