@@ -27,6 +27,10 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/models/task_type_model.dart';
+import 'package:vidyanexis/controller/models/add_task_model.dart';
+import 'package:vidyanexis/controller/models/search_user_details_model.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
 
 class CustomerPage extends StatefulWidget {
   const CustomerPage({super.key});
@@ -77,6 +81,7 @@ class _CustomerPageState extends State<CustomerPage> {
       await provider.getFollowUpStatusCustomer(context);
       provider.getEnquirySource(context);
       provider.getEnquiryFor(context);
+      provider.getTaskType(context);
 
       //search
       // searchController.addListener(() {
@@ -598,10 +603,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                               TableWidget(
                                                 width: 80,
                                                 fontSize: 12,
-                                                padding: const EdgeInsets
-                                                    .symmetric(
-                                                    vertical: 6.0,
-                                                    horizontal: 12.0),
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 6.0,
+                                                        horizontal: 12.0),
                                                 title: ((index + 1) +
                                                         customerProvider
                                                             .startLimit -
@@ -920,7 +925,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                         horizontal: 8.0),
                                                 data: _HoverMenuAnchor(
                                                   builder: (context, controller,
-                                                      child) {
+                                                      onHover, child) {
                                                     return IconButton(
                                                       onPressed: () {
                                                         if (controller.isOpen) {
@@ -941,104 +946,166 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     if (settingsProvider
                                                             .menuIsEditMap[4] ==
                                                         1)
-                                                      MenuItemButton(
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'edit', lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(Icons.edit,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .blue),
-                                                            SizedBox(width: 8),
-                                                            Text(
-                                                                'Edit Customer'),
-                                                          ],
-                                                        ),
-                                                      ),
+                                                      (onHover) =>
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'edit',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(Icons.edit,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .blue),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text(
+                                                                    'Edit Customer'),
+                                                              ],
+                                                            ),
+                                                          ),
                                                     if (settingsProvider
                                                                 .menuIsSaveMap[
                                                             16] ==
                                                         1)
-                                                      MenuItemButton(
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'quotation',
-                                                                lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(
-                                                                Icons
-                                                                    .request_quote,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .orange),
-                                                            SizedBox(width: 8),
-                                                            Text('Quotation'),
-                                                          ],
-                                                        ),
-                                                      ),
+                                                      (onHover) =>
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'quotation',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .request_quote,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .orange),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text(
+                                                                    'Quotation'),
+                                                              ],
+                                                            ),
+                                                          ),
                                                     if (settingsProvider
                                                                 .menuIsSaveMap[
                                                             19] ==
                                                         1)
-                                                      MenuItemButton(
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'document',
-                                                                lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(
-                                                                Icons
-                                                                    .description,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .purple),
-                                                            SizedBox(width: 8),
-                                                            Text('Document'),
-                                                          ],
-                                                        ),
-                                                      ),
+                                                      (onHover) =>
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'document',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .description,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .purple),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text(
+                                                                    'Document'),
+                                                              ],
+                                                            ),
+                                                          ),
                                                     if (settingsProvider
                                                                 .menuIsSaveMap[
                                                             13] ==
                                                         1)
-                                                      MenuItemButton(
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'task', lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(Icons.add_task,
-                                                                size: 18,
-                                                                color: Colors
-                                                                    .teal),
-                                                            SizedBox(width: 8),
-                                                            Text('Task'),
-                                                          ],
-                                                        ),
-                                                      ),
+                                                      (onHover) =>
+                                                          MultiLevelHoverMenu(
+                                                            isSubMenu: false,
+                                                            title: 'Task',
+                                                            onHoverChange:
+                                                                (hovering) {
+                                                              onHover(hovering);
+                                                            },
+                                                            leadingIcon:
+                                                                const Icon(
+                                                                    Icons
+                                                                        .add_task,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .teal),
+                                                            children: provider
+                                                                .taskType
+                                                                .map(
+                                                                    (taskType) {
+                                                              final users = provider
+                                                                  .searchUserDetails
+                                                                  .where(
+                                                                      (user) {
+                                                                return user
+                                                                        .departmentId
+                                                                        .toString() ==
+                                                                    taskType
+                                                                        .departmentIds
+                                                                        .toString();
+                                                              }).toList();
+
+                                                              if (users
+                                                                  .isEmpty) {
+                                                                return MenuItemButton(
+                                                                  onPressed:
+                                                                      null,
+                                                                  child: Text(
+                                                                      taskType
+                                                                          .taskTypeName),
+                                                                );
+                                                              }
+
+                                                              return MultiLevelHoverMenu(
+                                                                title: taskType
+                                                                    .taskTypeName,
+                                                                children: users
+                                                                    .map(
+                                                                        (user) {
+                                                                  return MenuItemButton(
+                                                                    onPressed:
+                                                                        () {
+                                                                      _openTaskDialog(
+                                                                          lead,
+                                                                          taskType,
+                                                                          user);
+                                                                    },
+                                                                    child: Text(
+                                                                        user.userDetailsName),
+                                                                  );
+                                                                }).toList(),
+                                                              );
+                                                            }).toList(),
+                                                          ),
                                                     if (settingsProvider
                                                                 .menuIsDeleteMap[
                                                             4] ==
                                                         1)
-                                                      MenuItemButton(
-                                                        onPressed: () =>
-                                                            _handleLeadAction(
-                                                                'delete', lead),
-                                                        child: const Row(
-                                                          children: [
-                                                            Icon(Icons.delete,
-                                                                size: 18,
-                                                                color:
-                                                                    Colors.red),
-                                                            SizedBox(width: 8),
-                                                            Text('Delete'),
-                                                          ],
-                                                        ),
-                                                      ),
+                                                      (onHover) =>
+                                                          MenuItemButton(
+                                                            onPressed: () =>
+                                                                _handleLeadAction(
+                                                                    'delete',
+                                                                    lead),
+                                                            child: const Row(
+                                                              children: [
+                                                                Icon(
+                                                                    Icons
+                                                                        .delete,
+                                                                    size: 18,
+                                                                    color: Colors
+                                                                        .red),
+                                                                SizedBox(
+                                                                    width: 8),
+                                                                Text('Delete'),
+                                                              ],
+                                                            ),
+                                                          ),
                                                   ],
                                                 ),
                                               ),
@@ -1306,7 +1373,9 @@ class _CustomerPageState extends State<CustomerPage> {
                                                     ),
                                                     _HoverMenuAnchor(
                                                       builder: (context,
-                                                          controller, child) {
+                                                          controller,
+                                                          onHover,
+                                                          child) {
                                                         return IconButton(
                                                           onPressed: () {
                                                             if (controller
@@ -1332,118 +1401,182 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                     .menuIsEditMap[
                                                                 4] ==
                                                             1)
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'edit',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(Icons.edit,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .blue),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Edit Customer'),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'edit',
+                                                                        lead),
+                                                                child:
+                                                                    const Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .edit,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .blue),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    Text(
+                                                                        'Edit Customer'),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                         if (settingsProvider
                                                                     .menuIsSaveMap[
                                                                 16] ==
                                                             1)
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'quotation',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .request_quote,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .orange),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Quotation'),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'quotation',
+                                                                        lead),
+                                                                child:
+                                                                    const Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .request_quote,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .orange),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    Text(
+                                                                        'Quotation'),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                         if (settingsProvider
                                                                     .menuIsSaveMap[
                                                                 19] ==
                                                             1)
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'document',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .description,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .purple),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Document'),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'document',
+                                                                        lead),
+                                                                child:
+                                                                    const Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .description,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .purple),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    Text(
+                                                                        'Document'),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                         if (settingsProvider
                                                                     .menuIsSaveMap[
                                                                 13] ==
                                                             1)
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'task',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
+                                                          (onHover) =>
+                                                              MultiLevelHoverMenu(
+                                                                isSubMenu:
+                                                                    false,
+                                                                title: 'Task',
+                                                                onHoverChange:
+                                                                    (hovering) {
+                                                                  onHover(
+                                                                      hovering);
+                                                                },
+                                                                leadingIcon: const Icon(
                                                                     Icons
                                                                         .add_task,
                                                                     size: 18,
                                                                     color: Colors
                                                                         .teal),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text('Task'),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                                children: provider
+                                                                    .taskType
+                                                                    .map(
+                                                                        (taskType) {
+                                                                  final users = provider
+                                                                      .searchUserDetails
+                                                                      .where(
+                                                                          (user) {
+                                                                    return user
+                                                                            .departmentId
+                                                                            .toString() ==
+                                                                        taskType
+                                                                            .departmentIds
+                                                                            .toString();
+                                                                  }).toList();
+
+                                                                  if (users
+                                                                      .isEmpty) {
+                                                                    return MenuItemButton(
+                                                                      onPressed:
+                                                                          null,
+                                                                      child: Text(
+                                                                          taskType
+                                                                              .taskTypeName),
+                                                                    );
+                                                                  }
+
+                                                                  return MultiLevelHoverMenu(
+                                                                    title: taskType
+                                                                        .taskTypeName,
+                                                                    children:
+                                                                        users.map(
+                                                                            (user) {
+                                                                      return MenuItemButton(
+                                                                        onPressed:
+                                                                            () {
+                                                                          _openTaskDialog(
+                                                                              lead,
+                                                                              taskType,
+                                                                              user);
+                                                                        },
+                                                                        child: Text(
+                                                                            user.userDetailsName),
+                                                                      );
+                                                                    }).toList(),
+                                                                  );
+                                                                }).toList(),
+                                                              ),
                                                         if (settingsProvider
                                                                     .menuIsDeleteMap[
                                                                 4] ==
                                                             1)
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'delete',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .red),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text('Delete'),
-                                                              ],
-                                                            ),
-                                                          ),
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'delete',
+                                                                        lead),
+                                                                child:
+                                                                    const Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .delete,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .red),
+                                                                    SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    Text(
+                                                                        'Delete'),
+                                                                  ],
+                                                                ),
+                                                              ),
                                                       ],
                                                     ),
                                                     const Spacer(),
@@ -1828,6 +1961,39 @@ class _CustomerPageState extends State<CustomerPage> {
     }
   }
 
+  void _openTaskDialog(
+      SearchLeadModel lead, TaskTypeModel taskType, SearchUserDetails user) {
+    final customerDetailsProvider =
+        Provider.of<CustomerDetailsProvider>(context, listen: false);
+    customerDetailsProvider.customerId = lead.customerId.toString();
+    customerDetailsProvider.clearTaskDetails();
+
+    // Pre-populate data
+    customerDetailsProvider.updateTaskType(
+        taskType.taskTypeId, taskType.taskTypeName);
+    final userInTask = UserInTaskModel(
+        userDetailsId: user.userDetailsId,
+        userDetailsName: user.userDetailsName);
+    customerDetailsProvider.addAssignedWorker(userInTask);
+
+    // Open Dialog
+    if (AppStyles.isWebScreen(context)) {
+      showDialog(
+        barrierDismissible: false,
+        context: context,
+        builder: (context) => Dialog(
+          backgroundColor: Colors.transparent,
+          child: TaskCreationWidget(isEdit: false, taskId: '0'),
+        ),
+      );
+    } else {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => AddTaskMobile(isEdit: false, taskId: '0')));
+    }
+  }
+
   String _formatDateSafely(String dateStr) {
     try {
       final date = DateTime.parse(dateStr);
@@ -2185,8 +2351,9 @@ class _CustomerPageState extends State<CustomerPage> {
 }
 
 class _HoverMenuAnchor extends StatefulWidget {
-  final Widget Function(BuildContext, MenuController, Widget?) builder;
-  final List<Widget> menuChildren;
+  final Widget Function(
+      BuildContext, MenuController, void Function(bool), Widget?) builder;
+  final List<Widget Function(void Function(bool))> menuChildren;
 
   const _HoverMenuAnchor({
     required this.builder,
@@ -2204,14 +2371,14 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
   void _updateHover(bool isIn) {
     _hoverTimer?.cancel();
     if (isIn) {
-      // Small 50ms delay before opening to ensure it's intentional
-      _hoverTimer = Timer(const Duration(milliseconds: 50), () {
+      // Small 150ms delay before opening to ensure it's intention
+      _hoverTimer = Timer(const Duration(milliseconds: 150), () {
         if (mounted && !_controller.isOpen) {
           _controller.open();
         }
       });
     } else {
-      // 200ms grace period to move pointer from button to menu
+      // 200ms grace period to move pointer between menu levels
       _hoverTimer = Timer(const Duration(milliseconds: 200), () {
         if (mounted && _controller.isOpen) {
           _controller.close();
@@ -2236,8 +2403,23 @@ class _HoverMenuAnchorState extends State<_HoverMenuAnchor> {
         // Adjust vertically to overlap slightly for smoother transition
         alignmentOffset: const Offset(0, -5),
         builder: (context, controller, child) =>
-            widget.builder(context, controller, child),
-        menuChildren: widget.menuChildren.map((child) {
+            widget.builder(context, controller, _updateHover, child),
+        menuChildren: widget.menuChildren.map((builder) {
+          final child = builder(_updateHover);
+          // Check if the child is our MultiLevelHoverMenu to pass the recursive callback
+          if (child is MultiLevelHoverMenu) {
+            return MultiLevelHoverMenu(
+              title: child.title,
+              leadingIcon: child.leadingIcon,
+              onTap: child.onTap,
+              isSubMenu: child.isSubMenu,
+              hoverColor: child.hoverColor,
+              onHoverChange: (hovering) {
+                _updateHover(hovering);
+              },
+              children: child.children,
+            );
+          }
           return MouseRegion(
             onEnter: (_) => _updateHover(true),
             onExit: (_) => _updateHover(false),
