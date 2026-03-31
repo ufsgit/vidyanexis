@@ -209,7 +209,7 @@ class _tasksPageReportState extends State<TaskPage> {
               onExcelTap: () async {
                 await reportsProvider.fetchTasksForExport(context);
               },
-              showExcel: true,
+              showExcel: false,
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,

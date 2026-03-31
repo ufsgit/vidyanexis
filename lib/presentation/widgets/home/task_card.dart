@@ -56,7 +56,8 @@ class _TaskCardState extends State<TaskCard> {
   Widget build(BuildContext context) {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
-    final mappedEnquiryForName = dropDownProvider.getEnquiryForNameById(widget.task.enquiryForId, widget.task.enquiryForName);
+    final mappedEnquiryForName = dropDownProvider.getEnquiryForNameById(
+        widget.task.enquiryForId, widget.task.enquiryForName);
 
     Color getStatusColor(String statusName) {
       statusName = statusName.toUpperCase();
@@ -79,7 +80,7 @@ class _TaskCardState extends State<TaskCard> {
             decoration: BoxDecoration(
               color: AppColors.whiteColor,
             ),
-            padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -111,59 +112,60 @@ class _TaskCardState extends State<TaskCard> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 4),
+                const SizedBox(height: 1),
 
-                // SECOND LINE: Task Type
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        widget.task.taskTypeName,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w400,
-                          color: AppColors.textGrey3,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 4),
-
-                // THIRD LINE: Status and Dropdown Arrow
+                // SECOND LINE: Task Type, Status and Dropdown Arrow
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      widget.task.taskStatusName,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: statusColor,
+                    Expanded(
+                      child: Row(
+                        children: [
+                          Flexible(
+                            child: Text(
+                              widget.task.taskTypeName,
+                              overflow: TextOverflow.ellipsis,
+                              maxLines: 1,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textGrey3,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          Text(
+                            widget.task.taskStatusName,
+                            style: GoogleFonts.plusJakartaSans(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: statusColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                     InkWell(
                       onTap: () => widget.onTap(),
                       child: Padding(
-                        padding: const EdgeInsets.only(left: 8.0, top: 4.0, bottom: 4.0),
+                        padding: const EdgeInsets.only(
+                            left: 8.0, top: 4.0, bottom: 4.0),
                         child: Icon(
                           widget.isExpanded
                               ? Icons.keyboard_arrow_up
                               : Icons.keyboard_arrow_down,
-                          size: 20,
+                          size: 28,
                           color: AppColors.textGrey3,
                         ),
                       ),
                     ),
                   ],
                 ),
-                
+
                 // FOURTH LINE: Assigned To (If Admin)
                 if (userType == "1")
                   Padding(
-                    padding: const EdgeInsets.only(top: 2.0),
+                    padding: const EdgeInsets.only(top: 0.0),
                     child: Text(
                       'Assigned To: ${widget.task.toUserName}',
                       style: GoogleFonts.plusJakartaSans(
