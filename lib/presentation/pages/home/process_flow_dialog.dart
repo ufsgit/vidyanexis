@@ -7,7 +7,6 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 
@@ -35,7 +34,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
   bool showScheduleNotes = false;
   bool showDescription = false;
   bool showFollowUpDate = false;
-
 
   @override
   void initState() {
@@ -234,93 +232,84 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                       child: ListView(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                         children: [
-                          // Status Segmented Control
+                          // Status Segmented Control (Wrap instead of horizontal scroll)
                           Container(
-                            height: 45,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border:
+                                  Border.all(color: const Color(0xFFE2E8F0)),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  physics: const BouncingScrollPhysics(),
-                                  child: Row(
-                                    children: statusOptions.map((status) {
-                                      bool isSelected =
-                                          selectedStatus.statusId ==
-                                              status.statusId;
-                                      return GestureDetector(
-                                        onTap: () async {
-                                          setState(() {
-                                            selectedStatus = status;
-                                          });
+                            padding: const EdgeInsets.all(12),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: statusOptions.map((status) {
+                                bool isSelected =
+                                    selectedStatus.statusId == status.statusId;
+                                return GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      selectedStatus = status;
+                                    });
 
-                                          int statusId =
-                                              selectedStatus.statusId ?? 0;
-                                          int tasktypeId =
-                                              selectedStatus.taskTypeId ?? 0;
-                                          int customerId =
-                                              widget.task.customerId;
-                                          int enquiryForId =
-                                              widget.task.enquiryForId;
+                                    int statusId = selectedStatus.statusId ?? 0;
+                                    int tasktypeId =
+                                        selectedStatus.taskTypeId ?? 0;
+                                    int customerId = widget.task.customerId;
+                                    int enquiryForId = widget.task.enquiryForId;
 
-                                          await reportsProvider.fetchTaskTypes(
-                                              tasktypeId,
-                                              statusId,
-                                              customerId,
-                                              enquiryForId,
-                                              context);
+                                    await reportsProvider.fetchTaskTypes(
+                                        tasktypeId,
+                                        statusId,
+                                        customerId,
+                                        enquiryForId,
+                                        context);
 
-                                          final formProvider =
-                                              Provider.of<FormProvider>(context,
-                                                  listen: false);
-                                          debugPrint(
-                                              "DEBUG: Status changed to ${status.statusName}, refreshing forms for taskTypeId: $tasktypeId");
-                                          await formProvider
-                                              .getFormDataByCustomer(
-                                            customerId.toString(),
-                                            taskTypeId: tasktypeId.toString(),
-                                            enquiryForId:
-                                                enquiryForId.toString(),
-                                            taskId:
-                                                widget.task.taskId.toString(),
-                                          );
-                                        },
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 4),
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? const Color(0xFFE3F2FD)
-                                                : Colors.transparent,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            status.statusName ?? '',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              color: isSelected
-                                                  ? const Color(0xFF1A7AE8)
-                                                  : const Color(0xFF64748B),
-                                              fontWeight: isSelected
-                                                  ? FontWeight.w700
-                                                  : FontWeight.w500,
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
+                                    final formProvider =
+                                        Provider.of<FormProvider>(context,
+                                            listen: false);
+                                    debugPrint(
+                                        "DEBUG: Status changed to ${status.statusName}, refreshing forms for taskTypeId: $tasktypeId");
+                                    await formProvider.getFormDataByCustomer(
+                                      customerId.toString(),
+                                      taskTypeId: tasktypeId.toString(),
+                                      enquiryForId: enquiryForId.toString(),
+                                      taskId: widget.task.taskId.toString(),
+                                    );
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? const Color(0xFF1A7AE8)
+                                              .withOpacity(0.1)
+                                          : const Color(0xFFF1F5F9),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? const Color(0xFF1A7AE8)
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      (status.statusName ?? '').toUpperCase(),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: isSelected
+                                            ? const Color(0xFF1A7AE8)
+                                            : const Color(0xFF64748B),
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
+                                        fontSize: 11,
+                                      ),
+                                    ),
                                   ),
                                 );
-                              },
+                              }).toList(),
                             ),
                           ),
 
@@ -372,8 +361,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             children: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                 _buildFieldLabel('Next FollowUp Date'),
-
+                                _buildFieldLabel('Next FollowUp Date'),
                                 _buildInputField(
                                   controller:
                                       reportsProvider.followUpDateController,
@@ -389,7 +377,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       builder: (context, child) {
                                         return Theme(
                                           data: Theme.of(context).copyWith(
-                                            colorScheme: const ColorScheme.light(
+                                            colorScheme:
+                                                const ColorScheme.light(
                                               primary: Color(0xFF1A7AE8),
                                             ),
                                           ),
@@ -398,9 +387,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                       },
                                     );
                                     if (pickedDate != null) {
-                                      reportsProvider.followUpDateController
-                                          .text = DateFormat('dd MMM yyyy')
-                                          .format(pickedDate);
+                                      reportsProvider
+                                              .followUpDateController.text =
+                                          DateFormat('dd MMM yyyy')
+                                              .format(pickedDate);
                                     }
                                   },
                                 ),
@@ -480,7 +470,6 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                             },
                           ),
 
-
                           // --- Section: Pending Documents ---
                           Consumer<TaskPageProvider>(
                             builder: (context, reportsProvider, child) {
@@ -525,15 +514,27 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                           return _buildDocumentTile(
                                             title: doc.documentTypeName,
                                             onTap: () async {
-                                              final imageProvider = Provider.of<ImageUploadProvider>(context, listen: false);
+                                              final imageProvider = Provider.of<
+                                                      ImageUploadProvider>(
+                                                  context,
+                                                  listen: false);
                                               imageProvider.clearFiles();
-                                              imageProvider.setCutomerId(widget.task.customerId.toString());
-                                              imageProvider.updateDocumentType(doc.documentTypeId, doc.documentTypeName);
-                                              
-                                              await _showPickOptions(context, imageProvider);
-                                              
-                                              if (imageProvider.fileInfoList.isNotEmpty) {
-                                                await imageProvider.uploadAllDocumentsGrouped(context, shouldPop: false);
+                                              imageProvider.setCutomerId(widget
+                                                  .task.customerId
+                                                  .toString());
+                                              imageProvider.updateDocumentType(
+                                                  doc.documentTypeId,
+                                                  doc.documentTypeName);
+
+                                              await _showPickOptions(
+                                                  context, imageProvider);
+
+                                              if (imageProvider
+                                                  .fileInfoList.isNotEmpty) {
+                                                await imageProvider
+                                                    .uploadAllDocumentsGrouped(
+                                                        context,
+                                                        shouldPop: false);
                                                 _refreshData();
                                               }
                                             },
@@ -782,180 +783,241 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
       }
     }
 
-    showDialog(
+    showGeneralDialog(
       context: context,
-      builder: (context) {
+      barrierDismissible: false,
+      barrierLabel: '',
+      transitionDuration: const Duration(milliseconds: 250),
+      transitionBuilder: (context, anim1, anim2, child) {
+        return SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 1),
+            end: Offset.zero,
+          ).animate(anim1),
+          child: child,
+        );
+      },
+      pageBuilder: (context, animation, secondaryAnimation) {
         return StatefulBuilder(
           builder: (dialogContext, setState) {
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
+            return Scaffold(
+              backgroundColor: Colors.white,
+              appBar: AppBar(
+                backgroundColor: Colors.white,
+                elevation: 0.5,
+                leading: IconButton(
+                  icon: const Icon(Icons.close, color: Colors.black),
+                  onPressed: () => Navigator.pop(dialogContext),
+                ),
+                title: Text(
+                  form.name.toUpperCase(),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF1A7AE8),
+                  ),
+                ),
+                centerTitle: true,
               ),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                width: MediaQuery.of(dialogContext).size.width * 0.9,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        form.name,
-                        style: GoogleFonts.plusJakartaSans(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: const Color(0xFF1A7AE8),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      ...form.fields.map((field) {
-                        Widget fieldWidget;
+              body: Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ...form.fields.map((field) {
+                            Widget fieldWidget;
 
-                        if (field.type == FieldType.date) {
-                          fieldWidget = GestureDetector(
-                            onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2101),
-                              );
-                              if (pickedDate != null) {
-                                setState(() {
-                                  fieldValues[field.id] =
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(pickedDate);
-                                });
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF8FAFC),
-                                borderRadius: BorderRadius.circular(8),
-                                border:
-                                    Border.all(color: const Color(0xFFE2E8F0)),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      fieldValues[field.id] ?? 'Select Date',
-                                      style: GoogleFonts.plusJakartaSans(
-                                        color: fieldValues[field.id] == null
-                                            ? const Color(0xFF64748B)
-                                            : Colors.black87,
-                                        fontSize: 14,
-                                      ),
-                                    ),
+                            if (field.type == FieldType.date) {
+                              fieldWidget = GestureDetector(
+                                onTap: () async {
+                                  DateTime? pickedDate = await showDatePicker(
+                                    context: context,
+                                    initialDate: DateTime.now(),
+                                    firstDate: DateTime(2000),
+                                    lastDate: DateTime(2101),
+                                  );
+                                  if (pickedDate != null) {
+                                    setState(() {
+                                      fieldValues[field.id] =
+                                          DateFormat('yyyy-MM-dd')
+                                              .format(pickedDate);
+                                    });
+                                  }
+                                },
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 12),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFFF8FAFC),
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(
+                                        color: const Color(0xFFE2E8F0)),
                                   ),
-                                  const Icon(Icons.calendar_today,
-                                      color: Color(0xFFCBD5E1), size: 20),
-                                ],
-                              ),
-                            ),
-                          );
-                        } else if (field.type == FieldType.dropdown) {
-                          List<String> options = field.options ?? [];
-
-                          fieldWidget = Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF8FAFC),
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                isExpanded: true,
-                                hint: Text(
-                                  field.label,
-                                  style: GoogleFonts.plusJakartaSans(
-                                    color: const Color(0xFF64748B),
-                                    fontSize: 14,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          fieldValues[field.id] ??
+                                              'Select Date',
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: fieldValues[field.id] == null
+                                                ? const Color(0xFF64748B)
+                                                : Colors.black87,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      ),
+                                      const Icon(Icons.calendar_today,
+                                          color: Color(0xFFCBD5E1), size: 20),
+                                    ],
                                   ),
                                 ),
-                                value: fieldValues[field.id],
-                                items: options.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
+                              );
+                            } else if (field.type == FieldType.dropdown) {
+                              List<String> options = field.options ?? [];
+
+                              fieldWidget = Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 16, vertical: 4),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF8FAFC),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: const Color(0xFFE2E8F0)),
+                                ),
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<String>(
+                                    isExpanded: true,
+                                    hint: Text(
+                                      field.label,
                                       style: GoogleFonts.plusJakartaSans(
                                         color: const Color(0xFF64748B),
                                         fontSize: 14,
                                       ),
                                     ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    fieldValues[field.id] = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          );
-                        } else {
-                          // Text or Number
-                          fieldWidget = Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF8FAFC),
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: TextField(
-                              controller: fieldValues[field.id],
-                              keyboardType: field.type == FieldType.number
-                                  ? TextInputType.number
-                                  : TextInputType.text,
-                              decoration: InputDecoration(
-                                hintText: field.label,
-                                hintStyle: GoogleFonts.plusJakartaSans(
-                                  color: const Color(0xFF64748B),
-                                  fontSize: 14,
+                                    value: fieldValues[field.id],
+                                    items: options.map((String value) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(
+                                          value,
+                                          style: GoogleFonts.plusJakartaSans(
+                                            color: const Color(0xFF64748B),
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                      );
+                                    }).toList(),
+                                    onChanged: (value) {
+                                      setState(() {
+                                        fieldValues[field.id] = value;
+                                      });
+                                    },
+                                  ),
                                 ),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 14),
-                              ),
-                            ),
-                          );
-                        }
+                              );
+                            } else {
+                              // Text or Number
+                              fieldWidget = Container(
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFFF8FAFC),
+                                  borderRadius: BorderRadius.circular(8),
+                                  border: Border.all(
+                                      color: const Color(0xFFE2E8F0)),
+                                ),
+                                child: TextField(
+                                  controller: fieldValues[field.id],
+                                  keyboardType: field.type == FieldType.number
+                                      ? TextInputType.number
+                                      : TextInputType.text,
+                                  decoration: InputDecoration(
+                                    hintText: field.label,
+                                    hintStyle: GoogleFonts.plusJakartaSans(
+                                      color: const Color(0xFF64748B),
+                                      fontSize: 14,
+                                    ),
+                                    border: InputBorder.none,
+                                    contentPadding: const EdgeInsets.symmetric(
+                                        horizontal: 16, vertical: 14),
+                                  ),
+                                ),
+                              );
+                            }
 
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: fieldWidget,
-                        );
-                      }),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    field.label.toUpperCase(),
+                                    style: GoogleFonts.plusJakartaSans(
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFF94A3B8),
+                                      letterSpacing: 0.5,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  fieldWidget,
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      border: const Border(
+                          top: BorderSide(color: Color(0xFFF1F5F9))),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.03),
+                          offset: const Offset(0, -4),
+                          blurRadius: 10,
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton(
+                            style: OutlinedButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 16),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              side: const BorderSide(color: Color(0xFFE2E8F0)),
+                            ),
+                            onPressed: () => Navigator.pop(dialogContext),
                             child: Text(
-                              'Cancel',
+                              'CANCEL',
                               style: GoogleFonts.plusJakartaSans(
                                 color: const Color(0xFF64748B),
-                                fontWeight: FontWeight.w600,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
                               ),
                             ),
                           ),
-                          const SizedBox(width: 8),
-                          ElevatedButton(
+                        ),
+                        const SizedBox(width: 16),
+                        Expanded(
+                          child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFF1A7AE8),
                               foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
+                                borderRadius: BorderRadius.circular(12),
                               ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 12),
+                              elevation: 0,
                             ),
                             onPressed: () {
                               List<Map<String, dynamic>> customFieldsPayload =
@@ -988,7 +1050,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               }
 
                               final formProvider = Provider.of<FormProvider>(
-                                  context, // ProcessFlowDialog context
+                                  context,
                                   listen: false);
 
                               formProvider
@@ -1003,11 +1065,10 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                 customFields: customFieldsPayload,
                               )
                                   .then((resultId) {
-                                if (resultId != null) {
-                                  if (mounted) {
-                                    Navigator.pop(
-                                        dialogContext); // Close form dialog
-                                  }
+                                if (mounted) {
+                                  Navigator.pop(
+                                      dialogContext); // Close form dialog
+
                                   showDialog(
                                     context: context,
                                     builder: (confirmContext) => AlertDialog(
@@ -1028,7 +1089,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                               context: context,
                                               customerId: widget.task.customerId
                                                   .toString(),
-                                              formDataDetailsId: resultId,
+                                              formDataDetailsId: resultId!,
                                               taskId: widget.task.taskId,
                                             );
                                           },
@@ -1041,17 +1102,19 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                               });
                             },
                             child: Text(
-                              'Save',
+                              'SAVE FORM',
                               style: GoogleFonts.plusJakartaSans(
-                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 13,
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                ],
               ),
             );
           },
@@ -1301,7 +1364,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
     );
   }
 
-  Future<void> _showPickOptions(BuildContext context, ImageUploadProvider provider) async {
+  Future<void> _showPickOptions(
+      BuildContext context, ImageUploadProvider provider) async {
     await showModalBottomSheet(
       context: context,
       shape: const RoundedRectangleBorder(
@@ -1320,7 +1384,8 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
+              leading:
+                  const Icon(Icons.photo_library, color: Color(0xFF1A7AE8)),
               title: const Text('Pick from Gallery'),
               onTap: () async {
                 await provider.addPhotoMobile(allowCamera: false);

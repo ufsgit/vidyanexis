@@ -243,11 +243,10 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 if (leadProvider.isFilter)
                   Expanded(
                     child: SingleChildScrollView(
-                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const SizedBox(height: 8),
                           CustomText(
                             'Status',
                             fontSize: 16,
@@ -261,8 +260,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             children: [
                               FilterChipWidget(
                                 label: 'All',
-                                isSelected: leadProvider.selectedStatusIds
-                                    .contains(0),
+                                isSelected:
+                                    leadProvider.selectedStatusIds.contains(0),
                                 onTap: () {
                                   leadProvider.toggleStatus(0);
                                 },
@@ -347,8 +346,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               children: [
                                 FilterChipWidget(
                                   label: 'All',
-                                  isSelected: leadProvider.selectedUserIds
-                                      .contains(0),
+                                  isSelected:
+                                      leadProvider.selectedUserIds.contains(0),
                                   onTap: () {
                                     leadProvider.toggleUserFilter(0);
                                   },
@@ -390,8 +389,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                               ...provider.enquiryForList.map((enquiry) {
                                 return FilterChipWidget(
                                   label: enquiry.enquiryForName,
-                                  isSelected: leadProvider
-                                      .selectedEnquiryForIds
+                                  isSelected: leadProvider.selectedEnquiryForIds
                                       .contains(enquiry.enquiryForId),
                                   onTap: () {
                                     leadProvider.toggleEnquiryForFilter(
@@ -550,33 +548,35 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   icon: const Icon(Icons.check, color: Colors.white, size: 18),
                 ),
               )
-            : FloatingActionButton(
-                heroTag: 'add_lead_fab',
-                shape: const CircleBorder(),
-                elevation: 0,
-                backgroundColor: AppColors.bluebutton,
-                onPressed: () async {
-                  final dropDownProvider =
-                      Provider.of<DropDownProvider>(context, listen: false);
-                  dropDownProvider.updateEnquiryForName(null, '');
-                  dropDownProvider.updateDistrict(null, '');
+            : leadProvider.expandedIndex != null
+                ? null
+                : FloatingActionButton(
+                    heroTag: 'add_lead_fab',
+                    shape: const CircleBorder(),
+                    elevation: 0,
+                    backgroundColor: AppColors.bluebutton,
+                    onPressed: () async {
+                      final dropDownProvider =
+                          Provider.of<DropDownProvider>(context, listen: false);
+                      dropDownProvider.updateEnquiryForName(null, '');
+                      dropDownProvider.updateDistrict(null, '');
 
-                  await leadProvider.getLeadDropdowns(context);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const NewLeadDrawerMobileWidget(
-                        isEdit: false,
-                        customerId: '0',
-                      ),
+                      await leadProvider.getLeadDropdowns(context);
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const NewLeadDrawerMobileWidget(
+                            isEdit: false,
+                            customerId: '0',
+                          ),
+                        ),
+                      );
+                    },
+                    child: Icon(
+                      Icons.add,
+                      color: AppColors.whiteColor,
                     ),
-                  );
-                },
-                child: Icon(
-                  Icons.add,
-                  color: AppColors.whiteColor,
-                ),
-              ),
+                  ),
       ),
     );
   }

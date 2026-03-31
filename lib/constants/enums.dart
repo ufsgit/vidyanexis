@@ -16,7 +16,8 @@ enum CustomFieldType {
   dropdown(3),
   datePicker(4),
   checkbox(5), // Added checkbox type
-  fileUpload(6);
+  fileUpload(6),
+  signature(7);
 
   const CustomFieldType(this.value);
   final int value;

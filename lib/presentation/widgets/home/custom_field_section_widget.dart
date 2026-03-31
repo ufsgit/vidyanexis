@@ -12,6 +12,7 @@ import 'package:url_launcher/url_launcher.dart' as launcher;
 import 'package:flutter/foundation.dart';
 import 'package:vidyanexis/utils/file_downloader.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:vidyanexis/presentation/widgets/home/signature_capture_dialog.dart';
 
 // Global keys for specific instances
 final GlobalKey<_CustomFieldSectionWidgetState> customFieldLeadStatusKey =
@@ -266,6 +267,14 @@ class CustomFieldWidgetBuilder {
         width: double.infinity,
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
         child: _buildFileUploadField(field),
+      );
+    }
+
+    if (fieldType == CustomFieldType.signature) {
+      return Container(
+        width: double.infinity,
+        margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
+        child: _buildSignatureField(field),
       );
     }
 
@@ -885,6 +894,162 @@ class CustomFieldWidgetBuilder {
     );
   }
 
+  Widget _buildSignatureField(CustomFieldByStatusId field) {
+    final isRequired = field.isMandatory == 1;
+    final fieldName = field.customFieldName ?? 'Signature';
+
+    return StatefulBuilder(
+      builder: (context, setState) {
+        final existing = _getFieldValue(field.customFieldId!);
+        String? uploadedUrl = existing?.value;
+        bool hasPending = _pendingFileBytes.containsKey(field.customFieldId!);
+
+        Future<void> captureSignature() async {
+          final Uint8List? result = await showDialog<Uint8List>(
+            context: context,
+            builder: (context) => SignatureCaptureDialog(title: 'Capture $fieldName'),
+          );
+
+          if (result != null) {
+            _pendingFileBytes[field.customFieldId!] = result;
+            _pendingFileContentType[field.customFieldId!] = 'image/png';
+            setState(() {
+              hasPending = true;
+            });
+            onFieldChanged?.call();
+          }
+        }
+
+        return FormField<String>(
+          validator: (v) {
+            if (!isRequired) return null;
+            final fv = _getFieldValue(field.customFieldId!);
+            final pending = _pendingFileBytes.containsKey(field.customFieldId!);
+            if ((fv?.value == null || (fv!.value!.trim().isEmpty)) &&
+                !pending) {
+              return 'Please provide $fieldName';
+            }
+            return null;
+          },
+          builder: (state) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8.0),
+                  child: Text(
+                    '$fieldName${isRequired ? ' *' : ''}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                      color: enabled ? Colors.black87 : Colors.grey,
+                    ),
+                  ),
+                ),
+                GestureDetector(
+                  onTap: enabled ? captureSignature : null,
+                  child: Container(
+                    height: 120,
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      border: Border.all(
+                        color: AppColors.primaryBlue.withOpacity(0.3),
+                        width: 1.5,
+                      ),
+                      borderRadius: BorderRadius.circular(12),
+                      color: AppColors.primaryBlue.withOpacity(0.02),
+                    ),
+                    child: hasPending
+                        ? ClipRRect(
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              color: Colors.white,
+                              child: Image.memory(
+                                _pendingFileBytes[field.customFieldId!]!,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                          )
+                        : (uploadedUrl != null && uploadedUrl!.isNotEmpty)
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(12),
+                                child: Container(
+                                  color: Colors.white,
+                                  child: Image.network(
+                                    uploadedUrl!,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (c, e, s) => const Center(
+                                        child: Icon(Icons.broken_image,
+                                            color: Colors.grey)),
+                                  ),
+                                ),
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.edit_note_rounded,
+                                    size: 32,
+                                    color: AppColors.primaryBlue,
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Click to sign $fieldName',
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColors.primaryBlue,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                  ),
+                ),
+                if (hasPending || (uploadedUrl != null && uploadedUrl!.isNotEmpty))
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        if (enabled)
+                          TextButton.icon(
+                            onPressed: () {
+                              _setFieldValue(field.customFieldId!, "");
+                              _pendingFileBytes.remove(field.customFieldId!);
+                              _pendingFileContentType.remove(field.customFieldId!);
+                              setState(() {
+                                uploadedUrl = null;
+                                hasPending = false;
+                              });
+                              state.didChange(null);
+                              onFieldChanged?.call();
+                            },
+                            icon: const Icon(Icons.delete_outline, size: 18),
+                            label: const Text('Clear Signature'),
+                            style: TextButton.styleFrom(foregroundColor: Colors.red),
+                          ),
+                      ],
+                    ),
+                  ),
+                if (state.hasError)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      state.errorText!,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   Widget _buildFieldWidget(
       CustomFieldByStatusId field, TextEditingController controller) {
     final fieldType = CustomFieldType.fromValue(field.customFieldTypeId);
@@ -1213,8 +1378,9 @@ class CustomFieldWidgetBuilder {
               errors.add('${field.customFieldName} is required');
             }
           }
-        } else if (fieldType == CustomFieldType.fileUpload) {
-          // For file upload, allow either an existing URL value or a pending file selection
+        } else if (fieldType == CustomFieldType.fileUpload ||
+            fieldType == CustomFieldType.signature) {
+          // For file upload and signature, allow either an existing URL value or a pending file selection
           final hasExisting =
               fieldValue?.value != null && fieldValue!.value!.trim().isNotEmpty;
           final hasPending =

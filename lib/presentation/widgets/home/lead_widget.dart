@@ -41,7 +41,6 @@ class LeadCard extends StatefulWidget {
 }
 
 class _LeadCardState extends State<LeadCard> {
-  bool _isInternalMoreExpanded = false;
   bool _isNoteClicked = false;
 
   @override
@@ -50,7 +49,6 @@ class _LeadCardState extends State<LeadCard> {
     if (!widget.isExpanded && oldWidget.isExpanded) {
       if (mounted) {
         setState(() {
-          _isInternalMoreExpanded = false;
           _isNoteClicked = false;
         });
       }
@@ -294,549 +292,493 @@ class _LeadCardState extends State<LeadCard> {
                   padding: const EdgeInsets.only(left: 8, right: 8, bottom: 16),
                   child: Column(
                     children: [
-                      // Toggleable Note Section
-                      if (_isNoteClicked) ...[
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            Consumer2<DropDownProvider, SettingsProvider>(
-                              builder: (context, dropDownProvider,
-                                  settingsProvider, child) {
-                                return Column(
-                                  children: [
-                                    // Status Selection Chips
-                                    Container(
-                                      padding: const EdgeInsets.all(12),
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.grey[300]!),
-                                        borderRadius: BorderRadius.circular(8),
-                                      ),
-                                      child: Wrap(
-                                        spacing: 8,
-                                        runSpacing: 8,
-                                        children: dropDownProvider.followUpData
-                                            .map((status) {
-                                          final isSelected = dropDownProvider
-                                                  .selectedStatusId ==
-                                              status.statusId;
-                                          return GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                dropDownProvider
-                                                    .setSelectedStatusId(
-                                                        status.statusId ?? 0);
-                                                leadsProvider
-                                                    .getCustomFieldsByStatusId(
-                                                        context,
-                                                        leadId: leadsProvider
-                                                            .customerId,
-                                                        statusId:
-                                                            status.statusId ??
-                                                                0);
-                                                leadsProvider
-                                                        .statusController.text =
-                                                    status.statusName ?? '';
-                                              });
-                                            },
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 12,
-                                                      vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: isSelected
-                                                    ? AppColors.bluebutton
-                                                        .withOpacity(0.1)
-                                                    : Colors.grey[100],
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                    color: isSelected
-                                                        ? AppColors.bluebutton
-                                                        : Colors.transparent),
-                                              ),
-                                              child: Text(
-                                                status.statusName
-                                                        ?.toUpperCase() ??
-                                                    '',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                  fontSize: 11,
-                                                  fontWeight: isSelected
-                                                      ? FontWeight.w700
-                                                      : FontWeight.w600,
+                      // Follow-up section (Always visible when expanded)
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const SizedBox(height: 8),
+                          Consumer2<DropDownProvider, SettingsProvider>(
+                            builder: (context, dropDownProvider,
+                                settingsProvider, child) {
+                              return Column(
+                                children: [
+                                  // Status Selection Chips
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      border:
+                                          Border.all(color: Colors.grey[300]!),
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
+                                    child: Wrap(
+                                      spacing: 8,
+                                      runSpacing: 8,
+                                      children: dropDownProvider.followUpData
+                                          .map((status) {
+                                        final isSelected =
+                                            dropDownProvider.selectedStatusId ==
+                                                status.statusId;
+                                        return GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              dropDownProvider
+                                                  .setSelectedStatusId(
+                                                      status.statusId ?? 0);
+                                              leadsProvider
+                                                  .getCustomFieldsByStatusId(
+                                                      context,
+                                                      leadId: leadsProvider
+                                                          .customerId,
+                                                      statusId:
+                                                          status.statusId ?? 0);
+                                              leadsProvider
+                                                      .statusController.text =
+                                                  status.statusName ?? '';
+                                            });
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 12, vertical: 8),
+                                            decoration: BoxDecoration(
+                                              color: isSelected
+                                                  ? AppColors.bluebutton
+                                                      .withOpacity(0.1)
+                                                  : Colors.grey[100],
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
                                                   color: isSelected
                                                       ? AppColors.bluebutton
-                                                      : Colors.grey[600],
-                                                ),
+                                                      : Colors.transparent),
+                                            ),
+                                            child: Text(
+                                              status.statusName
+                                                      ?.toUpperCase() ??
+                                                  '',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                fontSize: 11,
+                                                fontWeight: isSelected
+                                                    ? FontWeight.w700
+                                                    : FontWeight.w600,
+                                                color: isSelected
+                                                    ? AppColors.bluebutton
+                                                    : Colors.grey[600],
                                               ),
                                             ),
-                                          );
-                                        }).toList(),
-                                      ),
+                                          ),
+                                        );
+                                      }).toList(),
                                     ),
-                                    const SizedBox(height: 12),
-                                    CustomTextField(
-                                      readOnly: true,
-                                      controller: leadsProvider
-                                          .nextFollowUpDateController,
-                                      hintText: 'Next Follow-up Date*',
-                                      onTap: () async {
-                                        final date = await showDatePicker(
-                                            context: context,
-                                            initialDate: DateTime.now(),
-                                            firstDate: DateTime.now(),
-                                            lastDate: DateTime(2100));
-                                        if (date != null) {
-                                          leadsProvider
-                                                  .nextFollowUpDateController
-                                                  .text =
-                                              DateFormat('yyyy-MM-dd')
-                                                  .format(date);
-                                        }
-                                      },
-                                    ),
-                                    const SizedBox(height: 12),
-                                    CustomTextField(
-                                      controller:
-                                          leadsProvider.messageController,
-                                      hintText: 'Remarks',
-                                      maxLines: 3,
-                                    ),
+                                  ),
+                                  const SizedBox(height: 12),
+                                  CustomTextField(
+                                    readOnly: true,
+                                    controller: leadsProvider
+                                        .nextFollowUpDateController,
+                                    hintText: 'Next Follow-up Date*',
+                                    onTap: () async {
+                                      final date = await showDatePicker(
+                                          context: context,
+                                          initialDate: DateTime.now(),
+                                          firstDate: DateTime.now(),
+                                          lastDate: DateTime(2100));
+                                      if (date != null) {
+                                        leadsProvider.nextFollowUpDateController
+                                                .text =
+                                            DateFormat('yyyy-MM-dd')
+                                                .format(date);
+                                      }
+                                    },
+                                  ),
+                                  const SizedBox(height: 12),
+                                  CustomTextField(
+                                    controller: leadsProvider.messageController,
+                                    hintText: 'Remarks',
+                                    maxLines: 3,
+                                  ),
 
-                                    if (_isInternalMoreExpanded) ...[
-                                      const SizedBox(height: 8),
-                                      // Branch Selection Chips
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text('Branch*',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.w700)),
-                                              const SizedBox(width: 8),
-                                              const Expanded(
-                                                  child: Divider(
-                                                      thickness: 1,
-                                                      color:
-                                                          Color(0xFFEEEEEE))),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            spacing: 8,
-                                            runSpacing: 8,
-                                            children: settingsProvider
-                                                .branchModel
-                                                .map((branch) {
-                                              final isSelected =
-                                                  settingsProvider
-                                                          .selectedBranchId ==
-                                                      branch.branchId;
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    settingsProvider
-                                                            .selectedBranchId =
-                                                        branch.branchId;
-                                                    leadsProvider
-                                                            .branchController
-                                                            .text =
-                                                        branch.branchName ?? '';
-                                                    settingsProvider
-                                                        .setSelectedDepartmentId(
-                                                            0);
-                                                    leadsProvider
-                                                        .departmentController
-                                                        .clear();
-                                                    dropDownProvider
-                                                        .setSelectedUserId(0);
-                                                    leadsProvider
-                                                        .searchUserController
-                                                        .clear();
-                                                    dropDownProvider
-                                                        .filterStaffByBranchAndDepartment(
-                                                      branchId: branch.branchId,
-                                                      departmentId: null,
-                                                    );
-                                                  });
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 6),
-                                                  decoration: BoxDecoration(
-                                                    color: isSelected
-                                                        ? AppColors.bluebutton
-                                                            .withOpacity(0.1)
-                                                        : Colors.grey[100],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: isSelected
-                                                            ? AppColors
-                                                                .bluebutton
-                                                            : Colors
-                                                                .transparent),
-                                                  ),
-                                                  child: Text(
-                                                    branch.branchName
-                                                            ?.toUpperCase() ??
-                                                        '',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 11,
-                                                      fontWeight: isSelected
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal,
-                                                      color: isSelected
-                                                          ? AppColors.bluebutton
-                                                          : Colors.black87,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 12),
-                                      // Department Selection Chips
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text('Department',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                              const SizedBox(width: 8),
-                                              const Expanded(
-                                                  child: Divider(
-                                                      thickness: 1,
-                                                      color:
-                                                          Color(0xFFEEEEEE))),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            spacing: 8,
-                                            runSpacing: 8,
-                                            children: settingsProvider
-                                                .departmentModel
-                                                .map((dept) {
-                                              final isSelected = settingsProvider
-                                                      .selectedDepartmentId ==
-                                                  dept.departmentId;
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    settingsProvider
-                                                        .setSelectedDepartmentId(
-                                                            dept.departmentId);
-                                                    leadsProvider
-                                                            .departmentController
-                                                            .text =
-                                                        dept.departmentName;
-                                                    dropDownProvider
-                                                        .setSelectedUserId(0);
-                                                    leadsProvider
-                                                        .searchUserController
-                                                        .clear();
-                                                    dropDownProvider
-                                                        .filterStaffByBranchAndDepartment(
-                                                      branchId: settingsProvider
-                                                          .selectedBranchId,
-                                                      departmentId:
-                                                          dept.departmentId,
-                                                    );
-                                                  });
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 6),
-                                                  decoration: BoxDecoration(
-                                                    color: isSelected
-                                                        ? AppColors.bluebutton
-                                                            .withOpacity(0.1)
-                                                        : Colors.grey[100],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: isSelected
-                                                            ? AppColors
-                                                                .bluebutton
-                                                            : Colors
-                                                                .transparent),
-                                                  ),
-                                                  child: Text(
-                                                    dept.departmentName
-                                                        .toUpperCase(),
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 11,
-                                                      fontWeight: isSelected
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal,
-                                                      color: isSelected
-                                                          ? AppColors.bluebutton
-                                                          : Colors.black87,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 12),
-                                      // Staff Selection Chips
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Text('Assigned Staff*',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                          fontSize: 12,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                              const SizedBox(width: 8),
-                                              const Expanded(
-                                                  child: Divider(
-                                                      thickness: 1,
-                                                      color:
-                                                          Color(0xFFEEEEEE))),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8),
-                                          Wrap(
-                                            spacing: 8,
-                                            runSpacing: 8,
-                                            children: (() {
-                                              final staffList =
-                                                  List<SearchUserDetails>.from(
-                                                      dropDownProvider
-                                                          .filteredStaffData);
-                                              final selectedId =
-                                                  dropDownProvider
-                                                          .selectedUserId ??
-                                                      0;
-                                              if (selectedId != 0 &&
-                                                  leadsProvider
-                                                      .searchUserController
-                                                      .text
-                                                      .isNotEmpty) {
-                                                if (!staffList.any((u) =>
-                                                    u.userDetailsId ==
-                                                    selectedId)) {
-                                                  staffList.insert(
-                                                      0,
-                                                      SearchUserDetails(
-                                                          userDetailsId:
-                                                              selectedId,
-                                                          userDetailsName:
-                                                              leadsProvider
-                                                                  .searchUserController
-                                                                  .text));
-                                                }
-                                              }
-                                              return staffList;
-                                            })()
-                                                .map((user) {
-                                              final isSelected =
-                                                  dropDownProvider
-                                                          .selectedUserId ==
-                                                      user.userDetailsId;
-                                              return GestureDetector(
-                                                onTap: () {
-                                                  setState(() {
-                                                    dropDownProvider
-                                                        .setSelectedUserId(
-                                                            user.userDetailsId);
-                                                    leadsProvider
-                                                            .searchUserController
-                                                            .text =
-                                                        user.userDetailsName;
-                                                  });
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      horizontal: 10,
-                                                      vertical: 6),
-                                                  decoration: BoxDecoration(
-                                                    color: isSelected
-                                                        ? AppColors.bluebutton
-                                                            .withOpacity(0.1)
-                                                        : Colors.grey[100],
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            8),
-                                                    border: Border.all(
-                                                        color: isSelected
-                                                            ? AppColors
-                                                                .bluebutton
-                                                            : Colors
-                                                                .transparent),
-                                                  ),
-                                                  child: Text(
-                                                    user.userDetailsName
-                                                            ?.toUpperCase() ??
-                                                        '',
-                                                    style: GoogleFonts
-                                                        .plusJakartaSans(
-                                                      fontSize: 11,
-                                                      fontWeight: isSelected
-                                                          ? FontWeight.bold
-                                                          : FontWeight.normal,
-                                                      color: isSelected
-                                                          ? AppColors.bluebutton
-                                                          : Colors.black87,
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }).toList(),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                    const SizedBox(height: 16),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                                  if (_isNoteClicked) ...[
+                                    const SizedBox(height: 8),
+                                    // Branch Selection Chips
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        GestureDetector(
-                                          onTap: () => setState(() =>
-                                              _isInternalMoreExpanded =
-                                                  !_isInternalMoreExpanded),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Text(
-                                                _isInternalMoreExpanded
-                                                    ? 'Less'
-                                                    : 'More',
+                                        Row(
+                                          children: [
+                                            Text('Branch*',
                                                 style:
                                                     GoogleFonts.plusJakartaSans(
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w700,
-                                                  color: AppColors.bluebutton,
-                                                ),
-                                              ),
-                                              Icon(
-                                                _isInternalMoreExpanded
-                                                    ? Icons
-                                                        .keyboard_arrow_up_outlined
-                                                    : Icons
-                                                        .keyboard_arrow_down_outlined,
-                                                color: AppColors.bluebutton,
-                                                size: 20,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          width: 90,
-                                          height: 32,
-                                          child: ElevatedButton(
-                                            onPressed: () async {
-                                              final selectedUser =
-                                                  dropDownProvider
-                                                      .filteredStaffData
-                                                      .firstWhere(
-                                                (u) =>
-                                                    u.userDetailsId ==
-                                                    dropDownProvider
-                                                        .selectedUserId,
-                                                orElse: () => SearchUserDetails(
-                                                    userDetailsId: 0,
-                                                    userDetailsName: ''),
-                                              );
-                                              await leadsProvider.saveFollowUp(
-                                                statusId: dropDownProvider
-                                                        .selectedStatusId ??
-                                                    0,
-                                                statusName: leadsProvider
-                                                    .statusController.text,
-                                                branchId: settingsProvider
-                                                        .selectedBranchId ??
-                                                    0,
-                                                branchName: leadsProvider
-                                                    .branchController.text,
-                                                departmentId: settingsProvider
-                                                    .selectedDepartmentId,
-                                                departmentName: leadsProvider
-                                                    .departmentController.text,
-                                                context: context,
-                                                toUserId: dropDownProvider
-                                                        .selectedUserId ??
-                                                    0,
-                                                toUserName: selectedUser
-                                                    .userDetailsName,
-                                                followUpDate: leadsProvider
-                                                    .nextFollowUpDateController
-                                                    .text,
-                                                custId: int.parse(widget
-                                                    .lead.customerId
-                                                    .toString()),
-                                                followUp: leadsProvider
-                                                        .nextFollowUpDateController
-                                                        .text
-                                                        .isNotEmpty
-                                                    ? 1
-                                                    : 0,
-                                                message: leadsProvider
-                                                    .messageController.text,
-                                                audioFiles: [],
-                                              );
-                                            },
-                                            style: ElevatedButton.styleFrom(
-                                              backgroundColor:
-                                                  AppColors.bluebutton,
-                                              shape: RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                            ),
-                                            child: Text('Save',
-                                                style:
-                                                    GoogleFonts.plusJakartaSans(
-                                                        color: Colors.white,
                                                         fontSize: 12,
                                                         fontWeight:
-                                                            FontWeight.w600)),
-                                          ),
+                                                            FontWeight.w700)),
+                                            const SizedBox(width: 8),
+                                            const Expanded(
+                                                child: Divider(
+                                                    thickness: 1,
+                                                    color: Color(0xFFEEEEEE))),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: settingsProvider.branchModel
+                                              .map((branch) {
+                                            final isSelected = settingsProvider
+                                                    .selectedBranchId ==
+                                                branch.branchId;
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  settingsProvider
+                                                          .selectedBranchId =
+                                                      branch.branchId;
+                                                  leadsProvider.branchController
+                                                          .text =
+                                                      branch.branchName ?? '';
+                                                  settingsProvider
+                                                      .setSelectedDepartmentId(
+                                                          0);
+                                                  leadsProvider
+                                                      .departmentController
+                                                      .clear();
+                                                  dropDownProvider
+                                                      .setSelectedUserId(0);
+                                                  leadsProvider
+                                                      .searchUserController
+                                                      .clear();
+                                                  dropDownProvider
+                                                      .filterStaffByBranchAndDepartment(
+                                                    branchId: branch.branchId,
+                                                    departmentId: null,
+                                                  );
+                                                });
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 6),
+                                                decoration: BoxDecoration(
+                                                  color: isSelected
+                                                      ? AppColors.bluebutton
+                                                          .withOpacity(0.1)
+                                                      : Colors.grey[100],
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                      color: isSelected
+                                                          ? AppColors.bluebutton
+                                                          : Colors.transparent),
+                                                ),
+                                                child: Text(
+                                                  branch.branchName
+                                                          ?.toUpperCase() ??
+                                                      '',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 11,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                        : Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    // Department Selection Chips
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text('Department',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                            const SizedBox(width: 8),
+                                            const Expanded(
+                                                child: Divider(
+                                                    thickness: 1,
+                                                    color: Color(0xFFEEEEEE))),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: settingsProvider
+                                              .departmentModel
+                                              .map((dept) {
+                                            final isSelected = settingsProvider
+                                                    .selectedDepartmentId ==
+                                                dept.departmentId;
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  settingsProvider
+                                                      .setSelectedDepartmentId(
+                                                          dept.departmentId);
+                                                  leadsProvider
+                                                          .departmentController
+                                                          .text =
+                                                      dept.departmentName;
+                                                  dropDownProvider
+                                                      .setSelectedUserId(0);
+                                                  leadsProvider
+                                                      .searchUserController
+                                                      .clear();
+                                                  dropDownProvider
+                                                      .filterStaffByBranchAndDepartment(
+                                                    branchId: settingsProvider
+                                                        .selectedBranchId,
+                                                    departmentId:
+                                                        dept.departmentId,
+                                                  );
+                                                });
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 6),
+                                                decoration: BoxDecoration(
+                                                  color: isSelected
+                                                      ? AppColors.bluebutton
+                                                          .withOpacity(0.1)
+                                                      : Colors.grey[100],
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                      color: isSelected
+                                                          ? AppColors.bluebutton
+                                                          : Colors.transparent),
+                                                ),
+                                                child: Text(
+                                                  dept.departmentName
+                                                      .toUpperCase(),
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 11,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                        : Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
+                                        ),
+                                      ],
+                                    ),
+                                    const SizedBox(height: 12),
+                                    // Staff Selection Chips
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            Text('Assigned Staff*',
+                                                style:
+                                                    GoogleFonts.plusJakartaSans(
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.bold)),
+                                            const SizedBox(width: 8),
+                                            const Expanded(
+                                                child: Divider(
+                                                    thickness: 1,
+                                                    color: Color(0xFFEEEEEE))),
+                                          ],
+                                        ),
+                                        const SizedBox(height: 8),
+                                        Wrap(
+                                          spacing: 8,
+                                          runSpacing: 8,
+                                          children: (() {
+                                            final staffList =
+                                                List<SearchUserDetails>.from(
+                                                    dropDownProvider
+                                                        .filteredStaffData);
+                                            final selectedId = dropDownProvider
+                                                    .selectedUserId ??
+                                                0;
+                                            if (selectedId != 0 &&
+                                                leadsProvider
+                                                    .searchUserController
+                                                    .text
+                                                    .isNotEmpty) {
+                                              if (!staffList.any((u) =>
+                                                  u.userDetailsId ==
+                                                  selectedId)) {
+                                                staffList.insert(
+                                                    0,
+                                                    SearchUserDetails(
+                                                        userDetailsId:
+                                                            selectedId,
+                                                        userDetailsName:
+                                                            leadsProvider
+                                                                .searchUserController
+                                                                .text));
+                                              }
+                                            }
+                                            return staffList;
+                                          })()
+                                              .map((user) {
+                                            final isSelected = dropDownProvider
+                                                    .selectedUserId ==
+                                                user.userDetailsId;
+                                            return GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  dropDownProvider
+                                                      .setSelectedUserId(
+                                                          user.userDetailsId);
+                                                  leadsProvider
+                                                          .searchUserController
+                                                          .text =
+                                                      user.userDetailsName;
+                                                });
+                                              },
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10,
+                                                        vertical: 6),
+                                                decoration: BoxDecoration(
+                                                  color: isSelected
+                                                      ? AppColors.bluebutton
+                                                          .withOpacity(0.1)
+                                                      : Colors.grey[100],
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
+                                                  border: Border.all(
+                                                      color: isSelected
+                                                          ? AppColors.bluebutton
+                                                          : Colors.transparent),
+                                                ),
+                                                child: Text(
+                                                  user.userDetailsName
+                                                          ?.toUpperCase() ??
+                                                      '',
+                                                  style: GoogleFonts
+                                                      .plusJakartaSans(
+                                                    fontSize: 11,
+                                                    fontWeight: isSelected
+                                                        ? FontWeight.bold
+                                                        : FontWeight.normal,
+                                                    color: isSelected
+                                                        ? AppColors.bluebutton
+                                                        : Colors.black87,
+                                                  ),
+                                                ),
+                                              ),
+                                            );
+                                          }).toList(),
                                         ),
                                       ],
                                     ),
                                   ],
-                                );
-                              },
-                            ),
-                          ],
-                        ),
-                      ],
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    children: [
+                                      SizedBox(
+                                        width: 90,
+                                        height: 32,
+                                        child: ElevatedButton(
+                                          onPressed: () async {
+                                            final selectedUser =
+                                                dropDownProvider
+                                                    .filteredStaffData
+                                                    .firstWhere(
+                                              (u) =>
+                                                  u.userDetailsId ==
+                                                  dropDownProvider
+                                                      .selectedUserId,
+                                              orElse: () => SearchUserDetails(
+                                                  userDetailsId: 0,
+                                                  userDetailsName: ''),
+                                            );
+                                            await leadsProvider.saveFollowUp(
+                                              statusId: dropDownProvider
+                                                      .selectedStatusId ??
+                                                  0,
+                                              statusName: leadsProvider
+                                                  .statusController.text,
+                                              branchId: settingsProvider
+                                                      .selectedBranchId ??
+                                                  0,
+                                              branchName: leadsProvider
+                                                  .branchController.text,
+                                              departmentId: settingsProvider
+                                                  .selectedDepartmentId,
+                                              departmentName: leadsProvider
+                                                  .departmentController.text,
+                                              context: context,
+                                              toUserId: dropDownProvider
+                                                      .selectedUserId ??
+                                                  0,
+                                              toUserName:
+                                                  selectedUser.userDetailsName,
+                                              followUpDate: leadsProvider
+                                                  .nextFollowUpDateController
+                                                  .text,
+                                              custId: int.parse(widget
+                                                  .lead.customerId
+                                                  .toString()),
+                                              followUp: leadsProvider
+                                                      .nextFollowUpDateController
+                                                      .text
+                                                      .isNotEmpty
+                                                  ? 1
+                                                  : 0,
+                                              message: leadsProvider
+                                                  .messageController.text,
+                                              audioFiles: [],
+                                            );
+                                          },
+                                          style: ElevatedButton.styleFrom(
+                                            backgroundColor:
+                                                AppColors.bluebutton,
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10)),
+                                          ),
+                                          child: Text('Save',
+                                              style:
+                                                  GoogleFonts.plusJakartaSans(
+                                                      color: Colors.white,
+                                                      fontSize: 12,
+                                                      fontWeight:
+                                                          FontWeight.w600)),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
+                        ],
+                      ),
                       const SizedBox(height: 16),
                       // Action Buttons Row 1
                       Row(

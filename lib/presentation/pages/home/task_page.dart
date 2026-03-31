@@ -209,7 +209,7 @@ class _tasksPageReportState extends State<TaskPage> {
               onExcelTap: () async {
                 await reportsProvider.fetchTasksForExport(context);
               },
-              showExcel: true,
+              showExcel: false,
               showLogo: false,
               showUserName: false,
               showFilterIcon: false,
@@ -843,7 +843,7 @@ class _tasksPageReportState extends State<TaskPage> {
             if (reportsProvider.isFilter && !AppStyles.isWebScreen(context))
               Expanded(
                 child: SingleChildScrollView(
-                  padding: const EdgeInsets.fromLTRB(16, 16, 16, 80),
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
