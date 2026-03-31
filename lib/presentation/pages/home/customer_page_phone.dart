@@ -152,207 +152,214 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
         searchController: searchController,
       ),
       drawer: const SidebarDrawer(),
-      floatingActionButtonLocation: customerProvider.isFilter
-          ? FloatingActionButtonLocation.centerFloat
-          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 32),
+        child: customerProvider.isFilter
+            ? SizedBox(
+                height: 40,
+                child: FloatingActionButton.extended(
+                  heroTag: 'apply_customer_filter_fab',
+                  onPressed: () {
+                    customerProvider.setSearchCriteria(
+                      customerProvider.search,
+                      customerProvider.fromDateS,
+                      customerProvider.toDateS,
+                    );
+                    customerProvider.getSearchCustomers(context);
+                    customerProvider.toggleFilter();
+                  },
+                  backgroundColor: AppColors.darkGreen,
+                  label: const CustomText(
+                    'APPLY',
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                  ),
+                  icon: const Icon(Icons.check, color: Colors.white, size: 18),
+                ),
+              )
+            : null,
+      ),
       body: customerProvider.isLoading
           ? const Center(
               child: LoadingCircle(),
             )
-          : RefreshIndicator(
-              onRefresh: _refreshData,
-              child: CustomScrollView(
-                controller: customerProvider.scrollController,
-                slivers: [
-                  if (customerProvider.isFilter)
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 16, vertical: 0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            CustomText(
-                              'Status',
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.textBlack,
-                            ),
-                            const SizedBox(height: 8),
-                            Wrap(
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              children: [
-                                FilterChipWidget(
-                                  label: 'All',
+          : Column(
+              children: [
+                if (customerProvider.isFilter)
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 80),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          CustomText(
+                            'Status',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            children: [
+                              FilterChipWidget(
+                                label: 'All',
+                                isSelected: customerProvider.selectedStatusIds
+                                    .contains(0),
+                                onTap: () {
+                                  customerProvider.toggleStatus(0);
+                                },
+                              ),
+                              ...provider.followUpData.map((status) {
+                                return FilterChipWidget(
+                                  label: status.statusName ?? 'Unknown',
                                   isSelected: customerProvider.selectedStatusIds
-                                      .contains(0),
+                                      .contains(status.statusId),
                                   onTap: () {
-                                    customerProvider.toggleStatus(0);
+                                    customerProvider
+                                        .toggleStatus(status.statusId ?? 0);
                                   },
-                                ),
-                                ...provider.followUpData.map((status) {
-                                  return FilterChipWidget(
-                                    label: status.statusName ?? 'Unknown',
-                                    isSelected: customerProvider
-                                        .selectedStatusIds
-                                        .contains(status.statusId),
-                                    onTap: () {
-                                      customerProvider
-                                          .toggleStatus(status.statusId ?? 0);
-                                    },
-                                  );
-                                }).toList(),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Wrap(
-                              spacing: 8.0,
-                              runSpacing: 8.0,
-                              alignment: WrapAlignment.start,
-                              children: [
-                                GestureDetector(
-                                  onTap: () {
-                                    onClickTopButton(context);
-                                  },
-                                  child: Container(
-                                    height: 32,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.scaffoldColor,
-                                      borderRadius: BorderRadius.circular(10),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 12),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Flexible(
-                                            child: ConstrainedBox(
-                                              constraints: const BoxConstraints(
-                                                  maxWidth: 200),
-                                              child: CustomText(
-                                                customerProvider.fromDate ==
-                                                            null &&
-                                                        customerProvider
-                                                                .toDate ==
-                                                            null
-                                                    ? 'Date'
-                                                    : 'Date : ${customerProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedToDate.toString().toDayMonthYearFormat()}',
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColors.textBlack,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
+                                );
+                              }).toList(),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+                          Wrap(
+                            spacing: 8.0,
+                            runSpacing: 8.0,
+                            alignment: WrapAlignment.start,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  onClickTopButton(context);
+                                },
+                                child: Container(
+                                  height: 32,
+                                  decoration: BoxDecoration(
+                                    color: AppColors.scaffoldColor,
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 12),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Flexible(
+                                          child: ConstrainedBox(
+                                            constraints: const BoxConstraints(
+                                                maxWidth: 200),
+                                            child: CustomText(
+                                              customerProvider.fromDate ==
+                                                          null &&
+                                                      customerProvider.toDate ==
+                                                          null
+                                                  ? 'Date'
+                                                  : 'Date : ${customerProvider.formattedFromDate.toString().toDayMonthYearFormat()} - ${customerProvider.formattedToDate.toString().toDayMonthYearFormat()}',
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColors.textBlack,
+                                              overflow: TextOverflow.ellipsis,
                                             ),
                                           ),
-                                          const SizedBox(width: 4),
-                                          Icon(
-                                            Icons.keyboard_arrow_down,
-                                            color: AppColors.textGrey3,
-                                            size: 18,
-                                          ),
-                                        ],
-                                      ),
+                                        ),
+                                        const SizedBox(width: 4),
+                                        Icon(
+                                          Icons.keyboard_arrow_down,
+                                          color: AppColors.textGrey3,
+                                          size: 18,
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ),
-                              ],
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 24),
+                          if (customerProvider.fromDate != null ||
+                              customerProvider.toDate != null ||
+                              !customerProvider.selectedStatusIds
+                                  .every((id) => id == 0) ||
+                              customerProvider.search.isNotEmpty)
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                onPressed: () {
+                                  customerProvider.clearAllFilters();
+                                  searchController.clear();
+                                  customerProvider.getSearchCustomers(context);
+                                },
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: AppColors.textRed,
+                                  side: BorderSide(color: AppColors.textRed),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                ),
+                                child: const Text('Reset All Filters'),
+                              ),
                             ),
-                            const SizedBox(height: 24),
-                            const SizedBox(height: 16),
-                          ],
-                        ),
+                          const SizedBox(height: 80),
+                        ],
                       ),
                     ),
-                  SliverList(
-                    delegate: SliverChildBuilderDelegate(
-                      (context, index) {
-                        var customer = customerProvider.customerData[index];
-                        return Column(
-                          children: [
-                            Divider(
-                              height: 1,
-                              color: AppColors.grey,
-                            ),
-                            LeadCard(
-                              isLead: false,
-                              lead: customer,
-                              isExpanded:
-                                  customerProvider.expandedIndex == index,
-                              onTap: () {
-                                customerProvider.toggleExpansion(index);
-                                if (customerProvider.expandedIndex == index) {
-                                  Provider.of<LeadCheckInProvider>(context,
-                                          listen: false)
-                                      .fetchLeadCheckInReports(context,
-                                          customer.customerId.toString());
-                                }
+                  ),
+                if (!customerProvider.isFilter)
+                  Expanded(
+                    child: RefreshIndicator(
+                      onRefresh: _refreshData,
+                      child: CustomScrollView(
+                        controller: customerProvider.scrollController,
+                        slivers: [
+                          SliverList(
+                            delegate: SliverChildBuilderDelegate(
+                              (context, index) {
+                                var customer =
+                                    customerProvider.customerData[index];
+                                return Column(
+                                  children: [
+                                    Divider(
+                                      height: 1,
+                                      color: AppColors.grey,
+                                    ),
+                                    LeadCard(
+                                      isLead: false,
+                                      lead: customer,
+                                      isExpanded:
+                                          customerProvider.expandedIndex ==
+                                              index,
+                                      onTap: () {
+                                        customerProvider.toggleExpansion(index);
+                                        if (customerProvider.expandedIndex ==
+                                            index) {
+                                          Provider.of<LeadCheckInProvider>(
+                                                  context,
+                                                  listen: false)
+                                              .fetchLeadCheckInReports(
+                                                  context,
+                                                  customer.customerId
+                                                      .toString());
+                                        }
+                                      },
+                                    ),
+                                  ],
+                                );
                               },
+                              childCount: customerProvider.customerData.length,
                             ),
-                          ],
-                        );
-                      },
-                      childCount: customerProvider.customerData.length,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
-              ),
+              ],
             ),
-      floatingActionButton: customerProvider.isFilter
-          ? Padding(
-              padding: const EdgeInsets.only(bottom: 32, left: 32),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    height: 40,
-                    child: FloatingActionButton.extended(
-                      heroTag: 'reset_customer_filter_fab',
-                      onPressed: () {
-                        customerProvider.clearAllFilters();
-                        customerProvider.getSearchCustomers(context);
-                      },
-                      backgroundColor: AppColors.textRed.withOpacity(0.8),
-                      label: const CustomText(
-                        'RESET',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      icon: const Icon(Icons.refresh,
-                          color: Colors.white, size: 18),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  SizedBox(
-                    height: 40,
-                    child: FloatingActionButton.extended(
-                      heroTag: 'apply_customer_filter_fab',
-                      onPressed: () {
-                        customerProvider.setSearchCriteria(
-                          customerProvider.search,
-                          customerProvider.fromDateS,
-                          customerProvider.toDateS,
-                        );
-                        customerProvider.getSearchCustomers(context);
-                        customerProvider.toggleFilter();
-                      },
-                      backgroundColor: AppColors.darkGreen,
-                      label: const CustomText(
-                        'APPLY',
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      icon: const Icon(Icons.check,
-                          color: Colors.white, size: 18),
-                    ),
-                  ),
-                ],
-              ),
-            )
-          : null,
     );
   }
 
