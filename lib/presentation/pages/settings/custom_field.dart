@@ -96,12 +96,14 @@ class _CustomFieldState extends State<CustomField> {
                                 });
                               },
                               decoration: const InputDecoration(
-                                hintText: 'Search...',
-                                isDense: true,
+                                hintText: 'Search fields...',
+                                hintStyle: TextStyle(
+                                    fontSize: 14, color: Colors.grey),
                                 prefixIcon: Icon(Icons.search,
-                                    color: Colors.grey, size: 18),
+                                    color: Colors.grey, size: 20),
                                 border: InputBorder.none,
-                                contentPadding: EdgeInsets.zero,
+                                contentPadding:
+                                    EdgeInsets.symmetric(vertical: 10),
                               ),
                             ),
                           ),

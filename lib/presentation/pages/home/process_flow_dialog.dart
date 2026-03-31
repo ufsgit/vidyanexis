@@ -234,93 +234,83 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                       child: ListView(
                         padding: const EdgeInsets.fromLTRB(16, 8, 16, 80),
                         children: [
-                          // Status Segmented Control
+                          // Status Segmented Control (Wrap instead of horizontal scroll)
                           Container(
-                            height: 45,
-                            decoration: const BoxDecoration(
-                              color: Colors.transparent,
+                            width: double.infinity,
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: const Color(0xFFE2E8F0)),
                             ),
-                            padding: const EdgeInsets.symmetric(vertical: 4),
-                            child: LayoutBuilder(
-                              builder: (context, constraints) {
-                                return SingleChildScrollView(
-                                  scrollDirection: Axis.horizontal,
-                                  physics: const BouncingScrollPhysics(),
-                                  child: Row(
-                                    children: statusOptions.map((status) {
-                                      bool isSelected =
-                                          selectedStatus.statusId ==
-                                              status.statusId;
-                                      return GestureDetector(
-                                        onTap: () async {
-                                          setState(() {
-                                            selectedStatus = status;
-                                          });
+                            padding: const EdgeInsets.all(12),
+                            child: Wrap(
+                              spacing: 8,
+                              runSpacing: 8,
+                              children: statusOptions.map((status) {
+                                bool isSelected =
+                                    selectedStatus.statusId == status.statusId;
+                                return GestureDetector(
+                                  onTap: () async {
+                                    setState(() {
+                                      selectedStatus = status;
+                                    });
 
-                                          int statusId =
-                                              selectedStatus.statusId ?? 0;
-                                          int tasktypeId =
-                                              selectedStatus.taskTypeId ?? 0;
-                                          int customerId =
-                                              widget.task.customerId;
-                                          int enquiryForId =
-                                              widget.task.enquiryForId;
+                                    int statusId = selectedStatus.statusId ?? 0;
+                                    int tasktypeId =
+                                        selectedStatus.taskTypeId ?? 0;
+                                    int customerId = widget.task.customerId;
+                                    int enquiryForId = widget.task.enquiryForId;
 
-                                          await reportsProvider.fetchTaskTypes(
-                                              tasktypeId,
-                                              statusId,
-                                              customerId,
-                                              enquiryForId,
-                                              context);
+                                    await reportsProvider.fetchTaskTypes(
+                                        tasktypeId,
+                                        statusId,
+                                        customerId,
+                                        enquiryForId,
+                                        context);
 
-                                          final formProvider =
-                                              Provider.of<FormProvider>(context,
-                                                  listen: false);
-                                          debugPrint(
-                                              "DEBUG: Status changed to ${status.statusName}, refreshing forms for taskTypeId: $tasktypeId");
-                                          await formProvider
-                                              .getFormDataByCustomer(
-                                            customerId.toString(),
-                                            taskTypeId: tasktypeId.toString(),
-                                            enquiryForId:
-                                                enquiryForId.toString(),
-                                            taskId:
-                                                widget.task.taskId.toString(),
-                                          );
-                                        },
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 200),
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 16),
-                                          margin: const EdgeInsets.symmetric(
-                                              horizontal: 4),
-                                          decoration: BoxDecoration(
-                                            color: isSelected
-                                                ? const Color(0xFFE3F2FD)
-                                                : Colors.transparent,
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                          ),
-                                          alignment: Alignment.center,
-                                          child: Text(
-                                            status.statusName ?? '',
-                                            style: GoogleFonts.plusJakartaSans(
-                                              color: isSelected
-                                                  ? const Color(0xFF1A7AE8)
-                                                  : const Color(0xFF64748B),
-                                              fontWeight: isSelected
-                                                  ? FontWeight.w700
-                                                  : FontWeight.w500,
-                                              fontSize: 13,
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    }).toList(),
+                                    final formProvider = Provider.of<FormProvider>(
+                                        context,
+                                        listen: false);
+                                    debugPrint(
+                                        "DEBUG: Status changed to ${status.statusName}, refreshing forms for taskTypeId: $tasktypeId");
+                                    await formProvider.getFormDataByCustomer(
+                                      customerId.toString(),
+                                      taskTypeId: tasktypeId.toString(),
+                                      enquiryForId: enquiryForId.toString(),
+                                      taskId: widget.task.taskId.toString(),
+                                    );
+                                  },
+                                  child: AnimatedContainer(
+                                    duration: const Duration(milliseconds: 200),
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 8),
+                                    decoration: BoxDecoration(
+                                      color: isSelected
+                                          ? const Color(0xFF1A7AE8)
+                                              .withOpacity(0.1)
+                                          : const Color(0xFFF1F5F9),
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(
+                                        color: isSelected
+                                            ? const Color(0xFF1A7AE8)
+                                            : Colors.transparent,
+                                      ),
+                                    ),
+                                    child: Text(
+                                      (status.statusName ?? '').toUpperCase(),
+                                      style: GoogleFonts.plusJakartaSans(
+                                        color: isSelected
+                                            ? const Color(0xFF1A7AE8)
+                                            : const Color(0xFF64748B),
+                                        fontWeight: isSelected
+                                            ? FontWeight.w700
+                                            : FontWeight.w600,
+                                        fontSize: 11,
+                                      ),
+                                    ),
                                   ),
                                 );
-                              },
+                              }).toList(),
                             ),
                           ),
 

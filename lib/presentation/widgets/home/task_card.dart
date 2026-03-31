@@ -112,7 +112,6 @@ class _TaskCardState extends State<TaskCard> {
                     ),
                   ],
                 ),
-                const SizedBox(height: 1),
 
                 // SECOND LINE: Task Type, Status and Dropdown Arrow
                 Row(
@@ -149,12 +148,12 @@ class _TaskCardState extends State<TaskCard> {
                       onTap: () => widget.onTap(),
                       child: Padding(
                         padding: const EdgeInsets.only(
-                            left: 8.0, top: 4.0, bottom: 4.0),
+                            left: 8.0, top: 0.0, bottom: 0.0),
                         child: Icon(
                           widget.isExpanded
                               ? Icons.keyboard_arrow_up
                               : Icons.keyboard_arrow_down,
-                          size: 28,
+                          size: 32,
                           color: AppColors.textGrey3,
                         ),
                       ),
@@ -164,8 +163,8 @@ class _TaskCardState extends State<TaskCard> {
 
                 // FOURTH LINE: Assigned To (If Admin)
                 if (userType == "1")
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0.0),
+                  Transform.translate(
+                    offset: const Offset(0, -4),
                     child: Text(
                       'Assigned To: ${widget.task.toUserName}',
                       style: GoogleFonts.plusJakartaSans(
