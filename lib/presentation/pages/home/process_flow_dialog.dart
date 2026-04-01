@@ -410,7 +410,7 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
 
                           Consumer<FormProvider>(
                             builder: (context, formProvider, child) {
-                              if (formProvider.isLoadingForms) {
+                              if (formProvider.isFetchingCustomerForms) {
                                 return const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 20),
                                   child: Center(
@@ -420,19 +420,52 @@ class ProcessFlowDialogState extends State<ProcessFlowDialog> {
                                   ),
                                 );
                               }
-                              if (formProvider.customerForms.isEmpty) {
-                                return const SizedBox.shrink();
+                              final forms = formProvider.customerForms.where((f) => 
+                                f.id.isNotEmpty && f.id != "0" && f.name.isNotEmpty
+                              ).toList();
+
+                              if (forms.isEmpty) {
+                                return const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 12),
+                                  child: Center(
+                                    child: Text(
+                                      'No forms available for this status',
+                                      style: TextStyle(
+                                        color: Colors.grey,
+                                        fontSize: 13,
+                                        fontStyle: FontStyle.italic,
+                                      ),
+                                    ),
+                                  ),
+                                );
                               }
+
+                              // Deduplicate forms locally for this dialog to ensure "One button per form type"
+                              // We prioritize the "Definition" (instanceId == null) so that clicking it
+                              // opens a fresh form.
+                              final Map<String, FormModel> uniqueForms = {};
+                              for (var f in forms) {
+                                if (!uniqueForms.containsKey(f.id)) {
+                                  uniqueForms[f.id] = f;
+                                } else {
+                                  // If we already have one, prefer the definition (null instanceId)
+                                  if (f.instanceId == null && 
+                                      uniqueForms[f.id]!.instanceId != null) {
+                                    uniqueForms[f.id] = f;
+                                  }
+                                }
+                              }
+                              final displayForms = uniqueForms.values.toList();
+
                               return Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  _buildSectionHeader('FORMS'),
+                                  _buildSectionHeader('Available Forms'),
                                   const SizedBox(height: 12),
                                   Wrap(
                                     spacing: 8.0,
                                     runSpacing: 8.0,
-                                    children:
-                                        formProvider.customerForms.map((form) {
+                                    children: displayForms.map((form) {
                                       return ElevatedButton.icon(
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor:

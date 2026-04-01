@@ -3295,7 +3295,7 @@ class _tasksPageReportState extends State<TaskPage> {
                               const SizedBox(height: 20),
                               Consumer<FormProvider>(
                                 builder: (context, formProvider, child) {
-                                  if (formProvider.isLoadingForms) {
+                                  if (formProvider.isFetchingCustomerForms) {
                                     return const Padding(
                                       padding:
                                           EdgeInsets.symmetric(vertical: 20),
@@ -3306,12 +3306,25 @@ class _tasksPageReportState extends State<TaskPage> {
                                       ),
                                     );
                                   }
-                                  final validForms =
+                                  final rawForms =
                                       formProvider.customerForms.where((form) {
                                     return form.id.isNotEmpty &&
                                         form.id != '0' &&
                                         form.name.isNotEmpty;
                                   }).toList();
+
+                                  // Deduplicate locally to ensure "One button per form type"
+                                  // We prefer the "Definition" (instanceId == null) so the button opens a fresh form.
+                                  final Map<String, FormModel> uniqueForms = {};
+                                  for (var f in rawForms) {
+                                    if (!uniqueForms.containsKey(f.id)) {
+                                      uniqueForms[f.id] = f;
+                                    } else if (f.instanceId == null && 
+                                               uniqueForms[f.id]!.instanceId != null) {
+                                      uniqueForms[f.id] = f;
+                                    }
+                                  }
+                                  final validForms = uniqueForms.values.toList();
 
                                   if (validForms.isEmpty) {
                                     return const SizedBox.shrink();

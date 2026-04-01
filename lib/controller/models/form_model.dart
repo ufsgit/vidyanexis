@@ -33,6 +33,7 @@ class FormModel {
   final String? createdUser;
   final String? createdDate;
   final int? taskId;
+  final int deletedStatus;
 
   FormModel({
     required this.id,
@@ -47,5 +48,6 @@ class FormModel {
     this.createdUser,
     this.createdDate,
     this.taskId,
+    this.deletedStatus = 0,
   });
 }

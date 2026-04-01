@@ -91,17 +91,12 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     if (widget.initialDocumentTypeId == null) ...[
-                      CustomText(
-                        "Select Document Type",
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.textGrey3,
-                      ),
-                      const SizedBox(height: 12),
-                      ListView.builder(
+                      ListView.separated(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: dropDownProvider.documentType.length,
+                        separatorBuilder: (context, index) =>
+                            Divider(color: Colors.grey.withOpacity(0.2), height: 1),
                         itemBuilder: (context, index) {
                           final docType = dropDownProvider.documentType[index];
                           final selectedCount = provider.fileInfoList
@@ -110,25 +105,10 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                               .length;
 
                           return Container(
-                            margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 12),
+                                horizontal: 8, vertical: 8),
                             decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: selectedCount > 0
-                                    ? AppColors.appViolet.withOpacity(0.5)
-                                    : AppColors.textGrey2.withOpacity(0.2),
-                                width: selectedCount > 0 ? 1.5 : 1,
-                              ),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.02),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
+                              color: Colors.transparent,
                             ),
                             child: Row(
                               children: [
@@ -147,10 +127,10 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                       ),
                                       if (selectedCount > 0)
                                         Padding(
-                                          padding: const EdgeInsets.only(top: 4),
+                                          padding: const EdgeInsets.only(top: 2),
                                           child: CustomText(
                                             '$selectedCount file${selectedCount > 1 ? 's' : ''} added',
-                                            fontSize: 12,
+                                            fontSize: 11,
                                             color: AppColors.appViolet,
                                             fontWeight: FontWeight.w600,
                                           ),
@@ -166,13 +146,13 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                     await provider.addFileMobile();
                                   },
                                   child: Container(
-                                    padding: const EdgeInsets.all(8),
+                                    padding: const EdgeInsets.all(6),
                                     decoration: BoxDecoration(
                                       color: selectedCount > 0
                                           ? AppColors.appViolet
                                           : AppColors.appViolet
                                               .withOpacity(0.1),
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(6),
                                     ),
                                     child: Icon(
                                       selectedCount > 0
@@ -181,7 +161,7 @@ class _ImageUploadAlertState extends State<ImageUploadAlert> {
                                       color: selectedCount > 0
                                           ? Colors.white
                                           : AppColors.appViolet,
-                                      size: 20,
+                                      size: 18,
                                     ),
                                   ),
                                 ),

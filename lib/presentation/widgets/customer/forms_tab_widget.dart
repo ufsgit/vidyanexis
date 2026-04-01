@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
@@ -31,10 +32,11 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   @override
   Widget build(BuildContext context) {
     final formProvider = Provider.of<FormProvider>(context);
+    final bool isLoading = formProvider.isFetchingCustomerForms;
 
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: formProvider.isLoadingForms
+      backgroundColor: const Color(0xFFF1F5F9), // Light grey background
+      body: isLoading
           ? const Center(
               child: CircularProgressIndicator(
                 color: AppColors.bluebutton,
@@ -42,7 +44,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
             )
           : formProvider.customerForms.isEmpty
               ? _buildEmptyState()
-              : _buildFormsTable(formProvider.customerForms),
+              : _buildFormsList(formProvider.customerForms),
     );
   }
 
@@ -54,15 +56,15 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
           Icon(
             Icons.assignment_outlined,
             size: 64,
-            color: Colors.grey[300],
+            color: Colors.grey[400],
           ),
           const SizedBox(height: 16),
           const Text(
-            "No form data found",
+            "No forms submitted yet",
             style: TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.w500,
-              color: Colors.grey,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF64748B),
             ),
           ),
         ],
@@ -70,97 +72,142 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
     );
   }
 
-  Widget _buildFormsTable(List<FormModel> forms) {
+  Widget _buildFormsList(List<FormModel> forms) {
+    return ListView.builder(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      itemCount: forms.length,
+      itemBuilder: (context, index) {
+        final form = forms[index];
+        return _buildFormCard(form, index + 1);
+      },
+    );
+  }
+
+  Widget _buildFormCard(FormModel form, int serialNum) {
     final formProvider = Provider.of<FormProvider>(context);
     final settingsprovider = Provider.of<SettingsProvider>(context);
-    const borderColor = Color(0xFFE9EDF1);
+    
+    // Format date string safely
+    String dateStr = "N/A";
+    if (form.createdDate != null) {
+        dateStr = form.createdDate!.split('T')[0];
+    }
 
-    return Expanded(
-      child: Container(
-        margin: const EdgeInsets.only(top: 10),
-        decoration: const BoxDecoration(
-          border: Border(
-            top: BorderSide(color: borderColor),
-            left: BorderSide(color: borderColor),
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
           ),
-        ),
-        child: Column(
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Table Header
-            IntrinsicHeight(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
+            // Serial Number / Badge
+            Container(
+              width: 32,
+              height: 32,
+              decoration: BoxDecoration(
+                color: const Color(0xFFEFF6FF),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Center(
+                child: Text(
+                  serialNum.toString(),
+                  style: GoogleFonts.plusJakartaSans(
+                    fontWeight: FontWeight.bold,
+                    color: const Color(0xFF2563EB),
+                    fontSize: 13,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 12),
+            // Content
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeaderCell('#', width: 50.0),
-                  _buildHeaderCell('Form Name', flex: 3),
-                  _buildHeaderCell('Created User', flex: 2),
-                  _buildHeaderCell('Created Date', flex: 2),
-                  _buildHeaderCell('Options', flex: 1),
+                  Text(
+                    form.name.toUpperCase(),
+                    style: GoogleFonts.plusJakartaSans(
+                      fontWeight: FontWeight.w800,
+                      fontSize: 14,
+                      color: const Color(0xFF1E293B),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      const Icon(Icons.person_outline, size: 14, color: Color(0xFF64748B)),
+                      const SizedBox(width: 4),
+                      Text(
+                        "User: ${form.createdUser ?? "N/A"}",
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Icon(Icons.calendar_today_outlined, size: 14, color: Color(0xFF64748B)),
+                      const SizedBox(width: 4),
+                      Text(
+                        dateStr,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 12,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                    ],
+                  ),
                 ],
               ),
             ),
-            // Table Body
-            Expanded(
-              child: ListView.builder(
-                itemCount: forms.length,
-                itemBuilder: (context, index) {
-                  final form = forms[index];
-                  return IntrinsicHeight(
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        _buildDataCell((index + 1).toString(), width: 50.0),
-                        _buildDataCell(form.name, flex: 3, isBold: true),
-                        _buildDataCell(form.createdUser ?? "Shebina", flex: 2),
-                        _buildDataCell(form.createdDate ?? "17-03-2026", flex: 2),
-                        _buildWidgetCell(
-                          flex: 1,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                                if (settingsprovider.menuIsEditMap[85] == 1)
-                                  IconButton(
-                                    icon: const Icon(Icons.edit,
-                                        size: 20, color: Colors.blue),
-                                    onPressed: () => _showEditDialog(form),
-                                  ),
-                                IconButton(
-                                  icon: formProvider.isPrinting
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child: CircularProgressIndicator(
-                                            strokeWidth: 2,
-                                            color: Colors.orange,
-                                          ),
-                                        )
-                                      : const Icon(Icons.print,
-                                          size: 20, color: Colors.orange),
-                                  onPressed: () {
-                                    if (form.instanceId != null) {
-                                      formProvider.fetchAndPrintFormPdf(
-                                        context: context,
-                                        customerId: widget.customerId,
-                                        formDataDetailsId: form.instanceId!,
-                                        taskId: form.taskId,
-                                      );
-                                    } else {
-                                      ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                            content: Text(
-                                                'No print data available for this form')),
-                                      );
-                                    }
-                                  },
-                                ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
-                  );
-                },
-              ),
+            // Actions
+            Column(
+              children: [
+                if (settingsprovider.menuIsEditMap[85] == 1)
+                  IconButton(
+                    icon: const Icon(Icons.edit_note, color: Color(0xFF2563EB)),
+                    onPressed: () => _showEditDialog(form),
+                    padding: EdgeInsets.zero,
+                    constraints: const BoxConstraints(),
+                  ),
+                const SizedBox(height: 8),
+                IconButton(
+                  icon: formProvider.isPrinting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.print_outlined, color: Color(0xFFF59E0B)),
+                  onPressed: () {
+                    if (form.instanceId != null) {
+                      formProvider.fetchAndPrintFormPdf(
+                        context: context,
+                        customerId: widget.customerId,
+                        formDataDetailsId: form.instanceId!,
+                        taskId: form.taskId,
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Print not available for this record')),
+                      );
+                    }
+                  },
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
             ),
           ],
         ),
@@ -171,20 +218,20 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   Widget _buildHeaderCell(String text, {int flex = 1, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
     Widget child = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: Color(0xFFF8FAFC),
         border: Border(
           right: BorderSide(color: borderColor),
-          bottom: BorderSide(color: borderColor),
+          bottom: BorderSide(color: borderColor, width: 1.5),
         ),
       ),
       child: Text(
         text,
-        style: const TextStyle(
-          color: Color(0xFF7D8B9B),
+        style: GoogleFonts.plusJakartaSans(
+          color: const Color(0xFF64748B),
           fontWeight: FontWeight.bold,
-          fontSize: 15,
+          fontSize: 13,
         ),
       ),
     );
@@ -196,7 +243,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   Widget _buildDataCell(String text, {int flex = 1, bool isBold = false, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
     Widget child = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -208,10 +255,10 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
         alignment: Alignment.centerLeft,
         child: Text(
           text,
-          style: TextStyle(
-            fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.w500,
             fontSize: 12,
-            color: AppColors.textBlack,
+            color: const Color(0xFF1E293B),
           ),
           overflow: TextOverflow.ellipsis,
         ),
@@ -225,7 +272,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   Widget _buildWidgetCell({required Widget child, int flex = 1, double? width}) {
     const borderColor = Color(0xFFE9EDF1);
     Widget cellChild = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
       decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(
@@ -233,7 +280,7 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
           bottom: BorderSide(color: borderColor),
         ),
       ),
-      child: Align(alignment: Alignment.centerLeft, child: child),
+      child: child,
     );
 
     if (width != null) return SizedBox(width: width, child: cellChild);

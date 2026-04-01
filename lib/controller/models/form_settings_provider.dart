@@ -14,6 +14,13 @@ class FormProvider extends ChangeNotifier {
   List<FormModel> _customerForms = [];
   List<FormModel> get customerForms => _customerForms;
 
+  bool _isFetchingCustomerForms = false;
+  bool get isFetchingCustomerForms => _isFetchingCustomerForms;
+  set isFetchingCustomerForms(bool value) {
+    _isFetchingCustomerForms = value;
+    notifyListeners();
+  }
+
   void clearForms() {
     _customerForms = [];
     _lastFetchedCustomerId = null;
@@ -260,8 +267,9 @@ class FormProvider extends ChangeNotifier {
               customerId: item['Customer_Id'],
               fields: parsedFields,
               taskId: item['Task_Id'] ?? item['task_id'],
+              deletedStatus: int.tryParse((item['Deleted_Status'] ?? item['deleted_status'] ?? 0).toString()) ?? 0,
             );
-          }).toList();
+          }).where((f) => f.deletedStatus != 1).toList();
           notifyListeners();
         }
       }
@@ -384,7 +392,8 @@ class FormProvider extends ChangeNotifier {
   String? _lastFetchedTaskTypeId;
   String? _lastFetchedEnquiryForId;
   String? _lastFetchedTaskId;
-  Future<void>? _activeFetch;
+  int _currentFetchId = 0;
+  Future<void>? _activeCustomerFetch;
 
   Future<void> getFormDataByCustomer(String customerId,
       {String? taskTypeId, String? enquiryForId, String? taskId}) async {
@@ -393,10 +402,10 @@ class FormProvider extends ChangeNotifier {
         _lastFetchedTaskTypeId == taskTypeId &&
         _lastFetchedEnquiryForId == enquiryForId &&
         _lastFetchedTaskId == taskId &&
-        (_customerForms.isNotEmpty || isLoadingForms)) {
+        (_customerForms.isNotEmpty || isFetchingCustomerForms)) {
       debugPrint(
           "DEBUG: getFormDataByCustomer - skipping redundant or overlapping fetch");
-      return _activeFetch;
+      return _activeCustomerFetch;
     }
 
     _lastFetchedCustomerId = customerId;
@@ -404,16 +413,19 @@ class FormProvider extends ChangeNotifier {
     _lastFetchedEnquiryForId = enquiryForId;
     _lastFetchedTaskId = taskId;
 
-    _customerForms = [];
-    isLoadingForms = true;
-    notifyListeners();
+    _currentFetchId++;
+    final int fetchId = _currentFetchId;
 
-    _activeFetch = _performFetch(customerId, taskTypeId, enquiryForId, taskId);
-    return _activeFetch;
+    _customerForms = [];
+    isFetchingCustomerForms = true;
+
+    _activeCustomerFetch =
+        _performFetch(customerId, taskTypeId, enquiryForId, taskId, fetchId);
+    return _activeCustomerFetch;
   }
 
   Future<void> _performFetch(String customerId, String? taskTypeId,
-      String? enquiryForId, String? taskId) async {
+      String? enquiryForId, String? taskId, int fetchId) async {
     try {
       if (availableFields.isEmpty) {
         await fetchAvailableFields();
@@ -446,8 +458,15 @@ class FormProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        final data = response.data;
+        var data = response.data;
         if (data != null) {
+          // If response is { "success": true, "data": { ... } } or { "success": true, "data": [ ... ] }
+          if (data is Map && data.containsKey('data') && data['data'] != null) {
+              data = data['data'];
+          } else if (data is Map && data.containsKey('Data') && data['Data'] != null) {
+              data = data['Data'];
+          }
+
           bool hasData = false;
           if (data is Map) {
             hasData = (data['forms'] is List && data['forms'].isNotEmpty) ||
@@ -457,63 +476,68 @@ class FormProvider extends ChangeNotifier {
           }
 
           if (hasData) {
-            setCustomerForms(data);
+            if (fetchId == _currentFetchId) {
+              _customerForms = _processCustomerFormsData(data);
+              notifyListeners();
+            }
           } else {
-            _customerForms = [];
-            isLoadingForms = false;
-            notifyListeners();
+            if (fetchId == _currentFetchId) {
+              _customerForms = [];
+              notifyListeners();
+            }
           }
         }
       }
     } catch (e) {
       debugPrint('Exception occurred in getFormDataByCustomer: $e');
     } finally {
-      isLoadingForms = false;
-      _activeFetch = null;
-      notifyListeners();
+      // Only reset loading state if this is the most recent request
+      if (fetchId == _currentFetchId) {
+        _isFetchingCustomerForms = false;
+        _activeCustomerFetch = null;
+        notifyListeners();
+      }
     }
   }
 
-  void setCustomerForms(dynamic data) {
-    if (data == null) return;
+  List<FormModel> _processCustomerFormsData(dynamic data) {
+    if (data == null) return [];
     try {
-      debugPrint("DEBUG: setCustomerForms received data: $data");
-      List<dynamic> formsList = [];
-      if (data is Map) {
-        var fForms = data['forms'];
-        var fData = data['form_data'];
-
-        if (fForms is List && fForms.isNotEmpty) {
-          formsList = fForms;
-        } else if (fData is List && fData.isNotEmpty) {
-          formsList = fData;
-        }
-      } else if (data is List) {
-        formsList = data;
+      debugPrint("DEBUG: _processCustomerFormsData received data: $data");
+      
+      // Secondary check if data is wrapped here as well
+      var processedData = data;
+      if (processedData is Map && processedData.containsKey('data') && processedData['data'] != null) {
+          processedData = processedData['data'];
+      } else if (processedData is Map && processedData.containsKey('Data') && processedData['Data'] != null) {
+          processedData = processedData['Data'];
       }
 
-      debugPrint("DEBUG: parsed formsList size: ${formsList.length}");
+      List<dynamic> formsList = [];
+      if (processedData is Map) {
+        var fForms = processedData['forms'];
+        var fData = processedData['form_data'];
 
-      _customerForms = formsList.map((item) {
+        // Merge both definitions and instances to provide a complete history in the tab
+        if (fForms is List) formsList.addAll(fForms);
+        if (fData is List) formsList.addAll(fData);
+      } else if (processedData is List) {
+        formsList = processedData;
+      }
+
+      return formsList.map((item) {
         List<FieldModel> parsedFields = [];
-        // ...
+        
         if (item['Custom_Fields'] != null && item['Custom_Fields'] is List) {
           parsedFields = (item['Custom_Fields'] as List).map((f) {
-            // Try both PascalCase and snake_case keys as seen in user's JSON
-            final cfId =
-                (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ??
-                    '0';
-            final cfName =
-                (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
+            final cfId = (f['Custom_Field_Id'] ?? f['custom_field_id'])?.toString() ?? '0';
+            final cfName = (f['Custom_Field_Name'] ?? f['custom_field_name'])?.toString();
             final isMandatoryValue = f['Is_Mandatory'] ?? f['isMandatory'];
 
-            // Match by ID first, then by Label as a fallback to "repair" corrupted IDs
             final availableField = availableFields.firstWhere(
               (a) => a.id == cfId,
               orElse: () => availableFields.firstWhere(
-                (a) =>
-                    cfName != null &&
-                    a.label.toLowerCase() == cfName.toLowerCase(),
+                (a) => cfName != null && a.label.toLowerCase() == cfName.toLowerCase(),
                 orElse: () => FieldModel(
                   id: cfId,
                   label: cfName ?? 'Field $cfId',
@@ -521,46 +545,48 @@ class FormProvider extends ChangeNotifier {
                 ),
               ),
             );
+            
             final dataValue = f['datavalue'] ?? f['DataValue'] ?? f['value'];
             final orderBy = f['Order_By'] ?? f['order_by'] ?? 0;
 
             return FieldModel(
               id: availableField.id,
-              label:
-                  availableField.label.isEmpty || availableField.label == "null"
-                      ? (cfName ?? 'Field $cfId')
-                      : availableField.label,
+              label: availableField.label.isEmpty || availableField.label == "null"
+                       ? (cfName ?? 'Field $cfId')
+                       : availableField.label,
               type: availableField.type,
               options: availableField.options,
               value: dataValue?.toString(),
-              isMandatory: (isMandatoryValue == 1 ||
-                  isMandatoryValue == true ||
-                  isMandatoryValue == "1"),
+              isMandatory: (isMandatoryValue == 1 || isMandatoryValue == true || isMandatoryValue == "1"),
               orderBy: int.tryParse(orderBy.toString()) ?? 0,
             );
           }).toList();
         }
 
         return FormModel(
-          id: item['Form_Id']?.toString() ?? '',
-          name: item['Form_Name']?.toString() ?? '',
-          department: item['Department_Name']?.toString() ?? '',
-          taskType: item['Task_Type_Name']?.toString() ?? '',
+          id: (item['Form_Id'] ?? item['form_id'] ?? '').toString(),
+          name: (item['Form_Name'] ?? item['form_name'] ?? '').toString(),
+          department: (item['Department_Name'] ?? item['department_name'] ?? '').toString(),
+          taskType: (item['Task_Type_Name'] ?? item['task_type_name'] ?? '').toString(),
           fields: parsedFields,
-          instanceId:
-              item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
-          createdDate: item['Created_Date'] ?? item['created_date'],
+          instanceId: item['Form_Data_Details_Id'] ?? item['form_data_details_id'],
+          createdDate: (item['Created_Date'] ?? item['created_at'] ?? item['created_date'] ?? item['entry_date'] ?? item['Entry_Date'])?.toString(),
+          createdUser: (item['created_user_name'] ?? item['Created_User_Name'] ?? item['created_by_name'] ?? item['Created_By_Name'] ?? item['user_name'])?.toString(),
           taskId: item['Task_Id'] ?? item['task_id'],
+          deletedStatus: int.tryParse((item['Deleted_Status'] ?? item['deleted_status'] ?? item['Is_Delete'] ?? item['is_delete'] ?? 0).toString()) ?? 0,
         );
-      }).toList();
-
-      isLoadingForms = false; // Reset loading state when forms are set
-      notifyListeners();
-      debugPrint(
-          "DEBUG: customerForms updated, size: ${_customerForms.length}");
+      }).where((f) => f.deletedStatus != 1).toList();
     } catch (e) {
-      debugPrint('Error in setCustomerForms: $e');
+      debugPrint('Error in _processCustomerFormsData: $e');
+      return [];
     }
+  }
+
+  // Deprecated - use internal processing
+  void setCustomerForms(dynamic data) {
+    _customerForms = _processCustomerFormsData(data);
+    _isFetchingCustomerForms = false;
+    notifyListeners();
   }
 
   Future<int?> saveTaskFormData({
