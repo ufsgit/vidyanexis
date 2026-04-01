@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/controller/audio_file_provider.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
@@ -31,6 +29,9 @@ import 'package:vidyanexis/controller/models/task_type_model.dart';
 import 'package:vidyanexis/controller/models/add_task_model.dart';
 import 'package:vidyanexis/controller/models/search_user_details_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_multi_level_dropdown.dart';
+import 'package:vidyanexis/utils/extensions.dart';
+import 'dart:developer';
+import 'package:go_router/go_router.dart';
 
 class CustomerPage extends StatefulWidget {
   const CustomerPage({super.key});
@@ -114,17 +115,13 @@ class _CustomerPageState extends State<CustomerPage> {
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
-  void onItemClick(int customerId) {
-    // final context = navigatorKey.currentState?.context;
-    // if (context != null) {
-    //   final sideProvider = Provider.of<SidebarProvider>(context, listen: false);
-    sideProvider.replaceWidgetCustomer(false, customerId.toString());
-    // } else {
-    //   print("Navigator context is null");
-    // }
-    // sideProvider
-    //     .replaceWidgetCustomer(
-    //     false, customerId.toString());
+  void onItemClick(dynamic customerId) {
+    if (AppStyles.isWebScreen(context)) {
+      sideProvider.replaceWidgetCustomer(false, customerId.toString());
+    } else {
+      context.push(
+          '${CustomerDetailsScreen.route}$customerId/${'true'}');
+    }
   }
 
   Future<void> loadExistingAudioFiles(List<AudioFileLead> audioFiless) async {
@@ -169,7 +166,6 @@ class _CustomerPageState extends State<CustomerPage> {
   Widget build(BuildContext context) {
     final customerProvider = Provider.of<CustomerProvider>(context);
     final provider = Provider.of<DropDownProvider>(context);
-    final leadsProvider = Provider.of<LeadsProvider>(context);
     final settingsProvider = Provider.of<SettingsProvider>(context);
 
     // Calculate dynamic heights for table
@@ -177,7 +173,7 @@ class _CustomerPageState extends State<CustomerPage> {
     const headerHeight = 60.0;
     const searchBarHeight = 70.0;
     const paginationHeight = 60.0;
-    const tableHeaderHeight = 50.0;
+    const tableHeaderHeight = 40.0;
 
     final availableHeight = screenHeight -
         headerHeight -
@@ -185,7 +181,7 @@ class _CustomerPageState extends State<CustomerPage> {
         paginationHeight -
         tableHeaderHeight -
         40;
-    final rowHeight = 48.0;
+    const double rowHeight = 36.0;
     return Scaffold(
       key: _scaffoldKey,
       body: SafeArea(
@@ -499,66 +495,49 @@ class _CustomerPageState extends State<CustomerPage> {
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: const Row(
-                                mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   TableWidget(
                                     width: 80,
                                     title: 'Sl No.',
                                     padding: EdgeInsets.symmetric(
-                                        vertical: 6.0, horizontal: 12.0),
+                                        vertical: 4.0, horizontal: 12.0),
                                     color: Color(0xFFFFFFFF),
                                   ),
-                                  // TableWidget(
-                                  //     title: 'Order no',
-                                  //     color: Color(0xFF607185)),
                                   TableWidget(
                                       flex: 3,
                                       title: 'Customer Name',
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Mobile no',
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Assigned Staff',
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Remarks',
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 1,
-                                      title: 'Follow-Up',
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Status',
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                   TableWidget(
                                       flex: 2,
                                       title: 'Follow Up Date',
                                       padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
-                                      color: Color(0xFFFFFFFF)),
-                                  TableWidget(
-                                      flex: 2,
-                                      title: 'Action',
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 6.0, horizontal: 8.0),
+                                          vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
                                 ],
                               ),
@@ -618,757 +597,35 @@ class _CustomerPageState extends State<CustomerPage> {
                                                 flex: 3,
                                                 padding:
                                                     const EdgeInsets.symmetric(
-                                                        vertical: 6.0,
+                                                        vertical: 4.0,
                                                         horizontal: 8.0),
-                                                data: InkWell(
-                                                  onTap: () {
-                                                    onItemClick(
-                                                        lead.customerId);
-                                                    // context.push(
-                                                    //     '${CustomerDetailsScreen.route}${lead.customerId.toString()}');
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFE9EDF1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                    ),
-                                                    child:
-                                                        MediaQuery.of(context)
-                                                                    .size
-                                                                    .width >
-                                                                1700
-                                                            ? Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min, // Ensures the Row takes only as much space as needed
-                                                                children: [
-                                                                  // Front image (before text)
-                                                                  Icon(
-                                                                    Icons
-                                                                        .account_circle,
-                                                                    size: 16,
-                                                                    color: AppColors
-                                                                        .primaryBlue,
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width:
-                                                                          8), // Space between the image and text
-                                                                  Text(
-                                                                    lead.customerName.length >
-                                                                            20
-                                                                        ? '${lead.customerName.substring(0, 20)}...'
-                                                                        : lead
-                                                                            .customerName,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          12,
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width:
-                                                                          8), // Space between the text and back image
-                                                                  // Back image (after text)
-                                                                  Icon(
-                                                                    Icons
-                                                                        .arrow_forward_ios,
-                                                                    size: 12,
-                                                                    color: Colors
-                                                                        .grey,
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            : Text(
-                                                                lead.customerName,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.contactNumber),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.toUserName),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: lead.remark),
-                                              TableWidget(
-                                                flex: 1,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 6.0,
-                                                        horizontal: 8.0),
-                                                data: InkWell(
-                                                  onTap: () async {
-                                                    try {
-                                                      final dropDownProvider =
-                                                          Provider.of<
-                                                                  DropDownProvider>(
-                                                              context,
-                                                              listen: false);
-                                                      final settingsProvider =
-                                                          Provider.of<
-                                                                  SettingsProvider>(
-                                                              context,
-                                                              listen: false);
-
-                                                      dropDownProvider
-                                                              .selectedStatusId =
-                                                          int.parse(lead
-                                                              .statusId
-                                                              .toString());
-                                                      leadsProvider
-                                                              .statusController
-                                                              .text =
-                                                          lead.statusName;
-                                                      print(
-                                                          'status id ${lead.statusId}');
-                                                      print(
-                                                          'status name ${lead.statusName}');
-                                                      dropDownProvider
-                                                              .selectedUserId =
-                                                          int.parse(lead
-                                                              .toUserId
-                                                              .toString());
-                                                      leadsProvider
-                                                          .searchUserController
-                                                          .text = lead.toUserName;
-                                                      print(
-                                                          'assign to ${lead.toUserName}');
-                                                      print(
-                                                          'assign to id ${lead.toUserId}');
-                                                      leadsProvider
-                                                          .setCutomerId(
-                                                              lead.customerId);
-                                                      leadsProvider
-                                                              .branchController
-                                                              .text =
-                                                          lead.branchName;
-                                                      settingsProvider
-                                                              .selectedBranchId =
-                                                          lead.branchId;
-                                                      print(
-                                                          'branch ${lead.branchId}');
-                                                      print(
-                                                          'branch name ${lead.branchName}');
-                                                      leadsProvider
-                                                              .departmentController
-                                                              .text =
-                                                          lead.departmentName;
-                                                      settingsProvider
-                                                              .selectedDepartmentId =
-                                                          int.tryParse(lead
-                                                                  .departmentId
-                                                                  .toString()) ??
-                                                              0;
-                                                      print(
-                                                          'department id ${lead.departmentId}');
-                                                      print(
-                                                          'department name ${lead.departmentName}');
-
-                                                      leadsProvider
-                                                          .nextFollowUpDateController
-                                                          .text = lead
-                                                              .nextFollowUpDate
-                                                              .isNotEmpty
-                                                          ? _formatDateSafely(lead
-                                                              .nextFollowUpDate)
-                                                          : '';
-                                                      leadsProvider
-                                                          .messageController
-                                                          .clear();
-                                                      dropDownProvider
-                                                          .filterStaffByBranchAndDepartment(
-                                                        branchId: lead.branchId,
-                                                        departmentId:
-                                                            int.tryParse(lead
-                                                                    .departmentId
-                                                                    .toString()) ??
-                                                                0,
-                                                      );
-                                                    } catch (e) {}
-                                                    showDialog(
-                                                      barrierDismissible: false,
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                              context) =>
-                                                          AddFollowupDialog(
-                                                        customerName:
+                                                data: Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: InkWell(
+                                                        onTap: () =>
+                                                            onItemClick(lead
+                                                                .customerId),
+                                                        child: Tooltip(
+                                                          message:
+                                                              lead.customerName,
+                                                          child: Text(
                                                             lead.customerName,
-                                                      ),
-                                                    );
-                                                  },
-                                                  child: Icon(
-                                                    lead.lateFollowUp == '0'
-                                                        ? Icons.event_available
-                                                        : Icons.event_busy,
-                                                    color:
-                                                        lead.lateFollowUp == '0'
-                                                            ? Colors.green
-                                                            : Colors.red,
-                                                    size: 20,
-                                                  ),
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                // width: 200,
-                                                flex: 2,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 6.0,
-                                                        horizontal: 8.0),
-                                                data: Container(
-                                                  padding: lead
-                                                          .statusName.isNotEmpty
-                                                      ? const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 4)
-                                                      : const EdgeInsets.all(0),
-                                                  decoration: BoxDecoration(
-                                                    // color: StatusUtils.getStatusColor(
-                                                    //     int.parse(lead.statusId)),
-                                                    color: parseColor(
-                                                            lead.colorCode)
-                                                        .withOpacity(0.1)
-                                                        .withAlpha(30),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    border: Border.all(
-                                                        color: Colors.black45,
-                                                        width: 0.1),
-                                                  ),
-                                                  child: Text(
-                                                    lead.statusName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: TextStyle(
-                                                      color: parseColor(
-                                                          lead.colorCode),
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      // color:
-                                                      //     StatusUtils.getStatusTextColor(
-                                                      //         int.parse(lead.statusId)),
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 6.0,
-                                                      horizontal: 8.0),
-                                                  title: (lead.nextFollowUpDate
-                                                          .isNotEmpty)
-                                                      ? DateFormat(
-                                                              'dd MMM yyyy')
-                                                          .format(DateTime
-                                                              .parse(lead
-                                                                  .nextFollowUpDate))
-                                                      : ''),
-                                              TableWidget(
-                                                flex: 2,
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        vertical: 6.0,
-                                                        horizontal: 8.0),
-                                                data: _HoverMenuAnchor(
-                                                  builder: (context, controller,
-                                                      onHover, child) {
-                                                    return IconButton(
-                                                      onPressed: () {
-                                                        if (controller.isOpen) {
-                                                          controller.close();
-                                                        } else {
-                                                          controller.open();
-                                                        }
-                                                      },
-                                                      icon: const Icon(
-                                                          Icons
-                                                              .keyboard_arrow_down,
-                                                          size: 20,
-                                                          color: Colors.grey),
-                                                      padding: EdgeInsets.zero,
-                                                    );
-                                                  },
-                                                  menuChildren: [
-                                                    if (settingsProvider
-                                                            .menuIsEditMap[4] ==
-                                                        1)
-                                                      (onHover) =>
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'edit',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(Icons.edit,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .blue),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Edit Customer'),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                    if (settingsProvider
-                                                                .menuIsSaveMap[
-                                                            16] ==
-                                                        1)
-                                                      (onHover) =>
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'quotation',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .request_quote,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .orange),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Quotation'),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                    if (settingsProvider
-                                                                .menuIsSaveMap[
-                                                            19] ==
-                                                        1)
-                                                      (onHover) =>
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'document',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .description,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .purple),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text(
-                                                                    'Document'),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                    if (settingsProvider
-                                                                .menuIsSaveMap[
-                                                            13] ==
-                                                        1)
-                                                      (onHover) =>
-                                                          MultiLevelHoverMenu(
-                                                            isSubMenu: false,
-                                                            title: 'Task',
-                                                            onHoverChange:
-                                                                (hovering) {
-                                                              onHover(hovering);
-                                                            },
-                                                            leadingIcon:
-                                                                const Icon(
-                                                                    Icons
-                                                                        .add_task,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .teal),
-                                                            children: provider
-                                                                .taskType
-                                                                .map(
-                                                                    (taskType) {
-                                                              final users = provider
-                                                                  .searchUserDetails
-                                                                  .where(
-                                                                      (user) {
-                                                                return user
-                                                                        .departmentId
-                                                                        .toString() ==
-                                                                    taskType
-                                                                        .departmentIds
-                                                                        .toString();
-                                                              }).toList();
-
-                                                              if (users
-                                                                  .isEmpty) {
-                                                                return MenuItemButton(
-                                                                  onPressed:
-                                                                      null,
-                                                                  child: Text(
-                                                                      taskType
-                                                                          .taskTypeName),
-                                                                );
-                                                              }
-
-                                                              return MultiLevelHoverMenu(
-                                                                title: taskType
-                                                                    .taskTypeName,
-                                                                children: users
-                                                                    .map(
-                                                                        (user) {
-                                                                  return MenuItemButton(
-                                                                    onPressed:
-                                                                        () {
-                                                                      _openTaskDialog(
-                                                                          lead,
-                                                                          taskType,
-                                                                          user);
-                                                                    },
-                                                                    child: Text(
-                                                                        user.userDetailsName),
-                                                                  );
-                                                                }).toList(),
-                                                              );
-                                                            }).toList(),
-                                                          ),
-                                                    if (settingsProvider
-                                                                .menuIsDeleteMap[
-                                                            4] ==
-                                                        1)
-                                                      (onHover) =>
-                                                          MenuItemButton(
-                                                            onPressed: () =>
-                                                                _handleLeadAction(
-                                                                    'delete',
-                                                                    lead),
-                                                            child: const Row(
-                                                              children: [
-                                                                Icon(
-                                                                    Icons
-                                                                        .delete,
-                                                                    size: 18,
-                                                                    color: Colors
-                                                                        .red),
-                                                                SizedBox(
-                                                                    width: 8),
-                                                                Text('Delete'),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          )
-                                        //Mobile Design
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Column(
-                                              // mainAxisAlignment: MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                // SizedBox(
-                                                //   width: 80,
-                                                //   child: Padding(
-                                                //     padding:
-                                                //         const EdgeInsets.symmetric(
-                                                //             vertical: 12.0,
-                                                //             horizontal: 25.0),
-                                                //     child: Text(
-                                                //         ((index + 1) +
-                                                //                 leadsProvider
-                                                //                     .startLimit -
-                                                //                 1)
-                                                //             .toString(),
-                                                //         style: const TextStyle(
-                                                //           fontWeight: FontWeight.bold,
-                                                //         )),
-                                                //   ),
-                                                // ),
-                                                Row(
-                                                  children: [
-                                                    InkWell(
-                                                      onTap: () {
-                                                        // sideprovider
-                                                        //     .replaceWidgetCustomer(
-                                                        //         false,
-                                                        //         lead.customerId
-                                                        //             .toString());
-                                                        context.push(
-                                                            '${CustomerDetailsScreen.route}${lead.customerId.toString()}/${'true'}');
-                                                      },
-                                                      child: Container(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .symmetric(
-                                                                horizontal: 8,
-                                                                vertical: 4),
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: const Color(
-                                                              0xFFE9EDF1),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(50),
-                                                        ),
-                                                        constraints:
-                                                            const BoxConstraints(
-                                                          maxWidth:
-                                                              120, // Set your desired max width here
-                                                        ),
-                                                        child: Text(
-                                                          lead.customerName,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                          maxLines: 1,
-                                                          style:
-                                                              const TextStyle(
-                                                            color: Colors.black,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                            fontSize: 14,
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    const Spacer(),
-                                                    Text(
-                                                      (lead.nextFollowUpDate
-                                                              .isNotEmpty)
-                                                          ? DateFormat(
-                                                                  'dd MMM yyyy')
-                                                              .format(DateTime
-                                                                  .parse(lead
-                                                                      .nextFollowUpDate))
-                                                          : '',
-                                                      style: const TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w600),
-                                                    ),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  lead.contactNumber,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          'Assigned Staff',
-                                                          style: TextStyle(
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            maxLines: 1,
+                                                            style:
+                                                                const TextStyle(
+                                                              color:
+                                                                  Colors.blue,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w500,
-                                                              color: AppColors
-                                                                  .textGrey4),
-                                                        ),
-                                                        Text(
-                                                          lead.toUserName,
-                                                          style:
-                                                              const TextStyle(
-                                                            fontWeight:
-                                                                FontWeight.w600,
+                                                                      .w600,
+                                                              fontSize: 12,
+                                                            ),
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
-                                                    const Spacer(),
-                                                  ],
-                                                ),
-                                                const SizedBox(
-                                                  height: 10,
-                                                ),
-                                                Text(
-                                                  lead.remark.trim(),
-                                                ),
-                                                const SizedBox(
-                                                  height: 15,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Text(
-                                                      'Follow Up  ',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColors
-                                                              .textGrey4),
-                                                    ),
-                                                    InkWell(
-                                                      onTap: () {
-                                                        final dropDownProvider =
-                                                            Provider.of<
-                                                                    DropDownProvider>(
-                                                                context,
-                                                                listen: false);
-                                                        final settingsProvider =
-                                                            Provider.of<
-                                                                    SettingsProvider>(
-                                                                context,
-                                                                listen: false);
-                                                        dropDownProvider
-                                                                .selectedStatusId =
-                                                            int.parse(lead
-                                                                .statusId
-                                                                .toString());
-                                                        leadsProvider
-                                                                .statusController
-                                                                .text =
-                                                            lead.statusName;
-                                                        print(
-                                                            'status id ${lead.statusId}');
-                                                        print(
-                                                            'status name ${lead.statusName}');
-                                                        dropDownProvider
-                                                                .selectedUserId =
-                                                            int.parse(lead
-                                                                .toUserId
-                                                                .toString());
-                                                        leadsProvider
-                                                            .searchUserController
-                                                            .text = lead.toUserName;
-                                                        print(
-                                                            'assign to ${lead.toUserName}');
-                                                        print(
-                                                            'assign to id ${lead.toUserId}');
-                                                        leadsProvider
-                                                            .setCutomerId(lead
-                                                                .customerId);
-                                                        leadsProvider
-                                                                .branchController
-                                                                .text =
-                                                            lead.branchName;
-                                                        settingsProvider
-                                                                .selectedBranchId =
-                                                            lead.branchId;
-                                                        print(
-                                                            'branch ${lead.branchId}');
-                                                        print(
-                                                            'branch name ${lead.branchName}');
-                                                        leadsProvider
-                                                                .departmentController
-                                                                .text =
-                                                            lead.departmentName;
-                                                        settingsProvider
-                                                                .selectedDepartmentId =
-                                                            int.tryParse(lead
-                                                                    .departmentId
-                                                                    .toString()) ??
-                                                                0;
-                                                        print(
-                                                            'department id ${lead.departmentId}');
-                                                        print(
-                                                            'department name ${lead.departmentName}');
-
-                                                        leadsProvider
-                                                            .nextFollowUpDateController
-                                                            .text = lead
-                                                                .nextFollowUpDate
-                                                                .isNotEmpty
-                                                            ? _formatDateSafely(
-                                                                lead.nextFollowUpDate)
-                                                            : '';
-                                                        leadsProvider
-                                                            .messageController
-                                                            .clear();
-                                                        dropDownProvider
-                                                            .filterStaffByBranchAndDepartment(
-                                                          branchId:
-                                                              lead.branchId,
-                                                          departmentId:
-                                                              int.tryParse(lead
-                                                                      .departmentId
-                                                                      .toString()) ??
-                                                                  0,
-                                                        );
-                                                        showDialog(
-                                                          barrierDismissible:
-                                                              false,
-                                                          context: context,
-                                                          builder: (BuildContext
-                                                                  context) =>
-                                                              AddFollowupDialog(
-                                                            customerName: lead
-                                                                .customerName,
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Icon(
-                                                        lead.lateFollowUp == '0'
-                                                            ? Icons
-                                                                .event_available
-                                                            : Icons.event_busy,
-                                                        color:
-                                                            lead.lateFollowUp ==
-                                                                    '0'
-                                                                ? Colors.green
-                                                                : Colors.red,
-                                                        size: 20,
                                                       ),
                                                     ),
                                                     _HoverMenuAnchor(
@@ -1394,6 +651,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                   Colors.grey),
                                                           padding:
                                                               EdgeInsets.zero,
+                                                          constraints:
+                                                              const BoxConstraints(),
                                                         );
                                                       },
                                                       menuChildren: [
@@ -1407,8 +666,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                     _handleLeadAction(
                                                                         'edit',
                                                                         lead),
-                                                                child:
-                                                                    const Row(
+                                                                child: Row(
                                                                   children: [
                                                                     Icon(
                                                                         Icons
@@ -1417,10 +675,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                             18,
                                                                         color: Colors
                                                                             .blue),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                             8),
-                                                                    Text(
+                                                                    const Text(
                                                                         'Edit Customer'),
                                                                   ],
                                                                 ),
@@ -1435,8 +693,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                     _handleLeadAction(
                                                                         'quotation',
                                                                         lead),
-                                                                child:
-                                                                    const Row(
+                                                                child: Row(
                                                                   children: [
                                                                     Icon(
                                                                         Icons
@@ -1445,10 +702,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                             18,
                                                                         color: Colors
                                                                             .orange),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                             8),
-                                                                    Text(
+                                                                    const Text(
                                                                         'Quotation'),
                                                                   ],
                                                                 ),
@@ -1463,8 +720,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                     _handleLeadAction(
                                                                         'document',
                                                                         lead),
-                                                                child:
-                                                                    const Row(
+                                                                child: Row(
                                                                   children: [
                                                                     Icon(
                                                                         Icons
@@ -1473,10 +729,10 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                             18,
                                                                         color: Colors
                                                                             .purple),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                             8),
-                                                                    Text(
+                                                                    const Text(
                                                                         'Document'),
                                                                   ],
                                                                 ),
@@ -1489,7 +745,8 @@ class _CustomerPageState extends State<CustomerPage> {
                                                               MultiLevelHoverMenu(
                                                                 isSubMenu:
                                                                     false,
-                                                                title: 'Task',
+                                                                title:
+                                                                    'Create Task',
                                                                 onHoverChange:
                                                                     (hovering) {
                                                                   onHover(
@@ -1559,8 +816,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                     _handleLeadAction(
                                                                         'delete',
                                                                         lead),
-                                                                child:
-                                                                    const Row(
+                                                                child: Row(
                                                                   children: [
                                                                     Icon(
                                                                         Icons
@@ -1569,61 +825,227 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                             18,
                                                                         color: Colors
                                                                             .red),
-                                                                    SizedBox(
+                                                                    const SizedBox(
                                                                         width:
                                                                             8),
-                                                                    Text(
+                                                                    const Text(
                                                                         'Delete'),
                                                                   ],
                                                                 ),
                                                               ),
                                                       ],
                                                     ),
-                                                    const Spacer(),
-                                                    Container(
-                                                      padding: lead.statusName
-                                                              .isNotEmpty
-                                                          ? const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 8,
-                                                              vertical: 4)
-                                                          : const EdgeInsets
-                                                              .all(0),
-                                                      decoration: BoxDecoration(
-                                                        // color: StatusUtils.getStatusColor(
-                                                        //     int.parse(lead.statusId)),
-                                                        color: parseColor(
-                                                                lead.colorCode)
-                                                            .withOpacity(0.1)
-                                                            .withAlpha(30),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
-                                                        border: Border.all(
-                                                            color:
-                                                                Colors.black45,
-                                                            width: 0.1),
-                                                      ),
-                                                      child: Text(
-                                                        lead.statusName,
-                                                        overflow: TextOverflow
-                                                            .ellipsis,
-                                                        maxLines: 1,
-                                                        style: TextStyle(
-                                                          color: parseColor(
-                                                              lead.colorCode),
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          // color:
-                                                          //     StatusUtils.getStatusTextColor(
-                                                          //         int.parse(lead.statusId)),
-                                                          fontSize: 12,
-                                                        ),
-                                                      ),
-                                                    ),
                                                   ],
                                                 ),
-                                              ],
+                                              ),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                                  title: lead.contactNumber),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                                  title: lead.toUserName),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 6.0,
+                                                      horizontal: 8.0),
+                                                  title: lead.remark),
+                                              TableWidget(
+                                                flex: 2,
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        vertical: 4.0,
+                                                        horizontal: 8.0),
+                                                data: InkWell(
+                                                  onTap: () => _onStatusClick(
+                                                      context, lead),
+                                                  child: Container(
+                                                    padding: lead.statusName
+                                                            .isNotEmpty
+                                                        ? const EdgeInsets
+                                                            .symmetric(
+                                                            horizontal: 8,
+                                                            vertical: 4)
+                                                        : EdgeInsets.zero,
+                                                    decoration: BoxDecoration(
+                                                      color: parseColor(
+                                                              lead.colorCode)
+                                                          .withOpacity(0.12),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      border: Border.all(
+                                                          color: parseColor(lead
+                                                                  .colorCode)
+                                                              .withOpacity(0.5),
+                                                          width: 0.5),
+                                                    ),
+                                                    child: Text(
+                                                      lead.statusName,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      maxLines: 1,
+                                                      style: TextStyle(
+                                                        color: parseColor(
+                                                            lead.colorCode),
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 12,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                  flex: 2,
+                                                  fontSize: 12,
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 8.0),
+                                                  title: lead.nextFollowUpDate
+                                                          .isNotEmpty
+                                                      ? lead.nextFollowUpDate
+                                                          .toDayMonthYearFormat()
+                                                      : ''),
+                                            ],
+                                          )
+                                        //Mobile Design
+                                        : Expanded(
+                                            child: Container(
+                                              margin: const EdgeInsets.only(
+                                                  bottom: 12),
+                                              padding: const EdgeInsets.all(12),
+                                              decoration: BoxDecoration(
+                                                color: Colors.white,
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: Colors.black
+                                                        .withOpacity(0.05),
+                                                    blurRadius: 10,
+                                                    offset: const Offset(0, 4),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Expanded(
+                                                        child: InkWell(
+                                                          onTap: () => onItemClick(lead.customerId),
+                                                          child: Text(
+                                                            lead.customerName,
+                                                            style: const TextStyle(
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold),
+                                                            overflow: TextOverflow
+                                                                .ellipsis,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        lead.nextFollowUpDate
+                                                            .toFormattedDate(),
+                                                        style: TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              lead.lateFollowUp ==
+                                                                      '0'
+                                                                  ? Colors.green
+                                                                  : Colors.red,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  const SizedBox(height: 4),
+                                                  Text(
+                                                    'Assigned: ${lead.toUserName}',
+                                                    style: TextStyle(
+                                                        fontSize: 12,
+                                                        color: Colors
+                                                            .grey.shade600),
+                                                  ),
+                                                  const SizedBox(height: 8),
+                                                  if (lead.remark.isNotEmpty)
+                                                    Text(
+                                                      lead.remark,
+                                                      maxLines: 2,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                          fontSize: 12,
+                                                          color:
+                                                              Colors.black87),
+                                                    ),
+                                                  const SizedBox(height: 12),
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.end,
+                                                    children: [
+                                                      InkWell(
+                                                        onTap: () =>
+                                                            _onStatusClick(
+                                                                context, lead),
+                                                        child: Container(
+                                                          padding:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      10,
+                                                                  vertical: 5),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            color: parseColor(lead
+                                                                    .colorCode)
+                                                                .withOpacity(
+                                                                    0.15),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        20),
+                                                            border: Border.all(
+                                                                color: parseColor(
+                                                                    lead.colorCode)),
+                                                          ),
+                                                          child: Text(
+                                                            lead.statusName,
+                                                            style: TextStyle(
+                                                              color: parseColor(
+                                                                  lead.colorCode),
+                                                              fontSize: 11,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w600,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ],
+                                              ),
                                             ),
                                           ),
                                   ),
@@ -1994,13 +1416,52 @@ class _CustomerPageState extends State<CustomerPage> {
     }
   }
 
-  String _formatDateSafely(String dateStr) {
+
+
+  void _onStatusClick(BuildContext context, SearchLeadModel lead) {
     try {
-      final date = DateTime.parse(dateStr);
-      return DateFormat('dd MMM yyyy').format(date);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
+      final settingsProvider =
+          Provider.of<SettingsProvider>(context, listen: false);
+      final leadsProvider = Provider.of<LeadsProvider>(context, listen: false);
+
+      dropDownProvider.selectedStatusId =
+          int.tryParse(lead.statusId.toString()) ?? 0;
+      leadsProvider.statusController.text = lead.statusName;
+
+      dropDownProvider.selectedUserId =
+          int.tryParse(lead.toUserId.toString()) ?? 0;
+      leadsProvider.searchUserController.text = lead.toUserName;
+
+      leadsProvider.setCutomerId(lead.customerId);
+      leadsProvider.branchController.text = lead.branchName;
+      settingsProvider.selectedBranchId = lead.branchId;
+      settingsProvider.selectedDepartmentId =
+          int.tryParse(lead.departmentId.toString()) ?? 0;
+      leadsProvider.departmentController.text = lead.departmentName;
+
+      leadsProvider.nextFollowUpDateController.text =
+          lead.nextFollowUpDate.isNotEmpty
+              ? lead.nextFollowUpDate.toDayMonthYearFormat()
+              : '';
+      leadsProvider.messageController.clear();
+
+      dropDownProvider.filterStaffByBranchAndDepartment(
+        branchId: lead.branchId,
+        departmentId: int.tryParse(lead.departmentId.toString()) ?? 0,
+      );
     } catch (e) {
-      return ''; // Return an empty string if parsing fails
+      log('Error in _onStatusClick: $e');
     }
+
+    showDialog(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) => AddFollowupDialog(
+        customerName: lead.customerName,
+      ),
+    );
   }
 
   List<String> dateButtonTitles = [
