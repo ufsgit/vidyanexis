@@ -237,7 +237,7 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                                                       ? MediaQuery.of(context)
                                                               .size
                                                               .width /
-                                                          3
+                                                          1.5
                                                       : MediaQuery.of(context)
                                                           .size
                                                           .width,
@@ -517,38 +517,41 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                                               TableWidget(
                                                 flex: 1,
                                                 data: InkWell(
-                                                  onTap: (settingsProvider.menuIsEditMap[36] == 1)
+                                                  onTap: (settingsProvider
+                                                                  .menuIsEditMap[
+                                                              36] ==
+                                                          1)
                                                       ? () {
-                                                          if (AppStyles.isWebScreen(
-                                                              context)) {
+                                                          if (AppStyles
+                                                              .isWebScreen(
+                                                                  context)) {
                                                             showDialog(
                                                               context: context,
-                                                              builder: (BuildContext
-                                                                  context) {
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
                                                                 return AlertDialog(
                                                                   backgroundColor:
-                                                                      Colors.white,
-                                                                  content: SizedBox(
+                                                                      Colors
+                                                                          .white,
+                                                                  content:
+                                                                      SizedBox(
                                                                     width: AppStyles
                                                                             .isWebScreen(
                                                                                 context)
-                                                                        ? MediaQuery.of(
-                                                                                    context)
-                                                                                .size
-                                                                                .width /
-                                                                            3
-                                                                        : MediaQuery.of(
-                                                                                context)
+                                                                        ? MediaQuery.of(context).size.width /
+                                                                            1.5
+                                                                        : MediaQuery.of(context)
                                                                             .size
                                                                             .width,
-                                                                    height:
-                                                                        MediaQuery.of(
-                                                                                context)
-                                                                            .size
-                                                                            .height,
+                                                                    height: MediaQuery.of(
+                                                                            context)
+                                                                        .size
+                                                                        .height,
                                                                     child:
                                                                         ProcessFlowAddWidget(
-                                                                      isEdit: true,
+                                                                      isEdit:
+                                                                          true,
                                                                       processFlowModel:
                                                                           processModel
                                                                               .copyWith(),
@@ -657,11 +660,13 @@ class _LeadsPageState extends State<ProcessFlowPage> {
                                                   title:
                                                       processModel.statusName ??
                                                           ""),
-                                              if (settingsProvider.menuIsDeleteMap[36] == 1)
+                                              if (settingsProvider
+                                                      .menuIsDeleteMap[36] ==
+                                                  1)
                                                 Padding(
-                                                  padding:
-                                                      const EdgeInsets.symmetric(
-                                                          horizontal: 8.0),
+                                                  padding: const EdgeInsets
+                                                      .symmetric(
+                                                      horizontal: 8.0),
                                                   child: InkWell(
                                                       onTap: () {
                                                         showDialog(

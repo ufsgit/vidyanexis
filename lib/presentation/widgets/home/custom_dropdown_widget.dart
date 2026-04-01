@@ -30,7 +30,6 @@ class CommonDropdown<T> extends StatelessWidget {
   final Color? borderColor;
   final Color? focusedBorderColor;
 
-
   @override
   Widget build(BuildContext context) {
     bool hasAsterisk = hintText.contains('*');
@@ -85,28 +84,30 @@ class CommonDropdown<T> extends StatelessWidget {
             ),
             labelStyle: GoogleFonts.plusJakartaSans(
               fontSize: 14,
-              fontWeight: FontWeight.w500,
+              fontWeight: FontWeight.w400,
               color: AppColors.textGrey3,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
-              borderSide: BorderSide(color: borderColor ?? AppColors.textGrey2, width: 1),
+              borderSide: BorderSide(
+                  color: borderColor ?? AppColors.textGrey2, width: 1),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
-              borderSide: BorderSide(color: focusedBorderColor ?? AppColors.textGrey2, width: 1),
+              borderSide: BorderSide(
+                  color: focusedBorderColor ?? AppColors.textGrey2, width: 1),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 10),
               borderSide: BorderSide(
-                  color: borderColor ?? (AppStyles.isWebScreen(context)
-                      ? AppColors.textGrey2
-                      : AppColors.grey),
+                  color: borderColor ??
+                      (AppStyles.isWebScreen(context)
+                          ? AppColors.textGrey2
+                          : AppColors.grey),
                   width: 1),
             ),
-
             contentPadding:
-                const EdgeInsets.symmetric(vertical: 18, horizontal: 12),
+                const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
           ),
           // Handle selectedValue properly, it should be a valid id in items
           value: validValue,
