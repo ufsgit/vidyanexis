@@ -267,8 +267,9 @@ class FormProvider extends ChangeNotifier {
               customerId: item['Customer_Id'],
               fields: parsedFields,
               taskId: item['Task_Id'] ?? item['task_id'],
+              deletedStatus: int.tryParse((item['Deleted_Status'] ?? item['deleted_status'] ?? 0).toString()) ?? 0,
             );
-          }).toList();
+          }).where((f) => f.deletedStatus != 1).toList();
           notifyListeners();
         }
       }
@@ -572,8 +573,9 @@ class FormProvider extends ChangeNotifier {
           createdDate: (item['Created_Date'] ?? item['created_at'] ?? item['created_date'] ?? item['entry_date'] ?? item['Entry_Date'])?.toString(),
           createdUser: (item['created_user_name'] ?? item['Created_User_Name'] ?? item['created_by_name'] ?? item['Created_By_Name'] ?? item['user_name'])?.toString(),
           taskId: item['Task_Id'] ?? item['task_id'],
+          deletedStatus: int.tryParse((item['Deleted_Status'] ?? item['deleted_status'] ?? item['Is_Delete'] ?? item['is_delete'] ?? 0).toString()) ?? 0,
         );
-      }).toList();
+      }).where((f) => f.deletedStatus != 1).toList();
     } catch (e) {
       debugPrint('Error in _processCustomerFormsData: $e');
       return [];
