@@ -77,6 +77,7 @@ class DashboardProvider extends ChangeNotifier {
   bool isCustomerLoaded = false;
   bool isTaskInfoLoaded = false;
   bool isDashboardCountLoaded = false;
+  bool isWorkDashboardCountLoaded = false;
   bool isTaskOverviewLoaded = false;
   bool isAmcLoaded = false;
   bool isPaymentLoaded = false;
@@ -440,7 +441,7 @@ class DashboardProvider extends ChangeNotifier {
       String? filterValue,
       String? keyword,
       bool shouldNotify = true}) async {
-    if (isDashboardCountLoaded && !isFilter) return;
+    if (isWorkDashboardCountLoaded && !isFilter) return;
     try {
       if (shouldNotify) notifyListeners();
       selectedDashboardCountValue = filterValue;
@@ -475,7 +476,7 @@ class DashboardProvider extends ChangeNotifier {
         if (response.statusCode == 200) {
           List<dynamic> data = response.data;
           dashBoardCountModel = await compute(_parseDashBoardCount, data);
-          isDashboardCountLoaded = true;
+          isWorkDashboardCountLoaded = true;
         }
       });
     } catch (e) {
@@ -661,6 +662,7 @@ class DashboardProvider extends ChangeNotifier {
             });
           }
           isDashboardCountLoaded = true;
+          await getDashBoardCount(shouldNotify: false);
         }
       });
     } catch (e) {
@@ -685,6 +687,7 @@ class DashboardProvider extends ChangeNotifier {
         getLeadProgressionReport(shouldNotify: false),
         getLeadEnquiryReport(shouldNotify: false),
         getLeadDashboardCount(shouldNotify: false),
+        getDashBoardCount(shouldNotify: false),
       ]);
       isLeadLoaded = true;
     } finally {
@@ -716,6 +719,7 @@ class DashboardProvider extends ChangeNotifier {
     isLeadLoaded = false;
     isWorkLoaded = false;
     isDashboardCountLoaded = false;
+    isWorkDashboardCountLoaded = false;
     print(_selectedUser.toString());
     notifyListeners(); // Notify listeners about the change
   }
@@ -770,6 +774,7 @@ class DashboardProvider extends ChangeNotifier {
     isLeadLoaded = false;
     isWorkLoaded = false;
     isDashboardCountLoaded = false;
+    isWorkDashboardCountLoaded = false;
     notifyListeners(); // Notify listeners to rebuild the UI
   }
 

@@ -92,7 +92,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                 await rtsFeasibilityReportPdf(customerDetails: leadDetailsProvider.leadDetails!.first, context: context);
                               },
                             ),
-                          if (settingsProvider.menuIsViewMap[61] == 1)
+                          if (settingsProvider.menuIsViewMap[101] == 1)
                             CustomElevatedButton(
                               backgroundColor: AppColors.whiteColor,
                               borderColor: AppColors.bluebutton,
@@ -102,7 +102,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                 await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure1}${widget.customerId}', 'Annexture1', context);
                               },
                             ),
-                          if (settingsProvider.menuIsViewMap[63] == 1)
+                          if (settingsProvider.menuIsViewMap[102] == 1)
                             CustomElevatedButton(
                               backgroundColor: AppColors.whiteColor,
                               borderColor: AppColors.bluebutton,
@@ -112,7 +112,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                 await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure2}${widget.customerId}', 'Annexture2', context);
                               },
                             ),
-                          if (settingsProvider.menuIsViewMap[62] == 1)
+                          if (settingsProvider.menuIsViewMap[103] == 1)
                             CustomElevatedButton(
                               backgroundColor: AppColors.whiteColor,
                               borderColor: AppColors.bluebutton,
