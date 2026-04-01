@@ -475,11 +475,14 @@ class FormProvider extends ChangeNotifier {
           }
 
           if (hasData) {
-            setCustomerForms(data);
+            if (fetchId == _currentFetchId) {
+              _customerForms = _processCustomerFormsData(data);
+              notifyListeners();
+            }
           } else {
             if (fetchId == _currentFetchId) {
-             _customerForms = [];
-             isFetchingCustomerForms = false;
+              _customerForms = [];
+              notifyListeners();
             }
           }
         }
@@ -489,16 +492,17 @@ class FormProvider extends ChangeNotifier {
     } finally {
       // Only reset loading state if this is the most recent request
       if (fetchId == _currentFetchId) {
-        isFetchingCustomerForms = false;
+        _isFetchingCustomerForms = false;
         _activeCustomerFetch = null;
+        notifyListeners();
       }
     }
   }
 
-  void setCustomerForms(dynamic data) {
-    if (data == null) return;
+  List<FormModel> _processCustomerFormsData(dynamic data) {
+    if (data == null) return [];
     try {
-      debugPrint("DEBUG: setCustomerForms received data: $data");
+      debugPrint("DEBUG: _processCustomerFormsData received data: $data");
       
       // Secondary check if data is wrapped here as well
       var processedData = data;
@@ -520,7 +524,7 @@ class FormProvider extends ChangeNotifier {
         formsList = processedData;
       }
 
-      _customerForms = formsList.map((item) {
+      return formsList.map((item) {
         List<FieldModel> parsedFields = [];
         
         if (item['Custom_Fields'] != null && item['Custom_Fields'] is List) {
@@ -570,14 +574,17 @@ class FormProvider extends ChangeNotifier {
           taskId: item['Task_Id'] ?? item['task_id'],
         );
       }).toList();
-
-      isLoadingForms = false;
-      isFetchingCustomerForms = false;
-      notifyListeners();
-      debugPrint("DEBUG: customerForms updated with ${_customerForms.length} items (no deduplication)");
     } catch (e) {
-      debugPrint('Error in setCustomerForms: $e');
+      debugPrint('Error in _processCustomerFormsData: $e');
+      return [];
     }
+  }
+
+  // Deprecated - use internal processing
+  void setCustomerForms(dynamic data) {
+    _customerForms = _processCustomerFormsData(data);
+    _isFetchingCustomerForms = false;
+    notifyListeners();
   }
 
   Future<int?> saveTaskFormData({
