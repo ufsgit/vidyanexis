@@ -2014,7 +2014,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context: context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[61] ==
+                                                                    if (settingsprovider.menuIsViewMap[101] ==
                                                                             1 &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
@@ -2035,7 +2035,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[63] ==
+                                                                    if (settingsprovider.menuIsViewMap[102] ==
                                                                             1 &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
@@ -2056,7 +2056,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
-                                                                    if (settingsprovider.menuIsViewMap[62] ==
+                                                                    if (settingsprovider.menuIsViewMap[103] ==
                                                                             1 &&
                                                                         sideprovider.name !=
                                                                             'Lead /')
