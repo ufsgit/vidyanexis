@@ -1735,6 +1735,21 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: 'Commercial ',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textGrey1,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
           OutlinedButton.icon(
             onPressed: () {
               customerDetailsProvider.clearCommercialItemFields();
@@ -2173,6 +2188,21 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: 'Bill of Materials ',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textGrey1,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
         Align(
           alignment: Alignment.centerLeft,
           child: OutlinedButton.icon(

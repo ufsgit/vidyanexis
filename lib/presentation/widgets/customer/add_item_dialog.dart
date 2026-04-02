@@ -5,9 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
 
 class AddItemDialog extends StatefulWidget {
   final int index;
@@ -27,21 +25,6 @@ class _AddItemDialogState extends State<AddItemDialog> {
   @override
   Widget build(BuildContext context) {
     final provider = Provider.of<CustomerDetailsProvider>(context);
-    final settingsProvider = Provider.of<SettingsProvider>(context);
-
-    // Find the selected unit ID based on the text in the controller
-    int? selectedUnitId;
-    if (provider.itemUnitController.text.isNotEmpty) {
-      try {
-        selectedUnitId = settingsProvider.searchUnit
-            .firstWhere(
-              (u) => u.unitName == provider.itemUnitController.text,
-            )
-            .unitId;
-      } catch (e) {
-        // Unit not found in the list
-      }
-    }
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -102,22 +85,15 @@ class _AddItemDialogState extends State<AddItemDialog> {
               const SizedBox(height: 16),
 
               // As Per Standards (Unit Dropdown)
-              CommonDropdown<int>(
-                items: settingsProvider.searchUnit
-                    .map((e) => DropdownItem<int>(
-                          id: e.unitId,
-                          name: e.unitName,
-                        ))
-                    .toList(),
-                hintText: provider.getQuotationFieldName(3, 'As Per Standards'),
+              CustomTextField(
                 controller: provider.itemUnitController,
-                onItemSelected: (unitId) {
-                  final unitName = settingsProvider.searchUnit
-                      .firstWhere((u) => u.unitId == unitId)
-                      .unitName;
-                  provider.itemUnitController.text = unitName;
-                },
-                selectedValue: selectedUnitId,
+                labelText:
+                    provider.getQuotationFieldName(3, 'As Per Standards'),
+                hintText: provider.getQuotationFieldName(3, 'As Per Standards'),
+                height: 54,
+                borderRadius: 12,
+                borderColor: const Color(0xFFD0D5DD),
+                focusedBorderColor: AppColors.bluebutton,
               ),
               const SizedBox(height: 16),
 
