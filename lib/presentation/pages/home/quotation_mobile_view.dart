@@ -3,7 +3,11 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/http/loader.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_commercial.dart';
+import 'package:vidyanexis/presentation/widgets/customer/pdf/print_residential.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -76,6 +80,8 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
               itemCount: customerDetailsProvider.quotationList.length,
               itemBuilder: (context, index) {
                 final item = customerDetailsProvider.quotationList[index];
+                final settingsProvider =
+                    Provider.of<SettingsProvider>(context, listen: false);
                 return InkWell(
                   onTap: () {
                     Navigator.push(
@@ -128,6 +134,96 @@ class _QuotationMobileViewState extends State<QuotationMobileView> {
                                 ),
                               ),
                             ),
+                            // Print 1 — API-generated PDF (menuIsViewMap[32])
+                            if (settingsProvider.menuIsViewMap[32] == 1) ...[
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () async {
+                                  await Loader.showLoader(context);
+                                  await customerDetailsProvider
+                                      .getQuotationMasterPdf(
+                                    item.quotationMasterId.toString(),
+                                    context,
+                                  );
+                                  Loader.stopLoader(context);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Tooltip(
+                                    message: 'Print Quotation 1',
+                                    child: const Icon(Icons.print,
+                                        size: 20, color: Colors.blue),
+                                  ),
+                                ),
+                              ),
+                            ],
+                            // Print 2 — Local Commercial/Residential PDF (menuIsViewMap[55])
+                            if (settingsProvider.menuIsViewMap[55] == 1) ...[
+                              const SizedBox(width: 4),
+                              GestureDetector(
+                                onTap: () async {
+                                  await Loader.showLoader(context);
+                                  await customerDetailsProvider
+                                      .getQuatationListByMasterId(
+                                    item.quotationMasterId.toString(),
+                                    context,
+                                  );
+                                  await customerDetailsProvider.fetchLeadDetails(
+                                      widget.customerId, context);
+                                  await settingsProvider.getCompanyDetails();
+
+                                  if (settingsProvider
+                                          .companyDetails.isNotEmpty &&
+                                      (customerDetailsProvider
+                                              .leadDetails?.isNotEmpty ??
+                                          false) &&
+                                      customerDetailsProvider
+                                          .quotationListByMaster.isNotEmpty) {
+                                    if (item.quotationTypeId == 2) {
+                                      printCommercialPDFs(
+                                        context: context,
+                                        companyDetails: settingsProvider
+                                            .companyDetails[0],
+                                        customerDetails: customerDetailsProvider
+                                            .leadDetails![0],
+                                        quotationData: customerDetailsProvider
+                                            .quotationListByMaster[0],
+                                      );
+                                    } else {
+                                      printResidentialPDFs(
+                                        context: context,
+                                        companyDetails: settingsProvider
+                                            .companyDetails[0],
+                                        customerDetails: customerDetailsProvider
+                                            .leadDetails![0],
+                                        quotationData: customerDetailsProvider
+                                            .quotationListByMaster[0],
+                                      );
+                                    }
+                                  } else {
+                                    if (context.mounted) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                        const SnackBar(
+                                            content: Text(
+                                                'Unable to load details for printing')),
+                                      );
+                                    }
+                                  }
+                                  Loader.stopLoader(context);
+                                },
+                                child: Padding(
+                                  padding: const EdgeInsets.all(4),
+                                  child: Tooltip(
+                                    message: item.quotationTypeId == 2
+                                        ? 'Print Commercial'
+                                        : 'Print Residential',
+                                    child: const Icon(Icons.print_outlined,
+                                        size: 20, color: Colors.blue),
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                         const SizedBox(height: 15),
