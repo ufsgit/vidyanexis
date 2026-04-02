@@ -939,6 +939,48 @@ class LeadReportProvider extends ChangeNotifier {
     }
   }
 
+  Future<List<LeadReportModel>> fetchAllLeadsForExport(
+      BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+      } else {
+        isDate = "1";
+      }
+
+      // Fetch with a large range (e.g., 1 to 10000) to get all results
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Status_Id=${_selectedStatus ?? 0}&Page_Index1=1&Page_Index2=10000&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data is List) {
+          List<LeadReportModel> allLeads = data
+              .map((item) => LeadReportModel.fromJson(item))
+              .toList();
+
+          if (allLeads.isNotEmpty) {
+            // Remove the metadata row (last item) if it contains total counts
+            allLeads.removeLast();
+          }
+          return allLeads;
+        }
+      }
+      return [];
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error fetching leads for export: $e');
+      }
+      return [];
+    } finally {
+      Loader.stopLoader(context);
+    }
+  }
+
   Future<void> getSearchLeads(BuildContext context) async {
     // try {
     // Loader.showLoader(context);

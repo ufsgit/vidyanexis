@@ -540,4 +540,65 @@ class TaskReportProvider extends ChangeNotifier {
       print('Exception occurred: $e');
     }
   }
+
+  Future<List<TaskReportModel>> fetchAllTasksForExport(
+      BuildContext context) async {
+    try {
+      Loader.showLoader(context);
+      if (_Status.isEmpty || _Status == 'null') {
+        _Status = '0';
+      }
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+      } else {
+        isDate = "1";
+      }
+
+      String toUserId = (_selectedUser ?? 0).toString();
+
+      if (_TaskType.isEmpty || _TaskType == 'null') {
+        _TaskType = '0';
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: HttpUrls.searchTaskReport,
+          bodyData: {
+            'Customer_Name': _Search,
+            'Task_Status_Id': _Status,
+            'To_User': toUserId,
+            'Is_Date': isDate,
+            'Fromdate': _fromDateS,
+            'Todate': _toDateS,
+            'Task_Type_Id': _TaskType,
+            'Page_Index': 1,
+            'PageSize': 10000, // Fetch a large number for export
+          });
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          final dataMap = data is Map ? data['data'] ?? data : data;
+          if (dataMap is List) {
+            final allTasks =
+                dataMap.map((item) => TaskReportModel.fromJson(item)).toList();
+
+            // Remove metadata row if present
+            if (allTasks.isNotEmpty &&
+                allTasks.last.taskId == 0 &&
+                allTasks.last.customerId > 0) {
+              allTasks.removeLast();
+            }
+            return allTasks;
+          }
+        }
+      }
+      return [];
+    } catch (e) {
+      print('DEBUG: Exception in fetchAllTasksForExport: $e');
+      return [];
+    } finally {
+      Loader.stopLoader(context);
+    }
+  }
 }
