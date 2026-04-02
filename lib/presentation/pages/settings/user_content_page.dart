@@ -499,9 +499,7 @@ class _UsersContentState extends State<UsersContent> {
                                                                       .searchUserDetails[
                                                                           index]
                                                                       .allowAppLogin ==
-                                                                  1
-                                                              ? true
-                                                              : false,
+                                                                  '1',
                                                           userType: settingsProvider
                                                               .searchUserDetails[
                                                                   index]
@@ -887,10 +885,7 @@ class _UsersContentState extends State<UsersContent> {
                                                           .toString());
 
                                                       return SettingsAddUserWidget(
-                                                          appLogin:
-                                                              settingsProvider.searchUserDetails[index].allowAppLogin == 1
-                                                                  ? true
-                                                                  : false,
+                                                          appLogin: settingsProvider.searchUserDetails[index].allowAppLogin == '1',
                                                           userType: settingsProvider
                                                               .searchUserDetails[
                                                                   index]

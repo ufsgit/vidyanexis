@@ -122,6 +122,56 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                 await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfAnnexure3}${widget.customerId}', 'Annexture3', context);
                               },
                             ),
+                          if (settingsProvider.menuIsViewMap[105] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Net meter Agreement',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}', 'Net meter Agreement', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[106] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'MNRE Agreement',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfMnreAgreement}${widget.customerId}', 'MNRE Agreement', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[107] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Loan Agreement',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfLoanAgreement}${widget.customerId}', 'Loan Agreement', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[108] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Schedule',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfSchedule}${widget.customerId}', 'Schedule', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[109] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Completion Report',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfCompletionReport}${widget.customerId}', 'Completion Report', context);
+                              },
+                            ),
                         ],
                       ),
                     ),

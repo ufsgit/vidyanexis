@@ -76,7 +76,7 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
         settingsProvider.employeeCodeController.text = widget.empCode!;
         settingsProvider.dateOfJoinController.text = widget.doj!;
         settingsProvider.designationController.text = widget.designation!;
-        settingsProvider.allowAppLogin;
+        settingsProvider.toggleAppLogin(widget.appLogin ?? false);
         final userWorkingStatus =
             settingsProvider.searchWorkingStatus.firstWhere(
           (status) =>
