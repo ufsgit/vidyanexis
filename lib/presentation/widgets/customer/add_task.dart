@@ -96,6 +96,20 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                 '';
         customerDetailsProvider.taskDescriptionController.text =
             widget.taskDetails?.description ?? widget.task?.description ?? '';
+
+        if (widget.taskDetails?.taskDate != null &&
+            widget.taskDetails!.taskDate.isNotEmpty) {
+          try {
+            DateTime date = DateTime.parse(widget.taskDetails!.taskDate);
+            customerDetailsProvider.taskChoosedateController.text =
+                DateFormat('dd MMM yyyy').format(date);
+          } catch (e) {
+            // Handle parsing error
+          }
+        } else if (widget.task?.taskDate != null) {
+          customerDetailsProvider.taskChoosedateController.text =
+              DateFormat('dd MMM yyyy').format(widget.task!.taskDate);
+        }
       }
     });
   }
@@ -451,6 +465,80 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                     ],
                   ),
                 ),
+              const SizedBox(height: 16),
+              Container(
+                width: double.infinity,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 10,
+                      offset: const Offset(0, 4),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'TASK DATE',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w800,
+                        color: Colors.grey[400],
+                        letterSpacing: 1.2,
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    InkWell(
+                      onTap: () async {
+                        final DateTime? picked = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime.now(),
+                          firstDate: DateTime(2000),
+                          lastDate: DateTime(2101),
+                        );
+                        if (picked != null) {
+                          customerDetailsProvider.taskChoosedateController
+                              .text = DateFormat('dd MMM yyyy').format(picked);
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 12),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFF7F8F9),
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.transparent),
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              customerDetailsProvider
+                                      .taskChoosedateController.text.isEmpty
+                                  ? 'Select Date'
+                                  : customerDetailsProvider
+                                      .taskChoosedateController.text,
+                              style: GoogleFonts.plusJakartaSans(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF1E232C),
+                              ),
+                            ),
+                            Icon(Icons.calendar_today,
+                                color: AppColors.bluebutton, size: 20),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 16),
               Container(
                 width: double.infinity,
