@@ -84,6 +84,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
       if (widget.isEdit) {
         customerDetailsProvider.commissionController.text =
             widget.task?.commissionNumber.toString() ?? '';
+        customerDetailsProvider.taskDescriptionController.text =
+            widget.task?.description ?? '';
       }
     });
   }
@@ -105,7 +107,8 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
       }
 
       await customerDetailsProvider.saveTask(
-        widget.task?.taskId.first.toString() ?? '0',  //taking first item from list
+        widget.task?.taskId.first.toString() ??
+            '0', //taking first item from list
         widget.task?.taskMasterId.toString() ?? '0',
         customerDetailsProvider.selectedTaskType.toString(),
         customerDetailsProvider.taskDescriptionController.text.toString(),
@@ -306,6 +309,71 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                                 );
                               }).toList(),
                             ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 14, vertical: 16),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(16),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.04),
+                          blurRadius: 10,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'DESCRIPTION',
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.grey[400],
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        TextField(
+                          controller:
+                              customerDetailsProvider.taskDescriptionController,
+                          maxLines: 3,
+                          style: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            color: const Color(0xFF1E232C),
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Enter task description...',
+                            hintStyle: GoogleFonts.plusJakartaSans(
+                              fontSize: 14,
+                              color: Colors.grey[400],
+                            ),
+                            filled: true,
+                            fillColor: const Color(0xFFF7F8F9),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide.none,
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(12),
+                              borderSide: BorderSide(
+                                  color: AppColors.bluebutton.withOpacity(0.5)),
+                            ),
+                            contentPadding: const EdgeInsets.all(12),
                           ),
                         ),
                       ],

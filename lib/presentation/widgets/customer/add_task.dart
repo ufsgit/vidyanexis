@@ -94,6 +94,8 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
             widget.taskDetails?.commissionNumber.toString() ??
                 widget.task?.commissionNumber.toString() ??
                 '';
+        customerDetailsProvider.taskDescriptionController.text =
+            widget.taskDetails?.description ?? widget.task?.description ?? '';
       }
     });
   }
