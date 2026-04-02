@@ -1356,7 +1356,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),              Align(
+              const SizedBox(height: 16),
+              Align(
                 alignment: Alignment.centerLeft,
                 child: OutlinedButton.icon(
                   onPressed: () {
@@ -1375,8 +1376,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     foregroundColor: AppColors.primaryBlue,
                     backgroundColor: Colors.white,
                     side: BorderSide(color: AppColors.primaryBlue),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
@@ -1411,8 +1412,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   );
                 },
               ),
-
-
               if (customerDetailsProvider.items.isNotEmpty)
                 Row(
                   mainAxisAlignment: AppStyles.isWebScreen(context)
@@ -2329,7 +2328,6 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
             ),
             TextButton(
               onPressed: () async {
-                Navigator.pop(context); // Close dialog
                 final customerDetailsProvider =
                     Provider.of<CustomerDetailsProvider>(context,
                         listen: false);
@@ -2363,6 +2361,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     );
                   }
                 }
+                Navigator.pop(context); // Close dialog
               },
               child: Text(
                 'Yes',
