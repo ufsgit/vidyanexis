@@ -6,6 +6,8 @@ import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_commercial_item_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_field_section_widget.dart';
@@ -1354,284 +1356,30 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   ],
                 ),
               ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemNameController,
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          1, 'Item Name'),
-                      labelText: '',
+              const SizedBox(height: 16),              Align(
+                alignment: Alignment.centerLeft,
+                child: OutlinedButton.icon(
+                  onPressed: () {
+                    customerDetailsProvider.clearItemFields();
+                    showDialog(
+                      context: context,
+                      builder: (context) => const AddItemDialog(
+                        index: -1,
+                        isEdit: false,
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: const Text('Add Item'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: AppColors.primaryBlue,
+                    backgroundColor: Colors.white,
+                    side: BorderSide(color: AppColors.primaryBlue),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemMrpController,
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          2, 'As Per Standerd Warranty'),
-                      labelText: '',
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemUnitController,
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          3, 'As Per Standerds'),
-                      labelText: '',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemPriceController,
-                      onChanged: (p0) {
-                        // Calculate total amount and GST when price changes
-                        customerDetailsProvider.calculateTotalAmount();
-                      },
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          4, 'Price'),
-                      labelText: '',
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d{0,2}'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller:
-                          customerDetailsProvider.itemQuantityController,
-                      onChanged: (value) {
-                        // Calculate total amount when quantity changes
-                        customerDetailsProvider.calculateTotalAmount();
-                      },
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          5, 'Quantity'),
-                      labelText: '',
-                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller:
-                          customerDetailsProvider.itemGstPercentController,
-                      onChanged: (value) {
-                        // Calculate GST when GST% changes
-                        customerDetailsProvider.calculateTotalAmount();
-                      },
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          6, 'gst %'),
-                      labelText: '',
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d{0,2}'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: true,
-                      height: 54,
-                      controller: customerDetailsProvider.itemGstController,
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          7, 'GST'),
-                      labelText: '',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: false,
-                      height: 54,
-                      controller: customerDetailsProvider.itemAdCessController,
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          8, 'Other Tax'),
-                      labelText: '',
-                      onChanged: (value) {
-                        // Calculate GST when GST% changes
-                        customerDetailsProvider.calculateTotalAmount();
-                      },
-                      inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                          RegExp(r'^\d*\.?\d{0,2}'),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CustomTextField(
-                      readOnly: true,
-                      height: 54,
-                      controller: customerDetailsProvider.itemTotalController,
-                      hintText: customerDetailsProvider.getQuotationFieldName(
-                          9, 'Amount'),
-                      labelText: '',
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: CustomTextField(
-              //         readOnly: false,
-              //         height: 54,
-              //         controller: customerDetailsProvider
-              //             .itemMrpController,
-              //         hintText: 'MRP',
-              //         labelText: '',
-              //         inputFormatters: [
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     ),
-              //     const SizedBox(width: 16),
-              //     Expanded(
-              //       child: CustomTextField(
-              //         readOnly: false,
-              //         height: 54,
-              //         controller: customerDetailsProvider
-              //             .itemPriceController,
-              //         onChanged: (p0) {
-              //           int total = 0;
-
-              //           final itemPrice = int.tryParse(
-              //               customerDetailsProvider
-              //                   .itemPriceController.text);
-              //           final itemQuantity = int.tryParse(
-              //               customerDetailsProvider
-              //                   .itemQuantityController.text);
-
-              //           if (itemPrice != null &&
-              //               itemQuantity != null) {
-              //             total = itemPrice * itemQuantity;
-              //           } else {
-              //             print(
-              //                 "Invalid input for price or quantity");
-              //           }
-              //           customerDetailsProvider
-              //               .itemTotalController
-              //               .text = total.toString();
-              //         },
-              //         hintText: 'Price',
-              //         labelText: '',
-              //         inputFormatters: [
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              // const SizedBox(height: 16),
-              // Row(
-              //   children: [
-              //     Expanded(
-              //       child: CustomTextField(
-              //         readOnly: false,
-              //         height: 54,
-              //         controller: customerDetailsProvider
-              //             .itemQuantityController,
-              //         hintText: 'Quantity',
-              //         labelText: '',
-              //         onChanged: (p0) {
-              //           int total = 0;
-
-              //           final itemPrice = int.tryParse(
-              //               customerDetailsProvider
-              //                   .itemPriceController.text);
-              //           final itemQuantity = int.tryParse(
-              //               customerDetailsProvider
-              //                   .itemQuantityController.text);
-
-              //           if (itemPrice != null &&
-              //               itemQuantity != null) {
-              //             total = itemPrice * itemQuantity;
-              //           } else {
-              //             print(
-              //                 "Invalid input for price or quantity");
-              //           }
-              //           customerDetailsProvider
-              //               .itemTotalController
-              //               .text = total.toString();
-              //         },
-              //         inputFormatters: [
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     ),
-              //     const SizedBox(width: 16),
-              //     Expanded(
-              //       child: CustomTextField(
-              //         readOnly: true,
-              //         height: 54,
-              //         controller: customerDetailsProvider
-              //             .itemTotalController,
-              //         hintText: 'Total',
-              //         labelText: '',
-              //         inputFormatters: [
-              //           FilteringTextInputFormatter.digitsOnly
-              //         ],
-              //       ),
-              //     ),
-              //   ],
-              // ),
-              const SizedBox(height: 16),
-              OutlinedButton.icon(
-                onPressed: () {
-                  customerDetailsProvider.addOrEditItem(context);
-                },
-                icon: const Icon(Icons.add),
-                label: const Text('Add item'),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor:
-                      AppColors.primaryBlue, // Change foreground color
-                  backgroundColor: Colors.white, // Change background color
-                  side: BorderSide(
-                      color: AppColors.primaryBlue), // Change border color
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 0,
-                  ),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8), // Add border radius
                   ),
                 ),
               ),
@@ -1649,6 +1397,13 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     onEdit: () {
                       customerDetailsProvider
                           .populateItemFieldsForEditing(index);
+                      showDialog(
+                        context: context,
+                        builder: (context) => AddItemDialog(
+                          index: index,
+                          isEdit: true,
+                        ),
+                      );
                     },
                     onDelete: () {
                       customerDetailsProvider.deleteItem(index);
@@ -1656,6 +1411,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                   );
                 },
               ),
+
 
               if (customerDetailsProvider.items.isNotEmpty)
                 Row(
@@ -1990,92 +1746,20 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                     color: AppColors.textGrey1,
                   ),
                 ),
-                TextSpan(
-                  text: '',
-                  style: GoogleFonts.plusJakartaSans(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w500,
-                    color: Colors.red,
-                  ),
-                ),
               ],
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  controller:
-                      customerDetailsProvider.commercialDescriptionController,
-                  readOnly: false,
-                  keyboardType: TextInputType.multiline,
-                  height: 54,
-                  hintText: 'Description',
-                  labelText: '',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  controller:
-                      customerDetailsProvider.commercialDCCapacityController,
-                  readOnly: false,
-                  height: 54,
-                  hintText: 'Solar Plant DC Capacity',
-                  labelText: '',
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: CustomTextField(
-                  controller:
-                      customerDetailsProvider.commercialACCapacityController,
-                  readOnly: false,
-                  height: 54,
-                  hintText: 'Solar Plant AC Capacity',
-                  labelText: '',
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: CustomTextField(
-                  controller:
-                      customerDetailsProvider.commercialUnitPriceController,
-                  readOnly: false,
-                  height: 54,
-                  hintText: 'Unit Price',
-                  labelText: '',
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: CustomTextField(
-                  controller: customerDetailsProvider.commercialTotalController,
-                  readOnly: false,
-                  height: 54,
-                  hintText: 'Total',
-                  labelText: '',
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                        RegExp(r'^\d*\.?\d{0,2}')),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
           OutlinedButton.icon(
             onPressed: () {
-              customerDetailsProvider.addOrEditCommercialItem(context);
+              customerDetailsProvider.clearCommercialItemFields();
+              showDialog(
+                context: context,
+                builder: (context) => const AddCommercialItemDialog(
+                  index: -1,
+                  isEdit: false,
+                ),
+              );
             },
             icon: const Icon(Icons.add),
             label: const Text('Add item'),
@@ -2106,6 +1790,13 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                 onEdit: () {
                   customerDetailsProvider
                       .populateCommercialItemFieldsForEditing(index);
+                  showDialog(
+                    context: context,
+                    builder: (context) => AddCommercialItemDialog(
+                      index: index,
+                      isEdit: true,
+                    ),
+                  );
                 },
                 onDelete: () {
                   customerDetailsProvider.deleteCommercialItem(index);
@@ -2497,6 +2188,21 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        RichText(
+          text: TextSpan(
+            children: [
+              TextSpan(
+                text: 'Bill of Materials ',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.textGrey1,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 16),
         Align(
           alignment: Alignment.centerLeft,
           child: OutlinedButton.icon(

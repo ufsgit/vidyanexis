@@ -261,39 +261,45 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                         const SizedBox(width: 16),
                         ElevatedButton.icon(
                           onPressed: () async {
-                            exportToExcel(
-                              headers: [
-                                ''
-                                    'Customer Name',
-                                'Mobile no',
-                                'Remark',
-                                'Assigned To',
-                                'Next Follow-up Date',
-                                'Status'
-                              ],
-                              data: (leadReportProvider.selectedLeadIds.isEmpty
-                                      ? leadReportProvider.leadReportData
-                                      : leadReportProvider.leadReportData.where(
-                                          (lead) => leadReportProvider
-                                              .selectedLeadIds
-                                              .contains(lead.customerId)))
-                                  .map((task) {
-                                return {
-                                  'Customer Name': task.customerName,
-                                  'Mobile no': task.contactNumber,
-                                  'Remark': task.remark,
-                                  'Assigned To': task.toUserName,
-                                  'Next Follow-up Date':
-                                      task.nextFollowUpDate.isNotEmpty
-                                          ? DateFormat('dd MMM yyyy').format(
-                                              DateTime.parse(
-                                                  task.nextFollowUpDate))
-                                          : '',
-                                  'Status': task.statusName,
-                                };
-                              }).toList(),
-                              fileName: 'Lead_Report',
-                            );
+                            final allLeads = await leadReportProvider
+                                .fetchAllLeadsForExport(context);
+                            if (allLeads.isNotEmpty) {
+                              exportToExcel(
+                                headers: [
+                                  'Customer Name',
+                                  'Mobile no',
+                                  'Remark',
+                                  'Assigned To',
+                                  'Next Follow-up Date',
+                                  'Status'
+                                ],
+                                data: (leadReportProvider.selectedLeadIds.isEmpty
+                                        ? allLeads
+                                        : allLeads.where((lead) =>
+                                            leadReportProvider.selectedLeadIds
+                                                .contains(lead.customerId)))
+                                    .map((task) {
+                                  return {
+                                    'Customer Name': task.customerName,
+                                    'Mobile no': task.contactNumber,
+                                    'Remark': task.remark,
+                                    'Assigned To': task.toUserName,
+                                    'Next Follow-up Date':
+                                        task.nextFollowUpDate.isNotEmpty
+                                            ? DateFormat('dd MMM yyyy').format(
+                                                DateTime.parse(
+                                                    task.nextFollowUpDate))
+                                            : '',
+                                    'Status': task.statusName,
+                                  };
+                                }).toList(),
+                                fileName: 'Lead_Report',
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('No data found')),
+                              );
+                            }
                           },
                           icon: const Icon(Icons.download),
                           label: Text(MediaQuery.of(context).size.width > 860

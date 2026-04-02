@@ -13,10 +13,9 @@ import '../../../controller/customer_details_provider.dart';
 import '../../widgets/home/custom_field_section_widget.dart';
 import 'package:vidyanexis/presentation/widgets/customer/bom_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/customer/add_item_dialog.dart';
 import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
-
-
 
 class AddQuotationWidgetMobile extends StatefulWidget {
   const AddQuotationWidgetMobile(
@@ -283,140 +282,38 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                 ),
                               ),
                               const SizedBox(height: 16),
-                               CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller:
-                                    customerDetailsProvider.itemNameController,
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(1, 'Item Name'),
-                              ),
-                              const SizedBox(height: 16),
-                               CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller:
-                                    customerDetailsProvider.itemMrpController,
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(2, 'As Per Standerd Warranty'),
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller:
-                                    customerDetailsProvider.itemUnitController,
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(
-                                        3, 'As Per Standerds'),
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller:
-                                    customerDetailsProvider.itemPriceController,
-                                onChanged: (p0) {
-                                  // Calculate total amount and GST when price changes
-                                  customerDetailsProvider
-                                      .calculateTotalAmount();
-                                },
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(4, 'Price'),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d*\.?\d{0,2}'),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller: customerDetailsProvider
-                                    .itemQuantityController,
-                                onChanged: (value) {
-                                  // Calculate total amount when quantity changes
-                                  customerDetailsProvider
-                                      .calculateTotalAmount();
-                                },
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(5, 'Quantity'),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.digitsOnly
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                               CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller: customerDetailsProvider
-                                    .itemGstPercentController,
-                                onChanged: (value) {
-                                  // Calculate GST when GST% changes
-                                  customerDetailsProvider
-                                      .calculateTotalAmount();
-                                },
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(6, 'gst %'),
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d*\.?\d{0,2}'),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
-                                readOnly: true,
-                                controller:
-                                    customerDetailsProvider.itemGstController,
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(
-                                        7, 'GST'),
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
-                                readOnly: false,
-                                controller: customerDetailsProvider
-                                    .itemAdCessController,
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(8, 'Other Tax'),
-                                onChanged: (value) {
-                                  // Calculate GST when GST% changes
-                                  customerDetailsProvider
-                                      .calculateTotalAmount();
-                                },
-                                inputFormatters: [
-                                  FilteringTextInputFormatter.allow(
-                                    RegExp(r'^\d*\.?\d{0,2}'),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              CustomTextfieldWidgetMobile(
-                                readOnly: true,
-                                controller:
-                                    customerDetailsProvider.itemTotalController,
-                                labelText: customerDetailsProvider
-                                    .getQuotationFieldName(9, 'Amount'),
-                              ),
-                              const SizedBox(height: 16),
-                              OutlinedButton.icon(
-                                onPressed: () {
-                                  customerDetailsProvider
-                                      .addOrEditItem(context);
-                                },
-                                icon: const Icon(Icons.add),
-                                label: const Text('Add item'),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: AppColors
-                                      .primaryBlue, // Change foreground color
-                                  backgroundColor:
-                                      Colors.white, // Change background color
-                                  side: BorderSide(
-                                      color: AppColors
-                                          .primaryBlue), // Change border color
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 10,
-                                    vertical: 0,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                        8), // Add border radius
+                              // Add Item button — opens popup dialog
+                              Align(
+                                alignment: Alignment.centerLeft,
+                                child: SizedBox(
+                                  height: 36,
+                                  child: OutlinedButton.icon(
+                                    onPressed: () {
+                                      customerDetailsProvider.clearItemFields();
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) =>
+                                            const AddItemDialog(
+                                          index: -1,
+                                          isEdit: false,
+                                        ),
+                                      );
+                                    },
+                                    icon: const Icon(Icons.add, size: 18),
+                                    label: const Text('Add Item'),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: AppColors.primaryBlue,
+                                      backgroundColor: Colors.white,
+                                      side: BorderSide(
+                                          color: AppColors.primaryBlue),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 12,
+                                        vertical: 0,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8),
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
@@ -488,10 +385,19 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                               ),
                                               const SizedBox(width: 5),
                                               TextButton(
-                                                onPressed: () =>
-                                                    customerDetailsProvider
-                                                        .populateItemFieldsForEditing(
-                                                            index),
+                                                onPressed: () {
+                                                  customerDetailsProvider
+                                                      .populateItemFieldsForEditing(
+                                                          index);
+                                                  showDialog(
+                                                    context: context,
+                                                    builder: (context) =>
+                                                        AddItemDialog(
+                                                      index: index,
+                                                      isEdit: true,
+                                                    ),
+                                                  );
+                                                },
                                                 child: Text(
                                                   'Edit',
                                                   style: TextStyle(
@@ -534,6 +440,13 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                                             customerDetailsProvider
                                                 .populateItemFieldsForEditing(
                                                     index);
+                                            showDialog(
+                                                context: context,
+                                                builder: (context) =>
+                                                    AddItemDialog(
+                                                      index: index,
+                                                      isEdit: true,
+                                                    ));
                                           },
                                           onDelete: () {
                                             customerDetailsProvider
@@ -1411,6 +1324,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
       ),
     );
   }
+
   void _showPrintQuotationDialog(BuildContext context, String masterId) {
     showDialog(
       context: context,
@@ -1697,7 +1611,6 @@ class _ScrollableMultipleExpansionCardState
       ],
     );
   }
-
 }
 
 String getStatusNameById(int statusId) {

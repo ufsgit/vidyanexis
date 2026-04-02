@@ -106,30 +106,30 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                       keyboardType: TextInputType.number,
                     ),
                   ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: CommonDropdown<int>(
-                      hintText: 'UOM',
-                      borderRadius: 12,
-                      borderColor: const Color(0xFFD0D5DD),
-                      focusedBorderColor: AppColors.bluebutton,
-                      items: settingsProvider.searchUnit
-                          .map((unit) => DropdownItem<int>(
-                                id: unit.unitId,
-                                name: unit.unitName,
-                              ))
-                          .toList(),
-                      onItemSelected: (value) {
-                        setState(() {
-                          provider.billuomController.text = settingsProvider
-                              .searchUnit
-                              .firstWhere((u) => u.unitId == value)
-                              .unitName;
-                        });
-                      },
-                      selectedValue: selectedUnitId,
-                    ),
-                  ),
+                  // const SizedBox(width: 16),
+                  // Expanded(
+                  //   child: CommonDropdown<int>(
+                  //     hintText: 'UOM',
+                  //     borderRadius: 12,
+                  //     borderColor: const Color(0xFFD0D5DD),
+                  //     focusedBorderColor: AppColors.bluebutton,
+                  //     items: settingsProvider.searchUnit
+                  //         .map((unit) => DropdownItem<int>(
+                  //               id: unit.unitId,
+                  //               name: unit.unitName,
+                  //             ))
+                  //         .toList(),
+                  //     onItemSelected: (value) {
+                  //       setState(() {
+                  //         provider.billuomController.text = settingsProvider
+                  //             .searchUnit
+                  //             .firstWhere((u) => u.unitId == value)
+                  //             .unitName;
+                  //       });
+                  //     },
+                  //     selectedValue: selectedUnitId,
+                  //   ),
+                  // ),
                 ],
               ),
               const SizedBox(height: 16),
@@ -182,7 +182,6 @@ class _EditBomItemDialogState extends State<EditBomItemDialog> {
                   ),
                 ],
               ),
-
             ],
           ),
         ),

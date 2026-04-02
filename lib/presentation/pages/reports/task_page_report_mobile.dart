@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -169,6 +171,48 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
           );
           _refreshData();
         },
+        onExcelTap: () async {
+          final allTasks =
+              await reportsProvider.fetchAllTasksForExport(context);
+          if (allTasks.isNotEmpty) {
+            exportToExcel(
+              headers: [
+                'Customer Name',
+                'Phone Number',
+                'Address',
+                'Task',
+                'Enquiry for',
+                'Assigned To',
+                'Description',
+                'Date',
+                'Status'
+              ],
+              data: allTasks.map((task) {
+                return {
+                  'Customer Name': task.customerName,
+                  'Phone Number': task.mobile,
+                  'Address':
+                      '${task.address1}${task.address2.isNotEmpty ? ', ${task.address2}' : ''}${task.address3.isNotEmpty ? ', ${task.address3}' : ''}${task.address4.isNotEmpty ? ', ${task.address4}' : ''}',
+                  'Task': task.taskTypeName,
+                  'Enquiry for': task.enquiryForName,
+                  'Assigned To': task.toUserName,
+                  'Description': task.description,
+                  'Date': task.entryDate.isNotEmpty
+                      ? DateFormat('dd MMM yyyy')
+                          .format(DateTime.parse(task.entryDate))
+                      : '',
+                  'Status': task.taskStatusName,
+                };
+              }).toList(),
+              fileName: 'Task_Report',
+            );
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('No data found')),
+            );
+          }
+        },
+        showExcel: true,
         searchController: searchController,
       ),
       body: Container(

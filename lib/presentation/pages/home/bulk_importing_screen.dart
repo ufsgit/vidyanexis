@@ -31,6 +31,10 @@ class _BulkImportScreenState extends State<BulkImportScreen> {
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
+      dropDownProvider.searchUserDetails.clear();
+      dropDownProvider.followUpData.clear();
+      dropDownProvider.enquiryForList.clear();
+      dropDownProvider.enquiryData.clear();
 
       // Only fetch if data is empty to prevent infinite loops if the widget is recreated
       if (dropDownProvider.searchUserDetails.isEmpty) {
