@@ -335,7 +335,7 @@ Future<void> _addItemPage(pw.Document pdf) async {
                           child: pw.Column(
                             crossAxisAlignment: pw.CrossAxisAlignment.start,
                             children: [
-                              _summaryRow('Discount',
+                              _summaryRow('Subsidy',
                                   quotation?.subsidyAmount.toString() ?? '0'),
                               _summaryRow('CGST',
                                   quotation?.totalCgstAmount.toString() ?? '0'),

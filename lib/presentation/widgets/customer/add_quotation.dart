@@ -1604,7 +1604,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       : MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Discount:   ',
+                      'Subsidy:   ',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
