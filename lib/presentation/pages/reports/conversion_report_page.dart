@@ -1122,10 +1122,6 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                             title: 'Mobile No',
                                             color: Color(0xFF607185)),
                                         TableWidget(
-                                            flex: 2,
-                                            title: 'Address',
-                                            color: Color(0xFF607185)),
-                                        TableWidget(
                                             flex: 1,
                                             title: 'Enquiry For',
                                             color: Color(0xFF607185)),
@@ -1324,11 +1320,6 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                                           fontSize: 12,
                                                           title: conversion
                                                               .mobile),
-                                                      TableWidget(
-                                                          flex: 2,
-                                                          fontSize: 12,
-                                                          title:
-                                                              '${conversion.address1}${conversion.address2.isNotEmpty ? ', ${conversion.address2}' : ''}${conversion.address3.isNotEmpty ? ', ${conversion.address3}' : ''}${conversion.address4.isNotEmpty ? ', ${conversion.address4}' : ''}'),
                                                       TableWidget(
                                                           flex: 1,
                                                           fontSize: 12,

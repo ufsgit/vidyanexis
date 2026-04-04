@@ -822,10 +822,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                               title: 'Mobile No',
                                               color: Color(0xFF607185)),
                                           TableWidget(
-                                              flex: 3,
-                                              title: 'Address',
-                                              color: Color(0xFF607185)),
-                                          TableWidget(
                                               flex: 1,
                                               title: 'Enquiry For',
                                               color: Color(0xFF607185)),
@@ -1048,18 +1044,6 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                                     title: lead
                                                                         .contactNumber),
                                                                 TableWidget(
-                                                                    flex: 3,
-                                                                    title: [
-                                                                      lead.address1,
-                                                                      lead.address2,
-                                                                      lead.address3,
-                                                                      lead.address4
-                                                                    ]
-                                                                        .where((a) => a
-                                                                            .isNotEmpty)
-                                                                        .join(
-                                                                            ', ')),
-                                                                TableWidget(
                                                                     flex: 1,
                                                                     title: lead
                                                                         .enquiryFor),
@@ -1075,8 +1059,8 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                                                                     flex: 1,
                                                                     title: lead
                                                                         .toUserName),
-                                                                  TableWidget(
-                                                                    width: 130,
+                                                                TableWidget(
+                                                                  width: 130,
                                                                   data:
                                                                       Container(
                                                                     padding: lead
