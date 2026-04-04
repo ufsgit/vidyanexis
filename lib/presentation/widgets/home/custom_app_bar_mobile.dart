@@ -39,6 +39,9 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final InputDecoration? searchDecoration;
   final bool showSearch;
   final bool showExcel;
+  final bool showTransfer;
+  final void Function()? onTransferTap;
+
 
   final bool showLogo;
   final bool showUserName;
@@ -76,6 +79,9 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.searchDecoration,
     this.showSearch = true,
     this.showExcel = false,
+    this.showTransfer = false,
+    this.onTransferTap,
+
   }) : assert(title != null || customTitle != null,
             'Either title or customTitle must be provided');
 
@@ -227,6 +233,16 @@ class _CustomAppBarState extends State<CustomAppBar> {
                 ),
                 onPressed: onExcelTap,
               ),
+            if (widget.showTransfer)
+              IconButton(
+                icon: Icon(
+                  Icons.compare_arrows,
+                  color: widget.iconColor,
+                  size: widget.searchIconSize,
+                ),
+                onPressed: widget.onTransferTap,
+              ),
+
           ],
         ),
       ),

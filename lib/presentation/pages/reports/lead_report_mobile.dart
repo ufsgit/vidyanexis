@@ -15,6 +15,10 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
+import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
+
 
 class LeadReportMobile extends StatefulWidget {
   const LeadReportMobile(this.fromDashBoard, {super.key});
@@ -150,6 +154,11 @@ class _leadReportMobile extends State<LeadReportMobile> {
         },
         searchController: searchController,
         showExcel: true,
+        showTransfer: true,
+        onTransferTap: () {
+          _showTransferDialog(context);
+        },
+
         onExcelTap: () async {
           final allLeads =
               await leadReportProvider.fetchAllLeadsForExport(context);
@@ -495,6 +504,37 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         : SingleChildScrollView(
                             child: Column(
                               children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 16, vertical: 8),
+                                  child: Row(
+                                    children: [
+                                      Checkbox(
+                                        value:
+                                            leadReportProvider.areAllLeadsSelected,
+                                        onChanged: (value) {
+                                          leadReportProvider
+                                              .toggleAllLeadsSelection(
+                                                  value ?? false);
+                                        },
+                                        activeColor: AppColors.primaryBlue,
+                                      ),
+                                      const CustomText(
+                                        'Select All Leads',
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                      const Spacer(),
+                                      CustomText(
+                                        '${leadReportProvider.selectedLeadIds.length} Selected',
+                                        fontSize: 14,
+                                        color: AppColors.primaryBlue,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
                                 ListView.separated(
                                   separatorBuilder: (context, index) {
                                     return Divider(
@@ -522,6 +562,19 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                             children: [
                                               Row(
                                                 children: [
+                                                  Checkbox(
+                                                    value: leadReportProvider
+                                                        .isLeadSelected(
+                                                            lead.customerId),
+                                                    onChanged: (value) {
+                                                      leadReportProvider
+                                                          .toggleLeadSelection(
+                                                              lead.customerId);
+                                                    },
+                                                    activeColor:
+                                                        AppColors.primaryBlue,
+                                                  ),
+
                                                   Container(
                                                       height: 42,
                                                       width: 3,
@@ -535,53 +588,56 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                                   const SizedBox(
                                                     width: 8,
                                                   ),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      InkWell(
-                                                        onTap: () {
-                                                          Navigator.push(
-                                                            context,
-                                                            MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  CustomerDetailPageMobile(
-                                                                customerId: lead
-                                                                    .customerId,
-                                                                fromLead: false,
+                                                  Expanded(
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        InkWell(
+                                                          onTap: () {
+                                                            Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                builder: (context) =>
+                                                                    CustomerDetailPageMobile(
+                                                                  customerId: lead
+                                                                      .customerId,
+                                                                  fromLead: false,
+                                                                ),
                                                               ),
+                                                            );
+                                                          },
+                                                          child: Text(
+                                                            lead.customerName,
+                                                            style: GoogleFonts
+                                                                .plusJakartaSans(
+                                                              fontSize: 16,
+                                                              fontWeight:
+                                                                  FontWeight.w600,
+                                                              color: AppColors
+                                                                  .textBlack,
                                                             ),
-                                                          );
-                                                        },
-                                                        child: Text(
-                                                          lead.customerName,
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow
+                                                                .ellipsis,
+                                                          ),
+                                                        ),
+                                                        Text(
+                                                          lead.contactNumber,
                                                           style: GoogleFonts
                                                               .plusJakartaSans(
-                                                            fontSize: 16,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: AppColors
-                                                                .textBlack,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColors
+                                                                      .textGrey3),
                                                         ),
-                                                      ),
-                                                      Text(
-                                                        lead.contactNumber,
-                                                        style: GoogleFonts
-                                                            .plusJakartaSans(
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColors
-                                                                    .textGrey3),
-                                                      ),
-                                                    ],
+                                                      ],
+                                                    ),
                                                   ),
+
                                                 ],
                                               ),
                                             ],
@@ -598,35 +654,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
           ],
         ),
       ),
-      floatingActionButton: leadReportProvider.isFilter
-          ? Padding(
-              padding: const EdgeInsets.only(bottom: 32),
-              child: SizedBox(
-                height: 48,
-                child: FloatingActionButton.extended(
-                  heroTag: 'apply_filter_fab',
-                  onPressed: () async {
-                    leadReportProvider.toggleFilter();
-                    await leadReportProvider.getSearchLeadReports(
-                      searchController.text,
-                      leadReportProvider.formattedFromDate,
-                      leadReportProvider.formattedToDate,
-                      leadReportProvider.selectedStatus.toString(),
-                      context,
-                    );
-                  },
-                  backgroundColor: AppColors.darkGreen,
-                  label: const CustomText(
-                    'APPLY',
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  icon: const Icon(Icons.check, color: Colors.white, size: 20),
-                ),
-              ),
-            )
-          : null,
     );
   }
 
@@ -799,6 +826,349 @@ class _leadReportMobile extends State<LeadReportMobile> {
       ),
     );
   }
+
+  void _showTransferDialog(BuildContext parentContext) {
+    final leadReportProvider =
+        Provider.of<LeadReportProvider>(parentContext, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(parentContext, listen: false);
+    final dropDownProvider =
+        Provider.of<DropDownProvider>(parentContext, listen: false);
+
+    if (leadReportProvider.selectedLeadIds.isEmpty) {
+      ScaffoldMessenger.of(parentContext).showSnackBar(
+        const SnackBar(content: Text('Please select leads to transfer')),
+      );
+      return;
+    }
+
+    // Reset providers
+    settingsProvider.selectedBranchId = null;
+    settingsProvider.selectedDepartmentId = null;
+    dropDownProvider.selectedStatusId = null;
+    dropDownProvider.filteredStaffData = [];
+
+    final statusController = TextEditingController();
+    final branchController = TextEditingController();
+    final departmentController = TextEditingController();
+    final remarkController = TextEditingController();
+
+    // Config for distribution
+    Map<int, int> assignments = {}; // UserId -> Count
+    Map<int, TextEditingController> assignmentControllers = {};
+
+    showDialog(
+      context: parentContext,
+      builder: (dialogContext) {
+        return StatefulBuilder(builder: (context, setState) {
+          int totalSelected = leadReportProvider.selectedLeadIds.length;
+          int assignedTotal =
+              assignments.values.fold(0, (sum, count) => sum + count);
+          int balance = totalSelected - assignedTotal;
+
+          return AlertDialog(
+            backgroundColor: Colors.white,
+            surfaceTintColor: Colors.white,
+            insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            contentPadding: const EdgeInsets.all(20),
+            content: SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: SingleChildScrollView(
+                child: Consumer2<DropDownProvider, SettingsProvider>(
+                  builder:
+                      (context, dropDownProvider, settingsProvider, child) {
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Transfer Leads',
+                          style: GoogleFonts.plusJakartaSans(
+                            color: AppColors.textBlack,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Status
+                        CommonDropdown<int>(
+                          hintText: 'Follow-up Status*',
+                          items: dropDownProvider.followUpData
+                              .map((status) => DropdownItem<int>(
+                                    id: status.statusId ?? 0,
+                                    name: status.statusName ?? '',
+                                  ))
+                              .toList(),
+                          controller: statusController,
+                          onItemSelected: (selectedId) {
+                            dropDownProvider.setSelectedStatusId(selectedId);
+                            final selectedItem =
+                                dropDownProvider.followUpData.firstWhere(
+                              (status) => status.statusId == selectedId,
+                            );
+                            statusController.text =
+                                selectedItem.statusName ?? '';
+                          },
+                          selectedValue: dropDownProvider.selectedStatusId,
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Branch
+                        CommonDropdown<int>(
+                          hintText: 'Branch*',
+                          selectedValue: settingsProvider.selectedBranchId,
+                          items: settingsProvider.branchModel
+                              .map((source) => DropdownItem<int>(
+                                    id: source.branchId ?? 0,
+                                    name: source.branchName ?? '',
+                                  ))
+                              .toList(),
+                          controller: branchController,
+                          onItemSelected: (selectedId) {
+                            settingsProvider.selectedBranchId = selectedId;
+                            final selectedBranch = settingsProvider.branchModel
+                                .firstWhere((b) => b.branchId == selectedId);
+                            branchController.text = selectedBranch.branchName ?? '';
+                            
+                            // Reset department and staff
+                            settingsProvider.selectedDepartmentId = null;
+                            departmentController.clear();
+                            dropDownProvider.filteredStaffData = [];
+                            assignments.clear();
+                            assignmentControllers.clear();
+                            
+                            settingsProvider.searchDepartment(
+                              selectedId.toString(),
+                              context,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+
+                        // Department
+                        CommonDropdown<int>(
+                          hintText: 'Department*',
+                          selectedValue: settingsProvider.selectedDepartmentId,
+                          items: settingsProvider.departmentModel
+                              .map((source) => DropdownItem<int>(
+                                    id: source.departmentId,
+                                    name: source.departmentName,
+                                  ))
+                              .toList(),
+                          controller: departmentController,
+                          onItemSelected: (selectedId) {
+                            settingsProvider.selectedDepartmentId = selectedId;
+                            final selectedDept = settingsProvider.departmentModel
+                                .firstWhere((d) => d.departmentId == selectedId);
+                            departmentController.text = selectedDept.departmentName;
+
+                            setState(() {
+                              assignments.clear();
+                              assignmentControllers.clear();
+                            });
+
+                            dropDownProvider.filterStaffByBranchAndDepartment(
+                              branchId: settingsProvider.selectedBranchId,
+                              departmentId: selectedId,
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 16),
+
+                        // Count Indicators
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("Total: $totalSelected",
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 13)),
+                            Text("Balance: $balance",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 13,
+                                    color: balance < 0
+                                        ? Colors.red
+                                        : Colors.black)),
+                          ],
+                        ),
+                        const Divider(),
+
+                        // Staff List
+                        if (dropDownProvider.filteredStaffData.isNotEmpty)
+                          Container(
+                            height: 180,
+                            decoration: BoxDecoration(
+                                border:
+                                    Border.all(color: Colors.grey.shade300),
+                                borderRadius: BorderRadius.circular(8)),
+                            child: ListView.separated(
+                              shrinkWrap: true,
+                              itemCount:
+                                  dropDownProvider.filteredStaffData.length,
+                              separatorBuilder: (c, i) =>
+                                  const Divider(height: 1),
+                              itemBuilder: (context, index) {
+                                final staff =
+                                    dropDownProvider.filteredStaffData[index];
+                                final userId = staff.userDetailsId;
+
+                                if (!assignmentControllers
+                                    .containsKey(userId)) {
+                                  assignmentControllers[userId] =
+                                      TextEditingController();
+                                }
+
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 4.0, horizontal: 8),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                          flex: 3,
+                                          child: Text(staff.userDetailsName,
+                                              style: const TextStyle(fontSize: 13))),
+                                      Expanded(
+                                          flex: 1,
+                                          child: SizedBox(
+                                            height: 30,
+                                            child: TextField(
+                                              controller:
+                                                  assignmentControllers[userId],
+                                              keyboardType:
+                                                  TextInputType.number,
+                                              style: const TextStyle(fontSize: 13),
+                                              decoration: const InputDecoration(
+                                                border: OutlineInputBorder(),
+                                                contentPadding:
+                                                    EdgeInsets.symmetric(
+                                                        horizontal: 8,
+                                                        vertical: 0),
+                                              ),
+                                              onChanged: (val) {
+                                                int count =
+                                                    int.tryParse(val) ?? 0;
+                                                setState(() {
+                                                  assignments[userId] = count;
+                                                });
+                                              },
+                                            ),
+                                          )),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          )
+                        else
+                          const Center(
+                            child: Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                "Select Branch/Dept to see staff",
+                                style: TextStyle(fontSize: 12, color: Colors.grey),
+                              ),
+                            ),
+                          ),
+
+                        const SizedBox(height: 12),
+
+                        // Remarks
+                        CustomTextField(
+                          height: 70,
+                          controller: remarkController,
+                          hintText: 'Remarks',
+                          labelText: '',
+                          minLines: 2,
+                          keyboardType: TextInputType.multiline,
+                        ),
+
+                        const SizedBox(height: 20),
+
+                        // Buttons
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () => Navigator.pop(context),
+                              child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: () {
+                                if (dropDownProvider.selectedStatusId == null) {
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                        content: Text('Please select Status')),
+                                  );
+                                  return;
+                                }
+
+                                int assigned = assignments.values
+                                    .fold(0, (sum, count) => sum + count);
+                                if (assigned == 0) {
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Please assign leads')),
+                                  );
+                                  return;
+                                }
+
+                                if (assigned > totalSelected) {
+                                  ScaffoldMessenger.of(dialogContext)
+                                      .showSnackBar(
+                                    const SnackBar(
+                                        content: Text(
+                                            'Assigned count exceeds selected')),
+                                  );
+                                  return;
+                                }
+
+                                Navigator.pop(dialogContext);
+
+                                Map<int, String> userNames = {};
+                                for (var staff
+                                    in dropDownProvider.filteredStaffData) {
+                                  userNames[staff.userDetailsId] =
+                                      staff.userDetailsName;
+                                }
+
+                                leadReportProvider.transferLeadsMultiUser(
+                                  context: parentContext,
+                                  statusId: dropDownProvider.selectedStatusId!,
+                                  statusName: statusController.text,
+                                  assignments: assignments,
+                                  userNames: userNames,
+                                  remark: remarkController.text,
+                                  nextFollowUpDate: "0", // Pass "0" as requested
+                                );
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('Transfer'),
+                            ),
+                          ],
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ),
+            ),
+          );
+        });
+      },
+    );
+  }
+
 
   List<String> dateButtonTitles = [
     'Yesterday',
