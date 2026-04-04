@@ -42,6 +42,7 @@ class LeadReportModel {
   String enquiryFor;
   String enquirySourceId;
   String enquirySourceName;
+  String creationDate;
 
   LeadReportModel({
     required this.customerId,
@@ -87,6 +88,7 @@ class LeadReportModel {
     required this.enquiryFor,
     required this.enquirySourceId,
     required this.enquirySourceName,
+    required this.creationDate,
   });
 
   LeadReportModel copyWith({
@@ -133,6 +135,7 @@ class LeadReportModel {
     String? enquiryFor,
     String? enquirySourceId,
     String? enquirySourceName,
+    String? creationDate,
   }) {
     return LeadReportModel(
       customerId: customerId ?? this.customerId,
@@ -178,6 +181,7 @@ class LeadReportModel {
       enquiryFor: enquiryFor ?? this.enquiryFor,
       enquirySourceId: enquirySourceId ?? this.enquirySourceId,
       enquirySourceName: enquirySourceName ?? this.enquirySourceName,
+      creationDate: creationDate ?? this.creationDate,
     );
   }
 
@@ -185,14 +189,13 @@ class LeadReportModel {
       LeadReportModel(
           customerId: json["Customer_Id"] ?? 0,
           customerName: json["Customer_Name"]?.toString() ?? '',
-          contactNumber: json["Phone_Number"]?.toString() ??
-              '', // Note: API uses Phone_Number not Contact_Number
+          contactNumber: (json["Phone_Number"]?.toString() ?? '').trim(),
           contactPerson: json["Contact_Person"]?.toString() ?? '',
           email: json["Email"]?.toString() ?? '',
-          address1: json["Address1"]?.toString() ?? '',
-          address2: json["Address2"]?.toString() ?? '',
-          address3: json["Address3"]?.toString() ?? '',
-          address4: json["Address4"]?.toString() ?? '',
+          address1: (json["Address1"]?.toString() ?? '').trim() == '0' ? '' : (json["Address1"]?.toString() ?? ''),
+          address2: (json["Address2"]?.toString() ?? '').trim() == '0' ? '' : (json["Address2"]?.toString() ?? ''),
+          address3: (json["Address3"]?.toString() ?? '').trim() == '0' ? '' : (json["Address3"]?.toString() ?? ''),
+          address4: (json["Address4"]?.toString() ?? '').trim() == '0' ? '' : (json["Address4"]?.toString() ?? ''),
           followUpId: json["FollowUp_Id"]?.toString() ?? '0',
           nextFollowUpDate: json["Next_FollowUp_date"]?.toString() ?? '',
           toUserId: json["To_User_Id"]?.toString() ?? '0',
@@ -226,7 +229,8 @@ class LeadReportModel {
           colorCode: json["Color_Code"]?.toString() ?? "Color(0xff34c759)",
           enquiryFor: json["Enquiry_For_Name"]?.toString() ?? "",
           enquirySourceName: json["Enquiry_Source_Name"]?.toString() ?? '',
-          enquirySourceId: json["Enquiry_Source_Id"]?.toString() ?? '');
+          enquirySourceId: json["Enquiry_Source_Id"]?.toString() ?? '',
+          creationDate: json["creationDate"]?.toString() ?? '');
 
   Map<String, dynamic> toJson() => {
         "Customer_Id": customerId,
@@ -272,5 +276,6 @@ class LeadReportModel {
         "Enquiry_For_Name": enquiryFor,
         "Enquiry_Source_Id": enquirySourceId,
         "Enquiry_Source_Name": enquirySourceName,
+        "creationDate": creationDate,
       };
 }
