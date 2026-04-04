@@ -32,6 +32,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final void Function()? onClearTap;
   final void Function()? onSearchTap;
   final void Function()? onExcelTap;
+  final void Function()? onTransferTap;
 
   final String searchHintText;
   final TextStyle? searchHintStyle;
@@ -39,6 +40,7 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
   final InputDecoration? searchDecoration;
   final bool showSearch;
   final bool showExcel;
+  final bool showTransfer;
 
   final bool showLogo;
   final bool showUserName;
@@ -76,6 +78,8 @@ class CustomAppBar extends StatefulWidget implements PreferredSizeWidget {
     this.searchDecoration,
     this.showSearch = true,
     this.showExcel = false,
+    this.showTransfer = false,
+    this.onTransferTap,
   }) : assert(title != null || customTitle != null,
             'Either title or customTitle must be provided');
 
@@ -117,7 +121,7 @@ class _CustomAppBarState extends State<CustomAppBar> {
           ? _buildSearchField(searchProvider)
           : widget.customTitle ?? _defaultTitle(),
       actions: _buildActions(searchProvider, widget.onFilterTap,
-          widget.onClearTap, widget.onSearchTap, widget.onExcelTap),
+          widget.onClearTap, widget.onSearchTap, widget.onExcelTap, widget.onTransferTap),
     );
   }
 
@@ -187,7 +191,8 @@ class _CustomAppBarState extends State<CustomAppBar> {
       void Function()? onFilterTap,
       void Function()? onClear,
       void Function()? onSearchTap,
-      void Function()? onExcelTap) {
+      void Function()? onExcelTap,
+      void Function()? onTransferTap) {
     if (searchProvider.isSearching) {
       return [
         Padding(
@@ -226,6 +231,15 @@ class _CustomAppBarState extends State<CustomAppBar> {
                   size: widget.searchIconSize,
                 ),
                 onPressed: onExcelTap,
+              ),
+            if (widget.showTransfer)
+              IconButton(
+                icon: Icon(
+                  Icons.compare_arrows,
+                  color: widget.iconColor,
+                  size: widget.searchIconSize,
+                ),
+                onPressed: onTransferTap,
               ),
           ],
         ),
