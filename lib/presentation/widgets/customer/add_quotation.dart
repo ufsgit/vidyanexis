@@ -19,6 +19,7 @@ import 'package:vidyanexis/presentation/widgets/customer/edit_bom_item_dialog.da
 import 'package:vidyanexis/presentation/widgets/customer/quotation_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/commercial_item_card.dart';
 import 'package:vidyanexis/presentation/widgets/customer/scope_of_work_card.dart';
+import 'package:vidyanexis/http/loader.dart';
 
 class QuotationCreationWidget extends StatefulWidget {
   bool isEdit;
@@ -2340,6 +2341,8 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         settingsProvider.menuIsViewMap[55] == 1);
 
                 if (hasPrintPermission) {
+                  await Loader.showLoader(context,
+                      message: 'Generating Print...');
                   try {
                     await customerDetailsProvider.getQuotationMasterPdf(
                         masterId, context);
@@ -2350,6 +2353,10 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                             content:
                                 Text('Printing failed. Please try again.')),
                       );
+                    }
+                  } finally {
+                    if (context.mounted) {
+                      Loader.stopLoader(context);
                     }
                   }
                 } else {
