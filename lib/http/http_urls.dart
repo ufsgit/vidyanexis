@@ -20,6 +20,7 @@ class HttpUrls {
   // static String baseUrl = 'https://rythmstoreapi.trackbox.net.in/';
   // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
+  // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
 
 //dev
 
@@ -340,6 +341,11 @@ class HttpUrls {
   static String getPdfAnnexure1 = "lead/get_pdf_annexure1/";
   static String getPdfAnnexure2 = "lead/get_pdf_annexure2/";
   static String getPdfAnnexure3 = "lead/get_pdf_annexure3/";
+  static String getPdfNetMeterAgreement = "lead/get_pdf_net_meter_agreement/";
+  static String getPdfMnreAgreement = "lead/get_pdf_mnre_agreement/";
+  static String getPdfLoanAgreement = "lead/get_pdf_loan_agreement/";
+  static String getPdfSchedule = "lead/get_pdf_schedule/";
+  static String getPdfCompletionReport = "lead/get_pdf_completion_report/";
   static String getCommissionReport = "lead/Get_Commission_Report";
   static String subContractsReport = "task/Sub_contracts_report";
 }

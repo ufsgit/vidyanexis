@@ -2360,6 +2360,18 @@ class _NewLeadDrawerMobileWidgetState extends State<NewLeadDrawerMobileWidget> {
         const SizedBox(
           height: 10,
         ),
+        if (settingsProvider.menuIsViewMap[104] == 1) ...[
+          CustomTextfieldWidgetMobile(
+            focusNode: FocusNode(),
+            controller: leadProvider.projectCostController,
+            labelText: 'Total Project Cost',
+            keyBoardType: TextInputType.number,
+            inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+          ),
+          const SizedBox(
+            height: 10,
+          ),
+        ],
         CustomTextfieldWidgetMobile(
           focusNode: FocusNode(),
           controller: leadProvider.commissionController,

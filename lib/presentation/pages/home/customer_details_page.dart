@@ -2077,6 +2077,101 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
+                                                                    if (settingsprovider.menuIsViewMap[105] == 1 &&
+                                                                        sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Net meter Agreement',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
+                                                                              'Net meter Agreement',
+                                                                              context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[106] == 1 &&
+                                                                        sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'MNRE Agreement',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
+                                                                              'MNRE Agreement',
+                                                                              context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[107] == 1 &&
+                                                                        sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Loan Agreement',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
+                                                                              'Loan Agreement',
+                                                                              context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[108] == 1 &&
+                                                                        sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Schedule',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfSchedule}${widget.customerId}',
+                                                                              'Schedule',
+                                                                              context);
+                                                                        },
+                                                                      ),
+                                                                    if (settingsprovider.menuIsViewMap[109] == 1 &&
+                                                                        sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText:
+                                                                            'Completion Report',
+                                                                        onPressed:
+                                                                            () async {
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
+                                                                              'Completion Report',
+                                                                              context);
+                                                                        },
+                                                                      ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
@@ -2683,6 +2778,101 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     await customerDetailsProvider.getAnnexurePdf(
                                                                         '${HttpUrls.getPdfAnnexure3}${widget.customerId}',
                                                                         'Annexture3',
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider.menuIsViewMap[105] == 1 &&
+                                                                  sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors.whiteColor,
+                                                                  borderColor:
+                                                                      AppColors.bluebutton,
+                                                                  textColor:
+                                                                      AppColors.bluebutton,
+                                                                  buttonText:
+                                                                      'Net meter Agreement',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfNetMeterAgreement}${widget.customerId}',
+                                                                        'Net meter Agreement',
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider.menuIsViewMap[106] == 1 &&
+                                                                  sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors.whiteColor,
+                                                                  borderColor:
+                                                                      AppColors.bluebutton,
+                                                                  textColor:
+                                                                      AppColors.bluebutton,
+                                                                  buttonText:
+                                                                      'MNRE Agreement',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfMnreAgreement}${widget.customerId}',
+                                                                        'MNRE Agreement',
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider.menuIsViewMap[107] == 1 &&
+                                                                  sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors.whiteColor,
+                                                                  borderColor:
+                                                                      AppColors.bluebutton,
+                                                                  textColor:
+                                                                      AppColors.bluebutton,
+                                                                  buttonText:
+                                                                      'Loan Agreement',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfLoanAgreement}${widget.customerId}',
+                                                                        'Loan Agreement',
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider.menuIsViewMap[108] == 1 &&
+                                                                  sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors.whiteColor,
+                                                                  borderColor:
+                                                                      AppColors.bluebutton,
+                                                                  textColor:
+                                                                      AppColors.bluebutton,
+                                                                  buttonText:
+                                                                      'Schedule',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfSchedule}${widget.customerId}',
+                                                                        'Schedule',
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider.menuIsViewMap[109] == 1 &&
+                                                                  sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors.whiteColor,
+                                                                  borderColor:
+                                                                      AppColors.bluebutton,
+                                                                  textColor:
+                                                                      AppColors.bluebutton,
+                                                                  buttonText:
+                                                                      'Completion Report',
+                                                                  onPressed:
+                                                                      () async {
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfCompletionReport}${widget.customerId}',
+                                                                        'Completion Report',
                                                                         context);
                                                                   },
                                                                 ),

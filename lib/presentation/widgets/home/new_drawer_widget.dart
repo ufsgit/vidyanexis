@@ -818,22 +818,25 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                           // Row 3: Total Project Cost
                           ResponsiveRow(
                             children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 8.0),
-                                  child: CustomTextField(
-                                    height: 54,
-                                    controller:
-                                        leadProvider.projectCostController,
-                                    hintText: 'Total Project Cost',
-                                    labelText: '',
-                                    keyboardType: TextInputType.number,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.digitsOnly,
-                                    ],
+                              if (settingsProvider.menuIsViewMap[104] == 1)
+                                Expanded(
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 8.0),
+                                    child: CustomTextField(
+                                      height: 54,
+                                      controller:
+                                          leadProvider.projectCostController,
+                                      hintText: 'Total Project Cost',
+                                      labelText: '',
+                                      keyboardType: TextInputType.number,
+                                      inputFormatters: [
+                                        FilteringTextInputFormatter.digitsOnly,
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ),
+                                )
+                              else
+                                const Expanded(child: SizedBox.shrink()),
                               Expanded(
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(

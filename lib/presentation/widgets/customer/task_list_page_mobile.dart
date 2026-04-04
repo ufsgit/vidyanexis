@@ -29,7 +29,7 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
   @override
   void initState() {
     super.initState();
-    _scrollController.addListener(_scrollListener);
+    // _scrollController.addListener(_scrollListener); // uncomment for pagination
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final customerDetailsProvider =
           Provider.of<CustomerDetailsProvider>(context, listen: false);
@@ -258,33 +258,33 @@ class _TaskListPageMobileState extends State<TaskListPageMobile> {
                       ],
                     ),
                   ),
-        floatingActionButton: Provider.of<SettingsProvider>(context,
-                        listen: false)
-                    .menuIsSaveMap[13] ==
-                1
-            ? CustomElevatedButton(
-                prefixIcon: Icons.add,
-                radius: 32,
-                buttonText: 'Create task',
-                onPressed: () {
-                  final customerDetailsProvider =
-                      Provider.of<CustomerDetailsProvider>(context,
-                          listen: false);
-                  customerDetailsProvider.customerId = widget.customerId;
-                  customerDetailsProvider.clearTaskDetails();
-                  Navigator.push(context, MaterialPageRoute(
-                    builder: (context) {
-                      return AddTaskMobile(
-                        isEdit: false,
-                        taskId: '0',
-                      );
+        floatingActionButton:
+            Provider.of<SettingsProvider>(context, listen: false)
+                        .menuIsSaveMap[13] ==
+                    1
+                ? CustomElevatedButton(
+                    prefixIcon: Icons.add,
+                    radius: 32,
+                    buttonText: 'Create task',
+                    onPressed: () {
+                      final customerDetailsProvider =
+                          Provider.of<CustomerDetailsProvider>(context,
+                              listen: false);
+                      customerDetailsProvider.customerId = widget.customerId;
+                      customerDetailsProvider.clearTaskDetails();
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return AddTaskMobile(
+                            isEdit: false,
+                            taskId: '0',
+                          );
+                        },
+                      ));
                     },
-                  ));
-                },
-                backgroundColor: AppColors.bluebutton,
-                borderColor: AppColors.bluebutton,
-                textColor: AppColors.whiteColor,
-              )
-            : null);
+                    backgroundColor: AppColors.bluebutton,
+                    borderColor: AppColors.bluebutton,
+                    textColor: AppColors.whiteColor,
+                  )
+                : null);
   }
 }

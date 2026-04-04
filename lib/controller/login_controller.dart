@@ -7,6 +7,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/presentation/pages/home/homepage.dart';
 
 class LoginController extends ChangeNotifier {
@@ -41,6 +42,22 @@ class LoginController extends ChangeNotifier {
 
       if (response != null && response.statusCode == 200) {
         final data = response.data;
+
+        if (!AppStyles.isWebScreen(context)) {
+          final allowAppLogin = data['Allow_App_Login']?.toString() ?? '0';
+          if (allowAppLogin == '0' || allowAppLogin == 'false') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Center(child: Text('App access is disabled for your account')),
+                backgroundColor: Colors.red.shade400,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+            Loader.stopLoader(context);
+            return;
+          }
+        }
+
         preferences.setString('token', data['token'].toString());
         preferences.setString('userName', data['User_Details_Name'].toString());
         preferences.setString('userId', data['User_Details_Id'].toString());
