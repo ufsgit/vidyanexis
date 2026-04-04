@@ -53,6 +53,15 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                   user.departmentId.toString() ==
                       selectedTaskTypeModel.departmentIds.toString())
               .toList();
+
+          if (_filteredUsers.length == 1) {
+            final worker = _filteredUsers.first;
+            final userInTask = UserInTaskModel(
+                userDetailsId: worker.userDetailsId,
+                userDetailsName: worker.userDetailsName);
+            customerDetailsProvider.addTaskModel.taskUser?.clear();
+            customerDetailsProvider.addAssignedWorker(userInTask);
+          }
         });
       } catch (e) {
         setState(() {
