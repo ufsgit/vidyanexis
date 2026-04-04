@@ -738,13 +738,29 @@ class _tasksPageReportState extends State<TaskPageReport> {
                                                       TextOverflow.ellipsis)),
                                           SizedBox(
                                               width: 140,
+                                              child: Text(task.enquiryForName,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis)),
+                                          SizedBox(
+                                              width: 140,
                                               child: Text(task.toUserName,
+                                                  maxLines: 1,
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                  ),
                                                   overflow:
                                                       TextOverflow.ellipsis)),
                                           Expanded(
                                             child: Text(
                                               task.description,
                                               maxLines: 1,
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                              ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
                                           ),

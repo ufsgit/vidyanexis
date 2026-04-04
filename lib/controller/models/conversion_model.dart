@@ -1,8 +1,5 @@
-// To parse this JSON data, do
-//
-//     final conversionModel = conversionModelFromJson(jsonString);
-
 import 'dart:convert';
+import 'package:intl/intl.dart';
 
 List<ConversionModel> conversionModelFromJson(String str) =>
     List<ConversionModel>.from(
@@ -36,19 +33,34 @@ class ConversionModel {
     required this.address1,
   });
 
-  factory ConversionModel.fromJson(Map<String, dynamic> json) =>
-      ConversionModel(
-        customerName: json["Customer_Name"],
-        registerdBy: json["RegisterdBy"],
-        creationDate: null!=json["creationDate"] ?DateTime.parse(json["creationDate"]):DateTime.now(),
-        registeredDate: DateTime.parse(json["Registered_Date"]),
-        statusName: json["Status_Name"],
-        enquiryForName: json["Enquiry_For_Name"] ?? '',
-        colorCode: json["Color_Code"] ?? '',
-        customerId: json["Customer_Id"] ?? 0,
-        mobile: json['Contact_Number'] ?? '',
-        address1: json['Address1'] ?? '',
-      );
+  factory ConversionModel.fromJson(Map<String, dynamic> json) {
+    DateTime parseDate(dynamic value) {
+      if (value == null || value.toString().isEmpty) return DateTime.now();
+      String dateStr = value.toString();
+      try {
+        return DateTime.parse(dateStr);
+      } catch (_) {
+        try {
+          return DateFormat('dd-MM-yyyy').parse(dateStr);
+        } catch (_) {
+          return DateTime.now();
+        }
+      }
+    }
+
+    return ConversionModel(
+      customerName: json["Customer_Name"] ?? '',
+      registerdBy: json["RegisterdBy"] ?? '',
+      creationDate: parseDate(json["creationDate"]),
+      registeredDate: parseDate(json["Registered_Date"]),
+      statusName: json["Status_Name"] ?? '',
+      enquiryForName: json["Enquiry_For_Name"] ?? '',
+      colorCode: json["Color_Code"] ?? '',
+      customerId: json["Customer_Id"] ?? 0,
+      mobile: json['Contact_Number'] ?? '',
+      address1: json['Address1'] ?? '',
+    );
+  }
 
   Map<String, dynamic> toJson() => {
         "Customer_Name": customerName,
@@ -63,3 +75,4 @@ class ConversionModel {
         'Address1': address1,
       };
 }
+
