@@ -15,11 +15,6 @@ import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_dropdown_widget.dart';
-import 'package:vidyanexis/presentation/widgets/home/custom_text_field.dart';
-import 'package:vidyanexis/controller/settings_provider.dart';
-import 'package:vidyanexis/http/loader.dart';
 
 class LeadReportMobile extends StatefulWidget {
   const LeadReportMobile(this.fromDashBoard, {super.key});
@@ -155,8 +150,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
         },
         searchController: searchController,
         showExcel: true,
-        showTransfer: true,
-        onTransferTap: () => _showTransferDialog(context),
         onExcelTap: () async {
           final allLeads =
               await leadReportProvider.fetchAllLeadsForExport(context);
@@ -319,8 +312,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                               isSelected: leadReportProvider.selectedUser ==
                                   user.userDetailsId,
                               onTap: () {
-                                leadReportProvider
-                                    .setUserFilterStatus(user.userDetailsId);
+                                leadReportProvider.setUserFilterStatus(
+                                    user.userDetailsId ?? 0);
                               },
                             );
                           }).toList(),
@@ -354,8 +347,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                   leadReportProvider.selectedEnquiryFor ==
                                       enquiry.enquiryForId,
                               onTap: () {
-                                leadReportProvider
-                                    .setEnquiryForFilter(enquiry.enquiryForId);
+                                leadReportProvider.setEnquiryForFilter(
+                                    enquiry.enquiryForId ?? 0);
                               },
                             );
                           }).toList(),
@@ -502,39 +495,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         : SingleChildScrollView(
                             child: Column(
                               children: [
-                                Container(
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 16, vertical: 8),
-                                  color: Colors.white,
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                        width: 24,
-                                        height: 24,
-                                        child: Checkbox(
-                                          value: leadReportProvider
-                                              .areAllLeadsSelected,
-                                          onChanged: (value) {
-                                            leadReportProvider
-                                                .toggleAllLeadsSelection(
-                                                    value ?? false);
-                                          },
-                                          activeColor: AppColors.primaryBlue,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12),
-                                      Text(
-                                        'Select All (${leadReportProvider.selectedLeadIds.length})',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColors.textBlack,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                Divider(height: 1, color: Colors.grey[200]),
                                 ListView.separated(
                                   separatorBuilder: (context, index) {
                                     return Divider(
@@ -562,23 +522,6 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                             children: [
                                               Row(
                                                 children: [
-                                                  SizedBox(
-                                                    width: 24,
-                                                    height: 24,
-                                                    child: Checkbox(
-                                                      value: leadReportProvider
-                                                          .isLeadSelected(
-                                                              lead.customerId),
-                                                      onChanged: (value) {
-                                                        leadReportProvider
-                                                            .toggleLeadSelection(
-                                                                lead.customerId);
-                                                      },
-                                                      activeColor:
-                                                          AppColors.primaryBlue,
-                                                    ),
-                                                  ),
-                                                  const SizedBox(width: 8),
                                                   Container(
                                                       height: 42,
                                                       width: 3,
@@ -760,7 +703,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               hintText: leadReportProvider.fromDate != null
-                                  ? leadReportProvider.formattedFromDate
+                                  ? '${leadReportProvider.fromDate!.toLocal()}'
+                                      .split(' ')[0]
                                   : 'From',
                               suffixIcon: const Icon(Icons.calendar_month),
                             ),
@@ -777,7 +721,8 @@ class _leadReportMobile extends State<LeadReportMobile> {
                                 borderRadius: BorderRadius.circular(15),
                               ),
                               hintText: leadReportProvider.toDate != null
-                                  ? leadReportProvider.formattedToDate
+                                  ? '${leadReportProvider.toDate!.toLocal()}'
+                                      .split(' ')[0]
                                   : 'To',
                               suffixIcon: const Icon(Icons.calendar_month),
                             ),
@@ -862,394 +807,4 @@ class _leadReportMobile extends State<LeadReportMobile> {
     'This Week',
     'This Month',
   ];
-
-  void _showTransferDialog(BuildContext parentContext) {
-    final leadReportProvider =
-        Provider.of<LeadReportProvider>(parentContext, listen: false);
-    final settingsProvider =
-        Provider.of<SettingsProvider>(parentContext, listen: false);
-    final dropDownProvider =
-        Provider.of<DropDownProvider>(parentContext, listen: false);
-
-    if (leadReportProvider.selectedLeadIds.isEmpty) {
-      ScaffoldMessenger.of(parentContext).showSnackBar(
-        const SnackBar(content: Text('Please select leads to transfer')),
-      );
-      return;
-    }
-
-    // Reset providers
-    settingsProvider.selectedBranchId = null;
-    settingsProvider.selectedDepartmentId = null;
-    dropDownProvider.selectedStatusId = null;
-    dropDownProvider.filteredStaffData = [];
-
-    final statusController = TextEditingController();
-    final branchController = TextEditingController();
-    final departmentController = TextEditingController();
-    final remarkController = TextEditingController();
-    final nextFollowUpDateController = TextEditingController();
-
-    Map<int, int> assignments = {};
-    Map<int, TextEditingController> assignmentControllers = {};
-
-    showDialog(
-      context: parentContext,
-      builder: (dialogContext) {
-        return StatefulBuilder(builder: (context, setState) {
-          int totalSelected = leadReportProvider.selectedLeadIds.length;
-          int assignedTotal =
-              assignments.values.fold(0, (sum, count) => sum + count);
-          int balance = totalSelected - assignedTotal;
-
-          return AlertDialog(
-            backgroundColor: Colors.white,
-            surfaceTintColor: Colors.white,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            insetPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-            contentPadding: const EdgeInsets.all(20),
-            content: SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: SingleChildScrollView(
-                child: Consumer2<DropDownProvider, SettingsProvider>(
-                  builder:
-                      (context, dropDownProvider, settingsProvider, child) {
-                    return Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Transfer Leads ($totalSelected)',
-                          style: GoogleFonts.plusJakartaSans(
-                            color: AppColors.textBlack,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                        const SizedBox(height: 20),
-                        CommonDropdown<int>(
-                          hintText: 'Follow-up Status*',
-                          items: dropDownProvider.followUpData
-                              .map((status) => DropdownItem<int>(
-                                    id: status.statusId ?? 0,
-                                    name: status.statusName ?? '',
-                                  ))
-                              .toList(),
-                          controller: statusController,
-                          onItemSelected: (selectedId) {
-                            dropDownProvider.setSelectedStatusId(selectedId);
-                            final selectedItem =
-                                dropDownProvider.followUpData.firstWhere(
-                              (status) => status.statusId == selectedId,
-                            );
-                            statusController.text =
-                                selectedItem.statusName ?? '';
-                          },
-                          selectedValue: dropDownProvider.selectedStatusId,
-                        ),
-                        const SizedBox(height: 16),
-                        CommonDropdown<int>(
-                          hintText: 'Branch*',
-                          selectedValue: settingsProvider.selectedBranchId,
-                          items: settingsProvider.branchModel
-                              .map((source) => DropdownItem<int>(
-                                    id: source.branchId ?? 0,
-                                    name: source.branchName ?? '',
-                                  ))
-                              .toList(),
-                          controller: branchController,
-                          onItemSelected: (selectedId) {
-                            settingsProvider.selectedBranchId = selectedId;
-                            final selectedBranch = settingsProvider.branchModel
-                                .firstWhere(
-                                    (branch) => branch.branchId == selectedId);
-                            branchController.text =
-                                selectedBranch.branchName ?? '';
-                            settingsProvider.setSelectedDepartmentId(0);
-                            departmentController.clear();
-
-                            setState(() {
-                              assignments.clear();
-                              assignmentControllers.clear();
-                            });
-
-                            dropDownProvider.filterStaffByBranchAndDepartment(
-                              branchId: selectedId,
-                              departmentId: null,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 16),
-                        CommonDropdown<int>(
-                          key: ValueKey(settingsProvider.selectedBranchId),
-                          hintText: 'Department*',
-                          selectedValue: settingsProvider.selectedDepartmentId,
-                          items: settingsProvider.departmentModel
-                              .map((source) => DropdownItem<int>(
-                                    id: source.departmentId,
-                                    name: source.departmentName ?? '',
-                                  ))
-                              .toList(),
-                          controller: departmentController,
-                          onItemSelected: (selectedId) {
-                            settingsProvider.selectedDepartmentId = selectedId;
-                            final selectedDepartment =
-                                settingsProvider.departmentModel.firstWhere(
-                                    (dept) => dept.departmentId == selectedId);
-                            departmentController.text =
-                                selectedDepartment.departmentName ?? '';
-
-                            setState(() {
-                              assignments.clear();
-                              assignmentControllers.clear();
-                            });
-
-                            dropDownProvider.filterStaffByBranchAndDepartment(
-                              branchId: settingsProvider.selectedBranchId,
-                              departmentId: selectedId,
-                            );
-                          },
-                        ),
-                        const SizedBox(height: 20),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text("Total: $totalSelected",
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 13)),
-                            Text("Balance: $balance",
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 13,
-                                    color: balance < 0
-                                        ? Colors.red
-                                        : Colors.black)),
-                          ],
-                        ),
-                        const Divider(),
-                        Container(
-                          color: const Color(0xFFF3F4F6),
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 8),
-                          child: const Row(
-                            children: [
-                              SizedBox(
-                                  width: 30,
-                                  child: Text("No",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12))),
-                              Expanded(
-                                  flex: 3,
-                                  child: Text("Staff",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12))),
-                              Expanded(
-                                  flex: 2,
-                                  child: Text("Assign",
-                                      style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 12))),
-                            ],
-                          ),
-                        ),
-                        if (dropDownProvider.filteredStaffData.isNotEmpty)
-                          Container(
-                            constraints: const BoxConstraints(maxHeight: 200),
-                            decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Colors.grey.shade300)),
-                            child: ListView.separated(
-                              shrinkWrap: true,
-                              itemCount:
-                                  dropDownProvider.filteredStaffData.length,
-                              separatorBuilder: (c, i) =>
-                                  const Divider(height: 1),
-                              itemBuilder: (context, index) {
-                                final staff =
-                                    dropDownProvider.filteredStaffData[index];
-                                final userId = staff.userDetailsId;
-
-                                if (!assignmentControllers
-                                    .containsKey(userId)) {
-                                  assignmentControllers[userId] =
-                                      TextEditingController();
-                                }
-
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 4.0, horizontal: 8),
-                                  child: Row(
-                                    children: [
-                                      SizedBox(
-                                          width: 30,
-                                          child: Text("${index + 1}",
-                                              style: const TextStyle(
-                                                  fontSize: 12))),
-                                      Expanded(
-                                          flex: 3,
-                                          child: Text(staff.userDetailsName,
-                                              style: const TextStyle(
-                                                  fontSize: 12))),
-                                      Expanded(
-                                          flex: 2,
-                                          child: SizedBox(
-                                            height: 30,
-                                            child: TextField(
-                                              controller:
-                                                  assignmentControllers[userId],
-                                              keyboardType:
-                                                  TextInputType.number,
-                                              style:
-                                                  const TextStyle(fontSize: 12),
-                                              decoration: const InputDecoration(
-                                                border: OutlineInputBorder(),
-                                                contentPadding:
-                                                    EdgeInsets.symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 0),
-                                              ),
-                                              onChanged: (val) {
-                                                int count =
-                                                    int.tryParse(val) ?? 0;
-                                                setState(() {
-                                                  assignments[userId] = count;
-                                                });
-                                              },
-                                            ),
-                                          )),
-                                    ],
-                                  ),
-                                );
-                              },
-                            ),
-                          )
-                        else
-                          const Padding(
-                            padding: EdgeInsets.all(16.0),
-                            child: Center(
-                                child: Text(
-                                    "Select Branch/Department to see staff",
-                                    style: TextStyle(fontSize: 12))),
-                          ),
-                        const SizedBox(height: 16),
-                        CustomTextField(
-                          height: 80,
-                          controller: remarkController,
-                          hintText: 'Remarks',
-                          labelText: '',
-                          minLines: 2,
-                          keyboardType: TextInputType.multiline,
-                        ),
-                        const SizedBox(height: 16),
-                        if (dropDownProvider.isFollowupRequiredNew())
-                          CustomTextField(
-                            onTap: () async {
-                              final DateTime? picked = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime.now(),
-                                lastDate: DateTime.now()
-                                    .add(const Duration(days: 365)),
-                              );
-                              if (picked != null) {
-                                nextFollowUpDateController.text =
-                                    DateFormat('dd MMM yyyy').format(picked);
-                              }
-                            },
-                            readOnly: true,
-                            height: 54,
-                            controller: nextFollowUpDateController,
-                            hintText: 'Next Follow-up Date*',
-                            suffixIcon: const Icon(Icons.calendar_today),
-                            labelText: '',
-                          ),
-                        const SizedBox(height: 24),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            CustomElevatedButton(
-                              buttonText: 'Cancel',
-                              onPressed: () => Navigator.pop(context),
-                              backgroundColor: Colors.white,
-                              borderColor: const Color(0xFFFFB800),
-                              textColor: const Color(0xFFFFB800),
-                            ),
-                            const SizedBox(width: 8),
-                            CustomElevatedButton(
-                              buttonText: 'Transfer',
-                              onPressed: () {
-                                if (dropDownProvider.selectedStatusId == null) {
-                                  ScaffoldMessenger.of(dialogContext)
-                                      .showSnackBar(
-                                    const SnackBar(
-                                        content: Text('Please select Status')),
-                                  );
-                                  return;
-                                }
-
-                                int assigned = assignments.values
-                                    .fold(0, (sum, count) => sum + count);
-                                if (assigned == 0) {
-                                  ScaffoldMessenger.of(dialogContext)
-                                      .showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Please assign leads to at least one staff member')),
-                                  );
-                                  return;
-                                }
-
-                                if (assigned > totalSelected) {
-                                  ScaffoldMessenger.of(dialogContext)
-                                      .showSnackBar(
-                                    const SnackBar(
-                                        content: Text(
-                                            'Assigned count exceeds selected leads')),
-                                  );
-                                  return;
-                                }
-
-                                Navigator.pop(dialogContext);
-                                Loader.showLoader(parentContext);
-
-                                Map<int, String> userNames = {};
-                                for (var staff
-                                    in dropDownProvider.filteredStaffData) {
-                                  userNames[staff.userDetailsId] =
-                                      staff.userDetailsName;
-                                }
-
-                                leadReportProvider.transferLeadsMultiUser(
-                                  context: parentContext,
-                                  statusId: dropDownProvider.selectedStatusId!,
-                                  statusName: statusController.text,
-                                  assignments: assignments,
-                                  userNames: userNames,
-                                  remark: remarkController.text,
-                                  nextFollowUpDate:
-                                      nextFollowUpDateController.text,
-                                );
-                              },
-                              backgroundColor: const Color(0xFFFFB800),
-                              borderColor: const Color(0xFFFFB800),
-                              textColor: Colors.white,
-                            ),
-                          ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
-              ),
-            ),
-          );
-        });
-      },
-    );
-  }
 }
