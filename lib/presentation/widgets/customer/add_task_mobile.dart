@@ -427,7 +427,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'COMMISSION',
+                            'AMOUNT',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 13,
                               fontWeight: FontWeight.w800,
@@ -446,7 +446,7 @@ class _AddTaskMobileState extends State<AddTaskMobile> {
                               color: const Color(0xFF1E232C),
                             ),
                             decoration: InputDecoration(
-                              hintText: 'Enter commission...',
+                              hintText: 'Enter amount...',
                               hintStyle: GoogleFonts.plusJakartaSans(
                                 fontSize: 14,
                                 color: Colors.grey[400],

@@ -438,7 +438,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'COMMISSION',
+                        'AMOUNT',
                         style: GoogleFonts.plusJakartaSans(
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
@@ -457,7 +457,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                           color: const Color(0xFF1E232C),
                         ),
                         decoration: InputDecoration(
-                          hintText: 'Enter commission...',
+                          hintText: 'Enter amount...',
                           hintStyle: GoogleFonts.plusJakartaSans(
                             fontSize: 14,
                             color: Colors.grey[400],

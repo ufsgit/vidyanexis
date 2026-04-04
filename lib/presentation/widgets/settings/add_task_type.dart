@@ -476,7 +476,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                       const SizedBox(height: 10),
                                       CheckboxListTile(
                                         title: const Text(
-                                          "Commission Number",
+                                          "Amount",
                                           style: TextStyle(fontSize: 14),
                                         ),
                                         value:
@@ -788,7 +788,7 @@ class _AddTaskTypeState extends State<AddTaskType> {
                                   const SizedBox(height: 10),
                                   CheckboxListTile(
                                       title: const Text(
-                                        "Commission Number",
+                                        "Amount",
                                         style: TextStyle(fontSize: 14),
                                       ),
                                       value:
