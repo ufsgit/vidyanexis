@@ -393,7 +393,7 @@ class LeadDetailsWidgetState extends State<LeadDetailsWidget> {
                                   _buildDetailRow('Phone Number',
                                       leadDetails.phoneNumber.toString()),
                                   _buildDetailRow('Total Project Cost',
-                                      leadDetails.totalProjectCost.toString()),
+                                      leadDetails.displayProjectCost),
                                 ],
                               ),
                             ),

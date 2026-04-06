@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/notification_provider.dart';
@@ -47,6 +48,7 @@ import 'package:vidyanexis/presentation/widgets/home/side_bar_widget.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_status_report_screen.dart';
 import 'package:vidyanexis/presentation/pages/reports/commission_report_page.dart';
 import 'package:vidyanexis/presentation/pages/reports/sub_contract_report_page.dart';
+import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_page.dart';
 
 class HomePage extends StatefulWidget {
   static String route = '/home';
@@ -348,6 +350,12 @@ class _HomePageState extends State<HomePage> {
           title: 'Outstanding Reports',
           iconPath: 'assets/images/Reports.svg',
           baseContent: const Center(child: OutstandingReportPage()),
+        ),
+      if (settingsProvider.menuIsViewMap[110].toString() == '1' || kDebugMode)
+        SidebarOption(
+          title: 'Customer Outstanding Reports',
+          iconPath: 'assets/images/Reports.svg',
+          baseContent: const Center(child: CustomerOutstandingReportPage()),
         ),
       // SidebarOption(
       //   title: 'Feedback Reports',

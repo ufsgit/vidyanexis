@@ -1285,12 +1285,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                               const SizedBox(height: 2),
 
                                               DetailRow(
-                                                label: "Total project cost :",
+                                                label: "Total project cost",
                                                 value: customerDetailsProvider
-                                                        .leadDetails![0]
-                                                        .totalProjectCost
-                                                        .toString() ??
-                                                    '',
+                                                    .leadDetails![0]
+                                                    .displayProjectCost,
                                               ),
                                               // DetailRow(
                                               //   label: "Engineer",
@@ -1769,12 +1767,10 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             2),
                                                                     DetailRow(
                                                                       label:
-                                                                          "Total project cost :",
+                                                                          "Total project cost",
                                                                       value: customerDetailsProvider
-                                                                              .leadDetails![0]
-                                                                              .totalProjectCost
-                                                                              .toString() ??
-                                                                          '',
+                                                                          .leadDetails![0]
+                                                                          .displayProjectCost,
                                                                     ),
                                                                   ],
                                                                 ),

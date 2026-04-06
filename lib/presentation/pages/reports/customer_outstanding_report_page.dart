@@ -1,0 +1,404 @@
+import 'package:flutter/material.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
+import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart';
+import 'package:vidyanexis/presentation/pages/reports/customer_outstanding_report_mobile.dart';
+import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:provider/provider.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+
+class CustomerOutstandingReportPage extends StatefulWidget {
+  static String route = '/customer_outstanding_report';
+  const CustomerOutstandingReportPage({super.key});
+
+  @override
+  State<CustomerOutstandingReportPage> createState() => _CustomerOutstandingReportPageState();
+}
+
+class _CustomerOutstandingReportPageState extends State<CustomerOutstandingReportPage> {
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final provider = Provider.of<CustomerOutstandingReportProvider>(context, listen: false);
+      provider.getReport(context);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!AppStyles.isWebScreen(context)) {
+      return const CustomerOutstandingReportMobile();
+    }
+
+    final provider = Provider.of<CustomerOutstandingReportProvider>(context);
+
+    return Scaffold(
+      backgroundColor: Colors.white,
+      body: Column(
+        children: [
+          // Header section
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(bottom: BorderSide(color: Colors.grey[200]!)),
+            ),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'Customer Outstanding Report',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.textBlack,
+                      ),
+                    ),
+                    const Spacer(),
+                    Container(
+                      width: 400,
+                      height: 44,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(color: Colors.grey[200]!),
+                      ),
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 15),
+                          const Icon(Icons.search, color: Colors.grey, size: 20),
+                          Expanded(
+                            child: TextField(
+                              controller: searchController,
+                              decoration: const InputDecoration(
+                                hintText: 'Search here....',
+                                border: InputBorder.none,
+                                hintStyle: TextStyle(color: Colors.grey, fontSize: 13),
+                              ),
+                              onChanged: (val) => provider.setSearch(val),
+                              onSubmitted: (val) => provider.getReport(context),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.all(4),
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFF7F8C8D),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                              ),
+                              onPressed: () => provider.getReport(context),
+                              child: const Text('Search', style: TextStyle(color: Colors.white, fontSize: 12)),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    OutlinedButton.icon(
+                      onPressed: () => provider.toggleFilter(),
+                      icon: const Icon(Icons.filter_list, size: 18),
+                      label: const Text('Filter'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: provider.isFilter ? Colors.white : const Color(0xFFF1C40F),
+                        backgroundColor: provider.isFilter ? const Color(0xFFF1C40F) : Colors.white,
+                        side: const BorderSide(color: Color(0xFFF1C40F)),
+                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton(
+                      onPressed: () {
+                        exportToExcel(
+                          headers: [
+                            'Customer Name',
+                            'Phone no',
+                            'Project Cost',
+                            'Received',
+                            'Balance',
+                          ],
+                          data: provider.reportData.map((item) {
+                            return {
+                              'Customer Name': item.customerName,
+                              'Phone no': item.phone,
+                              'Project Cost': item.projectCost,
+                              'Received': item.received,
+                              'Balance': item.balance,
+                            };
+                          }).toList(),
+                          fileName: 'Customer_Outstanding_Report',
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFF1C40F),
+                        foregroundColor: Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                      ),
+                      child: const Text('Export to Excel', style: TextStyle(fontWeight: FontWeight.bold)),
+                    ),
+                  ],
+                ),
+                if (provider.isFilter) ...[
+                  const SizedBox(height: 20),
+                  Row(
+                    children: [
+                      _buildFilterItem(
+                        context,
+                        'Date Range',
+                        '${provider.formattedFromDate} - ${provider.formattedToDate}',
+                        onTap: () => _onClickDateRange(context),
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () => provider.resetFilters(context),
+                        child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+          // Table section
+          Expanded(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minWidth: MediaQuery.of(context).size.width),
+              child: Container(
+                width: MediaQuery.of(context).size.width > 1200 ? MediaQuery.of(context).size.width : 1200,
+                child: Column(
+                    children: [
+                      // Table Header
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF8FAFC),
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(8),
+                            topRight: Radius.circular(8),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            _buildTableHeader('No.', flex: 1),
+                            _buildTableHeader('Customer Name', flex: 5),
+                            _buildTableHeader('Phone no', flex: 3),
+                            _buildTableHeader('Project Cost', flex: 3),
+                            _buildTableHeader('Received', flex: 3),
+                            _buildTableHeader('Balance', flex: 3),
+                          ],
+                        ),
+                      ),
+                      // Table Body
+                      Expanded(
+                        child: provider.reportData.isEmpty
+                            ? const Center(child: Text('No data found'))
+                            : ListView.separated(
+                                itemCount: provider.reportData.length,
+                                separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[100]),
+                                itemBuilder: (context, index) {
+                                  final item = provider.reportData[index];
+                                  return Container(
+                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                                    child: Row(
+                                      children: [
+                                        Expanded(flex: 1, child: Text('${index + 1}', style: const TextStyle(fontSize: 13))),
+                                        Expanded(
+                                          flex: 5,
+                                          child: InkWell(
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) => CustomerDetailsScreen(
+                                                    customerId: item.customerId.toString(),
+                                                    report: 'true',
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                            focusColor: Colors.transparent,
+                                            hoverColor: Colors.transparent,
+                                            splashColor: Colors.transparent,
+                                            highlightColor: Colors.transparent,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                CircleAvatar(
+                                                  radius: 14,
+                                                  backgroundColor: AppColors.primaryBlue.withOpacity(0.1),
+                                                  child: Icon(Icons.person, size: 16, color: AppColors.primaryBlue),
+                                                ),
+                                                const SizedBox(width: 10),
+                                                Flexible(
+                                                  child: Text(
+                                                    item.customerName,
+                                                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+                                                    overflow: TextOverflow.ellipsis,
+                                                  ),
+                                                ),
+                                                const SizedBox(width: 6),
+                                                Icon(Icons.chevron_right, size: 18, color: AppColors.primaryBlue),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                        Expanded(flex: 3, child: Text(item.phone, style: const TextStyle(fontSize: 13))),
+                                        Expanded(flex: 3, child: Text('₹${item.projectCost}', style: const TextStyle(fontSize: 13))),
+                                        Expanded(flex: 3, child: Text('₹${item.received}', style: const TextStyle(fontSize: 13, color: Colors.green))),
+                                        Expanded(
+                                          flex: 3,
+                                          child: Text(
+                                            '₹${item.balance}',
+                                            style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red, fontSize: 13),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                      ),
+                      // Table Footer
+                      Container(
+                        padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFF8FAFC),
+                          border: Border(top: BorderSide(color: Color(0xFFE2E8F0))),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(8),
+                            bottomRight: Radius.circular(8),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            const Expanded(flex: 1, child: SizedBox()),
+                            const Expanded(flex: 5, child: Text('TOTAL', style: TextStyle(fontWeight: FontWeight.bold))),
+                            const Expanded(flex: 3, child: SizedBox()),
+                            Expanded(flex: 3, child: Text('₹${provider.totalProjectCost}', style: const TextStyle(fontWeight: FontWeight.bold))),
+                            Expanded(flex: 3, child: Text('₹${provider.totalReceived}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.green))),
+                            Expanded(flex: 3, child: Text('₹${provider.totalBalance}', style: const TextStyle(fontWeight: FontWeight.bold, color: Colors.red))),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTableHeader(String title, {int? flex, double? width, bool center = false}) {
+    final child = Text(
+      title.toUpperCase(),
+      textAlign: center ? TextAlign.center : TextAlign.start,
+      style: TextStyle(
+        fontSize: 12,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey[600],
+        letterSpacing: 0.5,
+      ),
+    );
+    return flex != null
+        ? Expanded(flex: flex, child: child)
+        : SizedBox(
+            width: width,
+            child: center ? Center(child: child) : child,
+          );
+  }
+
+  Widget _buildFilterItem(BuildContext context, String label, String value, {VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Row(
+          children: [
+            Text('$label: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+            Text(value, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+            const SizedBox(width: 8),
+            const Icon(Icons.arrow_drop_down, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _onClickDateRange(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => Consumer<CustomerOutstandingReportProvider>(
+        builder: (context, provider, child) {
+          return AlertDialog(
+            title: const Text('Select Date Range'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    for (int i = 0; i < 5; i++)
+                      ActionChip(
+                        label: Text(['Yesterday', 'Today', 'Tomorrow', 'This Week', 'This Month'][i]),
+                        onPressed: () => provider.selectDateFilterOption(i),
+                        backgroundColor: provider.selectedDateFilterIndex == i ? AppColors.primaryBlue : null,
+                        labelStyle: TextStyle(color: provider.selectedDateFilterIndex == i ? Colors.white : null),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                Row(
+                  children: [
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => provider.selectDate(context, true),
+                        icon: const Icon(Icons.calendar_today, size: 16),
+                        label: Text(provider.fromDate != null ? provider.formattedFromDate : 'From Date'),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => provider.selectDate(context, false),
+                        icon: const Icon(Icons.calendar_today, size: 16),
+                        label: Text(provider.toDate != null ? provider.formattedToDate : 'To Date'),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+              ElevatedButton(
+                onPressed: () {
+                  provider.getReport(context);
+                  Navigator.pop(context);
+                },
+                child: const Text('Apply'),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}

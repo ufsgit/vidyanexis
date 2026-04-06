@@ -348,4 +348,5 @@ class HttpUrls {
   static String getPdfCompletionReport = "lead/get_pdf_completion_report/";
   static String getCommissionReport = "lead/Get_Commission_Report";
   static String subContractsReport = "task/Sub_contracts_report";
+  static String customerOutstandingReport = "lead/Customer_Outstanding_Report";
 }

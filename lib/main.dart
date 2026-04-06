@@ -59,6 +59,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/commission_report_provider.dart';
 import 'package:vidyanexis/utils/firebase_notification_service.dart';
 import 'package:vidyanexis/controller/sub_contract_report_provider.dart';
+import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart';
 
 final GlobalKey<ScaffoldMessengerState> navigatorKey =
     GlobalKey<ScaffoldMessengerState>();
@@ -146,6 +147,7 @@ class MyApp extends StatelessWidget {
           create: (_) => SidebarProvider(),
         ),
         ChangeNotifierProvider(create: (context) => SubContractReportProvider()),
+        ChangeNotifierProvider(create: (context) => CustomerOutstandingReportProvider()),
       ],
       child: Consumer<SettingsProvider>(
         builder: (context, settingsProvider, child) {
