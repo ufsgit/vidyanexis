@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/customer_details_provider.dart';
 import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/process_flow_dialog.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
 import 'package:vidyanexis/presentation/widgets/customer/add_quotation.dart';
 import 'package:vidyanexis/presentation/widgets/customer/upload_image.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
@@ -35,6 +36,7 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/presentation/widgets/home/task_card.dart';
 import 'package:vidyanexis/utils/status_utils.dart';
+import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 
@@ -2370,292 +2372,26 @@ class _tasksPageReportState extends State<TaskPage> {
 
   void _showWebFormDialog(
       BuildContext context, FormModel form, TaskReportModel task) {
-    // Initialize state mapping for field values
-    Map<String, dynamic> fieldValues = {};
-    for (var field in form.fields) {
-      if (field.type == FieldType.text || field.type == FieldType.number) {
-        fieldValues[field.id] = TextEditingController();
-      } else {
-        fieldValues[field.id] = null;
-      }
-    }
-
     showDialog(
       context: context,
-      builder: (context) {
-        return StatefulBuilder(
-          builder: (dialogContext, setState) {
-            final isSmallScreen = MediaQuery.of(dialogContext).size.width < 600;
-            return Dialog(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Container(
-                padding: const EdgeInsets.all(24),
-                width: isSmallScreen
-                    ? MediaQuery.of(context).size.width * 0.9
-                    : 500,
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        form.name,
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Color(0xFF1A7AE8),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      ...form.fields.map((field) {
-                        Widget fieldWidget;
-
-                        if (field.type == FieldType.date) {
-                          fieldWidget = GestureDetector(
-                            onTap: () async {
-                              DateTime? pickedDate = await showDatePicker(
-                                context: context,
-                                initialDate: DateTime.now(),
-                                firstDate: DateTime(2000),
-                                lastDate: DateTime(2101),
-                              );
-                              if (pickedDate != null) {
-                                setState(() {
-                                  fieldValues[field.id] =
-                                      DateFormat('yyyy-MM-dd')
-                                          .format(pickedDate);
-                                });
-                              }
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 16, vertical: 12),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFFF8FAFC),
-                                borderRadius: BorderRadius.circular(8),
-                                border:
-                                    Border.all(color: const Color(0xFFE2E8F0)),
-                              ),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      fieldValues[field.id] ?? 'Select Date',
-                                      style: TextStyle(
-                                        color: fieldValues[field.id] == null
-                                            ? const Color(0xFF64748B)
-                                            : Colors.black87,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ),
-                                  const Icon(Icons.calendar_today,
-                                      color: Color(0xFFCBD5E1), size: 20),
-                                ],
-                              ),
-                            ),
-                          );
-                        } else if (field.type == FieldType.dropdown) {
-                          List<String> options = field.options ?? [];
-
-                          fieldWidget = Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 16, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF8FAFC),
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: DropdownButtonHideUnderline(
-                              child: DropdownButton<String>(
-                                isExpanded: true,
-                                hint: Text(
-                                  field.label,
-                                  style: const TextStyle(
-                                    color: Color(0xFF64748B),
-                                    fontSize: 14,
-                                  ),
-                                ),
-                                value: fieldValues[field.id],
-                                items: options.map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(
-                                      value,
-                                      style: const TextStyle(
-                                        color: Color(0xFF64748B),
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (value) {
-                                  setState(() {
-                                    fieldValues[field.id] = value;
-                                  });
-                                },
-                              ),
-                            ),
-                          );
-                        } else {
-                          // Text or Number
-                          fieldWidget = Container(
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFF8FAFC),
-                              borderRadius: BorderRadius.circular(8),
-                              border:
-                                  Border.all(color: const Color(0xFFE2E8F0)),
-                            ),
-                            child: TextField(
-                              controller: fieldValues[field.id],
-                              keyboardType: field.type == FieldType.number
-                                  ? TextInputType.number
-                                  : TextInputType.text,
-                              decoration: InputDecoration(
-                                hintText: field.label,
-                                hintStyle: const TextStyle(
-                                  color: Color(0xFF64748B),
-                                  fontSize: 14,
-                                ),
-                                border: InputBorder.none,
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 14),
-                              ),
-                            ),
-                          );
-                        }
-
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: fieldWidget,
-                        );
-                      }),
-                      const SizedBox(height: 16),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text(
-                              'Cancel',
-                              style: TextStyle(
-                                color: Color(0xFF64748B),
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFF1A7AE8),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(24),
-                              ),
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 12),
-                            ),
-                            onPressed: () {
-                              List<Map<String, dynamic>> customFieldsPayload =
-                                  [];
-                              for (var field in form.fields) {
-                                String valueStr = '';
-                                if (field.type == FieldType.text ||
-                                    field.type == FieldType.number) {
-                                  valueStr = (fieldValues[field.id]
-                                          as TextEditingController)
-                                      .text;
-                                } else {
-                                  valueStr = fieldValues[field.id] ?? '';
-                                }
-
-                                int typeId = 1;
-                                if (field.type == FieldType.number) typeId = 2;
-                                if (field.type == FieldType.dropdown) {
-                                  typeId = 3;
-                                }
-                                if (field.type == FieldType.date) typeId = 4;
-
-                                customFieldsPayload.add({
-                                  "custom_field_id":
-                                      int.tryParse(field.id) ?? 0,
-                                  "custom_field_name": field.label,
-                                  "custom_field_type_id": typeId,
-                                  "datavalue": valueStr,
-                                });
-                              }
-
-                              final formProvider = Provider.of<FormProvider>(
-                                  context, // outer context
-                                  listen: false);
-
-                              formProvider
-                                  .saveTaskFormData(
-                                context: context, // outer context
-                                taskId: task.taskId,
-                                formId: int.parse(form.id),
-                                customerId: task.customerId,
-                                taskTypeId: task.taskTypeId.toString(),
-                                customFields: customFieldsPayload,
-                              )
-                                  .then((resultId) {
-                                if (resultId != null) {
-                                  if (mounted) {
-                                    Navigator.pop(dialogContext); // Close form
-                                  }
-                                  showDialog(
-                                    context: context, // outer context
-                                    builder: (confirmContext) => AlertDialog(
-                                      title: const Text("Print Form"),
-                                      content: const Text(
-                                          "Do you want to print form?"),
-                                      actions: [
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(confirmContext);
-                                          },
-                                          child: const Text("No"),
-                                        ),
-                                        TextButton(
-                                          onPressed: () {
-                                            Navigator.pop(confirmContext);
-                                            formProvider.fetchAndPrintFormPdf(
-                                              context:
-                                                  context, // outer TaskPage context
-                                              customerId:
-                                                  task.customerId.toString(),
-                                              formDataDetailsId: resultId,
-                                              taskId: task.taskId,
-                                            );
-                                          },
-                                          child: const Text("Yes"),
-                                        ),
-                                      ],
-                                    ),
-                                  );
-                                }
-                              });
-                            },
-                            child: const Text(
-                              'Save',
-                              style: TextStyle(
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        );
-      },
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: CustomFormFillerView(
+            form: form,
+            taskId: task.taskId,
+            customerId: task.customerId,
+            taskTypeId: task.taskTypeId.toString(),
+            enquiryForId: task.enquiryForId,
+            formDataDetailsId: form.instanceId?.toString(),
+            onSaved: () {
+              // Any specific refresh logic for TaskPage if needed?
+            },
+          ),
+        ),
+      ),
     );
   }
 
@@ -4202,3 +3938,4 @@ class _tasksPageReportState extends State<TaskPage> {
     );
   }
 }
+

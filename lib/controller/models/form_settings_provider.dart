@@ -150,14 +150,26 @@ class FormProvider extends ChangeNotifier {
               customFieldModelList.where((f) => f.deletedStatus != 1).map((cf) {
             FieldType type;
             switch (cf.customFieldTypeId) {
-              case 2:
+              case 1:
                 type = FieldType.number;
+                break;
+              case 2:
+                type = FieldType.text;
                 break;
               case 3:
                 type = FieldType.dropdown;
                 break;
               case 4:
                 type = FieldType.date;
+                break;
+              case 5:
+                type = FieldType.checkbox;
+                break;
+              case 6:
+                type = FieldType.file;
+                break;
+              case 7:
+                type = FieldType.signature;
                 break;
               default:
                 type = FieldType.text;
@@ -170,6 +182,7 @@ class FormProvider extends ChangeNotifier {
                   : label,
               type: type,
               options: cf.dropDownValues,
+              checkBoxOptions: cf.checkBoxValues,
             );
           }).toList();
         }
@@ -416,8 +429,15 @@ class FormProvider extends ChangeNotifier {
     _currentFetchId++;
     final int fetchId = _currentFetchId;
 
-    _customerForms = [];
-    isFetchingCustomerForms = true;
+    // Only clear and show spinner if we have no forms yet to prevent flicker 
+    // when data arrives from parallel sources like fetchTaskTypes.
+    if (_customerForms.isEmpty) {
+      _customerForms = [];
+      isFetchingCustomerForms = true;
+    } else {
+      _isFetchingCustomerForms = true;
+      notifyListeners();
+    }
 
     _activeCustomerFetch =
         _performFetch(customerId, taskTypeId, enquiryForId, taskId, fetchId);
@@ -461,10 +481,13 @@ class FormProvider extends ChangeNotifier {
         var data = response.data;
         if (data != null) {
           // If response is { "success": true, "data": { ... } } or { "success": true, "data": [ ... ] }
-          if (data is Map && data.containsKey('data') && data['data'] != null) {
+          // Only unwrap if the current map doesn't already contain the target form keys ('forms' or 'form_data')
+          if (data is Map && !data.containsKey('forms') && !data.containsKey('form_data')) {
+            if (data.containsKey('data') && data['data'] != null) {
               data = data['data'];
-          } else if (data is Map && data.containsKey('Data') && data['Data'] != null) {
+            } else if (data.containsKey('Data') && data['Data'] != null) {
               data = data['Data'];
+            }
           }
 
           bool hasData = false;
@@ -482,7 +505,12 @@ class FormProvider extends ChangeNotifier {
             }
           } else {
             if (fetchId == _currentFetchId) {
-              _customerForms = [];
+              // Only clear if we didn't already have forms (e.g. from fetchTaskTypes).
+              // This prevents a race condition where history returns empty and kills the buttons.
+              if (_customerForms.isEmpty) {
+                _customerForms = [];
+              }
+              _isFetchingCustomerForms = false;
               notifyListeners();
             }
           }
@@ -507,10 +535,13 @@ class FormProvider extends ChangeNotifier {
       
       // Secondary check if data is wrapped here as well
       var processedData = data;
-      if (processedData is Map && processedData.containsKey('data') && processedData['data'] != null) {
+      // Only unwrap if the current map doesn't already contain the target form keys ('forms' or 'form_data')
+      if (processedData is Map && !processedData.containsKey('forms') && !processedData.containsKey('form_data')) {
+        if (processedData.containsKey('data') && processedData['data'] != null) {
           processedData = processedData['data'];
-      } else if (processedData is Map && processedData.containsKey('Data') && processedData['Data'] != null) {
+        } else if (processedData.containsKey('Data') && processedData['Data'] != null) {
           processedData = processedData['Data'];
+        }
       }
 
       List<dynamic> formsList = [];

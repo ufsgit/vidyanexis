@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
 import 'package:vidyanexis/controller/models/form_model.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
-import 'package:intl/intl.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/presentation/widgets/common/custom_form_filler_view.dart';
 
 class FormsTabWidget extends StatefulWidget {
   final String customerId;
@@ -290,257 +290,24 @@ class _FormsTabWidgetState extends State<FormsTabWidget> {
   void _showEditDialog(FormModel form) {
     showDialog(
       context: context,
-      builder: (context) {
-        return EditFormDialog(
-          form: form,
-          customerId: widget.customerId,
-          onSaved: () {
-            _fetchForms();
-          },
-        );
-      },
-    );
-  }
-}
-
-class EditFormDialog extends StatefulWidget {
-  final FormModel form;
-  final String customerId;
-  final VoidCallback onSaved;
-
-  const EditFormDialog({
-    super.key,
-    required this.form,
-    required this.customerId,
-    required this.onSaved,
-  });
-
-  @override
-  State<EditFormDialog> createState() => _EditFormDialogState();
-}
-
-class _EditFormDialogState extends State<EditFormDialog> {
-  final Map<String, dynamic> _fieldValues = {};
-
-  @override
-  void initState() {
-    super.initState();
-    for (var field in widget.form.fields) {
-      _fieldValues[field.id] = field.value;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: Container(
-        padding: const EdgeInsets.all(24),
-        width: 450,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  "Edit ${widget.form.name}",
-                  style: const TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-            const Divider(),
-            const SizedBox(height: 16),
-            Flexible(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: widget.form.fields.map((field) {
-                    return _buildFormField(field);
-                  }).toList(),
-                ),
-              ),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                OutlinedButton(
-                  onPressed: () => Navigator.pop(context),
-                  style: OutlinedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text("Cancel"),
-                ),
-                const SizedBox(width: 12),
-                ElevatedButton(
-                  onPressed: _saveForm,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.bluebutton,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text("Save Changes"),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildFormField(FieldModel field) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            field.label,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF64748B),
-            ),
+      barrierDismissible: false,
+      builder: (context) => Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 600),
+          child: CustomFormFillerView(
+            form: form,
+            taskId: form.taskId ?? 0,
+            customerId: int.tryParse(widget.customerId) ?? form.customerId ?? 0,
+            taskTypeId: form.taskTypeId?.toString() ?? "",
+            formDataDetailsId: form.instanceId?.toString(),
+            onSaved: () {
+              _fetchForms();
+            },
           ),
-          const SizedBox(height: 8),
-          _buildInput(field),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildInput(FieldModel field) {
-    if (field.type == FieldType.date) {
-      return _buildDatePicker(field);
-    } else if (field.type == FieldType.dropdown) {
-      return _buildDropdown(field);
-    } else {
-      return _buildTextField(field);
-    }
-  }
-
-  Widget _buildTextField(FieldModel field) {
-    return TextFormField(
-      initialValue: _fieldValues[field.id],
-      decoration: InputDecoration(
-        filled: true,
-        fillColor: const Color(0xFFF8FAFC),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: Color(0xFFE2E8F0)),
-        ),
-      ),
-      onChanged: (val) {
-        _fieldValues[field.id] = val;
-      },
-    );
-  }
-
-  Widget _buildDatePicker(FieldModel field) {
-    return InkWell(
-      onTap: () async {
-        DateTime? picked = await showDatePicker(
-          context: context,
-          initialDate: DateTime.tryParse(_fieldValues[field.id] ?? "") ?? DateTime.now(),
-          firstDate: DateTime(2000),
-          lastDate: DateTime(2101),
-        );
-        if (picked != null) {
-          setState(() {
-            _fieldValues[field.id] = DateFormat('yyyy-MM-dd').format(picked);
-          });
-        }
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF8FAFC),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0xFFE2E8F0)),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              _fieldValues[field.id] ?? "Select Date",
-              style: TextStyle(
-                color: _fieldValues[field.id] != null ? Colors.black : Colors.grey,
-                fontSize: 14,
-              ),
-            ),
-            const Icon(Icons.calendar_today, size: 18, color: Colors.grey),
-          ],
         ),
       ),
     );
-  }
-
-  Widget _buildDropdown(FieldModel field) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: const Color(0xFFE2E8F0)),
-      ),
-      child: DropdownButtonHideUnderline(
-        child: DropdownButton<String>(
-          isExpanded: true,
-          value: (field.options?.contains(_fieldValues[field.id]) ?? false) ? _fieldValues[field.id] : null,
-          hint: const Text("Select option", style: TextStyle(fontSize: 14)),
-          items: (field.options ?? []).map((String val) {
-            return DropdownMenuItem<String>(
-              value: val,
-              child: Text(val, style: const TextStyle(fontSize: 14)),
-            );
-          }).toList(),
-          onChanged: (val) {
-            setState(() {
-              _fieldValues[field.id] = val;
-            });
-          },
-        ),
-      ),
-    );
-  }
-
-  void _saveForm() {
-    final formProvider = Provider.of<FormProvider>(context, listen: false);
-
-    List<Map<String, dynamic>> customFields = widget.form.fields.map((f) {
-      return {
-        "Custom_Field_Id": int.tryParse(f.id) ?? 0,
-        "DataValue": _fieldValues[f.id] ?? "",
-      };
-    }).toList();
-
-    formProvider.saveTaskFormData(
-      context: context,
-      taskId: 0,
-      formId: int.tryParse(widget.form.id) ?? 0,
-      customFields: customFields,
-      formDataDetailsId: widget.form.instanceId ?? 0,
-      customerId: int.tryParse(widget.customerId) ?? 0,
-    ).then((_) {
-      widget.onSaved();
-      Navigator.pop(context);
-    });
   }
 }
+
