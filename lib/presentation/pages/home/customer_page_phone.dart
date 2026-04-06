@@ -148,7 +148,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
           );
           customerProvider.getSearchCustomers(context);
         },
-        onChanged: _onSearchChanged,
+        // onChanged: _onSearchChanged,
         searchController: searchController,
       ),
       drawer: const SidebarDrawer(),

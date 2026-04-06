@@ -1,4 +1,4 @@
-enum FieldType { text, dropdown, date, number }
+enum FieldType { text, dropdown, date, number, checkbox, file, signature }
 
 class FieldModel {
   final String id;
@@ -8,6 +8,7 @@ class FieldModel {
   int orderBy;
   String? value;
   final List<String>? options;
+  final List<String>? checkBoxOptions;
 
   FieldModel({
     required this.id,
@@ -17,6 +18,7 @@ class FieldModel {
     this.orderBy = 0,
     this.value,
     this.options,
+    this.checkBoxOptions,
   });
 }
 
