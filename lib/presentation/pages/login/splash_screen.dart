@@ -61,49 +61,64 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           Center(
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.circle,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
-                    blurRadius: 20,
-                    offset: const Offset(0, 10),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(4),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-              child: CircleAvatar(
-                radius: 75,
-                backgroundColor: Colors.transparent,
-                child: ClipOval(
-                  child: displayLogo.startsWith('http')
-                      ? Image.network(
-                          displayLogo,
-                          height: 150,
-                          width: 150,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Image.asset(
-                              AppStyles.logo(),
+                  child: CircleAvatar(
+                    radius: 75,
+                    backgroundColor: Colors.transparent,
+                    child: ClipOval(
+                      child: displayLogo.startsWith('http')
+                          ? Image.network(
+                              displayLogo,
                               height: 150,
                               width: 150,
                               fit: BoxFit.contain,
-                            );
-                          },
-                        )
-                      : Image.asset(
-                          displayLogo,
-                          height: 150,
-                          width: 150,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container();
-                          },
-                        ),
+                              errorBuilder: (context, error, stackTrace) {
+                                return Image.asset(
+                                  AppStyles.logo(),
+                                  height: 150,
+                                  width: 150,
+                                  fit: BoxFit.contain,
+                                );
+                              },
+                            )
+                          : Image.asset(
+                              displayLogo,
+                              height: 150,
+                              width: 150,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container();
+                              },
+                            ),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(height: 20),
+                Text(
+                  settingsProvider.displayTitle,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 1.2,
+                  ),
+                ),
+              ],
             ),
           ),
         ],

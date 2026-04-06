@@ -273,22 +273,25 @@ class _CustomerDetailPageMobileState extends State<CustomerDetailPageMobile>
                                 context,
                                 listen: false);
                             final customerId = widget.customerId.toString();
+
+                            // Optimistic removal
                             leadsProvider.removeLeadFromList(customerId);
                             Provider.of<CustomerProvider>(context,
                                     listen: false)
                                 .removeCustomerFromList(customerId);
-                            Navigator.pop(context); // dialog
-                            Navigator.pop(context); // details page
-                            // if (widget.fromLead) {
-                            leadsProvider.deleteLead(context, customerId);
-                            // } else {
-                            //   Provider.of<CustomerProvider>(context,
-                            //           listen: false)
-                            //       .deleteCustomer(context, customerId);
-                            // }
-                            Provider.of<CustomerProvider>(context,
-                                    listen: false)
-                                .getSearchCustomers(context);
+
+                            // Perform deletion and wait for it
+                            await leadsProvider.deleteLead(context, customerId);
+
+                            if (context.mounted) {
+                              Navigator.pop(context); // close dialog
+                              Navigator.pop(context); // close details page
+                              
+                              // Refresh the list silently on the previous page
+                              Provider.of<CustomerProvider>(context,
+                                      listen: false)
+                                  .getSearchCustomersNoContext();
+                            }
                           },
                           confirmButtonText: 'Delete',
                         );

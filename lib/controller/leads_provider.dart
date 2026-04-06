@@ -1775,24 +1775,28 @@ class LeadsProvider extends ChangeNotifier {
   // }
 
   Future<void> deleteLead(BuildContext context, String custId) async {
+    bool loaderShown = false;
     try {
+      if (context.mounted) {
+        Loader.showLoader(context);
+        loaderShown = true;
+      }
       final response = await HttpRequest.httpDeleteRequest(
           endPoint: '${HttpUrls.deleteLead}/$custId');
 
       if (response != null && response.statusCode == 200) {
         log('Lead deleted successfully');
         removeLeadFromList(custId);
-        await getSearchLeads(context);
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete lead')),
-        );
       }
     } catch (e) {
       print('Exception occurred: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
+      if (loaderShown) {
+        Loader.stopLoader(context);
+      }
     }
   }
 

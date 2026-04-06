@@ -535,35 +535,39 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       onCancel: () =>
                                           Navigator.of(context).pop(),
                                       onConfirm: () async {
-                                        // Optimistic removal from lists
-                                        leadProvider.removeLeadFromList(
-                                            widget.customerId);
-                                        customerProvider.removeCustomerFromList(
-                                            widget.customerId);
-
-                                        // Close dialog
+                                        // Close confirmation dialog first to avoid blocking the loader
                                         Navigator.of(context).pop();
 
-                                        // Go back from details
-                                        if (Navigator.of(context).canPop()) {
-                                          Navigator.of(context).pop();
+                                        // Perform deletion while page is still mounted
+                                        if (sideprovider.name == 'Lead /') {
+                                          await leadProvider.deleteLead(
+                                              context, widget.customerId);
                                         } else {
-                                          // Fallback for embedded views (Web logic)
-                                          sideprovider.replaceWidget(true, '');
-                                          sideprovider.replaceWidgetCustomer(
-                                              true, '');
+                                          await customerProvider.deleteCustomer(
+                                              context, widget.customerId);
                                         }
 
-                                        // Perform actions in background
-                                        if (sideprovider.name == 'Lead /') {
-                                          leadProvider.deleteLead(
-                                              context, widget.customerId);
-                                        } else {
-                                          customerProvider.deleteCustomer(
-                                              context, widget.customerId);
+                                        if (context.mounted) {
+                                          // Optimistic removal from lists
+                                          leadProvider.removeLeadFromList(
+                                              widget.customerId);
+                                          customerProvider.removeCustomerFromList(
+                                              widget.customerId);
+
+                                          // Now go back from details page
+                                          if (Navigator.of(context).canPop()) {
+                                            Navigator.of(context).pop();
+                                          } else {
+                                            // Fallback for embedded views (Web logic)
+                                            sideprovider.replaceWidget(true, '');
+                                            sideprovider.replaceWidgetCustomer(
+                                                true, '');
+                                          }
+
+                                          // Refresh the list silently on the previous page
+                                          customerProvider
+                                              .getSearchCustomersNoContext();
                                         }
-                                        customerProvider
-                                            .getSearchCustomers(context);
                                       },
                                     );
                                   },

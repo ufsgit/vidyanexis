@@ -1373,10 +1373,10 @@ class _CustomerPageState extends State<CustomerPage> {
         content: 'Are you sure you want to delete this customer?',
         onCancel: () => Navigator.of(context).pop(),
         onConfirm: () async {
+          Navigator.of(context).pop(); // Close confirmation dialog first
           await leadsProvider.deleteLead(context, lead.customerId.toString());
           if (context.mounted) {
-            Navigator.of(context).pop();
-            customerProvider.getSearchCustomers(context);
+            customerProvider.getSearchCustomersNoContext();
           }
         },
       );
