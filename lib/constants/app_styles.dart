@@ -3,22 +3,35 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 
 class AppStyles {
+  static String? _cachedName;
+  static String? _cachedLogo;
+
+  static void updateCachedBranding(String? name, String? logo) {
+    _cachedName = name;
+    _cachedLogo = logo;
+  }
+
   static String logo() {
-    String logo = 'assets/images/Icon-512.png';
-    // String logo = 'assets/images/app_logo.png';
-    // String logo = 'assets/images/solaris_logo.png';
-    return logo;
+    if (_cachedLogo != null && _cachedLogo!.isNotEmpty) {
+      if (_cachedLogo!.startsWith('http')) {
+        return _cachedLogo!;
+      } else {
+        return "${HttpUrls.imgBaseUrl}$_cachedLogo";
+      }
+    }
+    return 'assets/images/Icon-512.png';
   }
 
   static String name() {
+    if (_cachedName != null && _cachedName!.isNotEmpty) {
+      return _cachedName!;
+    }
     const String fallback = 'TrackboxDevelopment';
     try {
       final String url = HttpUrls.baseUrl;
-      // Find the part after 'https://' (or 'http://')
       final int slashIndex = url.indexOf('//');
       if (slashIndex == -1) return fallback;
       final String afterSlashes = url.substring(slashIndex + 2);
-      // afterSlashes e.g. 'suryaprabhaapi.trackbox.net.in/'
       final int apiIndex = afterSlashes.toLowerCase().indexOf('api');
       if (apiIndex <= 0) return fallback;
       final String extracted = afterSlashes.substring(0, apiIndex);

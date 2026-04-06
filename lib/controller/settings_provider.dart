@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vidyanexis/controller/models/inventory_customer_model.dart';
 import 'package:vidyanexis/controller/models/location_model.dart';
 import 'package:vidyanexis/controller/models/branch_model.dart';
@@ -70,6 +71,8 @@ class SettingsProvider extends ChangeNotifier {
       if (cachedLogo != null || cachedTitle != null) {
         logo = cachedLogo ?? logo;
         title = cachedTitle ?? title;
+        AppStyles.updateCachedBranding(title, logo);
+        _updateAppSwitcher();
         _isCacheLoaded = true;
         print('Branding loaded from cache: $title - $logo');
         notifyListeners();
@@ -77,6 +80,15 @@ class SettingsProvider extends ChangeNotifier {
     } catch (e) {
       print('Error loading branding cache: $e');
     }
+  }
+
+  void _updateAppSwitcher() {
+    SystemChrome.setApplicationSwitcherDescription(
+      ApplicationSwitcherDescription(
+        label: displayTitle,
+        primaryColor: AppColors.primaryBlue.value,
+      ),
+    );
   }
 
   Future<void> _loadCache() async {
@@ -2876,7 +2888,10 @@ class SettingsProvider extends ChangeNotifier {
             SharedPreferences preferences = await SharedPreferences.getInstance();
             await preferences.setString('cached_company_logo', logo);
             await preferences.setString('cached_company_title', title);
+            AppStyles.updateCachedBranding(title, logo);
+            _updateAppSwitcher();
             print('Branding updated from API and cached: $title');
+            notifyListeners();
           }
         } else if (data != null && data is Map<String, dynamic>) {
           // In case the endpoint actually returns a direct map { "company_name": "...", "company_logo": "..." }
@@ -2890,7 +2905,10 @@ class SettingsProvider extends ChangeNotifier {
             SharedPreferences preferences = await SharedPreferences.getInstance();
             await preferences.setString('cached_company_logo', logo);
             await preferences.setString('cached_company_title', title);
+            AppStyles.updateCachedBranding(title, logo);
+            _updateAppSwitcher();
             print('Branding updated from API MAP and cached: $title');
+            notifyListeners();
           }
         } else {
           print('getCompanyDetails: No company data found in response');

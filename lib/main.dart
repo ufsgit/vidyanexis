@@ -21,7 +21,6 @@ import 'package:vidyanexis/controller/payment_schedule_provider.dart';
 import 'package:vidyanexis/controller/stock_use_provider.dart';
 import 'package:vidyanexis/controller/stockreturn_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/amc_report_provider.dart';
 import 'package:vidyanexis/controller/attendance_report_provider.dart';
 import 'package:vidyanexis/controller/conversion_report_provider.dart';
@@ -148,41 +147,45 @@ class MyApp extends StatelessWidget {
         ),
         ChangeNotifierProvider(create: (context) => SubContractReportProvider()),
       ],
-      child: MaterialApp.router(
-        scrollBehavior: const MaterialScrollBehavior().copyWith(
-          dragDevices: {
-            PointerDeviceKind.touch,
-            PointerDeviceKind.mouse,
-            PointerDeviceKind.stylus,
-            PointerDeviceKind.trackpad,
-          },
-        ),
-        scaffoldMessengerKey: navigatorKey,
-        color: const Color.fromARGB(255, 0, 90, 69),
-        title: '${AppStyles.name()} Admin',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(
-            seedColor: const Color.fromARGB(255, 0, 90, 69),
-          ),
-          useMaterial3: true,
-          fontFamily: 'PlusJakartaSans',
-          textTheme: const TextTheme(
-            bodyLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
-            bodyMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
-            bodySmall: TextStyle(fontFamily: 'PlusJakartaSans'),
-            labelLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
-            labelMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
-            labelSmall: TextStyle(fontFamily: 'PlusJakartaSans'),
-            titleLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
-            titleMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
-            titleSmall: TextStyle(fontFamily: 'PlusJakartaSans'),
-            displayLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
-            displayMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
-            displaySmall: TextStyle(fontFamily: 'PlusJakartaSans'),
-          ),
-        ),
-        routerConfig: appRouter,
+      child: Consumer<SettingsProvider>(
+        builder: (context, settingsProvider, child) {
+          return MaterialApp.router(
+            scrollBehavior: const MaterialScrollBehavior().copyWith(
+              dragDevices: {
+                PointerDeviceKind.touch,
+                PointerDeviceKind.mouse,
+                PointerDeviceKind.stylus,
+                PointerDeviceKind.trackpad,
+              },
+            ),
+            scaffoldMessengerKey: navigatorKey,
+            color: const Color.fromARGB(255, 0, 90, 69),
+            title: '${settingsProvider.displayTitle} Admin',
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              colorScheme: ColorScheme.fromSeed(
+                seedColor: const Color.fromARGB(255, 0, 90, 69),
+              ),
+              useMaterial3: true,
+              fontFamily: 'PlusJakartaSans',
+              textTheme: const TextTheme(
+                bodyLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
+                bodyMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
+                bodySmall: TextStyle(fontFamily: 'PlusJakartaSans'),
+                labelLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
+                labelMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
+                labelSmall: TextStyle(fontFamily: 'PlusJakartaSans'),
+                titleLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
+                titleMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
+                titleSmall: TextStyle(fontFamily: 'PlusJakartaSans'),
+                displayLarge: TextStyle(fontFamily: 'PlusJakartaSans'),
+                displayMedium: TextStyle(fontFamily: 'PlusJakartaSans'),
+                displaySmall: TextStyle(fontFamily: 'PlusJakartaSans'),
+              ),
+            ),
+            routerConfig: appRouter,
+          );
+        },
       ),
     );
   }
