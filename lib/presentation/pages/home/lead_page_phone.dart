@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
@@ -32,6 +33,7 @@ class LeadPagePhone extends StatefulWidget {
 
 class _LeadPagePhoneState extends State<LeadPagePhone> {
   TextEditingController searchController = TextEditingController();
+  TextEditingController leadIdController = TextEditingController();
   Timer? _debounce;
 
   void _onSearchChanged(String query) {
@@ -43,6 +45,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
         query,
         leadProvider.fromDateS,
         leadProvider.toDateS,
+        leadId: leadIdController.text,
       );
       leadProvider.getSearchLeads(context);
     });
@@ -79,6 +82,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
       '',
       '',
       '',
+      leadId: leadIdController.text,
     );
     await leadProvider.getSearchLeads(context);
   }
@@ -133,6 +137,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
         '',
         '',
         '',
+        leadId: '0',
       );
       leadProvider.getSearchLeads(context);
       leadProvider.initializeScroll(context);
@@ -247,6 +252,31 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          const SizedBox(height: 16),
+                          CustomText(
+                            'Lead ID',
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.textBlack,
+                          ),
+                          const SizedBox(height: 8),
+                          TextField(
+                            controller: leadIdController,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            decoration: InputDecoration(
+                              hintText: 'Enter Lead ID',
+                              contentPadding: const EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 12),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                            ),
+                            onChanged: (v) => leadProvider.setLeadId(v),
+                          ),
+                          const SizedBox(height: 16),
                           CustomText(
                             'Status',
                             fontSize: 16,
@@ -452,6 +482,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                 onPressed: () {
                                   leadProvider.clearAllFilters();
                                   searchController.clear();
+                                  leadIdController.clear();
                                   leadProvider.getSearchLeads(context);
                                 },
                                 style: OutlinedButton.styleFrom(
@@ -713,6 +744,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                             leadProvider.search,
                             fromDate,
                             toDate,
+                            leadId: leadIdController.text,
                           );
                           leadProvider.getSearchLeads(context);
                         },

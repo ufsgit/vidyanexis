@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,7 @@ class LeadPage extends StatefulWidget {
 class _LeadsPageState extends State<LeadPage> {
   ScrollController scrollController = ScrollController();
   TextEditingController searchController = TextEditingController();
+  TextEditingController leadIdController = TextEditingController();
   // final ScrollController _horizontalScrollController = ScrollController();
   // final ScrollController _verticalScrollController = ScrollController();
   final _horizontalScrollController = ScrollController();
@@ -100,9 +102,9 @@ class _LeadsPageState extends State<LeadPage> {
   @override
   void dispose() {
     _debounce?.cancel();
-    _horizontalScrollController.dispose();
-    _fixedVerticalController.dispose();
     _scrollableVerticalController.dispose();
+    searchController.dispose();
+    leadIdController.dispose();
     super.dispose();
   }
 
@@ -169,7 +171,8 @@ class _LeadsPageState extends State<LeadPage> {
       if (!mounted) return;
       final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
       leadProvider.setSearchCriteria(
-          query, leadProvider.fromDateS, leadProvider.toDateS);
+          query, leadProvider.fromDateS, leadProvider.toDateS,
+          leadId: leadIdController.text);
       leadProvider.getSearchLeads(context);
     });
   }
@@ -325,7 +328,8 @@ class _LeadsPageState extends State<LeadPage> {
                       onSubmitted: (query) {
                         if (_debounce?.isActive ?? false) _debounce!.cancel();
                         leadProvider.setSearchCriteria(query,
-                            leadProvider.fromDateS, leadProvider.toDateS);
+                            leadProvider.fromDateS, leadProvider.toDateS,
+                            leadId: leadIdController.text);
                         leadProvider.getSearchLeads(context);
                       },
                       decoration: InputDecoration(
@@ -342,7 +346,8 @@ class _LeadsPageState extends State<LeadPage> {
                             leadProvider.setSearchCriteria(
                                 searchController.text,
                                 leadProvider.fromDateS,
-                                leadProvider.toDateS);
+                                leadProvider.toDateS,
+                                leadId: leadIdController.text);
                             leadProvider.getSearchLeads(context);
                           },
                           child: const Icon(Icons.search, color: Colors.black),
@@ -431,6 +436,7 @@ class _LeadsPageState extends State<LeadPage> {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     _buildStatusFilter(leadProvider, provider),
+                    _buildLeadIdFilter(leadProvider),
                     GestureDetector(
                       onTap: () {
                         onClickTopButton(context);
@@ -490,7 +496,9 @@ class _LeadsPageState extends State<LeadPage> {
                           leadProvider.selectDateFilterOption(null);
                           leadProvider.toggleStatus(0); // Reset status to [0]
                           searchController.clear();
-                          leadProvider.setSearchCriteria('', '', '');
+                          leadIdController.clear();
+                          leadProvider.setSearchCriteria('', '', '',
+                              leadId: '0');
                           leadProvider.getSearchLeads(context);
                         },
                         style: ElevatedButton.styleFrom(
@@ -1734,6 +1742,44 @@ class _LeadsPageState extends State<LeadPage> {
   }
 
   // Filters (no date): User, Client, Project Type, Expense Type
+
+  Widget _buildLeadIdFilter(LeadsProvider leadProvider) {
+    return Container(
+      width: 100,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(
+          color: (leadIdController.text.isNotEmpty)
+              ? AppColors.primaryBlue
+              : Colors.grey[300]!,
+        ),
+      ),
+      child: TextField(
+        controller: leadIdController,
+        textAlignVertical: TextAlignVertical.center,
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        onChanged: (v) => _onSearchChanged(searchController.text),
+        onSubmitted: (v) {
+          if (_debounce?.isActive ?? false) _debounce!.cancel();
+          leadProvider.setSearchCriteria(searchController.text,
+              leadProvider.fromDateS, leadProvider.toDateS,
+              leadId: v);
+          leadProvider.getSearchLeads(context);
+        },
+        decoration: const InputDecoration(
+          hintText: 'Lead ID',
+          border: InputBorder.none,
+          isDense: true,
+          contentPadding: EdgeInsets.symmetric(vertical: 8),
+        ),
+        style: const TextStyle(fontSize: 14),
+      ),
+    );
+  }
+
   Widget _buildAssignedStaffFilter(LeadsProvider leadProvider) {
     return Consumer<DropDownProvider>(
       builder: (context, dropDownProvider, child) {
