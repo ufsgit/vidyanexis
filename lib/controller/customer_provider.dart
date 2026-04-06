@@ -419,14 +419,13 @@ class CustomerProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId');
 
       if (response.statusCode == 200) {
         var data = response.data;
         if (data != null && data is List) {
           List<SearchLeadModel> allItems =
               data.map((item) => SearchLeadModel.fromJson(item)).toList();
-
           // Correct metadata handling using tp field
           _customerData = allItems.where((item) => item.tp == 1).toList();
 
