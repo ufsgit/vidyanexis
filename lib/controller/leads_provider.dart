@@ -207,12 +207,14 @@ class LeadsProvider extends ChangeNotifier {
   SaveLeadDropdownModel? get leadDropdownData => _leadDropdownData;
 
   String _search = '';
+  String _leadId = '0';
   String _fromDateS = '';
   String _toDateS = '';
   String _status = '';
   String _enquiryForS = '';
 
   String get search => _search;
+  String get leadId => _leadId;
   String get fromDateS => _fromDateS;
   String get toDateS => _toDateS;
   String get status => _status;
@@ -245,6 +247,11 @@ class LeadsProvider extends ChangeNotifier {
         int.tryParse(preferences.getString('departmentId') ?? '0') ?? 0;
     _loginDepartmentName = preferences.getString('departmentName') ?? '';
     _loginUserTypeName = preferences.getString('userTypeName') ?? '';
+    notifyListeners();
+  }
+
+  void setLeadId(String value) {
+    _leadId = value.isEmpty ? '0' : value;
     notifyListeners();
   }
 
@@ -681,9 +688,11 @@ class LeadsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setSearchCriteria(String search, String fromDate, String toDate) {
+  void setSearchCriteria(String search, String fromDate, String toDate,
+      {String leadId = '0'}) {
     leadData.clear();
     _search = search;
+    _leadId = leadId.isEmpty ? '0' : leadId;
     _fromDateS = fromDate;
     _toDateS = toDate;
 
@@ -730,6 +739,7 @@ class LeadsProvider extends ChangeNotifier {
     _fromDateS = '';
     _toDateS = '';
     _search = '';
+    _leadId = '0';
     _status = '';
     _enquiryForS = '';
     _isFilter = false;
@@ -946,7 +956,7 @@ class LeadsProvider extends ChangeNotifier {
 
     final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=$enquirySourceIds');
+            '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId');
 
     if (response.statusCode == 200) {
       final data = response.data;
@@ -1092,13 +1102,14 @@ class LeadsProvider extends ChangeNotifier {
       } else {
         isDate = "1";
       }
-      // SharedPreferences preferences = await SharedPreferences.getInstance();
-
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userIdPref = preferences.getString('userId') ?? "0";
+      _loginUserId = int.parse(userIdPref);
       String toUserId = (_selectedUser ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId');
 
       if (response.statusCode == 200) {
         final data = response.data;

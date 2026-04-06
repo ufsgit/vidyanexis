@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/models/mandatory_status_model.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CustomerProvider extends ChangeNotifier {
   List<SearchLeadModel> _customerData = [];
@@ -125,9 +126,13 @@ class CustomerProvider extends ChangeNotifier {
       String enquiryForId = _selectedEnquiryForIds.join(',');
       String enquirySourceId = _selectedEnquirySourceIds.join(',');
 
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userIdPref = preferences.getString('userId') ?? "0";
+      int loginUserId = int.parse(userIdPref);
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$enquiryForId&Enquiry_Source_Id=$enquirySourceId');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -406,11 +411,15 @@ class CustomerProvider extends ChangeNotifier {
       String enquiryForId = _selectedEnquiryForIds.join(',');
       String enquirySourceId = _selectedEnquirySourceIds.join(',');
 
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userIdPref = preferences.getString('userId') ?? "0";
+      int loginUserId = int.parse(userIdPref);
+
       Loader.showLoader(context);
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$enquiryForId&Enquiry_Source_Id=$enquirySourceId');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0');
 
       if (response.statusCode == 200) {
         var data = response.data;
@@ -466,9 +475,13 @@ class CustomerProvider extends ChangeNotifier {
       String enquiryForId = _selectedEnquiryForIds.join(',');
       String enquirySourceId = _selectedEnquirySourceIds.join(',');
 
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userIdPref = preferences.getString('userId') ?? "0";
+      int loginUserId = int.parse(userIdPref);
+
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchCustomer}?Customer_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$enquiryForId&Enquiry_Source_Id=$enquirySourceId');
+              '${HttpUrls.searchCustomer}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$enquiryForId&Enquiry_Source_Id_=$enquirySourceId&User_Details_Id_=$loginUserId&Lead_Id_=0');
 
       if (response.statusCode == 200) {
         var data = response.data;

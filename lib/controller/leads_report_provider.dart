@@ -889,7 +889,7 @@ class LeadReportProvider extends ChangeNotifier {
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Status_Id=${_selectedStatus ?? 0}&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+              '${HttpUrls.searchLeadReports}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=${_selectedUser ?? 0}&Login_User_Id_=$_loginUserId&Status_Id_=${_selectedStatus ?? 0}&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id_=${_selectedEnquirySource ?? 0}&User_Details_Id_=$_loginUserId&Lead_Id_=0');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -954,7 +954,7 @@ class LeadReportProvider extends ChangeNotifier {
       // Fetch with a large range (e.g., 1 to 10000) to get all results
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLeadReports}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=${_selectedUser ?? 0}&Status_Id=${_selectedStatus ?? 0}&Page_Index1=1&Page_Index2=10000&Enquiry_For_Id=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+              '${HttpUrls.searchLeadReports}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=${_selectedUser ?? 0}&Login_User_Id_=$_loginUserId&Status_Id_=${_selectedStatus ?? 0}&Page_Index1_=1&Page_Index2_=10000&Enquiry_For_Id_=${_selectedEnquiryFor ?? 0}&Enquiry_Source_Id_=${_selectedEnquirySource ?? 0}&User_Details_Id_=$_loginUserId&Lead_Id_=0');
 
       if (response.statusCode == 200) {
         final data = response.data;
@@ -1018,7 +1018,7 @@ class LeadReportProvider extends ChangeNotifier {
 
     final response = await HttpRequest.httpGetRequest(
         endPoint:
-            '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS&Enquiry_Source_Id=${_selectedEnquirySource ?? 0}');
+            '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=${_selectedEnquirySource ?? 0}&User_Details_Id_=$_loginUserId&Lead_Id_=0');
 
     if (response.statusCode == 200) {
       final data = response.data;
@@ -1210,13 +1210,14 @@ class LeadReportProvider extends ChangeNotifier {
       } else {
         isDate = "1";
       }
-      // SharedPreferences preferences = await SharedPreferences.getInstance();
-
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userIdPref = preferences.getString('userId') ?? "0";
+      _loginUserId = int.parse(userIdPref);
       String toUserId = (_selectedUser ?? 0).toString();
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
-              '${HttpUrls.searchLead}?lead_Name=$_search&Is_Date=$isDate&Fromdate=$_fromDateS&Todate=$_toDateS&To_User_Id=$toUserId&Status_Id=$_status&Page_Index1=$_startLimit&Page_Index2=$_endLimit&Enquiry_For_Id=$_enquiryForS');
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&User_Details_Id_=$_loginUserId&Lead_Id_=0');
 
       if (response.statusCode == 200) {
         final data = response.data;
