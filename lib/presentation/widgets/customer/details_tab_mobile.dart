@@ -172,6 +172,26 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                                 await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfCompletionReport}${widget.customerId}', 'Completion Report', context);
                               },
                             ),
+                          if (settingsProvider.menuIsViewMap[110] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'KSEB Net Meter',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfKsebNetMeter}${widget.customerId}', 'KSEB Net Meter', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[111] == 1)
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Vendor Agreement A3s',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfVendorAgreement}${widget.customerId}', 'Vendor Agreement A3s', context);
+                              },
+                            ),
                         ],
                       ),
                     ),
