@@ -170,7 +170,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
       if (settingsprovider.menuIsViewMap[15] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Periodic Service"),
-      if (settingsprovider.menuIsViewMap[73] == 1) const Tab(text: "History"),
+      if (settingsprovider.menuIsViewMap[100] == 1) const Tab(text: "History"),
       if (settingsprovider.menuIsViewMap[18] == 1 &&
           sideprovider.name != 'Lead /')
         const Tab(text: "Receipt"),
@@ -3751,7 +3751,7 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
 
                                             // Follow-Up Details Tab
                                             if (settingsprovider
-                                                    .menuIsViewMap[73] ==
+                                                    .menuIsViewMap[100] ==
                                                 1)
                                               const FollowUpTabWidget(),
 
