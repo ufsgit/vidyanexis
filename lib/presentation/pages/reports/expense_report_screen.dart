@@ -98,9 +98,14 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                         padding: const EdgeInsets.all(4.0),
                         child: ElevatedButton(
                           onPressed: () {
-                            String query =
-                                provider.searchExpenseController.text;
-                            provider.searchExpense(query, context);
+                            if (provider.searchExpenseController.text.isNotEmpty) {
+                              provider.searchExpenseController.clear();
+                              provider.searchExpense('', context);
+                            } else {
+                              String query =
+                                  provider.searchExpenseController.text;
+                              provider.searchExpense(query, context);
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.primaryBlue,
@@ -114,7 +119,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                             ),
                           ),
                           child: Text(
-                            'Search',
+                            provider.searchExpenseController.text.isNotEmpty
+                                ? 'Cancel'
+                                : 'Search',
                             style: GoogleFonts.plusJakartaSans(
                               fontWeight: FontWeight.w600,
                               fontSize: 13,
@@ -148,6 +155,9 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
                     ),
                   ),
                 ),
@@ -214,7 +224,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       backgroundColor: AppColors.primaryBlue,
       borderColor: AppColors.primaryBlue,
       textColor: Colors.white,
-      radius: 8,
+      radius: 30, // Updated to match other report buttons
       textSize: 13,
     );
   }
@@ -266,10 +276,10 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                     borderRadius: BorderRadius.circular(30)),
                 elevation: 0,
               ),
-              child: const Text('Filter'),
+              child: const Text('Apply'),
             ),
             const SizedBox(width: 10),
-            OutlinedButton(
+            ElevatedButton(
               onPressed: () {
                 provider.setFromDate(DateTime.now());
                 provider.setToDate(DateTime.now());
@@ -279,8 +289,10 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 provider.clearExpenseTypeFilter();
                 provider.getExpenseReport(context);
               },
-              style: OutlinedButton.styleFrom(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.white,
                 foregroundColor: AppColors.textRed,
+                elevation: 0,
                 side: const BorderSide(color: AppColors.textRed),
                 padding:
                     const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -301,17 +313,17 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       required IconData icon}) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
+      borderRadius: BorderRadius.circular(20),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey[200]!),
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.grey[50],
+          border: Border.all(color: Colors.grey[300]!),
+          borderRadius: BorderRadius.circular(20),
+          color: Colors.white,
         ),
         child: Row(
           children: [
-            Icon(icon, size: 14, color: AppColors.textGrey3),
+            Icon(icon, size: 16, color: AppColors.textGrey3),
             const SizedBox(width: 8),
             Text(
               label,
@@ -321,6 +333,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 fontWeight: FontWeight.w500,
               ),
             ),
+            const SizedBox(width: 4),
+            const Icon(Icons.arrow_drop_down, size: 18, color: Colors.grey),
           ],
         ),
       ),
@@ -333,11 +347,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       builder: (context, settingsProvider, child) {
         return Container(
           width: 200,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[200]!),
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.grey[50],
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
@@ -346,13 +360,14 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   : expenseProvider.selectedUser,
               hint: Text('Assigned To',
                   style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13, color: AppColors.textGrey3)),
+                      fontSize: 13, color: AppColors.textBlack)),
               icon: const Icon(Icons.arrow_drop_down, size: 20),
               isExpanded: true,
               items: settingsProvider.searchUserDetails
                   .map((user) => DropdownMenuItem<int>(
                         value: user.userDetailsId,
                         child: Text(user.userDetailsName ?? '',
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(fontSize: 13)),
                       ))
                   .toList(),
@@ -372,11 +387,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       builder: (context, settingsProvider, child) {
         return Container(
           width: 200,
-          padding: const EdgeInsets.symmetric(horizontal: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
           decoration: BoxDecoration(
-            border: Border.all(color: Colors.grey[200]!),
-            borderRadius: BorderRadius.circular(8),
-            color: Colors.grey[50],
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
           ),
           child: DropdownButtonHideUnderline(
             child: DropdownButton<int>(
@@ -385,13 +400,14 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   : expenseProvider.selectedProjectTypeId,
               hint: Text('Project Type',
                   style: GoogleFonts.plusJakartaSans(
-                      fontSize: 13, color: AppColors.textGrey3)),
+                      fontSize: 13, color: AppColors.textBlack)),
               icon: const Icon(Icons.arrow_drop_down, size: 20),
               isExpanded: true,
               items: settingsProvider.projectTypeList
                   .map((item) => DropdownMenuItem<int>(
                         value: item.projectTypeId,
                         child: Text(item.projectTypeName ?? '',
+                            overflow: TextOverflow.ellipsis,
                             style: GoogleFonts.plusJakartaSans(fontSize: 13)),
                       ))
                   .toList(),
@@ -409,11 +425,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       ExpenseProvider expenseProvider, bool isSmallScreen) {
     return Container(
       width: 200,
-      padding: const EdgeInsets.symmetric(horizontal: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey[200]!),
-        borderRadius: BorderRadius.circular(8),
-        color: Colors.grey[50],
+        border: Border.all(color: Colors.grey[300]!),
+        borderRadius: BorderRadius.circular(20),
+        color: Colors.white,
       ),
       child: DropdownButtonHideUnderline(
         child: DropdownButton<int>(
@@ -422,13 +438,14 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               : expenseProvider.selectedExpenseTypeId,
           hint: Text('Expense Type',
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13, color: AppColors.textGrey3)),
+                  fontSize: 13, color: AppColors.textBlack)),
           icon: const Icon(Icons.arrow_drop_down, size: 20),
           isExpanded: true,
           items: expenseProvider.expenseTypeList
               .map((item) => DropdownMenuItem<int>(
                     value: item.expenseTypeId,
                     child: Text(item.expenseTypeName ?? '',
+                        overflow: TextOverflow.ellipsis,
                         style: GoogleFonts.plusJakartaSans(fontSize: 13)),
                   ))
               .toList(),
@@ -442,7 +459,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
   Widget _buildSummaryCard(ExpenseProvider provider, bool isSmallScreen) {
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
       decoration: BoxDecoration(
         color: AppColors.primaryBlue,
         borderRadius: BorderRadius.circular(20),
@@ -460,13 +477,13 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 _buildSummaryItem(
                     'Received Amount', provider.correlationbox.receivedAmount),
                 const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(color: Colors.white24, height: 1),
                 ),
                 _buildSummaryItem('Total Expense Amount',
                     provider.correlationbox.totalExpenseAmount),
                 const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
+                  padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(color: Colors.white24, height: 1),
                 ),
                 _buildSummaryItem(
@@ -479,11 +496,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 _buildSummaryItem(
                     'Received Amount', provider.correlationbox.receivedAmount,
                     expand: true),
-                Container(width: 1, height: 50, color: Colors.white30),
+                Container(width: 1, height: 60, color: Colors.white30),
                 _buildSummaryItem('Total Expense Amount',
                     provider.correlationbox.totalExpenseAmount,
                     expand: true),
-                Container(width: 1, height: 50, color: Colors.white30),
+                Container(width: 1, height: 60, color: Colors.white30),
                 _buildSummaryItem(
                     'Total Balance', provider.correlationbox.totalBalance,
                     expand: true),
@@ -495,23 +512,23 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
   Widget _buildSummaryItem(String label, double? amount,
       {bool expand = false}) {
     final content = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: isSmallScreen ? CrossAxisAlignment.center : CrossAxisAlignment.start,
       children: [
         Text(
           label.toUpperCase(),
           style: GoogleFonts.plusJakartaSans(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 11,
-            letterSpacing: 0.5,
-            fontWeight: FontWeight.w600,
+            color: Colors.white.withOpacity(0.95),
+            fontSize: 12,
+            letterSpacing: 0.8,
+            fontWeight: FontWeight.w700,
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
           '₹ ${amount?.toStringAsFixed(2) ?? "0.00"}',
           style: GoogleFonts.plusJakartaSans(
             color: Colors.white,
-            fontSize: 28,
+            fontSize: 32,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -532,12 +549,15 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          const SizedBox(height: 100),
           Icon(Icons.receipt_long_outlined,
-              size: 48, color: Colors.grey.withOpacity(0.3)),
-          const SizedBox(height: 16),
+              size: 64, color: Colors.grey.withOpacity(0.3)),
+          const SizedBox(height: 24),
           Text('No records found',
               style: GoogleFonts.plusJakartaSans(
-                  color: Colors.grey, fontWeight: FontWeight.w500)),
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w600)),
         ],
       ));
     }
@@ -565,8 +585,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: SizedBox(
-            width: MediaQuery.of(context).size.width < 1200
-                ? 1200
+            width: MediaQuery.of(context).size.width < 1500
+                ? 1500
                 : MediaQuery.of(context).size.width - 64,
             child: Column(
               children: [
@@ -579,13 +599,13 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   child: Row(
                     children: [
                       _buildTableHeaderCell('Sl No', width: 60),
-                      _buildTableHeaderCell('User Name', width: 150),
-                      _buildTableHeaderCell('Entry Date', width: 120),
-                      _buildTableHeaderCell('Expense Head', width: 200),
-                      _buildTableHeaderCell('Category', width: 150),
-                      _buildTableHeaderCell('Project Name', width: 200),
-                      _buildTableHeaderCell('Amount', width: 120),
-                      _buildTableHeaderCell('Action', width: 80),
+                      _buildTableHeaderCell('User Name', width: 160),
+                      _buildTableHeaderCell('Entry Date', width: 130),
+                      _buildTableHeaderCell('Expense Head', width: 220),
+                      _buildTableHeaderCell('Category', width: 180),
+                      _buildTableHeaderCell('Project Name', width: 220),
+                      _buildTableHeaderCell('Amount', width: 140),
+                      _buildTableHeaderCell('Action', width: 100),
                     ],
                   ),
                 ),
@@ -596,47 +616,47 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                     final item = provider.expenseModelList[index];
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 10, horizontal: 12),
+                          vertical: 12, horizontal: 12),
                       decoration: BoxDecoration(
                         color: index % 2 == 0
                             ? Colors.white
                             : const Color(0xFFF6F7F9),
                         border: Border(
-                          bottom: BorderSide(color: Colors.grey.shade300),
+                          bottom: BorderSide(color: Colors.grey.shade200),
                         ),
                       ),
                       child: Row(
                         children: [
                           _buildTableDataCell('${index + 1}', width: 60),
-                          _buildTableDataCell(item.userName ?? '-', width: 150),
+                          _buildTableDataCell(item.userName ?? '-', width: 160, isBlue: true),
                           _buildTableDataCell(item.entryDate ?? '-',
-                              width: 120),
+                              width: 130),
                           _buildTableDataCell(item.expenseHead ?? '-',
-                              width: 200),
+                              width: 220, isBold: true),
                           _buildTableDataCell(item.expenseTypeName ?? '-',
-                              width: 150),
+                              width: 180),
                           _buildTableDataCell(item.projectName ?? '-',
-                              width: 200),
+                              width: 220),
                           SizedBox(
-                            width: 120,
+                            width: 140,
                             child: Padding(
-                              padding: const EdgeInsets.only(left: 8.0),
+                              padding: const EdgeInsets.only(left: 12.0),
                               child: Text(
                                 '₹ ${item.amount?.toStringAsFixed(2) ?? "0.00"}',
                                 style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w700,
                                   color: AppColors.textBlue800,
                                 ),
                               ),
                             ),
                           ),
                           SizedBox(
-                            width: 80,
+                            width: 100,
                             child: Center(
                               child: IconButton(
                                 icon: const Icon(Icons.delete_outline,
-                                    color: Colors.red, size: 20),
+                                    color: AppColors.textRed, size: 22),
                                 onPressed: () {
                                   showConfirmationDialog(
                                     context: context,
@@ -671,12 +691,12 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     return SizedBox(
       width: width,
       child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+        padding: const EdgeInsets.symmetric(vertical: 14.0, horizontal: 12.0),
         child: Text(
           label,
           style: GoogleFonts.plusJakartaSans(
             fontWeight: FontWeight.bold,
-            fontSize: 13,
+            fontSize: 14,
             color: const Color(0xFF607185),
           ),
         ),
@@ -684,14 +704,18 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     );
   }
 
-  Widget _buildTableDataCell(String text, {double? width}) {
+  Widget _buildTableDataCell(String text, {double? width, bool isBlue = false, bool isBold = false}) {
     return SizedBox(
       width: width,
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 12.0),
         child: Text(
           text,
-          style: GoogleFonts.plusJakartaSans(fontSize: 13),
+          style: GoogleFonts.plusJakartaSans(
+            fontSize: 13,
+            fontWeight: isBold ? FontWeight.w600 : FontWeight.normal,
+            color: isBlue ? Colors.blue : AppColors.textBlack,
+          ),
           overflow: TextOverflow.ellipsis,
         ),
       ),

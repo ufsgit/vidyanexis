@@ -14,7 +14,9 @@ import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
+import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/customer/service_details_widget.dart';
+
 
 class ServicePageReport extends StatefulWidget {
   final bool fromDashBoard;
@@ -59,287 +61,43 @@ class _ServicesPageReportState extends State<ServicePageReport> {
     final provider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider =
         Provider.of<CustomerDetailsProvider>(context);
-
-    final screenHeight = MediaQuery.of(context).size.height;
-    const headerHeight = 60;
-    const searchSectionHeight = 80;
-    const paginationHeight = 60;
-    const tableHeaderHeight = 50;
-    const paddingSafety = 40;
-    final availableHeight = screenHeight -
-        headerHeight -
-        searchSectionHeight -
-        paginationHeight -
-        tableHeaderHeight -
-        paddingSafety;
-    final rowHeight = availableHeight / 20;
+    final isSmallScreen = MediaQuery.of(context).size.width < 600;
 
     return Scaffold(
-      key: _scaffoldKey,
+      backgroundColor: Colors.grey[50],
       appBar: !AppStyles.isWebScreen(context)
           ? AppBar(
               surfaceTintColor: AppColors.scaffoldColor,
               backgroundColor: AppColors.whiteColor,
-              title: Text(
+              title: const Text(
                 'Complaint Report',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
                 ),
               ),
             )
           : null,
-      body: Container(
-        color: Colors.grey[50],
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Header
-            AppStyles.isWebScreen(context)
-                ? Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      children: [
-                        if (widget.fromDashBoard &&
-                            AppStyles.isWebScreen(context))
-                          InkWell(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
-                            child: Icon(
-                              Icons.arrow_back,
-                              size: 24,
-                              color: Color(0xFF152D70),
-                            ),
-                          ),
-                        if (widget.fromDashBoard &&
-                            AppStyles.isWebScreen(context))
-                          SizedBox(
-                            width: 8,
-                          ),
-                        const Text(
-                          'Complaint Report',
-                          style: TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Flexible(child: Container()),
-                        Container(
-                          width: MediaQuery.of(context).size.width / 4,
-                          height: 40,
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: TextField(
-                            controller: searchController,
-                            onSubmitted: (query) {
-                              // reportsProvider.selectDateFilterOption(null);
-                              // reportsProvider.removeStatus();
-                              reportsProvider.setTaskSearchCriteria(
-                                query,
-                                reportsProvider.fromDateS,
-                                reportsProvider.toDateS,
-                                reportsProvider.Status,
-                                reportsProvider.AssignedTo,
-                              );
-                              reportsProvider.getSearchServiceReport(context);
-                            },
-                            decoration: InputDecoration(
-                              hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
-                              border: InputBorder.none,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 4,
-                              ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    String query = searchController.text;
-                                    // leadProvider.selectDateFilterOption(null);
-                                    // leadProvider.removeStatus();
-                                    print(query);
-                                    if (reportsProvider.Search.isNotEmpty) {
-                                      searchController.clear();
-                                      reportsProvider.setTaskSearchCriteria(
-                                        '',
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchServiceReport(context);
-                                    } else {
-                                      reportsProvider.setTaskSearchCriteria(
-                                        query,
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchServiceReport(context);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        OutlinedButton.icon(
-                          onPressed: () {
-                            reportsProvider.toggleFilter();
-                            print(reportsProvider.isFilter);
-                          },
-                          icon: const Icon(Icons.filter_list),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: reportsProvider.isFilter
-                                ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
-                            backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 12,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        CustomElevatedButton(
-                          onPressed: () {
-                            exportToExcel(
-                              headers: [
-                                'Customer Name',
-                                'Complaint Type',
-                                'Complaint Name',
-                                'Complaint Description',
-                                'Added Date',
-                                'Amount',
-                                'Status'
-                              ],
-                              data: reportsProvider.serviceReport.map((task) {
-                                return {
-                                  'Customer Name': task.customerName,
-                                  'Complaint Type': task.serviceTypeName,
-                                  'Complaint Name': task.serviceName,
-                                  'Complaint Description': task.description,
-                                  'Added Date': task.createDate.isNotEmpty
-                                      ? DateFormat('dd MMM yyyy').format(
-                                          DateTime.parse(task.createDate))
-                                      : '',
-                                  'Amount': task.amount.toString(),
-                                  'Status': task.serviceStatusName,
-                                };
-                              }).toList(),
-                              fileName: 'Complaint_Report',
-                            );
-                          },
-                          buttonText: 'Export to Excel',
-                          textColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          backgroundColor: AppColors.appViolet,
-                        )
-                      ],
-                    ),
-                  )
-                //mobile
-                : Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Container(
-                                height: 40,
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.grey[300]!),
-                                ),
-                                child: TextField(
-                                  controller: searchController,
-                                  onSubmitted: (query) {
-                                    reportsProvider.setTaskSearchCriteria(
-                                      query,
-                                      reportsProvider.fromDateS,
-                                      reportsProvider.toDateS,
-                                      reportsProvider.Status,
-                                      reportsProvider.AssignedTo,
-                                    );
-                                    reportsProvider
-                                        .getSearchServiceReport(context);
-                                  },
-                                  decoration: InputDecoration(
-                                    hintText: 'Search here....',
-                                    prefixIcon: const Icon(Icons.search),
-                                    border: InputBorder.none,
-                                    contentPadding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 0,
-                                    ),
-                                    suffixIcon: Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: ElevatedButton(
-                                        onPressed: () {
-                                          String query = searchController.text;
-                                          if (reportsProvider
-                                              .Search.isNotEmpty) {
-                                            searchController.clear();
-                                            reportsProvider
-                                                .setTaskSearchCriteria(
-                                              '',
-                                              reportsProvider.fromDateS,
-                                              reportsProvider.toDateS,
-                                              reportsProvider.Status,
-                                              reportsProvider.AssignedTo,
-                                            );
-                                            reportsProvider
-                                                .getSearchServiceReport(
-                                                    context);
-                                          } else {
-                                            reportsProvider
-                                                .setTaskSearchCriteria(
-                                              query,
-                                              reportsProvider.fromDateS,
-                                              reportsProvider.toDateS,
-                                              reportsProvider.Status,
-                                              reportsProvider.AssignedTo,
-                                            );
-                                            reportsProvider
-                                                .getSearchServiceReport(
-                                                    context);
-                                          }
-                                        },
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(context, reportsProvider),
+          if (reportsProvider.isFilter)
+            _buildFilters(context, reportsProvider, provider),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: _buildServiceTable(
+                  context, reportsProvider, customerDetailsProvider, isSmallScreen),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+  // UI Helpers start here
                                         style: ElevatedButton.styleFrom(
                                           backgroundColor: AppColors.textGrey4,
                                           foregroundColor: Colors.white,
