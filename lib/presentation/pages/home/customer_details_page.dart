@@ -1772,6 +1772,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                           .leadDetails![0]
                                                                           .displayProjectCost,
                                                                     ),
+                                                                    const SizedBox(
+                                                                        height:
+                                                                            2),
+                                                                    DetailRow(
+                                                                      label:
+                                                                          "Sub Source",
+                                                                      value: customerDetailsProvider
+                                                                          .leadDetails![0]
+                                                                          .referenceName,
+                                                                    ),
                                                                   ],
                                                                 ),
                                                                 // Address Details
@@ -2438,6 +2448,16 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                             0]
                                                                         .enquiryForName ??
                                                                     '',
+                                                              ),
+                                                              const SizedBox(
+                                                                  height: 2),
+                                                              DetailRow(
+                                                                label:
+                                                                    "Sub Source",
+                                                                value: customerDetailsProvider
+                                                                    .leadDetails![
+                                                                        0]
+                                                                    .referenceName,
                                                               ),
                                                               const SizedBox(
                                                                   height: 2),
