@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/models/expense_management_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
+import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
@@ -44,103 +45,138 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     final isSmallScreen = size.width < 600;
 
     return Scaffold(
-      backgroundColor:
-          Colors.grey[50], // Slightly grey background for better contrast
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildHeader(context, provider),
-              const SizedBox(height: 16),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _buildFilters(context, provider, isSmallScreen),
-                      const SizedBox(height: 16),
-                      _buildSummaryCard(provider, isSmallScreen),
-                      const SizedBox(height: 16),
-                      _buildExpenseTable(provider, isSmallScreen),
-                    ],
+      backgroundColor: Colors.grey[50],
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Padding(
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+            child: Row(
+              children: [
+                Text(
+                  'Expense Report',
+                  style: GoogleFonts.plusJakartaSans(
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
+                    color: const Color(0xFF152D70),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(width: 32),
+                const Spacer(),
+                Container(
+                  width: MediaQuery.of(context).size.width / 4,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.grey[300]!),
+                  ),
+                  child: TextField(
+                    controller: provider.searchExpenseController,
+                    textAlignVertical: TextAlignVertical.center,
+                    onSubmitted: (query) {
+                      provider.searchExpense(query, context);
+                    },
+                    decoration: InputDecoration(
+                      hintText: 'Search here....',
+                      hintStyle: GoogleFonts.plusJakartaSans(
+                        color: Colors.grey[400],
+                        fontSize: 14,
+                      ),
+                      prefixIcon: Icon(
+                        Icons.search,
+                        color: Colors.grey[600],
+                        size: 20,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                      ),
+                      suffixIcon: Padding(
+                        padding: const EdgeInsets.all(4.0),
+                        child: ElevatedButton(
+                          onPressed: () {
+                            String query =
+                                provider.searchExpenseController.text;
+                            provider.searchExpense(query, context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 20,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          child: Text(
+                            'Search',
+                            style: GoogleFonts.plusJakartaSans(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                OutlinedButton.icon(
+                  onPressed: () {
+                    provider.toggleFilter();
+                  },
+                  icon: const Icon(Icons.filter_list),
+                  label: Text(MediaQuery.of(context).size.width > 860
+                      ? 'Filter'
+                      : ''),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: provider.isFilter
+                        ? Colors.white
+                        : AppColors.textBlue800,
+                    backgroundColor: provider.isFilter
+                        ? const Color(0xFF5499D9)
+                        : Colors.white,
+                    side: BorderSide(
+                        color: provider.isFilter
+                            ? const Color(0xFF5499D9)
+                            : AppColors.textBlue800),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                _buildExportButton(provider),
+              ],
+            ),
           ),
-        ),
+          if (provider.isFilter) _buildFilters(context, provider, isSmallScreen),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSummaryCard(provider, isSmallScreen),
+                  const SizedBox(height: 16),
+                  _buildExpenseTable(provider, isSmallScreen),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context, ExpenseProvider provider) {
-    final isSmallScreen = MediaQuery.of(context).size.width < 600;
-    final isWeb = AppStyles.isWebScreen(context);
-
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  if (!isWeb)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 12.0),
-                      child: InkWell(
-                        onTap: () => Navigator.of(context).pop(),
-                        borderRadius: BorderRadius.circular(10),
-                        child: Container(
-                          padding: const EdgeInsets.all(8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(10),
-                            border: Border.all(color: Colors.grey[200]!),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.black.withOpacity(0.03),
-                                blurRadius: 4,
-                                offset: const Offset(0, 2),
-                              ),
-                            ],
-                          ),
-                          child: Icon(Icons.arrow_back,
-                              size: 20, color: AppColors.textBlue800),
-                        ),
-                      ),
-                    ),
-                  Expanded(
-                    child: Text(
-                      'Expense Report',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: isSmallScreen ? 20 : 24,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.textBlue800,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            if (!isSmallScreen) _buildExportButton(provider),
-          ],
-        ),
-        if (isSmallScreen)
-          Padding(
-            padding: const EdgeInsets.only(top: 12.0),
-            child: SizedBox(
-                width: double.infinity, child: _buildExportButton(provider)),
-          ),
-      ],
-    );
-  }
-
   Widget _buildExportButton(ExpenseProvider provider) {
-    return ElevatedButton.icon(
+    return CustomElevatedButton(
       onPressed: () async {
         List<String> headers = [
           "Sl No",
@@ -173,122 +209,88 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
             fileName:
                 'Expense_Report_${DateFormat('dd-MM-yyyy').format(DateTime.now())}');
       },
-      icon: const Icon(Icons.download, size: 18),
-      label: const Text('Export to Excel'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: AppColors.primaryBlue,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        elevation: 0,
-      ),
+      buttonText: 'Export to Excel',
+      prefixIcon: Icons.download,
+      backgroundColor: AppColors.primaryBlue,
+      borderColor: AppColors.primaryBlue,
+      textColor: Colors.white,
+      radius: 8,
+      textSize: 13,
     );
   }
 
   Widget _buildFilters(
       BuildContext context, ExpenseProvider provider, bool isSmallScreen) {
     return Container(
-      padding: const EdgeInsets.all(16),
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      padding: const EdgeInsets.all(10.0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
-            spreadRadius: 1,
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          )
-        ],
+        borderRadius: BorderRadius.circular(20),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            alignment: WrapAlignment.start,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            children: [
-              // Date Filter
-              SizedBox(
-                width: isSmallScreen ? double.infinity : 300,
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: _buildFilterWrapper(
-                        onTap: () => provider.selectDate(context, true),
-                        label: provider.formattedFromDate.isEmpty
-                            ? 'From Date'
-                            : provider.formattedFromDate,
-                        icon: Icons.calendar_today,
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: _buildFilterWrapper(
-                        onTap: () => provider.selectDate(context, false),
-                        label: provider.formattedToDate.isEmpty
-                            ? 'To Date'
-                            : provider.formattedToDate,
-                        icon: Icons.calendar_today,
-                      ),
-                    ),
-                  ],
-                ),
+      child: SingleChildScrollView(
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          children: [
+            // Date Filter
+            _buildFilterWrapper(
+              onTap: () => provider.selectDate(context, true),
+              label: provider.formattedFromDate.isEmpty
+                  ? 'From Date'
+                  : provider.formattedFromDate,
+              icon: Icons.calendar_today,
+            ),
+            const SizedBox(width: 10),
+            _buildFilterWrapper(
+              onTap: () => provider.selectDate(context, false),
+              label: provider.formattedToDate.isEmpty
+                  ? 'To Date'
+                  : provider.formattedToDate,
+              icon: Icons.calendar_today,
+            ),
+            const SizedBox(width: 10),
+            _buildAssignedToFilter(provider, isSmallScreen),
+            const SizedBox(width: 10),
+            _buildProjectTypeFilter(provider, isSmallScreen),
+            const SizedBox(width: 10),
+            _buildExpenseTypeFilter(provider, isSmallScreen),
+            const SizedBox(width: 16),
+            ElevatedButton(
+              onPressed: () => provider.getExpenseReport(context),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.primaryBlue,
+                foregroundColor: Colors.white,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)),
+                elevation: 0,
               ),
-
-              _buildAssignedToFilter(provider, isSmallScreen),
-              _buildProjectTypeFilter(provider, isSmallScreen),
-              _buildExpenseTypeFilter(provider, isSmallScreen),
-
-              // Action Buttons
-              if (isSmallScreen)
-                const SizedBox(width: double.infinity, height: 4),
-
-              SizedBox(
-                width: isSmallScreen ? double.infinity : null,
-                child: ElevatedButton(
-                  onPressed: () => provider.getExpenseReport(context),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primaryBlue,
-                    foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                    elevation: 0,
-                  ),
-                  child: const Text('Filter'),
-                ),
+              child: const Text('Filter'),
+            ),
+            const SizedBox(width: 10),
+            OutlinedButton(
+              onPressed: () {
+                provider.setFromDate(DateTime.now());
+                provider.setToDate(DateTime.now());
+                provider.clearUserFilter();
+                provider.clearClientFilter();
+                provider.clearProjectTypeFilter();
+                provider.clearExpenseTypeFilter();
+                provider.getExpenseReport(context);
+              },
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.textRed,
+                side: const BorderSide(color: AppColors.textRed),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)),
               ),
-
-              SizedBox(
-                width: isSmallScreen ? double.infinity : null,
-                child: OutlinedButton(
-                  onPressed: () {
-                    provider.setFromDate(DateTime.now());
-                    provider.setToDate(DateTime.now());
-                    provider.clearUserFilter();
-                    provider.clearClientFilter();
-                    provider.clearProjectTypeFilter();
-                    provider.clearExpenseTypeFilter();
-                    provider.getExpenseReport(context);
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.textGrey3,
-                    side: BorderSide(color: Colors.grey[300]!),
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 14),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
-                  ),
-                  child: const Text('Reset'),
-                ),
-              ),
-            ],
-          ),
-        ],
+              child: const Text('Reset'),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -311,16 +313,12 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           children: [
             Icon(icon, size: 14, color: AppColors.textGrey3),
             const SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                label,
-                style: GoogleFonts.plusJakartaSans(
-                  fontSize: 13,
-                  color: AppColors.textBlack,
-                  fontWeight: FontWeight.w500,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+            Text(
+              label,
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 13,
+                color: AppColors.textBlack,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -334,7 +332,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     return Consumer<SettingsProvider>(
       builder: (context, settingsProvider, child) {
         return Container(
-          width: isSmallScreen ? double.infinity : 200,
+          width: 200,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[200]!),
@@ -373,7 +371,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     return Consumer<SettingsProvider>(
       builder: (context, settingsProvider, child) {
         return Container(
-          width: isSmallScreen ? double.infinity : 200,
+          width: 200,
           padding: const EdgeInsets.symmetric(horizontal: 12),
           decoration: BoxDecoration(
             border: Border.all(color: Colors.grey[200]!),
@@ -410,7 +408,7 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
   Widget _buildExpenseTypeFilter(
       ExpenseProvider expenseProvider, bool isSmallScreen) {
     return Container(
-      width: isSmallScreen ? double.infinity : 200,
+      width: 200,
       padding: const EdgeInsets.symmetric(horizontal: 12),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.grey[200]!),
@@ -444,15 +442,15 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
   Widget _buildSummaryCard(ExpenseProvider provider, bool isSmallScreen) {
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
         color: AppColors.primaryBlue,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-            color: AppColors.primaryBlue.withOpacity(0.3),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
+            color: AppColors.primaryBlue.withOpacity(0.2),
+            blurRadius: 20,
+            offset: const Offset(0, 10),
           ),
         ],
       ),
@@ -462,13 +460,13 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 _buildSummaryItem(
                     'Received Amount', provider.correlationbox.receivedAmount),
                 const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   child: Divider(color: Colors.white24, height: 1),
                 ),
                 _buildSummaryItem('Total Expense Amount',
                     provider.correlationbox.totalExpenseAmount),
                 const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                  padding: EdgeInsets.symmetric(vertical: 16),
                   child: Divider(color: Colors.white24, height: 1),
                 ),
                 _buildSummaryItem(
@@ -481,11 +479,11 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 _buildSummaryItem(
                     'Received Amount', provider.correlationbox.receivedAmount,
                     expand: true),
-                Container(width: 1, height: 40, color: Colors.white24),
+                Container(width: 1, height: 50, color: Colors.white30),
                 _buildSummaryItem('Total Expense Amount',
                     provider.correlationbox.totalExpenseAmount,
                     expand: true),
-                Container(width: 1, height: 40, color: Colors.white24),
+                Container(width: 1, height: 50, color: Colors.white30),
                 _buildSummaryItem(
                     'Total Balance', provider.correlationbox.totalBalance,
                     expand: true),
@@ -496,23 +494,24 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
 
   Widget _buildSummaryItem(String label, double? amount,
       {bool expand = false}) {
-    final widget = Column(
+    final content = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          label,
+          label.toUpperCase(),
           style: GoogleFonts.plusJakartaSans(
-            color: Colors.white.withOpacity(0.8),
-            fontSize: 12,
-            fontWeight: FontWeight.w500,
+            color: Colors.white.withOpacity(0.9),
+            fontSize: 11,
+            letterSpacing: 0.5,
+            fontWeight: FontWeight.w600,
           ),
         ),
-        const SizedBox(height: 6),
+        const SizedBox(height: 8),
         Text(
           '₹ ${amount?.toStringAsFixed(2) ?? "0.00"}',
           style: GoogleFonts.plusJakartaSans(
             color: Colors.white,
-            fontSize: 22,
+            fontSize: 28,
             fontWeight: FontWeight.w800,
           ),
         ),
@@ -521,10 +520,10 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
     return expand
         ? Expanded(
             child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: widget,
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: content,
           ))
-        : SizedBox(width: double.infinity, child: widget);
+        : SizedBox(width: double.infinity, child: content);
   }
 
   Widget _buildExpenseTable(ExpenseProvider provider, bool isSmallScreen) {
@@ -556,99 +555,144 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
       );
     }
 
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-          side: BorderSide(color: Colors.grey[200]!)),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(14),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
         child: SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          physics: const NeverScrollableScrollPhysics(),
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: DataTable(
-              headingRowColor: WidgetStateProperty.all(Colors.grey[50]),
-              horizontalMargin: 24,
-              columnSpacing: 24,
-              columns: [
-                DataColumn(
-                    label: Text('Sl No',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
-                DataColumn(
-                    label: Text('User Name',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
-                DataColumn(
-                    label: Text('Entry Date',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
-                DataColumn(
-                    label: Text('Expense Head',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
-                DataColumn(
-                    label: Text('Category',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
-                DataColumn(
-                    label: Text('Project Name',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
-                DataColumn(
-                    label: Text('Amount',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
-                DataColumn(
-                    label: Text('Action',
-                        style: GoogleFonts.plusJakartaSans(
-                            fontWeight: FontWeight.bold, fontSize: 13))),
+          scrollDirection: Axis.horizontal,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width < 1200
+                ? 1200
+                : MediaQuery.of(context).size.width - 64,
+            child: Column(
+              children: [
+                // Header Row
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEFF2F5),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Row(
+                    children: [
+                      _buildTableHeaderCell('Sl No', width: 60),
+                      _buildTableHeaderCell('User Name', width: 150),
+                      _buildTableHeaderCell('Entry Date', width: 120),
+                      _buildTableHeaderCell('Expense Head', width: 200),
+                      _buildTableHeaderCell('Category', width: 150),
+                      _buildTableHeaderCell('Project Name', width: 200),
+                      _buildTableHeaderCell('Amount', width: 120),
+                      _buildTableHeaderCell('Action', width: 80),
+                    ],
+                  ),
+                ),
+                // Data Rows
+                ...List.generate(
+                  provider.expenseModelList.length,
+                  (index) {
+                    final item = provider.expenseModelList[index];
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: index % 2 == 0
+                            ? Colors.white
+                            : const Color(0xFFF6F7F9),
+                        border: Border(
+                          bottom: BorderSide(color: Colors.grey.shade300),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          _buildTableDataCell('${index + 1}', width: 60),
+                          _buildTableDataCell(item.userName ?? '-', width: 150),
+                          _buildTableDataCell(item.entryDate ?? '-',
+                              width: 120),
+                          _buildTableDataCell(item.expenseHead ?? '-',
+                              width: 200),
+                          _buildTableDataCell(item.expenseTypeName ?? '-',
+                              width: 150),
+                          _buildTableDataCell(item.projectName ?? '-',
+                              width: 200),
+                          SizedBox(
+                            width: 120,
+                            child: Padding(
+                              padding: const EdgeInsets.only(left: 8.0),
+                              child: Text(
+                                '₹ ${item.amount?.toStringAsFixed(2) ?? "0.00"}',
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textBlue800,
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: 80,
+                            child: Center(
+                              child: IconButton(
+                                icon: const Icon(Icons.delete_outline,
+                                    color: Colors.red, size: 20),
+                                onPressed: () {
+                                  showConfirmationDialog(
+                                    context: context,
+                                    title: 'Delete Expense',
+                                    content:
+                                        'Are you sure you want to delete this expense?',
+                                    onCancel: () => Navigator.of(context).pop(),
+                                    onConfirm: () async {
+                                      Navigator.of(context).pop();
+                                      provider.deleteExpense(context,
+                                          item.expenseManagementId ?? 0);
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ],
-              rows: List.generate(provider.expenseModelList.length, (index) {
-                final item = provider.expenseModelList[index];
-                return DataRow(cells: [
-                  DataCell(Text('${index + 1}',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13))),
-                  DataCell(Text(item.userName ?? '-',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13))),
-                  DataCell(Text(item.entryDate ?? '-',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13))),
-                  DataCell(Text(item.expenseHead ?? '-',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13))),
-                  DataCell(Text(item.expenseTypeName ?? '-',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13))),
-                  DataCell(Text(item.projectName ?? '-',
-                      style: GoogleFonts.plusJakartaSans(fontSize: 13))),
-                  DataCell(Text(
-                      '₹ ${item.amount?.toStringAsFixed(2) ?? "0.00"}',
-                      style: GoogleFonts.plusJakartaSans(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primaryBlue))),
-                  DataCell(IconButton(
-                    icon: const Icon(Icons.delete_outline,
-                        color: Colors.red, size: 20),
-                    onPressed: () {
-                      showConfirmationDialog(
-                        context: context,
-                        title: 'Delete Expense',
-                        content:
-                            'Are you sure you want to delete this expense?',
-                        onCancel: () => Navigator.of(context).pop(),
-                        onConfirm: () async {
-                          Navigator.of(context).pop();
-                          provider.deleteExpense(
-                              context, item.expenseManagementId ?? 0);
-                        },
-                      );
-                    },
-                  )),
-                ]);
-              }),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableHeaderCell(String label, {double? width}) {
+    return SizedBox(
+      width: width,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 12.0),
+        child: Text(
+          label,
+          style: GoogleFonts.plusJakartaSans(
+            fontWeight: FontWeight.bold,
+            fontSize: 13,
+            color: const Color(0xFF607185),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildTableDataCell(String text, {double? width}) {
+    return SizedBox(
+      width: width,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 12.0),
+        child: Text(
+          text,
+          style: GoogleFonts.plusJakartaSans(fontSize: 13),
+          overflow: TextOverflow.ellipsis,
         ),
       ),
     );
