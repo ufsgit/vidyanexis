@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_category_page.dart';
 import 'package:vidyanexis/presentation/pages/settings/checklist_item_page.dart';
+import 'package:vidyanexis/presentation/pages/settings/campaign_content.dart';
 import 'package:provider/provider.dart';
 
 import 'package:vidyanexis/presentation/pages/settings/form_content.dart';
@@ -234,6 +235,8 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
             return const LocationPage();
           case 'Forms':
             return const FormContent();
+          case 'Campaign':
+            return const CampaignContent();
 
           default:
             return const SizedBox.shrink();
@@ -365,6 +368,11 @@ class _SettingsPageBodyState extends State<SettingsPageBody> {
           'Forms',
           Icons.format_list_bulleted,
         ),
+      _buildMenuItem(
+        context,
+        'Campaign',
+        Icons.campaign,
+      ),
       // if (settingsProvider.menuIsViewMap[28].toString() == '1')
       //   _buildMenuItem(context, 'Branch', Icons.document_scanner),
     ];

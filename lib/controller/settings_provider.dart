@@ -16,6 +16,7 @@ import 'package:vidyanexis/controller/models/custom_field_dropdown.dart';
 import 'package:vidyanexis/controller/models/custom_field_model.dart';
 import 'package:vidyanexis/controller/models/customer_details_model.dart';
 import 'package:vidyanexis/controller/models/expense_type_model.dart';
+import 'package:vidyanexis/controller/models/campaign_model.dart';
 import 'package:vidyanexis/controller/models/project_model.dart';
 import 'package:vidyanexis/controller/models/project_type_model.dart';
 import 'package:vidyanexis/controller/models/source_category_model.dart';
@@ -230,6 +231,13 @@ class SettingsProvider extends ChangeNotifier {
       TextEditingController();
   final TextEditingController locationController = TextEditingController();
 
+  //Campaign
+  final TextEditingController campaignNameController = TextEditingController();
+  final TextEditingController campaignIdStringController =
+      TextEditingController();
+  final TextEditingController searchCampaignController =
+      TextEditingController();
+
   //Supplier
   final TextEditingController searchSupplierController =
       TextEditingController();
@@ -298,6 +306,9 @@ class SettingsProvider extends ChangeNotifier {
   List<DepartmentModel> get departmentModel => _departmentModel;
   List<LocationModel> _locationModelList = [];
   List<LocationModel> get locationModelList => _locationModelList;
+
+  List<CampaignModel> _campaignList = [];
+  List<CampaignModel> get campaignList => _campaignList;
 
   bool get allowAppLogin => _allowAppLogin;
   int _selectedUserTypeId = -1;
@@ -621,6 +632,129 @@ class SettingsProvider extends ChangeNotifier {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred')),
       );
+    }
+  }
+
+  Future<void> searchCampaignData(String query, BuildContext context) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: "${HttpUrls.getCampaignList}?Campaign_Name=$query");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          List<dynamic> campaignListData;
+          if (data is List) {
+            campaignListData = data;
+          } else if (data is Map && data['success'] == true && data['data'] != null) {
+            campaignListData = data['data'];
+          } else {
+            return;
+          }
+          _campaignList =
+              campaignListData.map((item) => CampaignModel.fromJson(item)).toList();
+          notifyListeners();
+        }
+      }
+    } catch (e) {
+      log('Exception occurred in searchCampaignData: $e');
+    }
+  }
+
+  Future<void> saveCampaign({
+    required BuildContext context,
+    required String campaignId,
+    required String userIds,
+  }) async {
+    try {
+      Loader.showLoader(context);
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.saveCampaign,
+          bodyData: {
+            "Campaign_Id": int.parse(campaignId),
+            "Campaign_Name": campaignNameController.text,
+            "Campaign_Id_String": campaignIdStringController.text,
+            "User_Ids": userIds,
+          });
+
+      if (response != null && response.statusCode == 200) {
+        campaignNameController.clear();
+        campaignIdStringController.clear();
+        searchCampaignData('', context);
+        Navigator.pop(context);
+        Loader.stopLoader(context);
+      } else {
+        Loader.stopLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Failed to save campaign')),
+        );
+      }
+    } catch (e) {
+      Loader.stopLoader(context);
+      log('Exception occurred in saveCampaign: $e');
+    }
+  }
+
+  Future<CampaignModel?> getCampaignById(
+      BuildContext context, String campaignId) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint: "${HttpUrls.getCampaignById}?Campaign_Id=$campaignId");
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null && data['success'] == true) {
+          return CampaignModel.fromJson(data['data'][0]);
+        }
+      }
+    } catch (e) {
+      log('Exception occurred in getCampaignById: $e');
+    }
+    return null;
+  }
+
+  Future<void> deleteCampaign(BuildContext context, int campaignId) async {
+    // Optimistic UI update: Remove from list immediately for "quick and fast" feel
+    final campaignIndex = _campaignList.indexWhere((element) => element.campaignId == campaignId);
+    if (campaignIndex == -1) return;
+
+    final removedCampaign = _campaignList[campaignIndex];
+    _campaignList.removeAt(campaignIndex);
+    notifyListeners();
+
+    try {
+      final response = await HttpRequest.httpPostRequest(
+          endPoint: HttpUrls.deleteCampaign,
+          bodyData: {"Campaign_Id": campaignId});
+
+      if (response != null && response.statusCode == 200) {
+        // Even though it was successful, we refresh to ensure state consistency with server
+        searchCampaignData('', context);
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Campaign deleted successfully')),
+          );
+        }
+      } else {
+        // Revert on failure
+        _campaignList.insert(campaignIndex, removedCampaign);
+        notifyListeners();
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to delete campaign')),
+          );
+        }
+      }
+    } catch (e) {
+      // Revert on error
+      _campaignList.insert(campaignIndex, removedCampaign);
+      notifyListeners();
+      log('Exception occurred in deleteCampaign: $e');
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred during deletion')),
+        );
+      }
     }
   }
 
