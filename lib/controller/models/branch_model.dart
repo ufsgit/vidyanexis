@@ -12,6 +12,7 @@ class BranchModel {
   String? bankName;
   String? bankHolderName;
   String? bankAccountNo;
+  String? bankBranch;
   String? ifscCode;
   int? deleteStatus;
 
@@ -29,6 +30,7 @@ class BranchModel {
     this.bankName,
     this.bankHolderName,
     this.bankAccountNo,
+    this.bankBranch,
     this.ifscCode,
     this.deleteStatus,
   });
@@ -47,6 +49,7 @@ class BranchModel {
     String? bankName,
     String? bankHolderName,
     String? bankAccountNo,
+    String? bankBranch,
     String? ifscCode,
     int? deleteStatus,
   }) =>
@@ -64,6 +67,7 @@ class BranchModel {
         bankName: bankName ?? this.bankName,
         bankHolderName: bankHolderName ?? this.bankHolderName,
         bankAccountNo: bankAccountNo ?? this.bankAccountNo,
+        bankBranch: bankBranch ?? this.bankBranch,
         ifscCode: ifscCode ?? this.ifscCode,
         deleteStatus: deleteStatus ?? this.deleteStatus,
       );
@@ -82,6 +86,7 @@ class BranchModel {
         bankName: json["bank_name"],
         bankHolderName: json["bank_holder_name"],
         bankAccountNo: json["bank_account_no"],
+        bankBranch: json["bank_branch"],
         ifscCode: json["ifsc_code"],
         deleteStatus: json["delete_status"],
       );
@@ -100,6 +105,7 @@ class BranchModel {
         "bank_name": bankName,
         "bank_holder_name": bankHolderName,
         "bank_account_no": bankAccountNo,
+        "bank_branch": bankBranch,
         "ifsc_code": ifscCode,
         "delete_status": deleteStatus,
       };
