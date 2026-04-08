@@ -131,7 +131,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             'Task Status',
                             'To User Name',
                             'Date',
-                            'Commission',
+                            'Amount',
                           ],
                           data: provider.subContractReport.map((item) {
                             return {
@@ -140,7 +140,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                               'Task Status': item.taskStatusName,
                               'To User Name': item.toUserName,
                               'Date': item.entryDate,
-                              'Commission': item.commission,
+                              'Amount': item.commission,
                             };
                           }).toList(),
                           fileName: 'Sub_Contract_Report',
@@ -231,7 +231,7 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             _buildTableHeader('Task Status', flex: 2, center: true),
                             _buildTableHeader('To User Name', flex: 3),
                             _buildTableHeader('Date', flex: 3),
-                            _buildTableHeader('Commission', flex: 2),
+                            _buildTableHeader('Amount', flex: 2),
                           ],
                         ),
                       ),
