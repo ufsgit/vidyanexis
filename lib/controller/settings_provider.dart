@@ -714,32 +714,41 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   Future<void> deleteCampaign(BuildContext context, int campaignId) async {
+    // Optimistic UI update: Remove from list immediately for "quick and fast" feel
+    final campaignIndex = _campaignList.indexWhere((element) => element.campaignId == campaignId);
+    if (campaignIndex == -1) return;
+
+    final removedCampaign = _campaignList[campaignIndex];
+    _campaignList.removeAt(campaignIndex);
+    notifyListeners();
+
     try {
-      Loader.showLoader(context);
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.deleteCampaign,
           bodyData: {"Campaign_Id": campaignId});
 
       if (response != null && response.statusCode == 200) {
-        final data = response.data;
-        // Check if the deletion was successful (assuming data['p_campaign_id'] > 0 or similar)
-        // Adjust based on actual API success indicator if needed
+        // Even though it was successful, we refresh to ensure state consistency with server
         searchCampaignData('', context);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Campaign deleted successfully')),
         );
       } else {
+        // Revert on failure
+        _campaignList.insert(campaignIndex, removedCampaign);
+        notifyListeners();
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to delete campaign')),
         );
       }
     } catch (e) {
+      // Revert on error
+      _campaignList.insert(campaignIndex, removedCampaign);
+      notifyListeners();
       log('Exception occurred in deleteCampaign: $e');
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('An error occurred during deletion')),
       );
-    } finally {
-      Loader.stopLoader(context);
     }
   }
 
