@@ -730,25 +730,31 @@ class SettingsProvider extends ChangeNotifier {
       if (response != null && response.statusCode == 200) {
         // Even though it was successful, we refresh to ensure state consistency with server
         searchCampaignData('', context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Campaign deleted successfully')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Campaign deleted successfully')),
+          );
+        }
       } else {
         // Revert on failure
         _campaignList.insert(campaignIndex, removedCampaign);
         notifyListeners();
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete campaign')),
-        );
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to delete campaign')),
+          );
+        }
       }
     } catch (e) {
       // Revert on error
       _campaignList.insert(campaignIndex, removedCampaign);
       notifyListeners();
       log('Exception occurred in deleteCampaign: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred during deletion')),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('An error occurred during deletion')),
+        );
+      }
     }
   }
 
