@@ -63,6 +63,9 @@ class _ServicesPageReportState extends State<ServicePageReport> {
         Provider.of<CustomerDetailsProvider>(context);
     final isSmallScreen = MediaQuery.of(context).size.width < 600;
 
+    final availableHeight = MediaQuery.of(context).size.height -
+        (AppStyles.isWebScreen(context) ? 100 : 200);
+
     return Scaffold(
       backgroundColor: Colors.grey[50],
       appBar: !AppStyles.isWebScreen(context)
@@ -87,586 +90,497 @@ class _ServicesPageReportState extends State<ServicePageReport> {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
-              child: _buildServiceTable(
-                  context, reportsProvider, customerDetailsProvider, isSmallScreen),
-            ),
+               child: _buildServiceTable(context, reportsProvider,
+                   customerDetailsProvider, isSmallScreen, availableHeight),
+             ),
+           ),
+         ],
+       ),
+     );
+   }
+
+
+  // UI Helpers start here
+  Widget _buildHeader(
+      BuildContext context, ServiceReportProvider reportsProvider) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              Text(
+                'Complaint Report',
+                style: GoogleFonts.plusJakartaSans(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w700,
+                  color: const Color(0xFF152D70),
+                ),
+              ),
+              const Spacer(),
+              Container(
+                width: MediaQuery.of(context).size.width / 4,
+                height: 48,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(30),
+                  border: Border.all(color: Colors.grey[300]!),
+                ),
+                child: TextField(
+                  controller: searchController,
+                  textAlignVertical: TextAlignVertical.center,
+                  onSubmitted: (query) {
+                    reportsProvider.setTaskSearchCriteria(query, '', '', '', '');
+                    reportsProvider.getSearchServiceReport(context);
+                  },
+                  decoration: InputDecoration(
+                    hintText: 'Search here....',
+                    hintStyle: GoogleFonts.plusJakartaSans(
+                      color: Colors.grey[400],
+                      fontSize: 14,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.search,
+                      color: Colors.grey[600],
+                      size: 20,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                    ),
+                    suffixIcon: Padding(
+                      padding: const EdgeInsets.all(4.0),
+                      child: ElevatedButton(
+                        onPressed: () {
+                          if (searchController.text.isNotEmpty) {
+                            searchController.clear();
+                            reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+                          } else {
+                            reportsProvider.setTaskSearchCriteria(searchController.text, '', '', '', '');
+                          }
+                          reportsProvider.getSearchServiceReport(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.textGrey4,
+                          foregroundColor: Colors.white,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 0,
+                          ),
+                        ),
+                        child: Text(reportsProvider.Search.isNotEmpty
+                            ? 'Cancel'
+                            : 'Search'),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              OutlinedButton.icon(
+                onPressed: () {
+                  reportsProvider.toggleFilter();
+                },
+                icon: const Icon(Icons.filter_list),
+                label: Text(
+                    MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: reportsProvider.isFilter
+                      ? Colors.white
+                      : AppColors.primaryBlue,
+                  backgroundColor: reportsProvider.isFilter
+                      ? const Color(0xFF5499D9)
+                      : Colors.white,
+                  side: BorderSide(
+                    color: reportsProvider.isFilter
+                        ? const Color(0xFF5499D9)
+                        : AppColors.primaryBlue,
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 0,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              CustomElevatedButton(
+                onPressed: () {
+                  exportToExcel(
+                    headers: [
+                      'Customer Name',
+                      'Complaint Type',
+                      'Complaint Name',
+                      'Complaint Description',
+                      'Added Date',
+                      'Amount',
+                      'Status'
+                    ],
+                    data: reportsProvider.serviceReport.map((task) {
+                      return {
+                        'Customer Name': task.customerName,
+                        'Complaint Type': task.serviceTypeName,
+                        'Complaint Name': task.serviceName,
+                        'Complaint Description': task.description,
+                        'Added Date': task.createDate.isNotEmpty
+                            ? DateFormat('dd MMM yyyy')
+                                .format(DateTime.parse(task.createDate))
+                            : '',
+                        'Amount': task.amount.toString(),
+                        'Status': task.serviceStatusName,
+                      };
+                    }).toList(),
+                    fileName: 'Complaint_Report',
+                  );
+                },
+                buttonText: 'Export to Excel',
+                textColor: AppColors.whiteColor,
+                borderColor: AppColors.appViolet,
+                backgroundColor: AppColors.appViolet,
+              )
+            ],
           ),
         ],
       ),
     );
   }
 
-
-  // UI Helpers start here
-                                        style: ElevatedButton.styleFrom(
-                                          backgroundColor: AppColors.textGrey4,
-                                          foregroundColor: Colors.white,
-                                          padding: const EdgeInsets.symmetric(
-                                            horizontal: 16,
-                                            vertical: 0,
-                                          ),
-                                        ),
-                                        child: Text(
-                                            reportsProvider.Search.isNotEmpty
-                                                ? 'Cancel'
-                                                : 'Search'),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                reportsProvider.toggleFilter();
-                                print(reportsProvider.isFilter);
-                              },
-                              icon: const Icon(Icons.filter_list),
-                              label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : ''), // Show only if width > 860px
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: reportsProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors.primaryBlue,
-                                backgroundColor: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : Colors.white,
-                                side: BorderSide(
-                                  color: reportsProvider.isFilter
-                                      ? const Color(0xFF5499D9)
-                                      : AppColors.primaryBlue,
-                                ),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            CustomElevatedButton(
-                              onPressed: () {
-                                exportToExcel(
-                                  headers: [
-                                    'Customer Name',
-                                    'Complaint Type',
-                                    'Complaint Name',
-                                    'Complaint Description',
-                                    'Added Date',
-                                    'Amount',
-                                    'Status'
-                                  ],
-                                  data:
-                                      reportsProvider.serviceReport.map((task) {
-                                    return {
-                                      'Customer Name': task.customerName,
-                                      'Complaint Type': task.serviceTypeName,
-                                      'Complaint Name': task.serviceName,
-                                      'Complaint Description': task.description,
-                                      'Added Date': task.createDate.isNotEmpty
-                                          ? DateFormat('dd MMM yyyy').format(
-                                              DateTime.parse(task.createDate))
-                                          : '',
-                                      'Amount': task.amount.toString(),
-                                      'Status': task.serviceStatusName,
-                                    };
-                                  }).toList(),
-                                  fileName: 'Complaint_Report',
-                                );
-                              },
-                              buttonText: 'Export to Excel',
-                              textColor: AppColors.whiteColor,
-                              borderColor: AppColors.appViolet,
-                              backgroundColor: AppColors.appViolet,
-                            )
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-            if (reportsProvider.isFilter)
-              AppStyles.isWebScreen(context)
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
+  Widget _buildFilters(BuildContext context,
+      ServiceReportProvider reportsProvider, DropDownProvider provider) {
+    return Column(
+      children: [
+        reportsProvider.isFilter
+            ? (AppStyles.isWebScreen(context)
+                ? Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
                       decoration: BoxDecoration(
                         color: Colors.white,
                         borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: reportsProvider.selectedStatus != null &&
+                                    reportsProvider.selectedStatus != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
                       ),
                       child: Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedStatus !=
-                                              null &&
-                                          reportsProvider.selectedStatus != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              children: [
-                                const Text('Status: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedStatus,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      const [
-                                        DropdownMenuItem<int>(
-                                          value: 1,
-                                          child: Text(
-                                            'Pending',
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ),
-                                        DropdownMenuItem<int>(
-                                          value: 2,
-                                          child: Text(
-                                            'Completed',
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ),
-                                      ],
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                        reportsProvider.Search,
-                                        fromDate,
-                                        toDate,
-                                        status,
-                                        assignedTo);
-                                    reportsProvider
-                                        .getSearchServiceReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Added Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
+                          const Text('Status: '),
+                          DropdownButton<int>(
+                            value: reportsProvider.selectedStatus,
+                            hint: const Text('All'),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value:
+                                        0, // Use 0 or null to represent "All"
+                                    child: Text(
+                                      'All',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
                                   ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
+                                ] +
+                                const [
+                                  DropdownMenuItem<int>(
+                                    value: 1,
+                                    child: Text(
+                                      'Pending',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                  DropdownMenuItem<int>(
+                                    value: 2,
+                                    child: Text(
+                                      'Completed',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
                                   ),
                                 ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.white,
-                          //     borderRadius: BorderRadius.circular(20),
-                          //     border: Border.all(
-                          //         color: reportsProvider.selectedUser != null
-                          //             ? AppColors.primaryBlue
-                          //             : Colors.grey[300]!),
-                          //   ),
-                          //   child: Row(
-                          //     children: [
-                          //       const Text('Assigned Staff: '),
-                          //       DropdownButton<int>(
-                          //         value: reportsProvider.selectedUser,
-                          //         hint: const Text('All'),
-                          //         items: provider.searchUserDetails
-                          //             .map((user) => DropdownMenuItem<int>(
-                          //                   value: user.userDetailsId!,
-                          //                   child: ConstrainedBox(
-                          //                     constraints:
-                          //                         BoxConstraints(maxWidth: 150),
-                          //                     child: Text(
-                          //                       user.userDetailsName ?? '',
-                          //                       style:
-                          //                           const TextStyle(fontSize: 14),
-                          //                       overflow: TextOverflow.ellipsis,
-                          //                     ),
-                          //                   ),
-                          //                 ))
-                          //             .toList(),
-                          //         onChanged: (int? newValue) {
-                          //           if (newValue != null) {
-                          //             reportsProvider.setUserFilterStatus(
-                          //                 newValue); // Update the status in the provider
-                          //           }
-                          //         },
-                          //         underline: Container(),
-                          //         isDense: true,
-                          //         iconSize: 18,
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-                          const Spacer(),
-                          // ElevatedButton(
-                          //   onPressed: () {
-                          //     // Apply the selected filters (You can use values from the provider)
-                          //     String status =
-                          //         reportsProvider.selectedStatus.toString();
-                          //     String fromDate = reportsProvider.formattedFromDate;
-                          //     String toDate = reportsProvider.formattedToDate;
-                          //     print(
-                          //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          //     reportsProvider.getSearchServiceReport(
-                          //         '', fromDate, toDate, status, context);
-                          //   },
-                          //   style: ElevatedButton.styleFrom(
-                          //     backgroundColor: Colors.white,
-                          //     foregroundColor: AppColors.primaryBlue,
-                          //     side: BorderSide(color: AppColors.primaryBlue),
-                          //     padding: const EdgeInsets.symmetric(
-                          //       horizontal: 16,
-                          //       vertical: 12,
-                          //     ),
-                          //   ),
-                          //   child: const Text('Apply'),
-                          // ),
-                          // const SizedBox(
-                          //   width: 10,
-                          // ),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider.getSearchServiceReport(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: const Text('Reset'),
-                            ),
-                        ],
-                      ),
-                    )
-                  //mobile
-                  : Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                      padding: const EdgeInsets.all(10.0),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Wrap(
-                        runSpacing: 10,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 20),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                  color: reportsProvider.selectedStatus !=
-                                              null &&
-                                          reportsProvider.selectedStatus != 0
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                const Text('Status: '),
-                                DropdownButton<int>(
-                                  value: reportsProvider.selectedStatus,
-                                  hint: const Text('All'),
-                                  items: [
-                                        const DropdownMenuItem<int>(
-                                          value:
-                                              0, // Use 0 or null to represent "All"
-                                          child: Text(
-                                            'All',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ),
-                                      ] +
-                                      const [
-                                        DropdownMenuItem<int>(
-                                          value: 1,
-                                          child: Text(
-                                            'Pending',
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ),
-                                        DropdownMenuItem<int>(
-                                          value: 2,
-                                          child: Text(
-                                            'Completed',
-                                            style: TextStyle(fontSize: 13),
-                                          ),
-                                        ),
-                                      ],
-                                  onChanged: (int? newValue) {
-                                    if (newValue != null) {
-                                      reportsProvider.setStatus(
-                                          newValue); // Update the status in the provider
-                                    }
-                                    String status = reportsProvider
-                                        .selectedStatus
-                                        .toString();
-                                    String assignedTo =
-                                        reportsProvider.selectedUser.toString();
-                                    String fromDate =
-                                        reportsProvider.formattedFromDate;
-                                    String toDate =
-                                        reportsProvider.formattedToDate;
-                                    print(
-                                        'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                                    reportsProvider.setTaskSearchCriteria(
-                                        reportsProvider.Search,
-                                        fromDate,
-                                        toDate,
-                                        status,
-                                        assignedTo);
-                                    reportsProvider
-                                        .getSearchServiceReport(context);
-                                  },
-                                  underline: Container(),
-                                  isDense: true,
-                                  iconSize: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                reportsProvider.setStatus(
+                                    newValue); // Update the status in the provider
+                              }
+                              String status =
+                                  reportsProvider.selectedStatus.toString();
+                              String assignedTo =
+                                  reportsProvider.selectedUser.toString();
+                              String fromDate =
+                                  reportsProvider.formattedFromDate;
+                              String toDate = reportsProvider.formattedToDate;
+                              reportsProvider.setTaskSearchCriteria(
+                                  reportsProvider.Search,
+                                  fromDate,
+                                  toDate,
+                                  status,
+                                  assignedTo);
+                              reportsProvider.getSearchServiceReport(context);
                             },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Added Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
                           ),
-                          const SizedBox(
-                            width: 10,
-                          ),
-                          // Container(
-                          //   padding: const EdgeInsets.symmetric(horizontal: 20),
-                          //   decoration: BoxDecoration(
-                          //     color: Colors.white,
-                          //     borderRadius: BorderRadius.circular(20),
-                          //     border: Border.all(
-                          //         color: reportsProvider.selectedUser != null
-                          //             ? AppColors.primaryBlue
-                          //             : Colors.grey[300]!),
-                          //   ),
-                          //   child: Row(
-                          //     children: [
-                          //       const Text('Assigned Staff: '),
-                          //       DropdownButton<int>(
-                          //         value: reportsProvider.selectedUser,
-                          //         hint: const Text('All'),
-                          //         items: provider.searchUserDetails
-                          //             .map((user) => DropdownMenuItem<int>(
-                          //                   value: user.userDetailsId!,
-                          //                   child: ConstrainedBox(
-                          //                     constraints:
-                          //                         BoxConstraints(maxWidth: 150),
-                          //                     child: Text(
-                          //                       user.userDetailsName ?? '',
-                          //                       style:
-                          //                           const TextStyle(fontSize: 14),
-                          //                       overflow: TextOverflow.ellipsis,
-                          //                     ),
-                          //                   ),
-                          //                 ))
-                          //             .toList(),
-                          //         onChanged: (int? newValue) {
-                          //           if (newValue != null) {
-                          //             reportsProvider.setUserFilterStatus(
-                          //                 newValue); // Update the status in the provider
-                          //           }
-                          //         },
-                          //         underline: Container(),
-                          //         isDense: true,
-                          //         iconSize: 18,
-                          //       ),
-                          //     ],
-                          //   ),
-                          // ),
-
-                          // ElevatedButton(
-                          //   onPressed: () {
-                          //     // Apply the selected filters (You can use values from the provider)
-                          //     String status =
-                          //         reportsProvider.selectedStatus.toString();
-                          //     String fromDate = reportsProvider.formattedFromDate;
-                          //     String toDate = reportsProvider.formattedToDate;
-                          //     print(
-                          //         'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
-                          //     reportsProvider.getSearchServiceReport(
-                          //         '', fromDate, toDate, status, context);
-                          //   },
-                          //   style: ElevatedButton.styleFrom(
-                          //     backgroundColor: Colors.white,
-                          //     foregroundColor: AppColors.primaryBlue,
-                          //     side: BorderSide(color: AppColors.primaryBlue),
-                          //     padding: const EdgeInsets.symmetric(
-                          //       horizontal: 16,
-                          //       vertical: 12,
-                          //     ),
-                          //   ),
-                          //   child: const Text('Apply'),
-                          // ),
-                          // const SizedBox(
-                          //   width: 10,
-                          // ),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider.getSearchServiceReport(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                              ),
-                              child: const Text('Reset'),
-                            ),
                         ],
                       ),
                     ),
-            SizedBox(
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        onClickTopButton(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 1.5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: reportsProvider.fromDate != null ||
+                                      reportsProvider.toDate != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          children: [
+                            if (reportsProvider.fromDate == null &&
+                                reportsProvider.toDate == null)
+                              const Text('Added Date: All'),
+                            if (reportsProvider.fromDate != null &&
+                                reportsProvider.toDate != null)
+                              Text(
+                                  'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Icon(
+                              Icons.arrow_drop_down_outlined,
+                              color: Colors.black45,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+                    if (reportsProvider.fromDate != null ||
+                        reportsProvider.toDate != null ||
+                        (reportsProvider.selectedStatus != null &&
+                            reportsProvider.selectedStatus != 0) ||
+                        (reportsProvider.selectedUser != null &&
+                            reportsProvider.selectedUser != 0) ||
+                        reportsProvider.Search.isNotEmpty)
+                      ElevatedButton(
+                        onPressed: () {
+                          reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.removeStatus();
+                          searchController.clear();
+                          reportsProvider.setTaskSearchCriteria(
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                          );
+                          reportsProvider.getSearchServiceReport(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 12,
+                          ),
+                        ),
+                        child: const Text('Reset'),
+                      ),
+                  ],
+                ),
+              )
+            //mobile
+            : Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                padding: const EdgeInsets.all(10.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Wrap(
+                  runSpacing: 10,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
+                            color: reportsProvider.selectedStatus != null &&
+                                    reportsProvider.selectedStatus != 0
+                                ? AppColors.primaryBlue
+                                : Colors.grey[300]!),
+                      ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text('Status: '),
+                          DropdownButton<int>(
+                            value: reportsProvider.selectedStatus,
+                            hint: const Text('All'),
+                            items: [
+                                  const DropdownMenuItem<int>(
+                                    value:
+                                        0, // Use 0 or null to represent "All"
+                                    child: Text(
+                                      'All',
+                                      style: TextStyle(fontSize: 14),
+                                    ),
+                                  ),
+                                ] +
+                                const [
+                                  DropdownMenuItem<int>(
+                                    value: 1,
+                                    child: Text(
+                                      'Pending',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                  DropdownMenuItem<int>(
+                                    value: 2,
+                                    child: Text(
+                                      'Completed',
+                                      style: TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                ],
+                            onChanged: (int? newValue) {
+                              if (newValue != null) {
+                                reportsProvider.setStatus(
+                                    newValue); // Update the status in the provider
+                              }
+                              String status =
+                                  reportsProvider.selectedStatus.toString();
+                              String assignedTo =
+                                  reportsProvider.selectedUser.toString();
+                              String fromDate =
+                                  reportsProvider.formattedFromDate;
+                              String toDate = reportsProvider.formattedToDate;
+                              reportsProvider.setTaskSearchCriteria(
+                                  reportsProvider.Search,
+                                  fromDate,
+                                  toDate,
+                                  status,
+                                  assignedTo);
+                              reportsProvider.getSearchServiceReport(context);
+                            },
+                            underline: Container(),
+                            isDense: true,
+                            iconSize: 18,
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(
+                      width: 10,
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        onClickTopButton(context);
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 1.5),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(
+                              color: reportsProvider.fromDate != null ||
+                                      reportsProvider.toDate != null
+                                  ? AppColors.primaryBlue
+                                  : Colors.grey[300]!),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            if (reportsProvider.fromDate == null &&
+                                reportsProvider.toDate == null)
+                              const Text('Added Date: All'),
+                            if (reportsProvider.fromDate != null &&
+                                reportsProvider.toDate != null)
+                              Text(
+                                  'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
+                            const SizedBox(
+                              width: 10,
+                            ),
+                            const Icon(
+                              Icons.arrow_drop_down_outlined,
+                              color: Colors.black45,
+                              size: 20,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    if (reportsProvider.fromDate != null ||
+                        reportsProvider.toDate != null ||
+                        (reportsProvider.selectedStatus != null &&
+                            reportsProvider.selectedStatus != 0) ||
+                        (reportsProvider.selectedUser != null &&
+                            reportsProvider.selectedUser != 0) ||
+                        reportsProvider.Search.isNotEmpty)
+                      ElevatedButton(
+                        onPressed: () {
+                          reportsProvider.selectDateFilterOption(null);
+                          reportsProvider.removeStatus();
+                          searchController.clear();
+                          reportsProvider.setTaskSearchCriteria(
+                            '',
+                            '',
+                            '',
+                            '',
+                            '',
+                          );
+                          reportsProvider.getSearchServiceReport(context);
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.white,
+                          foregroundColor: AppColors.textRed,
+                          side: BorderSide(color: AppColors.textRed),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 0,
+                          ),
+                        ),
+                        child: const Text('Reset'),
+                      ),
+                    ],
+                  ))
+                ) : Container(),
+      ],
+    );
+  }
+
+  Widget _buildServiceTable(
+      BuildContext context,
+      ServiceReportProvider reportsProvider,
+      CustomerDetailsProvider customerDetailsProvider,
+      bool isSmallScreen,
+      double availableHeight) {
+    final rowHeight = 45.0;
+
+    return SizedBox(
               height: availableHeight,
               child: !reportsProvider.hasFetched
                   ? Center(
@@ -1324,11 +1238,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                         ),
                       ),
                     ),
-            ), // end SizedBox
-          ],
-        ),
-      ),
-    );
+            );
   }
 
   void onClickTopButton(BuildContext context) {

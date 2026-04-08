@@ -475,41 +475,41 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
           ? Column(
               children: [
                 _buildSummaryItem(
-                    'Received Amount', provider.correlationbox.receivedAmount),
+                    'Received Amount', provider.correlationbox.receivedAmount, isSmallScreen),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(color: Colors.white24, height: 1),
                 ),
                 _buildSummaryItem('Total Expense Amount',
-                    provider.correlationbox.totalExpenseAmount),
+                    provider.correlationbox.totalExpenseAmount, isSmallScreen),
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: 20),
                   child: Divider(color: Colors.white24, height: 1),
                 ),
                 _buildSummaryItem(
-                    'Total Balance', provider.correlationbox.totalBalance),
+                    'Total Balance', provider.correlationbox.totalBalance, isSmallScreen),
               ],
             )
           : Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 _buildSummaryItem(
-                    'Received Amount', provider.correlationbox.receivedAmount,
+                    'Received Amount', provider.correlationbox.receivedAmount, isSmallScreen,
                     expand: true),
                 Container(width: 1, height: 60, color: Colors.white30),
                 _buildSummaryItem('Total Expense Amount',
-                    provider.correlationbox.totalExpenseAmount,
+                    provider.correlationbox.totalExpenseAmount, isSmallScreen,
                     expand: true),
                 Container(width: 1, height: 60, color: Colors.white30),
                 _buildSummaryItem(
-                    'Total Balance', provider.correlationbox.totalBalance,
+                    'Total Balance', provider.correlationbox.totalBalance, isSmallScreen,
                     expand: true),
               ],
             ),
     );
   }
 
-  Widget _buildSummaryItem(String label, double? amount,
+  Widget _buildSummaryItem(String label, double? amount, bool isSmallScreen,
       {bool expand = false}) {
     final content = Column(
       crossAxisAlignment: isSmallScreen ? CrossAxisAlignment.center : CrossAxisAlignment.start,
