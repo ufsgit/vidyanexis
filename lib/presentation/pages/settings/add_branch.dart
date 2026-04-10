@@ -143,6 +143,8 @@ class _AddBranchState extends State<AddBranch> {
             widget.branch!.bankHolderName ?? "";
         settingsProvider.bankAccountNoController.text =
             widget.branch!.bankAccountNo ?? "";
+        settingsProvider.bankBranchController.text =
+            widget.branch!.bankBranch ?? "";
         settingsProvider.ifscCodeController.text =
             widget.branch!.ifscCode ?? "";
         settingsProvider.logoController.text = widget.branch!.logo ?? "";
@@ -363,6 +365,14 @@ class _AddBranchState extends State<AddBranch> {
               height: 54,
               controller: settingsProvider.bankAccountNoController,
               hintText: 'Bank Account No',
+              labelText: '',
+            ),
+            const SizedBox(height: 20),
+            CustomTextField(
+              readOnly: false,
+              height: 54,
+              controller: settingsProvider.bankBranchController,
+              hintText: 'Bank Branch',
               labelText: '',
             ),
             const SizedBox(height: 20),

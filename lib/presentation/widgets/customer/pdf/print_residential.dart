@@ -776,6 +776,10 @@ Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
                         style: pw.TextStyle(font: boldFont, fontSize: 12),
                       ),
                       pw.Text(
+                        'Bank Name - ${quotation?.branchDetails?.bankName ?? ''}',
+                        style: pw.TextStyle(font: font, fontSize: 11),
+                      ),
+                      pw.Text(
                         'Account Name - ${quotation?.branchDetails?.bankHolderName ?? ''}',
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
@@ -788,7 +792,7 @@ Future<void> _addTwelthPage(pw.Document pdf, int pageNumber) async {
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                       pw.Text(
-                        quotation?.branchDetails?.branchName ?? '',
+                        'Bank Branch - ${quotation?.branchDetails?.bankBranch ?? ''}',
                         style: pw.TextStyle(font: font, fontSize: 11),
                       ),
                     ],

@@ -394,6 +394,7 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController bankHolderNameController =
       TextEditingController();
   final TextEditingController bankAccountNoController = TextEditingController();
+  final TextEditingController bankBranchController = TextEditingController();
   final TextEditingController ifscCodeController = TextEditingController();
   final TextEditingController logoController = TextEditingController();
   final TextEditingController branchCampaignController =
@@ -545,6 +546,7 @@ class SettingsProvider extends ChangeNotifier {
             "bank_name": bankNameController.text,
             "bank_holder_name": bankHolderNameController.text,
             "bank_account_no": bankAccountNoController.text,
+            "bank_branch": bankBranchController.text,
             "ifsc_code": ifscCodeController.text
           });
 
@@ -561,6 +563,7 @@ class SettingsProvider extends ChangeNotifier {
         bankNameController.clear();
         bankHolderNameController.clear();
         bankAccountNoController.clear();
+        bankBranchController.clear();
         ifscCodeController.clear();
         final data = response.data;
         searchBranch(context);
@@ -595,6 +598,7 @@ class SettingsProvider extends ChangeNotifier {
     bankNameController.clear();
     bankHolderNameController.clear();
     bankAccountNoController.clear();
+    bankBranchController.clear();
     ifscCodeController.clear();
     branchCampaignController.clear();
   }

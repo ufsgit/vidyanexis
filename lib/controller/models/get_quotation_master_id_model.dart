@@ -274,6 +274,7 @@ class BranchDetails {
   final String contactPerson;
   final String bankAccountNo;
   final String bankHolderName;
+  final String bankBranch;
 
   BranchDetails({
     required this.branchId,
@@ -290,6 +291,7 @@ class BranchDetails {
     required this.contactPerson,
     required this.bankAccountNo,
     required this.bankHolderName,
+    required this.bankBranch,
   });
 
   factory BranchDetails.fromJson(Map<String, dynamic> json) {
@@ -308,6 +310,7 @@ class BranchDetails {
       contactPerson: toStr(json['contact_person']),
       bankAccountNo: toStr(json['bank_account_no']),
       bankHolderName: toStr(json['bank_holder_name']),
+      bankBranch: toStr(json['bank_branch']),
     );
   }
 }
