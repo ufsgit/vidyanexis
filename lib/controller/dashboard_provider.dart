@@ -87,7 +87,7 @@ class DashboardProvider extends ChangeNotifier {
   String? selectedeTaskAllocationValue;
   String? selectedDashboardCountValue;
 
-  /// keyword for lead dashboard count (New_Leads, Missed_Leads, Pending_Followups, Transferred_Leads etc)
+  /// keyword for lead dashboard count (New_Leads, Missed_Leads, Followup_Leads, Not_Interested, Transferred_Leads etc)
   String? selectedLeadCountKeyword;
   String? selectedWorkSummaryValue;
   String? selectedLeadEnquiryReportValue;
@@ -655,14 +655,19 @@ class DashboardProvider extends ChangeNotifier {
           if (data.isNotEmpty && data.first is Map) {
             Map<String, dynamic> counts = data.first;
             leadCountMap.clear();
+            leadDashboardCountData.clear();
             counts.forEach((key, value) {
               if (value is int) {
                 leadCountMap[key] = value;
+                leadDashboardCountData.add(DashBoardCountModel(
+                  tp: 1,
+                  title: key,
+                  dataCount: value,
+                ));
               }
             });
           }
           isDashboardCountLoaded = true;
-          await getDashBoardCount(shouldNotify: false);
         }
       });
     } catch (e) {

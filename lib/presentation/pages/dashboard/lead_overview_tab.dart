@@ -45,6 +45,9 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
         return const Color(0xFF9CC9BF);
       case 'total_called':
         return const Color(0xFF8699C9);
+      case 'not_interested':
+      case 'not interested':
+        return const Color(0xFFE5D1B0);
       case 'transferred_leads':
         return const Color(0xFF9ABDE2);
       case 'missed_leads':

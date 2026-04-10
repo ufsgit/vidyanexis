@@ -18,6 +18,7 @@ class DashboardCountTab extends StatelessWidget {
     if (t.contains('called')) return const Color(0xFF8699C9);
     if (t.contains('transferred')) return const Color(0xFF9ABDE2);
     if (t.contains('missed')) return const Color(0xFFDEB0B9);
+    if (t.contains('interested')) return const Color(0xFFE5D1B0);
     return Colors.grey.shade300;
   }
 
@@ -40,10 +41,10 @@ class DashboardCountTab extends StatelessWidget {
     final allowedKeys = [
       'New_Leads',
       'Missed_Leads',
-      'Pending_Followups',
+      'Followup_Leads',
+      'Not_Interested',
       'Transferred_Leads',
-      'Closed_Leads',
-      'Total_Called'
+      'Closed_Leads'
     ];
     final items = dashBoardProvider.leadCountMap.entries
         .where((e) => allowedKeys.contains(e.key))
@@ -95,16 +96,7 @@ class DashboardCountTab extends StatelessWidget {
                       w.isNotEmpty ? w[0].toUpperCase() + w.substring(1) : w)
                   .join(' ');
 
-              String apiKeyword = keyword.toLowerCase();
-              if (keyword == 'Pending_Followups') {
-                apiKeyword = 'pending_followup';
-              } else if (keyword == 'Transferred_Leads') {
-                apiKeyword = 'transffered_leads';
-              } else if (keyword == 'Closed_Leads') {
-                apiKeyword = 'Closed_Leads';
-              } else if (keyword == 'Total_Called') {
-                apiKeyword = 'Total_Called';
-              }
+              String apiKeyword = keyword;
 
               return GestureDetector(
                 onTap: () {
