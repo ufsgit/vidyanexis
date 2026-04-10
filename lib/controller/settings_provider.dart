@@ -412,6 +412,10 @@ class SettingsProvider extends ChangeNotifier {
   final TextEditingController cphoneController = TextEditingController();
   final TextEditingController cmobileController = TextEditingController();
   final TextEditingController cemailController = TextEditingController();
+  final TextEditingController cgstNoController = TextEditingController();
+  final TextEditingController cpanNoController = TextEditingController();
+  final TextEditingController ccinNoController = TextEditingController();
+
   final List<Uint8List> _images = [];
   List<Uint8List> get images => _images;
   String uploadedFilePath = '';
@@ -3090,8 +3094,9 @@ class SettingsProvider extends ChangeNotifier {
             "Email": cemailController.text.toString(),
             "Website": '',
             "Logo": uploadedFilePath,
-            "Gst_No": '',
-            "Pan_No": '',
+            "Gst_No": cgstNoController.text.toString(),
+            "Pan_No": cpanNoController.text.toString(),
+            "Cin_No": ccinNoController.text.toString(),
             "Is_Location": _toggleValue
           });
 
@@ -3206,6 +3211,9 @@ class SettingsProvider extends ChangeNotifier {
     cphoneController.clear();
     cmobileController.clear();
     cnameController.clear();
+    cgstNoController.clear();
+    cpanNoController.clear();
+    ccinNoController.clear();
     uploadedFilePath = '';
   }
 

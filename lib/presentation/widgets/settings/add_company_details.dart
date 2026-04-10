@@ -162,6 +162,30 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                   hintText: 'Email',
                   labelText: '',
                 ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.cgstNoController,
+                  hintText: 'GST NO',
+                  labelText: '',
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.cpanNoController,
+                  hintText: 'PAN NO',
+                  labelText: '',
+                ),
+                const SizedBox(height: 10),
+                CustomTextField(
+                  readOnly: false,
+                  height: 54,
+                  controller: settingsProvider.ccinNoController,
+                  hintText: 'CIN NO',
+                  labelText: '',
+                ),
               ] else ...[
                 Row(
                   children: [
@@ -253,6 +277,44 @@ class _AddCompanyDetailsState extends State<AddCompanyDetails> {
                         height: 54,
                         controller: settingsProvider.cemailController,
                         hintText: 'Email',
+                        labelText: '',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.cgstNoController,
+                        hintText: 'GST NO',
+                        labelText: '',
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.cpanNoController,
+                        hintText: 'PAN NO',
+                        labelText: '',
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 10),
+                Row(
+                  children: [
+                    Expanded(
+                      child: CustomTextField(
+                        readOnly: false,
+                        height: 54,
+                        controller: settingsProvider.ccinNoController,
+                        hintText: 'CIN NO',
                         labelText: '',
                       ),
                     ),

@@ -81,6 +81,12 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                                 .toString();
                         settingsProvider.cemailController.text =
                             settingsProvider.companyDetails[0].email.toString();
+                        settingsProvider.cgstNoController.text =
+                            settingsProvider.companyDetails[0].gstNo.toString();
+                        settingsProvider.cpanNoController.text =
+                            settingsProvider.companyDetails[0].panNo.toString();
+                        settingsProvider.ccinNoController.text =
+                            settingsProvider.companyDetails[0].cinNo.toString();
                         settingsProvider.saveImagePath(
                             settingsProvider.companyDetails[0].logo.toString());
                         settingsProvider.setToggleValue(
@@ -150,6 +156,15 @@ class _CompanyDetailsState extends State<CompanyDetails> {
                       // Email
                       _buildInfoTile(Icons.email, "Email",
                           settingsProvider.companyDetails[0].email),
+                      // GST No
+                      _buildInfoTile(Icons.receipt_long, "GST No",
+                          settingsProvider.companyDetails[0].gstNo),
+                      // PAN No
+                      _buildInfoTile(Icons.credit_card, "PAN No",
+                          settingsProvider.companyDetails[0].panNo),
+                      // CIN No
+                      _buildInfoTile(Icons.business, "CIN No",
+                          settingsProvider.companyDetails[0].cinNo),
                       // Website
                       _buildInfoTile(
                         Icons.location_on_sharp,

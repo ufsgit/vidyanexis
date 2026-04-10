@@ -12,6 +12,7 @@ class Company {
   final String logo;
   final String gstNo;
   final String panNo;
+  final String cinNo;
   final int deleteStatus;
   final int isLocation;
 
@@ -29,6 +30,7 @@ class Company {
     required this.logo,
     required this.gstNo,
     required this.panNo,
+    required this.cinNo,
     required this.deleteStatus,
     required this.isLocation,
   });
@@ -49,6 +51,7 @@ class Company {
       logo: json['Logo'] ?? '',
       gstNo: json['Gst_No'] ?? '',
       panNo: json['Pan_No'] ?? '',
+      cinNo: json['Cin_No'] ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       isLocation: json['Is_Location'] ?? 0,
     );
@@ -70,6 +73,7 @@ class Company {
       'Logo': logo,
       'Gst_No': gstNo,
       'Pan_No': panNo,
+      'Cin_No': cinNo,
       'DeleteStatus': deleteStatus,
       'Is_Location': isLocation,
     };
