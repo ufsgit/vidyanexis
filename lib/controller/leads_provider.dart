@@ -2284,4 +2284,21 @@ class LeadsProvider extends ChangeNotifier {
 
     notifyListeners();
   }
+
+  Future<bool> checkLeadContactExists(String mobileNumber) async {
+    try {
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.checkLeadContactExists}?Phone_Number=$mobileNumber');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        return data['Exists_Status'] == 1;
+      }
+      return false;
+    } catch (e) {
+      print('Error checking lead contact: $e');
+      return false;
+    }
+  }
 }

@@ -353,4 +353,5 @@ class HttpUrls {
   static String getCampaignList = "settings/Get_Campaign_List";
   static String getCampaignById = "settings/Get_Campaign_By_Id";
   static String deleteCampaign = "settings/Delete_Campaign";
+  static String checkLeadContactExists = "lead/Check_Lead_Contact_Exists";
 }

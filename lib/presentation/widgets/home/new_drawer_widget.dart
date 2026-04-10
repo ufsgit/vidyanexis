@@ -475,7 +475,45 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                               ],
                             ),
                             TextButton(
-                              onPressed: _saveLead,
+                              onPressed: () async {
+                                bool exists =
+                                    await leadProvider.checkLeadContactExists(
+                                        leadProvider.contactNoController.text);
+                                print(exists);
+                                if (exists) {
+                                  print('Dialog');
+                                  showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return AlertDialog(
+                                        title:
+                                            Text('Lead contact already exists'),
+                                        content: Text(
+                                            'Lead contact already exists. Do you want to save'),
+                                        actions: [
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Text('Cancel'),
+                                          ),
+                                          TextButton(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                              print('Lead save');
+                                              _saveLead();
+                                            },
+                                            child: Text('Continue'),
+                                          ),
+                                        ],
+                                      );
+                                    },
+                                  );
+                                } else {
+                                  print('Lead save');
+                                  _saveLead();
+                                }
+                              },
                               child: Text(
                                 'Save',
                                 style: GoogleFonts.plusJakartaSans(
@@ -1798,8 +1836,8 @@ class _NewLeadDrawerWidgetState extends State<NewLeadDrawerWidget> {
                                           selectedValue:
                                               dropDownProvider.selectedUserId,
                                           enabled: settingsProvider
-                                                      .selectedBranchId !=
-                                                  null,
+                                                  .selectedBranchId !=
+                                              null,
                                         ),
                                       ),
                                     ),
