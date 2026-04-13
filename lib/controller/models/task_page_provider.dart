@@ -16,6 +16,7 @@ import 'package:vidyanexis/http/loader.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/controller/models/form_settings_provider.dart';
+import 'package:vidyanexis/constants/app_styles.dart';
 
 class TaskPageProvider extends ChangeNotifier {
   List<TaskReportModel> _taskReport = [];
@@ -226,7 +227,7 @@ class TaskPageProvider extends ChangeNotifier {
   Future<void> loadMoreData(BuildContext context) async {
     if (hasMorePages) {
       nextPage();
-      await searchTaskByCustomer(context);
+      await searchTaskByCustomer(context, isShowLoader: false);
     }
   }
 
@@ -536,14 +537,14 @@ class TaskPageProvider extends ChangeNotifier {
           _totalSize = metaData['Total_Items'] ?? 1;
           _totalPages = metaData['Total_Pages'] ?? 1;
 
-          // Check if it's mobile screen
-          final isMobile = MediaQuery.of(context).size.width < 768;
+          // Check if it's mobile screen using app-wide threshold
+          final isMobile = !AppStyles.isWebScreen(context);
 
           if (isMobile && _pageIndex > 1) {
             // For mobile scroll pagination, append new tasks to existing list
             _taskReport.addAll(newTasks);
           } else {
-            // For web or first page load, replace the entire list
+            // For web or first page load (e.g. filter change), replace the entire list
             _taskReport = newTasks;
           }
         }

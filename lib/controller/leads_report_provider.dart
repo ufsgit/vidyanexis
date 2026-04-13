@@ -903,7 +903,8 @@ class LeadReportProvider extends ChangeNotifier {
             _totalPages = (_totalSize / _pageSize).ceil();
             nextData.removeLast();
 
-            final isMobile = MediaQuery.of(context).size.width < 768;
+            // Check if it's mobile screen using app-wide threshold
+            final isMobile = !AppStyles.isWebScreen(context);
 
             if (isMobile && _pageIndex > 1) {
               _leadReportData.addAll(nextData);
