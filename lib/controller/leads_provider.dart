@@ -24,6 +24,7 @@ import 'package:vidyanexis/controller/lead_details_provider.dart';
 import 'package:vidyanexis/controller/models/save_lead_dropdown_model.dart';
 import 'package:vidyanexis/controller/models/search_leads_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
+import 'package:vidyanexis/controller/dashboard_provider.dart';
 import 'package:vidyanexis/http/http_requests.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/http/loader.dart';
@@ -1416,6 +1417,10 @@ class LeadsProvider extends ChangeNotifier {
           settingsProvider.selectedBranchId = 0;
           dropDownProvider.setSourceCategoryId(0);
 
+          final dashboardProvider =
+              Provider.of<DashboardProvider>(context, listen: false);
+          dashboardProvider.refreshDashboardData(context);
+
           Navigator.pop(context);
           Loader.stopLoader(context);
           notifyListeners();
@@ -1520,6 +1525,11 @@ class LeadsProvider extends ChangeNotifier {
         statusController.clear();
         assignToFollowUpController.clear();
         nextFollowUpDateController.clear();
+
+        final dashboardProvider =
+            Provider.of<DashboardProvider>(context, listen: false);
+        dashboardProvider.refreshDashboardData(context);
+
         notifyListeners();
         print(data);
       } else {
@@ -1787,6 +1797,9 @@ class LeadsProvider extends ChangeNotifier {
       if (response != null && response.statusCode == 200) {
         log('Lead deleted successfully');
         removeLeadFromList(custId);
+        final dashboardProvider =
+            Provider.of<DashboardProvider>(context, listen: false);
+        dashboardProvider.refreshDashboardData(context);
       }
     } catch (e) {
       print('Exception occurred: $e');
@@ -1817,6 +1830,9 @@ class LeadsProvider extends ChangeNotifier {
       if (response != null && response.statusCode == 200) {
         Fluttertoast.showToast(msg: "Lead Converted Successfully");
         await getSearchLeads(context);
+        final dashboardProvider =
+            Provider.of<DashboardProvider>(context, listen: false);
+        dashboardProvider.refreshDashboardData(context);
         if (context.mounted && Navigator.canPop(context)) {
           Navigator.pop(context); // Close the details/dialog
         }
@@ -2103,6 +2119,10 @@ class LeadsProvider extends ChangeNotifier {
         backgroundColor: Colors.black,
         textColor: Colors.white,
       );
+
+      final dashboardProvider =
+          Provider.of<DashboardProvider>(context, listen: false);
+      dashboardProvider.refreshDashboardData(context);
     } catch (e) {
       log('Import Exception: $e');
       _importStatusText = 'Import failed. Process stopped.';

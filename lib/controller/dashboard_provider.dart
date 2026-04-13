@@ -729,6 +729,24 @@ class DashboardProvider extends ChangeNotifier {
     notifyListeners(); // Notify listeners about the change
   }
 
+  void clearDashboardFlags() {
+    isLeadLoaded = false;
+    isWorkLoaded = false;
+    isCustomerLoaded = false;
+    isTaskInfoLoaded = false;
+    isDashboardCountLoaded = false;
+    isWorkDashboardCountLoaded = false;
+    isTaskOverviewLoaded = false;
+    isAmcLoaded = false;
+    isPaymentLoaded = false;
+  }
+
+  Future<void> refreshDashboardData(BuildContext context) async {
+    clearDashboardFlags();
+    await loadDataForTab(tabIndex, context);
+    notifyListeners();
+  }
+
   // updateAllLeadKeywords removed as getLeadDashboardCount fetch all counts in one go
 
   void selectDateFilterOption(int? index) {
