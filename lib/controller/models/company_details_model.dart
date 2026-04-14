@@ -15,6 +15,7 @@ class Company {
   final String cinNo;
   final int deleteStatus;
   final int isLocation;
+  final String notificationTopic;
 
   Company({
     required this.companyId,
@@ -33,6 +34,7 @@ class Company {
     required this.cinNo,
     required this.deleteStatus,
     required this.isLocation,
+    required this.notificationTopic,
   });
 
   // Factory constructor for creating an instance from JSON with null checks
@@ -54,6 +56,7 @@ class Company {
       cinNo: json['Cin_No'] ?? '',
       deleteStatus: json['DeleteStatus'] ?? 0,
       isLocation: json['Is_Location'] ?? 0,
+      notificationTopic: json['notification_topic'] ?? '',
     );
   }
 
@@ -76,6 +79,7 @@ class Company {
       'Cin_No': cinNo,
       'DeleteStatus': deleteStatus,
       'Is_Location': isLocation,
+      'notification_topic': notificationTopic,
     };
   }
 }

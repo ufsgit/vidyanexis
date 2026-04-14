@@ -68,14 +68,22 @@ class SettingsProvider extends ChangeNotifier {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? cachedLogo = preferences.getString('cached_company_logo');
       String? cachedTitle = preferences.getString('cached_company_title');
-      
-      if (cachedLogo != null || cachedTitle != null) {
+      String? cachedNotificationTopic =
+          preferences.getString('cached_company_notification_topic');
+
+      if (cachedLogo != null ||
+          cachedTitle != null ||
+          cachedNotificationTopic != null) {
         logo = cachedLogo ?? logo;
         title = cachedTitle ?? title;
+        notificationTopic = cachedNotificationTopic ?? notificationTopic;
+        print(
+            'DEBUG: notification_topic loaded from cache: $notificationTopic');
         AppStyles.updateCachedBranding(title, logo);
         _updateAppSwitcher();
         _isCacheLoaded = true;
-        print('Branding loaded from cache: $title - $logo');
+        print(
+            'Branding loaded from cache: $title - $logo - $notificationTopic');
         notifyListeners();
       }
     } catch (e) {
@@ -367,6 +375,7 @@ class SettingsProvider extends ChangeNotifier {
   List<Company> get companyDetails => _companyDetails;
   String logo = '';
   String title = '';
+  String notificationTopic = '';
   bool _isLogoLoading = false;
   bool get isLogoLoading => _isLogoLoading;
 
@@ -382,6 +391,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   String get displayTitle => title.isNotEmpty ? title : AppStyles.name();
+
+  String get currentNotificationTopic => notificationTopic;
 
   final TextEditingController addressController = TextEditingController();
   final TextEditingController phoneController = TextEditingController();
@@ -654,13 +665,16 @@ class SettingsProvider extends ChangeNotifier {
           List<dynamic> campaignListData;
           if (data is List) {
             campaignListData = data;
-          } else if (data is Map && data['success'] == true && data['data'] != null) {
+          } else if (data is Map &&
+              data['success'] == true &&
+              data['data'] != null) {
             campaignListData = data['data'];
           } else {
             return;
           }
-          _campaignList =
-              campaignListData.map((item) => CampaignModel.fromJson(item)).toList();
+          _campaignList = campaignListData
+              .map((item) => CampaignModel.fromJson(item))
+              .toList();
           notifyListeners();
         }
       }
@@ -723,7 +737,8 @@ class SettingsProvider extends ChangeNotifier {
 
   Future<void> deleteCampaign(BuildContext context, int campaignId) async {
     // Optimistic UI update: Remove from list immediately for "quick and fast" feel
-    final campaignIndex = _campaignList.indexWhere((element) => element.campaignId == campaignId);
+    final campaignIndex =
+        _campaignList.indexWhere((element) => element.campaignId == campaignId);
     if (campaignIndex == -1) return;
 
     final removedCampaign = _campaignList[campaignIndex];
@@ -1163,7 +1178,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getSearchLeadStatus(String query, String viewId, BuildContext context) async {
+  Future<void> getSearchLeadStatus(
+      String query, String viewId, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1581,7 +1597,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> getMenuPermissionData(String userId, BuildContext context) async {
+  Future<void> getMenuPermissionData(
+      String userId, BuildContext context) async {
     try {
       log(userId);
       final response = await HttpRequest.httpGetRequest(
@@ -1884,7 +1901,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchEnquiryStatusData(String query, BuildContext context) async {
+  Future<void> searchEnquiryStatusData(
+      String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -1945,7 +1963,8 @@ class SettingsProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> searchsourceCategoryData(String query, BuildContext context) async {
+  Future<void> searchsourceCategoryData(
+      String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
@@ -2988,7 +3007,7 @@ class SettingsProvider extends ChangeNotifier {
       print('getCompanyDetails: awaiting existing request...');
       return _getCompanyDetailsFuture;
     }
-    
+
     _getCompanyDetailsFuture = _performGetCompanyDetails();
     try {
       await _getCompanyDetailsFuture;
@@ -3012,24 +3031,33 @@ class SettingsProvider extends ChangeNotifier {
         if (data != null && data is List && data.isNotEmpty) {
           // If the API returns the classic Company format, still initialize it for other pages
           try {
-            _companyDetails = data
-                .map((item) => Company.fromJson(item))
-                .toList();
+            _companyDetails =
+                data.map((item) => Company.fromJson(item)).toList();
           } catch (e) {
-            print('SettingsProvider.getCompanyDetails: Failed to parse Company format - $e');
+            print(
+                'SettingsProvider.getCompanyDetails: Failed to parse Company format - $e');
           }
-          
+
           final item = data[0];
           String newLogo = item['company_logo'] ?? item['Logo'] ?? '';
           String newTitle = item['company_name'] ?? item['Company_Name'] ?? '';
-          
-          if (newLogo != logo || newTitle != title) {
+          String newNotificationTopic = item['notification_topic'] ?? '';
+
+          if (newLogo != logo ||
+              newTitle != title ||
+              newNotificationTopic != notificationTopic) {
             logo = newLogo;
             title = newTitle;
-            
-            SharedPreferences preferences = await SharedPreferences.getInstance();
+            notificationTopic = newNotificationTopic;
+            print(
+                'DEBUG: notification_topic updated from API (list): $notificationTopic');
+
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
             await preferences.setString('cached_company_logo', logo);
             await preferences.setString('cached_company_title', title);
+            await preferences.setString(
+                'cached_company_notification_topic', notificationTopic);
             AppStyles.updateCachedBranding(title, logo);
             _updateAppSwitcher();
             print('Branding updated from API and cached: $title');
@@ -3039,14 +3067,23 @@ class SettingsProvider extends ChangeNotifier {
           // In case the endpoint actually returns a direct map { "company_name": "...", "company_logo": "..." }
           String newLogo = data['company_logo'] ?? data['Logo'] ?? '';
           String newTitle = data['company_name'] ?? data['Company_Name'] ?? '';
+          String newNotificationTopic = data['notification_topic'] ?? '';
 
-          if (newLogo != logo || newTitle != title) {
+          if (newLogo != logo ||
+              newTitle != title ||
+              newNotificationTopic != notificationTopic) {
             logo = newLogo;
             title = newTitle;
-            
-            SharedPreferences preferences = await SharedPreferences.getInstance();
+            notificationTopic = newNotificationTopic;
+            print(
+                'DEBUG: notification_topic updated from API (map): $notificationTopic');
+
+            SharedPreferences preferences =
+                await SharedPreferences.getInstance();
             await preferences.setString('cached_company_logo', logo);
             await preferences.setString('cached_company_title', title);
+            await preferences.setString(
+                'cached_company_notification_topic', notificationTopic);
             AppStyles.updateCachedBranding(title, logo);
             _updateAppSwitcher();
             print('Branding updated from API MAP and cached: $title');
@@ -4579,7 +4616,8 @@ class SettingsProvider extends ChangeNotifier {
   }
 
   // Inventory Customer search API
-  Future<void> searchInventoryCustomerApi(String query, BuildContext context) async {
+  Future<void> searchInventoryCustomerApi(
+      String query, BuildContext context) async {
     try {
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userId = preferences.getString('userId') ?? "";
