@@ -1649,6 +1649,49 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                       : MainAxisAlignment.start,
                   children: [
                     Text(
+                      'Discount:   ',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                          fontSize: 16),
+                    ),
+                    Container(
+                      width: 140,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8.0, vertical: 0),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: TextField(
+                        controller: customerDetailsProvider.qDiscountController,
+                        onChanged: (p0) {
+                          if (customerDetailsProvider
+                              .qDiscountController.text.isEmpty) {
+                            customerDetailsProvider.qDiscountController.text =
+                                '0';
+                          }
+                          customerDetailsProvider.updateTotal();
+                        },
+                        decoration: const InputDecoration(
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.zero,
+                            hintText: '₹'),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                              RegExp(r'^\d*\.?\d{0,2}')),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              if (customerDetailsProvider.items.isNotEmpty)
+                Row(
+                  mainAxisAlignment: AppStyles.isWebScreen(context)
+                      ? MainAxisAlignment.end
+                      : MainAxisAlignment.start,
+                  children: [
+                    Text(
                       'Shipping Charges:   ',
                       style: TextStyle(
                           fontWeight: FontWeight.bold,

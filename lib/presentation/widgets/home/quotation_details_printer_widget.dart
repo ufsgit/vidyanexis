@@ -455,6 +455,25 @@ class QuotationPDFPrinter {
             ),
           ],
         ),
+        // Discount Amount row
+        pw.TableRow(
+          children: [
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(5),
+              child: pw.Text('Discount'),
+            ),
+            pw.Spacer(),
+            pw.Spacer(),
+            pw.Spacer(),
+            pw.Padding(
+              padding: const pw.EdgeInsets.all(5),
+              child: pw.Text(
+                data.discountAmount?.toString() ?? '0',
+                softWrap: false,
+              ),
+            ),
+          ],
+        ),
         // Net Total row
         pw.TableRow(
           decoration: const pw.BoxDecoration(color: PdfColors.grey200),

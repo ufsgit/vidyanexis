@@ -157,18 +157,7 @@ class _LeadCardState extends State<LeadCard> {
       children: [
         Container(
           width: MediaQuery.sizeOf(context).width,
-          margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-          decoration: BoxDecoration(
-            color: AppColors.whiteColor,
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+          color: AppColors.whiteColor,
           child: Column(
             children: [
               // Header Section
@@ -177,12 +166,12 @@ class _LeadCardState extends State<LeadCard> {
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Container(
-                        height: 62,
+                        height: 44,
                         width: 3,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(30),
