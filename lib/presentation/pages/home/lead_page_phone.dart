@@ -527,7 +527,8 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                                   children: [
                                     Divider(
                                       height: 1,
-                                      color: AppColors.grey,
+                                      thickness: 1,
+                                      color: const Color(0xFFCDD2D6),
                                     ),
                                     LeadCard(
                                       isLead: true,
