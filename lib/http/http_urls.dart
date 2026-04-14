@@ -21,6 +21,8 @@ class HttpUrls {
   // static String baseUrl = 'https://framesolarapi.trackbox.net.in/';
   // static String baseUrl = 'https://thirdeyeapi.trackbox.net.in/';
   // static String baseUrl = 'https://techtifycrmapi.trackbox.net.in/';
+  // static String baseUrl = 'https://sunxpertapi.trackbox.net.in/';
+  // static String baseUrl = 'https://ramcoelectronicsapi.trackbox.net.in/';
 
 //dev
 

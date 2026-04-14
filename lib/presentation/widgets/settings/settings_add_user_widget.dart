@@ -803,33 +803,22 @@ class _SettingsAddUserWidgetState extends State<SettingsAddUserWidget> {
                       ],
                     ),
                   ),
-                  StatefulBuilder(
-                    builder: (context, setState) {
-                      return Transform.scale(
-                        scale: 0.7,
-                        child: Switch(
-                          value: widget.isEdit
-                              ? widget.appLogin!
-                              : settingsProvider.allowAppLogin,
-                          onChanged: (bool value) {
-                            if (widget.isEdit) {
-                              setState(() {
-                                widget.appLogin = value;
-                              });
-                            }
-                            settingsProvider.toggleAppLogin(value);
-                          },
-                          trackOutlineColor:
-                              WidgetStatePropertyAll(AppColors.textGrey3),
-                          activeThumbColor: AppColors.whiteColor,
-                          activeTrackColor: AppColors.primaryBlue,
-                          inactiveThumbColor: AppColors.textGrey1,
-                          inactiveTrackColor: AppColors.whiteColor,
-                          materialTapTargetSize:
-                              MaterialTapTargetSize.shrinkWrap,
-                        ),
-                      );
-                    },
+                  Transform.scale(
+                    scale: 0.7,
+                    child: Switch(
+                      value: settingsProvider.allowAppLogin,
+                      onChanged: (bool value) {
+                        settingsProvider.toggleAppLogin(value);
+                      },
+                      trackOutlineColor:
+                          WidgetStatePropertyAll(AppColors.textGrey3),
+                      activeThumbColor: AppColors.whiteColor,
+                      activeTrackColor: AppColors.primaryBlue,
+                      inactiveThumbColor: AppColors.textGrey1,
+                      inactiveTrackColor: AppColors.whiteColor,
+                      materialTapTargetSize:
+                          MaterialTapTargetSize.shrinkWrap,
+                    ),
                   ),
                 ],
               ),

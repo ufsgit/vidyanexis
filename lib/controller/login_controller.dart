@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -43,9 +44,13 @@ class LoginController extends ChangeNotifier {
       if (response != null && response.statusCode == 200) {
         final data = response.data;
 
-        if (!AppStyles.isWebScreen(context)) {
-          final allowAppLogin = data['Allow_App_Login']?.toString() ?? '0';
-          if (allowAppLogin == '0' || allowAppLogin == 'false') {
+        if (!kIsWeb) {
+          final allowAppLogin = data['Allow_App_Login']?.toString() ?? 
+                                data['allow_app_login']?.toString() ?? 
+                                '0';
+          final userType = data['User_Type_Name']?.toString().toLowerCase() ?? '';
+
+          if (userType != 'admin' && (allowAppLogin == '0' || allowAppLogin == 'false')) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: const Center(child: Text('App access is disabled for your account')),

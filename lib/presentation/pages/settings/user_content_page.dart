@@ -92,6 +92,7 @@ class _UsersContentState extends State<UsersContent> {
                   if (settingsProvider.menuIsSaveMap[1] == 1)
                     CustomOutlinedSvgButton(
                       onPressed: () async {
+                        settingsProvider.resetStates();
                         showDialog(
                           barrierDismissible: false,
                           context: context,
