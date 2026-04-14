@@ -361,6 +361,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController qproductnameController = TextEditingController();
   final TextEditingController qsubsidyAmountController =
       TextEditingController(text: '0');
+  final TextEditingController qDiscountController =
+      TextEditingController(text: '0');
 
   final TextEditingController itemNameController = TextEditingController();
   final TextEditingController itemPriceController = TextEditingController();
@@ -1194,17 +1196,18 @@ class CustomerDetailsProvider extends ChangeNotifier {
     double total = 0;
 
     final subtotal = double.tryParse(subtotalController.text);
-    // final subsidy = double.tryParse(qsubsidyAmountController.text);
+    final subsidy = double.tryParse(qsubsidyAmountController.text) ?? 0.0;
+    final discount = double.tryParse(qDiscountController.text) ?? 0.0;
     final shippingCharges =
         double.tryParse(shippingChargesController.text) ?? 0.0;
 
     if (subtotal != null) {
-      total = subtotal + shippingCharges;
+      total = subtotal + shippingCharges - subsidy - discount;
     } else {
       print("Invalid input for price or quantity");
     }
     totalController.text =
-        total.toStringAsFixed(2); // Update controller with formatted subtotal
+        total.toStringAsFixed(2); // Update controller with formatted total
     notifyListeners();
   }
 
@@ -2177,6 +2180,8 @@ class CustomerDetailsProvider extends ChangeNotifier {
         "TotalAmount": subtotalController.text,
         "Subsidy_Amount":
             double.tryParse(qsubsidyAmountController.text.toString()) ?? 0,
+        "Discount_Amount":
+            double.tryParse(qDiscountController.text.toString()) ?? 0,
         "NetTotal": totalController.text,
         "Product_Name": qproductnameController.text.toString(),
         "Warranty": qwarrentyController.text.toString(),
@@ -2328,6 +2333,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     deliveryController.clear();
     quotationStatusController.clear();
     qsubsidyAmountController.text = '0';
+    qDiscountController.text = '0';
     qtermsConditionsController.clear();
     qwarrentyController.clear();
     itemNameController.clear();
@@ -3958,6 +3964,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     deliveryController.text = quotation.onDeliveryPercentage;
     workCompletionController.text = quotation.workCompletionPercentage;
     qsubsidyAmountController.text = quotation.subsidyAmount;
+    qDiscountController.text = quotation.discountAmount;
     qwarrentyController.text = quotation.warranty;
     qtermsConditionsController.text = quotation.termsAndConditions;
     quotationDescriptionController.text = quotation.description;

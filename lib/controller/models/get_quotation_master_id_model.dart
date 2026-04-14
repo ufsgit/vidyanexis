@@ -13,6 +13,7 @@ class GetQuotationbyMasterIdmodel {
 
   final String totalAmount;
   final String subsidyAmount;
+  final String discountAmount;
   final String netTotal;
 
   final String productName;
@@ -98,6 +99,7 @@ class GetQuotationbyMasterIdmodel {
     required this.paymentTermDescription,
     required this.totalAmount,
     required this.subsidyAmount,
+    required this.discountAmount,
     required this.netTotal,
     required this.productName,
     required this.workCompletionPercentage,
@@ -175,6 +177,7 @@ class GetQuotationbyMasterIdmodel {
       paymentTermDescription: toStr(json['Payment_Term_Description']),
       totalAmount: toStr(json['TotalAmount']),
       subsidyAmount: toStr(json['Subsidy_Amount']),
+      discountAmount: toStr(json['Discount_Amount']),
       netTotal: toStr(json['NetTotal']),
       productName: toStr(json['Product_Name']),
       advancePercentage: toStr(json['advance_percentage']),
