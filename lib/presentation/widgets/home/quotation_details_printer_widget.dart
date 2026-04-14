@@ -460,7 +460,7 @@ class QuotationPDFPrinter {
           children: [
             pw.Padding(
               padding: const pw.EdgeInsets.all(5),
-              child: pw.Text('Discount Amount'),
+              child: pw.Text('Discount'),
             ),
             pw.Spacer(),
             pw.Spacer(),

@@ -277,8 +277,8 @@ class QuotationPDFPrinterWeb {
     yPosition += 30;
 
     // Total amount
-    double totalAmount = (quotationData.totalAmount ?? 0) +
-        (quotationData.additionalAmount ?? 0);
+    double totalAmount = toDouble(quotationData.totalAmount) +
+        toDouble(quotationData.additionalAmount);
     graphics.drawString(
       totalAmount.toString(),
       boldFont,
@@ -289,7 +289,7 @@ class QuotationPDFPrinterWeb {
 
     // Subsidy amount
     graphics.drawString(
-      quotationData.subsidyAmount?.toString() ?? '0',
+      toDouble(quotationData.subsidyAmount).toString(),
       font,
       brush: PdfSolidBrush(PdfColor(0, 0, 0)),
       bounds: Rect.fromLTWH(400, yPosition, 150, 30),
@@ -298,7 +298,7 @@ class QuotationPDFPrinterWeb {
 
     // Discount amount
     graphics.drawString(
-      quotationData.discountAmount?.toString() ?? '0',
+      toDouble(quotationData.discountAmount).toString(),
       font,
       brush: PdfSolidBrush(PdfColor(0, 0, 0)),
       bounds: Rect.fromLTWH(400, yPosition, 150, 30),
@@ -307,8 +307,8 @@ class QuotationPDFPrinterWeb {
 
     // Effective price
     double effectivePrice = totalAmount -
-        (quotationData.subsidyAmount ?? 0) -
-        (quotationData.discountAmount ?? 0);
+        toDouble(quotationData.subsidyAmount) -
+        toDouble(quotationData.discountAmount);
     graphics.drawString(
       effectivePrice.toString(),
       boldFont,
