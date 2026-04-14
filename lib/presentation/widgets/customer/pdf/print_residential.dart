@@ -345,6 +345,8 @@ Future<void> _addItemPage(pw.Document pdf) async {
                                   quotation?.totalIgstAmount.toString() ?? '0'),
                               _summaryRow('Other Tax',
                                   quotation?.otherTax.toString() ?? '0'),
+                              _summaryRow('Discount Amount',
+                                  quotation?.discountAmount?.toString() ?? '0'),
                               _summaryRow('Shipping Charge',
                                   quotation?.shippingCharges.toString() ?? '0'),
                               pw.Container(

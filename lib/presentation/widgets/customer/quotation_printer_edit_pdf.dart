@@ -228,9 +228,9 @@ class QuotationPDFPrinterWeb {
 
       double total = 0;
       total = (double.parse(item.quantity.toString()) * item.amount);
-          row.cells[3].value = total.toString();
+      row.cells[3].value = total.toString();
     }
-  
+
     // Draw the grid
     grid.draw(
       page: page,
@@ -296,8 +296,19 @@ class QuotationPDFPrinterWeb {
     );
     yPosition += 30;
 
+    // Discount amount
+    graphics.drawString(
+      quotationData.discountAmount?.toString() ?? '0',
+      font,
+      brush: PdfSolidBrush(PdfColor(0, 0, 0)),
+      bounds: Rect.fromLTWH(400, yPosition, 150, 30),
+    );
+    yPosition += 30;
+
     // Effective price
-    double effectivePrice = totalAmount - (quotationData.subsidyAmount ?? 0);
+    double effectivePrice = totalAmount -
+        (quotationData.subsidyAmount ?? 0) -
+        (quotationData.discountAmount ?? 0);
     graphics.drawString(
       effectivePrice.toString(),
       boldFont,
