@@ -1580,6 +1580,8 @@ class LeadReportProvider extends ChangeNotifier {
       Loader.showLoader(context);
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String userName = preferences.getString('userName') ?? "";
+      String userIdPref = preferences.getString('userId') ?? "0";
+      _loginUserId = int.tryParse(userIdPref) ?? 0;
 
       final response = await HttpRequest.httpPostRequest(
           endPoint: HttpUrls.saveFollowUp,
