@@ -191,7 +191,7 @@ class _LeadsOverViewTabState extends State<LeadsOverViewTab> {
       runSpacing: 10,
       spacing: 10,
       children: [
-        countsGrid,
+        // countsGrid, // Hidden as per user request
         LeadGraphBarChart(
           leadData: widget.leadConversionData,
         ),
