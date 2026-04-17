@@ -490,7 +490,7 @@ class _QuotationCreationWidgetState extends State<QuotationCreationWidget> {
                         height: 54,
                         controller: customerDetailsProvider
                             .additionalStructureController,
-                        hintText: 'Additional Structure Work',
+                        hintText: 'Additional Paper Work',
                         labelText: '',
                         keyboardType: TextInputType.number,
                         inputFormatters: [
