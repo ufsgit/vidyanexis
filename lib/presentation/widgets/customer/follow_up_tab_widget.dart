@@ -38,11 +38,11 @@ class FollowUpTabWidget extends StatelessWidget {
                   children: [
                     _buildHeaderCell('#', width: 50),
                     _buildHeaderCell('Date'),
-                    _buildHeaderCell('Assigned To', flex: 2),
-                    _buildHeaderCell('Assigned By', flex: 2),
+                    _buildHeaderCell('Assigned To', flex: 1),
+                    _buildHeaderCell('Assigned By', flex: 1),
                     _buildHeaderCell('Status'),
                     _buildHeaderCell('Next Follow-up'),
-                    _buildHeaderCell('Remarks', flex: 2),
+                    _buildHeaderCell('Remarks', flex: 4),
                   ],
                 ),
               ),
@@ -59,11 +59,11 @@ class FollowUpTabWidget extends StatelessWidget {
                           _buildDataCell((index + 1).toString(), width: 50),
                           _buildDataCell(_formatDate(history.followUpDate)),
                           _buildWidgetCell(
-                            flex: 2,
+                            flex: 1,
                             child: _buildUserCell(history.assignedToName),
                           ),
                           _buildWidgetCell(
-                            flex: 2,
+                            flex: 1,
                             child: _buildUserCell(history.assignedByName),
                           ),
                           _buildWidgetCell(
@@ -87,7 +87,7 @@ class FollowUpTabWidget extends StatelessWidget {
                           _buildDataCell(_formatDate(history.nextFollowUpDate)),
                           _buildDataCell(
                             history.remarks ?? "",
-                            flex: 2,
+                            flex: 4,
                           ),
                         ],
                       ),

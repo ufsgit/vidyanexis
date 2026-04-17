@@ -48,7 +48,9 @@ class _DashBoardPageState extends State<DashBoardPage> {
 
       // Essential calls
       dropDownProvider.getUserDetails(context);
-      dropDownProvider.getFollowUpStatus(context, "3");
+      dropDownProvider.getFollowUpStatus(context, "1");
+      settingsProvider.searchBranch(context);
+      settingsProvider.searchDepartment('', context);
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       userId = int.tryParse(preferences.getString('userId') ?? "0") ?? 0;
