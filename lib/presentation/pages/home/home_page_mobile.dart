@@ -44,7 +44,12 @@ class _HomePageMobileState extends State<HomePageMobile> {
       String userId = preferences.getString('userId') ?? "0";
       if (!kIsWeb && userId.isNotEmpty) {
         try {
-          final String topicName = '${AppStyles.name()}-$userId';
+          //
+          String? topicName_local =
+              preferences.getString('cached_company_notification_topic');
+          print("Subscribing to topic12: $topicName_local");
+          // final String topicName = '${topicNames}-$userId';
+          final String topicName = topicName_local ?? '';
           print("Subscribing to topic: $topicName");
           await FirebaseMessaging.instance.subscribeToTopic(topicName);
         } catch (e) {
@@ -103,7 +108,8 @@ class _HomePageMobileState extends State<HomePageMobile> {
           : pages[sideProvider.selectedIndexMobile.clamp(0, pages.length - 1)],
       bottomNavigationBar: bottomNavItems.length >= 2
           ? BottomNavigationBar(
-              currentIndex: sideProvider.selectedIndexMobile.clamp(0, bottomNavItems.length - 1),
+              currentIndex: sideProvider.selectedIndexMobile
+                  .clamp(0, bottomNavItems.length - 1),
               iconSize: 20,
               backgroundColor: AppColors.whiteColor,
               elevation: 1,

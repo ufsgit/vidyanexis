@@ -71,6 +71,8 @@ class SettingsProvider extends ChangeNotifier {
       String? cachedNotificationTopic =
           preferences.getString('cached_company_notification_topic');
 
+      print('DEBUG1: notification_topic loaded from cache: $notificationTopic');
+
       if (cachedLogo != null ||
           cachedTitle != null ||
           cachedNotificationTopic != null) {
@@ -3024,9 +3026,10 @@ class SettingsProvider extends ChangeNotifier {
 
       final response =
           await HttpRequest.httpGetRequest(endPoint: HttpUrls.getCompany);
-
+      print('getcompmayoutput');
       if (response.statusCode == 200) {
         final data = response.data;
+        print('SettingsProvider.getCompanyDetails1 $data');
 
         if (data != null && data is List && data.isNotEmpty) {
           // If the API returns the classic Company format, still initialize it for other pages
@@ -3043,6 +3046,12 @@ class SettingsProvider extends ChangeNotifier {
           String newTitle = item['company_name'] ?? item['Company_Name'] ?? '';
           String newNotificationTopic = item['notification_topic'] ?? '';
 
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          await preferences.setString('cached_company_logo', logo);
+          await preferences.setString('cached_company_title', title);
+          await preferences.setString(
+              'cached_company_notification_topic', notificationTopic);
+
           if (newLogo != logo ||
               newTitle != title ||
               newNotificationTopic != notificationTopic) {
@@ -3058,6 +3067,8 @@ class SettingsProvider extends ChangeNotifier {
             await preferences.setString('cached_company_title', title);
             await preferences.setString(
                 'cached_company_notification_topic', notificationTopic);
+            print(
+                'DEBUG: notification_topic saved to cache: $notificationTopic');
             AppStyles.updateCachedBranding(title, logo);
             _updateAppSwitcher();
             print('Branding updated from API and cached: $title');
