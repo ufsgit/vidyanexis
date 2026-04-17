@@ -407,7 +407,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
   final TextEditingController billuomController = TextEditingController();
   TextEditingController quotationStatusController = TextEditingController();
   TextEditingController systemPriceController = TextEditingController();
-  TextEditingController additionalStructureController = TextEditingController();
+  TextEditingController additionalStructureController = TextEditingController(text: '200');
   TextEditingController feasibilityFeeController = TextEditingController();
   TextEditingController registrationFeeController = TextEditingController();
 
@@ -2349,7 +2349,7 @@ class CustomerDetailsProvider extends ChangeNotifier {
     billinvoiceController.clear();
     billdescriptionController.clear();
     systemPriceController.clear();
-    additionalStructureController.clear();
+    additionalStructureController.text = '200';
     feasibilityFeeController.clear();
     registrationFeeController.clear();
     itemMrpController.clear();

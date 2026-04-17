@@ -2220,6 +2220,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                               context);
                                                                         },
                                                                       ),
+                                                                    if (settingsprovider.menuIsViewMap[112] == 1 &&
+                                                                        sideprovider.name != 'Lead /')
+                                                                      CustomElevatedButton(
+                                                                        backgroundColor:
+                                                                            AppColors.whiteColor,
+                                                                        borderColor:
+                                                                            AppColors.bluebutton,
+                                                                        textColor:
+                                                                            AppColors.bluebutton,
+                                                                        buttonText: 'Warranty',
+                                                                        onPressed: () async {
+                                                                          await customerDetailsProvider.getAnnexurePdf(
+                                                                              '${HttpUrls.getPdfWarranty}${widget.customerId}',
+                                                                              'Warranty',
+                                                                              context);
+                                                                        },
+                                                                      ),
                                                                   ],
                                                                 ),
                                                                 const SizedBox(
@@ -2969,6 +2986,23 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                                                     await customerDetailsProvider.getAnnexurePdf(
                                                                         '${HttpUrls.getPdfVendorAgreement}${widget.customerId}',
                                                                         'Vendor Agreement A3s',
+                                                                        context);
+                                                                  },
+                                                                ),
+                                                              if (settingsprovider.menuIsViewMap[112] == 1 &&
+                                                                  sideprovider.name != 'Lead /')
+                                                                CustomElevatedButton(
+                                                                  backgroundColor:
+                                                                      AppColors.whiteColor,
+                                                                  borderColor:
+                                                                      AppColors.bluebutton,
+                                                                  textColor:
+                                                                      AppColors.bluebutton,
+                                                                  buttonText: 'Warranty',
+                                                                  onPressed: () async {
+                                                                    await customerDetailsProvider.getAnnexurePdf(
+                                                                        '${HttpUrls.getPdfWarranty}${widget.customerId}',
+                                                                        'Warranty',
                                                                         context);
                                                                   },
                                                                 ),

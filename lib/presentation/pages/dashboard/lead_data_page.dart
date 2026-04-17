@@ -87,11 +87,17 @@ class _LeadDataPageState extends State<LeadDataPage> {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final settingsProvider =
           Provider.of<SettingsProvider>(context, listen: false);
+      final dropDownProvider =
+          Provider.of<DropDownProvider>(context, listen: false);
       final prefs = await SharedPreferences.getInstance();
       final userId = prefs.getString('userId') ?? '';
       if (userId.isNotEmpty) {
         settingsProvider.getMenuPermissionData(userId, context);
       }
+      dropDownProvider.getFollowUpStatus(context, "1");
+      dropDownProvider.getUserDetails(context);
+      settingsProvider.searchBranch(context);
+      settingsProvider.searchDepartment('', context);
     });
 
     _fetchLeads();

@@ -721,7 +721,7 @@ class _AddQuotationWidgetMobileState extends State<AddQuotationWidgetMobile> {
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       controller:
                           customerDetailsProvider.additionalStructureController,
-                      labelText: 'Additional Structure Work',
+                      labelText: 'Additional Paper Work',
                     ),
                     const SizedBox(height: 16),
                     CustomTextfieldWidgetMobile(

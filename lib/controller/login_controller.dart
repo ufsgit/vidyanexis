@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -43,20 +44,21 @@ class LoginController extends ChangeNotifier {
       if (response != null && response.statusCode == 200) {
         final data = response.data;
 
-        // if (!AppStyles.isWebScreen(context)) {
-        //   final allowAppLogin = data['Allow_App_Login']?.toString() ?? '0';
-        //   if (allowAppLogin == '0' || allowAppLogin == 'false') {
-        //     ScaffoldMessenger.of(context).showSnackBar(
-        //       SnackBar(
-        //         content: const Center(child: Text('App access is disabled for your account')),
-        //         backgroundColor: Colors.red.shade400,
-        //         duration: const Duration(seconds: 3),
-        //       ),
-        //     );
-        //     Loader.stopLoader(context);
-        //     return;
-        //   }
-        // }
+        if (!AppStyles.isWebScreen(context)) {
+          final allowAppLogin = data['Allow_App_Login']?.toString() ?? '0';
+          if (allowAppLogin == '0' || allowAppLogin == 'false') {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: const Center(
+                    child: Text('App access is disabled for your account')),
+                backgroundColor: Colors.red.shade400,
+                duration: const Duration(seconds: 3),
+              ),
+            );
+            Loader.stopLoader(context);
+            return;
+          }
+        }
 
         preferences.setString('token', data['token'].toString());
         preferences.setString('userName', data['User_Details_Name'].toString());

@@ -723,40 +723,7 @@ class _LeadsPageReportState extends State<LeadPageReport> {
                     ),
                   ),
                 Expanded(
-                  child: !leadReportProvider.hasFetched
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.calendar_month_outlined,
-                                  size: 100, color: Colors.grey[300]),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Select a date range to view reports',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 18,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              ElevatedButton.icon(
-                                onPressed: () => onClickTopButton(context),
-                                icon: const Icon(Icons.date_range),
-                                label: const Text('Choose Date'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryBlue,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 32, vertical: 16),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : SizedBox(
+                  child: SizedBox(
                           height: availableHeight,
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,

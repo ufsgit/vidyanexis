@@ -44,6 +44,8 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
     final leadProvider = Provider.of<LeadsProvider>(context, listen: false);
     final dropDownProvider =
         Provider.of<DropDownProvider>(context, listen: false);
+    final settingsProvider =
+        Provider.of<SettingsProvider>(context, listen: false);
 
     leadProvider.messageController.clear(); // Clear remarks textfield by default
 
@@ -54,6 +56,17 @@ class _AddFollowupDialogState extends State<AddFollowupDialog> {
         statusId: dropDownProvider.selectedStatusId ?? 0,
         leadId: leadProvider.customerId,
       );
+
+      // Ensure that branches, departments, and staff details are loaded
+      if (settingsProvider.branchModel.isEmpty) {
+        settingsProvider.searchBranch(context);
+      }
+      if (settingsProvider.departmentModel.isEmpty) {
+        settingsProvider.searchDepartment('', context);
+      }
+      if (dropDownProvider.searchUserDetails.isEmpty) {
+        dropDownProvider.getUserDetails(context);
+      }
     });
     super.initState();
   }

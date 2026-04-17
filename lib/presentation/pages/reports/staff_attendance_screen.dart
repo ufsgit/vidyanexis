@@ -27,22 +27,23 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<AttendanceReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
-      // reportsProvider.getSearchTaskReport(context);
+
+      // Default to today
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1); // index 1 = 'Today'
+      reportsProvider.formatDate();
+      reportsProvider.setTaskSearchCriteria(
+        '',
+        reportsProvider.formattedFromDate,
+        reportsProvider.formattedToDate,
+        '',
+        '',
+        '',
+      );
+      reportsProvider.getSearchTaskReport(context);
 
       final provider = Provider.of<DropDownProvider>(context, listen: false);
-      // provider.getAMCStatus(context);
       provider.getUserDetails(context);
-      // provider.getTaskType(context);
-
-      //search
-      // searchController.addListener(() {
-      //   reportsProvider.selectDateFilterOption(null);
-      //   reportsProvider.removeStatus();
-      //   String query = searchController.text;
-      //   print(query);
-      //   reportsProvider.getSearchCustomers(query, '', '', '', context);
-      // });
     });
   }
 
@@ -228,7 +229,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                   'Name': task.userDetailsName,
                                   'Check In Date': formatDate(task.checkInDate),
                                   'Check In Time': task.checkInTimeOnly,
-                                  'Check Out Date': formatDate(task.checkOutDate),
+                                  'Check Out Date':
+                                      formatDate(task.checkOutDate),
                                   'Check Out Time': task.checkOutTimeOnly,
                                 };
                               }).toList(),
@@ -877,22 +879,28 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                       Container(
                                         decoration: BoxDecoration(
                                           color: const Color(0xFFEFF2F5),
-                                          borderRadius: BorderRadius.circular(8),
+                                          borderRadius:
+                                              BorderRadius.circular(8),
                                         ),
                                         child: const Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.start,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
                                             SizedBox(
                                               width: 80,
                                               child: Padding(
                                                 padding: EdgeInsets.symmetric(
-                                                    vertical: 12.0, horizontal: 25.0),
+                                                    vertical: 12.0,
+                                                    horizontal: 25.0),
                                                 child: Text('No.',
                                                     style: TextStyle(
-                                                        fontWeight: FontWeight.bold,
+                                                        fontWeight:
+                                                            FontWeight.bold,
                                                         fontSize: 14,
-                                                        color: Color(0xFF607185))),
+                                                        color:
+                                                            Color(0xFF607185))),
                                               ),
                                             ),
                                             TableWidget(
@@ -927,10 +935,13 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                       Expanded(
                                         child: ListView.builder(
                                           shrinkWrap: true,
-                                          physics: const AlwaysScrollableScrollPhysics(),
-                                          itemCount: reportsProvider.taskReport.length,
+                                          physics:
+                                              const AlwaysScrollableScrollPhysics(),
+                                          itemCount:
+                                              reportsProvider.taskReport.length,
                                           itemBuilder: (context, index) {
-                                            var task = reportsProvider.taskReport[index];
+                                            var task = reportsProvider
+                                                .taskReport[index];
                                             return GestureDetector(
                                               onTap: () {},
                                               child: Container(
@@ -938,19 +949,28 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                   color: index % 2 == 0
                                                       ? Colors.white
                                                       : const Color(0xFFF6F7F9),
-                                                  borderRadius: BorderRadius.circular(8),
+                                                  borderRadius:
+                                                      BorderRadius.circular(8),
                                                 ),
                                                 child: Row(
                                                   children: [
                                                     SizedBox(
                                                       width: 80,
                                                       child: Padding(
-                                                        padding: const EdgeInsets.symmetric(
-                                                            vertical: 12.0,
-                                                            horizontal: 25.0),
-                                                        child: Text((index + 1).toString(),
-                                                            style: const TextStyle(
-                                                              fontWeight: FontWeight.bold,
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                vertical: 12.0,
+                                                                horizontal:
+                                                                    25.0),
+                                                        child: Text(
+                                                            (index + 1)
+                                                                .toString(),
+                                                            style:
+                                                                const TextStyle(
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .bold,
                                                               fontSize: 12,
                                                             )),
                                                       ),
@@ -958,19 +978,29 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                     TableWidget(
                                                       flex: 1,
                                                       data: Container(
-                                                        padding: const EdgeInsets.symmetric(
-                                                            horizontal: 8, vertical: 4),
-                                                        decoration: BoxDecoration(
-                                                          color: const Color(0xFFE9EDF1),
-                                                          borderRadius: BorderRadius.circular(50),
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal: 8,
+                                                                vertical: 4),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          color: const Color(
+                                                              0xFFE9EDF1),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(50),
                                                         ),
                                                         child: Text(
                                                           task.userDetailsName,
-                                                          overflow: TextOverflow.ellipsis,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
                                                           maxLines: 1,
-                                                          style: const TextStyle(
+                                                          style:
+                                                              const TextStyle(
                                                             color: Colors.black,
-                                                            fontWeight: FontWeight.bold,
+                                                            fontWeight:
+                                                                FontWeight.bold,
                                                             fontSize: 12,
                                                           ),
                                                         ),
@@ -979,19 +1009,23 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                     TableWidget(
                                                         flex: 1,
                                                         fontSize: 12,
-                                                        title: formatDate(task.checkInDate)),
+                                                        title: formatDate(
+                                                            task.checkInDate)),
                                                     TableWidget(
                                                         flex: 1,
                                                         fontSize: 12,
-                                                        title: formatTime(task.checkInTimeOnly)),
+                                                        title: formatTime(task
+                                                            .checkInTimeOnly)),
                                                     TableWidget(
                                                         flex: 1,
                                                         fontSize: 12,
-                                                        title: formatDate(task.checkOutDate)),
+                                                        title: formatDate(
+                                                            task.checkOutDate)),
                                                     TableWidget(
                                                         flex: 1,
                                                         fontSize: 12,
-                                                        title: formatTime(task.checkOutTimeOnly)),
+                                                        title: formatTime(task
+                                                            .checkOutTimeOnly)),
                                                   ],
                                                 ),
                                               ),
@@ -1087,7 +1121,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(14),
                                       child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
                                         children: [
                                           Row(
                                             children: [
@@ -1101,7 +1136,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                     fontSize: 18,
                                                     fontWeight: FontWeight.bold,
                                                   ),
-                                                  overflow: TextOverflow.ellipsis,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                   maxLines: 1,
                                                 ),
                                               ),
@@ -1113,34 +1149,53 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                 vertical: 6, horizontal: 10),
                                             decoration: BoxDecoration(
                                               color: Colors.grey.shade100,
-                                              borderRadius: BorderRadius.circular(8),
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
                                             ),
                                             child: Column(
                                               children: [
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     const Text('Check In:',
                                                         style: TextStyle(
                                                             fontSize: 12,
                                                             fontWeight:
-                                                                FontWeight.w600)),
+                                                                FontWeight
+                                                                    .w600)),
                                                     Row(
                                                       children: [
-                                                        const Icon(Icons.calendar_today,
-                                                            size: 14, color: Colors.grey),
-                                                        const SizedBox(width: 4),
-                                                        Text(formatDate(task.checkInDate),
-                                                            style: const TextStyle(
-                                                                fontSize: 12)),
-                                                        const SizedBox(width: 8),
-                                                        const Icon(Icons.access_time,
-                                                            size: 14, color: Colors.grey),
-                                                        const SizedBox(width: 4),
-                                                        Text(formatTime(task.checkInTimeOnly),
-                                                            style: const TextStyle(
-                                                                fontSize: 12)),
+                                                        const Icon(
+                                                            Icons
+                                                                .calendar_today,
+                                                            size: 14,
+                                                            color: Colors.grey),
+                                                        const SizedBox(
+                                                            width: 4),
+                                                        Text(
+                                                            formatDate(task
+                                                                .checkInDate),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        12)),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        const Icon(
+                                                            Icons.access_time,
+                                                            size: 14,
+                                                            color: Colors.grey),
+                                                        const SizedBox(
+                                                            width: 4),
+                                                        Text(
+                                                            formatTime(task
+                                                                .checkInTimeOnly),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        12)),
                                                       ],
                                                     ),
                                                   ],
@@ -1148,28 +1203,46 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                                 const SizedBox(height: 4),
                                                 Row(
                                                   mainAxisAlignment:
-                                                      MainAxisAlignment.spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                   children: [
                                                     const Text('Check Out:',
                                                         style: TextStyle(
                                                             fontSize: 12,
                                                             fontWeight:
-                                                                FontWeight.w600)),
+                                                                FontWeight
+                                                                    .w600)),
                                                     Row(
                                                       children: [
-                                                        const Icon(Icons.calendar_today,
-                                                            size: 14, color: Colors.grey),
-                                                        const SizedBox(width: 4),
-                                                        Text(formatDate(task.checkOutDate),
-                                                            style: const TextStyle(
-                                                                fontSize: 12)),
-                                                        const SizedBox(width: 8),
-                                                        const Icon(Icons.access_time,
-                                                            size: 14, color: Colors.grey),
-                                                        const SizedBox(width: 4),
-                                                        Text(formatTime(task.checkOutTimeOnly),
-                                                            style: const TextStyle(
-                                                                fontSize: 12)),
+                                                        const Icon(
+                                                            Icons
+                                                                .calendar_today,
+                                                            size: 14,
+                                                            color: Colors.grey),
+                                                        const SizedBox(
+                                                            width: 4),
+                                                        Text(
+                                                            formatDate(task
+                                                                .checkOutDate),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        12)),
+                                                        const SizedBox(
+                                                            width: 8),
+                                                        const Icon(
+                                                            Icons.access_time,
+                                                            size: 14,
+                                                            color: Colors.grey),
+                                                        const SizedBox(
+                                                            width: 4),
+                                                        Text(
+                                                            formatTime(task
+                                                                .checkOutTimeOnly),
+                                                            style:
+                                                                const TextStyle(
+                                                                    fontSize:
+                                                                        12)),
                                                       ],
                                                     ),
                                                   ],

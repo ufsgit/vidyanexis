@@ -89,16 +89,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
             childrenPadding: const EdgeInsets.only(left: 20),
             expandedCrossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
-              Text(
-                widget.category,
-                style: GoogleFonts.plusJakartaSans(
-                  color: AppColors.textBlack,
-                  fontSize: 12,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
+
               widget.items[0].filePath.isNotEmpty
                   ? MouseRegion(
                       cursor: SystemMouseCursors.click,
@@ -196,18 +187,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                         ),
                       ),
                     )
-                  : const SizedBox(
-                      height: 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            'No Documents',
-                            style: TextStyle(fontSize: 10, color: Colors.grey),
-                          ),
-                        ],
-                      ),
-                    ),
+                  : const SizedBox.shrink(),
               const SizedBox(height: 8),
               Text(
                 'Notes :',
@@ -226,51 +206,7 @@ class _UserInfoCardState extends State<UserInfoCard> {
                   fontWeight: FontWeight.w500,
                 ),
               ),
-              const SizedBox(height: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Start Date Time :',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.textBlack,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    widget.items[0].startDateTime,
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.textGrey3,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Completion Date Time :',
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.textBlack,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  Text(
-                    widget.items[0].completionDateTime,
-                    style: GoogleFonts.plusJakartaSans(
-                      color: AppColors.textGrey3,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
+
               if (settingsprovider.menuIsViewMap[31] == 1)
                 ElevatedButton(
                   onPressed: () async {

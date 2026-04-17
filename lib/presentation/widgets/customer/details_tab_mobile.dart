@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/pages/home/vendor_agreement_pdf.dart';
 import 'package:vidyanexis/presentation/pages/home/vendor_feasibility_pdf.dart';
 import 'package:vidyanexis/http/http_urls.dart';
 import 'package:vidyanexis/controller/customer_details_provider.dart';
+import 'package:vidyanexis/controller/side_bar_provider.dart';
 
 class DetailsTabMobile extends StatefulWidget {
   final String customerId;
@@ -42,6 +43,7 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
     final settingsProvider = Provider.of<SettingsProvider>(context);
     final dropDownProvider = Provider.of<DropDownProvider>(context);
     final customerDetailsProvider = Provider.of<CustomerDetailsProvider>(context, listen: false);
+    final sideProvider = Provider.of<SidebarProvider>(context);
 
     return Scaffold(
       backgroundColor: AppColors.whiteColor,
@@ -190,6 +192,17 @@ class _DetailsTabMobileState extends State<DetailsTabMobile> {
                               buttonText: 'Vendor Agreement A3s',
                               onPressed: () async {
                                 await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfVendorAgreement}${widget.customerId}', 'Vendor Agreement A3s', context);
+                              },
+                            ),
+                          if (settingsProvider.menuIsViewMap[112] == 1 &&
+                              sideProvider.name != 'Lead /')
+                            CustomElevatedButton(
+                              backgroundColor: AppColors.whiteColor,
+                              borderColor: AppColors.bluebutton,
+                              textColor: AppColors.bluebutton,
+                              buttonText: 'Warranty',
+                              onPressed: () async {
+                                await customerDetailsProvider.getAnnexurePdf('${HttpUrls.getPdfWarranty}${widget.customerId}', 'Warranty', context);
                               },
                             ),
                         ],
