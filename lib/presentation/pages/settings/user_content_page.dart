@@ -8,7 +8,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/models/get_user_model.dart';
 import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
-import 'package:vidyanexis/presentation/widgets/settings/permission_handling_user_widget.dart';
+import 'package:vidyanexis/presentation/pages/settings/permission_handling_page.dart';
 import 'package:vidyanexis/presentation/widgets/settings/settings_add_user_widget.dart';
 
 import '../../widgets/settings/add_team_widget.dart';
@@ -703,12 +703,11 @@ class _UsersContentState extends State<UsersContent> {
                                                       context);
                                               settingsProvider
                                                   .searchPermission(context);
-                                              showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return PermissionHandlingUserWidget(
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PermissionHandlingPage(
                                                     userId: settingsProvider
                                                         .searchUserDetails[
                                                             index]
@@ -718,8 +717,8 @@ class _UsersContentState extends State<UsersContent> {
                                                         .searchUserDetails[
                                                             index]
                                                         .userDetailsName,
-                                                  );
-                                                },
+                                                  ),
+                                                ),
                                               );
                                             },
                                             svgPath: 'assets/images/Print.svg',
@@ -1034,12 +1033,11 @@ class _UsersContentState extends State<UsersContent> {
                                                       context);
                                               settingsProvider
                                                   .searchPermission(context);
-                                              showDialog(
-                                                barrierDismissible: false,
-                                                context: context,
-                                                builder:
-                                                    (BuildContext context) {
-                                                  return PermissionHandlingUserWidget(
+                                              Navigator.push(
+                                                context,
+                                                MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      PermissionHandlingPage(
                                                     userId: settingsProvider
                                                         .searchUserDetails[
                                                             index]
@@ -1049,8 +1047,8 @@ class _UsersContentState extends State<UsersContent> {
                                                         .searchUserDetails[
                                                             index]
                                                         .userDetailsName,
-                                                  );
-                                                },
+                                                  ),
+                                                ),
                                               );
                                             },
                                             svgPath: 'assets/images/Print.svg',

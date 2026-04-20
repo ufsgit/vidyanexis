@@ -18,7 +18,6 @@ import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.da
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/customer/service_details_widget.dart';
 
-
 class ServicePageReport extends StatefulWidget {
   final bool fromDashBoard;
 
@@ -38,7 +37,15 @@ class _ServicesPageReportState extends State<ServicePageReport> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<ServiceReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1);
+      reportsProvider.formatDate();
+      reportsProvider.setTaskSearchCriteria(
+          '',
+          reportsProvider.formattedFromDate,
+          reportsProvider.formattedToDate,
+          '',
+          '');
       reportsProvider.getSearchServiceReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
@@ -91,15 +98,14 @@ class _ServicesPageReportState extends State<ServicePageReport> {
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
-               child: _buildServiceTable(context, reportsProvider,
-                   customerDetailsProvider, isSmallScreen, availableHeight),
-             ),
-           ),
-         ],
-       ),
-     );
-   }
-
+              child: _buildServiceTable(context, reportsProvider,
+                  customerDetailsProvider, isSmallScreen, availableHeight),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   // UI Helpers start here
   Widget _buildHeader(
@@ -124,14 +130,15 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                 height: 48,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.grey[300]!),
                 ),
                 child: TextField(
                   controller: searchController,
                   textAlignVertical: TextAlignVertical.center,
                   onSubmitted: (query) {
-                    reportsProvider.setTaskSearchCriteria(query, '', '', '', '');
+                    reportsProvider.setTaskSearchCriteria(
+                        query, '', '', '', '');
                     reportsProvider.getSearchServiceReport(context);
                   },
                   decoration: InputDecoration(
@@ -255,265 +262,269 @@ class _ServicesPageReportState extends State<ServicePageReport> {
             ? (AppStyles.isWebScreen(context)
                 ? Container(
                     margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : AppColors.primaryBlue),
-                      ),
-                      child: Row(
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ] +
-                                const [
-                                  DropdownMenuItem<int>(
-                                    value: 1,
-                                    child: Text(
-                                      'Pending',
-                                      style: TextStyle(fontSize: 13),
-                                    ),
-                                  ),
-                                  DropdownMenuItem<int>(
-                                    value: 2,
-                                    child: Text(
-                                      'Completed',
-                                      style: TextStyle(fontSize: 13),
-                                    ),
-                                  ),
-                                ],
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  reportsProvider.selectedStatus.toString();
-                              String assignedTo =
-                                  reportsProvider.selectedUser.toString();
-                              String fromDate =
-                                  reportsProvider.formattedFromDate;
-                              String toDate = reportsProvider.formattedToDate;
-                              reportsProvider.setTaskSearchCriteria(
-                                  reportsProvider.Search,
-                                  fromDate,
-                                  toDate,
-                                  status,
-                                  assignedTo);
-                              reportsProvider.getSearchServiceReport(context);
-                            },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
-                          ),
-                        ],
-                      ),
+                    padding: const EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    const SizedBox(
-                      width: 10,
-                    ),
-                    CommonReportDateFilter(
-                      fromDate: reportsProvider.fromDate?.toString(),
-                      toDate: reportsProvider.toDate?.toString(),
-                      formattedFromDate: reportsProvider.formattedFromDate,
-                      formattedToDate: reportsProvider.formattedToDate,
-                      onTap: () => onClickTopButton(context),
-                      label: 'Added Date: All',
-                    ),
-                    const Spacer(),
-                    if (reportsProvider.fromDate != null ||
-                        reportsProvider.toDate != null ||
-                        (reportsProvider.selectedStatus != null &&
-                            reportsProvider.selectedStatus != 0) ||
-                        (reportsProvider.selectedUser != null &&
-                            reportsProvider.selectedUser != 0) ||
-                        reportsProvider.Search.isNotEmpty)
-                      CommonReportResetButton(
-                        onReset: () {
-                          reportsProvider.selectDateFilterOption(null);
-                          reportsProvider.removeStatus();
-                          searchController.clear();
-                          reportsProvider.setTaskSearchCriteria(
-                            '',
-                            '',
-                            '',
-                            '',
-                            '',
-                          );
-                          reportsProvider.getSearchServiceReport(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          elevation: 0,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: reportsProvider.selectedStatus != null &&
+                                        reportsProvider.selectedStatus != 0
+                                    ? AppColors.primaryBlue
+                                    : AppColors.primaryBlue),
+                          ),
+                          child: Row(
+                            children: [
+                              const Text('Status: '),
+                              DropdownButton<int>(
+                                value: reportsProvider.selectedStatus,
+                                hint: const Text('All'),
+                                items: [
+                                      const DropdownMenuItem<int>(
+                                        value:
+                                            0, // Use 0 or null to represent "All"
+                                        child: Text(
+                                          'All',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ] +
+                                    const [
+                                      DropdownMenuItem<int>(
+                                        value: 1,
+                                        child: Text(
+                                          'Pending',
+                                          style: TextStyle(fontSize: 13),
+                                        ),
+                                      ),
+                                      DropdownMenuItem<int>(
+                                        value: 2,
+                                        child: Text(
+                                          'Completed',
+                                          style: TextStyle(fontSize: 13),
+                                        ),
+                                      ),
+                                    ],
+                                onChanged: (int? newValue) {
+                                  if (newValue != null) {
+                                    reportsProvider.setStatus(
+                                        newValue); // Update the status in the provider
+                                  }
+                                  String status =
+                                      reportsProvider.selectedStatus.toString();
+                                  String assignedTo =
+                                      reportsProvider.selectedUser.toString();
+                                  String fromDate =
+                                      reportsProvider.formattedFromDate;
+                                  String toDate =
+                                      reportsProvider.formattedToDate;
+                                  reportsProvider.setTaskSearchCriteria(
+                                      reportsProvider.Search,
+                                      fromDate,
+                                      toDate,
+                                      status,
+                                      assignedTo);
+                                  reportsProvider
+                                      .getSearchServiceReport(context);
+                                },
+                                underline: Container(),
+                                isDense: true,
+                                iconSize: 18,
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                  ],
-                ),
-              )
-            //mobile
-            : Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16.0),
-                padding: const EdgeInsets.all(10.0),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Wrap(
-                  runSpacing: 10,
-                  crossAxisAlignment: WrapCrossAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 20),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                            color: reportsProvider.selectedStatus != null &&
-                                    reportsProvider.selectedStatus != 0
-                                ? AppColors.primaryBlue
-                                : AppColors.primaryBlue),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text('Status: '),
-                          DropdownButton<int>(
-                            value: reportsProvider.selectedStatus,
-                            hint: const Text('All'),
-                            items: [
-                                  const DropdownMenuItem<int>(
-                                    value:
-                                        0, // Use 0 or null to represent "All"
-                                    child: Text(
-                                      'All',
-                                      style: TextStyle(fontSize: 14),
-                                    ),
-                                  ),
-                                ] +
-                                const [
-                                  DropdownMenuItem<int>(
-                                    value: 1,
-                                    child: Text(
-                                      'Pending',
-                                      style: TextStyle(fontSize: 13),
-                                    ),
-                                  ),
-                                  DropdownMenuItem<int>(
-                                    value: 2,
-                                    child: Text(
-                                      'Completed',
-                                      style: TextStyle(fontSize: 13),
-                                    ),
-                                  ),
-                                ],
-                            onChanged: (int? newValue) {
-                              if (newValue != null) {
-                                reportsProvider.setStatus(
-                                    newValue); // Update the status in the provider
-                              }
-                              String status =
-                                  reportsProvider.selectedStatus.toString();
-                              String assignedTo =
-                                  reportsProvider.selectedUser.toString();
-                              String fromDate =
-                                  reportsProvider.formattedFromDate;
-                              String toDate = reportsProvider.formattedToDate;
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        CommonReportDateFilter(
+                          fromDate: reportsProvider.fromDate?.toString(),
+                          toDate: reportsProvider.toDate?.toString(),
+                          formattedFromDate: reportsProvider.formattedFromDate,
+                          formattedToDate: reportsProvider.formattedToDate,
+                          onTap: () => onClickTopButton(context),
+                          label: 'Added Date: All',
+                        ),
+                        const Spacer(),
+                        if (reportsProvider.fromDate != null ||
+                            reportsProvider.toDate != null ||
+                            (reportsProvider.selectedStatus != null &&
+                                reportsProvider.selectedStatus != 0) ||
+                            (reportsProvider.selectedUser != null &&
+                                reportsProvider.selectedUser != 0) ||
+                            reportsProvider.Search.isNotEmpty)
+                          CommonReportResetButton(
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
                               reportsProvider.setTaskSearchCriteria(
-                                  reportsProvider.Search,
-                                  fromDate,
-                                  toDate,
-                                  status,
-                                  assignedTo);
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                              );
                               reportsProvider.getSearchServiceReport(context);
                             },
-                            underline: Container(),
-                            isDense: true,
-                            iconSize: 18,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.textRed,
+                              elevation: 0,
+                              side: BorderSide(color: AppColors.textRed),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
                           ),
-                        ],
-                      ),
+                      ],
                     ),
-                    const SizedBox(
-                      width: 10,
+                  )
+                //mobile
+                : Container(
+                    margin: const EdgeInsets.symmetric(horizontal: 16.0),
+                    padding: const EdgeInsets.all(10.0),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(20),
                     ),
-                    CommonReportDateFilter(
-                      fromDate: reportsProvider.fromDate?.toString(),
-                      toDate: reportsProvider.toDate?.toString(),
-                      formattedFromDate: reportsProvider.formattedFromDate,
-                      formattedToDate: reportsProvider.formattedToDate,
-                      onTap: () => onClickTopButton(context),
-                      label: 'Added Date: All',
-                    ),
-                    if (reportsProvider.fromDate != null ||
-                        reportsProvider.toDate != null ||
-                        (reportsProvider.selectedStatus != null &&
-                            reportsProvider.selectedStatus != 0) ||
-                        (reportsProvider.selectedUser != null &&
-                            reportsProvider.selectedUser != 0) ||
-                        reportsProvider.Search.isNotEmpty)
-                      CommonReportResetButton(
-                        onReset: () {
-                          reportsProvider.selectDateFilterOption(null);
-                          reportsProvider.removeStatus();
-                          searchController.clear();
-                          reportsProvider.setTaskSearchCriteria(
-                            '',
-                            '',
-                            '',
-                            '',
-                            '',
-                          );
-                          reportsProvider.getSearchServiceReport(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          elevation: 0,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 8,
-                          ),
-                          shape: RoundedRectangleBorder(
+                    child: Wrap(
+                      runSpacing: 10,
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 20),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
                             borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                                color: reportsProvider.selectedStatus != null &&
+                                        reportsProvider.selectedStatus != 0
+                                    ? AppColors.primaryBlue
+                                    : AppColors.primaryBlue),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              const Text('Status: '),
+                              DropdownButton<int>(
+                                value: reportsProvider.selectedStatus,
+                                hint: const Text('All'),
+                                items: [
+                                      const DropdownMenuItem<int>(
+                                        value:
+                                            0, // Use 0 or null to represent "All"
+                                        child: Text(
+                                          'All',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ),
+                                    ] +
+                                    const [
+                                      DropdownMenuItem<int>(
+                                        value: 1,
+                                        child: Text(
+                                          'Pending',
+                                          style: TextStyle(fontSize: 13),
+                                        ),
+                                      ),
+                                      DropdownMenuItem<int>(
+                                        value: 2,
+                                        child: Text(
+                                          'Completed',
+                                          style: TextStyle(fontSize: 13),
+                                        ),
+                                      ),
+                                    ],
+                                onChanged: (int? newValue) {
+                                  if (newValue != null) {
+                                    reportsProvider.setStatus(
+                                        newValue); // Update the status in the provider
+                                  }
+                                  String status =
+                                      reportsProvider.selectedStatus.toString();
+                                  String assignedTo =
+                                      reportsProvider.selectedUser.toString();
+                                  String fromDate =
+                                      reportsProvider.formattedFromDate;
+                                  String toDate =
+                                      reportsProvider.formattedToDate;
+                                  reportsProvider.setTaskSearchCriteria(
+                                      reportsProvider.Search,
+                                      fromDate,
+                                      toDate,
+                                      status,
+                                      assignedTo);
+                                  reportsProvider
+                                      .getSearchServiceReport(context);
+                                },
+                                underline: Container(),
+                                isDense: true,
+                                iconSize: 18,
+                              ),
+                            ],
                           ),
                         ),
-                      ),
-                    ],
-                  ))
-                ) : Container(),
+                        const SizedBox(
+                          width: 10,
+                        ),
+                        CommonReportDateFilter(
+                          fromDate: reportsProvider.fromDate?.toString(),
+                          toDate: reportsProvider.toDate?.toString(),
+                          formattedFromDate: reportsProvider.formattedFromDate,
+                          formattedToDate: reportsProvider.formattedToDate,
+                          onTap: () => onClickTopButton(context),
+                          label: 'Added Date: All',
+                        ),
+                        if (reportsProvider.fromDate != null ||
+                            reportsProvider.toDate != null ||
+                            (reportsProvider.selectedStatus != null &&
+                                reportsProvider.selectedStatus != 0) ||
+                            (reportsProvider.selectedUser != null &&
+                                reportsProvider.selectedUser != 0) ||
+                            reportsProvider.Search.isNotEmpty)
+                          CommonReportResetButton(
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                              );
+                              reportsProvider.getSearchServiceReport(context);
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.textRed,
+                              elevation: 0,
+                              side: BorderSide(color: AppColors.textRed),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
+                          ),
+                      ],
+                    )))
+            : Container(),
       ],
     );
   }
@@ -527,419 +538,128 @@ class _ServicesPageReportState extends State<ServicePageReport> {
     final rowHeight = 45.0;
 
     return SizedBox(
-              height: availableHeight,
-              child: reportsProvider.serviceReport.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.search_off_outlined,
-                                  size: 80, color: Colors.grey[300]),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No complaint reports found',
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
+      height: availableHeight,
+      child: reportsProvider.serviceReport.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.search_off_outlined,
+                      size: 80, color: Colors.grey[300]),
+                  const SizedBox(height: 16),
+                  Text(
+                    'No complaint reports found',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.grey[600],
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            )
+          : AppStyles.isWebScreen(context)
+              ? Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          // Header Row (Table Column Titles)
+                          Container(
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFEFF2F5),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: 80,
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        vertical: 12.0, horizontal: 25.0),
+                                    child: Text('No.',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 14,
+                                            color: Color(0xFF607185))),
+                                  ),
                                 ),
-                              ),
-                            ],
+                                TableWidget(
+                                    flex: 2,
+                                    title: 'Customer Name',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                                // TableWidget(
+                                //     flex: 1,
+                                //     title: 'Mobile',
+                                //     color: Color(0xFF607185)),
+                                // TableWidget(
+                                //     flex: 2,
+                                //     title: 'Address',
+                                //     color: Color(0xFF607185)),
+                                TableWidget(
+                                    flex: 1,
+                                    title: 'Complaint Type',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                                TableWidget(
+                                    flex: 1,
+                                    title: 'Complaint Name',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                                TableWidget(
+                                    flex: 2,
+                                    title: 'Complaint Description',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                                TableWidget(
+                                    flex: 1,
+                                    title: 'Added Date',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                                TableWidget(
+                                    flex: 1,
+                                    title: 'Amount',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                                TableWidget(
+                                    flex: 1,
+                                    title: 'Status',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                                TableWidget(
+                                    flex: 1,
+                                    title: 'View Details',
+                                    fontSize: 14,
+                                    color: Color(0xFF607185)),
+                              ],
+                            ),
                           ),
-                        )
-                      : AppStyles.isWebScreen(context)
-                          ? Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Header Row (Table Column Titles)
-                              Container(
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFEFF2F5),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 80,
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: 12.0, horizontal: 25.0),
-                                        child: Text('No.',
-                                            style: TextStyle(
-                                                fontWeight: FontWeight.bold,
-                                                fontSize: 14,
-                                                color: Color(0xFF607185))),
-                                      ),
-                                    ),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Customer Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 1,
-                                    //     title: 'Mobile',
-                                    //     color: Color(0xFF607185)),
-                                    // TableWidget(
-                                    //     flex: 2,
-                                    //     title: 'Address',
-                                    //     color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Complaint Type',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Complaint Name',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 2,
-                                        title: 'Complaint Description',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Added Date',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Amount',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'Status',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                    TableWidget(
-                                        flex: 1,
-                                        title: 'View Details',
-                                        fontSize: 14,
-                                        color: Color(0xFF607185)),
-                                  ],
-                                ),
-                              ),
-                              // Data Rows
-                              // Expanded(
-                              //   child:
-                              ListView.builder(
-                                shrinkWrap:
-                                    true, // To avoid scrolling issues when inside a parent widget
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount:
-                                    reportsProvider.serviceReport.length > 20
-                                        ? 20
-                                        : reportsProvider.serviceReport
-                                            .length, // Max 20 rows per page
-                                itemBuilder: (context, index) {
-                                  var Service =
-                                      reportsProvider.serviceReport[index];
-                                  return SizedBox(
-                                      height: rowHeight,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          // context.go(
-                                          //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                        },
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            color: index % 2 == 0
-                                                ? Colors.white
-                                                : const Color(0xFFF6F7F9),
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          // Alternate row colors
-                                          child: Row(
-                                            // mainAxisAlignment: MainAxisAlignment.start,
-                                            children: [
-                                              // Padding(
-                                              //   padding: const EdgeInsets.symmetric(
-                                              //       vertical: 12.0, horizontal: 25.0),
-                                              //   child: Text(Service.customerId.toString(),
-                                              //       style: const TextStyle(
-                                              //         fontWeight: FontWeight.bold,
-                                              //       )),
-                                              // ),
-                                              SizedBox(
-                                                width: 80,
-                                                child: Padding(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                      vertical: 12.0,
-                                                      horizontal: 25.0),
-                                                  child: Text(
-                                                      (index + 1).toString(),
-                                                      style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                        fontSize: 12,
-                                                      )),
-                                                ),
-                                              ),
-                                              // TableWidget(title: Service.orderNo),
-                                              TableWidget(
-                                                flex: 2,
-                                                data: InkWell(
-                                                  onTap: () {
-                                                    context.push(
-                                                        '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 4),
-                                                    decoration: BoxDecoration(
-                                                      color: const Color(
-                                                          0xFFE9EDF1),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                    ),
-                                                    child:
-                                                        MediaQuery.of(context)
-                                                                    .size
-                                                                    .width >
-                                                                1700
-                                                            ? Row(
-                                                                mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .min, // Ensures the Row takes only as much space as needed
-                                                                children: [
-                                                                  // Front image (before text)
-                                                                  Icon(
-                                                                    Icons
-                                                                        .account_circle,
-                                                                    size: 15,
-                                                                    color: Color(
-                                                                        0xFF152D70),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width:
-                                                                          8), // Space between the image and text
-                                                                  Text(
-                                                                    Service.customerName.length >
-                                                                            20
-                                                                        ? '${Service.customerName.substring(0, 20)}...'
-                                                                        : Service
-                                                                            .customerName,
-                                                                    overflow:
-                                                                        TextOverflow
-                                                                            .ellipsis,
-                                                                    maxLines: 1,
-                                                                    style:
-                                                                        const TextStyle(
-                                                                      color: Colors
-                                                                          .black,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .bold,
-                                                                      fontSize:
-                                                                          12,
-                                                                    ),
-                                                                  ),
-                                                                  const SizedBox(
-                                                                      width:
-                                                                          8), // Space between the text and back image
-                                                                  // Back image (after text)
-                                                                  Icon(
-                                                                    Icons
-                                                                        .arrow_forward_ios,
-                                                                    size: 12,
-                                                                    color: Color(
-                                                                        0xFF152D70),
-                                                                  ),
-                                                                ],
-                                                              )
-                                                            : Text(
-                                                                Service
-                                                                    .customerName,
-                                                                overflow:
-                                                                    TextOverflow
-                                                                        .ellipsis,
-                                                                maxLines: 1,
-                                                                style:
-                                                                    const TextStyle(
-                                                                  color: Colors
-                                                                      .black,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .bold,
-                                                                  fontSize: 12,
-                                                                ),
-                                                              ),
-                                                  ),
-                                                ),
-                                              ),
-                                              // TableWidget(
-                                              //     flex: 1, title: Service.mobile),
-                                              // TableWidget(
-                                              //     flex: 2,
-                                              //     title: Service.address1),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  fontSize: 12,
-                                                  title:
-                                                      Service.serviceTypeName),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  fontSize: 12,
-                                                  title: Service.serviceName
-                                                      .toString()),
-                                              TableWidget(
-                                                  flex: 2,
-                                                  fontSize: 12,
-                                                  title: Service.description),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  fontSize: 12,
-                                                  title: (Service.createDate
-                                                          .isNotEmpty)
-                                                      ? DateFormat(
-                                                              'dd MMM yyyy')
-                                                          .format(DateTime
-                                                              .parse(Service
-                                                                  .createDate))
-                                                      : ''),
-                                              TableWidget(
-                                                  flex: 1,
-                                                  fontSize: 12,
-                                                  title:
-                                                      "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
-                                              TableWidget(
-                                                flex: 1,
-                                                data: Container(
-                                                  padding: Service
-                                                          .serviceStatusName
-                                                          .isNotEmpty
-                                                      ? const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8,
-                                                          vertical: 2)
-                                                      : const EdgeInsets.all(0),
-                                                  decoration: BoxDecoration(
-                                                    color: StatusUtils
-                                                        .getStatusColor(Service
-                                                            .serviceStatusId),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    border: Border.all(
-                                                        color: Colors.black45,
-                                                        width: 0.1),
-                                                  ),
-                                                  child: Text(
-                                                    Service.serviceStatusName,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    maxLines: 1,
-                                                    style: TextStyle(
-                                                      color: StatusUtils
-                                                          .getStatusTextColor(
-                                                              Service
-                                                                  .serviceStatusId),
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              Expanded(
-                                                child: CustomOutlinedSvgButton(
-                                                  showIcon: false,
-                                                  onPressed: () async {
-                                                    String ServiceId = Service
-                                                        .serviceId
-                                                        .toString();
-                                                    String customerId = Service
-                                                        .customerId
-                                                        .toString();
-                                                    print(
-                                                        'Service ID: $ServiceId');
-                                                    customerDetailsProvider
-                                                        .getServiceDetails(
-                                                            ServiceId
-                                                                .toString(),
-                                                            context);
-
-                                                    showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return ServiceDetailsWidget(
-                                                            serviceId: ServiceId
-                                                                .toString(),
-                                                            customerId:
-                                                                customerId
-                                                                    .toString(),
-                                                            showEdit: false);
-                                                      },
-                                                    );
-                                                  },
-                                                  svgPath:
-                                                      'assets/images/Print.svg',
-                                                  label: 'View Details',
-                                                  breakpoint: 860,
-                                                  foregroundColor:
-                                                      AppColors.primaryBlue,
-                                                  backgroundColor: Colors.white,
-                                                  borderSide: BorderSide(
-                                                      color: AppColors
-                                                          .primaryBlue),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ));
-                                },
-                              ),
-                              // ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    )
-                  : Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(14),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Column(
-                            children: [
-                              // Data Rows
-                              // Expanded(
-                              //   child:
-                              ListView.builder(
-                                shrinkWrap:
-                                    true, // To avoid scrolling issues when inside a parent widget
-                                physics: const AlwaysScrollableScrollPhysics(),
-                                itemCount:
-                                    reportsProvider.serviceReport.length > 20
-                                        ? 20
-                                        : reportsProvider.serviceReport
-                                            .length, // Max 20 rows per page
-                                itemBuilder: (context, index) {
-                                  var Service =
-                                      reportsProvider.serviceReport[index];
-                                  return GestureDetector(
+                          // Data Rows
+                          // Expanded(
+                          //   child:
+                          ListView.builder(
+                            shrinkWrap:
+                                true, // To avoid scrolling issues when inside a parent widget
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: reportsProvider.serviceReport.length > 20
+                                ? 20
+                                : reportsProvider.serviceReport
+                                    .length, // Max 20 rows per page
+                            itemBuilder: (context, index) {
+                              var Service =
+                                  reportsProvider.serviceReport[index];
+                              return SizedBox(
+                                  height: rowHeight,
+                                  child: GestureDetector(
                                     onTap: () {
                                       // context.go(
                                       //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
@@ -952,7 +672,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       // Alternate row colors
-                                      child: Wrap(
+                                      child: Row(
                                         // mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
                                           // Padding(
@@ -963,10 +683,24 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                           //         fontWeight: FontWeight.bold,
                                           //       )),
                                           // ),
-
+                                          SizedBox(
+                                            width: 80,
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 12.0,
+                                                      horizontal: 25.0),
+                                              child: Text(
+                                                  (index + 1).toString(),
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    fontSize: 12,
+                                                  )),
+                                            ),
+                                          ),
                                           // TableWidget(title: Service.orderNo),
                                           TableWidget(
-                                            width: 150,
+                                            flex: 2,
                                             data: InkWell(
                                               onTap: () {
                                                 context.push(
@@ -992,12 +726,12 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                             .min, // Ensures the Row takes only as much space as needed
                                                         children: [
                                                           // Front image (before text)
-                                                          Image.asset(
-                                                            'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
-                                                            width:
-                                                                15, // You can adjust the size of the image
-                                                            height:
-                                                                15, // You can adjust the size of the image
+                                                          Icon(
+                                                            Icons
+                                                                .account_circle,
+                                                            size: 15,
+                                                            color: Color(
+                                                                0xFF152D70),
                                                           ),
                                                           const SizedBox(
                                                               width:
@@ -1020,19 +754,19 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                               fontWeight:
                                                                   FontWeight
                                                                       .bold,
-                                                              fontSize: 14,
+                                                              fontSize: 12,
                                                             ),
                                                           ),
                                                           const SizedBox(
                                                               width:
                                                                   8), // Space between the text and back image
                                                           // Back image (after text)
-                                                          Image.asset(
-                                                            'assets/images/forward.png', // Replace with your image asset or NetworkImage
-                                                            width:
-                                                                12, // Adjust the size of the image
-                                                            height:
-                                                                12, // Adjust the size of the image
+                                                          Icon(
+                                                            Icons
+                                                                .arrow_forward_ios,
+                                                            size: 12,
+                                                            color: Color(
+                                                                0xFF152D70),
                                                           ),
                                                         ],
                                                       )
@@ -1045,24 +779,33 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                           color: Colors.black,
                                                           fontWeight:
                                                               FontWeight.bold,
-                                                          fontSize: 14,
+                                                          fontSize: 12,
                                                         ),
                                                       ),
                                               ),
                                             ),
                                           ),
+                                          // TableWidget(
+                                          //     flex: 1, title: Service.mobile),
+                                          // TableWidget(
+                                          //     flex: 2,
+                                          //     title: Service.address1),
                                           TableWidget(
-                                              width: 150,
+                                              flex: 1,
+                                              fontSize: 12,
                                               title: Service.serviceTypeName),
                                           TableWidget(
-                                              width: 150,
+                                              flex: 1,
+                                              fontSize: 12,
                                               title: Service.serviceName
                                                   .toString()),
                                           TableWidget(
-                                              width: 180,
+                                              flex: 2,
+                                              fontSize: 12,
                                               title: Service.description),
                                           TableWidget(
-                                              width: 150,
+                                              flex: 1,
+                                              fontSize: 12,
                                               title: (Service
                                                       .createDate.isNotEmpty)
                                                   ? DateFormat('dd MMM yyyy')
@@ -1070,11 +813,12 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                           Service.createDate))
                                                   : ''),
                                           TableWidget(
-                                              width: 150,
+                                              flex: 1,
+                                              fontSize: 12,
                                               title:
                                                   "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
                                           TableWidget(
-                                            width: 150,
+                                            flex: 1,
                                             data: Container(
                                               padding: Service.serviceStatusName
                                                       .isNotEmpty
@@ -1102,13 +846,12 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                                       .getStatusTextColor(
                                                           Service
                                                               .serviceStatusId),
-                                                  fontSize: 13,
+                                                  fontSize: 12,
                                                 ),
                                               ),
                                             ),
                                           ),
-                                          Padding(
-                                            padding: const EdgeInsets.all(8.0),
+                                          Expanded(
                                             child: CustomOutlinedSvgButton(
                                               showIcon: false,
                                               onPressed: () async {
@@ -1151,15 +894,245 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                                         ],
                                       ),
                                     ),
-                                  );
-                                },
-                              ),
-                            ],
+                                  ));
+                            },
                           ),
-                        ),
+                          // ),
+                        ],
                       ),
                     ),
-            );
+                  ),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Column(
+                        children: [
+                          // Data Rows
+                          // Expanded(
+                          //   child:
+                          ListView.builder(
+                            shrinkWrap:
+                                true, // To avoid scrolling issues when inside a parent widget
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            itemCount: reportsProvider.serviceReport.length > 20
+                                ? 20
+                                : reportsProvider.serviceReport
+                                    .length, // Max 20 rows per page
+                            itemBuilder: (context, index) {
+                              var Service =
+                                  reportsProvider.serviceReport[index];
+                              return GestureDetector(
+                                onTap: () {
+                                  // context.go(
+                                  //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: index % 2 == 0
+                                        ? Colors.white
+                                        : const Color(0xFFF6F7F9),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  // Alternate row colors
+                                  child: Wrap(
+                                    // mainAxisAlignment: MainAxisAlignment.start,
+                                    children: [
+                                      // Padding(
+                                      //   padding: const EdgeInsets.symmetric(
+                                      //       vertical: 12.0, horizontal: 25.0),
+                                      //   child: Text(Service.customerId.toString(),
+                                      //       style: const TextStyle(
+                                      //         fontWeight: FontWeight.bold,
+                                      //       )),
+                                      // ),
+
+                                      // TableWidget(title: Service.orderNo),
+                                      TableWidget(
+                                        width: 150,
+                                        data: InkWell(
+                                          onTap: () {
+                                            context.push(
+                                                '${CustomerDetailsScreen.route}${Service.customerId.toString()}/${'true'}');
+                                          },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 4),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFE9EDF1),
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                            ),
+                                            child: MediaQuery.of(context)
+                                                        .size
+                                                        .width >
+                                                    1700
+                                                ? Row(
+                                                    mainAxisSize: MainAxisSize
+                                                        .min, // Ensures the Row takes only as much space as needed
+                                                    children: [
+                                                      // Front image (before text)
+                                                      Image.asset(
+                                                        'assets/images/lead_profile.png', // Replace with your image asset or NetworkImage
+                                                        width:
+                                                            15, // You can adjust the size of the image
+                                                        height:
+                                                            15, // You can adjust the size of the image
+                                                      ),
+                                                      const SizedBox(
+                                                          width:
+                                                              8), // Space between the image and text
+                                                      Text(
+                                                        Service.customerName
+                                                                    .length >
+                                                                20
+                                                            ? '${Service.customerName.substring(0, 20)}...'
+                                                            : Service
+                                                                .customerName,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        maxLines: 1,
+                                                        style: const TextStyle(
+                                                          color: Colors.black,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                          fontSize: 14,
+                                                        ),
+                                                      ),
+                                                      const SizedBox(
+                                                          width:
+                                                              8), // Space between the text and back image
+                                                      // Back image (after text)
+                                                      Image.asset(
+                                                        'assets/images/forward.png', // Replace with your image asset or NetworkImage
+                                                        width:
+                                                            12, // Adjust the size of the image
+                                                        height:
+                                                            12, // Adjust the size of the image
+                                                      ),
+                                                    ],
+                                                  )
+                                                : Text(
+                                                    Service.customerName,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    maxLines: 1,
+                                                    style: const TextStyle(
+                                                      color: Colors.black,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                          ),
+                                        ),
+                                      ),
+                                      TableWidget(
+                                          width: 150,
+                                          title: Service.serviceTypeName),
+                                      TableWidget(
+                                          width: 150,
+                                          title:
+                                              Service.serviceName.toString()),
+                                      TableWidget(
+                                          width: 180,
+                                          title: Service.description),
+                                      TableWidget(
+                                          width: 150,
+                                          title: (Service.createDate.isNotEmpty)
+                                              ? DateFormat('dd MMM yyyy')
+                                                  .format(DateTime.parse(
+                                                      Service.createDate))
+                                              : ''),
+                                      TableWidget(
+                                          width: 150,
+                                          title:
+                                              "₹${double.parse(Service.amount).toStringAsFixed(1)}"),
+                                      TableWidget(
+                                        width: 150,
+                                        data: Container(
+                                          padding: Service
+                                                  .serviceStatusName.isNotEmpty
+                                              ? const EdgeInsets.symmetric(
+                                                  horizontal: 8, vertical: 2)
+                                              : const EdgeInsets.all(0),
+                                          decoration: BoxDecoration(
+                                            color: StatusUtils.getStatusColor(
+                                                Service.serviceStatusId),
+                                            borderRadius:
+                                                BorderRadius.circular(6),
+                                            border: Border.all(
+                                                color: Colors.black45,
+                                                width: 0.1),
+                                          ),
+                                          child: Text(
+                                            Service.serviceStatusName,
+                                            overflow: TextOverflow.ellipsis,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                              color: StatusUtils
+                                                  .getStatusTextColor(
+                                                      Service.serviceStatusId),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: CustomOutlinedSvgButton(
+                                          showIcon: false,
+                                          onPressed: () async {
+                                            String ServiceId =
+                                                Service.serviceId.toString();
+                                            String customerId =
+                                                Service.customerId.toString();
+                                            print('Service ID: $ServiceId');
+                                            customerDetailsProvider
+                                                .getServiceDetails(
+                                                    ServiceId.toString(),
+                                                    context);
+
+                                            showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return ServiceDetailsWidget(
+                                                    serviceId:
+                                                        ServiceId.toString(),
+                                                    customerId:
+                                                        customerId.toString(),
+                                                    showEdit: false);
+                                              },
+                                            );
+                                          },
+                                          svgPath: 'assets/images/Print.svg',
+                                          label: 'View Details',
+                                          breakpoint: 860,
+                                          foregroundColor:
+                                              AppColors.primaryBlue,
+                                          backgroundColor: Colors.white,
+                                          borderSide: BorderSide(
+                                              color: AppColors.primaryBlue),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+    );
   }
 
   void onClickTopButton(BuildContext context) {
