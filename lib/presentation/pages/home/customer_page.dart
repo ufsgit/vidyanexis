@@ -74,7 +74,7 @@ class _CustomerPageState extends State<CustomerPage> {
       settingsProvider.searchBranch(context);
       settingsProvider.searchDepartment('', context);
 
-      customerProvider.getSearchCustomers(context);
+      customerProvider.getSearchCustomers(context, isSilent: true);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       // Load all statuses by default (no ViewIn_Id) so the dropdown shows everything.
       // provider.getFollowUpStatus(context, '2');
@@ -109,7 +109,7 @@ class _CustomerPageState extends State<CustomerPage> {
           Provider.of<CustomerProvider>(context, listen: false);
       customerProvider.setSearchCriteria(
           query, customerProvider.fromDateS, customerProvider.toDateS);
-      customerProvider.getSearchCustomers(context);
+      customerProvider.getSearchCustomers(context, isSilent: true);
     });
   }
 
@@ -229,7 +229,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.fromDateS,
                                   customerProvider.toDateS,
                                 );
-                                customerProvider.getSearchCustomers(context);
+                                customerProvider.getSearchCustomers(context, isSilent: true);
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
@@ -247,7 +247,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       customerProvider.toDateS,
                                     );
                                     customerProvider
-                                        .getSearchCustomers(context);
+                                        .getSearchCustomers(context, isSilent: true);
                                   },
                                   child: const Icon(Icons.search,
                                       color: Colors.black),
@@ -327,7 +327,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                   customerProvider.fromDateS,
                                   customerProvider.toDateS,
                                 );
-                                customerProvider.getSearchCustomers(context);
+                                customerProvider.getSearchCustomers(context, isSilent: true);
                               },
                               decoration: InputDecoration(
                                 hintText: 'Search here....',
@@ -345,7 +345,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                       customerProvider.toDateS,
                                     );
                                     customerProvider
-                                        .getSearchCustomers(context);
+                                        .getSearchCustomers(context, isSilent: true);
                                   },
                                   child: const Icon(Icons.search,
                                       color: Colors.black),
@@ -456,7 +456,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             customerProvider.removeStatus();
                             searchController.clear();
                             customerProvider.setSearchCriteria('', '', '');
-                            customerProvider.getSearchCustomers(context);
+                            customerProvider.getSearchCustomers(context, isSilent: true);
                           },
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
@@ -1256,7 +1256,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             fromDate,
                             toDate,
                           );
-                          customerProvider.getSearchCustomers(context);
+                          customerProvider.getSearchCustomers(context, isSilent: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primaryBlue,
@@ -1290,7 +1290,7 @@ class _CustomerPageState extends State<CustomerPage> {
                             fromDate,
                             toDate,
                           );
-                          customerProvider.getSearchCustomers(context);
+                          customerProvider.getSearchCustomers(context, isSilent: true);
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.textRed.withOpacity(0.1),
@@ -1551,7 +1551,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         customerProvider.formattedFromDate,
                         customerProvider.formattedToDate,
                       );
-                      customerProvider.getSearchCustomers(context);
+                      customerProvider.getSearchCustomers(context, isSilent: true);
                     },
                   );
                 },
@@ -1592,7 +1592,7 @@ class _CustomerPageState extends State<CustomerPage> {
                   customerProvider.formattedFromDate,
                   customerProvider.formattedToDate,
                 );
-                customerProvider.getSearchCustomers(context);
+                customerProvider.getSearchCustomers(context, isSilent: true);
               },
               child: Icon(
                 Icons.close,
@@ -1685,7 +1685,7 @@ class _CustomerPageState extends State<CustomerPage> {
                         if (newValue != null) {
                           customerProvider.setUserFilterStatus(newValue);
                         }
-                        customerProvider.getSearchCustomers(context);
+                        customerProvider.getSearchCustomers(context, isSilent: true);
                       }
                     : null,
                 underline: Container(),
@@ -1752,7 +1752,7 @@ class _CustomerPageState extends State<CustomerPage> {
                   if (newValue != null) {
                     customerProvider.setEnquiryForFilter(newValue);
                   }
-                  customerProvider.getSearchCustomers(context);
+                  customerProvider.getSearchCustomers(context, isSilent: true);
                 },
                 underline: Container(),
                 isDense: true,
@@ -1814,7 +1814,7 @@ class _CustomerPageState extends State<CustomerPage> {
                   if (newValue != null) {
                     customerProvider.setEnquirySourceFilter(newValue);
                   }
-                  customerProvider.getSearchCustomers(context);
+                  customerProvider.getSearchCustomers(context, isSilent: true);
                 },
                 underline: Container(),
                 isDense: true,

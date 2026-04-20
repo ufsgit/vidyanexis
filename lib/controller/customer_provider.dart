@@ -279,7 +279,7 @@ class CustomerProvider extends ChangeNotifier {
       if (AppStyles.isWebScreen(context)) {
         _startLimit += _limit;
         _endLimit += _limit;
-        await getSearchCustomers(context);
+        await getSearchCustomers(context, isSilent: true);
       } else {
         loadMoreCustomers(context);
       }
@@ -292,7 +292,7 @@ class CustomerProvider extends ChangeNotifier {
     if (_startLimit > 1) {
       _startLimit -= _limit;
       _endLimit -= _limit;
-      await getSearchCustomers(context);
+      await getSearchCustomers(context, isSilent: true);
     }
     notifyListeners();
   }
@@ -379,7 +379,7 @@ class CustomerProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> getSearchCustomers(BuildContext context) async {
+  Future<void> getSearchCustomers(BuildContext context, {bool isSilent = false}) async {
     try {
       _isLoading = true;
       _status = _selectedStatusIds.join(',');
@@ -415,7 +415,9 @@ class CustomerProvider extends ChangeNotifier {
       String userIdPref = preferences.getString('userId') ?? "0";
       int loginUserId = int.parse(userIdPref);
 
-      Loader.showLoader(context);
+      if (!isSilent) {
+        Loader.showLoader(context);
+      }
 
       final response = await HttpRequest.httpGetRequest(
           endPoint:
@@ -452,7 +454,9 @@ class CustomerProvider extends ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
-      Loader.stopLoader(context);
+      if (!isSilent) {
+        Loader.stopLoader(context);
+      }
     }
   }
 
