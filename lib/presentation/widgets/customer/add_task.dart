@@ -33,6 +33,7 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
   String _selectedTaskTypeId = '';
   List<SearchUserDetails> _filteredUsers = [];
   bool isSingleSelect = true;
+  bool _showMore = false;
 
   void _updateFilteredUsers() {
     final dropDownProvider =
@@ -344,70 +345,103 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                 ),
               ),
               const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'DESCRIPTION',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.grey[400],
-                        letterSpacing: 1.2,
+              InkWell(
+                onTap: () {
+                  setState(() {
+                    _showMore = !_showMore;
+                  });
+                },
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        _showMore ? 'Less' : 'More',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                          color: AppColors.bluebutton,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    TextField(
-                      controller:
-                          customerDetailsProvider.taskDescriptionController,
-                      maxLines: 3,
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        color: const Color(0xFF1E232C),
+                      const SizedBox(width: 4),
+                      Icon(
+                        _showMore
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        size: 18,
+                        color: AppColors.bluebutton,
                       ),
-                      decoration: InputDecoration(
-                        hintText: 'Enter task description...',
-                        hintStyle: GoogleFonts.plusJakartaSans(
-                          fontSize: 14,
-                          color: Colors.grey[400],
-                        ),
-                        filled: true,
-                        fillColor: const Color(0xFFF7F8F9),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(
-                              color: AppColors.bluebutton.withOpacity(0.5)),
-                        ),
-                        contentPadding: const EdgeInsets.all(12),
-                      ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
+              if (_showMore) const SizedBox(height: 16),
+              if (_showMore)
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'DESCRIPTION',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.grey[400],
+                          letterSpacing: 1.2,
+                        ),
+                      ),
+                      const SizedBox(height: 12),
+                      TextField(
+                        controller:
+                            customerDetailsProvider.taskDescriptionController,
+                        maxLines: 3,
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF1E232C),
+                        ),
+                        decoration: InputDecoration(
+                          hintText: 'Enter task description...',
+                          hintStyle: GoogleFonts.plusJakartaSans(
+                            fontSize: 14,
+                            color: Colors.grey[400],
+                          ),
+                          filled: true,
+                          fillColor: const Color(0xFFF7F8F9),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide.none,
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(12),
+                            borderSide: BorderSide(
+                                color: AppColors.bluebutton.withOpacity(0.5)),
+                          ),
+                          contentPadding: const EdgeInsets.all(12),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               if (customerDetailsProvider.selectedTaskType != null &&
                   dropDownProvider.taskType.any((element) =>
                       element.taskTypeId ==
@@ -474,80 +508,82 @@ class _TaskCreationWidgetState extends State<TaskCreationWidget> {
                     ],
                   ),
                 ),
-              const SizedBox(height: 16),
-              Container(
-                width: double.infinity,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.04),
-                      blurRadius: 10,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'TASK DATE',
-                      style: GoogleFonts.plusJakartaSans(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w800,
-                        color: Colors.grey[400],
-                        letterSpacing: 1.2,
+              if (_showMore) const SizedBox(height: 16),
+              if (_showMore)
+                Container(
+                  width: double.infinity,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 14, vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.04),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
-                    ),
-                    const SizedBox(height: 12),
-                    InkWell(
-                      onTap: () async {
-                        final DateTime? picked = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2000),
-                          lastDate: DateTime(2101),
-                        );
-                        if (picked != null) {
-                          customerDetailsProvider.taskChoosedateController
-                              .text = DateFormat('dd MMM yyyy').format(picked);
-                        }
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 12),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFF7F8F9),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.transparent),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'TASK DATE',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                          color: Colors.grey[400],
+                          letterSpacing: 1.2,
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              customerDetailsProvider
-                                      .taskChoosedateController.text.isEmpty
-                                  ? 'Select Date'
-                                  : customerDetailsProvider
-                                      .taskChoosedateController.text,
-                              style: GoogleFonts.plusJakartaSans(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                color: const Color(0xFF1E232C),
+                      ),
+                      const SizedBox(height: 12),
+                      InkWell(
+                        onTap: () async {
+                          final DateTime? picked = await showDatePicker(
+                            context: context,
+                            initialDate: DateTime.now(),
+                            firstDate: DateTime(2000),
+                            lastDate: DateTime(2101),
+                          );
+                          if (picked != null) {
+                            customerDetailsProvider
+                                    .taskChoosedateController.text =
+                                DateFormat('dd MMM yyyy').format(picked);
+                          }
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: const Color(0xFFF7F8F9),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: Colors.transparent),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                customerDetailsProvider
+                                        .taskChoosedateController.text.isEmpty
+                                    ? 'Select Date'
+                                    : customerDetailsProvider
+                                        .taskChoosedateController.text,
+                                style: GoogleFonts.plusJakartaSans(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  color: const Color(0xFF1E232C),
+                                ),
                               ),
-                            ),
-                            Icon(Icons.calendar_today,
-                                color: AppColors.bluebutton, size: 20),
-                          ],
+                              Icon(Icons.calendar_today,
+                                  color: AppColors.bluebutton, size: 20),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
               const SizedBox(height: 16),
               Container(
                 width: double.infinity,

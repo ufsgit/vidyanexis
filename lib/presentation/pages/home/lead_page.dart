@@ -527,7 +527,7 @@ class _LeadsPageState extends State<LeadPage> {
                   children: [
                     // Fixed columns section
                     SizedBox(
-                      width: 600,
+                      width: 850,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -571,12 +571,25 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                                 TableWidget(
-                                  flex: 3,
+                                  flex: 2,
                                   padding: EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.centerLeft,
                                   data: Text(
                                     'Name',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                TableWidget(
+                                  flex: 4,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 4.0, horizontal: 12.0),
+                                  alignment: Alignment.centerLeft,
+                                  data: Text(
+                                    'Address',
                                     style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.white,
@@ -699,7 +712,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 3,
+                                                  flex: 2,
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   padding: EdgeInsets.symmetric(
@@ -806,32 +819,76 @@ class _LeadsPageState extends State<LeadPage> {
                                                           );
                                                         },
                                                         menuChildren: [
+                                                          // Multi-level Create Task menu
                                                           if (settingsProvider
-                                                                      .menuIsEditMap[
-                                                                  3] ==
+                                                                      .menuIsSaveMap[
+                                                                  13] ==
                                                               1)
                                                             (onHover) =>
-                                                                MenuItemButton(
-                                                                  onPressed: () =>
-                                                                      _handleLeadAction(
-                                                                          'edit',
-                                                                          lead),
-                                                                  child: Row(
-                                                                    children: [
-                                                                      Icon(
-                                                                          Icons
-                                                                              .edit,
-                                                                          size:
-                                                                              18,
-                                                                          color:
-                                                                              Colors.blue),
-                                                                      SizedBox(
-                                                                          width:
-                                                                              8),
-                                                                      Text(
-                                                                          'Edit Lead'),
-                                                                    ],
-                                                                  ),
+                                                                MultiLevelHoverMenu(
+                                                                  isSubMenu:
+                                                                      false,
+                                                                  title:
+                                                                      'Create Task',
+                                                                  onHoverChange:
+                                                                      (hovering) {
+                                                                    // This is the logic for _HoverMenuAnchor that we will expose
+                                                                    onHover(
+                                                                        hovering);
+                                                                  },
+                                                                  leadingIcon: const Icon(
+                                                                      Icons
+                                                                          .add_task,
+                                                                      size: 18,
+                                                                      color: Colors
+                                                                          .teal),
+                                                                  children: provider
+                                                                      .taskType
+                                                                      .map(
+                                                                          (taskType) {
+                                                                    // Find users for this task type based on department
+                                                                    final users = provider
+                                                                        .searchUserDetails
+                                                                        .where(
+                                                                            (user) {
+                                                                      return user
+                                                                              .departmentId
+                                                                              .toString() ==
+                                                                          taskType
+                                                                              .departmentIds
+                                                                              .toString();
+                                                                    }).toList();
+
+                                                                    if (users
+                                                                        .isEmpty) {
+                                                                      return MenuItemButton(
+                                                                        onPressed:
+                                                                            null,
+                                                                        child: Text(
+                                                                            taskType.taskTypeName),
+                                                                      );
+                                                                    }
+
+                                                                    return MultiLevelHoverMenu(
+                                                                      title: taskType
+                                                                          .taskTypeName,
+                                                                      children:
+                                                                          users.map(
+                                                                              (user) {
+                                                                        return MenuItemButton(
+                                                                          onPressed:
+                                                                              () {
+                                                                            _openTaskDialog(
+                                                                                lead,
+                                                                                taskType,
+                                                                                user);
+                                                                          },
+                                                                          child:
+                                                                              Text(user.userDetailsName),
+                                                                        );
+                                                                      }).toList(),
+                                                                    );
+                                                                  }).toList(),
                                                                 ),
                                                           if (settingsProvider
                                                                       .menuIsViewMap[
@@ -914,80 +971,57 @@ class _LeadsPageState extends State<LeadPage> {
                                                                     ],
                                                                   ),
                                                                 ),
-                                                          // Multi-level Create Task menu
                                                           if (settingsProvider
-                                                                      .menuIsSaveMap[
-                                                                  13] ==
+                                                                      .menuIsEditMap[
+                                                                  3] ==
                                                               1)
                                                             (onHover) =>
-                                                                MultiLevelHoverMenu(
-                                                                  isSubMenu:
-                                                                      false,
-                                                                  title:
-                                                                      'Create Task',
-                                                                  onHoverChange:
-                                                                      (hovering) {
-                                                                    // This is the logic for _HoverMenuAnchor that we will expose
-                                                                    onHover(
-                                                                        hovering);
-                                                                  },
-                                                                  leadingIcon: const Icon(
-                                                                      Icons
-                                                                          .add_task,
-                                                                      size: 18,
-                                                                      color: Colors
-                                                                          .teal),
-                                                                  children: provider
-                                                                      .taskType
-                                                                      .map(
-                                                                          (taskType) {
-                                                                    // Find users for this task type based on department
-                                                                    final users = provider
-                                                                        .searchUserDetails
-                                                                        .where(
-                                                                            (user) {
-                                                                      return user
-                                                                              .departmentId
-                                                                              .toString() ==
-                                                                          taskType
-                                                                              .departmentIds
-                                                                              .toString();
-                                                                    }).toList();
-
-                                                                    if (users
-                                                                        .isEmpty) {
-                                                                      return MenuItemButton(
-                                                                        onPressed:
-                                                                            null,
-                                                                        child: Text(
-                                                                            taskType.taskTypeName),
-                                                                      );
-                                                                    }
-
-                                                                    return MultiLevelHoverMenu(
-                                                                      title: taskType
-                                                                          .taskTypeName,
-                                                                      children:
-                                                                          users.map(
-                                                                              (user) {
-                                                                        return MenuItemButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            _openTaskDialog(
-                                                                                lead,
-                                                                                taskType,
-                                                                                user);
-                                                                          },
-                                                                          child:
-                                                                              Text(user.userDetailsName),
-                                                                        );
-                                                                      }).toList(),
-                                                                    );
-                                                                  }).toList(),
+                                                                MenuItemButton(
+                                                                  onPressed: () =>
+                                                                      _handleLeadAction(
+                                                                          'edit',
+                                                                          lead),
+                                                                  child: Row(
+                                                                    children: [
+                                                                      Icon(
+                                                                          Icons
+                                                                              .edit,
+                                                                          size:
+                                                                              18,
+                                                                          color:
+                                                                              Colors.blue),
+                                                                      SizedBox(
+                                                                          width:
+                                                                              8),
+                                                                      Text(
+                                                                          'Edit Lead'),
+                                                                    ],
+                                                                  ),
                                                                 ),
+
                                                         ],
                                                       ),
                                                     ],
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  flex: 4,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  data: Tooltip(
+                                                    message: lead.displayAddress,
+                                                    child: Text(
+                                                      lead.displayAddress,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                                 TableWidget(
