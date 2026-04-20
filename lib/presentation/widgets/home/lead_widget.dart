@@ -166,19 +166,19 @@ class _LeadCardState extends State<LeadCard> {
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        height: 44,
-                        width: 3,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: getAvatarColor(widget.lead.customerName)
-                              .withOpacity(.4),
+                      const EdgeInsets.fromLTRB(16, 2, 16, 8),
+                  child: IntrinsicHeight(
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Container(
+                          width: 3,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(30),
+                            color: getAvatarColor(widget.lead.customerName)
+                                .withOpacity(.4),
+                          ),
                         ),
-                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Column(
@@ -283,6 +283,7 @@ class _LeadCardState extends State<LeadCard> {
                   ),
                 ),
               ),
+            ),
 
               // Expanded Content
               if (widget.isExpanded)
