@@ -47,7 +47,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
         leadProvider.toDateS,
         leadId: leadIdController.text,
       );
-      leadProvider.getSearchLeads(context);
+      leadProvider.getSearchLeads(context, isSilent: true);
     });
   }
 
@@ -186,12 +186,12 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 leadProvider.toggleFilter();
               },
               onClearTap: () {
+                searchController.clear();
                 searchProvider.stopSearch();
                 leadProvider.toggleFilter();
 
                 leadProvider.selectDateFilterOption(null);
                 leadProvider.removeStatus();
-                searchController.clear();
                 leadProvider.setSearchCriteria('', '', '');
                 leadProvider.getSearchLeads(context);
               },
@@ -204,21 +204,23 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   query,
                   leadProvider.fromDateS,
                   leadProvider.toDateS,
+                  leadId: leadIdController.text,
                 );
                 leadProvider.getSearchLeads(context);
               },
-              onChanged: _onSearchChanged,
+              // onChanged: _onSearchChanged,
               searchController: searchController,
             )
           : CustomAppBar(
               onSearchTap: () {
                 searchProvider.startSearch();
-                leadProvider.setFilter(true);
+                leadProvider.toggleFilter();
               },
               onFilterTap: () {
                 leadProvider.toggleFilter();
               },
               onClearTap: () {
+                searchController.clear();
                 searchProvider.stopSearch();
                 leadProvider.clearAllFilters();
                 leadProvider.getSearchLeads(context);
@@ -232,10 +234,11 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                   query,
                   leadProvider.fromDateS,
                   leadProvider.toDateS,
+                  leadId: leadIdController.text,
                 );
                 leadProvider.getSearchLeads(context);
               },
-              onChanged: _onSearchChanged,
+              // onChanged: _onSearchChanged,
               searchController: searchController,
             ),
       drawer: const SidebarDrawer(),
@@ -567,8 +570,14 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                 child: FloatingActionButton.extended(
                   heroTag: 'apply_filter_fab',
                   onPressed: () {
-                    leadProvider.setFilter(false);
+                    leadProvider.setSearchCriteria(
+                      leadProvider.search,
+                      leadProvider.fromDateS,
+                      leadProvider.toDateS,
+                      leadId: leadIdController.text,
+                    );
                     leadProvider.getSearchLeads(context);
+                    leadProvider.setFilter(false);
                   },
                   backgroundColor: AppColors.darkGreen,
                   label: const CustomText(

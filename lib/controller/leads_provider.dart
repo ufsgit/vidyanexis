@@ -905,88 +905,104 @@ class LeadsProvider extends ChangeNotifier {
   }
 
   Future<void> getSearchLeads(BuildContext context,
-      {bool isPagination = false, bool isWebPagination = false}) async {
-    if (!isPagination && !isWebPagination) {
-      currentPage = 1;
-      hasMoreData = true;
-      _leadData.clear();
-      notifyListeners();
-    }
-
-    if (isWebPagination) {
-      _leadData.clear();
-    }
-
-    _startLimit = ((currentPage - 1) * pageSize) + 1;
-    _endLimit = currentPage * pageSize;
-
-    _status = _selectedStatusIds.join(',');
-    _enquiryForS = _selectedEnquiryForIds.join(',');
-
-    print('Start$_startLimit');
-    print('End$_endLimit');
-
-    if (_status.isEmpty || _status == 'null') {
-      _status = '0';
-    }
-    if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
-      _enquiryForS = '0';
-    }
-
-    String isDate = "0";
-    if (_fromDateS.isEmpty && _toDateS.isEmpty) {
-      isDate = "0";
-      if (_fromDateS.isEmpty) {
-        _fromDateS = "";
+      {bool isPagination = false,
+      bool isWebPagination = false,
+      bool isSilent = false}) async {
+    try {
+      _isLoading = true;
+      if (!isPagination && !isWebPagination) {
+        currentPage = 1;
+        hasMoreData = true;
+        _leadData.clear();
+        // notifyListeners();
       }
-      if (_toDateS.isEmpty) {
-        _toDateS = "";
+
+      if (isWebPagination) {
+        _leadData.clear();
       }
-    } else {
-      isDate = "1";
-    }
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String userId = preferences.getString('userId') ?? "0";
-    String username = preferences.getString('userName') ?? "";
-    _loginUserId = int.parse(userId);
-    _loginUserName = username;
+      _startLimit = ((currentPage - 1) * pageSize) + 1;
+      _endLimit = currentPage * pageSize;
 
-    String toUserId = _selectedUserIds.join(',');
-    String enquirySourceIds = _selectedEnquirySourceIds.join(',');
+      _status = _selectedStatusIds.join(',');
+      _enquiryForS = _selectedEnquiryForIds.join(',');
 
-    final response = await HttpRequest.httpGetRequest(
-        endPoint:
-            '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId');
+      print('Start$_startLimit');
+      print('End$_endLimit');
 
-    if (response.statusCode == 200) {
-      final data = response.data;
-      if (data != null) {
-        _tempData = (data as List<dynamic>)
-            .map((item) => SearchLeadModel.fromJson(item))
-            .toList();
+      if (_status.isEmpty || _status == 'null') {
+        _status = '0';
+      }
+      if (_enquiryForS.isEmpty || _enquiryForS == 'null') {
+        _enquiryForS = '0';
+      }
 
-        if (_tempData.isNotEmpty) {
-          _totalCount = _tempData.last.customerId;
-          _tempData.removeLast();
+      String isDate = "0";
+      if (_fromDateS.isEmpty && _toDateS.isEmpty) {
+        isDate = "0";
+        if (_fromDateS.isEmpty) {
+          _fromDateS = "";
+        }
+        if (_toDateS.isEmpty) {
+          _toDateS = "";
+        }
+      } else {
+        isDate = "1";
+      }
+
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      String userId = preferences.getString('userId') ?? "0";
+      String username = preferences.getString('userName') ?? "";
+      _loginUserId = int.parse(userId);
+      _loginUserName = username;
+
+      String toUserId = _selectedUserIds.join(',');
+      String enquirySourceIds = _selectedEnquirySourceIds.join(',');
+
+      if (!isSilent && !isPagination && !isWebPagination) {
+        Loader.showLoader(context);
+      }
+
+      final response = await HttpRequest.httpGetRequest(
+          endPoint:
+              '${HttpUrls.searchLead}?Customer_Name_=$_search&Is_Date_=$isDate&Fromdate_=$_fromDateS&Todate_=$_toDateS&To_User_Id_=$toUserId&Login_User_Id_=$_loginUserId&Status_Id_=$_status&Page_Index1_=$_startLimit&Page_Index2_=$_endLimit&Enquiry_For_Id_=$_enquiryForS&Enquiry_Source_Id_=$enquirySourceIds&User_Details_Id_=$_loginUserId&Lead_Id_=$_leadId');
+
+      if (response.statusCode == 200) {
+        final data = response.data;
+        if (data != null) {
+          _tempData = (data as List<dynamic>)
+              .map((item) => SearchLeadModel.fromJson(item))
+              .toList();
 
           if (_tempData.isNotEmpty) {
-            _leadData.addAll(_tempData);
+            _totalCount = _tempData.last.customerId;
+            _tempData.removeLast();
+
+            if (_tempData.isNotEmpty) {
+              _leadData.addAll(_tempData);
+            } else {
+              hasMoreData = false;
+            }
           } else {
             hasMoreData = false;
           }
-        } else {
-          hasMoreData = false;
         }
-
-        _isLoading = false;
-        notifyListeners();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Server Error')),
+        );
       }
-    } else {
-      _isLoading = false;
+    } catch (e) {
+      log('Exception in getSearchLeads: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Server Error')),
+        const SnackBar(content: Text('An error occurred')),
       );
+    } finally {
+      _isLoading = false;
+      notifyListeners();
+      if (!isSilent && !isPagination && !isWebPagination) {
+        Loader.stopLoader(context);
+      }
     }
   }
 
