@@ -160,10 +160,10 @@ class LeadReportProvider extends ChangeNotifier {
   int? _selectedUser;
   int? _selectedEnquiryFor;
   int? _selectedEnquirySource;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   int? _selectedDateFilterIndex;
   int _customerId = 0;
 
@@ -236,8 +236,8 @@ class LeadReportProvider extends ChangeNotifier {
   SaveLeadDropdownModel? get leadDropdownData => _leadDropdownData;
 
   String _search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _status = '';
   String _enquiryForS = '';
 

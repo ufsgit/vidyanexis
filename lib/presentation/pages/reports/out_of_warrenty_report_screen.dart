@@ -10,6 +10,7 @@ import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class OutOfWarrentyReportScreen extends StatefulWidget {
   const OutOfWarrentyReportScreen({super.key});
@@ -148,28 +149,29 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list),
+                          icon: const Icon(Icons.filter_list, size: 18),
                           label: Text(MediaQuery.of(context).size.width > 860
                               ? 'Filter'
                               : ''),
-                          style: OutlinedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
                                 : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
+                                ? AppColors.primaryBlue
                                 : Colors.white,
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors.primaryBlue),
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: AppColors.primaryBlue),
                             ),
                           ),
                         ),
@@ -229,80 +231,34 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                       ),
                       child: Row(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
                           ),
                           const Spacer(),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider
-                                    .getSearchOutOfWarrentyReport(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: const Text('Reset'),
-                            ),
+                          CommonReportResetButton(
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                              );
+                              reportsProvider
+                                  .getSearchOutOfWarrentyReport(context);
+                            },
+                            label: 'Reset',
+                          ),
                         ],
                       ),
                     )
@@ -375,7 +331,30 @@ class _OutOfWarrentyReportScreen extends State<OutOfWarrentyReportScreen> {
                               ),
                               // Data Rows
                               Expanded(
-                                child: ListView.builder(
+                                child: reportsProvider
+                                        .outOfWarrentyReport.isEmpty
+                                    ? Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(height: 80),
+                                            Icon(Icons.search_off_outlined,
+                                                size: 80,
+                                                color: Colors.grey[300]),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              'No out of warranty reports found',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : ListView.builder(
                                   shrinkWrap: true,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),

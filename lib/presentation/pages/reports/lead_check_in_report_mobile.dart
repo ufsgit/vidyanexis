@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_check_in_model.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class LeadCheckInReportMobile extends StatefulWidget {
   const LeadCheckInReportMobile({super.key});
@@ -356,34 +357,25 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
           //   ),
           // ),
           // const SizedBox(height: 16),
-          _buildFilterLabel('Custom Date Range'),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: _buildDateTile(
-                  context,
-                  'From',
-                  provider.fromDate,
-                  (date) {
-                    provider.setDates(date, provider.toDate);
-                    provider.selectDateFilterOption(null);
-                  },
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: _buildDateTile(
-                  context,
-                  'To',
-                  provider.toDate,
-                  (date) {
-                    provider.setDates(provider.fromDate, date);
-                    provider.selectDateFilterOption(null);
-                  },
-                ),
-              ),
-            ],
+          CommonReportDateFilter(
+            fromDate: provider.fromDate?.toString(),
+            toDate: provider.toDate?.toString(),
+            formattedFromDate: provider.fromDate != null ? DateFormat('dd MMM yyyy').format(provider.fromDate!) : '',
+            formattedToDate: provider.toDate != null ? DateFormat('dd MMM yyyy').format(provider.toDate!) : '',
+            onTap: () async {
+              final picked = await showDateRangePicker(
+                context: context,
+                firstDate: DateTime(2020),
+                lastDate: DateTime.now(),
+                initialDateRange: provider.fromDate != null && provider.toDate != null
+                    ? DateTimeRange(start: provider.fromDate!, end: provider.toDate!)
+                    : null,
+              );
+              if (picked != null) {
+                provider.setDates(picked.start, picked.end);
+                provider.selectDateFilterOption(null);
+              }
+            },
           ),
           const SizedBox(height: 16),
           _buildFilterLabel('Staff'),
@@ -445,12 +437,12 @@ class _LeadCheckInReportMobileState extends State<LeadCheckInReportMobile> {
                 ),
               ),
               const SizedBox(width: 12),
-              TextButton(
-                onPressed: () {
+              CommonReportResetButton(
+                onReset: () {
                   provider.clearFilters();
                   provider.fetchReports(context);
                 },
-                child: const Text('Reset', style: TextStyle(color: Colors.red)),
+                label: 'Reset',
               ),
             ],
           ),

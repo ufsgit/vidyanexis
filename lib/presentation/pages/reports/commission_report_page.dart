@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class CommissionReportPage extends StatefulWidget {
   const CommissionReportPage({super.key});
@@ -92,33 +93,46 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                             margin: const EdgeInsets.all(4),
                             child: ElevatedButton(
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: const Color(0xFF7F8C8D),
-                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                                backgroundColor: AppColors.primaryBlue,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(20)),
                                 elevation: 0,
-                                padding: const EdgeInsets.symmetric(horizontal: 20),
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20),
                               ),
-                              onPressed: () => provider.getCommissionReport(context),
-                              child: const Text('Search', style: TextStyle(color: Colors.white, fontSize: 12)),
+                              onPressed: () =>
+                                  provider.getCommissionReport(context),
+                              child: const Text('Search',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 12)),
                             ),
                           ),
                         ],
                       ),
                     ),
                     const SizedBox(width: 16),
-                    OutlinedButton.icon(
+                    ElevatedButton.icon(
                       onPressed: () => provider.toggleFilter(),
                       icon: const Icon(Icons.filter_list, size: 18),
                       label: const Text('Filter'),
-                      style: OutlinedButton.styleFrom(
-                        foregroundColor: provider.isFilter ? Colors.white : const Color(0xFFF1C40F),
-                        backgroundColor: provider.isFilter ? const Color(0xFFF1C40F) : Colors.white,
-                        side: BorderSide(color: const Color(0xFFF1C40F)),
-                        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: provider.isFilter
+                            ? Colors.white
+                            : AppColors.primaryBlue,
+                        backgroundColor: provider.isFilter
+                            ? AppColors.primaryBlue
+                            : Colors.white,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(25),
+                          side: BorderSide(color: AppColors.primaryBlue),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
-                    ElevatedButton(
+                    ElevatedButton.icon(
                       onPressed: () {
                         exportToExcel(
                           headers: [
@@ -142,14 +156,18 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                           fileName: 'Commission_Report',
                         );
                       },
+                      icon: const Icon(Icons.download, size: 18),
+                      label: const Text('Export',
+                          style: TextStyle(fontWeight: FontWeight.bold)),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFFF1C40F),
+                        backgroundColor: AppColors.primaryBlue,
                         foregroundColor: Colors.white,
                         elevation: 0,
-                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 24, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25)),
                       ),
-                      child: const Text('Export to Excel', style: TextStyle(fontWeight: FontWeight.bold)),
                     ),
                   ],
                 ),
@@ -157,10 +175,11 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      _buildFilterItem(
-                        context,
-                        'Date Range',
-                        '${provider.formattedFromDate} - ${provider.formattedToDate}',
+                      CommonReportDateFilter(
+                        fromDate: provider.fromDate?.toString(),
+                        toDate: provider.toDate?.toString(),
+                        formattedFromDate: provider.formattedFromDate,
+                        formattedToDate: provider.formattedToDate,
                         onTap: () => _onClickDateRange(context),
                       ),
                       const SizedBox(width: 16),
@@ -196,9 +215,9 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                         },
                       ),
                       const Spacer(),
-                      TextButton(
-                        onPressed: () => provider.resetFilters(context),
-                        child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+                      CommonReportResetButton(
+                        onReset: () => provider.resetFilters(context),
+                        label: 'Clear All',
                       ),
                     ],
                   ),
@@ -243,7 +262,25 @@ class _CommissionReportPageState extends State<CommissionReportPage> {
                       // Table Body
                       Expanded(
                         child: provider.commissionReport.isEmpty
-                            ? const Center(child: Text('No data found'))
+                            ? Center(
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const SizedBox(height: 80),
+                                    Icon(Icons.search_off_outlined,
+                                        size: 80, color: Colors.grey[300]),
+                                    const SizedBox(height: 16),
+                                    Text(
+                                      'No commission reports found',
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: Colors.grey[600],
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
                             : ListView.separated(
                                 itemCount: provider.commissionReport.length,
                                 separatorBuilder: (context, index) => Divider(height: 1, color: Colors.grey[100]),

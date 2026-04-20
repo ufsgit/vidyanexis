@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/sub_contract_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
 class SubContractReportMobile extends StatefulWidget {
@@ -90,27 +91,12 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
                   Row(
                     children: [
                       Expanded(
-                        child: GestureDetector(
+                        child: CommonReportDateFilter(
+                          fromDate: provider.fromDate?.toString(),
+                          toDate: provider.toDate?.toString(),
+                          formattedFromDate: provider.formattedFromDate,
+                          formattedToDate: provider.formattedToDate,
                           onTap: () => _showDateFilterDialog(context),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.calendar_month, size: 20),
-                                const SizedBox(width: 8),
-                                Text(
-                                  provider.fromDate != null
-                                      ? '${provider.formattedFromDate} to ${provider.formattedToDate}'
-                                      : 'Select Date Range',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
                         ),
                       ),
                     ],
@@ -176,7 +162,25 @@ class _SubContractReportMobileState extends State<SubContractReportMobile> {
             ),
           Expanded(
             child: provider.subContractReport.isEmpty
-                ? const Center(child: Text('No data found'))
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 80),
+                        Icon(Icons.search_off_outlined,
+                            size: 80, color: Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No sub contract reports found',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 : Column(
                     children: [
                       Expanded(

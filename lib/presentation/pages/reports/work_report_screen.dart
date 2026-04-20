@@ -175,11 +175,14 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                               }
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.textGrey4,
+                              backgroundColor: AppColors.primaryBlue,
                               foregroundColor: Colors.white,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
                               ),
                             ),
                             child: Text(reportsProvider.Search.isNotEmpty
@@ -191,29 +194,29 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                     ),
                   ),
                   const SizedBox(width: 16),
-                  OutlinedButton.icon(
+                  ElevatedButton.icon(
                     onPressed: () {
                       reportsProvider.toggleFilter();
-                      print(reportsProvider.isFilter);
                     },
-                    icon: const Icon(Icons.filter_list),
+                    icon: const Icon(Icons.filter_list, size: 18),
                     label: Text(MediaQuery.of(context).size.width > 860
                         ? 'Filter'
                         : ''),
-                    style: OutlinedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(
                       foregroundColor: reportsProvider.isFilter
                           ? Colors.white
-                          : AppColors.primaryBlue, // Change foreground color
+                          : AppColors.primaryBlue,
                       backgroundColor: reportsProvider.isFilter
-                          ? const Color(0xFF5499D9)
-                          : Colors.white, // Change background color
-                      side: BorderSide(
-                          color: reportsProvider.isFilter
-                              ? const Color(0xFF5499D9)
-                              : AppColors.primaryBlue), // Change border color
+                          ? AppColors.primaryBlue
+                          : Colors.white,
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: AppColors.primaryBlue),
                       ),
                     ),
                   ),
@@ -273,7 +276,7 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                             color: reportsProvider.selectedStatus != null &&
                                     reportsProvider.selectedStatus != 0
                                 ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
+                                : AppColors.primaryBlue),
                       ),
                       child: Row(
                         children: [
@@ -344,11 +347,11 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: reportsProvider.fromDate != null ||
-                                      reportsProvider.toDate != null
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
+                                border: Border.all(
+                                    color: reportsProvider.fromDate != null ||
+                                            reportsProvider.toDate != null
+                                        ? AppColors.primaryBlue
+                                        : AppColors.primaryBlue),
                         ),
                         child: Row(
                           children: [
@@ -507,10 +510,14 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: AppColors.textRed,
+                          elevation: 0,
                           side: BorderSide(color: AppColors.textRed),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
                             vertical: 12,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
                         child: const Text('Reset'),
@@ -597,8 +604,30 @@ class _WorkReportScreenState extends State<WorkReportScreen> {
                           ),
                         ),
                         // Data Rows
-                        Expanded(
-                          child: ListView.builder(
+                        reportsProvider.taskReport.isEmpty
+                            ? Expanded(
+                                child: Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(height: 80),
+                                      Icon(Icons.search_off_outlined,
+                                          size: 80, color: Colors.grey[300]),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No work reports found',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : Expanded(
+                                child: ListView.builder(
                             shrinkWrap:
                                 true, // To avoid scrolling issues when inside a parent widget
                             physics: const AlwaysScrollableScrollPhysics(),

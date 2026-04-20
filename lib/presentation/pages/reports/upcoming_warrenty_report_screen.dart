@@ -12,6 +12,8 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+
 class UpcomingWarrentyReportScreen extends StatefulWidget {
   const UpcomingWarrentyReportScreen({super.key});
 
@@ -150,28 +152,29 @@ class _UpcomingWarrentyReportScreen
                           ),
                         ),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list),
+                          icon: const Icon(Icons.filter_list, size: 18),
                           label: Text(MediaQuery.of(context).size.width > 860
                               ? 'Filter'
                               : ''),
-                          style: OutlinedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
                                 : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
+                                ? AppColors.primaryBlue
                                 : Colors.white,
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors.primaryBlue),
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: AppColors.primaryBlue),
                             ),
                           ),
                         ),
@@ -295,29 +298,30 @@ class _UpcomingWarrentyReportScreen
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            OutlinedButton.icon(
+                            ElevatedButton.icon(
                               onPressed: () {
                                 reportsProvider.toggleFilter();
                               },
-                              icon: const Icon(Icons.filter_list),
+                              icon: const Icon(Icons.filter_list, size: 18),
                               label: Text(
                                   MediaQuery.of(context).size.width > 860
                                       ? 'Filter'
                                       : ''),
-                              style: OutlinedButton.styleFrom(
+                              style: ElevatedButton.styleFrom(
                                 foregroundColor: reportsProvider.isFilter
                                     ? Colors.white
                                     : AppColors.primaryBlue,
                                 backgroundColor: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
+                                    ? AppColors.primaryBlue
                                     : Colors.white,
-                                side: BorderSide(
-                                    color: reportsProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : AppColors.primaryBlue),
+                                elevation: 0,
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
                                   vertical: 0,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
+                                  side: BorderSide(color: AppColors.primaryBlue),
                                 ),
                               ),
                             ),
@@ -419,8 +423,8 @@ class _UpcomingWarrentyReportScreen
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -434,16 +438,6 @@ class _UpcomingWarrentyReportScreen
                                 reportsProvider
                                     .getSearchUpcomingWarrantyReport(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
@@ -592,7 +586,30 @@ class _UpcomingWarrentyReportScreen
                               ),
                               // Data Rows
                               Expanded(
-                                child: ListView.builder(
+                                child: reportsProvider
+                                        .upcomingWarrantyReport.isEmpty
+                                    ? Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const SizedBox(height: 80),
+                                            Icon(Icons.search_off_outlined,
+                                                size: 80,
+                                                color: Colors.grey[300]),
+                                            const SizedBox(height: 16),
+                                            Text(
+                                              'No upcoming warranty reports found',
+                                              style: TextStyle(
+                                                fontSize: 16,
+                                                color: Colors.grey[600],
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      )
+                                    : ListView.builder(
                                   shrinkWrap: true,
                                   physics:
                                       const AlwaysScrollableScrollPhysics(),
@@ -677,7 +694,27 @@ class _UpcomingWarrentyReportScreen
                     ),
                   )
                 : Expanded(
-                    child: ListView.separated(
+                    child: reportsProvider.upcomingWarrantyReport.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const SizedBox(height: 80),
+                                Icon(Icons.search_off_outlined,
+                                    size: 80, color: Colors.grey[300]),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No upcoming warranty reports found',
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.separated(
                       separatorBuilder: (context, index) =>
                           Divider(height: 2, color: AppColors.grey),
                       itemCount: reportsProvider.upcomingWarrantyReport.length,

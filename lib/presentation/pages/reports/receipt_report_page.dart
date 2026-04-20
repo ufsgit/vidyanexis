@@ -11,6 +11,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart'
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+
 class ReceiptReportPage extends StatefulWidget {
   const ReceiptReportPage({super.key});
 
@@ -169,34 +171,12 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
       ),
       child: Row(
         children: [
-          GestureDetector(
+          CommonReportDateFilter(
+            fromDate: provider.fromDate?.toString(),
+            toDate: provider.toDate?.toString(),
+            formattedFromDate: provider.formattedFromDate,
+            formattedToDate: provider.formattedToDate,
             onTap: () => onClickTopButton(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.primaryBlue),
-              ),
-              child: Row(
-                children: [
-                  if (provider.fromDate == null && provider.toDate == null)
-                    const Text('Date: All'),
-                  if (provider.fromDate != null && provider.toDate != null)
-                    Text(
-                      'Date: ${provider.formattedFromDate} - ${provider.formattedToDate}',
-                    ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Icon(
-                    Icons.arrow_drop_down_outlined,
-                    color: Colors.black45,
-                    size: 20,
-                  ),
-                ],
-              ),
-            ),
           ),
           const SizedBox(width: 16),
           Container(
@@ -280,24 +260,14 @@ class _ReceiptReportPageState extends State<ReceiptReportPage> {
             child: const Text('Apply'),
           ),
           const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () {
+          CommonReportResetButton(
+            onReset: () {
               provider.setSearch('');
               searchController.clear();
               customerFilterController.clear();
               provider.selectDateFilterOption(null);
               provider.getReceiptReport(context);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: AppColors.textRed,
-              side: BorderSide(color: AppColors.textRed),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            child: const Text('Reset'),
           ),
         ],
       ),

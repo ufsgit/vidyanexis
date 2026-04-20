@@ -8,6 +8,8 @@ import 'package:vidyanexis/controller/payment_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+
 class UpcomingPaymentReportPage extends StatefulWidget {
   const UpcomingPaymentReportPage({super.key});
 
@@ -99,12 +101,18 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
                 icon: const Icon(Icons.filter_list, size: 18),
                 label: const Text('Filter'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  foregroundColor: Colors.white,
+                  foregroundColor: provider.isFilter
+                      ? Colors.white
+                      : AppColors.primaryBlue,
+                  backgroundColor: provider.isFilter
+                      ? AppColors.primaryBlue
+                      : Colors.white,
+                  elevation: 0,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: AppColors.primaryBlue),
                   ),
                 ),
               ),
@@ -118,7 +126,25 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
         _buildWebTableHeader(),
         Expanded(
           child: provider.upcomingPaymentReportList.isEmpty
-              ? const Center(child: Text('No data found'))
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 80),
+                      Icon(Icons.search_off_outlined,
+                          size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No upcoming payment reports found',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -187,26 +213,15 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
             child: const Text('Apply'),
           ),
           const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () {
+          CommonReportResetButton(
+            onReset: () {
               provider.setSearch('');
               searchController.clear();
-              // customerFilterController.clear();
               provider.selectedCustomerId = null;
               provider.selectedCustomerName = null;
               provider.selectDateFilterOption(null);
               provider.getUpcomingPaymentReport(context);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: AppColors.textRed,
-              side: BorderSide(color: AppColors.textRed),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            child: const Text('Reset'),
           ),
         ],
       ),
@@ -299,7 +314,24 @@ class _UpcomingPaymentReportPageState extends State<UpcomingPaymentReportPage> {
       return const Center(child: CircularProgressIndicator());
     }
     if (provider.upcomingPaymentReportList.isEmpty) {
-      return const Center(child: Text('No data found'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 80),
+            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              'No upcoming payment reports found',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
     }
     return Container(
         color: Colors.grey[50],

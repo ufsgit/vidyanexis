@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/lead_status_report_provider.dart';
 import 'package:vidyanexis/controller/models/lead_status_report_model.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
 class LeadStatusReportScreen extends StatefulWidget {
@@ -228,51 +229,21 @@ class _LeadStatusReportScreenState extends State<LeadStatusReportScreen> {
             padding: const EdgeInsets.only(top: 16.0),
             child: Row(
               children: [
-                GestureDetector(
+                CommonReportDateFilter(
+                  fromDate: provider.fromDate?.toString(),
+                  toDate: provider.toDate?.toString(),
+                  formattedFromDate: provider.formattedFromDate,
+                  formattedToDate: provider.formattedToDate,
                   onTap: () => onClickTopButton(context),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(
-                          color: provider.fromDate != null ||
-                                  provider.toDate != null
-                              ? AppColors.primaryBlue
-                              : Colors.grey[300]!),
-                    ),
-                    child: Row(
-                      children: [
-                        if (provider.fromDate == null &&
-                            provider.toDate == null)
-                          const Text('Date: All'),
-                        if (provider.fromDate != null &&
-                            provider.toDate != null)
-                          Text(
-                              'Date : ${provider.formattedFromDate} - ${provider.formattedToDate}'),
-                        const Icon(Icons.arrow_drop_down,
-                            color: Colors.black45, size: 20),
-                      ],
-                    ),
-                  ),
                 ),
                 const Spacer(),
-                if (provider.fromDate != null || provider.toDate != null)
-                  ElevatedButton(
-                    onPressed: () {
-                      provider.selectDateFilterOption(null);
-                      provider.fetchReportData(context);
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      foregroundColor: AppColors.textRed,
-                      side: BorderSide(color: AppColors.textRed),
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 12),
-                    ),
-                    child: const Text('Reset'),
-                  ),
+                CommonReportResetButton(
+                  onReset: () {
+                    provider.selectDateFilterOption(null);
+                    provider.fetchReportData(context);
+                  },
+                  label: 'Reset',
+                ),
               ],
             ),
           ),

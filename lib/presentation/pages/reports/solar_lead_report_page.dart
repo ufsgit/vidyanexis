@@ -7,6 +7,8 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/solar_lead_report_provider.dart';
 
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+
 class SolarLeadReportPage extends StatefulWidget {
   const SolarLeadReportPage({super.key});
 
@@ -192,25 +194,26 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
             ),
           ),
           const SizedBox(width: 16),
-          OutlinedButton.icon(
+          ElevatedButton.icon(
             onPressed: () {
               provider.toggleFilter();
             },
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list, size: 18),
             label:
                 Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-            style: OutlinedButton.styleFrom(
+            style: ElevatedButton.styleFrom(
               foregroundColor:
                   provider.isFilter ? Colors.white : AppColors.primaryBlue,
               backgroundColor:
-                  provider.isFilter ? const Color(0xFF5499D9) : Colors.white,
-              side: BorderSide(
-                  color: provider.isFilter
-                      ? const Color(0xFF5499D9)
-                      : AppColors.primaryBlue),
+                  provider.isFilter ? AppColors.primaryBlue : Colors.white,
+              elevation: 0,
               padding: const EdgeInsets.symmetric(
                 horizontal: 16,
                 vertical: 12,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(color: AppColors.primaryBlue),
               ),
             ),
           ),
@@ -378,22 +381,12 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
               provider.selectedStatus != 0 ||
               provider.selectedUser != 0 ||
               provider.Search.isNotEmpty)
-            ElevatedButton(
-              onPressed: () {
+            CommonReportResetButton(
+              onReset: () {
                 provider.removeStatus();
                 searchController.clear();
                 provider.getSolarLeadReport(context, '', '', '', '', '');
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: AppColors.textRed,
-                side: BorderSide(color: AppColors.textRed),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-              ),
-              child: const Text('Reset'),
             ),
         ],
       ),
@@ -604,14 +597,26 @@ class _SolarLeadReportPageState extends State<SolarLeadReportPage> {
                     const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const SizedBox(height: 40),
             Center(
-              child: Text(
-                title.contains('Conversion')
-                    ? 'No converted leads found for the selected period'
-                    : title.contains('Cost')
-                        ? 'No project cost data available for converted leads'
-                        : 'No data available',
-                textAlign: TextAlign.center,
-                style: const TextStyle(color: Colors.grey, fontSize: 16),
+              child: Column(
+                children: [
+                   const SizedBox(height: 20),
+                   Icon(Icons.search_off_outlined,
+                      size: 48, color: Colors.grey[300]),
+                  const SizedBox(height: 12),
+                  Text(
+                    title.contains('Conversion')
+                        ? 'No converted leads found for the selected period'
+                        : title.contains('Cost')
+                            ? 'No project cost data available'
+                            : 'No data found for this range',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: Colors.grey[500],
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
             const SizedBox(height: 40),

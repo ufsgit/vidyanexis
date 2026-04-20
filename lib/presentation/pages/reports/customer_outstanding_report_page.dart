@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class CustomerOutstandingReportPage extends StatefulWidget {
   static String route = '/customer_outstanding_report';
@@ -151,16 +152,17 @@ class _CustomerOutstandingReportPageState extends State<CustomerOutstandingRepor
                   const SizedBox(height: 20),
                   Row(
                     children: [
-                      _buildFilterItem(
-                        context,
-                        'Date Range',
-                        '${provider.formattedFromDate} - ${provider.formattedToDate}',
+                      CommonReportDateFilter(
+                        fromDate: provider.fromDate?.toString(),
+                        toDate: provider.toDate?.toString(),
+                        formattedFromDate: provider.formattedFromDate,
+                        formattedToDate: provider.formattedToDate,
                         onTap: () => _onClickDateRange(context),
                       ),
                       const Spacer(),
-                      TextButton(
-                        onPressed: () => provider.resetFilters(context),
-                        child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+                      CommonReportResetButton(
+                        onReset: () => provider.resetFilters(context),
+                        label: 'Clear All',
                       ),
                     ],
                   ),
