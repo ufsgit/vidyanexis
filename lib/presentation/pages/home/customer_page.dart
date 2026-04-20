@@ -657,87 +657,6 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       },
                                                       menuChildren: [
                                                         if (settingsProvider
-                                                                    .menuIsEditMap[
-                                                                4] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'edit',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .edit,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .blue),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Edit Customer'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsSaveMap[
-                                                                16] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'quotation',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .request_quote,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .orange),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Quotation'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
-                                                                    .menuIsSaveMap[
-                                                                19] ==
-                                                            1)
-                                                          (onHover) =>
-                                                              MenuItemButton(
-                                                                onPressed: () =>
-                                                                    _handleLeadAction(
-                                                                        'document',
-                                                                        lead),
-                                                                child: Row(
-                                                                  children: [
-                                                                    Icon(
-                                                                        Icons
-                                                                            .description,
-                                                                        size:
-                                                                            18,
-                                                                        color: Colors
-                                                                            .purple),
-                                                                    const SizedBox(
-                                                                        width:
-                                                                            8),
-                                                                    const Text(
-                                                                        'Document'),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                        if (settingsProvider
                                                                     .menuIsSaveMap[
                                                                 13] ==
                                                             1)
@@ -807,6 +726,87 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                 }).toList(),
                                                               ),
                                                         if (settingsProvider
+                                                                    .menuIsSaveMap[
+                                                                16] ==
+                                                            1)
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'quotation',
+                                                                        lead),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .request_quote,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .orange),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    const Text(
+                                                                        'Quotation'),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                        if (settingsProvider
+                                                                    .menuIsSaveMap[
+                                                                19] ==
+                                                            1)
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'document',
+                                                                        lead),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .description,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .purple),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    const Text(
+                                                                        'Document'),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                        if (settingsProvider
+                                                                    .menuIsEditMap[
+                                                                4] ==
+                                                            1)
+                                                          (onHover) =>
+                                                              MenuItemButton(
+                                                                onPressed: () =>
+                                                                    _handleLeadAction(
+                                                                        'edit',
+                                                                        lead),
+                                                                child: Row(
+                                                                  children: [
+                                                                    Icon(
+                                                                        Icons
+                                                                            .edit,
+                                                                        size:
+                                                                            18,
+                                                                        color: Colors
+                                                                            .blue),
+                                                                    const SizedBox(
+                                                                        width:
+                                                                            8),
+                                                                    const Text(
+                                                                        'Edit Customer'),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                        if (settingsProvider
                                                                     .menuIsDeleteMap[
                                                                 4] ==
                                                             1)
@@ -833,6 +833,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                                                   ],
                                                                 ),
                                                               ),
+
                                                       ],
                                                     ),
                                                   ],
