@@ -2070,6 +2070,7 @@ class _tasksPageReportState extends State<TaskPage> {
                   backgroundColor: AppColors.darkGreen,
                   onPressed: () {
                     reportsProvider.setFilterState(false);
+                    searchProvider.stopSearch();
                     reportsProvider.goToPage(1);
                     reportsProvider.searchTaskByCustomer(context,
                         isShowLoader: false);

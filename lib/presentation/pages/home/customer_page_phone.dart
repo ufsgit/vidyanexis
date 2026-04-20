@@ -162,10 +162,11 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                   heroTag: 'apply_customer_filter_fab',
                   onPressed: () {
                     customerProvider.setSearchCriteria(
-                      customerProvider.search,
+                      searchController.text,
                       customerProvider.fromDateS,
                       customerProvider.toDateS,
                     );
+                    searchProvider.stopSearch();
                     customerProvider.getSearchCustomers(context);
                     customerProvider.toggleFilter();
                   },
@@ -483,7 +484,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                           leadProvider.setSearchCriteria(
-                            leadProvider.search,
+                            searchController.text,
                             fromDate,
                             toDate,
                           );
@@ -519,7 +520,7 @@ class _CustomerPagePhoneState extends State<CustomerPagePhone> {
                           print(
                               'Selected Status: $status, Selected From Date: $fromDate,Selected To Date: $toDate');
                           leadProvider.setSearchCriteria(
-                            leadProvider.search,
+                            searchController.text,
                             fromDate,
                             toDate,
                           );

@@ -577,6 +577,7 @@ class _LeadPagePhoneState extends State<LeadPagePhone> {
                       leadId: leadIdController.text,
                     );
                     leadProvider.getSearchLeads(context);
+                    searchProvider.stopSearch();
                     leadProvider.setFilter(false);
                   },
                   backgroundColor: AppColors.darkGreen,
