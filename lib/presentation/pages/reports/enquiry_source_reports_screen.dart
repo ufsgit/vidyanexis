@@ -9,6 +9,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class EnquirySourceReportsScreen extends StatefulWidget {
   static const String route = '/enquirySourceReport/';
@@ -172,29 +173,29 @@ class _EnquirySourceReportsScreenState
                     ),
                   ),
                   const SizedBox(width: 16),
-                  OutlinedButton.icon(
+                  ElevatedButton.icon(
                     onPressed: () {
                       reportsProvider.toggleFilter();
-                      print(reportsProvider.isFilter);
                     },
-                    icon: const Icon(Icons.filter_list),
+                    icon: const Icon(Icons.filter_list, size: 18),
                     label: Text(MediaQuery.of(context).size.width > 860
                         ? 'Filter'
                         : ''),
-                    style: OutlinedButton.styleFrom(
+                    style: ElevatedButton.styleFrom(
                       foregroundColor: reportsProvider.isFilter
                           ? Colors.white
-                          : AppColors.primaryBlue, // Change foreground color
+                          : AppColors.primaryBlue,
                       backgroundColor: reportsProvider.isFilter
-                          ? const Color(0xFF5499D9)
-                          : Colors.white, // Change background color
-                      side: BorderSide(
-                          color: reportsProvider.isFilter
-                              ? const Color(0xFF5499D9)
-                              : AppColors.primaryBlue), // Change border color
+                          ? AppColors.primaryBlue
+                          : Colors.white,
+                      elevation: 0,
                       padding: const EdgeInsets.symmetric(
                         horizontal: 16,
                         vertical: 12,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        side: BorderSide(color: AppColors.primaryBlue),
                       ),
                     ),
                   ),
@@ -254,7 +255,7 @@ class _EnquirySourceReportsScreenState
                             color: reportsProvider.selectedStatus != null &&
                                     reportsProvider.selectedStatus != 0
                                 ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
+                                : AppColors.primaryBlue),
                       ),
                       child: Row(
                         children: [
@@ -315,42 +316,12 @@ class _EnquirySourceReportsScreenState
                     const SizedBox(
                       width: 10,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        onClickTopButton(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: reportsProvider.fromDate != null ||
-                                      reportsProvider.toDate != null
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
-                        ),
-                        child: Row(
-                          children: [
-                            if (reportsProvider.fromDate == null &&
-                                reportsProvider.toDate == null)
-                              const Text('Entry Date: All'),
-                            if (reportsProvider.fromDate != null &&
-                                reportsProvider.toDate != null)
-                              Text(
-                                  'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_outlined,
-                              color: Colors.black45,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
+                    CommonReportDateFilter(
+                      fromDate: reportsProvider.fromDate?.toString(),
+                      toDate: reportsProvider.toDate?.toString(),
+                      formattedFromDate: reportsProvider.formattedFromDate,
+                      formattedToDate: reportsProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
                     ),
                     // const SizedBox(
                     //   width: 10,
@@ -470,8 +441,8 @@ class _EnquirySourceReportsScreenState
                         (reportsProvider.selectedUser != null &&
                             reportsProvider.selectedUser != 0) ||
                         reportsProvider.Search.isNotEmpty)
-                      ElevatedButton(
-                        onPressed: () {
+                      CommonReportResetButton(
+                        onReset: () {
                           reportsProvider.selectDateFilterOption(null);
                           reportsProvider.removeStatus();
                           searchController.clear();
@@ -485,16 +456,6 @@ class _EnquirySourceReportsScreenState
                           reportsProvider.getSearchTaskReport(
                               widget.userId, context);
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text('Reset'),
                       ),
                   ],
                 ),
@@ -570,7 +531,28 @@ class _EnquirySourceReportsScreenState
                         ),
                         // Data Rows
                         Expanded(
-                          child: ListView.builder(
+                          child: reportsProvider.taskReport.isEmpty
+                              ? Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      const SizedBox(height: 80),
+                                      Icon(Icons.search_off_outlined,
+                                          size: 80,
+                                          color: Colors.grey[300]),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No enquiry reports found',
+                                        style: TextStyle(
+                                          fontSize: 16,
+                                          color: Colors.grey[600],
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              : ListView.builder(
                             shrinkWrap:
                                 true, // To avoid scrolling issues when inside a parent widget
                             physics: const AlwaysScrollableScrollPhysics(),

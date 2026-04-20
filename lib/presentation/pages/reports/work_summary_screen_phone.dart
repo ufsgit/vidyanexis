@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen_phone.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class WorkSummaryPhone extends StatefulWidget {
   const WorkSummaryPhone({super.key});
@@ -138,43 +139,12 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                 runSpacing: 10, // vertical spacing between lines
                 crossAxisAlignment: WrapCrossAlignment.center,
                 children: [
-                  GestureDetector(
-                    onTap: () {
-                      onClickTopButton(context);
-                    },
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 20, vertical: 1.5),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(
-                          color: reportsProvider.fromDate != null ||
-                                  reportsProvider.toDate != null
-                              ? AppColors.primaryBlue
-                              : Colors.grey[300]!,
-                        ),
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize
-                            .min, // Add this to prevent Row from expanding
-                        children: [
-                          if (reportsProvider.fromDate == null &&
-                              reportsProvider.toDate == null)
-                            const Text('Date: All'),
-                          if (reportsProvider.fromDate != null &&
-                              reportsProvider.toDate != null)
-                            Text(
-                                'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                          const SizedBox(width: 10),
-                          const Icon(
-                            Icons.arrow_drop_down_outlined,
-                            color: Colors.black45,
-                            size: 20,
-                          ),
-                        ],
-                      ),
-                    ),
+                  CommonReportDateFilter(
+                    fromDate: reportsProvider.fromDate?.toString(),
+                    toDate: reportsProvider.toDate?.toString(),
+                    formattedFromDate: reportsProvider.formattedFromDate,
+                    formattedToDate: reportsProvider.formattedToDate,
+                    onTap: () => onClickTopButton(context),
                   ),
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -263,31 +233,22 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                       (reportsProvider.selectedUser != null &&
                           reportsProvider.selectedUser != 0) ||
                       reportsProvider.Search.isNotEmpty)
-                    ElevatedButton(
-                      onPressed: () {
-                        reportsProvider.selectDateFilterOption(null);
-                        reportsProvider.removeStatus();
-                        searchController.clear();
-                        reportsProvider.setTaskSearchCriteria(
-                          '',
-                          '',
-                          '',
-                          '',
-                          '',
-                        );
-                        reportsProvider.getSearchWorkSummary(context);
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.white,
-                        foregroundColor: AppColors.textRed,
-                        side: BorderSide(color: AppColors.textRed),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
-                      ),
-                      child: const Text('Reset'),
-                    ),
+                  CommonReportResetButton(
+                    onReset: () {
+                      reportsProvider.selectDateFilterOption(null);
+                      reportsProvider.removeStatus();
+                      searchController.clear();
+                      reportsProvider.setTaskSearchCriteria(
+                        '',
+                        '',
+                        '',
+                        '',
+                        '',
+                      );
+                      reportsProvider.getSearchWorkSummary(context);
+                    },
+                    label: 'Reset',
+                  ),
                 ],
               ),
             ),
@@ -546,8 +507,8 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                     SizedBox(
                       width: double.infinity,
                       height: 40,
-                      child: TextButton(
-                        onPressed: () {
+                      child: CommonReportResetButton(
+                        onReset: () {
                           Navigator.pop(context);
                           reportsProvider.selectDateFilterOption(null);
                           String status =
@@ -567,17 +528,7 @@ class _WorkSummaryPhoneState extends State<WorkSummaryPhone> {
                           );
                           reportsProvider.getSearchWorkSummary(context);
                         },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textRed.withOpacity(0.1),
-                          foregroundColor: AppColors.textRed,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text(
-                          'Clear',
-                        ),
+                        label: 'Clear',
                       ),
                     ),
                   ],

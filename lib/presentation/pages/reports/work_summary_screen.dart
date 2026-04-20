@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/work_summary_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/work_report_screen.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/reports/work_summary_graph_widget.dart';
 
 class WorkSummaryScreen extends StatefulWidget {
@@ -85,32 +86,31 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                         runSpacing: 16,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          OutlinedButton.icon(
+                          ElevatedButton.icon(
                             onPressed: () {
                               reportsProvider.toggleFilter();
-                              print(reportsProvider.isFilter);
                             },
-                            icon: const Icon(Icons.filter_list),
+                            icon: const Icon(Icons.filter_list, size: 18),
                             label: Text(
                               MediaQuery.of(context).size.width > 860
                                   ? 'Filter'
                                   : '',
                             ),
-                            style: OutlinedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(
                               foregroundColor: reportsProvider.isFilter
                                   ? Colors.white
                                   : AppColors.primaryBlue,
                               backgroundColor: reportsProvider.isFilter
-                                  ? const Color(0xFF5499D9)
+                                  ? AppColors.primaryBlue
                                   : Colors.white,
-                              side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors.primaryBlue,
-                              ),
+                              elevation: 0,
                               padding: const EdgeInsets.symmetric(
                                 horizontal: 16,
                                 vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                side: BorderSide(color: AppColors.primaryBlue),
                               ),
                             ),
                           ),
@@ -135,35 +135,22 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                               ),
                               Flexible(child: Container()),
                               const SizedBox(width: 16),
-                              OutlinedButton.icon(
-                                onPressed: () {
-                                  reportsProvider.toggleFilter();
-                                  print(reportsProvider.isFilter);
-                                },
-                                icon: const Icon(Icons.filter_list),
-                                label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : '',
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: reportsProvider.isFilter
-                                      ? Colors.white
-                                      : AppColors.primaryBlue,
-                                  backgroundColor: reportsProvider.isFilter
-                                      ? const Color(0xFF5499D9)
-                                      : Colors.white,
-                                  side: BorderSide(
-                                    color: reportsProvider.isFilter
-                                        ? const Color(0xFF5499D9)
+                                ElevatedButton.icon(
+                                  onPressed: () {
+                                    reportsProvider.toggleFilter();
+                                  },
+                                  icon: const Icon(Icons.filter_list, size: 18),
+                                  label: Text(
+                                    MediaQuery.of(context).size.width > 860
+                                        ? 'Filter'
+                                        : '',
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    foregroundColor: reportsProvider.isFilter
+                                        ? Colors.white
                                         : AppColors.primaryBlue,
                                   ),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
                                 ),
-                              ),
                               const SizedBox(width: 16),
                             ],
                           ),
@@ -215,43 +202,13 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                         runSpacing: 10, // vertical spacing between lines
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                  color: reportsProvider.fromDate != null ||
-                                          reportsProvider.toDate != null
-                                      ? AppColors.primaryBlue
-                                      : Colors.grey[300]!,
-                                ),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize
-                                    .min, // Add this to prevent Row from expanding
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(width: 10),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -350,8 +307,8 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -364,16 +321,6 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                 );
                                 reportsProvider.getSearchWorkSummary(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
@@ -387,42 +334,13 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                       ),
                       child: Row(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
@@ -636,7 +554,29 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                   ),
                                   // Data Rows
                                   Expanded(
-                                    child: ListView.builder(
+                                    child: reportsProvider.taskReport.isEmpty
+                                        ? Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const SizedBox(height: 80),
+                                                Icon(Icons.search_off_outlined,
+                                                    size: 80,
+                                                    color: Colors.grey[300]),
+                                                const SizedBox(height: 16),
+                                                Text(
+                                                  'No reports found for the selected range',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color(0xFF607185),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : ListView.builder(
                                       shrinkWrap: true,
                                       physics:
                                           const AlwaysScrollableScrollPhysics(),
@@ -849,7 +789,29 @@ class _WorkSummaryScreenState extends State<WorkSummaryScreen> {
                                   ),
                                   // Data Rows
                                   Expanded(
-                                    child: ListView.builder(
+                                    child: reportsProvider.taskReport.isEmpty
+                                        ? Center(
+                                            child: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
+                                              children: [
+                                                const SizedBox(height: 80),
+                                                Icon(Icons.search_off_outlined,
+                                                    size: 80,
+                                                    color: Colors.grey[300]),
+                                                const SizedBox(height: 16),
+                                                Text(
+                                                  'No reports found for the selected range',
+                                                  style: const TextStyle(
+                                                    fontSize: 16,
+                                                    color: Color(0xFF607185),
+                                                    fontWeight: FontWeight.w500,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          )
+                                        : ListView.builder(
                                       shrinkWrap: true,
                                       physics:
                                           const AlwaysScrollableScrollPhysics(),

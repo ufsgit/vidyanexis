@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
+import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/controller/commission_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
 class CommissionReportMobile extends StatefulWidget {
@@ -96,30 +98,31 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _showDateFilterDialog(context),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.calendar_month, size: 20),
-                                const SizedBox(width: 8),
-                                Text(
-                                  provider.fromDate != null
-                                      ? '${provider.formattedFromDate} to ${provider.formattedToDate}'
-                                      : 'Select Date Range',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
+                    CommonReportDateFilter(
+                      fromDate: provider.fromDate?.toString(),
+                      toDate: provider.toDate?.toString(),
+                      formattedFromDate: provider.formattedFromDate,
+                      formattedToDate: provider.formattedToDate,
+                      onTap: () => _showDateFilterDialog(context),
+                    ),
+                    const SizedBox(width: 8),
+                    CommonReportResetButton(
+                      onReset: () => provider.resetFilters(context),
+                      label: 'Reset',
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        foregroundColor: AppColors.textRed,
+                        elevation: 0,
+                        side: BorderSide(color: AppColors.textRed),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
                         ),
                       ),
+                    ),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -183,7 +186,25 @@ class _CommissionReportMobileState extends State<CommissionReportMobile> {
             ),
           Expanded(
             child: provider.commissionReport.isEmpty
-                ? const Center(child: Text('No data found'))
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const SizedBox(height: 80),
+                        Icon(Icons.search_off_outlined,
+                            size: 80, color: Colors.grey[300]),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No commission reports found',
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  )
                 : Column(
                     children: [
                       Expanded(

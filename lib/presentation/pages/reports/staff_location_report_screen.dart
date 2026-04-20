@@ -98,11 +98,14 @@ class _EmployeeLocationReportScreenState
                                       getData();
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.textGrey4,
+                                      backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 12,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
                                     child: Text(searchController.text.isNotEmpty
@@ -178,11 +181,14 @@ class _EmployeeLocationReportScreenState
                                       getData();
                                     },
                                     style: ElevatedButton.styleFrom(
-                                      backgroundColor: AppColors.textGrey4,
+                                      backgroundColor: AppColors.primaryBlue,
                                       foregroundColor: Colors.white,
                                       padding: const EdgeInsets.symmetric(
                                         horizontal: 16,
                                         vertical: 0,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
                                     ),
                                     child: Text(searchController.text.isNotEmpty
@@ -315,41 +321,27 @@ class _EmployeeLocationReportScreenState
 
                                         locationDataList = snapshot.data ?? [];
 
-                                        if (locationDataList.isEmpty) {
                                           return Center(
                                             child: Column(
-                                              mainAxisSize: MainAxisSize.min,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.center,
                                               children: [
-                                                const SizedBox(height: 30),
-                                                Icon(Icons.category_outlined,
-                                                    size: 60,
-                                                    color: AppColors.textGrey1
-                                                        .withOpacity(0.3)),
+                                                const SizedBox(height: 80),
+                                                Icon(Icons.search_off_outlined,
+                                                    size: 80,
+                                                    color: Colors.grey[300]),
                                                 const SizedBox(height: 16),
                                                 Text(
-                                                  'No data found',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
+                                                  'No location reports found',
+                                                  style: TextStyle(
                                                     fontSize: 16,
+                                                    color: Colors.grey[600],
                                                     fontWeight: FontWeight.w500,
-                                                    color: AppColors.textGrey1,
-                                                  ),
-                                                ),
-                                                const SizedBox(height: 8),
-                                                Text(
-                                                  'Try refreshing',
-                                                  style: GoogleFonts
-                                                      .plusJakartaSans(
-                                                    fontSize: 14,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppColors.textGrey1
-                                                        .withOpacity(0.7),
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           );
-                                        }
 
                                         return ListView.builder(
                                           shrinkWrap:
@@ -516,30 +508,18 @@ class _EmployeeLocationReportScreenState
                               if (locationDataList.isEmpty) {
                                 return Center(
                                   child: Column(
-                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      const SizedBox(height: 30),
-                                      Icon(Icons.category_outlined,
-                                          size: 60,
-                                          color: AppColors.textGrey1
-                                              .withOpacity(0.3)),
+                                      const SizedBox(height: 80),
+                                      Icon(Icons.search_off_outlined,
+                                          size: 80, color: Colors.grey[300]),
                                       const SizedBox(height: 16),
                                       Text(
-                                        'No data found',
-                                        style: GoogleFonts.plusJakartaSans(
+                                        'No location reports found',
+                                        style: TextStyle(
                                           fontSize: 16,
+                                          color: Colors.grey[600],
                                           fontWeight: FontWeight.w500,
-                                          color: AppColors.textGrey1,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 8),
-                                      Text(
-                                        'Try refreshing',
-                                        style: GoogleFonts.plusJakartaSans(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w400,
-                                          color: AppColors.textGrey1
-                                              .withOpacity(0.7),
                                         ),
                                       ),
                                     ],

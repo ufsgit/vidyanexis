@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class FollowupReportMobile extends StatefulWidget {
@@ -225,42 +226,12 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                     const SizedBox(
                       width: 10,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        onClickTopButton(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: followUpReportsProvider.fromDate != null ||
-                                      followUpReportsProvider.toDate != null
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
-                        ),
-                        child: Row(
-                          children: [
-                            if (followUpReportsProvider.fromDate == null &&
-                                followUpReportsProvider.toDate == null)
-                              const Text('Date: All'),
-                            if (followUpReportsProvider.fromDate != null &&
-                                followUpReportsProvider.toDate != null)
-                              Text(
-                                  'Date : ${followUpReportsProvider.formattedFromDate} - ${followUpReportsProvider.formattedToDate}'),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_outlined,
-                              color: Colors.black45,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
+                    CommonReportDateFilter(
+                      fromDate: followUpReportsProvider.fromDate?.toString(),
+                      toDate: followUpReportsProvider.toDate?.toString(),
+                      formattedFromDate: followUpReportsProvider.formattedFromDate,
+                      formattedToDate: followUpReportsProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
                     ),
                     const SizedBox(
                       width: 10,
@@ -347,29 +318,17 @@ class _FollowupReportMobile extends State<FollowupReportMobile> {
                     const SizedBox(
                       width: 10,
                     ),
-                    if (followUpReportsProvider.fromDate != null ||
-                        followUpReportsProvider.toDate != null ||
-                        followUpReportsProvider.selectedStatus != null ||
-                        followUpReportsProvider.selectedUser != null)
-                      ElevatedButton(
-                        onPressed: () {
-                          followUpReportsProvider.selectDateFilterOption(null);
-                          followUpReportsProvider.removeStatus();
-                          followUpReportsProvider.setFollowupSearch(
-                              '', '', '', '', '');
-                          followUpReportsProvider.getFollowupReports(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          foregroundColor: AppColors.textRed,
-                          side: BorderSide(color: AppColors.textRed),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 12,
-                          ),
-                        ),
-                        child: const Text('Reset'),
-                      ),
+                    const SizedBox(width: 10),
+                    CommonReportResetButton(
+                      onReset: () {
+                        followUpReportsProvider.selectDateFilterOption(null);
+                        followUpReportsProvider.removeStatus();
+                        followUpReportsProvider.setFollowupSearch(
+                            '', '', '', '', '');
+                        followUpReportsProvider.getFollowupReports(context);
+                      },
+                      label: 'Reset',
+                    ),
                   ],
                 ),
               ),

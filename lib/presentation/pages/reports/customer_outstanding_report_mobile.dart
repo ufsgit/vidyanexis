@@ -3,6 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/controller/customer_outstanding_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
 class CustomerOutstandingReportMobile extends StatefulWidget {
@@ -83,30 +84,18 @@ class _CustomerOutstandingReportMobileState extends State<CustomerOutstandingRep
                 children: [
                   Row(
                     children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () => _showDateFilterDialog(context),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey[300]!),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Row(
-                              children: [
-                                const Icon(Icons.calendar_month, size: 20),
-                                const SizedBox(width: 8),
-                                Text(
-                                  provider.fromDate != null
-                                      ? '${provider.formattedFromDate} to ${provider.formattedToDate}'
-                                      : 'Select Date Range',
-                                  style: const TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
+                    CommonReportDateFilter(
+                      fromDate: provider.fromDate?.toString(),
+                      toDate: provider.toDate?.toString(),
+                      formattedFromDate: provider.formattedFromDate,
+                      formattedToDate: provider.formattedToDate,
+                      onTap: () => _showDateFilterDialog(context),
+                    ),
+                    const SizedBox(width: 8),
+                    CommonReportResetButton(
+                      onReset: () => provider.resetFilters(context),
+                      label: 'Reset',
+                    ),
                     ],
                   ),
                 ],

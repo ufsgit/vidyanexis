@@ -8,6 +8,7 @@ import 'package:vidyanexis/controller/balance_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 
 class BalanceReportPage extends StatefulWidget {
@@ -87,8 +88,25 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
             SliverToBoxAdapter(child: _buildWebFilter(provider)),
           SliverToBoxAdapter(child: _buildWebTableHeader()),
           if (provider.balanceReportList.isEmpty)
-            const SliverFillRemaining(
-              child: Center(child: Text('No data found')),
+            SliverFillRemaining(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.search_off_outlined,
+                        size: 80, color: Colors.grey[300]),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No balance reports found',
+                      style: GoogleFonts.plusJakartaSans(
+                        fontSize: 16,
+                        color: Colors.grey[600],
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             )
           else
             SliverList(
@@ -142,34 +160,49 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
                   horizontal: 16,
                   vertical: 4,
                 ),
-                suffixIcon: TextButton(
-                  onPressed: () {
-                    provider.setSearch(searchController.text);
-                    provider.getBalanceReport(context);
-                  },
-                  child: const Text('Search'),
+                suffixIcon: Padding(
+                  padding: const EdgeInsets.all(4.0),
+                  child: ElevatedButton(
+                    onPressed: () {
+                      provider.setSearch(searchController.text);
+                      provider.getBalanceReport(context);
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.textGrey4,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 0,
+                      ),
+                    ),
+                    child: Text(provider.search.isNotEmpty ? 'Cancel' : 'Search'),
+                  ),
                 ),
               ),
             ),
           ),
           const SizedBox(width: 16),
-          OutlinedButton.icon(
+          ElevatedButton.icon(
             onPressed: () {
               provider.toggleFilter();
             },
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.filter_list, size: 18),
             label:
                 Text(MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-            style: OutlinedButton.styleFrom(
+            style: ElevatedButton.styleFrom(
               foregroundColor:
                   provider.isFilter ? Colors.white : AppColors.primaryBlue,
               backgroundColor:
-                  provider.isFilter ? const Color(0xFF5499D9) : Colors.white,
-              side: BorderSide(
-                  color: provider.isFilter
-                      ? const Color(0xFF5499D9)
-                      : AppColors.primaryBlue),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  provider.isFilter ? AppColors.primaryBlue : Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+                side: BorderSide(color: AppColors.primaryBlue),
+              ),
             ),
           ),
           const SizedBox(width: 16),
@@ -202,34 +235,12 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
         ),
         child: Row(
           children: [
-            GestureDetector(
+            CommonReportDateFilter(
+              fromDate: provider.formattedDate, // provider uses a single date here
+              toDate: null,
+              formattedFromDate: provider.formattedDate,
+              formattedToDate: '',
               onTap: () => provider.selectDate(context),
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(20),
-                  border: Border.all(color: AppColors.primaryBlue),
-                ),
-                child: Row(
-                  children: [
-                    Text(
-                      'Date: ${provider.formattedDate}',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Icon(
-                      Icons.arrow_drop_down_outlined,
-                      color: Colors.black45,
-                      size: 20,
-                    ),
-                  ],
-                ),
-              ),
             ),
             const SizedBox(width: 16),
             ElevatedButton(
@@ -243,21 +254,14 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
               child: const Text('Apply'),
             ),
             const SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: () {
+            CommonReportResetButton(
+              onReset: () {
                 provider.setSearch('');
                 searchController.clear();
                 provider.setDate(DateTime.now());
                 provider.getBalanceReport(context);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: AppColors.textRed,
-                side: BorderSide(color: AppColors.textRed),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-              ),
-              child: const Text('Reset'),
+              label: 'Reset',
             ),
           ],
         ),
@@ -372,7 +376,23 @@ class _BalanceReportPageState extends State<BalanceReportPage> {
 
   Widget _buildMobileBody(BalanceReportProvider provider) {
     if (provider.balanceReportList.isEmpty) {
-      return const Center(child: Text('No data found'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              'No balance reports found',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
     }
     return Container(
       color: Colors.grey[50],

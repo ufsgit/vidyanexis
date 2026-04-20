@@ -12,6 +12,7 @@ import 'package:vidyanexis/controller/task_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_text_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/home/filter_chip_widget.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/utils/extensions.dart';
@@ -253,47 +254,12 @@ class _leadReportMobile extends State<LeadReportMobile> {
                         color: AppColors.textBlack,
                       ),
                       const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () {
-                          onClickTopButton(context);
-                        },
-                        child: Container(
-                          height: 32,
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFF3F4F6),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.symmetric(horizontal: 12),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: ConstrainedBox(
-                                    constraints:
-                                        const BoxConstraints(maxWidth: 300),
-                                    child: CustomText(
-                                      leadReportProvider.fromDate == null &&
-                                              leadReportProvider.toDate == null
-                                          ? 'Select Date'
-                                          : 'Date : ${leadReportProvider.formattedFromDate} - ${leadReportProvider.formattedToDate}',
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColors.textBlack,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 4),
-                                Icon(
-                                  Icons.keyboard_arrow_down,
-                                  color: AppColors.textGrey3,
-                                  size: 18,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
+                      CommonReportDateFilter(
+                        fromDate: leadReportProvider.fromDate?.toString(),
+                        toDate: leadReportProvider.toDate?.toString(),
+                        formattedFromDate: leadReportProvider.formattedFromDate,
+                        formattedToDate: leadReportProvider.formattedToDate,
+                        onTap: () => onClickTopButton(context),
                       ),
                       const SizedBox(height: 16),
                       CustomText(
@@ -412,22 +378,27 @@ class _leadReportMobile extends State<LeadReportMobile> {
                               leadReportProvider.selectedEnquirySource != 0))
                         SizedBox(
                           width: double.infinity,
-                          child: OutlinedButton(
-                            onPressed: () {
+                          child: CommonReportResetButton(
+                            label: 'Reset All Filters',
+                            onReset: () {
                               leadReportProvider.selectDateFilterOption(null);
                               leadReportProvider.removeStatus();
                               leadReportProvider.getSearchLeadReports(
                                   '', '', '', '', context);
                             },
-                            style: OutlinedButton.styleFrom(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
                               foregroundColor: AppColors.textRed,
+                              elevation: 0,
                               side: BorderSide(color: AppColors.textRed),
-                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
                               shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12),
+                                borderRadius: BorderRadius.circular(20),
                               ),
                             ),
-                            child: const Text('Reset All Filters'),
                           ),
                         ),
                       const SizedBox(height: 12),
@@ -445,28 +416,62 @@ class _leadReportMobile extends State<LeadReportMobile> {
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                const SizedBox(height: 100),
                                 Icon(Icons.search_off_outlined,
                                     size: 80, color: Colors.grey[300]),
                                 const SizedBox(height: 16),
                                 Text(
-                                  'No reports found for the selected range',
-                                  style: GoogleFonts.plusJakartaSans(
+                                  'No lead reports found',
+                                  style: TextStyle(
                                     fontSize: 16,
                                     color: Colors.grey[600],
                                     fontWeight: FontWeight.w500,
                                   ),
                                 ),
-                                const SizedBox(height: 16),
-                                TextButton(
-                                  onPressed: () {
-                                    leadReportProvider
-                                        .selectDateFilterOption(null);
-                                    leadReportProvider.removeStatus();
-                                    leadReportProvider.getSearchLeadReports(
-                                        '', '', '', '', context);
-                                  },
-                                  child: const Text('Clear All Filters'),
-                                ),
+                                const SizedBox(height: 24),
+                                if (leadReportProvider.fromDate != null ||
+                                    leadReportProvider.toDate != null ||
+                                    (leadReportProvider.selectedStatus !=
+                                            null &&
+                                        leadReportProvider.selectedStatus !=
+                                            0) ||
+                                    (leadReportProvider.selectedUser != null &&
+                                        leadReportProvider.selectedUser != 0) ||
+                                    (leadReportProvider.selectedEnquiryFor !=
+                                            null &&
+                                        leadReportProvider
+                                                .selectedEnquiryFor !=
+                                            0) ||
+                                    (leadReportProvider
+                                                .selectedEnquirySource !=
+                                            null &&
+                                        leadReportProvider
+                                                .selectedEnquirySource !=
+                                            0))
+                                  ElevatedButton(
+                                    onPressed: () {
+                                      leadReportProvider
+                                          .selectDateFilterOption(null);
+                                      leadReportProvider.removeStatus();
+                                      leadReportProvider.getSearchLeadReports(
+                                          '', '', '', '', context);
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.white,
+                                      foregroundColor: AppColors.primaryBlue,
+                                      elevation: 0,
+                                      side: BorderSide(
+                                          color: AppColors.primaryBlue),
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 24,
+                                        vertical: 12,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                    child: const Text('Clear All Filters'),
+                                  ),
                               ],
                             ),
                           )

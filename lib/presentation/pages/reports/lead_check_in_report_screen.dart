@@ -6,6 +6,7 @@ import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/controller/lead_check_in_report_provider.dart';
 import 'package:vidyanexis/presentation/pages/reports/lead_check_in_report_mobile.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class LeadCheckInReportScreen extends StatefulWidget {
   const LeadCheckInReportScreen({super.key});
@@ -167,33 +168,12 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
                   ],
                 ),
               ),
-              // Date Range From
-              SizedBox(
-                width: 160,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('From Date',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    _buildVisibleDatePicker(context, reportProvider, true),
-                  ],
-                ),
-              ),
-              // Date Range To
-              SizedBox(
-                width: 160,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text('To Date',
-                        style: TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    _buildVisibleDatePicker(context, reportProvider, false),
-                  ],
-                ),
+              CommonReportDateFilter(
+                fromDate: reportProvider.fromDate?.toString(),
+                toDate: reportProvider.toDate?.toString(),
+                formattedFromDate: reportProvider.fromDate != null ? DateFormat('dd MMM yyyy').format(reportProvider.fromDate!) : '',
+                formattedToDate: reportProvider.toDate != null ? DateFormat('dd MMM yyyy').format(reportProvider.toDate!) : '',
+                onTap: () => reportProvider.selectDate(context, true), // Note: The provider usually handles the range in the dialog, but here we can just trigger one of them or a combined one if the provider supports it.
               ),
               // Action Buttons
               _buildActionButtons(context, reportProvider),
@@ -328,13 +308,13 @@ class _LeadCheckInReportScreenState extends State<LeadCheckInReportScreen> {
           child: const Text('Show'),
         ),
         const SizedBox(width: 8),
-        TextButton(
-          onPressed: () {
+        CommonReportResetButton(
+          onReset: () {
             reportProvider.clearFilters();
             reportProvider.setLeadSearch('');
             reportProvider.fetchReports(context);
           },
-          child: const Text('Reset', style: TextStyle(color: Colors.red)),
+          label: 'Reset',
         ),
       ],
     );

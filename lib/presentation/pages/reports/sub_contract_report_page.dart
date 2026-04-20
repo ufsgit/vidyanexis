@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/sub_contract_report_provider.dart';
 import 'package:vidyanexis/controller/drop_down_provider.dart';
@@ -7,6 +8,7 @@ import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class SubContractReportPage extends StatefulWidget {
   const SubContractReportPage({super.key});
@@ -66,20 +68,30 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                       Container(
                         width: MediaQuery.of(context).size.width /
                             (MediaQuery.of(context).size.width > 860 ? 5 : 4),
-                        height: 38,
+                        height: 48,
                         decoration: BoxDecoration(
                           color: Colors.white,
                           borderRadius: BorderRadius.circular(30),
-                          border: Border.all(color: Colors.black, width: 1.5),
+                          border: Border.all(color: Colors.grey[300]!),
                         ),
                         child: TextField(
                           controller: searchController,
                           textAlignVertical: TextAlignVertical.center,
-                          decoration: const InputDecoration(
+                          decoration: InputDecoration(
                             hintText: 'Search here....',
+                            hintStyle: GoogleFonts.plusJakartaSans(
+                              color: Colors.grey[400],
+                              fontSize: 14,
+                            ),
+                            prefixIcon: Icon(
+                              Icons.search,
+                              color: Colors.grey[600],
+                              size: 20,
+                            ),
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.only(left: 16, right: 16, bottom: 11),
-                            suffixIcon: Icon(Icons.search, color: Colors.black),
+                            contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                            ),
                           ),
                           onSubmitted: (val) {
                             provider.setSearch(val);
@@ -88,20 +100,28 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                         ),
                       ),
                       const SizedBox(width: 16),
-                      OutlinedButton.icon(
+                      ElevatedButton.icon(
                         onPressed: () => provider.toggleFilter(),
-                        icon: const Icon(Icons.filter_list),
+                        icon: const Icon(Icons.filter_list, size: 18),
                         label: const Text('Filter'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: provider.isFilter ? Colors.white : AppColors.primaryBlue,
-                          backgroundColor: provider.isFilter ? const Color(0xFF5499D9) : Colors.white,
-                          side: BorderSide(
-                              color: provider.isFilter ? const Color(0xFF5499D9) : AppColors.primaryBlue),
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                        style: ElevatedButton.styleFrom(
+                          foregroundColor: provider.isFilter
+                              ? Colors.white
+                              : AppColors.primaryBlue,
+                          backgroundColor: provider.isFilter
+                              ? AppColors.primaryBlue
+                              : Colors.white,
+                          elevation: 0,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            side: BorderSide(color: AppColors.primaryBlue),
+                          ),
                         ),
                       ),
                       const SizedBox(width: 16),
-                      ElevatedButton(
+                      ElevatedButton.icon(
                         onPressed: () {
                           exportToExcel(
                             headers: [
@@ -125,14 +145,18 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                             fileName: 'Sub_Contract_Report',
                           );
                         },
+                        icon: const Icon(Icons.download, size: 18),
+                        label: const Text('Export',
+                            style: TextStyle(fontWeight: FontWeight.bold)),
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.appViolet,
+                          backgroundColor: AppColors.primaryBlue,
                           foregroundColor: Colors.white,
                           elevation: 0,
-                          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(25)),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 24, vertical: 15),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(25)),
                         ),
-                        child: const Text('Export to Excel', style: TextStyle(fontWeight: FontWeight.bold)),
                       ),
                     ],
                   ),
@@ -149,10 +173,11 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          _buildFilterItem(
-                            context,
-                            'Date Range',
-                            '${provider.formattedFromDate} - ${provider.formattedToDate}',
+                          CommonReportDateFilter(
+                            fromDate: provider.fromDate?.toString(),
+                            toDate: provider.toDate?.toString(),
+                            formattedFromDate: provider.formattedFromDate,
+                            formattedToDate: provider.formattedToDate,
                             onTap: () => _onClickDateRange(context),
                           ),
                           _buildDropDownFilter(
@@ -183,12 +208,25 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                               provider.getSubContractReport(context);
                             },
                           ),
-                          TextButton(
-                            onPressed: () {
+                          CommonReportResetButton(
+                            onReset: () {
                               searchController.clear();
                               provider.resetFilters(context);
                             },
-                            child: const Text('Clear All', style: TextStyle(color: Colors.red)),
+                            label: 'Reset',
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.white,
+                              foregroundColor: AppColors.textRed,
+                              elevation: 0,
+                              side: BorderSide(color: AppColors.textRed),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 16,
+                                vertical: 12,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(20),
+                              ),
+                            ),
                           ),
                         ],
                       ),
@@ -248,7 +286,29 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
                                     ),
                                     Expanded(
                                       child: provider.subContractReport.isEmpty
-                                          ? const Center(child: Text('No data found'))
+                                          ? Center(
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  const SizedBox(height: 80),
+                                                  Icon(
+                                                      Icons.search_off_outlined,
+                                                      size: 80,
+                                                      color: Colors.grey[300]),
+                                                  const SizedBox(height: 16),
+                                                  Text(
+                                                    'No sub contract reports found',
+                                                    style: TextStyle(
+                                                      fontSize: 16,
+                                                      color: Colors.grey[600],
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            )
                                           : ListView.separated(
                                               itemCount: provider.subContractReport.length,
                                               separatorBuilder: (context, index) => const Divider(height: 0, color: Colors.transparent),
@@ -426,7 +486,9 @@ class _SubContractReportPageState extends State<SubContractReportPage> {
       ),
       child: Row(
         children: [
-          Text('$label: ', style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+          Text('$label: ',
+              style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+          const SizedBox(width: 4),
           DropdownButton<int>(
             value: selectedValue == 0 ? null : (items.any((i) => i['id'] == selectedValue) ? selectedValue : null),
             hint: const Text('All', style: TextStyle(fontSize: 13)),

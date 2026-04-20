@@ -14,6 +14,7 @@ import 'package:vidyanexis/presentation/pages/home/customer_detail_page_mobile.d
 import 'package:vidyanexis/presentation/widgets/customer/complaints_details_page_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/extensions.dart';
 
 class ComplaintPageReportsMobile extends StatefulWidget {
@@ -149,7 +150,7 @@ class _ComplaintPageReportsMobileState
                               color: reportsProvider.selectedStatus != null &&
                                       reportsProvider.selectedStatus != 0
                                   ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
+                                  : AppColors.primaryBlue),
                         ),
                         child: Row(
                           children: [
@@ -215,42 +216,12 @@ class _ComplaintPageReportsMobileState
                       const SizedBox(
                         width: 10,
                       ),
-                      GestureDetector(
-                        onTap: () {
-                          onClickTopButton(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 1.5),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(
-                                color: reportsProvider.fromDate != null ||
-                                        reportsProvider.toDate != null
-                                    ? AppColors.primaryBlue
-                                    : Colors.grey[300]!),
-                          ),
-                          child: Row(
-                            children: [
-                              if (reportsProvider.fromDate == null &&
-                                  reportsProvider.toDate == null)
-                                const Text('Added Date: All'),
-                              if (reportsProvider.fromDate != null &&
-                                  reportsProvider.toDate != null)
-                                Text(
-                                    'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                              const SizedBox(
-                                width: 10,
-                              ),
-                              const Icon(
-                                Icons.arrow_drop_down_outlined,
-                                color: Colors.black45,
-                                size: 20,
-                              ),
-                            ],
-                          ),
-                        ),
+                      CommonReportDateFilter(
+                        fromDate: reportsProvider.fromDate?.toString(),
+                        toDate: reportsProvider.toDate?.toString(),
+                        formattedFromDate: reportsProvider.formattedFromDate,
+                        formattedToDate: reportsProvider.formattedToDate,
+                        onTap: () => onClickTopButton(context),
                       ),
                       const SizedBox(
                         width: 10,
@@ -266,8 +237,8 @@ class _ComplaintPageReportsMobileState
                           (reportsProvider.selectedUser != null &&
                               reportsProvider.selectedUser != 0) ||
                           reportsProvider.Search.isNotEmpty)
-                        ElevatedButton(
-                          onPressed: () {
+                        CommonReportResetButton(
+                          onReset: () {
                             reportsProvider.selectDateFilterOption(null);
                             reportsProvider.removeStatus();
                             searchController.clear();
@@ -283,69 +254,127 @@ class _ComplaintPageReportsMobileState
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.white,
                             foregroundColor: AppColors.textRed,
+                            elevation: 0,
                             side: BorderSide(color: AppColors.textRed),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
-                              vertical: 12,
+                              vertical: 8,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                          child: const Text('Reset'),
                         ),
                     ],
                   ),
                 ),
               ),
-            ListView.separated(
-              separatorBuilder: (context, index) {
-                return Divider(
-                  height: 2,
-                  color: AppColors.grey,
-                );
-              },
-              itemCount: reportsProvider.serviceReport.length,
-              shrinkWrap: true,
-              physics: const ClampingScrollPhysics(),
-              itemBuilder: (context, index) {
-                var service = reportsProvider.serviceReport[index];
-
-                Color statusColor = service.serviceStatusName == "Completed"
-                    ? Colors.green
-                    : service.serviceStatusName == "In Progress"
-                        ? Colors.orange
-                        : Colors.red;
-                return ReportListItem(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(
-                      builder: (context) {
-                        return ComplaintsDetailsPageMobile(service: service);
-                      },
-                    ));
-                  },
-                  onSubtitleTap: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => CustomerDetailPageMobile(
-                            customerId: service.customerId,
-                            fromLead: false,
+            if (!reportsProvider.isLoading &&
+                reportsProvider.serviceReport.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 100),
+                child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.search_off_outlined,
+                          size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No complaint reports found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      if (reportsProvider.fromDate != null ||
+                          reportsProvider.toDate != null ||
+                          (reportsProvider.selectedStatus != null &&
+                              reportsProvider.selectedStatus != 0) ||
+                          reportsProvider.Search.isNotEmpty)
+                        ElevatedButton(
+                          onPressed: () {
+                            reportsProvider.selectDateFilterOption(null);
+                            reportsProvider.removeStatus();
+                            searchController.clear();
+                            reportsProvider.setTaskSearchCriteria(
+                                '', '', '', '', '');
+                            reportsProvider.getSearchServiceReport(context);
+                          },
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.white,
+                            foregroundColor: AppColors.primaryBlue,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.primaryBlue),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
                           ),
-                        ));
-                  },
-                  title: service.serviceName,
-                  subtitle: '${service.customerName} >',
-                  status: service.serviceStatusName,
-                  statusColor: statusColor,
-                  description: service.description,
-                  bottomLeftText: (service.amount != "0" &&
-                          service.amount != "0.0" &&
-                          service.amount != "0.000")
-                      ? '₹${service.amount.split('.')[0]}'
-                      : null,
-                  bottomRightText:
-                      'By ${service.createdByName} on ${service.createDate.toMonthDayYearFormat()}',
-                );
-              },
-            )
+                          child: const Text('Clear All Filters'),
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            if (!reportsProvider.isLoading &&
+                reportsProvider.serviceReport.isNotEmpty)
+              ListView.separated(
+                separatorBuilder: (context, index) {
+                  return Divider(
+                    height: 2,
+                    color: AppColors.grey,
+                  );
+                },
+                itemCount: reportsProvider.serviceReport.length,
+                shrinkWrap: true,
+                physics: const ClampingScrollPhysics(),
+                itemBuilder: (context, index) {
+                  var service = reportsProvider.serviceReport[index];
+
+                  Color statusColor = service.serviceStatusName == "Completed"
+                      ? Colors.green
+                      : service.serviceStatusName == "In Progress"
+                          ? Colors.orange
+                          : Colors.red;
+                  return ReportListItem(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return ComplaintsDetailsPageMobile(service: service);
+                        },
+                      ));
+                    },
+                    onSubtitleTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => CustomerDetailPageMobile(
+                              customerId: service.customerId,
+                              fromLead: false,
+                            ),
+                          ));
+                    },
+                    title: service.serviceName,
+                    subtitle: '${service.customerName} >',
+                    status: service.serviceStatusName,
+                    statusColor: statusColor,
+                    description: service.description,
+                    bottomLeftText: (service.amount != "0" &&
+                            service.amount != "0.0" &&
+                            service.amount != "0.000")
+                        ? '₹${service.amount.split('.')[0]}'
+                        : null,
+                    bottomRightText:
+                        'By ${service.createdByName} on ${service.createDate.toMonthDayYearFormat()}',
+                  );
+                },
+              )
           ],
         ),
       ),

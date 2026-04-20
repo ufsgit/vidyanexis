@@ -20,6 +20,8 @@ class ServiceReportProvider extends ChangeNotifier {
 
   bool _isFilter = false;
   bool get isFilter => _isFilter;
+  bool _isLoading = false;
+  bool get isLoading => _isLoading;
   String _Search = '';
   String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
@@ -186,6 +188,8 @@ class ServiceReportProvider extends ChangeNotifier {
   //service report
   Future<void> getSearchServiceReport(BuildContext context) async {
     try {
+      _isLoading = true;
+      notifyListeners();
       Loader.showLoader(context);
       if (_Status.isEmpty || _Status == 'null') {
         _Status = '0';
@@ -234,13 +238,11 @@ class ServiceReportProvider extends ChangeNotifier {
           const SnackBar(content: Text('Server Error')),
         );
       }
-    } catch (e) {
+    } finally {
+      _isLoading = false;
       Loader.stopLoader(context);
       _hasFetched = true;
-      print('Exception occurred: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('An error occurred')),
-      );
+      notifyListeners();
     }
   }
 

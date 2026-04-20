@@ -8,10 +8,10 @@ import 'package:vidyanexis/http/loader.dart';
 class StockReportProvider extends ChangeNotifier {
   List<StockReportModel> _taskReport = [];
   List<StockReportModel> get taskReport => _taskReport;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
   DateTime? get fromDate => _fromDate;
@@ -20,8 +20,8 @@ class StockReportProvider extends ChangeNotifier {
   bool _isFilter = false;
   bool get isFilter => _isFilter;
   String _Search = '';
-  String _fromDateS = '';
-  String _toDateS = '';
+  String _fromDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _toDateS = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String _Status = '';
   String _AssignedTo = '';
 

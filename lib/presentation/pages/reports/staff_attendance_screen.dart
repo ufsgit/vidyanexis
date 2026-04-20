@@ -9,6 +9,7 @@ import 'package:vidyanexis/presentation/widgets/home/add_attendance.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class StaffAttendanceScreen extends StatefulWidget {
   const StaffAttendanceScreen({super.key});
@@ -159,31 +160,29 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                           ),
                         ),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
-                            print(reportsProvider.isFilter);
                           },
-                          icon: const Icon(Icons.filter_list),
+                          icon: const Icon(Icons.filter_list, size: 18),
                           label: Text(MediaQuery.of(context).size.width > 860
                               ? 'Filter'
                               : ''),
-                          style: OutlinedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
+                                : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
+                                ? AppColors.primaryBlue
+                                : Colors.white,
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: AppColors.primaryBlue),
                             ),
                           ),
                         ),
@@ -335,29 +334,27 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                             ),
                           ),
                         ),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
-                            print(reportsProvider.isFilter);
                           },
-                          icon: const Icon(Icons.filter_list),
-                          label: Text('Filter'),
-                          style: OutlinedButton.styleFrom(
+                          icon: const Icon(Icons.filter_list, size: 18),
+                          label: const Text('Filter'),
+                          style: ElevatedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
+                                : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
+                                ? AppColors.primaryBlue
+                                : Colors.white,
+                            elevation: 0,
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 0,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(20),
+                              side: BorderSide(color: AppColors.primaryBlue),
                             ),
                           ),
                         ),
@@ -435,42 +432,12 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                       ),
                       child: Row(
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
@@ -484,7 +451,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                   color: reportsProvider.selectedUser != null &&
                                           reportsProvider.selectedUser != 0
                                       ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                                      : AppColors.primaryBlue),
                             ),
                             child: Row(
                               children: [
@@ -600,8 +567,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               (reportsProvider.selectedTaskType != null &&
                                   reportsProvider.selectedTaskType != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -615,16 +582,6 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                 );
                                 reportsProvider.getSearchTaskReport(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
@@ -640,43 +597,12 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                         runSpacing: 10,
                         crossAxisAlignment: WrapCrossAlignment.center,
                         children: [
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
@@ -690,7 +616,7 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                   color: reportsProvider.selectedUser != null &&
                                           reportsProvider.selectedUser != 0
                                       ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                                      : AppColors.primaryBlue),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -777,8 +703,8 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                               (reportsProvider.selectedTaskType != null &&
                                   reportsProvider.selectedTaskType != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -792,89 +718,45 @@ class _StaffAttendanceScreenState extends State<StaffAttendanceScreen> {
                                 );
                                 reportsProvider.getSearchTaskReport(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                              ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
                     ),
             AppStyles.isWebScreen(context)
-                ? (!reportsProvider.hasFetched
+                ? (reportsProvider.taskReport.isEmpty
                     ? Expanded(
                         child: Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.calendar_month_outlined,
+                              const SizedBox(height: 80),
+                              Icon(Icons.search_off_outlined,
                                   size: 80, color: Colors.grey[300]),
                               const SizedBox(height: 16),
-                              const Text(
-                                'Select a date range to view reports',
+                              Text(
+                                'No attendance reports found',
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: Colors.grey,
+                                  color: Colors.grey[600],
                                   fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              ElevatedButton.icon(
-                                onPressed: () => onClickTopButton(context),
-                                icon: const Icon(Icons.date_range),
-                                label: const Text('Choose Date'),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.primaryBlue,
-                                  foregroundColor: Colors.white,
-                                  padding: const EdgeInsets.symmetric(
-                                      horizontal: 24, vertical: 12),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12)),
                                 ),
                               ),
                             ],
                           ),
                         ),
                       )
-                    : reportsProvider.taskReport.isEmpty
-                        ? Expanded(
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.search_off_outlined,
-                                      size: 80, color: Colors.grey[300]),
-                                  const SizedBox(height: 16),
-                                  const Text(
-                                    'No reports found for the selected range',
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                ],
-                              ),
+                    : Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(14),
                             ),
-                          )
-                        : Expanded(
                             child: Padding(
-                              padding: const EdgeInsets.all(16.0),
-                              child: Container(
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.circular(14),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Column(
-                                    children: [
+                              padding: const EdgeInsets.all(8.0),
+                              child: Column(
+                                children: [
                                       // Header Row (Table Column Titles)
                                       Container(
                                         decoration: BoxDecoration(

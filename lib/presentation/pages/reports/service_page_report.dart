@@ -13,6 +13,7 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import '../../widgets/customer/service_details_widget.dart';
@@ -38,7 +39,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
       final reportsProvider =
           Provider.of<ServiceReportProvider>(context, listen: false);
       reportsProvider.setTaskSearchCriteria('', '', '', '', '');
-      // reportsProvider.getSearchServiceReport(context);
+      reportsProvider.getSearchServiceReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
@@ -148,31 +149,18 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                     ),
-                    suffixIcon: Padding(
-                      padding: const EdgeInsets.all(4.0),
-                      child: ElevatedButton(
-                        onPressed: () {
-                          if (searchController.text.isNotEmpty) {
-                            searchController.clear();
-                            reportsProvider.setTaskSearchCriteria('', '', '', '', '');
-                          } else {
-                            reportsProvider.setTaskSearchCriteria(searchController.text, '', '', '', '');
-                          }
-                          reportsProvider.getSearchServiceReport(context);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.textGrey4,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 0,
-                          ),
-                        ),
-                        child: Text(reportsProvider.Search.isNotEmpty
-                            ? 'Cancel'
-                            : 'Search'),
-                      ),
-                    ),
+                    suffixIcon: searchController.text.isNotEmpty ||
+                            reportsProvider.Search.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.close),
+                            onPressed: () {
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                  '', '', '', '', '');
+                              reportsProvider.getSearchServiceReport(context);
+                            },
+                          )
+                        : null,
                   ),
                 ),
               ),
@@ -181,33 +169,33 @@ class _ServicesPageReportState extends State<ServicePageReport> {
           const SizedBox(height: 8),
           Row(
             children: [
-              OutlinedButton.icon(
+              ElevatedButton.icon(
                 onPressed: () {
                   reportsProvider.toggleFilter();
                 },
-                icon: const Icon(Icons.filter_list),
+                icon: const Icon(Icons.filter_list, size: 18),
                 label: Text(
                     MediaQuery.of(context).size.width > 860 ? 'Filter' : ''),
-                style: OutlinedButton.styleFrom(
+                style: ElevatedButton.styleFrom(
                   foregroundColor: reportsProvider.isFilter
                       ? Colors.white
                       : AppColors.primaryBlue,
                   backgroundColor: reportsProvider.isFilter
-                      ? const Color(0xFF5499D9)
+                      ? AppColors.primaryBlue
                       : Colors.white,
-                  side: BorderSide(
-                    color: reportsProvider.isFilter
-                        ? const Color(0xFF5499D9)
-                        : AppColors.primaryBlue,
-                  ),
+                  elevation: 0,
+                  side: BorderSide(color: AppColors.primaryBlue),
                   padding: const EdgeInsets.symmetric(
                     horizontal: 16,
-                    vertical: 0,
+                    vertical: 12,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
                   ),
                 ),
               ),
               const SizedBox(width: 8),
-              CustomElevatedButton(
+              ElevatedButton.icon(
                 onPressed: () {
                   exportToExcel(
                     headers: [
@@ -236,10 +224,21 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     fileName: 'Complaint_Report',
                   );
                 },
-                buttonText: 'Export to Excel',
-                textColor: AppColors.whiteColor,
-                borderColor: AppColors.appViolet,
-                backgroundColor: AppColors.appViolet,
+                icon: const Icon(Icons.download, size: 18),
+                label: const Text('Export',
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.primaryBlue,
+                  foregroundColor: Colors.white,
+                  elevation: 0,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 15,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                ),
               )
             ],
           ),
@@ -272,7 +271,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                             color: reportsProvider.selectedStatus != null &&
                                     reportsProvider.selectedStatus != 0
                                 ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
+                                : AppColors.primaryBlue),
                       ),
                       child: Row(
                         children: [
@@ -336,42 +335,13 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     const SizedBox(
                       width: 10,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        onClickTopButton(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: reportsProvider.fromDate != null ||
-                                      reportsProvider.toDate != null
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
-                        ),
-                        child: Row(
-                          children: [
-                            if (reportsProvider.fromDate == null &&
-                                reportsProvider.toDate == null)
-                              const Text('Added Date: All'),
-                            if (reportsProvider.fromDate != null &&
-                                reportsProvider.toDate != null)
-                              Text(
-                                  'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_outlined,
-                              color: Colors.black45,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
+                    CommonReportDateFilter(
+                      fromDate: reportsProvider.fromDate?.toString(),
+                      toDate: reportsProvider.toDate?.toString(),
+                      formattedFromDate: reportsProvider.formattedFromDate,
+                      formattedToDate: reportsProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
+                      label: 'Added Date: All',
                     ),
                     const Spacer(),
                     if (reportsProvider.fromDate != null ||
@@ -381,8 +351,8 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                         (reportsProvider.selectedUser != null &&
                             reportsProvider.selectedUser != 0) ||
                         reportsProvider.Search.isNotEmpty)
-                      ElevatedButton(
-                        onPressed: () {
+                      CommonReportResetButton(
+                        onReset: () {
                           reportsProvider.selectDateFilterOption(null);
                           reportsProvider.removeStatus();
                           searchController.clear();
@@ -398,13 +368,16 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: AppColors.textRed,
+                          elevation: 0,
                           side: BorderSide(color: AppColors.textRed),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 12,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        child: const Text('Reset'),
                       ),
                   ],
                 ),
@@ -430,7 +403,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                             color: reportsProvider.selectedStatus != null &&
                                     reportsProvider.selectedStatus != 0
                                 ? AppColors.primaryBlue
-                                : Colors.grey[300]!),
+                                : AppColors.primaryBlue),
                       ),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
@@ -495,43 +468,13 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                     const SizedBox(
                       width: 10,
                     ),
-                    GestureDetector(
-                      onTap: () {
-                        onClickTopButton(context);
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 20, vertical: 1.5),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: reportsProvider.fromDate != null ||
-                                      reportsProvider.toDate != null
-                                  ? AppColors.primaryBlue
-                                  : Colors.grey[300]!),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            if (reportsProvider.fromDate == null &&
-                                reportsProvider.toDate == null)
-                              const Text('Added Date: All'),
-                            if (reportsProvider.fromDate != null &&
-                                reportsProvider.toDate != null)
-                              Text(
-                                  'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                            const SizedBox(
-                              width: 10,
-                            ),
-                            const Icon(
-                              Icons.arrow_drop_down_outlined,
-                              color: Colors.black45,
-                              size: 20,
-                            ),
-                          ],
-                        ),
-                      ),
+                    CommonReportDateFilter(
+                      fromDate: reportsProvider.fromDate?.toString(),
+                      toDate: reportsProvider.toDate?.toString(),
+                      formattedFromDate: reportsProvider.formattedFromDate,
+                      formattedToDate: reportsProvider.formattedToDate,
+                      onTap: () => onClickTopButton(context),
+                      label: 'Added Date: All',
                     ),
                     if (reportsProvider.fromDate != null ||
                         reportsProvider.toDate != null ||
@@ -540,8 +483,8 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                         (reportsProvider.selectedUser != null &&
                             reportsProvider.selectedUser != 0) ||
                         reportsProvider.Search.isNotEmpty)
-                      ElevatedButton(
-                        onPressed: () {
+                      CommonReportResetButton(
+                        onReset: () {
                           reportsProvider.selectDateFilterOption(null);
                           reportsProvider.removeStatus();
                           searchController.clear();
@@ -557,13 +500,16 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,
                           foregroundColor: AppColors.textRed,
+                          elevation: 0,
                           side: BorderSide(color: AppColors.textRed),
                           padding: const EdgeInsets.symmetric(
                             horizontal: 16,
-                            vertical: 0,
+                            vertical: 8,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
                           ),
                         ),
-                        child: const Text('Reset'),
                       ),
                     ],
                   ))
@@ -582,46 +528,21 @@ class _ServicesPageReportState extends State<ServicePageReport> {
 
     return SizedBox(
               height: availableHeight,
-              child: !reportsProvider.hasFetched
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.calendar_month,
-                              size: 80, color: Colors.grey[300]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'Please select a date to view complaint reports',
-                            style: TextStyle(
-                                color: Colors.grey[600], fontSize: 16),
-                          ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: () => onClickTopButton(context),
-                            icon: const Icon(Icons.date_range),
-                            label: const Text('Choose Date'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 12),
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : reportsProvider.serviceReport.isEmpty
+              child: reportsProvider.serviceReport.isEmpty
                       ? Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.search_off,
+                              Icon(Icons.search_off_outlined,
                                   size: 80, color: Colors.grey[300]),
                               const SizedBox(height: 16),
                               Text(
-                                'No complaint reports found for the selected criteria',
+                                'No complaint reports found',
                                 style: TextStyle(
-                                    color: Colors.grey[600], fontSize: 16),
+                                  fontSize: 16,
+                                  color: Colors.grey[600],
+                                  fontWeight: FontWeight.w500,
+                                ),
                               ),
                             ],
                           ),

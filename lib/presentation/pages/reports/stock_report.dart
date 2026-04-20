@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/constants/app_colors.dart';
 import 'package:vidyanexis/constants/app_styles.dart';
@@ -8,6 +9,7 @@ import 'package:vidyanexis/controller/stock_report_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/presentation/widgets/reports/report_list_item.dart';
 
 class StockReport extends StatefulWidget {
@@ -136,28 +138,26 @@ class _StockReportState extends State<StockReport> {
                         ),
                         Flexible(child: Container()),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
                           },
-                          icon: const Icon(Icons.filter_list),
-                          label: Text(MediaQuery.of(context).size.width > 860
-                              ? 'Filter'
-                              : ''),
-                          style: OutlinedButton.styleFrom(
+                          icon: const Icon(Icons.filter_list, size: 18),
+                          label: const Text('Filter'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: reportsProvider.isFilter
+                                ? AppColors.primaryBlue
+                                : Colors.white,
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
                                 : AppColors.primaryBlue,
-                            backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white,
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors.primaryBlue),
+                            side: BorderSide(color: AppColors.primaryBlue),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
                             ),
                           ),
                         ),
@@ -352,38 +352,21 @@ class _StockReportState extends State<StockReport> {
                             ),
                           ),
                           const Spacer(),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
-                                reportsProvider.selectDateFilterOption(null);
-                                reportsProvider.removeStatus();
-                                searchController.clear();
-                                reportsProvider.setTaskSearchCriteria(
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                  '',
-                                );
-                                reportsProvider.getSearchWorkSummary(context);
-                              },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
-                                ),
-                              ),
-                              child: const Text('Reset'),
-                            ),
+                          CommonReportResetButton(
+                            onReset: () {
+                              reportsProvider.selectDateFilterOption(null);
+                              reportsProvider.removeStatus();
+                              searchController.clear();
+                              reportsProvider.setTaskSearchCriteria(
+                                '',
+                                '',
+                                '',
+                                '',
+                                '',
+                              );
+                              reportsProvider.getSearchWorkSummary(context);
+                            },
+                          ),
                         ],
                       ),
                     ),
@@ -736,7 +719,24 @@ class _StockReportState extends State<StockReport> {
                     ),
                   Expanded(
                     child: reportsProvider.taskReport.isEmpty
-                        ? const Center(child: Text('No data found'))
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.search_off_outlined,
+                                    size: 80, color: Colors.grey[300]),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No stock records found',
+                                  style: GoogleFonts.plusJakartaSans(
+                                    fontSize: 16,
+                                    color: Colors.grey[600],
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
                         : ListView.separated(
                             separatorBuilder: (context, index) =>
                                 Divider(height: 2, color: AppColors.grey),

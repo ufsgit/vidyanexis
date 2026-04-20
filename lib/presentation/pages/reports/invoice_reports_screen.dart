@@ -12,6 +12,8 @@ import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class InvoiceReportsScreen extends StatefulWidget {
   const InvoiceReportsScreen({super.key});
@@ -33,8 +35,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
       final dropDownProvider =
           Provider.of<DropDownProvider>(context, listen: false);
 
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '', '', '');
-      // reportsProvider.getSearchTaskReport(context);
+      // reportsProvider.setTaskSearchCriteria('', '', '', '', '', '', '');
+      reportsProvider.getSearchTaskReport(context);
       dropDownProvider.getEnquirySource(context);
       dropDownProvider.getEnquiryFor(context);
 
@@ -87,17 +89,16 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         Flexible(child: Container()),
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
-                          height: 40,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(30),
                             border: Border.all(color: Colors.grey[300]!),
                           ),
                           child: TextField(
                             controller: searchController,
+                            textAlignVertical: TextAlignVertical.center,
                             onSubmitted: (query) {
-                              // reportsProvider.selectDateFilterOption(null);
-                              // reportsProvider.removeStatus();
                               reportsProvider.setTaskSearchCriteria(
                                   query,
                                   reportsProvider.fromDateS,
@@ -110,92 +111,70 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: Colors.grey[400],
+                                fontSize: 14,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: Colors.grey[600],
+                                size: 20,
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
-                                vertical: 4,
                               ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    String query = searchController.text;
-                                    // leadProvider.selectDateFilterOption(null);
-                                    // leadProvider.removeStatus();
-                                    print(query);
-                                    if (reportsProvider.Search.isNotEmpty) {
-                                      searchController.clear();
-                                      reportsProvider.setTaskSearchCriteria(
-                                          '',
-                                          reportsProvider.fromDateS,
-                                          reportsProvider.toDateS,
-                                          reportsProvider.Status,
-                                          reportsProvider.AssignedTo,
-                                          reportsProvider.enquiryFor,
-                                          reportsProvider.enquirySource);
-                                      reportsProvider
-                                          .getSearchTaskReport(context);
-                                    } else {
-                                      reportsProvider.setTaskSearchCriteria(
-                                          query,
-                                          reportsProvider.fromDateS,
-                                          reportsProvider.toDateS,
-                                          reportsProvider.Status,
-                                          reportsProvider.AssignedTo,
-                                          reportsProvider.enquiryFor,
-                                          reportsProvider.enquirySource);
-                                      reportsProvider
-                                          .getSearchTaskReport(context);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
-                                ),
-                              ),
+                              suffixIcon: searchController.text.isNotEmpty ||
+                                      reportsProvider.Search.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        searchController.clear();
+                                        reportsProvider.setTaskSearchCriteria(
+                                            '',
+                                            reportsProvider.fromDateS,
+                                            reportsProvider.toDateS,
+                                            reportsProvider.Status,
+                                            reportsProvider.AssignedTo,
+                                            reportsProvider.enquiryFor,
+                                            reportsProvider.enquirySource);
+                                        reportsProvider
+                                            .getSearchTaskReport(context);
+                                      },
+                                    )
+                                  : null,
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
-                            print(reportsProvider.isFilter);
                           },
-                          icon: const Icon(Icons.filter_list),
+                          icon: const Icon(Icons.filter_list, size: 18),
                           label: Text(MediaQuery.of(context).size.width > 860
                               ? 'Filter'
                               : ''),
-                          style: OutlinedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
+                                : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
+                                ? AppColors.primaryBlue
+                                : Colors.white,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.primaryBlue),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
                             ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        CustomElevatedButton(
+                        ElevatedButton.icon(
                           onPressed: () {
                             exportToExcel(
                               headers: [
@@ -234,10 +213,21 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               fileName: 'Invoice_Report',
                             );
                           },
-                          buttonText: 'Export to Excel',
-                          textColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          backgroundColor: AppColors.appViolet,
+                          icon: const Icon(Icons.download, size: 18),
+                          label: const Text('Export',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 15,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -251,17 +241,16 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                         Column(
                           children: [
                             Container(
-                              height: 40,
+                              height: 48,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(30),
                                 border: Border.all(color: Colors.grey[300]!),
                               ),
                               child: TextField(
                                 controller: searchController,
+                                textAlignVertical: TextAlignVertical.center,
                                 onSubmitted: (query) {
-                                  // reportsProvider.selectDateFilterOption(null);
-                                  // reportsProvider.removeStatus();
                                   reportsProvider.setTaskSearchCriteria(
                                       query,
                                       reportsProvider.fromDateS,
@@ -274,145 +263,131 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                 },
                                 decoration: InputDecoration(
                                   hintText: 'Search here....',
-                                  prefixIcon: const Icon(Icons.search),
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    color: Colors.grey[400],
+                                    fontSize: 14,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Colors.grey[600],
+                                    size: 20,
+                                  ),
                                   border: InputBorder.none,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
-                                    vertical: 0,
                                   ),
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        String query = searchController.text;
-                                        // leadProvider.selectDateFilterOption(null);
-                                        // leadProvider.removeStatus();
-                                        print(query);
-                                        if (reportsProvider.Search.isNotEmpty) {
-                                          searchController.clear();
-                                          reportsProvider.setTaskSearchCriteria(
-                                              '',
-                                              reportsProvider.fromDateS,
-                                              reportsProvider.toDateS,
-                                              reportsProvider.Status,
-                                              reportsProvider.AssignedTo,
-                                              reportsProvider.enquiryFor,
-                                              reportsProvider.enquirySource);
-                                          reportsProvider
-                                              .getSearchTaskReport(context);
-                                        } else {
-                                          reportsProvider.setTaskSearchCriteria(
-                                              query,
-                                              reportsProvider.fromDateS,
-                                              reportsProvider.toDateS,
-                                              reportsProvider.Status,
-                                              reportsProvider.AssignedTo,
-                                              reportsProvider.enquiryFor,
-                                              reportsProvider.enquirySource);
-                                          reportsProvider
-                                              .getSearchTaskReport(context);
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.textGrey4,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 0,
-                                        ),
-                                      ),
-                                      child: Text(
+                                  suffixIcon: searchController.text.isNotEmpty ||
                                           reportsProvider.Search.isNotEmpty
-                                              ? 'Cancel'
-                                              : 'Search'),
-                                    ),
-                                  ),
+                                      ? IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: () {
+                                            searchController.clear();
+                                            reportsProvider.setTaskSearchCriteria(
+                                                '',
+                                                reportsProvider.fromDateS,
+                                                reportsProvider.toDateS,
+                                                reportsProvider.Status,
+                                                reportsProvider.AssignedTo,
+                                                reportsProvider.enquiryFor,
+                                                reportsProvider.enquirySource);
+                                            reportsProvider
+                                                .getSearchTaskReport(context);
+                                          },
+                                        )
+                                      : null,
                                 ),
                               ),
                             ),
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                OutlinedButton.icon(
+                                ElevatedButton.icon(
                                   onPressed: () {
                                     reportsProvider.toggleFilter();
-                                    print(reportsProvider.isFilter);
                                   },
-                                  icon: const Icon(Icons.filter_list),
+                                  icon: const Icon(Icons.filter_list, size: 18),
                                   label: Text(
                                       MediaQuery.of(context).size.width > 860
                                           ? 'Filter'
                                           : ''),
-                                  style: OutlinedButton.styleFrom(
+                                  style: ElevatedButton.styleFrom(
                                     foregroundColor: reportsProvider.isFilter
                                         ? Colors.white
-                                        : AppColors
-                                            .primaryBlue, // Change foreground color
+                                        : AppColors.primaryBlue,
                                     backgroundColor: reportsProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : Colors
-                                            .white, // Change background color
-                                    side: BorderSide(
-                                        color: reportsProvider.isFilter
-                                            ? const Color(0xFF5499D9)
-                                            : AppColors
-                                                .primaryBlue), // Change border color
+                                        ? AppColors.primaryBlue
+                                        : Colors.white,
+                                    elevation: 0,
+                                    side: BorderSide(color: AppColors.primaryBlue),
                                     padding: const EdgeInsets.symmetric(
                                       horizontal: 16,
-                                      vertical: 0,
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
                                     ),
                                   ),
                                 ),
                                 const SizedBox(width: 16),
-                                CustomElevatedButton(
-                                  onPressed: () {
-                                    exportToExcel(
-                                      headers: [
-                                        'Customer Name',
-                                        'Mobile',
-                                        'Address',
-                                        'Invoice No',
-                                        'Invoice Date',
-                                        'Invoice Amount',
-                                        'Receipt Amount',
-                                        'Balance Amount',
-                                        'Registered Date',
-                                      ],
-                                      data: reportsProvider.taskReport
-                                          .map((task) {
-                                        return {
-                                          'Customer Name': task.customerName,
-                                          'Mobile': task.contactNumber,
-                                          'Address': task.address1,
-                                          'Invoice No': task.invoiceNo,
-                                          'Invoice Date':
-                                              task.invoiceDate.isNotEmpty
-                                                  ? DateFormat('dd MMM yyyy')
-                                                      .format(DateTime.parse(
-                                                          task.invoiceDate))
-                                                  : '',
-                                          'Invoice Amount':
-                                              task.invoiceAmount.toString(),
-                                          'Receipt Amount':
-                                              task.recieptAmount.toString(),
-                                          'Balance Amount':
-                                              task.balanceAmount.toString(),
-                                          'Registered Date':
-                                              task.registeredDate.isNotEmpty
-                                                  ? DateFormat('dd MMM yyyy')
-                                                      .format(DateTime.parse(
-                                                          task.registeredDate))
-                                                  : '',
-                                        };
-                                      }).toList(),
-                                      fileName: 'Invoice_Report',
-                                    );
-                                  },
-                                  buttonText: 'Export to Excel',
-                                  textColor: AppColors.whiteColor,
-                                  borderColor: AppColors.appViolet,
-                                  backgroundColor: AppColors.appViolet,
-                                )
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      exportToExcel(
+                                        headers: [
+                                          'Customer Name',
+                                          'Mobile',
+                                          'Address',
+                                          'Invoice No',
+                                          'Invoice Date',
+                                          'Invoice Amount',
+                                          'Receipt Amount',
+                                          'Balance Amount',
+                                          'Registered Date',
+                                        ],
+                                        data: reportsProvider.taskReport.map((task) {
+                                          return {
+                                            'Customer Name': task.customerName,
+                                            'Mobile': task.contactNumber,
+                                            'Address': task.address1,
+                                            'Invoice No': task.invoiceNo,
+                                            'Invoice Date':
+                                                task.invoiceDate.isNotEmpty
+                                                    ? DateFormat('dd MMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            task.invoiceDate))
+                                                    : '',
+                                            'Invoice Amount':
+                                                task.invoiceAmount.toString(),
+                                            'Receipt Amount':
+                                                task.recieptAmount.toString(),
+                                            'Balance Amount':
+                                                task.balanceAmount.toString(),
+                                            'Registered Date':
+                                                task.registeredDate.isNotEmpty
+                                                    ? DateFormat('dd MMM yyyy')
+                                                        .format(DateTime.parse(
+                                                            task.registeredDate))
+                                                    : '',
+                                          };
+                                        }).toList(),
+                                        fileName: 'Invoice_Report',
+                                      );
+                                    },
+                                    icon: const Icon(Icons.download, size: 18),
+                                    label: const Text('Export',
+                                        style: TextStyle(fontWeight: FontWeight.bold)),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: AppColors.primaryBlue,
+                                      foregroundColor: Colors.white,
+                                      elevation: 0,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 24,
+                                        vertical: 12,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(30),
+                                      ),
+                                    ),
+                                  )
                               ],
                             ),
                           ],
@@ -504,44 +479,13 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           // const SizedBox(
                           //   width: 10,
                           // ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize
-                                    .min, // Make Row take minimum required width
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -554,7 +498,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                   color: reportsProvider.fromDate != null ||
                                           reportsProvider.toDate != null
                                       ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                                      : AppColors.primaryBlue),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize
@@ -589,7 +533,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                                   .selectedEnquirySourceId !=
                                               0
                                       ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                                      : AppColors.primaryBlue),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -672,7 +616,7 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                               null &&
                                           leadProvider.selectedEnquiryFor != 0
                                       ? AppColors.primaryBlue
-                                      : Colors.grey[300]!),
+                                      : AppColors.primaryBlue),
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize
@@ -866,8 +810,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               (dropDownProvider.selectedEnquiryForId != null &&
                                   dropDownProvider.selectedEnquirySourceId !=
                                       0))
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -877,16 +821,6 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                     '', '', '', '', '', '', '');
                                 reportsProvider.getSearchTaskReport(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                              ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
@@ -972,42 +906,13 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                           // const SizedBox(
                           //   width: 10,
                           // ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           // const SizedBox(
                           //   width: 10,
@@ -1124,8 +1029,8 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -1133,60 +1038,26 @@ class _InvoiceReportsScreen extends State<InvoiceReportsScreen> {
                                     '', '', '', '', '', '', '');
                                 reportsProvider.getSearchTaskReport(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                              ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
                     ),
-            if (!reportsProvider.hasFetched)
+            if (reportsProvider.taskReport.isEmpty)
               Expanded(
                 child: Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.calendar_month,
+                      Icon(Icons.search_off_outlined,
                           size: 80, color: Colors.grey[300]),
                       const SizedBox(height: 16),
                       Text(
-                        'Please select a date to view invoice reports',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
-                      ),
-                      const SizedBox(height: 24),
-                      ElevatedButton.icon(
-                        onPressed: () => onClickTopButton(context),
-                        icon: const Icon(Icons.date_range),
-                        label: const Text('Choose Date'),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.primaryBlue,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 12),
+                        'No invoice reports found',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-                    ],
-                  ),
-                ),
-              )
-            else if (reportsProvider.taskReport.isEmpty)
-              Expanded(
-                child: Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.search_off, size: 80, color: Colors.grey[300]),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No invoice reports found for the selected criteria',
-                        style: TextStyle(color: Colors.grey[600], fontSize: 16),
                       ),
                     ],
                   ),

@@ -9,6 +9,7 @@ import 'package:vidyanexis/controller/payment_report_provider.dart';
 import 'package:vidyanexis/controller/side_bar_provider.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_app_bar_mobile.dart';
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart'; // Ensure this exists or use local
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/utils/csv_function.dart'; // Ensure this exists
 
 class PaymentReportPage extends StatefulWidget {
@@ -127,12 +128,18 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
                 icon: const Icon(Icons.filter_list, size: 18),
                 label: const Text('Filter'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primaryBlue,
-                  foregroundColor: Colors.white,
+                  foregroundColor: provider.isFilter
+                      ? Colors.white
+                      : AppColors.primaryBlue,
+                  backgroundColor: provider.isFilter
+                      ? AppColors.primaryBlue
+                      : Colors.white,
+                  elevation: 0,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30),
+                    side: BorderSide(color: AppColors.primaryBlue),
                   ),
                 ),
               ),
@@ -146,7 +153,25 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
         _buildWebTableHeader(),
         Expanded(
           child: provider.paymentReportList.isEmpty
-              ? const Center(child: Text('No data found'))
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 80),
+                      Icon(Icons.search_off_outlined,
+                          size: 80, color: Colors.grey[300]),
+                      const SizedBox(height: 16),
+                      Text(
+                        'No payment reports found',
+                        style: GoogleFonts.plusJakartaSans(
+                          fontSize: 16,
+                          color: Colors.grey[600],
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
               : ListView.builder(
                   controller: scrollController,
                   padding: EdgeInsets.zero,
@@ -171,34 +196,12 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
       ),
       child: Row(
         children: [
-          GestureDetector(
+          CommonReportDateFilter(
+            fromDate: provider.fromDate?.toString(),
+            toDate: provider.toDate?.toString(),
+            formattedFromDate: provider.formattedFromDate,
+            formattedToDate: provider.formattedToDate,
             onTap: () => onClickTopButton(context),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: AppColors.primaryBlue),
-              ),
-              child: Row(
-                children: [
-                  if (provider.fromDate == null && provider.toDate == null)
-                    const Text('Date: All'),
-                  if (provider.fromDate != null && provider.toDate != null)
-                    Text(
-                      'Date: ${provider.formattedFromDate} - ${provider.formattedToDate}',
-                    ),
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  const Icon(
-                    Icons.arrow_drop_down_outlined,
-                    color: Colors.black45,
-                    size: 20,
-                  ),
-                ],
-              ),
-            ),
           ),
           const SizedBox(width: 16),
 
@@ -286,24 +289,15 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
             child: const Text('Apply'),
           ),
           const SizedBox(width: 10),
-          ElevatedButton(
-            onPressed: () {
+          CommonReportResetButton(
+            onReset: () {
               provider.setSearch('');
               searchController.clear();
               customerFilterController.clear();
               provider.selectDateFilterOption(null);
               provider.getPaymentReport(context);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: AppColors.textRed,
-              side: BorderSide(color: AppColors.textRed),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 12,
-              ),
-            ),
-            child: const Text('Reset'),
+            label: 'Reset',
           ),
         ],
       ),
@@ -396,7 +390,24 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
       return const Center(child: CircularProgressIndicator());
     }
     if (provider.paymentReportList.isEmpty) {
-      return const Center(child: Text('No data found'));
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 80),
+            Icon(Icons.search_off_outlined, size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              'No payment reports found',
+              style: GoogleFonts.plusJakartaSans(
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ),
+      );
     }
     return Container(
         color: Colors.grey[50],
@@ -404,33 +415,12 @@ class _PaymentReportPageState extends State<PaymentReportPage> {
           children: [
             Padding(
               padding: const EdgeInsets.all(8.0),
-              child: GestureDetector(
+              child: CommonReportDateFilter(
+                fromDate: provider.fromDate?.toString(),
+                toDate: provider.toDate?.toString(),
+                formattedFromDate: provider.formattedFromDate,
+                formattedToDate: provider.formattedToDate,
                 onTap: () => onClickTopButton(context),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.primaryBlue),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      if (provider.fromDate == null && provider.toDate == null)
-                        const Text('Date: All'),
-                      if (provider.fromDate != null && provider.toDate != null)
-                        Text(
-                          'Date: ${provider.formattedFromDate} - ${provider.formattedToDate}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      const Icon(Icons.calendar_today, size: 18),
-                    ],
-                  ),
-                ),
               ),
             ),
             Expanded(

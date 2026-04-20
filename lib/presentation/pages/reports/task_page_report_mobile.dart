@@ -4,6 +4,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 import 'package:vidyanexis/constants/app_colors.dart' hide StatusUtils;
 import 'package:vidyanexis/constants/app_styles.dart';
 import 'package:vidyanexis/controller/customer_provider.dart';
@@ -43,7 +44,7 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
 
       reportsProvider.setTaskSearchCriteria('', '', '', '', '', '');
       hasMoreData = true;
-      // reportsProvider.getSearchTaskReport(context);
+      reportsProvider.getSearchTaskReport(context);
       searchProvider.stopSearch();
       reportsProvider.setFilter(false);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
@@ -235,42 +236,12 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           const SizedBox(
                             width: 10,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
@@ -486,8 +457,8 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                               (reportsProvider.selectedTaskType != null &&
                                   reportsProvider.selectedTaskType != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                              ElevatedButton(
-                                onPressed: () {
+                              CommonReportResetButton(
+                                onReset: () {
                                   reportsProvider.selectDateFilterOption(null);
                                   reportsProvider.toggleStatus(0); // Reset to All
                                   searchController.clear();
@@ -501,16 +472,6 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                                   );
                                   _refreshData();
                                 },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.white,
-                                  foregroundColor: AppColors.textRed,
-                                  side: BorderSide(color: AppColors.textRed),
-                                  padding: const EdgeInsets.symmetric(
-                                    horizontal: 16,
-                                    vertical: 12,
-                                  ),
-                                ),
-                                child: const Text('Reset'),
                               ),
                         ],
                       ),
@@ -531,43 +492,12 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                           const SizedBox(
                             width: 10,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
@@ -784,8 +714,8 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                               (reportsProvider.selectedTaskType != null &&
                                   reportsProvider.selectedTaskType != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -802,71 +732,42 @@ class _tasksPageReportState extends State<TaskPageReportMobile> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: AppColors.textRed,
+                                elevation: 0,
                                 side: BorderSide(color: AppColors.textRed),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
-                                  vertical: 0,
+                                  vertical: 8,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
                     ),
             Expanded(
-              child: !reportsProvider.hasFetched
+              child: reportsProvider.taskReport.isEmpty
                   ? Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.calendar_month_outlined,
+                          const SizedBox(height: 80),
+                          Icon(Icons.search_off_outlined,
                               size: 80, color: Colors.grey[300]),
                           const SizedBox(height: 16),
                           Text(
-                            'Select a date range to view reports',
+                            'No task reports found',
                             style: GoogleFonts.plusJakartaSans(
                               fontSize: 16,
                               color: Colors.grey[600],
                               fontWeight: FontWeight.w500,
                             ),
                           ),
-                          const SizedBox(height: 24),
-                          ElevatedButton.icon(
-                            onPressed: () => onClickTopButton(context),
-                            icon: const Icon(Icons.date_range),
-                            label: const Text('Choose Date'),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: AppColors.primaryBlue,
-                              foregroundColor: Colors.white,
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 24, vertical: 12),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12)),
-                            ),
-                          ),
                         ],
                       ),
                     )
-                  : reportsProvider.taskReport.isEmpty
-                      ? Center(
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.search_off_outlined,
-                                  size: 80, color: Colors.grey[300]),
-                              const SizedBox(height: 16),
-                              Text(
-                                'No reports found for the selected range',
-                                style: GoogleFonts.plusJakartaSans(
-                                  fontSize: 16,
-                                  color: Colors.grey[600],
-                                  fontWeight: FontWeight.w500,
-                                ),
-                              ),
-                            ],
-                          ),
-                        )
-                      : SingleChildScrollView(
+                  : SingleChildScrollView(
                           controller: scrollController,
                           child: Column(
                             children: [

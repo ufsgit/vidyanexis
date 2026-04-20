@@ -12,10 +12,10 @@ class TaskReportProvider extends ChangeNotifier {
 
   bool _hasFetched = false;
   bool get hasFetched => _hasFetched;
-  DateTime? _fromDate;
-  DateTime? _toDate;
-  String _formattedFromDate = '';
-  String _formattedToDate = '';
+  DateTime? _fromDate = DateTime.now();
+  DateTime? _toDate = DateTime.now();
+  String _formattedFromDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
+  String _formattedToDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
   String get formattedFromDate => _formattedFromDate;
   String get formattedToDate => _formattedToDate;
   DateTime? get fromDate => _fromDate;

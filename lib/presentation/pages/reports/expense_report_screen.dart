@@ -10,6 +10,7 @@ import 'package:vidyanexis/controller/settings_provider.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
 import 'package:vidyanexis/presentation/widgets/home/confirmation_dialog_widget.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 class ExpenseReportScreen extends StatefulWidget {
   static const String route = "/expense_report";
@@ -133,31 +134,29 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                   ),
                 ),
                 const SizedBox(width: 16),
-                OutlinedButton.icon(
+                ElevatedButton.icon(
                   onPressed: () {
                     provider.toggleFilter();
                   },
-                  icon: const Icon(Icons.filter_list),
+                  icon: const Icon(Icons.filter_list, size: 18),
                   label: Text(MediaQuery.of(context).size.width > 860
                       ? 'Filter'
                       : ''),
-                  style: OutlinedButton.styleFrom(
+                  style: ElevatedButton.styleFrom(
                     foregroundColor: provider.isFilter
                         ? Colors.white
-                        : AppColors.textBlue800,
+                        : AppColors.primaryBlue,
                     backgroundColor: provider.isFilter
-                        ? const Color(0xFF5499D9)
+                        ? AppColors.primaryBlue
                         : Colors.white,
-                    side: BorderSide(
-                        color: provider.isFilter
-                            ? const Color(0xFF5499D9)
-                            : AppColors.textBlue800),
+                    elevation: 0,
                     padding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
                     ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
+                      side: BorderSide(color: AppColors.primaryBlue),
                     ),
                   ),
                 ),
@@ -243,20 +242,12 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
         child: Row(
           children: [
             // Date Filter
-            _buildFilterWrapper(
+            CommonReportDateFilter(
+              fromDate: provider.fromDate?.toString(),
+              toDate: provider.toDate?.toString(),
+              formattedFromDate: provider.formattedFromDate,
+              formattedToDate: provider.formattedToDate,
               onTap: () => provider.selectDate(context, true),
-              label: provider.formattedFromDate.isEmpty
-                  ? 'From Date'
-                  : provider.formattedFromDate,
-              icon: Icons.calendar_today,
-            ),
-            const SizedBox(width: 10),
-            _buildFilterWrapper(
-              onTap: () => provider.selectDate(context, false),
-              label: provider.formattedToDate.isEmpty
-                  ? 'To Date'
-                  : provider.formattedToDate,
-              icon: Icons.calendar_today,
             ),
             const SizedBox(width: 10),
             _buildAssignedToFilter(provider, isSmallScreen),
@@ -279,8 +270,8 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
               child: const Text('Apply'),
             ),
             const SizedBox(width: 10),
-            ElevatedButton(
-              onPressed: () {
+            CommonReportResetButton(
+              onReset: () {
                 provider.setFromDate(DateTime.now());
                 provider.setToDate(DateTime.now());
                 provider.clearUserFilter();
@@ -289,17 +280,6 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
                 provider.clearExpenseTypeFilter();
                 provider.getExpenseReport(context);
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.white,
-                foregroundColor: AppColors.textRed,
-                elevation: 0,
-                side: const BorderSide(color: AppColors.textRed),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)),
-              ),
-              child: const Text('Reset'),
             ),
           ],
         ),
@@ -546,20 +526,36 @@ class _ExpenseReportScreenState extends State<ExpenseReportScreen> {
   Widget _buildExpenseTable(ExpenseProvider provider, bool isSmallScreen) {
     if (provider.expenseModelList.isEmpty) {
       return Center(
-          child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const SizedBox(height: 100),
-          Icon(Icons.receipt_long_outlined,
-              size: 64, color: Colors.grey.withOpacity(0.3)),
-          const SizedBox(height: 24),
-          Text('No records found',
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(height: 80),
+            Icon(Icons.search_off_outlined,
+                size: 80, color: Colors.grey[300]),
+            const SizedBox(height: 16),
+            Text(
+              'No records found for the selected range',
               style: GoogleFonts.plusJakartaSans(
-                  fontSize: 16,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w600)),
-        ],
-      ));
+                fontSize: 16,
+                color: Colors.grey[600],
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: () {
+                provider.setFromDate(DateTime.now());
+                provider.setToDate(DateTime.now());
+                provider.clearUserFilter();
+                provider.clearProjectTypeFilter();
+                provider.clearExpenseTypeFilter();
+                provider.getExpenseReport(context);
+              },
+              child: const Text('Clear All Filters'),
+            ),
+          ],
+        ),
+      );
     }
 
     if (isSmallScreen) {

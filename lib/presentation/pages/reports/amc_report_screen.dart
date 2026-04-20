@@ -12,11 +12,13 @@ import 'package:vidyanexis/controller/drop_down_provider.dart';
 import 'package:vidyanexis/presentation/pages/home/customer_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/customer/periodic_service_details_page.dart';
 import 'package:vidyanexis/presentation/widgets/home/custom_button_widget.dart';
+import 'package:vidyanexis/presentation/widgets/reports/common_report_widgets.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/custom_outlined_icon_button_widget.dart';
 
 import 'package:vidyanexis/presentation/widgets/home/table_cell.dart';
 import 'package:vidyanexis/utils/csv_function.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AmcReportScreen extends StatefulWidget {
   final bool fromDashBoard;
@@ -142,17 +144,16 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                         Flexible(child: Container()),
                         Container(
                           width: MediaQuery.of(context).size.width / 4,
-                          height: 40,
+                          height: 48,
                           decoration: BoxDecoration(
                             color: Colors.white,
-                            borderRadius: BorderRadius.circular(20),
+                            borderRadius: BorderRadius.circular(30),
                             border: Border.all(color: Colors.grey[300]!),
                           ),
                           child: TextField(
                             controller: searchController,
+                            textAlignVertical: TextAlignVertical.center,
                             onSubmitted: (query) {
-                              // reportsProvider.selectDateFilterOption(null);
-                              // reportsProvider.removeStatus();
                               reportsProvider.setTaskSearchCriteria(
                                 query,
                                 reportsProvider.fromDateS,
@@ -164,90 +165,69 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                             },
                             decoration: InputDecoration(
                               hintText: 'Search here....',
-                              prefixIcon: const Icon(Icons.search),
+                              hintStyle: GoogleFonts.plusJakartaSans(
+                                color: Colors.grey[400],
+                                fontSize: 14,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: Colors.grey[600],
+                                size: 20,
+                              ),
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
-                                vertical: 4,
                               ),
-                              suffixIcon: Padding(
-                                padding: const EdgeInsets.all(4.0),
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    String query = searchController.text;
-                                    // leadProvider.selectDateFilterOption(null);
-                                    // leadProvider.removeStatus();
-                                    print(query);
-                                    if (reportsProvider.Search.isNotEmpty) {
-                                      searchController.clear();
-                                      reportsProvider.setTaskSearchCriteria(
-                                        '',
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchAmcReport(context);
-                                    } else {
-                                      reportsProvider.setTaskSearchCriteria(
-                                        query,
-                                        reportsProvider.fromDateS,
-                                        reportsProvider.toDateS,
-                                        reportsProvider.Status,
-                                        reportsProvider.AssignedTo,
-                                      );
-                                      reportsProvider
-                                          .getSearchAmcReport(context);
-                                    }
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: AppColors.textGrey4,
-                                    foregroundColor: Colors.white,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 16,
-                                      vertical: 12,
-                                    ),
-                                  ),
-                                  child: Text(reportsProvider.Search.isNotEmpty
-                                      ? 'Cancel'
-                                      : 'Search'),
-                                ),
-                              ),
+                              suffixIcon: searchController.text.isNotEmpty ||
+                                      reportsProvider.Search.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.close),
+                                      onPressed: () {
+                                        searchController.clear();
+                                        reportsProvider.setTaskSearchCriteria(
+                                          '',
+                                          reportsProvider.fromDateS,
+                                          reportsProvider.toDateS,
+                                          reportsProvider.Status,
+                                          reportsProvider.AssignedTo,
+                                        );
+                                        reportsProvider
+                                            .getSearchAmcReport(context);
+                                      },
+                                    )
+                                  : null,
                             ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        OutlinedButton.icon(
+                        ElevatedButton.icon(
                           onPressed: () {
                             reportsProvider.toggleFilter();
-                            print(reportsProvider.isFilter);
                           },
-                          icon: const Icon(Icons.filter_list),
+                          icon: const Icon(Icons.filter_list, size: 18),
                           label: Text(MediaQuery.of(context).size.width > 860
                               ? 'Filter'
                               : ''),
-                          style: OutlinedButton.styleFrom(
+                          style: ElevatedButton.styleFrom(
                             foregroundColor: reportsProvider.isFilter
                                 ? Colors.white
-                                : AppColors
-                                    .primaryBlue, // Change foreground color
+                                : AppColors.primaryBlue,
                             backgroundColor: reportsProvider.isFilter
-                                ? const Color(0xFF5499D9)
-                                : Colors.white, // Change background color
-                            side: BorderSide(
-                                color: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : AppColors
-                                        .primaryBlue), // Change border color
+                                ? AppColors.primaryBlue
+                                : Colors.white,
+                            elevation: 0,
+                            side: BorderSide(color: AppColors.primaryBlue),
                             padding: const EdgeInsets.symmetric(
                               horizontal: 16,
                               vertical: 12,
                             ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
                           ),
                         ),
                         const SizedBox(width: 16),
-                        CustomElevatedButton(
+                        ElevatedButton.icon(
                           onPressed: () {
                             exportToExcel(
                               headers: [
@@ -285,10 +265,21 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               fileName: 'Periodic_Service_Report',
                             );
                           },
-                          buttonText: 'Export to Excel',
-                          textColor: AppColors.whiteColor,
-                          borderColor: AppColors.appViolet,
-                          backgroundColor: AppColors.appViolet,
+                          icon: const Icon(Icons.download, size: 18),
+                          label: const Text('Export',
+                              style: TextStyle(fontWeight: FontWeight.bold)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.primaryBlue,
+                            foregroundColor: Colors.white,
+                            elevation: 0,
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 24,
+                              vertical: 15,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
                         )
                       ],
                     ),
@@ -306,17 +297,16 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           children: [
                             Container(
                               width: MediaQuery.of(context).size.width,
-                              height: 40,
+                              height: 48,
                               decoration: BoxDecoration(
                                 color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
+                                borderRadius: BorderRadius.circular(30),
                                 border: Border.all(color: Colors.grey[300]!),
                               ),
                               child: TextField(
                                 controller: searchController,
+                                textAlignVertical: TextAlignVertical.center,
                                 onSubmitted: (query) {
-                                  // reportsProvider.selectDateFilterOption(null);
-                                  // reportsProvider.removeStatus();
                                   reportsProvider.setTaskSearchCriteria(
                                     query,
                                     reportsProvider.fromDateS,
@@ -328,57 +318,37 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                 },
                                 decoration: InputDecoration(
                                   hintText: 'Search here....',
-                                  prefixIcon: const Icon(Icons.search),
+                                  hintStyle: GoogleFonts.plusJakartaSans(
+                                    color: Colors.grey[400],
+                                    fontSize: 14,
+                                  ),
+                                  prefixIcon: Icon(
+                                    Icons.search,
+                                    color: Colors.grey[600],
+                                    size: 20,
+                                  ),
                                   border: InputBorder.none,
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 16,
-                                    vertical: 0,
                                   ),
-                                  suffixIcon: Padding(
-                                    padding: const EdgeInsets.all(4.0),
-                                    child: ElevatedButton(
-                                      onPressed: () {
-                                        String query = searchController.text;
-                                        // leadProvider.selectDateFilterOption(null);
-                                        // leadProvider.removeStatus();
-                                        print(query);
-                                        if (reportsProvider.Search.isNotEmpty) {
-                                          searchController.clear();
-                                          reportsProvider.setTaskSearchCriteria(
-                                            '',
-                                            reportsProvider.fromDateS,
-                                            reportsProvider.toDateS,
-                                            reportsProvider.Status,
-                                            reportsProvider.AssignedTo,
-                                          );
-                                          reportsProvider
-                                              .getSearchAmcReport(context);
-                                        } else {
-                                          reportsProvider.setTaskSearchCriteria(
-                                            query,
-                                            reportsProvider.fromDateS,
-                                            reportsProvider.toDateS,
-                                            reportsProvider.Status,
-                                            reportsProvider.AssignedTo,
-                                          );
-                                          reportsProvider
-                                              .getSearchAmcReport(context);
-                                        }
-                                      },
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: AppColors.textGrey4,
-                                        foregroundColor: Colors.white,
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 16,
-                                          vertical: 0,
-                                        ),
-                                      ),
-                                      child: Text(
+                                  suffixIcon: searchController.text.isNotEmpty ||
                                           reportsProvider.Search.isNotEmpty
-                                              ? 'Cancel'
-                                              : 'Search'),
-                                    ),
-                                  ),
+                                      ? IconButton(
+                                          icon: const Icon(Icons.close),
+                                          onPressed: () {
+                                            searchController.clear();
+                                            reportsProvider.setTaskSearchCriteria(
+                                              '',
+                                              reportsProvider.fromDateS,
+                                              reportsProvider.toDateS,
+                                              reportsProvider.Status,
+                                              reportsProvider.AssignedTo,
+                                            );
+                                            reportsProvider
+                                                .getSearchAmcReport(context);
+                                          },
+                                        )
+                                      : null,
                                 ),
                               ),
                             ),
@@ -387,37 +357,35 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                         const SizedBox(height: 8),
                         Row(
                           children: [
-                            OutlinedButton.icon(
-                              onPressed: () {
-                                reportsProvider.toggleFilter();
-                                print(reportsProvider.isFilter);
-                              },
-                              icon: const Icon(Icons.filter_list),
-                              label: Text(
-                                  MediaQuery.of(context).size.width > 860
-                                      ? 'Filter'
-                                      : ''),
-                              style: OutlinedButton.styleFrom(
-                                foregroundColor: reportsProvider.isFilter
-                                    ? Colors.white
-                                    : AppColors
-                                        .primaryBlue, // Change foreground color
-                                backgroundColor: reportsProvider.isFilter
-                                    ? const Color(0xFF5499D9)
-                                    : Colors.white, // Change background color
-                                side: BorderSide(
-                                    color: reportsProvider.isFilter
-                                        ? const Color(0xFF5499D9)
-                                        : AppColors
-                                            .primaryBlue), // Change border color
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
+                             ElevatedButton.icon(
+                                onPressed: () {
+                                  reportsProvider.toggleFilter();
+                                },
+                                icon: const Icon(Icons.filter_list, size: 18),
+                                label: Text(
+                                    MediaQuery.of(context).size.width > 860
+                                        ? 'Filter'
+                                        : ''),
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: reportsProvider.isFilter
+                                      ? Colors.white
+                                      : AppColors.primaryBlue,
+                                  backgroundColor: reportsProvider.isFilter
+                                      ? AppColors.primaryBlue
+                                      : Colors.white,
+                                  elevation: 0,
+                                  side: BorderSide(color: AppColors.primaryBlue),
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 16,
+                                    vertical: 12,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
                                 ),
                               ),
-                            ),
                             const SizedBox(width: 16),
-                            CustomElevatedButton(
+                            ElevatedButton.icon(
                               onPressed: () {
                                 exportToExcel(
                                   headers: [
@@ -465,10 +433,22 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   fileName: 'Periodic_Service_Report',
                                 );
                               },
-                              buttonText: 'Export to Excel',
-                              textColor: AppColors.whiteColor,
-                              borderColor: AppColors.appViolet,
-                              backgroundColor: AppColors.appViolet,
+                              icon: const Icon(Icons.download, size: 18),
+                              label: const Text('Export',
+                                  style:
+                                      TextStyle(fontWeight: FontWeight.bold)),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primaryBlue,
+                                foregroundColor: Colors.white,
+                                elevation: 0,
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 24,
+                                  vertical: 15,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(30),
+                                ),
+                              ),
                             )
                           ],
                         ),
@@ -560,42 +540,12 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           const SizedBox(
                             width: 10,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate: reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
@@ -708,8 +658,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               (reportsProvider.selectedUser != null &&
                                   reportsProvider.selectedUser != 0) ||
                               reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -725,13 +675,16 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.white,
                                 foregroundColor: AppColors.textRed,
+                                elevation: 0,
                                 side: BorderSide(color: AppColors.textRed),
                                 padding: const EdgeInsets.symmetric(
                                   horizontal: 16,
-                                  vertical: 12,
+                                  vertical: 8,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20),
                                 ),
                               ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
@@ -822,43 +775,13 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           const SizedBox(
                             width: 10,
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              onClickTopButton(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 20, vertical: 1.5),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(20),
-                                border: Border.all(
-                                    color: reportsProvider.fromDate != null ||
-                                            reportsProvider.toDate != null
-                                        ? AppColors.primaryBlue
-                                        : Colors.grey[300]!),
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  if (reportsProvider.fromDate == null &&
-                                      reportsProvider.toDate == null)
-                                    const Text('Date: All'),
-                                  if (reportsProvider.fromDate != null &&
-                                      reportsProvider.toDate != null)
-                                    Text(
-                                        'Date : ${reportsProvider.formattedFromDate} - ${reportsProvider.formattedToDate}'),
-                                  const SizedBox(
-                                    width: 10,
-                                  ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_outlined,
-                                    color: Colors.black45,
-                                    size: 20,
-                                  ),
-                                ],
-                              ),
-                            ),
+                          CommonReportDateFilter(
+                            fromDate: reportsProvider.fromDate?.toString(),
+                            toDate: reportsProvider.toDate?.toString(),
+                            formattedFromDate:
+                                reportsProvider.formattedFromDate,
+                            formattedToDate: reportsProvider.formattedToDate,
+                            onTap: () => onClickTopButton(context),
                           ),
                           const SizedBox(
                             width: 10,
@@ -963,15 +886,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                           // const SizedBox(
                           //   width: 10,
                           // ),
-                          if (reportsProvider.fromDate != null ||
-                              reportsProvider.toDate != null ||
-                              (reportsProvider.selectedStatus != null &&
-                                  reportsProvider.selectedStatus != 0) ||
-                              (reportsProvider.selectedUser != null &&
-                                  reportsProvider.selectedUser != 0) ||
-                              reportsProvider.Search.isNotEmpty)
-                            ElevatedButton(
-                              onPressed: () {
+                            CommonReportResetButton(
+                              onReset: () {
                                 reportsProvider.selectDateFilterOption(null);
                                 reportsProvider.removeStatus();
                                 searchController.clear();
@@ -984,16 +900,6 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                 );
                                 reportsProvider.getSearchAmcReport(context);
                               },
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.white,
-                                foregroundColor: AppColors.textRed,
-                                side: BorderSide(color: AppColors.textRed),
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 0,
-                                ),
-                              ),
-                              child: const Text('Reset'),
                             ),
                         ],
                       ),
@@ -1229,48 +1135,47 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                     title: task.serviceName,
                                                     color: const Color(
                                                         0xFF607185)),
-                                                TableWidget(
-                                                  flex: 2,
-                                                  data: Center(
-                                                    child: IconButton(
-                                                      onPressed: () {
-                                                        // Redirection to detail screen
-                                                        showDialog(
-                                                          context: context,
-                                                          builder: (context) =>
-                                                              PeriodicServiceDetailsPage(
-                                                            customerId: task
-                                                                .customerId
-                                                                .toString(),
-                                                            amcReportModeld:
-                                                                task,
-                                                            showEdit: false,
-                                                          ),
-                                                        );
-                                                      },
-                                                      icon: Icon(
-                                                          Icons
-                                                              .arrow_forward_ios,
-                                                          size: 16,
-                                                          color: AppColors
-                                                              .primaryBlue),
-                                                    ),
+                                              TableWidget(
+                                                flex: 2,
+                                                data: Center(
+                                                  child: IconButton(
+                                                    onPressed: () {
+                                                      showDialog(
+                                                        context: context,
+                                                        builder: (context) =>
+                                                            PeriodicServiceDetailsPage(
+                                                          customerId: task
+                                                              .customerId
+                                                              .toString(),
+                                                          amcReportModeld:
+                                                              task,
+                                                          showEdit: false,
+                                                        ),
+                                                      );
+                                                    },
+                                                    icon: Icon(
+                                                        Icons
+                                                            .arrow_forward_ios,
+                                                        size: 16,
+                                                        color: AppColors
+                                                            .primaryBlue),
                                                   ),
                                                 ),
-                                              ],
-                                            ),
+                                              ),
+                                            ],
                                           ),
-                                        );
-                                      },
-                                    ),
+                                        ),
+                                      );
+                                    },
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         ),
                       ),
-                    )
+                    ),
+                  )
                   : SingleChildScrollView(
                       scrollDirection: Axis.horizontal,
                       child: SizedBox(
@@ -1290,8 +1195,8 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                 children: [
                                   // Table Header
                                   Container(
-                                    padding:
-                                        const EdgeInsets.symmetric(vertical: 4),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 4),
                                     decoration: BoxDecoration(
                                       color: const Color(0xFFF1F4F9),
                                       borderRadius: BorderRadius.circular(8),
@@ -1375,8 +1280,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                   // Data Rows
                                   Expanded(
                                     child: ListView.builder(
-                                      shrinkWrap:
-                                          false, // To avoid scrolling issues when inside a parent widget
+                                      shrinkWrap: false,
                                       physics:
                                           const AlwaysScrollableScrollPhysics(),
                                       itemCount:
@@ -1385,10 +1289,7 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                         var task =
                                             reportsProvider.amcReport[index];
                                         return GestureDetector(
-                                          onTap: () {
-                                            // context.go(
-                                            //     '${CustomerDetailsScreen.route}${Service.customerId.toString()}');
-                                          },
+                                          onTap: () {},
                                           child: Container(
                                             decoration: BoxDecoration(
                                               color: index % 2 == 0
@@ -1397,7 +1298,6 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                               borderRadius:
                                                   BorderRadius.circular(8),
                                             ),
-                                            // Alternate row colors
                                             child: Row(
                                               children: [
                                                 SizedBox(
@@ -1438,13 +1338,13 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                                       child: Text(
                                                         task.customerName
                                                                     .length >
-                                                                30
+                                                                 30
                                                             ? '${task.customerName.substring(0, 30)}...'
                                                             : task.customerName,
                                                         overflow: TextOverflow
                                                             .ellipsis,
                                                         maxLines: 1,
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                             fontSize: 13),
@@ -1629,13 +1529,13 @@ class _AmcReportScreen extends State<AmcReportScreen> {
                                     ),
                                   ),
                                 ],
+                                ),
                               ),
                             ),
                           ),
                         ),
                       ),
                     ),
-            ), // end Expanded
           ],
         ),
       ),
