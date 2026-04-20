@@ -527,7 +527,7 @@ class _LeadsPageState extends State<LeadPage> {
                   children: [
                     // Fixed columns section
                     SizedBox(
-                      width: 600,
+                      width: 850,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -571,12 +571,25 @@ class _LeadsPageState extends State<LeadPage> {
                                   ),
                                 ),
                                 TableWidget(
-                                  flex: 3,
+                                  flex: 2,
                                   padding: EdgeInsets.symmetric(
                                       vertical: 4.0, horizontal: 12.0),
                                   alignment: Alignment.centerLeft,
                                   data: Text(
                                     'Name',
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                                TableWidget(
+                                  flex: 4,
+                                  padding: EdgeInsets.symmetric(
+                                      vertical: 4.0, horizontal: 12.0),
+                                  alignment: Alignment.centerLeft,
+                                  data: Text(
+                                    'Address',
                                     style: TextStyle(
                                       fontSize: 13,
                                       color: Colors.white,
@@ -699,7 +712,7 @@ class _LeadsPageState extends State<LeadPage> {
                                                   ),
                                                 ),
                                                 TableWidget(
-                                                  flex: 3,
+                                                  flex: 2,
                                                   alignment:
                                                       Alignment.centerLeft,
                                                   padding: EdgeInsets.symmetric(
@@ -989,6 +1002,26 @@ class _LeadsPageState extends State<LeadPage> {
                                                         ],
                                                       ),
                                                     ],
+                                                  ),
+                                                ),
+                                                TableWidget(
+                                                  flex: 4,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  padding: EdgeInsets.symmetric(
+                                                      vertical: 4.0,
+                                                      horizontal: 12.0),
+                                                  data: Tooltip(
+                                                    message: lead.displayAddress,
+                                                    child: Text(
+                                                      lead.displayAddress,
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: const TextStyle(
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
                                                   ),
                                                 ),
                                                 TableWidget(

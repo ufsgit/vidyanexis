@@ -89,6 +89,16 @@ class SearchLeadModel {
   int? locationId;
   String? locationName;
 
+  String get displayAddress {
+    final List<String> parts = [
+      address,
+      address1,
+      address2,
+      address3,
+    ].where((s) => s.isNotEmpty).toList();
+    return parts.join(', ');
+  }
+
   SearchLeadModel({
     required this.customerId,
     required this.customerName,

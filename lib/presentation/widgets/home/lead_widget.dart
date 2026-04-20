@@ -187,13 +187,28 @@ class _LeadCardState extends State<LeadCard> {
                             Row(
                               children: [
                                 Flexible(
-                                  child: Text(
-                                    widget.lead.customerName,
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: widget.lead.customerName,
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textBlack),
+                                        ),
+                                        if (widget.lead.displayAddress.isNotEmpty) ...[
+                                          TextSpan(
+                                            text: ' , ${widget.lead.displayAddress}',
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppColors.textGrey3),
+                                          ),
+                                        ]
+                                      ],
+                                    ),
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textBlack),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
@@ -909,12 +924,20 @@ class _LeadCardState extends State<LeadCard> {
                         children: [
                           if (settingsProvider.menuIsSaveMap[13] == 1)
                             _buildActionButton(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddTaskMobile(
-                                        isEdit: false, taskId: '0'),
-                                  )),
+                              onTap: () {
+                                final customerDetailsProvider =
+                                    Provider.of<CustomerDetailsProvider>(
+                                        context,
+                                        listen: false);
+                                customerDetailsProvider.customerId =
+                                    widget.lead.customerId.toString();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AddTaskMobile(
+                                          isEdit: false, taskId: '0'),
+                                    ));
+                              },
                               icon: Icons.task,
                               text: 'Task',
                               color: Colors.orange,

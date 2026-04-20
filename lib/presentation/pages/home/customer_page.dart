@@ -504,8 +504,14 @@ class _CustomerPageState extends State<CustomerPage> {
                                     color: Color(0xFFFFFFFF),
                                   ),
                                   TableWidget(
-                                      flex: 3,
+                                      flex: 2,
                                       title: 'Customer Name',
+                                      padding: EdgeInsets.symmetric(
+                                          vertical: 4.0, horizontal: 8.0),
+                                      color: Color(0xFFFFFFFF)),
+                                  TableWidget(
+                                      flex: 4,
+                                      title: 'Address',
                                       padding: EdgeInsets.symmetric(
                                           vertical: 4.0, horizontal: 8.0),
                                       color: Color(0xFFFFFFFF)),
@@ -594,7 +600,7 @@ class _CustomerPageState extends State<CustomerPage> {
                                               ),
                                               // TableWidget(title: lead.orderNo),
                                               TableWidget(
-                                                flex: 3,
+                                                flex: 2,
                                                 padding:
                                                     const EdgeInsets.symmetric(
                                                         vertical: 4.0,
@@ -837,6 +843,26 @@ class _CustomerPageState extends State<CustomerPage> {
                                                       ],
                                                     ),
                                                   ],
+                                                ),
+                                              ),
+                                              TableWidget(
+                                                flex: 4,
+                                                fontSize: 12,
+                                                padding: const EdgeInsets
+                                                    .symmetric(
+                                                    vertical: 6.0,
+                                                    horizontal: 8.0),
+                                                data: Tooltip(
+                                                  message: lead.displayAddress,
+                                                  child: Text(
+                                                    lead.displayAddress,
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                    style: const TextStyle(
+                                                      fontSize: 12,
+                                                    ),
+                                                  ),
                                                 ),
                                               ),
                                               TableWidget(
