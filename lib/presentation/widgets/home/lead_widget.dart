@@ -187,13 +187,28 @@ class _LeadCardState extends State<LeadCard> {
                             Row(
                               children: [
                                 Flexible(
-                                  child: Text(
-                                    widget.lead.customerName,
+                                  child: Text.rich(
+                                    TextSpan(
+                                      children: [
+                                        TextSpan(
+                                          text: widget.lead.customerName,
+                                          style: GoogleFonts.plusJakartaSans(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColors.textBlack),
+                                        ),
+                                        if (widget.lead.displayAddress.isNotEmpty) ...[
+                                          TextSpan(
+                                            text: ' , ${widget.lead.displayAddress}',
+                                            style: GoogleFonts.plusJakartaSans(
+                                                fontSize: 12,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppColors.textGrey3),
+                                          ),
+                                        ]
+                                      ],
+                                    ),
                                     overflow: TextOverflow.ellipsis,
-                                    style: GoogleFonts.plusJakartaSans(
-                                        fontSize: 14,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColors.textBlack),
                                   ),
                                 ),
                                 const SizedBox(width: 8),
