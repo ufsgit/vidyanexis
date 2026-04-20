@@ -924,12 +924,20 @@ class _LeadCardState extends State<LeadCard> {
                         children: [
                           if (settingsProvider.menuIsSaveMap[13] == 1)
                             _buildActionButton(
-                              onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddTaskMobile(
-                                        isEdit: false, taskId: '0'),
-                                  )),
+                              onTap: () {
+                                final customerDetailsProvider =
+                                    Provider.of<CustomerDetailsProvider>(
+                                        context,
+                                        listen: false);
+                                customerDetailsProvider.customerId =
+                                    widget.lead.customerId.toString();
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const AddTaskMobile(
+                                          isEdit: false, taskId: '0'),
+                                    ));
+                              },
                               icon: Icons.task,
                               text: 'Task',
                               color: Colors.orange,
