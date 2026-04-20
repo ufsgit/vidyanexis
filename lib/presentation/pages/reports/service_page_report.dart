@@ -37,8 +37,11 @@ class _ServicesPageReportState extends State<ServicePageReport> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final reportsProvider =
           Provider.of<ServiceReportProvider>(context, listen: false);
-      reportsProvider.setTaskSearchCriteria('', '', '', '', '');
-      // reportsProvider.getSearchServiceReport(context);
+      reportsProvider.setDateFilter('Today');
+      reportsProvider.selectDateFilterOption(1);
+      reportsProvider.formatDate();
+      reportsProvider.setTaskSearchCriteria('', reportsProvider.formattedFromDate, reportsProvider.formattedToDate, '', '');
+      reportsProvider.getSearchServiceReport(context);
       final provider = Provider.of<DropDownProvider>(context, listen: false);
       provider.getAMCStatus(context);
       provider.getUserDetails(context);
@@ -123,7 +126,7 @@ class _ServicesPageReportState extends State<ServicePageReport> {
                 height: 48,
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(30),
+                  borderRadius: BorderRadius.circular(20),
                   border: Border.all(color: Colors.grey[300]!),
                 ),
                 child: TextField(
