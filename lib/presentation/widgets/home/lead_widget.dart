@@ -166,7 +166,7 @@ class _LeadCardState extends State<LeadCard> {
                 behavior: HitTestBehavior.opaque,
                 child: Padding(
                   padding:
-                      const EdgeInsets.fromLTRB(16, 2, 16, 8),
+                      const EdgeInsets.fromLTRB(16, 2, 16, 2),
                   child: IntrinsicHeight(
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.stretch,

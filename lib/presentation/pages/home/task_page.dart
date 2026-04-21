@@ -319,7 +319,7 @@ class _tasksPageReportState extends State<TaskPage> {
             // Responsive header implementation - modify your existing padding section:
             Padding(
               padding: AppStyles.isWebScreen(context)
-                  ? const EdgeInsets.fromLTRB(16.0, 16.0, 16.0, 4.0)
+                  ? const EdgeInsets.fromLTRB(16.0, 4.0, 16.0, 4.0)
                   : EdgeInsets.zero,
               child: Column(
                 children: [
@@ -1238,7 +1238,7 @@ class _tasksPageReportState extends State<TaskPage> {
                                             Divider(
                                               height: 1,
                                               thickness: 1,
-                                              color: AppColors.grey,
+                                              color: const Color(0xFFCDD2D6),
                                             ),
                                             TaskCard(
                                               task: task,
