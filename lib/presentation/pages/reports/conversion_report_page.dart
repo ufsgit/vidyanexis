@@ -121,7 +121,20 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                           ),
                           child: TextField(
                             controller: searchController,
+                            textAlign: TextAlign.center,
                             textAlignVertical: TextAlignVertical.center,
+                            onChanged: (query) {
+                              if (query.isEmpty) {
+                                reportsProvider.setTaskSearchCriteria(
+                                  '',
+                                  reportsProvider.fromDateS,
+                                  reportsProvider.toDateS,
+                                  reportsProvider.Status,
+                                  reportsProvider.AssignedTo,
+                                );
+                                reportsProvider.getSearchConversionReport(context);
+                              }
+                            },
                             onSubmitted: (query) {
                               reportsProvider.setTaskSearchCriteria(
                                 query,
@@ -144,6 +157,23 @@ class _ConversionReportPage extends State<ConversionReportPage> {
                                 color: Colors.grey[600],
                                 size: 20,
                               ),
+                              suffixIcon: reportsProvider.Search.isNotEmpty
+                                  ? IconButton(
+                                      icon: const Icon(Icons.close, size: 18),
+                                      onPressed: () {
+                                        searchController.clear();
+                                        reportsProvider.setTaskSearchCriteria(
+                                          '',
+                                          reportsProvider.fromDateS,
+                                          reportsProvider.toDateS,
+                                          reportsProvider.Status,
+                                          reportsProvider.AssignedTo,
+                                        );
+                                        reportsProvider
+                                            .getSearchConversionReport(context);
+                                      },
+                                    )
+                                  : null,
                               border: InputBorder.none,
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 16,
