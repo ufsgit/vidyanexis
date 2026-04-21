@@ -584,22 +584,33 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       size: 16),
                                 ),
                               Expanded(
-                                child: NotificationListener<ScrollNotification>(
-                                  onNotification: (notification) {
-                                    if (notification.metrics.maxScrollExtent >
-                                        0) {
+                                child: NotificationListener<Notification>(
+                                onNotification: (notification) {
+                                  if (notification is ScrollNotification ||
+                                      notification is ScrollMetricsNotification) {
+                                    final metrics = notification
+                                            is ScrollNotification
+                                        ? notification.metrics
+                                        : (notification
+                                                as ScrollMetricsNotification)
+                                            .metrics;
+                                    if (metrics.maxScrollExtent > 0) {
                                       setState(() {
-                                        _canScrollLeft =
-                                            notification.metrics.pixels > 5;
-                                        _canScrollRight =
-                                            notification.metrics.pixels <
-                                                notification.metrics
-                                                        .maxScrollExtent -
-                                                    5;
+                                        _canScrollLeft = metrics.pixels > 5;
+                                        _canScrollRight = metrics.pixels <
+                                            metrics.maxScrollExtent - 5;
                                       });
+                                    } else {
+                                      if (_canScrollLeft || _canScrollRight) {
+                                        setState(() {
+                                          _canScrollLeft = false;
+                                          _canScrollRight = false;
+                                        });
+                                      }
                                     }
-                                    return false;
-                                  },
+                                  }
+                                  return false;
+                                },
                                   child: TabBar(
                                     controller: _tabController,
                                     labelColor: AppColors.primaryBlue,
@@ -629,7 +640,6 @@ class _CustomerDetailsScreenState extends State<CustomerDetailsScreen>
                                       size: 16),
                                 ),
                               if (settingsprovider.menuIsSaveMap[13] == 1 &&
-                                  _isControllerInitialized &&
                                   _isControllerInitialized &&
                                   _tabs[_tabController.index].text == "Tasks")
                                 Padding(
